@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'dart:math' as math;
 
 extension ExploreExt on Explore {
 
@@ -217,35 +218,70 @@ extension ExploreExt on Explore {
 }
 
 extension ExploreMap on Explore {
+  
   static LatLngBounds? boundsOfList(List<Explore>? explores) {
     double? minLat, minLng, maxLat, maxLng;
     if (explores != null) {
       for (Explore explore in explores) {
         ExploreLocation? exploreLocation = explore.exploreLocation;
-        if ((exploreLocation != null)) {
-          double? exploreLat = exploreLocation.latitude?.toDouble();
-          double? exploreLng = exploreLocation.longitude?.toDouble();
-          if ((exploreLat != null) && (exploreLat != 0.0) && (exploreLng != null) && (exploreLng != 0.0)) {
-            if ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) {
-              if (exploreLat < minLat)
-                minLat = exploreLat;
-              else if (maxLat < exploreLat)
-                maxLat = exploreLat;
+        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+          double exploreLat = exploreLocation.latitude?.toDouble() ?? 0;
+          double exploreLng = exploreLocation.longitude?.toDouble() ?? 0;
+          if ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) {
+            if (exploreLat < minLat)
+              minLat = exploreLat;
+            else if (maxLat < exploreLat)
+              maxLat = exploreLat;
 
-              if (exploreLng < minLng)
-                minLng = exploreLng;
-              else if (maxLng < exploreLng)
-                maxLng = exploreLng;
-            }
-            else {
-              minLat = maxLat = exploreLat;
-              minLng = maxLng = exploreLng;
-            }
+            if (exploreLng < minLng)
+              minLng = exploreLng;
+            else if (maxLng < exploreLng)
+              maxLng = exploreLng;
+          }
+          else {
+            minLat = maxLat = exploreLat;
+            minLng = maxLng = exploreLng;
           }
         }
       }
     }
     return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
+  }
+
+  static LatLng? centerOfList(List<Explore>? explores) {
+    if (explores != null) {
+      int count = 0;
+      double x = 0, y = 0, z = 0;
+      double pi = 3.14159265358979323846264338327950288;
+      for (Explore explore in explores) {
+        ExploreLocation? exploreLocation = explore.exploreLocation;
+        if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+          double exploreLat = exploreLocation.latitude?.toDouble() ?? 0;
+          double exploreLng = exploreLocation.longitude?.toDouble() ?? 0;
+  	      
+          // https://stackoverflow.com/a/60163851/3759472
+          double latitude = exploreLat * pi / 180;
+          double longitude = exploreLng * pi / 180;
+          double c1 = math.cos(latitude);
+          x = x + c1 * math.cos(longitude);
+          y = y + c1 * math.sin(longitude);
+          z = z + math.sin(latitude);
+          count++;
+        }
+      }
+
+      if (0 < count) {
+        x = x / count.toDouble();
+        y = y / count.toDouble();
+        z = z / count.toDouble();
+
+        double centralLongitude = math.atan2(y, x);
+        double centralSquareRoot = math.sqrt(x * x + y * y);
+        double centralLatitude = math.atan2(z, centralSquareRoot);
+        return LatLng(centralLatitude * 180 / pi, centralLongitude * 180 / pi);
+      }
+    }
+    return null;
   }
 }
 

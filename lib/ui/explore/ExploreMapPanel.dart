@@ -1,4 +1,6 @@
 
+import 'dart:math' as math;
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -25,6 +27,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -46,8 +49,6 @@ class ExploreMapPanel extends StatefulWidget {
 class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExploreMapPanel> {
 
   static const double _filterLayoutSortKey = 1.0;
-  static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
-  static const double _mapPadding = 50;
 
   List<ExploreItem> _exploreItems = [];
   ExploreItem? _selectedExploreItem;
@@ -66,10 +67,21 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   bool _eventsDisplayDropDownValuesVisible = false;
   bool _filtersDropdownVisible = false;
   
+  final GlobalKey _mapContainerKey = GlobalKey();
+  static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
+  static const double _mapPadding = 50;
+  static const List<double> _thresoldDistanceByZoom = [
+		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
+		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
+		   5000,   2000,   1000,    500,    250, // zoom 10 - 14
+		    100,     50,      0                  // zoom 15 - 16
+  ];
+
   UniqueKey _mapKey = UniqueKey();
   GoogleMapController? _mapController;
   CameraPosition? _lastCameraPosition;
   CameraUpdate? _targetCameraUpdate;
+  Set<Marker>? _targetMarkers;
   
   LocationServicesStatus? _locationServicesStatus;
 
@@ -130,7 +142,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
                     Wrap(children: _buildFilters()),
                   ),
                   Expanded(child:
-                    Container(color: Styles().colors!.background, child:
+                    Container(key: _mapContainerKey, color: Styles().colors!.background, child:
                       _buildContent(),
                     ),
                   ),
@@ -175,6 +187,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       onCameraMove: _onMapCameraMove,
       compassEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
+      markers: _targetMarkers ?? const <Marker>{},
     );
   }
 
@@ -1032,7 +1045,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           _exploreTask = null;
           _exploreProgress = false;
           _mapKey = UniqueKey();
-          _targetCameraUpdate = exploresCameraUpdate(explores) ?? CameraUpdate.newCameraPosition(_defaultCameraPosition);
+          _acknowledgeMapContent(explores, updateCamera: true);
         });
       }
     });
@@ -1046,6 +1059,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       setState(() {
         _explores = explores;
         _exploreTask = null;
+        _acknowledgeMapContent(explores, updateCamera: false);
       });
     }
   }
@@ -1147,9 +1161,115 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   // Map Content
 
-  static CameraUpdate? exploresCameraUpdate(List<Explore>? explores) {
-      LatLngBounds? bounds = ExploreMap.boundsOfList(explores);
-      return (bounds != null) ? CameraUpdate.newLatLngBounds(bounds, _mapPadding) : null;
+  void _acknowledgeMapContent(List<Explore>? explores, { bool updateCamera = false}) {
+    LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
+    if (updateCamera) {
+      _targetCameraUpdate = (exploresBounds != null) ? CameraUpdate.newLatLngBounds(exploresBounds, _mapPadding) : null ?? CameraUpdate.newCameraPosition(_defaultCameraPosition);
+    }
+
+    Size? mapSize = _mapSize;
+    if ((exploresBounds != null) && (mapSize != null)) {
+      double zoom = GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
+      double thresoldDistance = _thresoldDistanceForZoom(zoom);
+      _targetMarkers = _buildMarkers(explores, thresoldDistance: thresoldDistance);
+
+    }
+  }
+
+  static Set<Marker> _buildMarkers(List<Explore>? explores, { double thresoldDistance = 0 }) {
+    Set<Marker> markers = <Marker>{};
+    if (explores != null) {
+      if (0 < thresoldDistance) {
+        // group by thresoldDistance
+        Set<List<Explore>> exploreGroups = <List<Explore>>{};
+        
+        for (Explore explore in explores) {
+          ExploreLocation? exploreLocation = explore.exploreLocation;
+          if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+            List<Explore>? groupExploreList = _lookupExploreInGroups(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
+            if (groupExploreList != null) {
+              groupExploreList.add(explore);
+            }
+            else {
+              exploreGroups.add(<Explore>[explore]);
+            }
+          }
+        }
+
+        for (List<Explore> groupExploreList in exploreGroups) {
+          if (0 < groupExploreList.length) {
+            Explore explore = groupExploreList.first;
+            LatLng markerPosition;
+            if (groupExploreList.length == 1) {
+              markerPosition = LatLng(explore.exploreLocation?.latitude?.toDouble() ?? 0, explore.exploreLocation?.longitude?.toDouble() ?? 0);
+            }
+            else {
+              markerPosition = ExploreMap.centerOfList(groupExploreList) ?? LatLng(0, 0);
+            }
+
+            markers.add(Marker(
+              markerId: MarkerId("[${markerPosition.latitude}, ${markerPosition.longitude}]"),
+              position: markerPosition
+            ));
+          }
+        }
+
+      }
+      else {
+        // no group
+        for (Explore explore in explores) {
+          ExploreLocation? exploreLocation = explore.exploreLocation;
+          if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
+            LatLng markerPosition = LatLng(exploreLocation.latitude?.toDouble() ?? 0, exploreLocation.longitude?.toDouble() ?? 0);
+            markers.add(Marker(
+              markerId: MarkerId("[${markerPosition.latitude}, ${markerPosition.longitude}]"),
+              position: markerPosition
+            ));
+          }
+        }
+      }
+    }
+    return markers;
+  }
+
+  static List<Explore>? _lookupExploreInGroups(Set<List<Explore>> exploreGroups, ExploreLocation exploreLocation, { double thresoldDistance = 0 }) {
+    for (List<Explore> groupExploreList in exploreGroups) {
+      for (Explore groupExplore in groupExploreList) {
+        double distance = GoogleMapUtils.getDistance(
+          exploreLocation.latitude?.toDouble() ?? 0,
+          exploreLocation.longitude?.toDouble() ?? 0,
+          groupExplore.exploreLocation?.latitude?.toDouble() ?? 0,
+          groupExplore.exploreLocation?.longitude?.toDouble() ?? 0);
+        if (distance < thresoldDistance) {
+          return groupExploreList;
+        }
+      }
+    }
+    return null;
+  }
+
+
+
+  static double _thresoldDistanceForZoom(double zoom) {
+    int zoomIndex = zoom.round();
+    if ((0 <= zoomIndex) && (zoomIndex < _thresoldDistanceByZoom.length)) {
+      double zoomDistance = _thresoldDistanceByZoom[zoomIndex];
+      double nextZoomDistance = ((zoomIndex + 1) < _thresoldDistanceByZoom.length) ? _thresoldDistanceByZoom[zoomIndex + 1] : 0;
+      double thresoldDistance = zoomDistance - (zoom - zoomIndex.toDouble()) * (zoomDistance - nextZoomDistance);
+      return thresoldDistance;
+    }
+    return 0;
+  }
+
+  Size? get _mapSize {
+    try {
+      final RenderObject? renderBox = _mapContainerKey.currentContext?.findRenderObject();
+      return (renderBox is RenderBox) ? renderBox.size : null;
+    }
+    on Exception catch (e) {
+      print(e.toString());
+      return null;
+    }
   }
 
 }
