@@ -2053,6 +2053,8 @@
     "panel.group_detail.button.create_poll.title": "Create Poll",
     "panel.group_detail.button.policy.hint": "Tap to ready policy statement",
     "panel.group_detail.attendance.member.attended.msg.format": "Student with UIN \"%s\" already attended on \"%s\"",
+    "panel.group_detail.date.updated.managed.membership.label": "Managed Updated:",
+    "panel.group_detail.date.updated.membership.label": "Membership Updated:",
     
     "panel.group_member_notifications.header.title": "Group Notifications",
     "panel.group_member_notifications.save.button": "Save",
