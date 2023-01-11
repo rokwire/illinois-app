@@ -265,9 +265,9 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
   void _onAnswer(Answer answer, { required Question question }) {
 
-    String answerTitle = _questionnaireString(answer.title, languageCode: 'en');
-    String? questionTitle = _questionnaireString(question.title, languageCode: 'en');
-    Analytics().logSelect(target: '$questionTitle => $answerTitle');
+    //String answerTitle = _questionnaireString(answer.title, languageCode: 'en');
+    //String? questionTitle = _questionnaireString(question.title, languageCode: 'en');
+    //Analytics().logSelect(target: '$questionTitle => $answerTitle');
 
     String? answerId = answer.id;
     String? questionId = question.id;
@@ -316,6 +316,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         AppAlert.showDialogResult(context, displayPrompt);
       }
       else {
+        Analytics().logResearchQuestionnaiire(answers: _analyticsAnswers);
+
         Auth2().profile?.setResearchQuestionnaireAnswers(_questionnaire?.id, _selection);
         
         Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
@@ -342,6 +344,32 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       }
     }
     return -1;
+  }
+
+  List<dynamic>? get _analyticsAnswers {
+    List<dynamic>? answers;
+    List<Question>? questions = _questionnaire?.questions;
+    if (questions != null) {
+      answers = [];
+      for (int index = 0; index < questions.length; index++) {
+        Question question = questions[index];
+        answers.add({ (question.title ?? '') : _isAnalyticsQuestionAnswered(question) });
+      }
+    }
+    return answers;
+  }
+
+  bool _isAnalyticsQuestionAnswered(Question question) {
+    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+    if (selectedAnswers != null) {
+      for (String answerId in selectedAnswers) {
+        Answer? answer = Answer.answerInList(question.answers, answerId: answerId);
+        if ((answer != null) && !answer.isAnalyticsSkipAnswer) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   String _questionnaireString(String? key, { String? languageCode }) => _questionnaire?.stringValue(key, languageCode: languageCode) ?? key ?? '';
