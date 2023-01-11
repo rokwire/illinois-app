@@ -7,14 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use Styles().images [#2476](https://github.com/rokwire/illinois-app/issues/2476).
-- Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
 ### Added
 - Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
 - Display managed and membership date fields in GroupDetailPanel [#2907](https://github.com/rokwire/illinois-app/issues/2907).
+- Show current year in copyright statement [#2899](https://github.com/rokwire/illinois-app/issues/2899).
 
 ## [5.0.1] - 2022-01-04
 ### Changed
 - Switch to xCode 14.2.
+
+## [4.2.50] - yyyy-MM-dd //TBD type the date when this version is released and remove this comment
+### Changed
+- Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
+### Fixed
+- Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
 
 ## [4.2.49] - 2022-01-05
 ### Fixed
