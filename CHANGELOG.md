@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
+### Fixed
+- Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
 
 ## [4.2.49] - 2022-01-05
 ### Fixed
