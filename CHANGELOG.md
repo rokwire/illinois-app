@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use Styles().images [#2476](https://github.com/rokwire/illinois-app/issues/2476).
+- Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
 ### Added
 - Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
 - Display managed and membership date fields in GroupDetailPanel [#2907](https://github.com/rokwire/illinois-app/issues/2907).
