@@ -221,7 +221,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         SizedBox(width: 32, height: 32, child:
           CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
         ),
-        Expanded(flex: 2, child: Container(),),
+        Expanded(flex: 1, child: Container(),),
       ],)
     );
   }
