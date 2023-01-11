@@ -96,6 +96,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool hasLiveGame = (Storage().debugDisableLiveGameCheck == true) || LiveStats().hasLiveGame(widget.game?.id);
     bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
     bool isGameFavorite = Auth2().isFavorite(widget.game);
+    bool isUpcomingGame = widget.game?.isUpcoming ?? false;
     String? liveStatsUrl = widget.game?.links?.liveStats;
     String? audioUrl = widget.game?.links?.audio;
     String? videoUrl = widget.game?.links?.video;
@@ -149,7 +150,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 child: Container(),
                               ),
                               Visibility(
-                                visible: Auth2().canFavorite,
+                                visible: (Auth2().canFavorite && isUpcomingGame),
                                 child: Semantics(
                                   label: Localization().getStringEx("widget.game_detail_heading.button.save_game.title", "Save Game"),
                                   hint: Localization().getStringEx("widget.game_detail_heading.button.save_game.hint", "Tap to save"),
