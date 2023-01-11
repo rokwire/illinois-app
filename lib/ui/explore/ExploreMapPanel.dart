@@ -68,6 +68,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   bool _filtersDropdownVisible = false;
   
   final GlobalKey _mapContainerKey = GlobalKey();
+  final Map<String, BitmapDescriptor> _markerIconCache = <String, BitmapDescriptor>{};
   static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
   static const double _mapPadding = 50;
   static const List<double> _thresoldDistanceByZoom = [
@@ -1041,12 +1042,15 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     _exploreProgress = true;
     _exploreTask?.then((List<Explore>? explores) {
       if (mounted && (exploreTask == _exploreTask)) {
-        setState(() {
-          _explores = explores;
-          _exploreTask = null;
-          _exploreProgress = false;
-          _mapKey = UniqueKey();
-          _acknowledgeMapContent(explores, updateCamera: true);
+        _acknowledgeMapContent(explores, updateCamera: true).then((_){
+          if (mounted && (exploreTask == _exploreTask)) {
+            setState(() {
+              _explores = explores;
+              _exploreTask = null;
+              _exploreProgress = false;
+              _mapKey = UniqueKey();
+            });
+          }
         });
       }
     });
@@ -1057,10 +1061,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     _exploreTask = exploreTask;
     List<Explore>? explores = await _exploreTask;
     if (mounted && (exploreTask == _exploreTask)) {
-      setState(() {
-        _explores = explores;
-        _exploreTask = null;
-        _acknowledgeMapContent(explores, updateCamera: false);
+      _acknowledgeMapContent(explores, updateCamera: false).then((_){
+        if (mounted && (exploreTask == _exploreTask)) {
+          setState(() {
+            _explores = explores;
+            _exploreTask = null;
+          });
+        }
       });
     }
   }
@@ -1162,7 +1169,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   // Map Content
 
-  void _acknowledgeMapContent(List<Explore>? explores, { bool updateCamera = false}) {
+  Future<void> _acknowledgeMapContent(List<Explore>? explores, { bool updateCamera = false}) async {
     LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
     if (updateCamera) {
       _targetCameraUpdate = (exploresBounds != null) ? CameraUpdate.newLatLngBounds(exploresBounds, _mapPadding) : null ?? CameraUpdate.newCameraPosition(_defaultCameraPosition);
@@ -1173,8 +1180,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       double zoom = GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
       double thresoldDistance = _thresoldDistanceForZoom(zoom);
       _markerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
-      _targetMarkers = _buildMarkers(_markerGroups);
-
+      _targetMarkers = await _buildMarkers(_markerGroups, context);
     }
   }
 
@@ -1216,26 +1222,37 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return null;
   }
 
-  static Set<Marker> _buildMarkers(List<dynamic>? exploreGroups) {
+  Future<Set<Marker>> _buildMarkers(List<dynamic>? exploreGroups, BuildContext context) async {
     Set<Marker> markers = <Marker>{};
     if (exploreGroups != null) {
+      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context);
       for (int index = 0; index < exploreGroups.length; index++) {
         dynamic entry = exploreGroups[index];
         LatLng? markerPosition;
+        BitmapDescriptor? markerIcon;
+        Offset? markerAnchor;
         if (entry is List<Explore>) {
           markerPosition = ExploreMap.centerOfList(entry);
+          String markerAsset = ExploreMap.mapGroupAssetNameForList(entry);
+          markerIcon = _markerIconCache[markerAsset] ??
+            (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
+          markerAnchor = Offset(0.5, 0.5);
         }
         else if (entry is Explore) {
-          if (entry.exploreLocation?.isLocationCoordinateValid ?? false) {
-            markerPosition = LatLng(
-              entry.exploreLocation?.latitude?.toDouble() ?? 0,
-              entry.exploreLocation?.longitude?.toDouble() ?? 0);
-          }
+          markerPosition = (entry.exploreLocation?.isLocationCoordinateValid == true) ? LatLng(
+            entry.exploreLocation?.latitude?.toDouble() ?? 0,
+            entry.exploreLocation?.longitude?.toDouble() ?? 0
+          ) : null;
+          Color? exploreColor = entry.uiColor;
+          markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : null;
+          markerAnchor = Offset(0.5, 1);
         }
         if (markerPosition != null) {
           markers.add(Marker(
             markerId: MarkerId("$index"),
-            position: markerPosition
+            position: markerPosition,
+            icon: markerIcon ?? BitmapDescriptor.defaultMarker,
+            anchor: markerAnchor ?? Offset(0.5, 1)
           ));
         }
       }

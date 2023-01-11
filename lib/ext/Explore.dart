@@ -186,6 +186,14 @@ extension ExploreExt on Explore {
   }
 
   Color? get uiColor {
+    // Event         eventColor       E54B30
+    // Dining        diningColor      F09842
+    // LaundryRoom   accentColor2     5FA7A3
+    // Game          fillColorPrimary 002855
+    // MTDStop       mtdColor         2376E5
+    // StudentCourse eventColor       E54B30
+    // ExplorePOI    accentColor3     5182CF
+
     if (this is Event) {
       return (this as Event).uiColor;
     }
@@ -210,7 +218,7 @@ extension ExploreExt on Explore {
     //else if (this is Building) {}
     //else if (this is Appointment) {}
     else {
-      return Styles().colors?.eventColor;
+      return Styles().colors?.accentColor2;
     }
   }
 
@@ -218,7 +226,52 @@ extension ExploreExt on Explore {
 }
 
 extension ExploreMap on Explore {
-  
+
+  String? get mapGroupMarkerAssetName {
+    if (this is Event) {
+      return 'images/map-marker-group-event.png';
+    }
+    else if (this is Dining) {
+      return 'images/map-marker-group-dining.png';
+    }
+    else if (this is LaundryRoom) {
+      return 'images/map-marker-group-laundry.png';
+    }
+    else if (this is Game) {
+      return 'images/map-marker-group-game.png';
+    }
+    else if (this is MTDStop) {
+      return 'images/map-marker-group-mtd-stop';
+    }
+    else if (this is StudentCourse) {
+      return 'images/map-marker-group-event.png';
+    }
+    else if (this is ExplorePOI) {
+      return 'images/map-marker-group-poi.png';
+    }
+    //else if (this is Building) {}
+    //else if (this is Appointment) {}
+    else {
+      return 'images/map-marker-group-laundry.png';
+    }
+  }
+
+  static String mapGroupAssetNameForList(List<Explore>? explores) {
+    String? assetName;
+    if (explores != null) {
+      for (Explore explore in explores) {
+        if (assetName == null) {
+          assetName = explore.mapGroupMarkerAssetName;
+        }
+        else if (assetName != explore.mapGroupMarkerAssetName) {
+          assetName = null;
+          break;
+        }
+      }
+    }
+    return assetName ?? 'images/map-marker-group-laundry.png';
+  }
+
   static LatLngBounds? boundsOfList(List<Explore>? explores) {
     double? minLat, minLng, maxLat, maxLng;
     if (explores != null) {
