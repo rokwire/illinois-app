@@ -81,6 +81,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   GoogleMapController? _mapController;
   CameraPosition? _lastCameraPosition;
   CameraUpdate? _targetCameraUpdate;
+  List<dynamic>? _markerGroups; // items: Explore or List<Explore>
   Set<Marker>? _targetMarkers;
   
   LocationServicesStatus? _locationServicesStatus;
@@ -1171,22 +1172,22 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     if ((exploresBounds != null) && (mapSize != null)) {
       double zoom = GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
       double thresoldDistance = _thresoldDistanceForZoom(zoom);
-      _targetMarkers = _buildMarkers(explores, thresoldDistance: thresoldDistance);
+      _markerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
+      _targetMarkers = _buildMarkers(_markerGroups);
 
     }
   }
 
-  static Set<Marker> _buildMarkers(List<Explore>? explores, { double thresoldDistance = 0 }) {
-    Set<Marker> markers = <Marker>{};
+  static List<dynamic>? _buildMarkerGroups(List<Explore>? explores, { double thresoldDistance = 0 }) {
     if (explores != null) {
       if (0 < thresoldDistance) {
         // group by thresoldDistance
-        Set<List<Explore>> exploreGroups = <List<Explore>>{};
+        List<List<Explore>> exploreGroups = <List<Explore>>[];
         
         for (Explore explore in explores) {
           ExploreLocation? exploreLocation = explore.exploreLocation;
           if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-            List<Explore>? groupExploreList = _lookupExploreInGroups(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
+            List<Explore>? groupExploreList = _lookupExploreGroup(exploreGroups, exploreLocation, thresoldDistance: thresoldDistance);
             if (groupExploreList != null) {
               groupExploreList.add(explore);
             }
@@ -1196,43 +1197,53 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           }
         }
 
-        for (List<Explore> groupExploreList in exploreGroups) {
-          if (0 < groupExploreList.length) {
-            Explore explore = groupExploreList.first;
-            LatLng markerPosition;
-            if (groupExploreList.length == 1) {
-              markerPosition = LatLng(explore.exploreLocation?.latitude?.toDouble() ?? 0, explore.exploreLocation?.longitude?.toDouble() ?? 0);
-            }
-            else {
-              markerPosition = ExploreMap.centerOfList(groupExploreList) ?? LatLng(0, 0);
-            }
-
-            markers.add(Marker(
-              markerId: MarkerId("[${markerPosition.latitude}, ${markerPosition.longitude}]"),
-              position: markerPosition
-            ));
+        List<dynamic> markerGroups = [];
+        for (List<Explore> exploreGroup in exploreGroups) {
+          if (exploreGroup.length == 1) {
+            markerGroups.add(exploreGroup.first);
+          }
+          else if (exploreGroup.length > 1) {
+            markerGroups.add(exploreGroup);
           }
         }
-
+        return markerGroups;
       }
       else {
-        // no group
-        for (Explore explore in explores) {
-          ExploreLocation? exploreLocation = explore.exploreLocation;
-          if ((exploreLocation != null) && exploreLocation.isLocationCoordinateValid) {
-            LatLng markerPosition = LatLng(exploreLocation.latitude?.toDouble() ?? 0, exploreLocation.longitude?.toDouble() ?? 0);
-            markers.add(Marker(
-              markerId: MarkerId("[${markerPosition.latitude}, ${markerPosition.longitude}]"),
-              position: markerPosition
-            ));
+        // no grouping
+        return explores;
+      }
+    }
+    return null;
+  }
+
+  static Set<Marker> _buildMarkers(List<dynamic>? exploreGroups) {
+    Set<Marker> markers = <Marker>{};
+    if (exploreGroups != null) {
+      for (int index = 0; index < exploreGroups.length; index++) {
+        dynamic entry = exploreGroups[index];
+        LatLng? markerPosition;
+        if (entry is List<Explore>) {
+          markerPosition = ExploreMap.centerOfList(entry);
+        }
+        else if (entry is Explore) {
+          if (entry.exploreLocation?.isLocationCoordinateValid ?? false) {
+            markerPosition = LatLng(
+              entry.exploreLocation?.latitude?.toDouble() ?? 0,
+              entry.exploreLocation?.longitude?.toDouble() ?? 0);
           }
+        }
+        if (markerPosition != null) {
+          markers.add(Marker(
+            markerId: MarkerId("$index"),
+            position: markerPosition
+          ));
         }
       }
     }
     return markers;
   }
 
-  static List<Explore>? _lookupExploreInGroups(Set<List<Explore>> exploreGroups, ExploreLocation exploreLocation, { double thresoldDistance = 0 }) {
+  static List<Explore>? _lookupExploreGroup(List<List<Explore>> exploreGroups, ExploreLocation exploreLocation, { double thresoldDistance = 0 }) {
     for (List<Explore> groupExploreList in exploreGroups) {
       for (Explore groupExplore in groupExploreList) {
         double distance = GoogleMapUtils.getDistance(
