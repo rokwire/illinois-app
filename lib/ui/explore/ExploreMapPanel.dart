@@ -1,6 +1,5 @@
 
 import 'dart:math' as math;
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -71,6 +70,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   final Map<String, BitmapDescriptor> _markerIconCache = <String, BitmapDescriptor>{};
   static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
   static const double _mapPadding = 50;
+  static const double _groupMarkersUpdateThresoldDelta = 0.3;
   static const List<double> _thresoldDistanceByZoom = [
 		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
 		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
@@ -81,9 +81,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   UniqueKey _mapKey = UniqueKey();
   GoogleMapController? _mapController;
   CameraPosition? _lastCameraPosition;
+  double? _lastMarkersUpdateZoom;
   CameraUpdate? _targetCameraUpdate;
+  // ignore: unused_field
   List<dynamic>? _markerGroups; // items: Explore or List<Explore>
   Set<Marker>? _targetMarkers;
+  bool _markersProgress = false;
+  Future<Set<Marker>?>? _buildMarkersTask;
   
   LocationServicesStatus? _locationServicesStatus;
 
@@ -176,8 +180,23 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       return _buildMessageContent(_emptyContentMessage ?? '');
     }
     else {
-      return _buildMapView();
+      return _buildMapUiContent();
     }
+  }
+
+  Widget _buildMapUiContent() {
+    return Stack(children: [
+      _buildMapView(),
+      Visibility(visible: _markersProgress, child:
+        Positioned.fill(child:
+          Center(child:
+            SizedBox(width: 24, height: 24, child:
+              CircularProgressIndicator(color: Styles().colors?.fillColorPrimaryVariant, strokeWidth: 2,),
+            )
+          )
+        )
+      )
+    ],);
   }
 
   Widget _buildMapView() {
@@ -210,6 +229,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   void _onMapCameraIdle() {
     debugPrint('ExploreMap camera idle' );
+    _mapController?.getZoomLevel().then((double value) {
+      if (_lastMarkersUpdateZoom == null) {
+        _lastMarkersUpdateZoom = value;
+      }
+      else if ((_lastMarkersUpdateZoom! - value).abs() > _groupMarkersUpdateThresoldDelta) {
+        _buildMapContent(_explores, updateCamera: false, zoom: value, updateState: true);
+      }
+    });
   }
 
   Widget _buildLoadingContent() {
@@ -1042,13 +1069,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     _exploreProgress = true;
     _exploreTask?.then((List<Explore>? explores) {
       if (mounted && (exploreTask == _exploreTask)) {
-        _acknowledgeMapContent(explores, updateCamera: true).then((_){
+        _buildMapContent(explores, updateCamera: true).then((_){
           if (mounted && (exploreTask == _exploreTask)) {
             setState(() {
               _explores = explores;
               _exploreTask = null;
               _exploreProgress = false;
-              _mapKey = UniqueKey();
             });
           }
         });
@@ -1058,10 +1084,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   Future<void> _onRefresh() async {
     Future<List<Explore>?> exploreTask = _loadExplores();
-    _exploreTask = exploreTask;
-    List<Explore>? explores = await _exploreTask;
+    List<Explore>? explores = await (_exploreTask = exploreTask);
     if (mounted && (exploreTask == _exploreTask)) {
-      _acknowledgeMapContent(explores, updateCamera: false).then((_){
+      _buildMapContent(explores, updateCamera: false).then((_){
         if (mounted && (exploreTask == _exploreTask)) {
           setState(() {
             _explores = explores;
@@ -1169,18 +1194,43 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   // Map Content
 
-  Future<void> _acknowledgeMapContent(List<Explore>? explores, { bool updateCamera = false}) async {
+  Future<void> _buildMapContent(List<Explore>? explores, { bool updateCamera = false, bool updateState = false, double? zoom}) async {
     LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
-    if (updateCamera) {
-      _targetCameraUpdate = (exploresBounds != null) ? CameraUpdate.newLatLngBounds(exploresBounds, _mapPadding) : null ?? CameraUpdate.newCameraPosition(_defaultCameraPosition);
-    }
+
+    CameraUpdate? targetCameraUpdate = updateCamera ?
+      ((exploresBounds != null) ? CameraUpdate.newLatLngBounds(exploresBounds, _mapPadding) : CameraUpdate.newCameraPosition(_defaultCameraPosition)) : null;
 
     Size? mapSize = _mapSize;
     if ((exploresBounds != null) && (mapSize != null)) {
-      double zoom = GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
+      zoom ??= GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
       double thresoldDistance = _thresoldDistanceForZoom(zoom);
-      _markerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
-      _targetMarkers = await _buildMarkers(_markerGroups, context);
+      List<dynamic>? markerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
+      Future<Set<Marker>> buildMarkersTask = _buildMarkers(markerGroups, context);
+      void Function(VoidCallback) invoke = (updateState && mounted) ? setState : _nopState;
+      invoke(() {
+        _markersProgress = true;
+        _buildMarkersTask = buildMarkersTask;
+      });
+      debugPrint('Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersSource: ${markerGroups?.length}');
+      Set<Marker> targetMarkers = await buildMarkersTask;
+      if (_buildMarkersTask == buildMarkersTask) {
+        debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersTarget: ${targetMarkers.length}');
+        void Function(VoidCallback) invoke = (updateState && mounted) ? setState : _nopState;
+        invoke((){
+          _markerGroups = markerGroups;
+          _targetMarkers = targetMarkers;
+          _targetCameraUpdate = targetCameraUpdate;
+          _lastMarkersUpdateZoom = null;
+          _markersProgress = false;
+          _mapKey = UniqueKey();
+        });
+      }
+    }
+    else if (targetCameraUpdate != null) {
+      void Function(VoidCallback) invoke = (updateState && mounted) ? setState : _nopState;
+      invoke((){
+        _targetCameraUpdate = targetCameraUpdate;
+      });
     }
   }
 
@@ -1276,8 +1326,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return null;
   }
 
-
-
   static double _thresoldDistanceForZoom(double zoom) {
     int zoomIndex = zoom.round();
     if ((0 <= zoomIndex) && (zoomIndex < _thresoldDistanceByZoom.length)) {
@@ -1299,6 +1347,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       return null;
     }
   }
+
+  void _nopState(VoidCallback fn) => fn();
 
 }
 
