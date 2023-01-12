@@ -25,9 +25,11 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
+import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -100,8 +102,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyInboxNotification,
+      FirebaseMessaging.notifyPollNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
       FirebaseMessaging.notifyAppointmentNotification,
+      FirebaseMessaging.notifyWellnessToDoItemNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
       ActionBuilder.notifyShowPanel,
@@ -230,11 +234,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
     }
+    else if (name == FirebaseMessaging.notifyPollNotification) {
+      _onFirebasePollNotification(param);
+    }
     else if (name == FirebaseMessaging.notifyCanvasAppDeepLinkNotification) {
       _onFirebaseCanvasAppDeepLinkNotification(param);
     }
     else if (name == FirebaseMessaging.notifyAppointmentNotification) {
       _onFirebaseAppointmentNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessToDoItemNotification) {
+      _onFirebaseWellnessToDoItemNotification(param);
     }
     else if (name == HomePanel.notifyCustomize) {
       _onSelectHome();
@@ -738,6 +748,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     SettingsNotificationsContentPanel.present(context,
         content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
+
+  void _onFirebasePollNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? pollId = JsonUtils.stringValue(param['entity_id']);
+      if (StringUtils.isNotEmpty(pollId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => PollDetailPanel(pollId: pollId)));
+      }
+    }
+  }
   
   void _onFirebaseCanvasAppDeepLinkNotification(dynamic param) {
     if (param is Map<String, dynamic>) {
@@ -751,6 +770,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? appointmentId = JsonUtils.stringValue(param['appointment_id']);
       if (StringUtils.isNotEmpty(appointmentId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+      }
+    }
+  }
+
+  void _onFirebaseWellnessToDoItemNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? todoItemId = JsonUtils.stringValue(param['entity_id']);
+      if (StringUtils.isNotEmpty(todoItemId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
       }
     }
   }
