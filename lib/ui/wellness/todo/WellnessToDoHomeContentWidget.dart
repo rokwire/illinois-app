@@ -656,18 +656,17 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
     return Stack(alignment: Alignment.center, children: [
       Container(
           decoration: BoxDecoration(color: widget.item.color, borderRadius: BorderRadius.all(Radius.circular(10))),
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          padding: EdgeInsets.only(left: 15),
           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
              Expanded(
-                 // child:AppSemantics.buildCheckBoxSemantics( selected: widget.item.isCompleted, title: widget.item.name,
-                 child:Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                 child: Padding(padding: EdgeInsets.symmetric(vertical: 10), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 _buildCompletedWidget(color: widget.item.color),
                 Expanded(
                     child: Text(StringUtils.ensureNotEmpty(widget.item.name),
                         overflow: TextOverflow.ellipsis,
                         style: Styles().textStyles?.getTextStyle("panel.wellness.todo.card.title"))),
-            ])),
-            Semantics(label: "Edit", button: true, child: GestureDetector(onTap: () => _onTapEdit(widget.item), child: Styles().images?.getImage('edit-white', excludeFromSemantics: true,)))
+            ]))),
+            Semantics(label: "Edit", button: true, child: InkWell(onTap: () => _onTapEdit(widget.item), child: Padding(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10), child: Styles().images?.getImage('edit-white', excludeFromSemantics: true))))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())
     ]);

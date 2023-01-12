@@ -1793,6 +1793,9 @@
     "panel.poll_pin_bouble.poll_not_opened": "Poll is not opened yet",
     "panel.poll_pin_bouble.poll_closed": "Poll is already closed",
 
+    "panel.poll.detail.header.title": "Poll",
+    "panel.poll.detail.error.msg": "This poll does not exist anymore.",
+
     "panel.parking_events.label.loading": "Loading parking events. Please wait...",
     "panel.parking_events.label.no_events": "Currently there is no parking information for any State Farm Center events.",
     "panel.parking_events.label.heading": "State Farm Center Parking",

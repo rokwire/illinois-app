@@ -1791,6 +1791,9 @@
     "panel.poll_pin_bouble.poll_not_opened": "La encuesta aún no está abierta",
     "panel.poll_pin_bouble.poll_closed": "La encuesta ya está cerrada",
 
+    "panel.poll.detail.header.title": "Encuesta",
+    "panel.poll.detail.error.msg": "Esta encuesta ya no existe.",
+
     "panel.parking_events.label.loading": "Cargando eventos de estacionamiento. Por favor espera...",
     "panel.parking_events.label.no_events": "Actualmente no hay información de estacionamiento para ningún evento del State Farm Center.",
     "panel.parking_events.label.heading": "Estacionamiento del centro de State Farm",

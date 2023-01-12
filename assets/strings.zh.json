@@ -1793,6 +1793,9 @@
 	"panel.poll_pin_bouble.poll_not_opened": "投票还未开放",
 	"panel.poll_pin_bouble.poll_closed": "投票已结束",
 
+    "panel.poll.detail.header.title": "輪詢",
+    "panel.poll.detail.error.msg": "此民意調查已不存在。",
+
 	"panel.parking_events.label.loading": "正在加載停車事件. 請耐心等待...",
 	"panel.parking_events.label.no_events": "Currently there is no parking information for any State Farm Center events.",
 	"panel.parking_events.label.heading": "州立農場中心停車場",
