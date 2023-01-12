@@ -28,6 +28,7 @@ import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -102,6 +103,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
       FirebaseMessaging.notifyAppointmentNotification,
+      FirebaseMessaging.notifyWellnessToDoItemNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
       ActionBuilder.notifyShowPanel,
@@ -235,6 +237,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyAppointmentNotification) {
       _onFirebaseAppointmentNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessToDoItemNotification) {
+      _onFirebaseWellnessToDoItemNotification(param);
     }
     else if (name == HomePanel.notifyCustomize) {
       _onSelectHome();
@@ -751,6 +756,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? appointmentId = JsonUtils.stringValue(param['appointment_id']);
       if (StringUtils.isNotEmpty(appointmentId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+      }
+    }
+  }
+
+  void _onFirebaseWellnessToDoItemNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? todoItemId = JsonUtils.stringValue(param['entity_id']);
+      if (StringUtils.isNotEmpty(todoItemId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
       }
     }
   }
