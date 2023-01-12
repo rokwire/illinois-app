@@ -25,11 +25,8 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-<<<<<<< HEAD
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
-=======
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
->>>>>>> develop
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
