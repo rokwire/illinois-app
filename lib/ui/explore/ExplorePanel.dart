@@ -30,14 +30,7 @@ import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/RootPanel.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
-import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
-import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
-import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -1454,54 +1447,14 @@ class ExplorePanelState extends State<ExplorePanel>
   
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
-
-    Route? route;
-    if (_selectedMapExplore is Event) {
-      if (_selectedMapExplore.isGameEvent) {
-        route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: _selectedMapExplore.speaker, sportName: _selectedMapExplore.registrationLabel,),);
-      }
-      else if (_selectedMapExplore.isComposite) {
-        route = CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: _selectedMapExplore),);
-      }
-      else {
-        route = CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: _selectedMapExplore, initialLocationData: _locationData),);
-      }
-    }
-    else if (_selectedMapExplore is Dining) {
-      route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: _selectedMapExplore, initialLocationData: _locationData),);
-    }
-    else if (_selectedMapExplore is LaundryRoom) {
-      route = CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: _selectedMapExplore),);
-    }
-    else if (_selectedMapExplore is Game) {
-      route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: _selectedMapExplore),);
-    }
-    else if (_selectedMapExplore is Building) {
-      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: _selectedMapExplore),);
-    }
-    else if (_selectedMapExplore is MTDStop) {
-      route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: _selectedMapExplore,),);
-    }
-    else if (_selectedMapExplore is StudentCourse) {
-      route = CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: _selectedMapExplore,),);
-    }
-    else if (_selectedMapExplore is Appointment) {
-      route = CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: _selectedMapExplore),);
-    }
-    else if (_selectedMapExplore is ExplorePOI) {
-      // Not supported
-    }
-    else if (_selectedMapExplore is Explore) {
-      route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: _selectedMapExplore, initialLocationData: _locationData,),);
+    if (this is Explore) {
+      (this as Explore).exploreLaunchDetail(context, initialLocationData: _locationData);
     }
     else if (_selectedMapExplore is List<Explore>) {
-      route = CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore),);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore),));
     }
-
-    if (route != null) {
-      _selectMapExplore(null);
-      Navigator.push(context, route);
-    }
+    
+    _selectMapExplore(null);
   }
 
   void _onTapMapClear() {

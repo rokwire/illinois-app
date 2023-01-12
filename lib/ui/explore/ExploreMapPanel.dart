@@ -1,6 +1,7 @@
 
 import 'dart:math' as math;
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,6 +9,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/Location.dart' as Native;
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
@@ -20,13 +22,18 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -34,7 +41,9 @@ import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class ExploreMapPanel extends StatefulWidget {
   final ExploreItem? initialContent;
@@ -69,6 +78,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   final GlobalKey _mapContainerKey = GlobalKey();
   final Map<String, BitmapDescriptor> _markerIconCache = <String, BitmapDescriptor>{};
   static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
+  static const double _mapBarHeight = 116;
   static const double _mapPadding = 50;
   static const double _groupMarkersUpdateThresoldDelta = 0.3;
   static const List<double> _thresoldDistanceByZoom = [
@@ -83,11 +93,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   CameraPosition? _lastCameraPosition;
   double? _lastMarkersUpdateZoom;
   CameraUpdate? _targetCameraUpdate;
-  // ignore: unused_field
-  List<dynamic>? _markerGroups; // items: Explore or List<Explore>
   Set<Marker>? _targetMarkers;
   bool _markersProgress = false;
   Future<Set<Marker>?>? _buildMarkersTask;
+  dynamic _selectedMapExplore;
+  AnimationController? _mapExploreBarAnimationController;
   
   LocationServicesStatus? _locationServicesStatus;
 
@@ -105,11 +115,20 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     _initLocationServicesStatus();
     _initExplores();
 
+    _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: -_mapBarHeight, upperBound: 0, vsync: this)
+      ..addListener(() {
+        if (mounted) {
+          setState(() {
+          });
+        }
+      });
+
     super.initState();
   }
 
   @override
   void dispose() {
+    _mapExploreBarAnimationController?.dispose();
     super.dispose();
   }
 
@@ -170,7 +189,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     if (_exploreProgress) {
       return _buildLoadingContent();
     }
-    else if (Connectivity().isOffline) {
+    /*else if (Connectivity().isOffline) {
       return _buildMessageContent(_offlineContentMessage ?? '');
     }
     else if (_explores == null) {
@@ -178,20 +197,21 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
     else if (_explores!.isEmpty) {
       return _buildMessageContent(_emptyContentMessage ?? '');
-    }
+    }*/
     else {
-      return _buildMapUiContent();
+      return _buildMapContent();
     }
   }
 
-  Widget _buildMapUiContent() {
+  Widget _buildMapContent() {
     return Stack(children: [
       _buildMapView(),
+      _buildMapExploreBar(),
       Visibility(visible: _markersProgress, child:
         Positioned.fill(child:
           Center(child:
             SizedBox(width: 24, height: 24, child:
-              CircularProgressIndicator(color: Styles().colors?.fillColorPrimaryVariant, strokeWidth: 2,),
+              CircularProgressIndicator(color: Styles().colors?.accentColor2, strokeWidth: 3,),
             )
           )
         )
@@ -206,9 +226,103 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       onMapCreated: _onMapCreated,
       onCameraIdle: _onMapCameraIdle,
       onCameraMove: _onMapCameraMove,
+      onTap: _onMapTap,
       compassEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
       markers: _targetMarkers ?? const <Marker>{},
+    );
+  }
+
+  Widget _buildMapExploreBar() {
+    String? title, description;
+    String detailsLabel = Localization().getStringEx('panel.explore.button.details.title', 'Details');
+    String detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
+    Color? exploreColor;
+    Widget? descriptionWidget;
+    bool canDirections = _userLocationEnabled, canDetail = true;
+    void Function() onTapDetail = _onTapMapExploreDetail;
+
+    if (_selectedMapExplore is Explore) {
+      title = (_selectedMapExplore as Explore).mapMarkerTitle;
+      description = (_selectedMapExplore as Explore).mapMarkerSnippet;
+      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors?.white;
+      if (_selectedMapExplore is MTDStop) {
+        detailsLabel = Localization().getStringEx('panel.explore.button.bus_schedule.title', 'Bus Schedule');
+        detailsHint = Localization().getStringEx('panel.explore.button.bus_schedule.hint', '');
+        descriptionWidget = _buildExploreBarStopDescription();
+      }
+      else if (_selectedMapExplore is ExplorePOI) {
+        title = title?.replaceAll('\n', ' ');
+        detailsLabel = Localization().getStringEx('panel.explore.button.clear.title', 'Clear');
+        detailsHint = Localization().getStringEx('panel.explore.button.clear.hint', '');
+        onTapDetail = _onTapMapClear;
+      }
+    }
+    else if  (_selectedMapExplore is List<Explore>) {
+      String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
+      title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
+      Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
+      description = explore?.exploreLocation?.description ?? "";
+      exploreColor = explore?.uiColor ?? Styles().colors?.fillColorSecondary;
+    }
+    else {
+      exploreColor = Styles().colors?.white;
+      canDirections = canDetail = false;
+    }
+
+    double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
+
+    return Positioned(bottom: _mapExploreBarAnimationController?.value, left: 0, right: 0, child:
+      Container(height: _mapBarHeight, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
+        Stack(children: [
+          Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 10), child:
+                Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, )),
+              ),
+              (descriptionWidget != null) ?
+                Row(children: <Widget>[
+                  Text(description ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+                  descriptionWidget
+                ]) :
+                Text(description ?? "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+              Container(height: 8,),
+              Row(children: <Widget>[
+                SizedBox(width: buttonWidth, child:
+                  RoundedButton(
+                    label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
+                    hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    fontSize: 16.0,
+                    textColor: canDirections ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                    borderColor: canDirections ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                    onTap: _onTapMapExploreDirections
+                  ),
+                ),
+                Container(width: 12,),
+                SizedBox(width: buttonWidth, child:
+                  RoundedButton(
+                    label: detailsLabel,
+                    hint: detailsHint,
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    fontSize: 16.0,
+                    textColor: canDetail ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                    borderColor: canDetail ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                    onTap: onTapDetail,
+                  ),
+                ),
+              ],),
+            ]),
+          ),
+          (_selectedMapExplore is Favorite) ?
+            Align(alignment: Alignment.topRight, child:
+              FavoriteButton(favorite: (_selectedMapExplore as Favorite), style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),),
+            ) :
+            Container(),
+        ],),
+      ),
     );
   }
 
@@ -234,9 +348,131 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         _lastMarkersUpdateZoom = value;
       }
       else if ((_lastMarkersUpdateZoom! - value).abs() > _groupMarkersUpdateThresoldDelta) {
-        _buildMapContent(_explores, updateCamera: false, zoom: value, updateState: true);
+        _buildMapContentData(_explores, updateCamera: false, zoom: value, updateState: true);
       }
     });
+  }
+
+  void _onMapTap(LatLng coordinate) {
+    debugPrint('ExploreMap tap' );
+    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/);
+    if (mtdStop != null) {
+      _selectMapExplore(mtdStop);
+    }
+    else if (_selectedMapExplore != null) {
+      _selectMapExplore(null);
+    }
+    else if ((_selectedExploreItem == ExploreItem.MTDDestinations)) {
+      _selectMapExplore(ExplorePOI(location: ExploreLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)));
+    }
+  }
+
+  void _onTapMarker(dynamic origin) {
+    _selectMapExplore(origin);
+  }
+
+  void _onTapMapExploreDirections() {
+    Analytics().logSelect(target: 'Directions');
+    if (_userLocationEnabled) {
+      dynamic explore = _selectedMapExplore;
+      _selectMapExplore(null);
+      if (explore != null) {
+        String? travelMode;
+        if (explore is List) {
+          dynamic exploreEntry = (0 < explore.length) ? explore.first : null;
+          travelMode = ((exploreEntry is MTDStop) || (exploreEntry is ExplorePOI)) ? 'transit' : null;
+        }
+        else {
+          travelMode = ((explore is MTDStop) || (explore is ExplorePOI)) ? 'transit' : null;
+        }
+        NativeCommunicator().launchExploreMapDirections(target: explore, options: (travelMode != null) ? {
+          'travelMode': travelMode
+        } : null);
+      }
+    }
+    else {
+      AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.na.msg", "You need to enable location services in order to get navigation directions."));
+    }
+  }
+  
+  void _onTapMapExploreDetail() {
+    Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
+    if (_selectedMapExplore is Explore) {
+      (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+    }
+    else if (_selectedMapExplore is List<Explore>) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore),));
+    }
+    _selectMapExplore(null);
+  }
+
+  void _onTapMapClear() {
+    Analytics().logSelect(target: 'Clear');
+    if (_selectedMapExplore is Favorite) {
+      Auth2().account?.prefs?.setFavorite(_selectedMapExplore as Favorite, false);
+    }
+    _selectMapExplore(null);
+  }
+
+  void _selectMapExplore(dynamic explore) {
+    if (explore != null) {
+      //TBD: _nativeMapController?.markPOI(((explore is ExplorePOI) && StringUtils.isEmpty(explore.placeId)) ? explore : null);
+      if (mounted) {
+        setState(() {
+          _selectedMapExplore = explore;
+        });
+      }
+      //TBD: _updateSelectedMapStopRoutes();
+      _mapExploreBarAnimationController?.forward();
+    }
+    else if (_selectedMapExplore != null) {
+      //TBD: _nativeMapController?.markPOI(null);
+      _mapExploreBarAnimationController?.reverse().then((_) {
+        if (mounted) {
+          setState(() {
+            _selectedMapExplore = null;
+          });
+        }
+        //TBD: _updateSelectedMapStopRoutes();
+      });
+    }
+  }
+
+  Widget? _buildExploreBarStopDescription() {
+    return null;
+    /*if (_loadingMapStopIdRoutes != null) {
+      return Padding(padding: EdgeInsets.only(left: 8), child:
+        SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 2,),
+        ),
+      );
+    }
+    else {
+      List<Widget> routeWidgets = <Widget>[];
+      if (_selectedMapStopRoutes != null) {
+        for (MTDRoute route in _selectedMapStopRoutes!) {
+          routeWidgets.add(
+            Padding(padding: EdgeInsets.only(left: routeWidgets.isNotEmpty ? 6 : 0), child:
+              Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
+                  Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, color: route.textColor,)),
+                )
+              )
+            )
+          );
+        }
+      }
+      if (routeWidgets.isNotEmpty) {
+        return Padding(padding: EdgeInsets.only(left: 8), child:
+          SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+            Row(children: routeWidgets,)
+          ),
+        );
+      }
+      else {
+        return null;
+      }
+    }*/
   }
 
   Widget _buildLoadingContent() {
@@ -254,7 +490,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     );
   }
 
-  Widget _buildMessageContent(String message) {
+  /*Widget _buildMessageContent(String message) {
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
@@ -262,7 +498,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       ),
       Expanded(flex: 2, child: Container(),),
     ],);
-  }
+  }*/
 
   // Dropdown Widgets
 
@@ -997,7 +1233,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   // Content Data
 
-  String? get _offlineContentMessage {
+  /*String? get _offlineContentMessage {
     switch (_selectedExploreItem) {
       case ExploreItem.Events:              return Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..');
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.');
@@ -1010,9 +1246,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.');
       default:                              return null;
     }
-  }
+  }*/
 
-  String? get _emptyContentMessage {
+  /*String? get _emptyContentMessage {
     switch (_selectedExploreItem) {
       case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.');
       case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
@@ -1025,9 +1261,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
       default:  return null;
     }
-  }
+  }*/
 
-  String? get _failedContentMessage {
+  /*String? get _failedContentMessage {
     switch (_selectedExploreItem) {
       case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.failed.events', 'Failed to load upcoming events.');
       case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
@@ -1040,7 +1276,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
       default:  return null;
     }
-  }
+  }*/
 
   // Locaction Services
 
@@ -1069,12 +1305,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     _exploreProgress = true;
     _exploreTask?.then((List<Explore>? explores) {
       if (mounted && (exploreTask == _exploreTask)) {
-        _buildMapContent(explores, updateCamera: true).then((_){
+        _buildMapContentData(explores, updateCamera: true).then((_){
           if (mounted && (exploreTask == _exploreTask)) {
             setState(() {
               _explores = explores;
               _exploreTask = null;
               _exploreProgress = false;
+              _selectedMapExplore = null;
+              _mapExploreBarAnimationController?.value = _mapExploreBarAnimationController?.lowerBound ?? 0;
             });
           }
         });
@@ -1086,7 +1324,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     Future<List<Explore>?> exploreTask = _loadExplores();
     List<Explore>? explores = await (_exploreTask = exploreTask);
     if (mounted && (exploreTask == _exploreTask)) {
-      _buildMapContent(explores, updateCamera: false).then((_){
+      _buildMapContentData(explores, updateCamera: false).then((_){
         if (mounted && (exploreTask == _exploreTask)) {
           setState(() {
             _explores = explores;
@@ -1194,7 +1432,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   // Map Content
 
-  Future<void> _buildMapContent(List<Explore>? explores, { bool updateCamera = false, bool updateState = false, double? zoom}) async {
+  Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool updateState = false, double? zoom}) async {
     LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
 
     CameraUpdate? targetCameraUpdate = updateCamera ?
@@ -1217,7 +1455,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersTarget: ${targetMarkers.length}');
         void Function(VoidCallback) invoke = (updateState && mounted) ? setState : _nopState;
         invoke((){
-          _markerGroups = markerGroups;
           _targetMarkers = targetMarkers;
           _targetCameraUpdate = targetCameraUpdate;
           _lastMarkersUpdateZoom = null;
@@ -1282,6 +1519,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         BitmapDescriptor? markerIcon;
         Offset? markerAnchor;
         String? markerTitle, markerSnippet;
+        
         if (entry is List<Explore>) {
           markerPosition = ExploreMap.centerOfList(entry);
           Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(entry);
@@ -1302,13 +1540,17 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           markerTitle = entry.mapMarkerTitle;
           markerSnippet = entry.mapMarkerSnippet;
         }
-        markerAnchor ??= Offset(0.5, 1);
+        
+        
         if (markerPosition != null) {
+          markerAnchor ??= Offset(0.5, 1);
           markers.add(Marker(
             markerId: MarkerId("$index"),
             position: markerPosition,
             icon: markerIcon ?? BitmapDescriptor.defaultMarker,
             anchor: markerAnchor,
+            consumeTapEvents: true,
+            onTap: () => _onTapMarker(entry),
             infoWindow: InfoWindow(
               title: markerTitle,
               snippet: markerSnippet,

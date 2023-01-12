@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Dining.dart';
@@ -8,6 +7,16 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
+import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -226,6 +235,52 @@ extension ExploreExt on Explore {
   }
 
   String? get exploreImageUrl => (this is Event) ? (this as Event).eventImageUrl : exploreImageURL;
+
+  void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData }) {
+    Route? route;
+    if (this is Event) {
+      if ((this as Event).isGameEvent) {
+        route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: (this as Event).speaker, sportName: (this as Event).registrationLabel,),);
+      }
+      else if ((this as Event).isComposite) {
+        route = CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: this as Event),);
+      }
+      else {
+        route = CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event, initialLocationData: initialLocationData),);
+      }
+    }
+    else if (this is Dining) {
+      route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData),);
+    }
+    else if (this is LaundryRoom) {
+      route = CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: this as LaundryRoom),);
+    }
+    else if (this is Game) {
+      route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game),);
+    }
+    else if (this is Building) {
+      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building),);
+    }
+    else if (this is MTDStop) {
+      route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop,),);
+    }
+    else if (this is StudentCourse) {
+      route = CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: this as StudentCourse,),);
+    }
+    else if (this is Appointment) {
+      route = CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: this as Appointment),);
+    }
+    else if (this is ExplorePOI) {
+      // Not supported
+    }
+    else {
+      route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: this, initialLocationData: initialLocationData,),);
+    }
+
+    if (route != null) {
+      Navigator.push(context, route);
+    }
+  }
 }
 
 extension ExploreMap on Explore {
