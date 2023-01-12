@@ -25,6 +25,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
+import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
@@ -101,6 +102,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyInboxNotification,
+      FirebaseMessaging.notifyPollNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
       FirebaseMessaging.notifyAppointmentNotification,
       FirebaseMessaging.notifyWellnessToDoItemNotification,
@@ -231,6 +233,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
+    }
+    else if (name == FirebaseMessaging.notifyPollNotification) {
+      _onFirebasePollNotification(param);
     }
     else if (name == FirebaseMessaging.notifyCanvasAppDeepLinkNotification) {
       _onFirebaseCanvasAppDeepLinkNotification(param);
@@ -742,6 +747,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onFirebaseInboxNotification() {
     SettingsNotificationsContentPanel.present(context,
         content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+  }
+
+  void _onFirebasePollNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? pollId = JsonUtils.stringValue(param['entity_id']);
+      if (StringUtils.isNotEmpty(pollId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => PollDetailPanel(pollId: pollId)));
+      }
+    }
   }
   
   void _onFirebaseCanvasAppDeepLinkNotification(dynamic param) {
