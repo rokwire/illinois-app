@@ -300,6 +300,28 @@ class Wellness with Service implements NotificationsListener {
     }
   }
 
+  Future<ToDoItem?> loadToDoItem(String? itemId) async {
+    if (StringUtils.isEmpty(itemId)) {
+      Log.w('Failed to load wellness todo item. Missing id.');
+      return null;
+    }
+    if (!isEnabled) {
+      Log.w('Failed to load wellness todo item. Missing wellness url.');
+      return null;
+    }
+    String url = '${Config().wellnessUrl}/user/todo_entries/$itemId';
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      ToDoItem? item = ToDoItem.fromJson(JsonUtils.decodeMap(responseString));
+      return item;
+    } else {
+      Log.w('Failed to load wellness todo item. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   // Tips
 
   String? get dailyTip => _tipString(tipId: _dailyTipId);
