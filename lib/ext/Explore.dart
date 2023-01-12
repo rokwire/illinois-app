@@ -7,6 +7,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -23,6 +24,8 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'dart:math' as math;
+
+import 'package:sprintf/sprintf.dart';
 
 extension ExploreExt on Explore {
 
@@ -227,7 +230,7 @@ extension ExploreExt on Explore {
 
 extension ExploreMap on Explore {
 
-  String? get mapGroupMarkerAssetName {
+  String? get mapMarkerAssetName {
     if (this is Event) {
       return 'images/map-marker-group-event.png';
     }
@@ -256,20 +259,89 @@ extension ExploreMap on Explore {
     }
   }
 
-  static String mapGroupAssetNameForList(List<Explore>? explores) {
-    String? assetName;
+  String? get mapMarkerTitle {
+    return exploreTitle;
+  }
+
+  String? get mapMarkerSnippet {
+    if (this is Event) {
+      return (this as Event).displayDate;
+    }
+    else if (this is Dining) {
+      return exploreShortDescription;
+    }
+    else if (this is LaundryRoom) {
+      return exploreSubTitle;
+    }
+    else if (this is Game) {
+      return exploreShortDescription;
+    }
+    else if (this is MTDStop) {
+      return exploreSubTitle;
+    }
+    else if (this is StudentCourse) {
+      return (this as StudentCourse).section?.displayLocation;
+    }
+    else if (this is ExplorePOI) {
+      return exploreLocationDescription;
+    }
+    else if (this is Building) {
+      return (this as Building).address1;
+    }
+    else if (this is Appointment) {
+      return (this as Appointment).location?.title;
+    }
+    else {
+      return null;
+    }
+  }
+
+  String? getMapGroupMarkerTitle(int count) {
+    if (this is Event) {
+      return sprintf('%s Events', [count]);
+    }
+    else if (this is Dining) {
+      return sprintf('%s Dining Locations', [count]);
+    }
+    else if (this is LaundryRoom) {
+      return sprintf('%s Laundry Rooms', [count]);
+    }
+    else if (this is Game) {
+      return sprintf('%s Games', [count]);
+    }
+    else if (this is MTDStop) {
+      return sprintf('%s MTD Stops', [count]);
+    }
+    else if (this is StudentCourse) {
+      return sprintf('%s Courses', [count]);
+    }
+    else if (this is ExplorePOI) {
+      return sprintf('%s MTD Destinations', [count]);
+    }
+    else if (this is Building) {
+      return sprintf('%s Buildings', [count]);
+    }
+    else if (this is Appointment) {
+      return sprintf('%s Appointments', [count]);
+    }
+    else {
+      return sprintf('%s Explores', [count]);
+    }
+  }
+
+  static Explore? mapGroupSameExploreForList(List<Explore>? explores) {
+    Explore? sameExplore;
     if (explores != null) {
       for (Explore explore in explores) {
-        if (assetName == null) {
-          assetName = explore.mapGroupMarkerAssetName;
+        if (sameExplore == null) {
+          sameExplore = explore;
         }
-        else if (assetName != explore.mapGroupMarkerAssetName) {
-          assetName = null;
-          break;
+        else if (sameExplore.runtimeType != explore.runtimeType) {
+          return null;
         }
       }
     }
-    return assetName ?? 'images/map-marker-group-laundry.png';
+    return sameExplore;
   }
 
   static LatLngBounds? boundsOfList(List<Explore>? explores) {

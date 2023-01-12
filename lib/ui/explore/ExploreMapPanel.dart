@@ -1281,12 +1281,15 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         LatLng? markerPosition;
         BitmapDescriptor? markerIcon;
         Offset? markerAnchor;
+        String? markerTitle, markerSnippet;
         if (entry is List<Explore>) {
           markerPosition = ExploreMap.centerOfList(entry);
-          String markerAsset = ExploreMap.mapGroupAssetNameForList(entry);
+          Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(entry);
+          String markerAsset = sameExplore?.mapMarkerAssetName ?? 'images/map-marker-group-laundry.png';
           markerIcon = _markerIconCache[markerAsset] ??
             (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
           markerAnchor = Offset(0.5, 0.5);
+          markerTitle = sameExplore?.getMapGroupMarkerTitle(entry.length);
         }
         else if (entry is Explore) {
           markerPosition = (entry.exploreLocation?.isLocationCoordinateValid == true) ? LatLng(
@@ -1296,13 +1299,20 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           Color? exploreColor = entry.uiColor;
           markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : null;
           markerAnchor = Offset(0.5, 1);
+          markerTitle = entry.mapMarkerTitle;
+          markerSnippet = entry.mapMarkerSnippet;
         }
+        markerAnchor ??= Offset(0.5, 1);
         if (markerPosition != null) {
           markers.add(Marker(
             markerId: MarkerId("$index"),
             position: markerPosition,
             icon: markerIcon ?? BitmapDescriptor.defaultMarker,
-            anchor: markerAnchor ?? Offset(0.5, 1)
+            anchor: markerAnchor,
+            infoWindow: InfoWindow(
+              title: markerTitle,
+              snippet: markerSnippet,
+              anchor: markerAnchor)
           ));
         }
       }
