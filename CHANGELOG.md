@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
 ### Fixed
 - Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
-- Handle tap action on poll inbox notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
+- Handle tap action over poll and wellness todo items notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
 
 ## [4.2.49] - 2022-01-05
 ### Fixed
