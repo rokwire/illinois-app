@@ -18,6 +18,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gateway.dart';
@@ -1517,7 +1518,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   }
 
   void _displayContentPopups() {
-    if (_explores == null) {
+    if (_selectedExploreItem == ExploreItem.StateFarmWayfinding) {
+      _viewStateFarmPoi();
+    }
+    else if (_explores == null) {
       _showMessagePopup(_failedContentMessage);
     }
     else if (_selectedExploreItem == ExploreItem.Appointments) {
@@ -1544,9 +1548,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       else if (CollectionUtils.isEmpty(_explores)) {
         _showMessagePopup(_emptyContentMessage);
       }
-    }
-    else if (_selectedExploreItem == ExploreItem.StateFarmWayfinding) {
-      //TBD: _viewStateFarmPoi();
     }
     else if (CollectionUtils.isEmpty(_explores)) {
       _showMessagePopup(_emptyContentMessage);
@@ -1785,5 +1786,16 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
   }
 
+  void _viewStateFarmPoi() {
+    Analytics().logSelect(target: "State Farm Wayfinding");
+    Map<String, dynamic> stateFarmLocation = Config().stateFarmWayfinding;
+    LatLng location = LatLng(
+      JsonUtils.doubleValue(stateFarmLocation['latitude']) ?? 0,
+      JsonUtils.doubleValue(stateFarmLocation['longitude']) ?? 0
+    );
+    double zoom = JsonUtils.doubleValue(stateFarmLocation['zoom']) ?? 0;
+    _targetCameraUpdate = CameraUpdate.newCameraPosition(CameraPosition(target: location, zoom: zoom));
+    _pinMapExplore(ExplorePOI(name: 'State Farm', location: ExploreLocation( latitude: location.latitude, longitude: location.longitude)));
+  }
 }
 
