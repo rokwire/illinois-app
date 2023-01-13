@@ -465,6 +465,10 @@ extension ExploreMap on Explore {
   }
 }
 
+extension ExploreLocationMap on ExploreLocation {
+  LatLng? get exploreLocationMapCoordinate => (isLocationCoordinateValid == true) ? LatLng(latitude?.toDouble() ?? 0, longitude?.toDouble() ?? 0) : null;
+}
+
 extension ExplorePOIExt on ExplorePOI {
   Color? get uiColor => Styles().colors?.accentColor3;
 }

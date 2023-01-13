@@ -106,6 +106,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   Set<Marker>? _targetMarkers;
   bool _markersProgress = false;
   Future<Set<Marker>?>? _buildMarkersTask;
+  Explore? _pinnedMapExplore;
   dynamic _selectedMapExplore;
   AnimationController? _mapExploreBarAnimationController;
   
@@ -269,7 +270,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         _lastMarkersUpdateZoom = value;
       }
       else if ((_lastMarkersUpdateZoom! - value).abs() > _groupMarkersUpdateThresoldDelta) {
-        _buildMapContentData(_explores, updateCamera: false, zoom: value, showProgress: true);
+        _buildMapContentData(_explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: value, showProgress: true);
       }
     });
   }
@@ -431,7 +432,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   void _selectMapExplore(dynamic explore) {
     if (explore != null) {
-      //TBD: _nativeMapController?.markPOI(((explore is ExplorePOI) && StringUtils.isEmpty(explore.placeId)) ? explore : null);
+      _pinMapExplore(((explore is ExplorePOI) && StringUtils.isEmpty(explore.placeId)) ? explore : null);
       setStateIfMounted(() {
         _selectedMapExplore = explore;
       });
@@ -439,13 +440,37 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       _mapExploreBarAnimationController?.forward();
     }
     else if (_selectedMapExplore != null) {
-      //TBD: _nativeMapController?.markPOI(null);
+      _pinMapExplore(null);
       _mapExploreBarAnimationController?.reverse().then((_) {
         setStateIfMounted(() {
           _selectedMapExplore = null;
         });
         _updateSelectedMapStopRoutes();
       });
+    }
+  }
+
+  Future<void> _pinMapExplore(Explore? explore) async {
+    if (_pinnedMapExplore != explore) {
+      Future<Set<Marker>> buildMarkersTask = _buildMarkers(context, exploreGroups: _exploreMarkerGroups, pinnedExplore: explore);
+      setStateIfMounted(() {
+        _markersProgress = true;
+        _pinnedMapExplore = explore;
+        _buildMarkersTask = buildMarkersTask;
+      });
+
+      debugPrint('Rebbuilding Markers markersSource: ${_exploreMarkerGroups?.length}');
+      Set<Marker> targetMarkers = await buildMarkersTask;
+      debugPrint('Finished Rebuilding Markers => ${targetMarkers.length}');
+
+      if (_buildMarkersTask == buildMarkersTask) {
+        debugPrint('Applying ${targetMarkers.length} Building Markers');
+        setStateIfMounted(() {
+          _targetMarkers = targetMarkers;
+          _markersProgress = false;
+          _buildMarkersTask = null;
+        });
+      }
     }
   }
 
@@ -1341,16 +1366,15 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     _exploreProgress = true;
     _exploreTask?.then((List<Explore>? explores) {
       if (mounted && (exploreTask == _exploreTask)) {
-        _buildMapContentData(explores, updateCamera: true).then((_){
+        _buildMapContentData(explores, pinnedExplore: null, updateCamera: true).then((_){
           if (mounted && (exploreTask == _exploreTask)) {
             setState(() {
               _explores = explores;
               _exploreTask = null;
               _exploreProgress = false;
-              _selectedMapExplore = null;
-              _mapExploreBarAnimationController?.value = _mapExploreBarAnimationController?.lowerBound ?? 0;
               _mapKey = UniqueKey(); // force map rebuild
             });
+            _selectMapExplore(null);
             _displayContentPopups();
           }
         });
@@ -1362,7 +1386,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     Future<List<Explore>?> exploreTask = _loadExplores();
     List<Explore>? explores = await (_exploreTask = exploreTask);
     if (mounted && (exploreTask == _exploreTask)) {
-      _buildMapContentData(explores, updateCamera: false).then((_){
+      _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false).then((_){
         if (mounted && (exploreTask == _exploreTask)) {
           setState(() {
             _explores = explores;
@@ -1553,7 +1577,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   // Map Content
 
-  Future<void> _buildMapContentData(List<Explore>? explores, { bool updateCamera = false, bool showProgress = false, double? zoom}) async {
+  Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom}) async {
     LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
 
     CameraUpdate? targetCameraUpdate = updateCamera ?
@@ -1565,22 +1589,25 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       double thresoldDistance = _thresoldDistanceForZoom(zoom);
       Set<dynamic>? exploreMarkerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
       if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
-        Future<Set<Marker>> buildMarkersTask = _buildMarkers(exploreMarkerGroups, context);
+        Future<Set<Marker>> buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMarkerGroups, pinnedExplore: pinnedExplore);
+        _buildMarkersTask = buildMarkersTask;
         if (showProgress && mounted) {
           setState(() {
             _markersProgress = true;
           });
         }
-        _buildMarkersTask = buildMarkersTask;
+
         debugPrint('Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersSource: ${exploreMarkerGroups?.length}');
         Set<Marker> targetMarkers = await buildMarkersTask;
         debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
+    
         if (_buildMarkersTask == buildMarkersTask) {
           debugPrint('Applying ${targetMarkers.length} Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance');
           _targetMarkers = targetMarkers;
           _exploreMarkerGroups = exploreMarkerGroups;
           _targetCameraUpdate = targetCameraUpdate;
           _lastMarkersUpdateZoom = null;
+          _buildMarkersTask = null;
           if (showProgress && mounted) {
             setState(() {
               _markersProgress = false;
@@ -1632,65 +1659,87 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return null;
   }
 
-  Future<Set<Marker>> _buildMarkers(Set<dynamic>? exploreGroups, BuildContext context) async {
+  Future<Set<Marker>> _buildMarkers(BuildContext context, { Set<dynamic>? exploreGroups, Explore? pinnedExplore }) async {
     Set<Marker> markers = <Marker>{};
+    ImageConfiguration imageConfiguration = createLocalImageConfiguration(context);
     if (exploreGroups != null) {
-      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context);
       for (dynamic entry in exploreGroups) {
-        LatLng? markerPosition;
-        BitmapDescriptor? markerIcon;
-        Offset? markerAnchor;
-        String? markerTitle, markerSnippet;
-        
+        Marker? marker;
         if (entry is List<Explore>) {
-          markerPosition = ExploreMap.centerOfList(entry);
-          Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(entry);
-          String markerAsset = sameExplore?.mapMarkerAssetName ?? 'images/map-marker-group-laundry.png';
-          markerIcon = _markerIconCache[markerAsset] ??
-            (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
-          markerAnchor = Offset(0.5, 0.5);
-          markerTitle = sameExplore?.getMapGroupMarkerTitle(entry.length);
+          marker = await _createExploreGroupMarker(entry, imageConfiguration: imageConfiguration);
         }
         else if (entry is Explore) {
-          markerPosition = (entry.exploreLocation?.isLocationCoordinateValid == true) ? LatLng(
-            entry.exploreLocation?.latitude?.toDouble() ?? 0,
-            entry.exploreLocation?.longitude?.toDouble() ?? 0
-          ) : null;
-          if (entry is MTDStop) {
-            String markerAsset = 'images/map-marker-mtd-stop.png';
-            markerIcon = _markerIconCache[markerAsset] ??
-              (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
-            markerAnchor = Offset(0.5, 0.5);
-          }
-          else {
-            Color? exploreColor = entry.uiColor;
-            markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
-            markerAnchor = Offset(0.5, 1);
-          }
-          markerTitle = entry.mapMarkerTitle;
-          markerSnippet = entry.mapMarkerSnippet;
+          marker = await _createExploreMarker(entry, imageConfiguration: imageConfiguration);
         }
-        
-        
-        if (markerPosition != null) {
-          markerIcon ??= BitmapDescriptor.defaultMarker;
-          markerAnchor ??= Offset(0.5, 1);
-          markers.add(Marker(
-            markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
-            position: markerPosition,
-            icon: markerIcon,
-            anchor: markerAnchor,
-            consumeTapEvents: true,
-            onTap: () => _onTapMarker(entry),
-            infoWindow: InfoWindow(
-              title: markerTitle,
-              snippet: markerSnippet,
-              anchor: markerAnchor)
-          ));
+        if (marker != null) {
+          markers.add(marker);
         }
       }
     }
+
+    if (pinnedExplore != null) {
+      Marker? marker = await _createExploreMarker(pinnedExplore, imageConfiguration: imageConfiguration);
+      if (marker != null) {
+        markers.add(marker);
+      }
+    }
+
     return markers;
+  }
+
+  Future<Marker?> _createExploreGroupMarker(List<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
+    LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
+    if ((exploreGroup != null) && (markerPosition != null)) {
+      Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
+      String markerAsset = sameExplore?.mapMarkerAssetName ?? 'images/map-marker-group-laundry.png';
+      BitmapDescriptor markerIcon = _markerIconCache[markerAsset] ??
+        (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
+      Offset markerAnchor = Offset(0.5, 0.5);
+      return Marker(
+        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
+        position: markerPosition,
+        icon: markerIcon,
+        anchor: markerAnchor,
+        consumeTapEvents: true,
+        onTap: () => _onTapMarker(exploreGroup),
+        infoWindow: InfoWindow(
+          title:  sameExplore?.getMapGroupMarkerTitle(exploreGroup.length),
+          anchor: markerAnchor)
+      );
+    }
+    return null;
+  }
+  
+  Future<Marker?> _createExploreMarker(Explore? explore, {required ImageConfiguration imageConfiguration}) async {
+    LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
+    if (markerPosition != null) {
+      BitmapDescriptor? markerIcon;
+      Offset? markerAnchor;
+      if (explore is MTDStop) {
+        String markerAsset = 'images/map-marker-mtd-stop.png';
+        markerIcon = _markerIconCache[markerAsset] ??
+          (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
+        markerAnchor = Offset(0.5, 0.5);
+      }
+      else {
+        Color? exploreColor = explore?.uiColor;
+        markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
+        markerAnchor = Offset(0.5, 1);
+      }
+      return Marker(
+        markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
+        position: markerPosition,
+        icon: markerIcon,
+        anchor: markerAnchor,
+        consumeTapEvents: true,
+        onTap: () => _onTapMarker(explore),
+        infoWindow: InfoWindow(
+          title:  explore?.mapMarkerTitle,
+          snippet: explore?.mapMarkerSnippet,
+          anchor: markerAnchor)
+      );
+    }
+    return null;
   }
 
   static List<Explore>? _lookupExploreGroup(List<List<Explore>> exploreGroups, ExploreLocation exploreLocation, { double thresoldDistance = 0 }) {
