@@ -687,7 +687,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _showOptionalMessagePopup(String message, { String? showPopupStorageKey }) {
-    showDialog(context: context, builder: (context) => _OptionalMessagePopup(
+    showDialog(context: context, builder: (context) => ExploreOptionalMessagePopup(
       message: message,
       showPopupStorageKey: showPopupStorageKey,
     )).then((_) => _fixMap());
@@ -2122,18 +2122,18 @@ class ExplorePanelState extends State<ExplorePanel>
 }
 
 /////////////////////////
-// _OptionalMessagePopup
+// ExploreOptionalMessagePopup
 
-class _OptionalMessagePopup extends StatefulWidget {
+class ExploreOptionalMessagePopup extends StatefulWidget {
   final String message;
   final String? showPopupStorageKey;
-  _OptionalMessagePopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
+  ExploreOptionalMessagePopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
 
   @override
-  State<_OptionalMessagePopup> createState() => _MTDInstructionsPopupState();
+  State<ExploreOptionalMessagePopup> createState() => _MTDInstructionsPopupState();
 }
 
-class _MTDInstructionsPopupState extends State<_OptionalMessagePopup> {
+class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
   bool? showInstructionsPopup;
   
   @override
