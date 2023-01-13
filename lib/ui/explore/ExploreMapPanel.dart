@@ -1616,8 +1616,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         }
       }
     }
-    else if (targetCameraUpdate != null) {
-      _targetCameraUpdate = targetCameraUpdate;
+    else {
+      _targetMarkers = null;
+      _exploreMarkerGroups = null;
+      _lastMarkersUpdateZoom = null;
+      if (targetCameraUpdate != null) {
+       _targetCameraUpdate = targetCameraUpdate;
+      }
     }
   }
 
