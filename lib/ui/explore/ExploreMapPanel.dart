@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Dining.dart';
@@ -75,7 +76,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   bool _eventsDisplayDropDownValuesVisible = false;
   bool _filtersDropdownVisible = false;
   
+  List<Explore>? _explores;
+  bool _exploreProgress = false;
+  Future<List<Explore>?>? _exploreTask;
+
   final GlobalKey _mapContainerKey = GlobalKey();
+  final String _mapStylesAssetName = 'assets/map.styles.json';
+  final String _mapStylesExplorePoiKey = 'explore-poi';
+  final String _mapStylesMtdStopKey = 'mtd-stop';
   final Map<String, BitmapDescriptor> _markerIconCache = <String, BitmapDescriptor>{};
   static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
   static const double _mapBarHeight = 116;
@@ -93,6 +101,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   CameraPosition? _lastCameraPosition;
   double? _lastMarkersUpdateZoom;
   CameraUpdate? _targetCameraUpdate;
+  String? _targetMapStyle, _lastMapStyle;
   Set<dynamic>? _exploreMarkerGroups;
   Set<Marker>? _targetMarkers;
   bool _markersProgress = false;
@@ -104,10 +113,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   List<MTDRoute>? _selectedMapStopRoutes;
 
   LocationServicesStatus? _locationServicesStatus;
-
-  List<Explore>? _explores;
-  bool _exploreProgress = false;
-  Future<List<Explore>?>? _exploreTask;
+  Map<String, dynamic>? _mapStyles;
 
   @override
   void initState() {
@@ -116,6 +122,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     _selectedEventsDisplayType = EventsDisplayType.single;
     
     _initFilters();
+    _initMapStyles();
     _initLocationServicesStatus();
     _initExplores();
 
@@ -235,6 +242,58 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     );
   }
 
+  void _onMapCreated(GoogleMapController controller) async {
+    debugPrint('ExploreMap created' );
+    _mapController = controller;
+
+    if (_targetMapStyle != _lastMapStyle) {
+      try { await _mapController?.setMapStyle(_lastMapStyle = _targetMapStyle); }
+      catch(e) { debugPrint(e.toString()); }
+    }
+
+    if (_targetCameraUpdate != null) {
+      await _mapController?.moveCamera(_targetCameraUpdate!);
+      _targetCameraUpdate = null;
+    }
+  }
+
+  void _onMapCameraMove(CameraPosition cameraPosition) {
+    debugPrint('ExploreMap camera position: lat: ${cameraPosition.target.latitude} lng: ${cameraPosition.target.longitude} zoom: ${cameraPosition.zoom}' );
+    _lastCameraPosition = cameraPosition;
+  }
+
+  void _onMapCameraIdle() {
+    debugPrint('ExploreMap camera idle' );
+    _mapController?.getZoomLevel().then((double value) {
+      if (_lastMarkersUpdateZoom == null) {
+        _lastMarkersUpdateZoom = value;
+      }
+      else if ((_lastMarkersUpdateZoom! - value).abs() > _groupMarkersUpdateThresoldDelta) {
+        _buildMapContentData(_explores, updateCamera: false, zoom: value, showProgress: true);
+      }
+    });
+  }
+
+  void _onMapTap(LatLng coordinate) {
+    debugPrint('ExploreMap tap' );
+    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/);
+    if (mtdStop != null) {
+      _selectMapExplore(mtdStop);
+    }
+    else if (_selectedMapExplore != null) {
+      _selectMapExplore(null);
+    }
+    else if ((_selectedExploreItem == ExploreItem.MTDDestinations)) {
+      _selectMapExplore(ExplorePOI(location: ExploreLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)));
+    }
+  }
+
+  void _onTapMarker(dynamic origin) {
+    _selectMapExplore(origin);
+  }
+
+  // Map Explore Bar
+
   Widget _buildMapExploreBar() {
     String? title, description;
     String detailsLabel = Localization().getStringEx('panel.explore.button.details.title', 'Details');
@@ -327,52 +386,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       ),
     );
   }
-
-  void _onMapCreated(GoogleMapController controller) async {
-    debugPrint('ExploreMap created' );
-    _mapController = controller;
-
-    if (_targetCameraUpdate != null) {
-      await _mapController?.moveCamera(_targetCameraUpdate!);
-      _targetCameraUpdate = null;
-    }
-  }
-
-  void _onMapCameraMove(CameraPosition cameraPosition) {
-    debugPrint('ExploreMap camera position: lat: ${cameraPosition.target.latitude} lng: ${cameraPosition.target.longitude} zoom: ${cameraPosition.zoom}' );
-    _lastCameraPosition = cameraPosition;
-  }
-
-  void _onMapCameraIdle() {
-    debugPrint('ExploreMap camera idle' );
-    _mapController?.getZoomLevel().then((double value) {
-      if (_lastMarkersUpdateZoom == null) {
-        _lastMarkersUpdateZoom = value;
-      }
-      else if ((_lastMarkersUpdateZoom! - value).abs() > _groupMarkersUpdateThresoldDelta) {
-        _buildMapContentData(_explores, updateCamera: false, zoom: value, showProgress: true);
-      }
-    });
-  }
-
-  void _onMapTap(LatLng coordinate) {
-    debugPrint('ExploreMap tap' );
-    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: coordinate.latitude, longitude: coordinate.longitude), locationThresholdDistance: 25 /*in meters*/);
-    if (mtdStop != null) {
-      _selectMapExplore(mtdStop);
-    }
-    else if (_selectedMapExplore != null) {
-      _selectMapExplore(null);
-    }
-    else if ((_selectedExploreItem == ExploreItem.MTDDestinations)) {
-      _selectMapExplore(ExplorePOI(location: ExploreLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)));
-    }
-  }
-
-  void _onTapMarker(dynamic origin) {
-    _selectMapExplore(origin);
-  }
-
   void _onTapMapExploreDirections() {
     Analytics().logSelect(target: 'Directions');
     if (_userLocationEnabled) {
@@ -713,6 +726,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       _itemsDropDownValuesVisible = false;
     });
     if (lastExploreItem != item) {
+      _targetMapStyle = _currentMapStyle;
       _initExplores();
     }
   }
@@ -1513,6 +1527,28 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     else if (CollectionUtils.isEmpty(_explores)) {
       _showMessagePopup(_emptyContentMessage);
     }
+  }
+
+  // Map Styles
+  
+  void _initMapStyles() {
+    rootBundle.loadString(_mapStylesAssetName).then((String value) {
+      _mapStyles = JsonUtils.decodeMap(value);
+      _targetMapStyle = _currentMapStyle;
+    }).catchError((_){
+    });
+  }
+
+  String? get _currentMapStyle {
+    if (_mapStyles != null) {
+      if (_selectedExploreItem == ExploreItem.Buildings) {
+        return JsonUtils.encode(_mapStyles![_mapStylesExplorePoiKey]);
+      }
+      else if (_selectedExploreItem == ExploreItem.MTDStops) {
+        return JsonUtils.encode(_mapStyles![_mapStylesMtdStopKey]);
+      }
+    }
+    return null;
   }
 
   // Map Content
