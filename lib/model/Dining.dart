@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -124,6 +125,37 @@ class Dining with Explore implements Favorite {
       'PaymentTypes': PaymentTypeHelper.paymentTypesToList(paymentTypes),
     };
   }
+
+  @override
+  bool operator ==(other) =>
+    (other is Dining) &&
+      (other.id == id) &&
+      (other.title == title) &&
+      (other.subTitle == subTitle) &&
+      (other.diningType == diningType) &&
+      (other.shortDescription == shortDescription) &&
+      (other.longDescription == longDescription) &&
+      (other.imageURL == imageURL) &&
+      (DeepCollectionEquality().equals(other.onlineOrder, onlineOrder)) &&
+      (other.placeID == placeID) &&
+      (other.location == location) &&
+      (DeepCollectionEquality().equals(other.paymentTypes, paymentTypes)) &&
+      (DeepCollectionEquality().equals(other.diningSchedules, diningSchedules));
+
+  @override
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (title?.hashCode ?? 0) ^
+      (subTitle?.hashCode ?? 0) ^
+      (diningType?.hashCode ?? 0) ^
+      (shortDescription?.hashCode ?? 0) ^
+      (longDescription?.hashCode ?? 0) ^
+      (imageURL?.hashCode ?? 0) ^
+      (DeepCollectionEquality().hash(onlineOrder)) ^
+      (placeID?.hashCode ?? 0) ^
+      (location?.hashCode ?? 0) ^
+      (DeepCollectionEquality().hash(paymentTypes)) ^
+      (DeepCollectionEquality().hash(diningSchedules));
 
   static bool canJson(Map<String, dynamic>? json) {
     return (json != null) && (json['DiningOptionID'] != null);
