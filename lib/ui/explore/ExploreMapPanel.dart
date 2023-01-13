@@ -93,7 +93,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   CameraPosition? _lastCameraPosition;
   double? _lastMarkersUpdateZoom;
   CameraUpdate? _targetCameraUpdate;
-  List<dynamic>? _exploreMarkerGroups;
+  Set<dynamic>? _exploreMarkerGroups;
   Set<Marker>? _targetMarkers;
   bool _markersProgress = false;
   Future<Set<Marker>?>? _buildMarkersTask;
@@ -1444,7 +1444,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     if ((exploresBounds != null) && (mapSize != null)) {
       zoom ??= GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
       double thresoldDistance = _thresoldDistanceForZoom(zoom);
-      List<dynamic>? exploreMarkerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
+      Set<dynamic>? exploreMarkerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
       if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
         Future<Set<Marker>> buildMarkersTask = _buildMarkers(exploreMarkerGroups, context);
         if (showProgress && mounted) {
@@ -1455,8 +1455,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         _buildMarkersTask = buildMarkersTask;
         //debugPrint('Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersSource: ${exploreMarkerGroups?.length}');
         Set<Marker> targetMarkers = await buildMarkersTask;
-        //debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersTarget: ${targetMarkers.length}');
+        //debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
         if (_buildMarkersTask == buildMarkersTask) {
+          //debugPrint('Applying ${targetMarkers.length} Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance');
           _targetMarkers = targetMarkers;
           _exploreMarkerGroups = exploreMarkerGroups;
           _targetCameraUpdate = targetCameraUpdate;
@@ -1474,7 +1475,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
   }
 
-  static List<dynamic>? _buildMarkerGroups(List<Explore>? explores, { double thresoldDistance = 0 }) {
+  static Set<dynamic>? _buildMarkerGroups(List<Explore>? explores, { double thresoldDistance = 0 }) {
     if (explores != null) {
       if (0 < thresoldDistance) {
         // group by thresoldDistance
@@ -1493,7 +1494,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           }
         }
 
-        List<dynamic> markerGroups = [];
+        Set<dynamic> markerGroups = <dynamic>{};
         for (List<Explore> exploreGroup in exploreGroups) {
           if (exploreGroup.length == 1) {
             markerGroups.add(exploreGroup.first);
@@ -1506,18 +1507,17 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       }
       else {
         // no grouping
-        return explores;
+        return Set<dynamic>.from(explores);
       }
     }
     return null;
   }
 
-  Future<Set<Marker>> _buildMarkers(List<dynamic>? exploreGroups, BuildContext context) async {
+  Future<Set<Marker>> _buildMarkers(Set<dynamic>? exploreGroups, BuildContext context) async {
     Set<Marker> markers = <Marker>{};
     if (exploreGroups != null) {
       ImageConfiguration imageConfiguration = createLocalImageConfiguration(context);
-      for (int index = 0; index < exploreGroups.length; index++) {
-        dynamic entry = exploreGroups[index];
+      for (dynamic entry in exploreGroups) {
         LatLng? markerPosition;
         BitmapDescriptor? markerIcon;
         Offset? markerAnchor;
@@ -1548,7 +1548,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         if (markerPosition != null) {
           markerAnchor ??= Offset(0.5, 1);
           markers.add(Marker(
-            markerId: MarkerId("$index"),
+            markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
             position: markerPosition,
             icon: markerIcon ?? BitmapDescriptor.defaultMarker,
             anchor: markerAnchor,
