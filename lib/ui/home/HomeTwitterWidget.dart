@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -18,7 +18,6 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-//import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Twitter.dart';
@@ -711,19 +710,27 @@ class _TweetWidget extends StatelessWidget {
                     ],
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
-                    //Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
-                    Html(data: tweet!.html,
-                      onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                      style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                    Semantics(container: true,
+                        child: HtmlWidget(
+                         tweet!.html??"",
+                          onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+                          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+                          // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.blueAccent)} : null
+                      )
+                    )
+                  //   Container()
                   ),
                 ],),
             Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
               Row(children: [
                 Expanded(child: StringUtils.isNotEmpty(tweet?.author?.userName) ?
-                  //Text("@${tweet?.author?.userName}", style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),) :
-                  Html(data: tweet?.author?.html,
-                    onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                    style: { "body": Style(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: FontSize(14), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },) :
+                  Semantics(container: true,
+                      child: HtmlWidget(
+                        tweet?.author?.html ?? "",
+                        onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+                        textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14,),
+                      )
+                  ) :
                   Container(),
                 ),
                 Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14, ),),
