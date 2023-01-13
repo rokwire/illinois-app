@@ -1617,20 +1617,29 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
             entry.exploreLocation?.latitude?.toDouble() ?? 0,
             entry.exploreLocation?.longitude?.toDouble() ?? 0
           ) : null;
-          Color? exploreColor = entry.uiColor;
-          markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : null;
-          markerAnchor = Offset(0.5, 1);
+          if (entry is MTDStop) {
+            String markerAsset = 'images/map-marker-mtd-stop.png';
+            markerIcon = _markerIconCache[markerAsset] ??
+              (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
+            markerAnchor = Offset(0.5, 0.5);
+          }
+          else {
+            Color? exploreColor = entry.uiColor;
+            markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
+            markerAnchor = Offset(0.5, 1);
+          }
           markerTitle = entry.mapMarkerTitle;
           markerSnippet = entry.mapMarkerSnippet;
         }
         
         
         if (markerPosition != null) {
+          markerIcon ??= BitmapDescriptor.defaultMarker;
           markerAnchor ??= Offset(0.5, 1);
           markers.add(Marker(
             markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
             position: markerPosition,
-            icon: markerIcon ?? BitmapDescriptor.defaultMarker,
+            icon: markerIcon,
             anchor: markerAnchor,
             consumeTapEvents: true,
             onTap: () => _onTapMarker(entry),
