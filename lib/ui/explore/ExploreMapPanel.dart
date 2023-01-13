@@ -501,6 +501,48 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     ],);
   }*/
 
+  void _showMessagePopup(String? message) {
+    if ((message != null) && message.isNotEmpty) {
+      showDialog(context: context, builder: (context) => AlertDialog(contentPadding: EdgeInsets.zero, content: 
+        Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)), child:
+          Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+            Padding(padding: EdgeInsets.all(30), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                Styles().images?.getImage('university-logo') ?? Container(),
+                Padding(padding: EdgeInsets.only(top: 20), child:
+                  Text(message, textAlign: TextAlign.center, style:
+                    Styles().textStyles?.getTextStyle("widget.detail.small")
+                  )
+                )
+              ])
+            ),
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                InkWell(onTap: () => _onCloseMessagePopup(message), child:
+                  Padding(padding: EdgeInsets.all(16), child:
+                    Styles().images?.getImage("close")
+                  )
+                )
+              )
+            )
+          ])
+        )
+      ));
+    }
+  }
+
+  void _showOptionalMessagePopup(String message, { String? showPopupStorageKey }) {
+    showDialog(context: context, builder: (context) => ExploreOptionalMessagePopup(
+      message: message,
+      showPopupStorageKey: showPopupStorageKey,
+    ));
+  }
+
+  void _onCloseMessagePopup(String message) {
+    Analytics().logSelect(target: 'Close $message');
+    Navigator.of(context).pop();
+  }
+
   // Dropdown Widgets
 
   Widget _buildExploreItemsDropDownButton() {
@@ -1249,7 +1291,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
   }*/
 
-  /*String? get _emptyContentMessage {
+  String? get _emptyContentMessage {
     switch (_selectedExploreItem) {
       case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.');
       case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
@@ -1262,9 +1304,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
       default:  return null;
     }
-  }*/
+  }
 
-  /*String? get _failedContentMessage {
+  String? get _failedContentMessage {
     switch (_selectedExploreItem) {
       case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.failed.events', 'Failed to load upcoming events.');
       case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
@@ -1277,7 +1319,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
       default:  return null;
     }
-  }*/
+  }
 
   // Locaction Services
 
@@ -1313,9 +1355,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
               _exploreTask = null;
               _exploreProgress = false;
               _selectedMapExplore = null;
-              _mapKey = UniqueKey(); // force map rebuild
               _mapExploreBarAnimationController?.value = _mapExploreBarAnimationController?.lowerBound ?? 0;
+              _mapKey = UniqueKey(); // force map rebuild
             });
+            _displayContentPopups();
           }
         });
       }
@@ -1420,7 +1463,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   }
 
   Future<List<Explore>?> _loadMTDDestinations() async {
-    return ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
+    return ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName)) ?? <Explore>[];
   }
 
   Future<List<Explore>?> _loadStudentCourse(List<ExploreFilter>? selectedFilterList) async {
@@ -1430,6 +1473,43 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   Future<List<Explore>?> _loadAppointments() async {
     return Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+  }
+
+  void _displayContentPopups() {
+    if (_explores == null) {
+      _showMessagePopup(_failedContentMessage);
+    }
+    else if (_selectedExploreItem == ExploreItem.Appointments) {
+      if (Storage().appointmentsCanDisplay != true) {
+        _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
+      } else if (CollectionUtils.isEmpty(_explores)) {
+        _showMessagePopup(Localization().getStringEx('panel.explore.missing.appointments.msg','You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
+      }
+    }
+    else if (_selectedExploreItem == ExploreItem.MTDStops) {
+      if (Storage().showMtdStopsMapInstructions != false) {
+        _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."), showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
+        );
+      }
+      else if (CollectionUtils.isEmpty(_explores)) {
+        _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
+      }
+    }
+    else if (_selectedExploreItem == ExploreItem.MTDDestinations) {
+      if (Storage().showMtdDestinationsMapInstructions != false) {
+        _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",), showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey
+        );
+      }
+      else if (CollectionUtils.isEmpty(_explores)) {
+        _showMessagePopup(_emptyContentMessage);
+      }
+    }
+    else if (_selectedExploreItem == ExploreItem.StateFarmWayfinding) {
+      //TBD: _viewStateFarmPoi();
+    }
+    else if (CollectionUtils.isEmpty(_explores)) {
+      _showMessagePopup(_emptyContentMessage);
+    }
   }
 
   // Map Content
@@ -1453,11 +1533,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           });
         }
         _buildMarkersTask = buildMarkersTask;
-        //debugPrint('Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersSource: ${exploreMarkerGroups?.length}');
+        debugPrint('Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance markersSource: ${exploreMarkerGroups?.length}');
         Set<Marker> targetMarkers = await buildMarkersTask;
-        //debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
+        debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
         if (_buildMarkersTask == buildMarkersTask) {
-          //debugPrint('Applying ${targetMarkers.length} Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance');
+          debugPrint('Applying ${targetMarkers.length} Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance');
           _targetMarkers = targetMarkers;
           _exploreMarkerGroups = exploreMarkerGroups;
           _targetCameraUpdate = targetCameraUpdate;
