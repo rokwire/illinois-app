@@ -709,7 +709,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     Storage().selectedMapExploreItem = exploreItemToString(item);
     setStateIfMounted(() {
       _clearActiveFilter();
-      _selectedExploreItem = item;
+      _selectedExploreItem = _lastExploreItem = item;
       _itemsDropDownValuesVisible = false;
     });
     if (lastExploreItem != item) {
@@ -906,7 +906,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return exploreItems;
   }
 
-  ExploreItem? get _lastExploreItem => exploreItemFromString(Storage().selectedMapExploreItemKey);
+  ExploreItem? get _lastExploreItem => exploreItemFromString(Storage().selectedMapExploreItem);
+  
+  set _lastExploreItem(ExploreItem? value) => Storage().selectedMapExploreItem = exploreItemToString(value);
 
   static String? _exploreItemName(ExploreItem? exploreItem) {
     switch (exploreItem) {
