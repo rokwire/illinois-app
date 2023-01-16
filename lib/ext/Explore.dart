@@ -299,7 +299,7 @@ extension ExploreMap on Explore {
       return 'images/map-marker-group-game.png';
     }
     else if (this is MTDStop) {
-      return 'images/map-marker-group-mtd-stop';
+      return 'images/map-marker-group-mtd-stop.png';
     }
     else if (this is StudentCourse) {
       return 'images/map-marker-group-event.png';
