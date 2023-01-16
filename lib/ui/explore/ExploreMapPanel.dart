@@ -1,5 +1,6 @@
 
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -89,6 +91,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
   static const double _mapBarHeight = 116;
   static const double _mapPadding = 50;
+  static const double _mapGroupMarkerSize = 24;
   static const double _groupMarkersUpdateThresoldDelta = 0.3;
   static const List<double> _thresoldDistanceByZoom = [
 		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
@@ -1697,9 +1700,17 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     LatLng? markerPosition = ExploreMap.centerOfList(exploreGroup);
     if ((exploreGroup != null) && (markerPosition != null)) {
       Explore? sameExplore = ExploreMap.mapGroupSameExploreForList(exploreGroup);
-      String markerAsset = sameExplore?.mapMarkerAssetName ?? 'images/map-marker-group-laundry.png';
-      BitmapDescriptor markerIcon = _markerIconCache[markerAsset] ??
-        (_markerIconCache[markerAsset] = await BitmapDescriptor.fromAssetImage(imageConfiguration, markerAsset));
+      Color? markerColor = sameExplore?.mapMarkerColor ?? ExploreMap.unknownMarkerColor;
+      String markerKey = "map-marker-group-${markerColor?.value ?? 0}-${exploreGroup.length}";
+      BitmapDescriptor markerIcon = _markerIconCache[markerKey] ??
+        (_markerIconCache[markerKey] = await _groupMarkerIcon(
+          context: context,
+          imageSize: _mapGroupMarkerSize,
+          backColor: markerColor,
+          borderColor: sameExplore?.mapMarkerBorderColor ?? ExploreMap.unknownMarkerBorderColor,
+          textColor: sameExplore?.mapMarkerTextColor ?? ExploreMap.unknownMarkerTextColor,
+          count: exploreGroup.length,
+        ));
       Offset markerAnchor = Offset(0.5, 0.5);
       return Marker(
         markerId: MarkerId("${markerPosition.latitude.toStringAsFixed(6)}:${markerPosition.latitude.toStringAsFixed(6)}"),
@@ -1716,6 +1727,30 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return null;
   }
   
+  static Future<BitmapDescriptor> _groupMarkerIcon({required BuildContext context, required double imageSize, Color? backColor, Color? borderColor, Color? textColor, int? count}) async {
+    Uint8List? markerImageBytes = await ImageUtils.mapGroupMarkerImage(
+      imageSize: imageSize * MediaQuery.of(context).devicePixelRatio,
+      backColor: backColor,
+      strokeColor: borderColor,
+      text: count?.toString(),
+      textStyle: TextStyle(
+        fontFamily: Styles().fontFamilies?.bold,
+        fontSize: 12 * MediaQuery.of(context).devicePixelRatio,
+        color: textColor,
+        overflow: TextOverflow.visible,
+      )
+    );
+    if (markerImageBytes != null) {
+      return BitmapDescriptor.fromBytes(markerImageBytes);
+    }
+    else if (backColor != null) {
+      return BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(backColor).toDouble());
+    }
+    else {
+      return BitmapDescriptor.defaultMarker;
+    }
+  }
+
   Future<Marker?> _createExploreMarker(Explore? explore, {required ImageConfiguration imageConfiguration}) async {
     LatLng? markerPosition = explore?.exploreLocation?.exploreLocationMapCoordinate;
     if (markerPosition != null) {
@@ -1728,7 +1763,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         markerAnchor = Offset(0.5, 0.5);
       }
       else {
-        Color? exploreColor = explore?.uiColor;
+        Color? exploreColor = explore?.mapMarkerColor;
         markerIcon = (exploreColor != null) ? BitmapDescriptor.defaultMarkerWithHue(ColorUtils.hueFromColor(exploreColor).toDouble()) : BitmapDescriptor.defaultMarker;
         markerAnchor = Offset(0.5, 1);
       }

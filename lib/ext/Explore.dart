@@ -314,6 +314,15 @@ extension ExploreMap on Explore {
     }
   }
 
+  Color? get mapMarkerColor => uiColor ?? unknownMarkerColor;
+  static Color? get unknownMarkerColor => Styles().colors?.accentColor2;
+
+  Color? get mapMarkerBorderColor => unknownMarkerBorderColor;
+  static Color? get unknownMarkerBorderColor => Styles().colors?.fillColorPrimary;
+
+  Color? get mapMarkerTextColor => unknownMarkerTextColor;
+  static Color? get unknownMarkerTextColor => Styles().colors?.background;
+
   String? get mapMarkerTitle {
     return exploreTitle;
   }
