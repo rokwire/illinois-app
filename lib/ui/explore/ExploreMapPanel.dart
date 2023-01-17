@@ -143,6 +143,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       Appointments.notifyAppointmentsChanged,
       ExplorePanel.notifySelectMap,
       RootPanel.notifyTabChanged,
+      Storage.notifySettingChanged,
     ]);
     
     _exploreItems = _buildExploreItems();
@@ -240,6 +241,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           (CollectionUtils.isEmpty(_exploreItems) || (_selectedExploreItem == ExploreItem.Events) || (_selectedExploreItem == ExploreItem.Appointments)) // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
       ) {
         _refreshExplores();
+      }
+    }
+    else if (name == Storage.notifySettingChanged) {
+      if (param == Storage.debugMapThresholdDistanceKey) {
+        _buildMapContentData(_explores, pinnedExplore: _pinnedMapExplore, updateCamera: false, zoom: _lastMarkersUpdateZoom, showProgress: true);
+      }
+      else if (param == Storage.debugMapShowLevelsKey) {
+        setStateIfMounted(() { });
       }
     }
   }
@@ -1837,8 +1846,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       double thresoldDistance;
       Set<dynamic>? exploreMarkerGroups;
       if (exploresBounds.northeast != exploresBounds.southwest) {
-        zoom ??= GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
-        thresoldDistance = _thresoldDistanceForZoom(zoom);
+        double? debugThresoldDistance = Storage().debugMapThresholdDistance?.toDouble();
+        if (debugThresoldDistance != null) {
+          thresoldDistance = debugThresoldDistance;
+        }
+        else {
+          zoom ??= GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
+          thresoldDistance = _thresoldDistanceForZoom(zoom);
+        }
         exploreMarkerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
       }
       else {
