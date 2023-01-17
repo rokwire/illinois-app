@@ -485,7 +485,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   Widget? _buildExploreBarStopDescription() {
     if (_loadingMapStopIdRoutes != null) {
-      return Padding(padding: EdgeInsets.only(left: 8), child:
+      return Padding(padding: EdgeInsets.only(left: 8, top: 3, bottom: 2), child:
         SizedBox(width: 16, height: 16, child:
           CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 2,),
         ),
@@ -514,7 +514,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         );
       }
       else {
-        return null;
+        return Container(height: 21);
       }
     }
   }
