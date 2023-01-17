@@ -1589,14 +1589,34 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   Future<void> _buildMapContentData(List<Explore>? explores, {Explore? pinnedExplore, bool updateCamera = false, bool showProgress = false, double? zoom}) async {
     LatLngBounds? exploresBounds = ExploreMap.boundsOfList(explores);
 
-    CameraUpdate? targetCameraUpdate = updateCamera ?
-      ((exploresBounds != null) ? CameraUpdate.newLatLngBounds(exploresBounds, _mapPadding) : CameraUpdate.newCameraPosition(_defaultCameraPosition)) : null;
+    CameraUpdate? targetCameraUpdate;
+    if (updateCamera) {
+      if (exploresBounds == null) {
+        targetCameraUpdate = CameraUpdate.newCameraPosition(_defaultCameraPosition);
+      }
+      else if (exploresBounds.northeast == exploresBounds.southwest) {
+        targetCameraUpdate = CameraUpdate.newCameraPosition(CameraPosition(target: exploresBounds.northeast, zoom: _defaultCameraPosition.zoom));
+      }
+      else {
+        targetCameraUpdate = CameraUpdate.newLatLngBounds(exploresBounds, _mapPadding);
+      }
+    }
 
     Size? mapSize = _mapSize;
     if ((exploresBounds != null) && (mapSize != null)) {
-      zoom ??= GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
-      double thresoldDistance = _thresoldDistanceForZoom(zoom);
-      Set<dynamic>? exploreMarkerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
+      
+      double thresoldDistance;
+      Set<dynamic>? exploreMarkerGroups;
+      if (exploresBounds.northeast != exploresBounds.southwest) {
+        zoom ??= GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
+        thresoldDistance = _thresoldDistanceForZoom(zoom);
+        exploreMarkerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
+      }
+      else {
+        thresoldDistance = 0;
+        exploreMarkerGroups = (explores != null) ? Set<dynamic>.from(explores) : null;
+      }
+      
       if (!DeepCollectionEquality().equals(_exploreMarkerGroups, exploreMarkerGroups)) {
         Future<Set<Marker>> buildMarkersTask = _buildMarkers(context, exploreGroups: exploreMarkerGroups, pinnedExplore: pinnedExplore);
         _buildMarkersTask = buildMarkersTask;
@@ -1611,7 +1631,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         debugPrint('Finished Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
     
         if (_buildMarkersTask == buildMarkersTask) {
-          debugPrint('Applying ${targetMarkers.length} Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance');
+          debugPrint('Applying Building Markers for zoom: $zoom thresholdDistance: $thresoldDistance => ${targetMarkers.length}');
           _targetMarkers = targetMarkers;
           _exploreMarkerGroups = exploreMarkerGroups;
           _targetCameraUpdate = targetCameraUpdate;
@@ -1630,7 +1650,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       _exploreMarkerGroups = null;
       _lastMarkersUpdateZoom = null;
       if (targetCameraUpdate != null) {
-       _targetCameraUpdate = targetCameraUpdate;
+        _targetCameraUpdate = targetCameraUpdate;
+      }
+      if (showProgress && mounted) {
+        setState(() {
+        });
       }
     }
   }
