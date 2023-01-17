@@ -28,6 +28,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -39,10 +40,12 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
@@ -58,12 +61,15 @@ class ExploreMapPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _ExploreMapPanelState();
 }
 
-class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExploreMapPanel> {
+class _ExploreMapPanelState extends State<ExploreMapPanel>
+  with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExploreMapPanel>
+  implements NotificationsListener {
 
   static const double _filterLayoutSortKey = 1.0;
+  static const ExploreItem _defaultExploreItem = ExploreItem.Events;
 
   List<ExploreItem> _exploreItems = [];
-  ExploreItem? _selectedExploreItem;
+  ExploreItem _selectedExploreItem = _defaultExploreItem;
   EventsDisplayType? _selectedEventsDisplayType;
 
   List<String>? _eventCategories;
@@ -119,11 +125,28 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   LocationServicesStatus? _locationServicesStatus;
   Map<String, dynamic>? _mapStyles;
+  DateTime? _pausedDateTime;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+      Connectivity.notifyStatusChanged,
+      LocationServices.notifyStatusChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+      StudentCourses.notifyTermsChanged,
+      StudentCourses.notifySelectedTermChanged,
+      StudentCourses.notifyCachedCoursesChanged,
+      MTD.notifyStopsChanged,
+      Appointments.notifyAppointmentsChanged,
+      ExplorePanel.notifySelectMap,
+      RootPanel.notifyTabChanged,
+    ]);
+    
     _exploreItems = _buildExploreItems();
-    _selectedExploreItem = widget.initialContent ?? _lastExploreItem ?? ExploreItem.Events;
+    _selectedExploreItem = _ensureExploreItem(widget.initialContent) ?? _ensureExploreItem(_lastExploreItem) ?? _defaultExploreItem;
     _selectedEventsDisplayType = EventsDisplayType.single;
     
     _initFilters();
@@ -142,8 +165,99 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   @override
   void dispose() {
+     NotificationService().unsubscribe(this);
     _mapExploreBarAnimationController?.dispose();
     super.dispose();
+  }
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if (name == Connectivity.notifyStatusChanged) {
+      if ((Connectivity().isNotOffline) && mounted) {
+        _initEventCategories();
+        _initExplores();
+      }
+    }
+    else if (name == LocationServices.notifyStatusChanged) {
+      _initLocationServicesStatus(status: param);
+    }
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      _initLocationServicesStatus();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _onFavoritesChanged();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateExploreItems();
+    }
+    else if (name == StudentCourses.notifyTermsChanged) {
+      applyStateIfMounted(() {
+        _studentCourseTerms = StudentCourses().terms;
+      });
+      if ((_selectedExploreItem == ExploreItem.StudentCourse) && mounted) {
+        _refreshExplores();
+      }
+    }
+    else if (name == StudentCourses.notifySelectedTermChanged) {
+      applyStateIfMounted(() {
+        _updateSelectedTermId();
+      });
+      if ((_selectedExploreItem == ExploreItem.StudentCourse) && mounted) {
+        _refreshExplores();
+      }
+    }
+    else if (name == StudentCourses.notifyCachedCoursesChanged) {
+      String? termId = param;
+      if ((_selectedExploreItem == ExploreItem.StudentCourse) && mounted && ((termId == null) || (StudentCourses().displayTermId == termId))) {
+        _refreshExplores();
+      }
+    }
+    else if (name == MTD.notifyStopsChanged) {
+      if ((_selectedExploreItem == ExploreItem.MTDStops) && mounted) {
+        _refreshExplores();
+      }
+    }
+    else if (name == Appointments.notifyAppointmentsChanged) {
+      if ((_selectedExploreItem == ExploreItem.Appointments) && mounted) {
+        _refreshExplores();
+      }
+    }
+    else if (name == ExplorePanel.notifySelectMap) {
+      ExploreItem? exploreItem = param;
+      if (mounted && (exploreItem != null) && (_selectedExploreItem != exploreItem)) {
+        setState(() {
+          _selectedExploreItem = exploreItem;
+        });
+        _initExplores();
+      }
+    }
+    else if (name == RootPanel.notifyTabChanged) {
+      if (((param == RootTab.Explore) || (param == RootTab.Maps)) && mounted &&
+          (CollectionUtils.isEmpty(_exploreItems) || (_selectedExploreItem == ExploreItem.Events) || (_selectedExploreItem == ExploreItem.Appointments)) // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
+      ) {
+        _refreshExplores();
+      }
+    }
+  }
+  
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          if (mounted) {
+            _refreshExplores();
+          }
+        }
+      }
+    }
   }
 
   // AutomaticKeepAliveClientMixin
@@ -389,13 +503,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           ),
           (_selectedMapExplore is Favorite) ?
             Align(alignment: Alignment.topRight, child:
-              FavoriteButton(favorite: (_selectedMapExplore as Favorite), style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),),
+              FavoriteButton(favorite: (_selectedMapExplore as Favorite), style: FavoriteIconStyle.SlantHeader, padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),),
             ) :
             Container(),
         ],),
       ),
     );
   }
+
   void _onTapMapExploreDirections() {
     Analytics().logSelect(target: 'Directions');
     if (_userLocationEnabled) {
@@ -433,10 +548,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   void _onTapMapClear() {
     Analytics().logSelect(target: 'Clear');
-    if (_selectedMapExplore is Favorite) {
-      Auth2().account?.prefs?.setFavorite(_selectedMapExplore as Favorite, false);
-    }
+    dynamic selectedMapExplore = _selectedMapExplore;
     _selectMapExplore(null);
+    if (selectedMapExplore is Favorite) {
+      Future.delayed(Duration(milliseconds: 100), (){
+        Auth2().account?.prefs?.setFavorite(selectedMapExplore, false);
+      });
+    }
   }
 
   void _selectMapExplore(dynamic explore) {
@@ -456,6 +574,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         });
         _updateSelectedMapStopRoutes();
       });
+    }
+    else {
+      _pinMapExplore(null);
     }
   }
 
@@ -954,6 +1075,31 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return exploreItems;
   }
 
+  void _updateExploreItems() {
+    List<ExploreItem> exploreItems = _buildExploreItems();
+    if (!DeepCollectionEquality().equals(_exploreItems, exploreItems)) {
+      if (exploreItems.contains(_selectedExploreItem)) {
+        setStateIfMounted(() {
+          _exploreItems = exploreItems;
+        });
+      }
+      else {
+        ExploreItem selectedExploreItem = _ensureExploreItem(widget.initialContent) ?? _defaultExploreItem;
+        setStateIfMounted(() {
+          _exploreItems = exploreItems;
+          _selectedExploreItem = selectedExploreItem;
+        });
+        _initExplores();
+      }
+    }
+  }
+  ExploreItem? _ensureExploreItem(ExploreItem? exploreItem, { List<ExploreItem>? exploreItems}) {
+    exploreItems ??= _exploreItems;
+    return ((exploreItem != null) && exploreItems.contains(exploreItem)) ? exploreItem : null;
+
+  }
+
+
   ExploreItem? get _lastExploreItem => exploreItemFromString(Storage().selectedMapExploreItem);
   
   set _lastExploreItem(ExploreItem? value) => Storage().selectedMapExploreItem = exploreItemToString(value);
@@ -1027,7 +1173,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         ExploreFilter(type: ExploreFilterType.student_course_terms, selectedIndexes: { _selectedTermIndex }),
       ],
     };
+    
+    _initEventCategories();
+  }
 
+  void _initEventCategories() {
     if (Connectivity().isNotOffline) {
       Events().loadEventCategories().then((List<dynamic>? categories) {
         setStateIfMounted(() {
@@ -1122,6 +1272,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     ExploreFilter? selectedFilter = _getSelectedFilter(selectedFilterList, ExploreFilterType.student_course_terms);
     int index = selectedFilter?.firstSelectedIndex ?? -1;
     return ((0 <= index) && (index < (_studentCourseTerms?.length ?? 0))) ? _studentCourseTerms![index].id : null;
+  }
+
+  void _updateSelectedTermId() {
+    List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![ExploreItem.StudentCourse] : null; 
+    ExploreFilter? selectedFilter = _getSelectedFilter(selectedFilterList, ExploreFilterType.student_course_terms);
+    if (selectedFilter != null) {
+      selectedFilter.selectedIndexes = { _selectedTermIndex };
+    }
   }
 
   String? _getFilterHint(ExploreFilterType filterType) {
@@ -1356,20 +1514,65 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
-  void _initLocationServicesStatus() {
+  void _initLocationServicesStatus({LocationServicesStatus? status}) {
     if (FlexUI().isLocationServicesAvailable) {
-      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
+      if (status != null) {
         setStateIfMounted(() {
-          _locationServicesStatus = locationServicesStatus;
+          _locationServicesStatus = status;
         });
-      });
+      }
+      else {
+        LocationServices().status.then((LocationServicesStatus? status) {
+          setStateIfMounted(() {
+            _locationServicesStatus = status;
+          });
+        });
+      }
     }
   }
 
-
   // Explore Content
 
-  void _initExplores() {
+  Future<void> _initExplores() async {
+    Future<List<Explore>?> exploreTask = _loadExplores();
+    applyStateIfMounted(() {
+      _exploreProgress = true;
+    });
+    List<Explore>? explores = await (_exploreTask = exploreTask);
+    if (mounted && (exploreTask == _exploreTask)) {
+      await _buildMapContentData(explores, pinnedExplore: null, updateCamera: true);
+      if (mounted && (exploreTask == _exploreTask)) {
+        setState(() {
+          _explores = explores;
+          _exploreTask = null;
+          _exploreProgress = false;
+          _mapKey = UniqueKey(); // force map rebuild
+        });
+        _selectMapExplore(null);
+        _displayContentPopups();
+     }
+    }
+  }
+
+  Future<void> _refreshExplores() async {
+    Future<List<Explore>?> exploreTask = _loadExplores();
+    List<Explore>? explores = await (_exploreTask = exploreTask);
+    if (mounted && (exploreTask == _exploreTask) && !DeepCollectionEquality().equals(_explores, explores)) {
+      await _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false);
+      if (mounted && (exploreTask == _exploreTask)) {
+        setState(() {
+          _explores = explores;
+          _exploreTask = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    await _refreshExplores() ;
+  }
+
+  /*void _initExplores() {
     Future<List<Explore>?> exploreTask = _loadExplores();
     _exploreTask = exploreTask;
     _exploreProgress = true;
@@ -1389,9 +1592,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         });
       }
     });
-  }
+  }*/
 
-  Future<void> _onRefresh() async {
+  /*Future<void> _onRefresh() async {
     Future<List<Explore>?> exploreTask = _loadExplores();
     List<Explore>? explores = await (_exploreTask = exploreTask);
     if (mounted && (exploreTask == _exploreTask)) {
@@ -1404,7 +1607,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         }
       });
     }
-  }
+  }*/
 
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
@@ -1469,7 +1672,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return await Gateway().loadBuildings();
   }
 
-  Future<List<Explore>?> _loadMTDStops() async {
+  List<Explore>? _loadMTDStops() {
     List<Explore> result = <Explore>[];
     _collectBusStops(result, stops: MTD().stops?.stops);
     return result;
@@ -1488,7 +1691,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
   }
 
-  Future<List<Explore>?> _loadMTDDestinations() async {
+  List<Explore>? _loadMTDDestinations() {
     return ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName)) ?? <Explore>[];
   }
 
@@ -1559,6 +1762,32 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
     else if (CollectionUtils.isEmpty(_explores)) {
       _showMessagePopup(_emptyContentMessage);
+    }
+  }
+
+  // Favorites
+
+  void _onFavoritesChanged() {
+    if (_selectedExploreItem == ExploreItem.MTDDestinations) {
+      _refreshMTDDestinations();
+    }
+    else {
+      setStateIfMounted(() {});
+    }
+  }
+
+  // MTD Destinations
+
+  void _refreshMTDDestinations() {
+    List<Explore>? explores = _loadMTDDestinations();
+    if (!DeepCollectionEquality().equals(_explores, explores) && mounted) {
+      _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false).then((_){
+        if (mounted) {
+          setState(() {
+            _explores = explores;
+          });
+        }
+      });
     }
   }
 
@@ -1637,11 +1866,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           _targetCameraUpdate = targetCameraUpdate;
           _lastMarkersUpdateZoom = null;
           _buildMarkersTask = null;
-          if (showProgress && mounted) {
-            setState(() {
-              _markersProgress = false;
-            });
-          }
+          applyStateIfMounted(() {
+            _markersProgress = false;
+          });
         }
       }
     }
