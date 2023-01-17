@@ -1,4 +1,5 @@
 
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:collection/collection.dart';
@@ -375,13 +376,24 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     _mapController = controller;
 
     if (_targetMapStyle != _lastMapStyle) {
-      try { await _mapController?.setMapStyle(_lastMapStyle = _targetMapStyle); }
-      catch(e) { debugPrint(e.toString()); }
+      _mapController?.setMapStyle(_lastMapStyle = _targetMapStyle).catchError((e) {
+        debugPrint(e.toString());
+      });
     }
 
     if (_targetCameraUpdate != null) {
-      await _mapController?.moveCamera(_targetCameraUpdate!);
-      _targetCameraUpdate = null;
+      if (Platform.isAndroid) {
+        Future.delayed(Duration(milliseconds: 100), () {
+          _mapController?.moveCamera(_targetCameraUpdate!).then((_) {
+            _targetCameraUpdate = null;
+          });
+        });
+      }
+      else {
+        _mapController?.moveCamera(_targetCameraUpdate!).then((_) {
+          _targetCameraUpdate = null;
+        });
+      }
     }
   }
 
@@ -1571,6 +1583,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       if (mounted && (exploreTask == _exploreTask)) {
         setState(() {
           _explores = explores;
+          _exploreProgress = false;
           _exploreTask = null;
         });
       }
@@ -1580,43 +1593,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Future<void> _onRefresh() async {
     await _refreshExplores() ;
   }
-
-  /*void _initExplores() {
-    Future<List<Explore>?> exploreTask = _loadExplores();
-    _exploreTask = exploreTask;
-    _exploreProgress = true;
-    _exploreTask?.then((List<Explore>? explores) {
-      if (mounted && (exploreTask == _exploreTask)) {
-        _buildMapContentData(explores, pinnedExplore: null, updateCamera: true).then((_){
-          if (mounted && (exploreTask == _exploreTask)) {
-            setState(() {
-              _explores = explores;
-              _exploreTask = null;
-              _exploreProgress = false;
-              _mapKey = UniqueKey(); // force map rebuild
-            });
-            _selectMapExplore(null);
-            _displayContentPopups();
-          }
-        });
-      }
-    });
-  }*/
-
-  /*Future<void> _onRefresh() async {
-    Future<List<Explore>?> exploreTask = _loadExplores();
-    List<Explore>? explores = await (_exploreTask = exploreTask);
-    if (mounted && (exploreTask == _exploreTask)) {
-      _buildMapContentData(explores, pinnedExplore: _pinnedMapExplore, updateCamera: false).then((_){
-        if (mounted && (exploreTask == _exploreTask)) {
-          setState(() {
-            _explores = explores;
-            _exploreTask = null;
-          });
-        }
-      });
-    }
-  }*/
 
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
