@@ -84,12 +84,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   Future<List<Explore>?>? _exploreTask;
 
   final GlobalKey _mapContainerKey = GlobalKey();
+  final GlobalKey _mapExploreBarKey = GlobalKey();
   final String _mapStylesAssetName = 'assets/map.styles.json';
   final String _mapStylesExplorePoiKey = 'explore-poi';
   final String _mapStylesMtdStopKey = 'mtd-stop';
   final Map<String, BitmapDescriptor> _markerIconCache = <String, BitmapDescriptor>{};
   static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
-  static const double _mapBarHeight = 116;
   static const double _mapPadding = 50;
   static const double _mapGroupMarkerSize = 24;
   static const double _groupMarkersUpdateThresoldDelta = 0.3;
@@ -131,7 +131,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     _initLocationServicesStatus();
     _initExplores();
 
-    _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: -_mapBarHeight, upperBound: 0, vsync: this)
+    _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: 0, upperBound: 1, vsync: this)
       ..addListener(() {
         setStateIfMounted(() {
         });
@@ -338,8 +338,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
 
-    return Positioned(bottom: _mapExploreBarAnimationController?.value, left: 0, right: 0, child:
-      Container(height: _mapBarHeight, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
+    double barHeight = _mapExploreBarSize?.height ?? 0;
+    double wrapHeight = _mapSize?.height ?? 0;
+    double progress = _mapExploreBarAnimationController?.value ?? 0;
+    double top = wrapHeight - (progress * barHeight);
+
+    return Positioned(top: top, left: 0, right: 0, child:
+      Container(key: _mapExploreBarKey, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
         Stack(children: [
           Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -1810,9 +1815,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return 0;
   }
 
-  Size? get _mapSize {
+  Size? get _mapSize => _globalKeySize(_mapContainerKey);
+  Size? get _mapExploreBarSize => _globalKeySize(_mapExploreBarKey);
+
+  static Size? _globalKeySize(GlobalKey key) {
     try {
-      final RenderObject? renderBox = _mapContainerKey.currentContext?.findRenderObject();
+      final RenderObject? renderBox = key.currentContext?.findRenderObject();
       return (renderBox is RenderBox) ? renderBox.size : null;
     }
     on Exception catch (e) {
