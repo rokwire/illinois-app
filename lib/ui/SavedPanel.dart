@@ -20,7 +20,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
@@ -195,13 +195,14 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
         (favoriteCategory != null) ?
-          Html(data: HomeFavoritesWidget.emptyMessageHtml(favoriteCategory) ?? '',
-            onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'SavedPanel($favoriteCategory)'),
-            style: {
-              "body": Style(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: FontSize(18), padding: EdgeInsets.zero, margin: EdgeInsets.zero, textAlign: TextAlign.center),
-              "a": Style(color: HomeFavoritesWidget.linkColor(favoriteCategory)),
-            }) :
-          Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+            HtmlWidget(
+                "<div style=text-align:center> ${HomeFavoritesWidget.emptyMessageHtml(favoriteCategory)} </div>",
+                onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'SavedPanel($favoriteCategory)'); return true;},
+                textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 18),
+                customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(favoriteCategory) ?? Colors.red)} : null,
+                // renderMode: RenderMode.sliverList,
+            )
+            : Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
         Expanded(child: Container(), flex: 3),
     ],),);
   }

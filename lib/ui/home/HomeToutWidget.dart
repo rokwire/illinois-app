@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -242,12 +242,12 @@ class _InfoDialog extends StatelessWidget {
               Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
                 Expanded(child:
                   Padding(padding: EdgeInsets.only(top: 24), child:
-                    Html(data: contentHtml,
-                      onLinkTap: (url, renderContext, attributes, element) => _onTapLink(context, url),
-                      style: {
-                        "body": Style(color: Styles().colors?.white, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                        "a": Style(color: Styles().colors?.white),
-                      },),
+                  HtmlWidget(
+                      contentHtml,
+                      onTapUrl : (url) {_onTapLink(context ,url); return true;},
+                      textStyle:  TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),
+                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.white ?? Colors.white)} : null
+                  )
                     //Text('Illinois app uses your first name from Student Self-Service. You can change your preferred name under Personal Information and Preferred First Name',
                     //  style: TextStyle(color: Styles().colors?.white, fontSize: 16, fontFamily: Styles().fontFamilies!.bold,),
                     //)
