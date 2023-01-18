@@ -26,7 +26,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/RootPanel.dart';
@@ -532,23 +531,21 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     );
   }
 
-  void _onTapMapExploreDirections() {
+  void _onTapMapExploreDirections() async {
     Analytics().logSelect(target: 'Directions');
     if (_userLocationEnabled) {
       dynamic explore = _selectedMapExplore;
       _selectMapExplore(null);
-      if (explore != null) {
-        String? travelMode;
-        if (explore is List) {
-          dynamic exploreEntry = (0 < explore.length) ? explore.first : null;
-          travelMode = ((exploreEntry is MTDStop) || (exploreEntry is ExplorePOI)) ? 'transit' : null;
-        }
-        else {
-          travelMode = ((explore is MTDStop) || (explore is ExplorePOI)) ? 'transit' : null;
-        }
-        NativeCommunicator().launchExploreMapDirections(target: explore, options: (travelMode != null) ? {
-          'travelMode': travelMode
-        } : null);
+      Future<bool>? launchTask;
+      if (explore is Explore) {
+        launchTask = explore.launchDirections();
+      }
+      else if (explore is List<Explore>) {
+        launchTask = GoogleMapUtils.launchDirections(destination: ExploreMap.centerOfList(explore), travelMode: GoogleMapUtils.traveModeWalking);
+      }
+
+      if ((launchTask != null) && !await launchTask) {
+        AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.failed.msg", "Failed to launch navigation directions."));  
       }
     }
     else {

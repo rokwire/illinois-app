@@ -1022,6 +1022,7 @@
     "panel.explore.instructions.mtd.dont_show.msg":"No me muestres esto de nuevo.",
     "panel.explore.missing.mtd_destinations.msg":"Actualmente no tiene destinos guardados. Toque la ubicación en el mapa que será su destino. Puede tocar el mapa para obtener indicaciones o guardar el destino como favorito.",
     "panel.explore.directions.na.msg":"Debe habilitar los servicios de ubicación para obtener indicaciones de navegación.",
+    "panel.explore.directions.failed.msg":"Error al iniciar las indicaciones de navegación.",
     "panel.explore.details.na.msg":"Los detalles no están disponibles para los puntos de interés personalizados.",
 
     "panel.explore_list.header.title":"Explorar",

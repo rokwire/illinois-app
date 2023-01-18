@@ -17,6 +17,7 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -471,6 +472,21 @@ extension ExploreMap on Explore {
       }
     }
     return null;
+  }
+
+  Future<bool> launchDirections() async {
+    if (exploreLocation?.isLocationCoordinateValid ?? false) {
+      return await GoogleMapUtils.launchDirections(
+        destination: LatLng(
+          exploreLocation?.latitude?.toDouble() ?? 0,
+          exploreLocation?.longitude?.toDouble() ?? 0
+        ),
+        travelMode: (this is ExplorePOI) ? GoogleMapUtils.traveModeTransit : GoogleMapUtils.traveModeWalking
+      );
+    }
+    else {
+      return false;
+    }
   }
 }
 

@@ -2,6 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:xml/xml.dart';
 import 'dart:math' as math;
 
@@ -40,6 +41,7 @@ class XmlUtils {
 }
 
 class GoogleMapUtils {
+
   static double latRad(double lat) {
     final double sin = math.sin(lat * math.pi / 180);
     final double radX2 = math.log((1 + sin) / (1 - sin)) / 2;
@@ -68,5 +70,48 @@ class GoogleMapUtils {
                math.cos(lat1 * p) * math.cos(lat2 * p) * 
                (1 - math.cos((lng2 - lng1) * p))/2;
     return 12742 * 1000 * math.asin(math.sqrt(a));
+  }
+
+  static const String traveModeWalking   = 'walking';
+  static const String traveModeBycycling = 'bicycling';
+  static const String traveModeDriving   = 'driving';
+  static const String traveModeTransit   = 'transit';
+
+  static Future<bool> launchDirections({ LatLng? origin, LatLng? destination, String? travelMode }) async {
+    Uri? googleMapsUri = Uri.tryParse(_googleMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
+    if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
+      return true;
+    }
+
+    Uri? wazeMapsUri = Uri.tryParse(_wazeMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
+    if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  static String _googleMapsUrl({ LatLng? origin, LatLng? destination, String? travelMode }) {
+    // https://developers.google.com/maps/documentation/urls/get-started#directions-action
+    String url = "https://www.google.com/maps/dir/?api=1"; //TBD: app config
+    if (origin != null) {
+      url += "&origin=${origin.latitude.toStringAsFixed(6)},${origin.longitude.toStringAsFixed(6)}";
+    }
+    if (destination != null) {
+      url += "&destination=${destination.latitude.toStringAsFixed(6)},${destination.longitude.toStringAsFixed(6)}";
+    }
+    if (travelMode != null) {
+      url += "&travelmode=$travelMode";
+    }
+    return url;
+  }
+
+  static String _wazeMapsUrl({ LatLng? origin, LatLng? destination, String? travelMode }) {
+    // https://developers.google.com/waze/deeplinks
+    String url = "https://waze.com/ul?navigate=yes"; //TBD: app config
+    if (destination != null) {
+      url += "&ll=${destination.latitude.toStringAsFixed(6)},${destination.longitude.toStringAsFixed(6)}";
+    }
+    return url;
   }
 }

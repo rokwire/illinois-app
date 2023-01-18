@@ -1023,6 +1023,7 @@
 	"panel.explore.instructions.mtd.dont_show.msg":"不要再給我看這個了。",
 	"panel.explore.missing.mtd_destinations.msg":"您目前沒有保存的目的地。 請點擊地圖上將成為您目的地的位置。 您可以點擊地圖以獲取路線或將目的地保存為收藏夾。",
 	"panel.explore.directions.na.msg":"您需要啟用定位服務才能獲得導航方向。",
+	"panel.explore.directions.failed.msg":"未能啟動導航方向。",
 	"panel.explore.details.na.msg":"自定義興趣點的詳細信息不可用。",
 
 	"panel.explore_list.header.title":"探索",
