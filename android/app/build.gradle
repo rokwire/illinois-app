@@ -181,6 +181,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation 'com.android.volley:volley:1.2.1'
+    implementation 'com.google.code.gson:gson:2.8.9' // used by maps and origo as well
     //Firebase
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-analytics:21.1.1'
@@ -190,13 +191,12 @@ dependencies {
     //Lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
-    //Security
+    //Security - also required by Origo 1.7.7 and above
     implementation "androidx.security:security-crypto:1.1.0-alpha03"
     //end Common
 
     //Google Maps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
-    implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'com.google.maps.android:android-maps-utils:0.5'
     //end Google Maps Utils
 
@@ -204,6 +204,29 @@ dependencies {
     implementation 'com.google.zxing:core:3.3.0' //Use zxing 3.3.0 because we have minSdk < 24
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+
+    // Origo and mobile keys SDK
+    debugImplementation name: 'origo-sdk-debug', version: '1.7.8', ext: 'aar'
+    releaseImplementation name: 'origo-sdk-release', version: '1.7.8', ext: 'aar'
+    debugImplementation name: 'mobilekeys-android-sdk-debug', version: '8.0.2', ext: 'aar'
+    releaseImplementation name: 'mobilekeys-android-sdk-release', version: '8.0.2', ext: 'aar'
+
+    // Origo transitive dependencies
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.68'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.mixpanel.android:mixpanel-android:5.8.5'
+
+    // Required from Origo-SDK v1.7.7
+    implementation('com.google.crypto.tink:tink-android') {
+        version {
+            strictly '1.4.0'
+        }
+    }
+
+    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    // end Origo
 }
 
 apply plugin: 'com.google.gms.google-services'
