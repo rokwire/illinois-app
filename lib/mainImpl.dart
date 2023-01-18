@@ -159,6 +159,8 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
   
   ServiceError? serviceError = await illinois.Services().init();
 
+  //_testSecretKeys();
+
   // do not show the red error widget when release mode
   if (kReleaseMode) {
     ErrorWidget.builder = (FlutterErrorDetails details) => Container();
@@ -459,3 +461,38 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     }
   }
 }
+
+/*void _testSecretKeys() {
+  String? encryptionKey = Config().encryptionKey;
+  String? encryptionIV = Config().encryptionIV;
+  
+  String? secretKeysDev, secretKeysDevEnc, secretKeysProd, secretKeysProdEnc, secretKeysTest, secretKeysTestEnc;
+  
+  // AESCrypt.decrypt
+
+  secretKeysDevEnc ??= '...';
+  secretKeysDev = AESCrypt.decrypt(secretKeysDevEnc, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysDev", lineLength: 912);
+
+  secretKeysProdEnc ??= '...';
+  secretKeysProd = AESCrypt.decrypt(secretKeysProdEnc, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysProd", lineLength: 912);
+
+  secretKeysTestEnc ??= '...';
+  secretKeysTest = AESCrypt.decrypt(secretKeysTestEnc, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysTest", lineLength: 912);
+  
+  // AESCrypt.encrypt
+  
+  secretKeysDev ??= '{...}';
+  secretKeysDevEnc = AESCrypt.encrypt(secretKeysDev, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysDevEnc", lineLength: 912);
+
+  secretKeysProd ??= '{...}';
+  secretKeysProdEnc = AESCrypt.encrypt(secretKeysProd, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysProdEnc", lineLength: 912);
+
+  secretKeysTest ??= '{...}';
+  secretKeysTestEnc = AESCrypt.encrypt(secretKeysTest, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysTestEnc", lineLength: 912);
+}*/

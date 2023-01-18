@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
+### Changed
+- Access MTD via content service [#2922](https://github.com/rokwire/illinois-app/issues/2922).
+- Removed access to shibboleth section from config secret keys (unused).
 
 ## [4.3.1] - 2022-01-12
 ### Changed
