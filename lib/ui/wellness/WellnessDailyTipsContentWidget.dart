@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -90,13 +90,12 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     Color? textColor = Styles().colors!.white;
     Color? backColor = _tipColor ?? Styles().colors?.accentColor3;
     return Container(color: backColor, padding: EdgeInsets.all(42), child:
-      Html(data: Wellness().dailyTip ?? '',
-        onLinkTap: (url, context, attributes, element) => _launchUrl(url),
-        style: {
-          "body": Style(color: textColor, fontFamily: Styles().fontFamilies?.extraBold, fontSize: FontSize(22), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-          "a": Style(color: textColor),
-        },
-      ),
+      HtmlWidget(
+        StringUtils.ensureNotEmpty(Wellness().dailyTip),
+          onTapUrl : (url) {_launchUrl(url); return true;},
+          textStyle:  TextStyle(color: textColor, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 22),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(textColor ?? Colors.white)} : null
+      )
     );
   }
 

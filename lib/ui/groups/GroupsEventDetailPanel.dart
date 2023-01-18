@@ -1,7 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -475,11 +475,11 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     }
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: Html(
-          data: longDescription,
-          onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-          style: { "body": Style(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-      ));
+        child: HtmlWidget(
+            StringUtils.ensureNotEmpty(longDescription),
+            onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+        ));
   }
 
   Widget _eventUrlButtons(){

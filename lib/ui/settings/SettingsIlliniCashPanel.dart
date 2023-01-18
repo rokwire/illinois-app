@@ -18,7 +18,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -245,12 +245,12 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             _buildSettingsHeader(Localization().getStringEx("panel.settings.illini_cash.label.buy_illini_cash", "Buy Illini Cash"), 'cost'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Html(data: contentHtml,
-                      onLinkTap: (url, renderContext, attributes, element) => _onTapLink(context, url),
-                      style: {
-                        "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(14), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                        "a": Style(color: Styles().colors?.fillColorSecondaryVariant),
-                      })
+              child: HtmlWidget(
+                  StringUtils.ensureNotEmpty(contentHtml),
+                  onTapUrl : (url) {_onTapLink(context, url); return true;},
+                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14),
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
+              )
             ),
             Row(
               children: <Widget>[

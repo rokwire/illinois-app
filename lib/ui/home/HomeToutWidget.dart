@@ -243,7 +243,7 @@ class _InfoDialog extends StatelessWidget {
                 Expanded(child:
                   Padding(padding: EdgeInsets.only(top: 24), child:
                   HtmlWidget(
-                      contentHtml,
+                      StringUtils.ensureNotEmpty(contentHtml),
                       onTapUrl : (url) {_onTapLink(context ,url); return true;},
                       textStyle:  TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),
                       customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.white ?? Colors.white)} : null

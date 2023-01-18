@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
@@ -520,15 +520,14 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         '<b>${Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep')}: </b> $instructions';
     return Padding(
         padding: EdgeInsets.only(top: 10),
-        child: Html(data: instructionsHtml, onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url), style: {
-          "body": Style(
-              color: Styles().colors!.textSurface,
-              fontFamily: Styles().fontFamilies!.medium,
-              fontSize: FontSize(16),
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero),
-          "a": Style(color: Styles().colors?.textSurface)
-        }));
+        child:
+        HtmlWidget(
+            StringUtils.ensureNotEmpty(instructionsHtml),
+            onTapUrl : (url) {_launchUrl(url); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
+        )
+    );
   }
 
   Widget _buildCancelDescription() {
@@ -544,15 +543,13 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     descriptionHtml = descriptionHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: Html(data: descriptionHtml, onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url), style: {
-          "body": Style(
-              color: Styles().colors!.textSurface,
-              fontFamily: Styles().fontFamilies!.medium,
-              fontSize: FontSize(16),
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero),
-          "a": Style(color: Styles().colors?.textSurface)
-        }));
+        child: HtmlWidget(
+            StringUtils.ensureNotEmpty(descriptionHtml),
+            onTapUrl : (url) {_launchUrl(url); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
+        )
+    );
   }
 
   void _onLocationDetailTapped() {
