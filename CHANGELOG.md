@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
+### Changed
+- Access MTD via content service [#2922](https://github.com/rokwire/illinois-app/issues/2922).
 
 ## [4.3.1] - 2022-01-12
 ### Changed
