@@ -42,7 +42,6 @@ class Config extends rokwire.Config {
 
   Map<String, dynamic> get thirdPartyServices  => JsonUtils.mapValue(content['thirdPartyServices']) ?? {};
 
-  Map<String, dynamic> get secretShibboleth => JsonUtils.mapValue(secretKeys['shibboleth']) ?? {};
   Map<String, dynamic> get secretIlliniCash => JsonUtils.mapValue(secretKeys['illini_cash']) ?? {};
   Map<String, dynamic> get secretParkhub => JsonUtils.mapValue(secretKeys['parkhub']) ?? {};
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
@@ -62,9 +61,6 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
   // Getters: Secret Keys
-
-  String? get shibbolethClientId     => JsonUtils.stringValue(secretShibboleth['client_id']);
-  String? get shibbolethClientSecret => JsonUtils.stringValue(secretShibboleth['client_secret']);
 
   String? get illiniCashAppKey       => JsonUtils.stringValue(secretIlliniCash['app_key']);
   String? get illiniCashHmacKey      => JsonUtils.stringValue(secretIlliniCash['hmac_key']);
