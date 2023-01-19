@@ -80,7 +80,7 @@ class GeoMapUtils {
   static Future<bool> launchDirections({ LatLng? origin, LatLng? destination, String? travelMode }) async {
     Uri? googleMapsUri = Uri.tryParse(_googleMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
     if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
-      debugPrint("Map directions:\n$googleMapsUri");
+      debugPrint("Map directions: $googleMapsUri");
       return true;
     }
 
