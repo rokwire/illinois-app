@@ -215,6 +215,16 @@ class NativeCommunicator with Service {
     return result;
   }
 
+  Future<String?> getMobileAccessId() async {
+    String? mobileAccessId;
+    try {
+      mobileAccessId = await _platformChannel.invokeMethod('mobileAccessId');
+    } catch (e) {
+      print(e.toString());
+    }
+    return mobileAccessId;
+  }
+
   Future<String?> getDeepLinkScheme() async {
     String? result;
     try {

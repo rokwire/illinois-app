@@ -405,6 +405,7 @@
     "panel.browse.entry.wallet.bus_pass_card.title": "Pase de autobus",
     "panel.browse.entry.wallet.illini_id_card.title": "Identificación Illini",
     "panel.browse.entry.wallet.library_card.title": "Tarjeta de biblioteca",
+    "panel.browse.entry.wallet.mobile_access.title": "Acceso móvil",
 
     "panel.browse.entry.wellness.wellness_rings.title": "Anillos",
     "panel.browse.entry.wellness.wellness_todo.title": "Lista de quehaceres",
@@ -2779,6 +2780,10 @@
     "widget.home.wallet.illini_id.title": "Identificación Illini",
 
     "widget.home.wallet.library_card.title": "Tarjeta de biblioteca",
+
+    "widget.home.wallet.mobile_access.title": "Mobile Access",
+    "widget.home.wallet.mobile_access.label.logged_out.mobile_access.short": "You need to be logged in with your NetID to view Mobile Access.",
+    "widget.home.wallet.mobile_access.label.mobile_access.no_mobile_id": "You have no mobile id.",
 
     "widget.home.radio.title": "WPGU 107.1 FM",
     "widget.home.radio.disabled.message": "WPGU 107.1 FM no está habilitada.",

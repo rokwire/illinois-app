@@ -405,6 +405,7 @@
 	"panel.browse.entry.wallet.bus_pass_card.title": "巴士通票",
 	"panel.browse.entry.wallet.illini_id_card.title": "伊利尼身份證",
 	"panel.browse.entry.wallet.library_card.title": "借書卡",
+    "panel.browse.entry.wallet.mobile_access.title": "移動訪問",
 
 	"panel.browse.entry.wellness.wellness_rings.title": "戒指",
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
@@ -2778,6 +2779,10 @@
 	"widget.home.wallet.illini_id.title": "伊利尼身份證",
 
 	"widget.home.wallet.library_card.title": "借書卡",
+
+	"widget.home.wallet.mobile_access.title": "Mobile Access",
+    "widget.home.wallet.mobile_access.label.logged_out.mobile_access.short": "You need to be logged in with your NetID to view Mobile Access.",
+    "widget.home.wallet.mobile_access.label.mobile_access.no_mobile_id": "You have no mobile id.",
 
 	"widget.home.radio.title": "WPGU 107.1 調頻",
 	"widget.home.radio.disabled.message": "WPGU 107.1 FM 未啟用。",

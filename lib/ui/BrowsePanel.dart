@@ -604,6 +604,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wallet.bus_pass_card":           _onTapBusPass(context); break;
       case "wallet.illini_id_card":          _onTapIlliniId(context); break;
       case "wallet.library_card":            _onTapLibraryCard(context); break;
+      case "wallet.mobile_access":           _onTapMobileAccess(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
       case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
@@ -1081,6 +1082,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapLibraryCard(BuildContext context) {
     Analytics().logSelect(target: "Library Card");
     _notImplemented(context);
+  }
+
+  void _onTapMobileAccess(BuildContext context) {
+    Analytics().logSelect(target: "Mobile Access");
+    //TBD: implement
   }
 
   void _onTapWellnessRings(BuildContext context) {
