@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
@@ -59,6 +61,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
   List<String>? _groupCategories;
   ContentFilterSet? _contentFilters;
+  Map<String, LinkedHashSet<String>> _contentFiltersSelection = <String, LinkedHashSet<String>>{};
 
   bool _groupCategoeriesLoading = false;
   bool _contentFiltersLoading = false;
@@ -99,6 +102,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
 
+    _contentFiltersSelection = _contentFilters?.selectionFromLabelSelection(_group?.filters) ?? <String, LinkedHashSet<String>>{};
 
     // #2550: we need consent checkbox selected by default
     // #2626: Hide consent checkbox and edit control. Default it to false...
@@ -113,7 +117,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _initCategories(){
-    setStateIfMounted(() {
+    setState(() {
       _groupCategoeriesLoading = true;
     });
     Groups().loadCategories().then((categories){
@@ -128,15 +132,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _initContentFilters(){
-    setStateIfMounted(() {
+    setState(() {
       _contentFiltersLoading = true;
     });
     ContentFilters().loadFilterSet('groups').then((ContentFilterSet? contentFilters){
       setStateIfMounted(() {
         _contentFilters = contentFilters;
-      });
-    }).whenComplete((){
-      setStateIfMounted(() {
         _contentFiltersLoading = false;
       });
     });
@@ -197,6 +198,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   ),
                   _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "search"),
                   _buildCategoryDropDown(),
+                  _buildFiltersDropDown(),
                   _buildTagsLayout(),
                 ]),
               ),
@@ -261,16 +263,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   Widget _buildLoading() {
-    return Expanded(child:
-      Center(child:
-        Container( child:
-          Align(alignment: Alignment.center, child:
-            SizedBox(height: 24, width: 24, child:
-              Semantics(label: "Loading." ,container: true, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ))
-            ),
+    return Center(child:
+      Container( child:
+        Align(alignment: Alignment.center, child:
+          SizedBox(height: 24, width: 24, child:
+            Semantics(label: "Loading." ,container: true, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ))
           ),
         ),
-      )
+      ),
     );
   }
 
@@ -474,29 +474,74 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Category
   Widget _buildCategoryDropDown() {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildSectionTitle(
-              (_group?.researchProject == true) ? "PROJECT CATEGORY" : Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
-              (_group?.researchProject == true) ? "Choose the category your project can be filtered by." : Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."), true),
-            GroupDropDownButton(
-              emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
-              buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
-              items: _groupCategories,
-              initialSelectedValue: _group?.category,
-              constructTitle: (dynamic item) => item,
-              onValueChanged: (value) {
-                setState(() {
-                  _group!.category = value;
-                  Log.d("Selected Category: $value");
-                });
-              }
-            )
-          ],
-        ));
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        _buildSectionTitle(
+          (_group?.researchProject == true) ? "PROJECT CATEGORY" : Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
+          (_group?.researchProject == true) ? "Choose the category your project can be filtered by." : Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."), true),
+        GroupDropDownButton(
+          emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
+          buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
+          items: _groupCategories,
+          initialSelectedValue: _group?.category,
+          constructTitle: (dynamic item) => item,
+          onValueChanged: (value) {
+            setState(() {
+              _group!.category = value;
+              Log.d("Selected Category: $value");
+            });
+          }
+        )
+      ],),
+    );
+  }
+
+  //
+  //Filters
+  Widget _buildFiltersDropDown() {
+    List<ContentFilter>? filters = _contentFilters?.filters;
+    if ((filters != null) && filters.isNotEmpty) {
+      List<Widget> filterWidgets = <Widget>[];
+      for (ContentFilter filter in filters) {
+        LinkedHashSet<String>? selectedIds = _contentFiltersSelection[filter.id];
+        ContentFilterEntry? selectedEntry = ((selectedIds != null) && selectedIds.isNotEmpty) ? filter.findEntry(id: selectedIds.first) : null; // TBD: multiple selection
+        filterWidgets.addAll(<Widget>[
+          _buildSectionTitle(
+            _contentFilters?.stringValue(filter.title)?.toUpperCase(),
+            _contentFilters?.stringValue(filter.description),
+          ),
+          GroupDropDownButton<ContentFilterEntry>(
+            emptySelectionText: _contentFilters?.stringValue(filter.emptyLabel),
+            buttonHint: _contentFilters?.stringValue(filter.hint),
+            items: filter.entries,
+            initialSelectedValue: selectedEntry,
+            constructTitle: (ContentFilterEntry entry) => _contentFilters?.stringValue(entry.label),
+            onValueChanged: (ContentFilterEntry value) => _onContentFilterEntry(filter, value),
+          )
+        ]);
+      }
+
+      return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: filterWidgets,),
+      );
+    }
+    else {
+      return Container();
+    }
+  }
+
+  void _onContentFilterEntry(ContentFilter filter, ContentFilterEntry value) {
+    LinkedHashSet<String> selectedIds = _contentFiltersSelection[filter.id] ?? LinkedHashSet<String>();
+    if (value.id != null) {
+      setStateIfMounted(() {
+        if (selectedIds.contains(value.id)) {
+          selectedIds.remove(value.id);
+        }
+        else {
+          selectedIds.add(value.id!);
+        }
+      });
+    }
   }
 
   //Tags

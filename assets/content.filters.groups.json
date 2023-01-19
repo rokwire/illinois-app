@@ -1,7 +1,10 @@
 {
   "content": [{
 		"id": "college",
-		"label": "College",
+		"title": "College",
+		"description": "Choose the college your group can be filtered by.",
+		"empty-label": "Select a group...",
+		"hint": "Double tap to show college options.",
 		"min-select-count": null,
 		"max-select-count": 1,
 		"values": [
@@ -10,7 +13,10 @@
 		]
 	},{
 		"id": "college.department",
-		"label": "Department",
+		"title": "Department",
+		"description": "Choose the department your group can be filtered by.",
+		"empty-label": "Select a department...",
+		"hint": "Double tap to show department options.",
 		"min-select-count": null,
 		"max-select-count": 1,
 		"values": [
@@ -22,7 +28,10 @@
 		]
 	},{
 		"id":"college.department.major",
-		"label":"Major",
+		"title":"Major",
+		"description": "Choose the major your group can be filtered by.",
+		"empty-label": "Select a major...",
+		"hint": "Double tap to show major options.",
 		"min-select-count": null,
 		"max-select-count": 1,
 		"values":[
@@ -39,7 +48,10 @@
 		]
 	},{
 		"id":"class",
-		"label":"class",
+		"title":"Class",
+		"description": "Choose the class your group can be filtered by.",
+		"empty-label": "Select a class...",
+		"hint": "Double tap to show class options.",
 		"min-select-count": null,
 		"max-select-count": null,
 		"values":[

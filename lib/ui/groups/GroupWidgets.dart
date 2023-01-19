@@ -87,7 +87,7 @@ class GroupDropDownButton<T> extends StatefulWidget{
   }
 }
 
-class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
+class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
 
   @override
   Widget build(BuildContext context) {
@@ -196,8 +196,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
 
   String? _getButtonDescriptionText(){
     if (widget.initialSelectedValue != null) {
-      GroupDropDownDescriptionDataBuilder<T?>? constructDescriptionFn = widget.constructDropdownDescription ?? widget.constructDescription;
-      return constructDescriptionFn!=null? constructDescriptionFn(widget.initialSelectedValue) : null;
+      GroupDropDownDescriptionDataBuilder<T>? constructDescriptionFn = widget.constructDropdownDescription ?? widget.constructDescription;
+      return (constructDescriptionFn != null) ? constructDescriptionFn(widget.initialSelectedValue!) : null;
     } else {
       //empty null for now
       return null;
@@ -206,24 +206,24 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
 
   String? _getButtonTitleText(){
     if (widget.initialSelectedValue != null) {
-      return widget.constructTitle != null ? widget.constructTitle!(widget.initialSelectedValue) : widget.initialSelectedValue?.toString();
+      return widget.constructTitle != null ? widget.constructTitle!(widget.initialSelectedValue!) : widget.initialSelectedValue?.toString();
     } else {
       return widget.emptySelectionText;
     }
   }
 
-  List<DropdownMenuItem<dynamic>>? _constructItems(){
+  List<DropdownMenuItem<T>>? _constructItems(){
     int optionsCount = widget.items?.length ?? 0;
     if (optionsCount == 0) {
       return null;
     }
 
-    return widget.items!.map((Object? item) {
+    return widget.items!.map((T item) {
       String? name = widget.constructTitle!=null? widget.constructTitle!(item) : item?.toString();
-      GroupDropDownDescriptionDataBuilder<T?>? constructDescriptionFn = widget.constructListItemDescription ?? widget.constructDescription;
-      String? description = constructDescriptionFn!=null? constructDescriptionFn(item as T?) : null;
+      GroupDropDownDescriptionDataBuilder<T>? constructDescriptionFn = widget.constructListItemDescription ?? widget.constructDescription;
+      String? description = (constructDescriptionFn != null) ? constructDescriptionFn(item) : null;
       bool isSelected = (widget.initialSelectedValue != null) && (widget.initialSelectedValue == item);
-      return DropdownMenuItem<dynamic>(
+      return DropdownMenuItem<T>(
         value: item,
         child: item!=null? _buildDropDownItem(name!,description,isSelected): Container(),
       );
