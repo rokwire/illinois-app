@@ -80,11 +80,13 @@ class GeoMapUtils {
   static Future<bool> launchDirections({ LatLng? origin, LatLng? destination, String? travelMode }) async {
     Uri? googleMapsUri = Uri.tryParse(_googleMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
     if ((googleMapsUri != null) && await canLaunchUrl(googleMapsUri) && await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication)) {
+      debugPrint("Map directions:\n$googleMapsUri");
       return true;
     }
 
     Uri? wazeMapsUri = Uri.tryParse(_wazeMapsUrl(origin: origin, destination: destination, travelMode: travelMode));
     if ((wazeMapsUri != null) && await canLaunchUrl(wazeMapsUri) && await launchUrl(wazeMapsUri, mode: LaunchMode.externalApplication)) {
+      debugPrint("Map directions: $wazeMapsUri");
       return true;
     }
 

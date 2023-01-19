@@ -394,6 +394,24 @@ extension ExploreMap on Explore {
     }
   }
 
+  Future<bool> launchDirections() async {
+    if (exploreLocation?.isLocationCoordinateValid ?? false) {
+      return await GeoMapUtils.launchDirections(
+        destination: LatLng(
+          exploreLocation?.latitude?.toDouble() ?? 0,
+          exploreLocation?.longitude?.toDouble() ?? 0
+        ),
+        travelMode: _defaultTravelMode
+      );
+    }
+    else {
+      return false;
+    }
+  }
+
+  String get _defaultTravelMode => ((this is MTDStop) || (this is ExplorePOI)) ?
+    GeoMapUtils.traveModeTransit : GeoMapUtils.traveModeWalking;
+
   static Explore? mapGroupSameExploreForList(List<Explore>? explores) {
     Explore? sameExplore;
     if (explores != null) {
@@ -472,21 +490,6 @@ extension ExploreMap on Explore {
       }
     }
     return null;
-  }
-
-  Future<bool> launchDirections() async {
-    if (exploreLocation?.isLocationCoordinateValid ?? false) {
-      return await GeoMapUtils.launchDirections(
-        destination: LatLng(
-          exploreLocation?.latitude?.toDouble() ?? 0,
-          exploreLocation?.longitude?.toDouble() ?? 0
-        ),
-        travelMode: (this is ExplorePOI) ? GeoMapUtils.traveModeTransit : GeoMapUtils.traveModeWalking
-      );
-    }
-    else {
-      return false;
-    }
   }
 }
 
