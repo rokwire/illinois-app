@@ -40,7 +40,7 @@ class XmlUtils {
   }
 }
 
-class GoogleMapUtils {
+class GeoMapUtils {
 
   static double latRad(double lat) {
     final double sin = math.sin(lat * math.pi / 180);

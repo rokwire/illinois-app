@@ -541,7 +541,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         launchTask = explore.launchDirections();
       }
       else if (explore is List<Explore>) {
-        launchTask = GoogleMapUtils.launchDirections(destination: ExploreMap.centerOfList(explore), travelMode: GoogleMapUtils.traveModeWalking);
+        launchTask = GeoMapUtils.launchDirections(destination: ExploreMap.centerOfList(explore), travelMode: GeoMapUtils.traveModeWalking);
       }
 
       if ((launchTask != null) && !await launchTask) {
@@ -1824,7 +1824,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           thresoldDistance = debugThresoldDistance;
         }
         else {
-          zoom ??= GoogleMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
+          zoom ??= GeoMapUtils.getMapBoundZoom(exploresBounds, math.max(mapSize.width - 2 * _mapPadding, 0), math.max(mapSize.height - 2 * _mapPadding, 0));
           thresoldDistance = _thresoldDistanceForZoom(zoom);
         }
         exploreMarkerGroups = _buildMarkerGroups(explores, thresoldDistance: thresoldDistance);
@@ -2030,7 +2030,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   static List<Explore>? _lookupExploreGroup(List<List<Explore>> exploreGroups, ExploreLocation exploreLocation, { double thresoldDistance = 0 }) {
     for (List<Explore> groupExploreList in exploreGroups) {
       for (Explore groupExplore in groupExploreList) {
-        double distance = GoogleMapUtils.getDistance(
+        double distance = GeoMapUtils.getDistance(
           exploreLocation.latitude?.toDouble() ?? 0,
           exploreLocation.longitude?.toDouble() ?? 0,
           groupExplore.exploreLocation?.latitude?.toDouble() ?? 0,

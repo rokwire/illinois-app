@@ -476,12 +476,12 @@ extension ExploreMap on Explore {
 
   Future<bool> launchDirections() async {
     if (exploreLocation?.isLocationCoordinateValid ?? false) {
-      return await GoogleMapUtils.launchDirections(
+      return await GeoMapUtils.launchDirections(
         destination: LatLng(
           exploreLocation?.latitude?.toDouble() ?? 0,
           exploreLocation?.longitude?.toDouble() ?? 0
         ),
-        travelMode: (this is ExplorePOI) ? GoogleMapUtils.traveModeTransit : GoogleMapUtils.traveModeWalking
+        travelMode: (this is ExplorePOI) ? GeoMapUtils.traveModeTransit : GeoMapUtils.traveModeWalking
       );
     }
     else {
