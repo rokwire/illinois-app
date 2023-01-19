@@ -19,7 +19,7 @@ import 'dart:typed_data';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
@@ -1185,16 +1185,23 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           flex: 2,
                           child: Container(
                             padding: EdgeInsets.only(top: 10, bottom: 10),
-                            child: Html(data: htmlBody, style: {
-                              "body": Style(
-                                  color: Styles().colors!.fillColorPrimary,
-                                  fontFamily: Styles().fontFamilies!.regular,
-                                  fontSize: FontSize(16),
-                                  maxLines: 3,
-                                  textOverflow: TextOverflow.ellipsis,
-                                  margin: EdgeInsets.zero,
-                              ),
-                            }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
+                            child:
+                            HtmlWidget(
+                                "<div style= text-overflow:ellipsis;max-lines:3> ${StringUtils.ensureNotEmpty(htmlBody)}</div>",
+                                onTapUrl : (url) {_onLinkTap(url); return true;},
+                                textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                            )
+                            // Html(data: htmlBody, style: {
+                            //   "body": Style(
+                            //       color: Styles().colors!.fillColorPrimary,
+                            //       fontFamily: Styles().fontFamilies!.regular,
+                            //       fontSize: FontSize(16),
+                            //       maxLines: 3,
+                            //       textOverflow: TextOverflow.ellipsis,
+                            //       margin: EdgeInsets.zero,
+                            //   ),
+                            // }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
+                          )),
                         StringUtils.isEmpty(imageUrl)? Container() :
                         Expanded(
                           flex: 1,
@@ -1310,6 +1317,11 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     if (widget.reply?.isUpdated ?? false) {
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
+      // bodyText += ' <span style=color:${ColorUtils.toHex(Styles().colors!.disabledTextColor  ?? Colors.blue)}>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
+      // bodyText += ' <a>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</a>';
+
+      // ' <span style=color:${ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)}} >(${"VERY VERY VERY VERY VERY VERY VEry  long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
+          // ' <span>(${"VERY VERY VERY VERY VERY VEry long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
     }
     return Semantics(container: true, button: true,
       child:GestureDetector(
@@ -1358,25 +1370,35 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           child: Semantics( child:
                           Padding(
                               padding: EdgeInsets.only(top: 10),
-                              child: Html(
-                                data: bodyText,
-                                style: {
-                                "body": Style(
-                                    color: Styles().colors!.fillColorPrimary,
-                                    fontFamily: Styles().fontFamilies!.regular,
-                                    fontSize: FontSize(16),
-                                    maxLines: 3000,
-                                    textOverflow: TextOverflow.ellipsis,
-                                    margin: EdgeInsets.zero
-                                ),
-                                "span": Style(
-                                    color: Styles().colors!.blackTransparent018,
-                                    fontFamily: Styles().fontFamilies!.regular,
-                                    fontSize: FontSize(16),
-                                    maxLines: 1,
-                                    textOverflow: TextOverflow.ellipsis)
-                                },
-                                onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))))),
+                              child:
+                              HtmlWidget(
+                                  StringUtils.ensureNotEmpty(bodyText),
+                                  onTapUrl : (url) {_onLinkTap(url); return true;},
+                                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors!.disabledTextColor ?? Colors.blue)}: null //Not able to use Transparent colour, it's not parsed correctly
+                                  // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.blackTransparent018 ?? Colors.blue)} : null
+                              )
+                              // Html(
+                              //   data: bodyText,
+                              //   style: {
+                              //   "body": Style(
+                              //       color: Styles().colors!.fillColorPrimary,
+                              //       fontFamily: Styles().fontFamilies!.regular,
+                              //       fontSize: FontSize(16),
+                              //       maxLines: 3000,
+                              //       textOverflow: TextOverflow.ellipsis,
+                              //       margin: EdgeInsets.zero
+                              //   ),
+                              //   "span": Style(
+                              //       color: Styles().colors!.blackTransparent018,
+                              //       fontFamily: Styles().fontFamilies!.regular,
+                              //       fontSize: FontSize(16),
+                              //       maxLines: 1,
+                              //       textOverflow: TextOverflow.ellipsis)
+                              //   },
+                              //   onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
+
+                          )))),
                   StringUtils.isEmpty(widget.reply?.imageUrl)? Container() :
                   Expanded(
                       flex: 1,
