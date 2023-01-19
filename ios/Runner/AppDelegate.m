@@ -248,6 +248,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"deepLinkScheme"]) {
 		[self handleDeepLinkSchemeWithParameters:parameters result:result];
 	}
+    else if ([call.method isEqualToString:@"mobileAccessKeys"]) {
+        [self handleMobileAccessKeysWithParameters:parameters result:result];
+    }
 	else if ([call.method isEqualToString:@"test"]) {
 		[self handleTestWithParameters:parameters result:result];
 	}
@@ -445,6 +448,13 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		}
 	}
 	result(deepLinkScheme);
+}
+
+#pragma mark Mobile Access Id
+
+- (void)handleMobileAccessKeysWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+    //TBD: implement mobile access keys
+    result(nil);
 }
 
 #pragma mark Orientations

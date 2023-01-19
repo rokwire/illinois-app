@@ -2782,7 +2782,7 @@
 
 	"widget.home.wallet.mobile_access.title": "Mobile Access",
     "widget.home.wallet.mobile_access.label.logged_out.mobile_access.short": "You need to be logged in with your NetID to view Mobile Access.",
-    "widget.home.wallet.mobile_access.label.mobile_access.no_mobile_id": "You have no mobile id.",
+    "widget.home.wallet.mobile_access.label.mobile_access.no_mobile_id": "No Mobile ID issued.",
 
 	"widget.home.radio.title": "WPGU 107.1 調頻",
 	"widget.home.radio.disabled.message": "WPGU 107.1 FM 未啟用。",

@@ -34,6 +34,13 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.hid.origo.OrigoKeysApiFacade;
+import com.hid.origo.OrigoKeysApiFactory;
+import com.hid.origo.api.OrigoMobileKey;
+import com.hid.origo.api.OrigoMobileKeys;
+import com.hid.origo.api.OrigoMobileKeysException;
+import com.hid.origo.api.OrigoReaderConnectionController;
+import com.hid.origo.api.ble.OrigoScanConfiguration;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -52,7 +59,7 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler {
+public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler, OrigoKeysApiFacade {
 
     private static final String TAG = "MainActivity";
 
@@ -70,12 +77,16 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private Toast statusToast;
 
+    private OrigoMobileKeys mobileKeys;
+    private OrigoKeysApiFactory mobileKeysApiFactory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         instance = this;
         initScreenOrientation();
+        initializeOrigo();
     }
 
     @Override
@@ -295,6 +306,34 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return getString(R.string.app_scheme);
     }
 
+    private List<HashMap<String, Object>> handleMobileAccessKeys(Object params) {
+        if (!isEndpointSetUpComplete()) {
+            Log.d(TAG, "handleMobileAccessId: Origo endpoint is not set up.");
+            return null;
+        }
+        if (getMobileKeys() != null) {
+            try {
+                List<OrigoMobileKey> origoMobileKeys = getMobileKeys().listMobileKeys();
+                if ((origoMobileKeys != null) && !origoMobileKeys.isEmpty()) {
+                    List<HashMap<String, Object>> keysJson = new ArrayList<>();
+                    for (OrigoMobileKey key : origoMobileKeys) {
+                        HashMap<String, Object> keyJson = new HashMap<>();
+                        keyJson.put("label", key.getLabel());
+                        keyJson.put("card_number", key.getCardNumber());
+                        keyJson.put("issuer", key.getIssuer());
+                        keyJson.put("type", key.getType());
+                        keysJson.add(keyJson);
+                    }
+                    return keysJson;
+                }
+            } catch (OrigoMobileKeysException e) {
+                Log.e(TAG, String.format("Origo failed to list mobile keys. Cause message: %s \nError code: %s", e.getCauseMessage(), e.getErrorCode()));
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     private String handleBarcode(Object params) {
         String barcodeImageData = null;
         String content = Utils.Map.getValueFromPath(params, "content", null);
@@ -473,13 +512,17 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
                     break;
+                case Constants.BARCODE_KEY:
+                    String barcodeImageData = handleBarcode(methodCall.arguments);
+                    result.success(barcodeImageData);
+                    break;
                 case Constants.DEEPLINK_SCHEME_KEY:
                     String deepLinkScheme = handleDeepLinkScheme(methodCall.arguments);
                     result.success(deepLinkScheme);
                     break;
-                case Constants.BARCODE_KEY:
-                    String barcodeImageData = handleBarcode(methodCall.arguments);
-                    result.success(barcodeImageData);
+                case Constants.MOBILE_ACCESS_KEYS_KEY:
+                    List<HashMap<String, Object>> keys = handleMobileAccessKeys(methodCall.arguments);
+                    result.success(keys);
                     break;
                 case Constants.TEST_KEY:
                     result.success(false);
@@ -495,4 +538,57 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             exception.printStackTrace();
         }
     }
+
+    //region Origo
+
+    private void initializeOrigo() {
+        mobileKeysApiFactory = (OrigoKeysApiFactory) getApplication();
+        mobileKeys = mobileKeysApiFactory.getMobileKeys();
+    }
+
+    //OrigoKeysApiFacade implementation
+
+    @Override
+    public void onStartUpComplete() {
+        Log.d(TAG, "Origo: onStartUpComplete");
+    }
+
+    @Override
+    public void onEndpointSetUpComplete() {
+        Log.d(TAG, "Origo: onEndpointSetUpComplete");
+    }
+
+    @Override
+    public void endpointNotPersonalized() {
+        Log.d(TAG, "Origo: endpointNotPersonalized");
+    }
+
+    @Override
+    public boolean isEndpointSetUpComplete() {
+        boolean isEndpointSetup = false;
+        try {
+            isEndpointSetup = mobileKeys.isEndpointSetupComplete();
+        } catch (OrigoMobileKeysException e) {
+            Log.d(TAG, "Origo: isEndpointSetUpComplete: exception: " + e.getCauseMessage() + "\n\n" + e.getMessage());
+            e.printStackTrace();
+        }
+        return isEndpointSetup;
+    }
+
+    @Override
+    public OrigoMobileKeys getMobileKeys() {
+        return mobileKeysApiFactory.getMobileKeys();
+    }
+
+    @Override
+    public OrigoReaderConnectionController getReaderConnectionController() {
+        return mobileKeysApiFactory.getReaderConnectionController();
+    }
+
+    @Override
+    public OrigoScanConfiguration getOrigoScanConfiguration() {
+        return mobileKeysApiFactory.getOrigoScanConfiguration();
+    }
+
+    //endregion
 }

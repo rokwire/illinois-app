@@ -696,7 +696,7 @@ class HomeMobileAccessWalletWidget extends StatefulWidget {
 }
 
 class _HomeMobileAccessWalletWidgetState extends State<HomeMobileAccessWalletWidget> implements NotificationsListener {
-  String? _mobileAccessId;
+  List<dynamic>? _mobileAccessKeys;
 
   @override
   void initState() {
@@ -707,12 +707,12 @@ class _HomeMobileAccessWalletWidgetState extends State<HomeMobileAccessWalletWid
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _loadMobileId();
+          _loadMobileAccessKeys();
         }
       });
     }
 
-    _loadMobileId();
+    _loadMobileAccessKeys();
     super.initState();
   }
 
@@ -726,7 +726,7 @@ class _HomeMobileAccessWalletWidgetState extends State<HomeMobileAccessWalletWid
 
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
-      _loadMobileId();
+      _loadMobileAccessKeys();
     }
   }
 
@@ -736,8 +736,8 @@ class _HomeMobileAccessWalletWidgetState extends State<HomeMobileAccessWalletWid
     if (!Auth2().isOidcLoggedIn) {
       message = Localization().getStringEx('widget.home.wallet.mobile_access.label.logged_out.mobile_access.short', 'You need to be logged in with your NetID to view Mobile Access.');
     }
-    else if (StringUtils.isEmpty(_mobileAccessId)) {
-      message = Localization().getStringEx('widget.home.wallet.mobile_access.label.mobile_access.no_mobile_id', 'You have no mobile id.');
+    else if (CollectionUtils.isEmpty(_mobileAccessKeys)) {
+      message = Localization().getStringEx('widget.home.wallet.mobile_access.label.mobile_access.no_mobile_id', 'No Mobile ID issued.');
     }
 
     return GestureDetector(onTap: _onTap, child:
@@ -770,7 +770,7 @@ class _HomeMobileAccessWalletWidgetState extends State<HomeMobileAccessWalletWid
                           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
                             Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors?.fillColorSecondary ?? Colors.transparent, width: 3))), child:
                               Padding(padding: EdgeInsets.only(left: 10), child:
-                                Text(StringUtils.ensureNotEmpty(_mobileAccessId), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary)),
+                                Text(StringUtils.ensureNotEmpty(_mobileAccessKeysLabel), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary)),
                               ),
                             ),
                           ),
@@ -786,20 +786,37 @@ class _HomeMobileAccessWalletWidgetState extends State<HomeMobileAccessWalletWid
     );
   }
 
+  String? get _mobileAccessKeysLabel {
+    if (CollectionUtils.isEmpty(_mobileAccessKeys)) {
+      return null;
+    }
+    String result = '';
+    for (Map<String, dynamic> key in _mobileAccessKeys!) {
+      String? keyLabel = JsonUtils.stringValue(key['label']);
+      if (keyLabel != null) {
+        if (StringUtils.isNotEmpty(result)) {
+          result += ', ';
+        }
+        result += keyLabel;
+      }
+    }
+    return result;
+  }
+
   void _onTap() {
     Analytics().logSelect(target: 'Mobile Access', source: widget.runtimeType.toString());
     //TBD: mobile access implement
   }
 
-  void _loadMobileId() {
+  void _loadMobileAccessKeys() {
     if (Auth2().isLoggedIn) {
-      NativeCommunicator().getMobileAccessId().then((String? mobileId) {
+      NativeCommunicator().getMobileAccessKeys().then((List<dynamic>? mobileAccessKeys) {
         setStateIfMounted(() {
-          _mobileAccessId = mobileId;
+          _mobileAccessKeys = mobileAccessKeys;
         });
       });
     } else {
-      _mobileAccessId = null;
+      _mobileAccessKeys = null;
     }
   }
 }
