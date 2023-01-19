@@ -364,7 +364,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       onCameraIdle: _onMapCameraIdle,
       onCameraMove: _onMapCameraMove,
       onTap: _onMapTap,
-      compassEnabled: _userLocationEnabled,
+      myLocationEnabled: _userLocationEnabled,
+      myLocationButtonEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
       markers: _targetMarkers ?? const <Marker>{},
     );
