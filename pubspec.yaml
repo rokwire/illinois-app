@@ -40,7 +40,6 @@ dependencies:
   roundcheckbox: ^2.0.4+1
   path_provider: ^2.0.4
   share: ^2.0.4
-  flutter_html: ^2.2.0
   qr_flutter: ^4.0.0
   webview_flutter: ^2.0.13
   app_settings: ^4.1.1
