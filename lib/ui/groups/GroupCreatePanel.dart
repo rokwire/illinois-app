@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/model/ContentFilter.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/ContentFilter.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -56,8 +60,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
   List<String>? _groupCategories;
+  ContentFilterSet? _contentFilters;
+  Map<String, LinkedHashSet<String>> _contentFiltersSelection = <String, LinkedHashSet<String>>{};
 
   bool _groupCategoeriesLoading = false;
+  bool _contentFiltersLoading = false;
   bool _creating = false;
   bool _researchRequiresConsentConfirmation = false;
 
@@ -65,6 +72,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void initState() {
     _initGroup();
     _initCategories();
+    _initContentFilters();
     _initResearchConsentDetails();
     super.initState();
   }
@@ -94,6 +102,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
 
+    _contentFiltersSelection = _contentFilters?.selectionFromLabelSelection(_group?.filters) ?? <String, LinkedHashSet<String>>{};
 
     // #2550: we need consent checkbox selected by default
     // #2626: Hide consent checkbox and edit control. Default it to false...
@@ -118,6 +127,18 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }).whenComplete((){
       setStateIfMounted(() {
         _groupCategoeriesLoading = false;
+      });
+    });
+  }
+
+  void _initContentFilters(){
+    setState(() {
+      _contentFiltersLoading = true;
+    });
+    ContentFilters().loadFilterSet('groups').then((ContentFilterSet? contentFilters){
+      setStateIfMounted(() {
+        _contentFilters = contentFilters;
+        _contentFiltersLoading = false;
       });
     });
   }
@@ -149,100 +170,107 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget build(BuildContext context) {
     return Scaffold(backgroundColor: Styles().colors!.background, body:
       Column(children: <Widget>[
-        _loading
-          ? Expanded(child:
-              Center(child:
-                Container(
-                  child: Align(alignment: Alignment.center,
-                    child: SizedBox(height: 24, width: 24,
-                        child: Semantics(label: "Loading." ,container: true, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ))
-                    ),
+        Expanded(child:
+          _loading ? _buildLoading() :  _buildContent(),
+        ),
+       _buildButtonsLayout(),
+      ],),
+    );
+  }
+
+  Widget _buildContent() {
+    return Container(color: Colors.white, child:
+      CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
+        SliverHeaderBar(
+          title: (_group?.researchProject == true) ? 'Create Research Project' : Localization().getStringEx("panel.groups_create.label.heading", "Create a Group"),
+        ),
+        SliverList(delegate: SliverChildListDelegate([
+          Container(color: Styles().colors!.background, child:
+            Column(children: <Widget>[
+              _buildImageSection(),
+              _buildNameField(),
+              _buildDescriptionField(),
+
+              Visibility(visible: !_isResearchProject, child:
+                Column(children: [
+                  Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                    Container(height: 1, color: Styles().colors!.surfaceAccent,),
                   ),
-                ),
-              )
-            )
-          : Expanded(child:
-            Container(color: Colors.white, child:
-              CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-                SliverHeaderBar(
-                  title: (_group?.researchProject == true) ? 'Create Research Project' : Localization().getStringEx("panel.groups_create.label.heading", "Create a Group"),
-                ),
-                SliverList(delegate: SliverChildListDelegate([
-                  Container(color: Styles().colors!.background, child:
-                    Column(children: <Widget>[
-                      _buildImageSection(),
-                      _buildNameField(),
-                      _buildDescriptionField(),
-
-                      Visibility(visible: !_isResearchProject, child:
-                        Column(children: [
-                          Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                          ),
-                          _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "search"),
-                          _buildCategoryDropDown(),
-                          _buildTagsLayout(),
-                        ]),
-                      ),
-
-
-                      Visibility(visible:_isResearchProject, child:
-                        Column(children: [
-                          //Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-                          //  Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                          //),
-                          //_buildTitle("Research", "images/icon-gear.png"),
-                          //_buildResearchOptionLayout(),
-                          //_buildResearchOpenLayout(),
-                          _buildResearchConsentDetailsField(),
-                          // #2626: Hide consent checkbox and edit control.
-                          // _buildResearchConfirmationLayout(),
-                          _buildResearchAudienceLayout(),
-                        ])
-                      ),
-
-                      Visibility(visible: !_isResearchProject, child:
-                        Column(children: [
-                          Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
-                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                          ),
-                          _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
-                          Container(height: 8),
-                          _buildPrivacyDropDown(),
-                          _buildHiddenForSearch(),
-                        ])
-                      ),
-
-                      Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child: Column(children: [
-                        _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "person"),
-                        _buildAuthManLayout(),
-                      ])),
-                      
-                      Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 20), child: Column(children: [
-                        _buildTitle(_isResearchProject ? 'Participation' : Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "person"),
-                        _buildMembershipLayout(),
-                      ],),),),
-                    //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
-                    //Visibility(visible: !_isResearchProject, child:
-                    //  Padding(padding: EdgeInsets.only(top: 8), child:
-                    //    _buildAttendanceLayout(),
-                    //  )
-                    //),
-                      Visibility(visible: !_isResearchProject, child:
-                        Padding(padding: EdgeInsets.only(top: 8), child:
-                          _buildSettingsLayout(),
-                        )
-                      ),
-                      Container(height: 40),
-                    ],),
-                  )
+                  _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "search"),
+                  _buildCategoryDropDown(),
+                  _buildFiltersDropDown(),
+                  _buildTagsLayout(),
                 ]),
               ),
+
+
+              Visibility(visible:_isResearchProject, child:
+                Column(children: [
+                  //Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                  //  Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                  //),
+                  //_buildTitle("Research", "images/icon-gear.png"),
+                  //_buildResearchOptionLayout(),
+                  //_buildResearchOpenLayout(),
+                  _buildResearchConsentDetailsField(),
+                  // #2626: Hide consent checkbox and edit control.
+                  // _buildResearchConfirmationLayout(),
+                  _buildResearchAudienceLayout(),
+                ])
+              ),
+
+              Visibility(visible: !_isResearchProject, child:
+                Column(children: [
+                  Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+                    Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                  ),
+                  _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
+                  Container(height: 8),
+                  _buildPrivacyDropDown(),
+                  _buildHiddenForSearch(),
+                ])
+              ),
+
+              Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child: Column(children: [
+                _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "person"),
+                _buildAuthManLayout(),
+              ])),
+              
+              Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 20), child: Column(children: [
+                _buildTitle(_isResearchProject ? 'Participation' : Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "person"),
+                _buildMembershipLayout(),
+              ],),),),
+
+              //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
+              //Visibility(visible: !_isResearchProject, child:
+              //  Padding(padding: EdgeInsets.only(top: 8), child:
+              //    _buildAttendanceLayout(),
+              //  )
+              //),
+
+              Visibility(visible: !_isResearchProject, child:
+                Padding(padding: EdgeInsets.only(top: 8), child:
+                  _buildSettingsLayout(),
+                )
+              ),
+
+              Container(height: 40),
             ],),
+          )
+        ]),),
+      ],),
+    );
+  }
+
+  Widget _buildLoading() {
+    return Center(child:
+      Container( child:
+        Align(alignment: Alignment.center, child:
+          SizedBox(height: 24, width: 24, child:
+            Semantics(label: "Loading." ,container: true, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ))
           ),
         ),
-        _buildButtonsLayout(),
-      ],),
+      ),
     );
   }
 
@@ -446,29 +474,118 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Category
   Widget _buildCategoryDropDown() {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildSectionTitle(
-              (_group?.researchProject == true) ? "PROJECT CATEGORY" : Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
-              (_group?.researchProject == true) ? "Choose the category your project can be filtered by." : Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."), true),
-            GroupDropDownButton(
-              emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
-              buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
-              items: _groupCategories,
-              initialSelectedValue: _group?.category,
-              constructTitle: (dynamic item) => item,
-              onValueChanged: (value) {
-                setState(() {
-                  _group!.category = value;
-                  Log.d("Selected Category: $value");
-                });
-              }
-            )
-          ],
-        ));
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        _buildSectionTitle(
+          (_group?.researchProject == true) ? "PROJECT CATEGORY" : Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
+          (_group?.researchProject == true) ? "Choose the category your project can be filtered by." : Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."),
+          true),
+        GroupDropDownButton(
+          emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
+          buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
+          items: _groupCategories,
+          initialSelectedValue: _group?.category,
+          constructTitle: (dynamic item) => item,
+          onValueChanged: (String value) {
+            setState(() {
+              _group!.category = value;
+              Log.d("Selected Category: $value");
+            });
+          }
+        )
+      ],),
+    );
+  }
+
+  //
+  //Filters
+  Widget _buildFiltersDropDown() {
+    List<ContentFilter>? filters = _contentFilters?.filters;
+    if ((filters != null) && filters.isNotEmpty) {
+      List<Widget> filterWidgets = <Widget>[];
+      for (ContentFilter filter in filters) {
+        LinkedHashSet<String>? selectedIds = _contentFiltersSelection[filter.id];
+        ContentFilterEntry? selectedEntry = ((selectedIds != null) && selectedIds.isNotEmpty) ?
+          ((1 < selectedIds.length) ? _ContentFilterMultipleEntries(selectedIds) : filter.findEntry(id: selectedIds.first)) : null;
+        List<ContentFilterEntry>? entries = filter.entriesFromSelection(_contentFiltersSelection);
+        filterWidgets.addAll(<Widget>[
+          _buildSectionTitle(
+            _contentFilters?.stringValue(filter.title)?.toUpperCase(),
+            _contentFilters?.stringValue(filter.description),
+            (0 < (filter.minSelectCount ?? 0)),
+          ),
+          GroupDropDownButton<ContentFilterEntry>(
+            emptySelectionText: _contentFilters?.stringValue(filter.emptyLabel),
+            buttonHint: _contentFilters?.stringValue(filter.hint),
+            items: entries,
+            initialSelectedValue: selectedEntry,
+            multipleSelection: (filter.maxSelectCount != 1),
+            enabled: entries?.isNotEmpty ?? true,
+            constructTitle: (ContentFilterEntry value) => _constructFilterEntryTitle(filter, value),
+            isItemSelected: (ContentFilterEntry value) => _isFilterEntrySelected(filter, value),
+            onValueChanged: (ContentFilterEntry value) => _onContentFilterEntry(filter, value),
+          )
+        ]);
+      }
+
+      return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: filterWidgets,),
+      );
+    }
+    else {
+      return Container();
+    }
+  }
+
+  String? _constructFilterEntryTitle(ContentFilter filter, ContentFilterEntry entry) {
+    if (entry is _ContentFilterMultipleEntries) {
+      String title = '';
+      for (String subEntryId in entry.entryIds) {
+        ContentFilterEntry? subEntry = filter.findEntry(id: subEntryId);
+        String? subEntryName = _contentFilters?.stringValue(subEntry?.label);
+        if ((subEntryName != null) && subEntryName.isNotEmpty) {
+          if (title.isNotEmpty) {
+            title += ', ';
+          }
+          title += subEntryName;
+        }
+      }
+      return title;
+    }
+    else {
+      return _contentFilters?.stringValue(entry.label);
+    }
+  }
+
+  bool _isFilterEntrySelected(ContentFilter filter, ContentFilterEntry entry) {
+    LinkedHashSet<String>? selectedIds = _contentFiltersSelection[filter.id];
+    return selectedIds?.contains(entry.id) ?? false;
+  }
+
+  void _onContentFilterEntry(ContentFilter filter, ContentFilterEntry value) {
+    String? filterId = filter.id;
+    String? valueId = value.id;
+    if ((filterId != null) && (valueId != null)) {
+      LinkedHashSet<String> selectedIds = (_contentFiltersSelection[filterId] ??= LinkedHashSet<String>());
+      setStateIfMounted(() {
+        
+        if (selectedIds.contains(valueId)) {
+          selectedIds.remove(valueId);
+        }
+        else {
+          selectedIds.add(valueId);
+        }
+        
+        if (filter.maxSelectCount != null) {
+          while (filter.maxSelectCount! < selectedIds.length) {
+            selectedIds.remove(selectedIds.first);
+          }
+        }
+
+        _contentFilters?.validateSelection(_contentFiltersSelection);
+      });
+    }
+
   }
 
   //Tags
@@ -972,6 +1089,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _group?.researchProfile = null;
       }
 
+      _group?.filters = _contentFilters?.selectionToLabelSelection(_contentFiltersSelection);
+
       // if the group is not authman then clear authman group name
       if (_group?.authManEnabled != true) {
         _group?.authManGroupName = null;
@@ -1122,10 +1241,16 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
         StringUtils.isNotEmpty(_group?.category) &&
+        (_contentFilters?.unsatisfiedFilterFromSelection(_contentFiltersSelection) == null) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount > 0));
   }
 
-  bool get _loading => _groupCategoeriesLoading;
+  bool get _loading => _groupCategoeriesLoading || _contentFiltersLoading;
+}
+
+class _ContentFilterMultipleEntries extends ContentFilterEntry {
+  final LinkedHashSet<String> entryIds;
+  _ContentFilterMultipleEntries(this.entryIds);
 }
