@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Access MTD via content service [#2922](https://github.com/rokwire/illinois-app/issues/2922).
 - Removed access to shibboleth section from config secret keys (unused).
+- Fixed checkbox image style in research questionnaire.
+### Added
+- Added filters in create group panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
 ## [4.3.1] - 2022-01-12
 ### Changed
