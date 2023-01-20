@@ -238,12 +238,12 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     String title = _questionnaireString(answer.title);
     String imageAsset = (question.maxAnswers == 1) ?
       (selected ? "radio-button-on" : "radio-button-off") :
-      (selected ? "check-box-filled" : "check-box-outline-gray");
+      (selected ? "check-box-filled" : "box-outline-gray");
     return
       Semantics(
         label: title, button: true,
         value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
-        child:InkWell(onTap: (){_onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
+        child: InkWell(onTap: () { _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
         Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: selected ? Styles().colors!.fillColorPrimary! : Styles().colors!.white!, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
