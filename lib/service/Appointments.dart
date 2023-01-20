@@ -141,7 +141,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
 
   List<Appointment>? getAppointments({bool? onlyUpcoming, AppointmentType? type}) {
     List<Appointment>? result;
-    if (CollectionUtils.isNotEmpty(_appointments)) {
+    if (_appointments != null) {
       result = <Appointment>[];
       for (Appointment appt in _appointments!) {
         if ((onlyUpcoming == true) && !appt.isUpcoming) {

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed access to shibboleth section from config secret keys (unused).
 - Fixed checkbox image style in research questionnaire.
 ### Added
+- Acknwoledge Google Maps flutter plugin [#2904](https://github.com/rokwire/illinois-app/issues/2904).
 - Added filters in create group panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
 ## [4.3.1] - 2022-01-12
