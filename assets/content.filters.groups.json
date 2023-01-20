@@ -5,7 +5,7 @@
 		"description": "Choose the college your group can be filtered by.",
 		"empty-label": "Select a group...",
 		"hint": "Double tap to show college options.",
-		"min-select-count": null,
+		"min-select-count": 1,
 		"max-select-count": 1,
 		"values": [
 			{ "id": "college.grainger", "label": "Grainger" },
@@ -17,8 +17,8 @@
 		"description": "Choose the department your group can be filtered by.",
 		"empty-label": "Select a department...",
 		"hint": "Double tap to show department options.",
-		"min-select-count": null,
-		"max-select-count": 1,
+		"min-select-count": 1,
+		"max-select-count": 2,
 		"values": [
 			{ "id": "college.department.ece", "label": "ECE", "requirements": { "college" : "college.grainger" }},
 			{ "id": "college.department.cs", "label": "CS", "requirements": { "college" : "college.grainger" }},

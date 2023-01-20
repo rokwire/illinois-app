@@ -478,14 +478,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         _buildSectionTitle(
           (_group?.researchProject == true) ? "PROJECT CATEGORY" : Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
-          (_group?.researchProject == true) ? "Choose the category your project can be filtered by." : Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."), true),
+          (_group?.researchProject == true) ? "Choose the category your project can be filtered by." : Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."),
+          true),
         GroupDropDownButton(
           emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
           buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
           items: _groupCategories,
           initialSelectedValue: _group?.category,
           constructTitle: (dynamic item) => item,
-          onValueChanged: (value) {
+          onValueChanged: (String value) {
             setState(() {
               _group!.category = value;
               Log.d("Selected Category: $value");
@@ -504,18 +505,24 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       List<Widget> filterWidgets = <Widget>[];
       for (ContentFilter filter in filters) {
         LinkedHashSet<String>? selectedIds = _contentFiltersSelection[filter.id];
-        ContentFilterEntry? selectedEntry = ((selectedIds != null) && selectedIds.isNotEmpty) ? filter.findEntry(id: selectedIds.first) : null; // TBD: multiple selection
+        ContentFilterEntry? selectedEntry = ((selectedIds != null) && selectedIds.isNotEmpty) ?
+          ((1 < selectedIds.length) ? _ContentFilterMultipleEntries(selectedIds) : filter.findEntry(id: selectedIds.first)) : null;
+        List<ContentFilterEntry>? entries = filter.entriesFromSelection(_contentFiltersSelection);
         filterWidgets.addAll(<Widget>[
           _buildSectionTitle(
             _contentFilters?.stringValue(filter.title)?.toUpperCase(),
             _contentFilters?.stringValue(filter.description),
+            (0 < (filter.minSelectCount ?? 0)),
           ),
           GroupDropDownButton<ContentFilterEntry>(
             emptySelectionText: _contentFilters?.stringValue(filter.emptyLabel),
             buttonHint: _contentFilters?.stringValue(filter.hint),
-            items: filter.entries,
+            items: entries,
             initialSelectedValue: selectedEntry,
-            constructTitle: (ContentFilterEntry entry) => _contentFilters?.stringValue(entry.label),
+            multipleSelection: (filter.maxSelectCount != 1),
+            enabled: entries?.isNotEmpty ?? true,
+            constructTitle: (ContentFilterEntry value) => _constructFilterEntryTitle(filter, value),
+            isItemSelected: (ContentFilterEntry value) => _isFilterEntrySelected(filter, value),
             onValueChanged: (ContentFilterEntry value) => _onContentFilterEntry(filter, value),
           )
         ]);
@@ -530,18 +537,55 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
   }
 
+  String? _constructFilterEntryTitle(ContentFilter filter, ContentFilterEntry entry) {
+    if (entry is _ContentFilterMultipleEntries) {
+      String title = '';
+      for (String subEntryId in entry.entryIds) {
+        ContentFilterEntry? subEntry = filter.findEntry(id: subEntryId);
+        String? subEntryName = _contentFilters?.stringValue(subEntry?.label);
+        if ((subEntryName != null) && subEntryName.isNotEmpty) {
+          if (title.isNotEmpty) {
+            title += ', ';
+          }
+          title += subEntryName;
+        }
+      }
+      return title;
+    }
+    else {
+      return _contentFilters?.stringValue(entry.label);
+    }
+  }
+
+  bool _isFilterEntrySelected(ContentFilter filter, ContentFilterEntry entry) {
+    LinkedHashSet<String>? selectedIds = _contentFiltersSelection[filter.id];
+    return selectedIds?.contains(entry.id) ?? false;
+  }
+
   void _onContentFilterEntry(ContentFilter filter, ContentFilterEntry value) {
-    LinkedHashSet<String> selectedIds = _contentFiltersSelection[filter.id] ?? LinkedHashSet<String>();
-    if (value.id != null) {
+    String? filterId = filter.id;
+    String? valueId = value.id;
+    if ((filterId != null) && (valueId != null)) {
+      LinkedHashSet<String> selectedIds = (_contentFiltersSelection[filterId] ??= LinkedHashSet<String>());
       setStateIfMounted(() {
-        if (selectedIds.contains(value.id)) {
-          selectedIds.remove(value.id);
+        
+        if (selectedIds.contains(valueId)) {
+          selectedIds.remove(valueId);
         }
         else {
-          selectedIds.add(value.id!);
+          selectedIds.add(valueId);
         }
+        
+        if (filter.maxSelectCount != null) {
+          while (filter.maxSelectCount! < selectedIds.length) {
+            selectedIds.remove(selectedIds.first);
+          }
+        }
+
+        _contentFilters?.validateSelection(_contentFiltersSelection);
       });
     }
+
   }
 
   //Tags
@@ -1045,6 +1089,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _group?.researchProfile = null;
       }
 
+      _group?.filters = _contentFilters?.selectionToLabelSelection(_contentFiltersSelection);
+
       // if the group is not authman then clear authman group name
       if (_group?.authManEnabled != true) {
         _group?.authManGroupName = null;
@@ -1195,10 +1241,16 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
         StringUtils.isNotEmpty(_group?.category) &&
+        (_contentFilters?.unsatisfiedFilterFromSelection(_contentFiltersSelection) == null) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount > 0));
   }
 
   bool get _loading => _groupCategoeriesLoading || _contentFiltersLoading;
+}
+
+class _ContentFilterMultipleEntries extends ContentFilterEntry {
+  final LinkedHashSet<String> entryIds;
+  _ContentFilterMultipleEntries(this.entryIds);
 }

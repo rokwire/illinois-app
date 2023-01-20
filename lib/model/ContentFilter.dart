@@ -91,6 +91,53 @@ class ContentFilterSet {
     }
     return selection;
   }
+
+  Map<String, dynamic>? selectionToLabelSelection(Map<String, LinkedHashSet<String>> selection) {
+    Map<String, dynamic>? labelSelection;
+    for (String filterId in selection.keys) {
+      ContentFilter? filter = findFilter(id: filterId);
+      LinkedHashSet<String>? entryIds = selection[filterId];
+      if ((filter != null) && (entryIds != null) && entryIds.isNotEmpty) {
+        dynamic labelFilterSelection = filter.selectionToLabelSelection(entryIds);
+        if (labelFilterSelection != null) {
+          labelSelection ??= <String, dynamic>{};
+          labelSelection[filterId] = labelFilterSelection;
+        }
+      }
+    }
+    return labelSelection;
+  }
+
+  void validateSelection(Map<String, LinkedHashSet<String>> selection) {
+    bool modified;
+    do {
+      modified = false;
+      for (String filterId in selection.keys) {
+        ContentFilter? filter = findFilter(id: filterId);
+        if (filter == null) {
+          selection.remove(filterId);
+          modified = true;
+          break;
+        }
+        else if (!filter.validateSelection(selection)) {
+          modified = true;
+          break;
+        }
+      }
+    }
+    while (modified);
+  }
+
+  ContentFilter? unsatisfiedFilterFromSelection(Map<String, LinkedHashSet<String>> selection) {
+    if (filters != null) {
+      for (ContentFilter filter in filters!) {
+        if (!filter.isSatisfiedFilterFromSelection(selection)) {
+          return filter;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 /////////////////////////////
@@ -173,7 +220,7 @@ class ContentFilter {
     return null;
   }
 
-  LinkedHashSet<String>? selectionFromLabelSelection(dynamic labelSelection, { Map<String, dynamic>? selection }) {
+  LinkedHashSet<String>? selectionFromLabelSelection(dynamic labelSelection, { Map<String, LinkedHashSet<String>>? selection }) {
     if (labelSelection is String) {
       ContentFilterEntry? labelEntry = findEntry(label: labelSelection);
       return ((labelEntry != null) && (labelEntry.id != null) && labelEntry.fulfillsSelection(selection)) ? LinkedHashSet<String>.from(<String>[labelEntry.id!]) : null;
@@ -183,7 +230,7 @@ class ContentFilter {
       for (dynamic entry in labelSelection) {
         LinkedHashSet<String>? entrySelection = selectionFromLabelSelection(entry, selection: selection);
         if (entrySelection != null) {
-          (listSelection ??= <String>[]).addAll(entrySelection.toList().reversed);
+          (listSelection ??= <String>[]).addAll(entrySelection.toList());
         }
       }
       return (listSelection != null) ? LinkedHashSet<String>.from(listSelection.reversed) : null;
@@ -191,6 +238,60 @@ class ContentFilter {
     else {
       return null;
     }
+  }
+
+  dynamic selectionToLabelSelection(LinkedHashSet<String>? selectedEntryIds) {
+    dynamic labelSelection;
+    if ((selectedEntryIds != null) && selectedEntryIds.isNotEmpty) {
+      for (String entryId in selectedEntryIds) {
+        String? filterEntryName = findEntry(id: entryId)?.label;
+        if ((filterEntryName != null) && filterEntryName.isNotEmpty) {
+          if (labelSelection is List<String>) {
+            labelSelection.add(filterEntryName);
+          }
+          else if (labelSelection is String) {
+            labelSelection = <String>[labelSelection, filterEntryName];
+          }
+          else {
+            labelSelection = filterEntryName;
+          }
+        }
+      }
+    }
+    return (labelSelection is List) ? List.from(labelSelection.reversed) : labelSelection;
+  }
+
+  bool validateSelection(Map<String, LinkedHashSet<String>> selection) {
+    LinkedHashSet<String>? entryIds = selection[id];
+    if (entryIds != null) {
+      for (String entryId in entryIds) {
+        ContentFilterEntry? filterEntry = findEntry(id: entryId);
+        if ((filterEntry == null) || !filterEntry.fulfillsSelection(selection)) {
+          entryIds.remove(entryId);
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  bool isSatisfiedFilterFromSelection(Map<String, LinkedHashSet<String>> selection) {
+    int selectedAnsersCount = selection[id]?.length ?? 0; 
+    return ((minSelectCount == null) || (minSelectCount! <= selectedAnsersCount)) &&
+           ((maxSelectCount == null) || (selectedAnsersCount <= maxSelectCount!));
+  }
+
+  List<ContentFilterEntry>? entriesFromSelection(Map<String, LinkedHashSet<String>> selection) {
+    List<ContentFilterEntry>? filteredItems;
+    if (entries != null) {
+      for (ContentFilterEntry entry in entries!) {
+        if (entry.fulfillsSelection(selection)) {
+          filteredItems ??= <ContentFilterEntry>[];
+          filteredItems.add(entry);
+        }
+      }
+    }
+    return filteredItems;
   }
 
   // List<ContentFilter> JSON Serialization
@@ -261,7 +362,7 @@ class ContentFilterEntry {
 
   // Accessories
 
-  bool fulfillsSelection(Map<String, dynamic>? selection) {
+  bool fulfillsSelection(Map<String, LinkedHashSet<String>>? selection) {
     if ((requirements == null) || requirements!.isEmpty) {
       return true;
     }
@@ -278,17 +379,9 @@ class ContentFilterEntry {
     }
   }
 
-  static bool _matchRequirement({dynamic requirement, dynamic selection}) {
+  static bool _matchRequirement({dynamic requirement, LinkedHashSet<String>? selection}) {
     if (requirement is String) {
-      if (selection is String) {
-        return requirement == selection;
-      }
-      else if (selection is List) {
-        return selection.contains(requirement);
-      }
-      else {
-        return false;
-      }
+      return selection?.contains(requirement) ?? false;
     }
     else if (requirement is List) {
       for (dynamic requirementEntry in requirement) {
