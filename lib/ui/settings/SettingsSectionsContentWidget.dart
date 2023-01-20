@@ -19,7 +19,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
@@ -828,13 +828,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         )
       ),
       Padding(padding: EdgeInsets.only(top: 20), child:
-        Html(
-          data: StringUtils.ensureNotEmpty(descriptionHtml),
-          onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
-          style: {
-            "body": Style(fontFamily: Styles().fontFamilies!.regularIt, color: Styles().colors!.textBackground, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero)
-          }
-        ),
+      HtmlWidget(
+          StringUtils.ensureNotEmpty(descriptionHtml),
+          onTapUrl : (url) {_onTapHtmlLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regularIt, fontSize: 16),
+      )
       ),
     ]);
   }

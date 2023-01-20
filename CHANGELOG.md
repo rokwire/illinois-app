@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Access MTD via content service [#2922](https://github.com/rokwire/illinois-app/issues/2922).
 - Removed access to shibboleth section from config secret keys (unused).
 - Fixed checkbox image style in research questionnaire.
+- Changed usage of HTMLWidget. Use flutter_widget_from_html for better Accessibility support. [#2912](https://github.com/rokwire/illinois-app/issues/2912).
 ### Added
 - Acknwoledge Google Maps flutter plugin [#2904](https://github.com/rokwire/illinois-app/issues/2904).
 - Added filters in create group panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).

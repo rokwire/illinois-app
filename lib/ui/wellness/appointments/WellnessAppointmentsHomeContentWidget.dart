@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
@@ -142,16 +142,14 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(appTitleMacro, Localization().getStringEx('app.title', 'Illinois'));
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 16),
-        child: Html(data: emptyUpcommingContentHtml, onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url), style: {
-          "body": Style(
-              textAlign: TextAlign.center,
-              color: Styles().colors!.fillColorPrimary,
-              fontFamily: Styles().fontFamilies!.regular,
-              fontSize: FontSize(18),
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero),
-          "a": Style(color: Styles().colors?.fillColorPrimary)
-        }));
+        child:
+        HtmlWidget(
+            "<div style=text-align:center> $emptyUpcommingContentHtml </div>",
+            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 18),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+        )
+    );
   }
 
   Widget _buildPastAppointments() {
@@ -199,16 +197,14 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
     return Padding(
         padding: EdgeInsets.only(left: 20, right: 20, top: 16),
-        child: Html(data: descriptionHtml, onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url), style: {
-          "body": Style(
-              textAlign: TextAlign.center,
-              color: Styles().colors!.fillColorPrimary,
-              fontFamily: Styles().fontFamilies!.regular,
-              fontSize: FontSize(16),
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero),
-          "a": Style(color: Styles().colors?.fillColorPrimary)
-        }));
+        child:
+        HtmlWidget(
+            "<div style=text-align:center> $descriptionHtml </div>",
+            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+        )
+    );
   }
 
   List<Widget> _buildAppointmentsWidgetList(List<Appointment>? appointments) {
@@ -269,19 +265,16 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                     Styles().images?.getImage('university-logo') ?? Container(),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: Html(
-                            data: rescheduleContentHtml,
-                            onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url),
-                            style: {
-                              "body": Style(
-                                  color: Styles().colors!.fillColorPrimary,
-                                  fontFamily: Styles().fontFamilies!.regular,
-                                  fontSize: FontSize(14),
-                                  padding: EdgeInsets.zero,
-                                  margin: EdgeInsets.zero),
-                              "a": Style(color: Styles().colors?.fillColorPrimary)
-                            }))
-                  ])),
+                        child:
+                        HtmlWidget(
+                            rescheduleContentHtml,
+                            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
+                            textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14),
+                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+                        )
+                    )
+                  ])
+              ),
               Positioned.fill(child: Align(
                   alignment: Alignment.topRight,
                   child: InkWell(

@@ -17,7 +17,7 @@
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -345,19 +345,17 @@ class _CheckListPageWidget extends StatelessWidget{
             ),
           ) :
           Padding(padding: EdgeInsets.only(left: 16), child: Container()),
-
           Expanded(child:
-          Padding(padding: EdgeInsets.only(top: 4, bottom: 4, right: 16), child:
-          Html(data: titleHtml,
-            onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text)
-            ,
-            style: {
-              "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-              "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
-            },),
-          ),
-          ),
-
+            Padding(padding: EdgeInsets.only(top: 4, bottom: 4, right: 16), child:
+              Semantics(container: true,
+                  child: HtmlWidget(
+                      titleHtml ?? "",
+                      onTapUrl : (url) {onTapLink!(url); return true;},
+                      textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 24),
+                      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
+                  )
+              )
+            ),),
         ],));
     }
 
@@ -365,13 +363,16 @@ class _CheckListPageWidget extends StatelessWidget{
     if (StringUtils.isNotEmpty(textHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-        Html(data: textHtml,
-          onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text),
-          style: {
-            "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-            "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
-          },),
-        ),);
+          Semantics(container: true,
+              child: HtmlWidget(
+                  textHtml ?? "",
+                  onTapUrl : (url) {onTapLink!(url); return true;},
+                  textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
+              )
+          )
+        ),
+      );
     }
 
     List<dynamic>? content = (page != null) ? JsonUtils.listValue(page!['content']) : null;
@@ -384,13 +385,15 @@ class _CheckListPageWidget extends StatelessWidget{
           if (StringUtils.isNotEmpty(headingHtml)) {
             contentEntryWidgets.add(
               Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child:
-              Html(data: headingHtml,
-                onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text),
-                style: {
-                  "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                  "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
-                },
-              ),),
+                Semantics(container: true,
+                    child: HtmlWidget(
+                        headingHtml ?? "",
+                        onTapUrl : (url) {onTapLink!(url); return true;},
+                        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                        customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
+                    )
+                )
+              ),
             );
           }
 
@@ -407,13 +410,15 @@ class _CheckListPageWidget extends StatelessWidget{
                     Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
                     Text(bulletText, style: TextStyle(color: bulletColor, fontSize: 20),),),
                     Expanded(child:
-                    Html(data: bulletEntry,
-                      onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text),
-                      style: {
-                        "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                        "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
-                      },
-                    ),),
+                      Semantics(container: true,
+                          child: HtmlWidget(
+                            bulletEntry,
+                            onTapUrl : (url) {onTapLink!(url); return true;},
+                            textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
+                          )
+                      )
+                    ),
                   ],)
                   ),
                 );
@@ -437,13 +442,15 @@ class _CheckListPageWidget extends StatelessWidget{
                     Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
                     Text('${numberIndex + 1}.', style: TextStyle(color: numberColor, fontSize: 20),),),
                     Expanded(child:
-                    Html(data: numberEntry,
-                      onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text),
-                      style: {
-                        "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                        "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
-                      },
-                    ),),
+                      Semantics(container: true,
+                          child: HtmlWidget(
+                              numberEntry,
+                              onTapUrl : (url) {onTapLink!(url); return true;},
+                              textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
+                          )
+                      )
+                    ),
                   ],)
                   ),
                 );

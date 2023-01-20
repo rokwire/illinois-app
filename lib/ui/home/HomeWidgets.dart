@@ -7,7 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -637,25 +637,23 @@ class HomeMessageHtmlCard extends StatelessWidget {
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Html(data: title,
-                  onLinkTap: (url, renderContext, attributes, element) => _onTapLink(url),
-                  style: {
-                    "body": Style(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                    "a": Style(color: Styles().colors?.fillColorSecondary),
-                  },
-                ),
+                HtmlWidget(
+                    StringUtils.ensureNotEmpty(title),
+                    onTapUrl : (url) {_onTapLink(url); return true;},
+                    textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20),
+                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+                )
               ),
             )
           ]) : Container(),
           StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
             Expanded(child:
-                Html(data: message,
-                  onLinkTap: (url, renderContext, attributes, element) => _onTapLink(url),
-                  style: {
-                    "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                    "a": Style(color: Styles().colors?.fillColorSecondary),
-                  },
-                ),
+                HtmlWidget(
+                  StringUtils.ensureNotEmpty(message),
+                  onTapUrl : (url) {_onTapLink(url); return true;},
+                  textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+               )
             )
           ]) : Container(),
         ]),

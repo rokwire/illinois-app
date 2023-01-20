@@ -19,7 +19,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -220,18 +220,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Visibility(visible: !_isEditMainPost,
                           child: Semantics(
                               container: true,
-                              child: Html(
-                                  data: StringUtils.ensureNotEmpty(_post?.body),
-                                  style: {
-                                    "body": Style(
-                                        color: Styles().colors!.fillColorPrimary,
-                                        fontFamily: Styles().fontFamilies!.regular,
-                                        fontSize: FontSize(20),
-                                        margin: EdgeInsets.zero,
-                                    ),
-                                  },
-                                  onLinkTap: (url, context, attributes, element) =>
-                                      _onTapPostLink(url)))),
+                              child:
+                              HtmlWidget(
+                                  StringUtils.ensureNotEmpty(_post?.body),
+                                  onTapUrl : (url) {_onTapPostLink(url); return true;},
+                                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                              )
+                          )),
                       Visibility(
                           visible: _isEditMainPost,
                           child: Column(
