@@ -238,7 +238,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     String title = _questionnaireString(answer.title);
     String imageAsset = (question.maxAnswers == 1) ?
       (selected ? "radio-button-on" : "radio-button-off") :
-      (selected ? "check-box-filled" : "check-box-outline-gray");
+      (selected ? "check-box-filled" : "box-outline-gray");
     return
       Semantics(
         label: title, button: true,
