@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/ContentFilter.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -23,6 +24,7 @@ class GroupFiltersPanel extends StatefulWidget {
 
 class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
 
+  final Map<String, GlobalKey> filterKeys = <String, GlobalKey>{};
   Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
 
   @override
@@ -87,14 +89,16 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
         requiredMark: (0 < (filter.minSelectCount ?? 0)),
       ),
       GroupDropDownButton<ContentFilterEntry>(
+        key: filterKeys[filter.id ?? ''] ??= GlobalKey(),
         emptySelectionText: widget.contentFilters.stringValue(filter.emptyLabel),
         buttonHint: widget.contentFilters.stringValue(filter.hint),
         items: entries,
         initialSelectedValue: selectedEntry,
-        multipleSelection: (filter.maxSelectCount != 1),
+        multipleSelection: filter.isMultipleSelection,
         enabled: entries?.isNotEmpty ?? true,
         constructTitle: (ContentFilterEntry value) => _constructFilterEntryTitle(filter, value),
         isItemSelected: (ContentFilterEntry value) => _isFilterEntrySelected(filter, value),
+        onItemSelected: (ContentFilterEntry value) => _onContentFilterEntrySelected(filter, value),
         onValueChanged: (ContentFilterEntry value) => _onContentFilterEntry(filter, value),
       )
     ]);
@@ -125,6 +129,9 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
     return selectedIds?.contains(entry.id) ?? false;
   }
 
+  void _onContentFilterEntrySelected(ContentFilter filter, ContentFilterEntry value) {
+  }
+
   void _onContentFilterEntry(ContentFilter filter, ContentFilterEntry value) {
     String? filterId = filter.id;
     String? valueId = value.id;
@@ -146,6 +153,18 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
         }
 
         widget.contentFilters.validateSelection(_selection);
+      });
+    }
+
+    if (filter.isMultipleSelection) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        final RenderObject? renderBox = filterKeys[filter.id]?.currentContext?.findRenderObject();
+        if (renderBox is RenderBox) {
+          Offset globalOffset = renderBox.localToGlobal(Offset(renderBox.size.width / 2, renderBox.size.height / 2));
+          GestureBinding.instance.handlePointerEvent(PointerDownEvent(position: globalOffset,));
+          //Future.delayed(Duration(milliseconds: 100)).then((_) =>);
+          GestureBinding.instance.handlePointerEvent(PointerUpEvent(position: globalOffset,));
+        }
       });
     }
   }
@@ -176,3 +195,4 @@ class _ContentFilterMultipleEntries extends ContentFilterEntry {
   final LinkedHashSet<String> entryIds;
   _ContentFilterMultipleEntries(this.entryIds);
 }
+
