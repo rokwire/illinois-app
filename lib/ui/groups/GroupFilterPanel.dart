@@ -157,6 +157,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
     }
 
     if (filter.isMultipleSelection) {
+      // Ugly workaround: show again dropdown popup if filter supports multiple select.
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         final RenderObject? renderBox = filterKeys[filter.id]?.currentContext?.findRenderObject();
         if (renderBox is RenderBox) {
