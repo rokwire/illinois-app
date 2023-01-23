@@ -23,6 +23,7 @@ import 'package:illinois/model/ContentFilter.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/ContentFilter.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
+import 'package:illinois/ui/groups/GroupFilterPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -198,7 +199,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   ),
                   _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "search"),
                   _buildCategoryDropDown(),
-                  _buildFiltersDropDown(),
+                  _buildFiltersLayout(),
                   _buildTagsLayout(),
                 ]),
               ),
@@ -328,7 +329,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-         _buildSectionTitle(title,null, true),
+         GroupSectionTitle(title: title, requiredMark: true),
           Container(
             decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1),color: Styles().colors!.white),
             child: Semantics(
@@ -366,7 +367,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _buildSectionTitle(title,description),
+          GroupSectionTitle(title: title, description: description),
           Container(height: 5,),
           Container(
             decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1),color: Styles().colors!.white),
@@ -403,7 +404,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Visibility(visible: _isResearchProject, child:
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          _buildSectionTitle(title, null),
+          GroupSectionTitle(title: title),
           Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
             Row(children: [
               Expanded(child:
@@ -440,7 +441,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ),
         Visibility(visible: _researchRequiresConsentConfirmation, child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            _buildSectionTitle(title, null),
+            GroupSectionTitle(title: title),
             Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
               Row(children: [
                 Expanded(child:
@@ -476,10 +477,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildCategoryDropDown() {
     return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        _buildSectionTitle(
-          (_group?.researchProject == true) ? "PROJECT CATEGORY" : Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
-          (_group?.researchProject == true) ? "Choose the category your project can be filtered by." : Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."),
-          true),
+        GroupSectionTitle(
+          title: Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
+          description: Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."),
+          requiredMark: true
+        ),
         GroupDropDownButton(
           emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
           buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
@@ -499,117 +501,117 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //
   //Filters
-  Widget _buildFiltersDropDown() {
-    List<ContentFilter>? filters = _contentFilters?.filters;
-    if ((filters != null) && filters.isNotEmpty) {
-      List<Widget> filterWidgets = <Widget>[];
-      for (ContentFilter filter in filters) {
-        LinkedHashSet<String>? selectedIds = _contentFiltersSelection[filter.id];
-        ContentFilterEntry? selectedEntry = ((selectedIds != null) && selectedIds.isNotEmpty) ?
-          ((1 < selectedIds.length) ? _ContentFilterMultipleEntries(selectedIds) : filter.findEntry(id: selectedIds.first)) : null;
-        List<ContentFilterEntry>? entries = filter.entriesFromSelection(_contentFiltersSelection);
-        filterWidgets.addAll(<Widget>[
-          _buildSectionTitle(
-            _contentFilters?.stringValue(filter.title)?.toUpperCase(),
-            _contentFilters?.stringValue(filter.description),
-            (0 < (filter.minSelectCount ?? 0)),
+  Widget _buildFiltersLayout() {
+    return (_contentFilters?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Expanded(flex: 5, child:
+            GroupSectionTitle(
+              title: Localization().getStringEx("panel.groups_create.filters.title", "FILTERS"),
+              description: Localization().getStringEx("panel.groups_create.filters.description", "Filters help people understand more about your group."),
+              requiredMark: _contentFilters?.hasRequired ?? false,
+            )
           ),
-          GroupDropDownButton<ContentFilterEntry>(
-            emptySelectionText: _contentFilters?.stringValue(filter.emptyLabel),
-            buttonHint: _contentFilters?.stringValue(filter.hint),
-            items: entries,
-            initialSelectedValue: selectedEntry,
-            multipleSelection: (filter.maxSelectCount != 1),
-            enabled: entries?.isNotEmpty ?? true,
-            constructTitle: (ContentFilterEntry value) => _constructFilterEntryTitle(filter, value),
-            isItemSelected: (ContentFilterEntry value) => _isFilterEntrySelected(filter, value),
-            onValueChanged: (ContentFilterEntry value) => _onContentFilterEntry(filter, value),
+          Container(width: 8),
+          Expanded(flex: 2, child:
+            RoundedButton(
+              label: Localization().getStringEx("panel.groups_create.button.filters.title", "Filters"),
+              hint: Localization().getStringEx("panel.groups_create.button.filters.hint", ""),
+              backgroundColor: Styles().colors!.white,
+              textColor: Styles().colors!.fillColorPrimary,
+              borderColor: Styles().colors!.fillColorSecondary,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              onTap: _onTapFilters,
+            )
           )
-        ]);
-      }
-
-      return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: filterWidgets,),
-      );
-    }
-    else {
-      return Container();
-    }
+        ]),
+        _constructFilterContent()
+      ])
+    ) : Container();
   }
 
-  String? _constructFilterEntryTitle(ContentFilter filter, ContentFilterEntry entry) {
-    if (entry is _ContentFilterMultipleEntries) {
-      String title = '';
-      for (String subEntryId in entry.entryIds) {
-        ContentFilterEntry? subEntry = filter.findEntry(id: subEntryId);
-        String? subEntryName = _contentFilters?.stringValue(subEntry?.label);
-        if ((subEntryName != null) && subEntryName.isNotEmpty) {
-          if (title.isNotEmpty) {
-            title += ', ';
+  Widget _constructFilterContent() {
+    String filtersDescr = '';
+    List<ContentFilter>? filters = _contentFilters?.filters;
+    if (filters != null) {
+      for (ContentFilter filter in filters) {
+        String? filterTitle = _contentFilters?.stringValue(filter.title);
+        LinkedHashSet<String>? filterSelection = _contentFiltersSelection[filter.id];
+        List<ContentFilterEntry>? filterEntries = filter.entries;
+        if ((filterTitle != null) && filterTitle.isNotEmpty &&
+            (filterSelection != null) && filterSelection.isNotEmpty &&
+            (filterEntries != null) && filterEntries.isNotEmpty) {
+
+          String filterOptions = '';
+          for (ContentFilterEntry entry in filterEntries) {
+            if (filterSelection.contains(entry.id)) {
+              String? entryTitle = _contentFilters?.stringValue(entry.label);
+              if ((entryTitle != null) && entryTitle.isNotEmpty) {
+                if (filterOptions.isNotEmpty) {
+                  filterOptions += '/';
+                }
+                filterOptions += entryTitle;
+              }
+            }
           }
-          title += subEntryName;
-        }
-      }
-      return title;
-    }
-    else {
-      return _contentFilters?.stringValue(entry.label);
-    }
-  }
 
-  bool _isFilterEntrySelected(ContentFilter filter, ContentFilterEntry entry) {
-    LinkedHashSet<String>? selectedIds = _contentFiltersSelection[filter.id];
-    return selectedIds?.contains(entry.id) ?? false;
-  }
-
-  void _onContentFilterEntry(ContentFilter filter, ContentFilterEntry value) {
-    String? filterId = filter.id;
-    String? valueId = value.id;
-    if ((filterId != null) && (valueId != null)) {
-      LinkedHashSet<String> selectedIds = (_contentFiltersSelection[filterId] ??= LinkedHashSet<String>());
-      setStateIfMounted(() {
-        
-        if (selectedIds.contains(valueId)) {
-          selectedIds.remove(valueId);
-        }
-        else {
-          selectedIds.add(valueId);
-        }
-        
-        if (filter.maxSelectCount != null) {
-          while (filter.maxSelectCount! < selectedIds.length) {
-            selectedIds.remove(selectedIds.first);
+          if (filterOptions.isNotEmpty) {
+            if (filtersDescr.isNotEmpty) {
+              filtersDescr += ', ';
+            }
+            filtersDescr += "$filterTitle: $filterOptions";
           }
         }
-
-        _contentFilters?.validateSelection(_contentFiltersSelection);
-      });
+      }
     }
 
+    return filtersDescr.isNotEmpty ? Padding(padding: EdgeInsets.zero, child:
+      Row(children: [
+        Expanded(child:
+          Text(filtersDescr, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold),),
+        )
+      ],)
+    ) : Container();
+  }
+
+  void _onTapFilters() {
+    Analytics().logSelect(target: "Filters");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: _contentFiltersSelection))).then((selection) {
+      if ((selection != null) && mounted) {
+        setState(() {
+          _contentFiltersSelection = selection;
+        });
+      }
+    });
   }
 
   //Tags
   Widget _buildTagsLayout() {
-    String? fieldTitle = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(flex: 5, child:
-              _buildSectionTitle(fieldTitle, (_group?.researchProject == true) ? "Tags help people understand more about your project." : Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."))),
-            Container(width: 8),
-            Expanded(flex: 2, child:
-              RoundedButton(
-                label: Localization().getStringEx("panel.groups_create.button.tags.title", "Tags"),
-                hint: Localization().getStringEx("panel.groups_create.button.tags.hint", ""),
-                backgroundColor: Styles().colors!.white,
-                textColor: Styles().colors!.fillColorPrimary,
-                borderColor: Styles().colors!.fillColorSecondary,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                onTap: _onTapTags))
-          ]),
-          _constructTagButtonsContent()
-        ]));
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Expanded(flex: 5, child:
+            GroupSectionTitle(
+              title: Localization().getStringEx("panel.groups_create.tags.title", "TAGS"),
+              description: Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.")
+            )
+          ),
+          Container(width: 8),
+          Expanded(flex: 2, child:
+            RoundedButton(
+              label: Localization().getStringEx("panel.groups_create.button.tags.title", "Tags"),
+              hint: Localization().getStringEx("panel.groups_create.button.tags.hint", ""),
+              backgroundColor: Styles().colors!.white,
+              textColor: Styles().colors!.fillColorPrimary,
+              borderColor: Styles().colors!.fillColorSecondary,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              onTap: _onTapTags
+            )
+          )
+        ]),
+        _constructTagButtonsContent()
+      ])
+    );
   }
 
   Widget _constructTagButtonsContent(){
@@ -939,7 +941,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           Visibility(
               visible: _isAuthManGroup,
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                _buildSectionTitle(Localization().getStringEx("panel.groups_create.authman.group.name.label", "Membership name"), null, true),
+                GroupSectionTitle(
+                  title: Localization().getStringEx("panel.groups_create.authman.group.name.label", "Membership name"),
+                  requiredMark: true
+                ),
                 Container(
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white),
                     child: TextField(
@@ -1124,98 +1129,49 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //
   // Common
-  Widget _buildSectionTitle(String? title, String? description, [bool requiredMark = false]){
-    return Container(
-      padding: EdgeInsets.only(bottom: 8, top:16),
-      child:
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-        Semantics(
-          label: title,
-          hint: description,
-          header: true,
-          excludeSemantics: true,
-          child:
-          RichText(
-            text: TextSpan(
-              text: title,
-              children: [
-                TextSpan(
-                  text: requiredMark ?  " *" : "",
-                  style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 12, fontFamily: Styles().fontFamilies!.extraBold),
-                )
-              ],
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
+  Widget _buildTitle(String title, String iconKey){
+    return Container( padding: EdgeInsets.only(left: 16), child:
+      Semantics(label: title, header: true, excludeSemantics: true, child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
+          Expanded(child:
+            Container(padding: EdgeInsets.only(left: 14, right: 4), child:
+              Text(title, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold,),)
             ),
           ),
-        ),
-        description==null? Container():
-            Container(
-              padding: EdgeInsets.only(top: 2),
-              child: Text(
-                description,
-                semanticsLabel: "",
-                style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
-              ),
-            )
-      ],)
+        ]),
+      ),
     );
   }
 
-  Widget _buildTitle(String title, String iconKey){
-    return
-      Container(
-        padding: EdgeInsets.only(left: 16),
-        child:
-          Semantics(
-            label: title,
-            header: true,
-            excludeSemantics: true,
-            child:
-            Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
-              Expanded(child:
-              Container(
-                  padding: EdgeInsets.only(left: 14, right: 4),
-                  child:Text(
-                    title,
-                    style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold,),
-                  )
-              ))
-      ],)));
-  }
-
   Widget _buildSwitch({String? title, bool? value, void Function()? onTap}){
-    return Container(
-      child: Semantics(
-        label: title,
-        value: value == true?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
-        button: true,
-        child: Container(
-              decoration: BoxDecoration(
-                  color: Styles().colors!.white,
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(4))),
-              padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Expanded(
-                      child: Text(title ?? "",
-                          style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
-                          semanticsLabel: "",)),
-                  GestureDetector(
-                      onTap: ((onTap != null)) ?
-                          (){
-                        onTap();
-                        AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(value == true), title);
-                      } : (){},
-                      child: Padding(padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(value ?? false ? 'toggle-on' : 'toggle-off')))
-                ])
-              ])),
-        ));
+    String semanticsValue = (value == true) ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
+    return Semantics(label: title, value: semanticsValue, button: true, child:
+      Container(
+        decoration: BoxDecoration(
+            color: Styles().colors!.white,
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))
+        ),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Expanded(child:
+              Text(title ?? "", semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),)
+            ),
+            GestureDetector(
+              onTap: ((onTap != null)) ?() {
+                onTap();
+                AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(value == true), title);
+              } : (){},
+              child: Padding(padding: EdgeInsets.only(left: 10), child:
+                Styles().images?.getImage(value ?? false ? 'toggle-on' : 'toggle-off')
+              )
+            )
+          ])
+        ])
+      ),
+    );
   }
 
   bool get _isManagedGroupAdmin {
@@ -1248,9 +1204,4 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   bool get _loading => _groupCategoeriesLoading || _contentFiltersLoading;
-}
-
-class _ContentFilterMultipleEntries extends ContentFilterEntry {
-  final LinkedHashSet<String> entryIds;
-  _ContentFilterMultipleEntries(this.entryIds);
 }

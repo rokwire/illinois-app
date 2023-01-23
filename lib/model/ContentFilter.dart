@@ -138,6 +138,17 @@ class ContentFilterSet {
     }
     return null;
   }
+
+  bool get hasRequired {
+    if (filters != null) {
+      for (ContentFilter filter in filters!) {
+        if (filter.isRequired) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 /////////////////////////////
@@ -207,6 +218,8 @@ class ContentFilter {
     (DeepCollectionEquality().hash(entries));
 
   // Accessories
+
+  bool get isRequired => (0 < (minSelectCount ?? 0));
 
   ContentFilterEntry? findEntry({String? id, String? label}) {
     if (entries != null) {
