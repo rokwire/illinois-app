@@ -220,6 +220,7 @@ class ContentFilter {
   // Accessories
 
   bool get isRequired => (0 < (minSelectCount ?? 0));
+  bool get isMultipleSelection => (maxSelectCount != 1);
 
   ContentFilterEntry? findEntry({String? id, String? label}) {
     if (entries != null) {

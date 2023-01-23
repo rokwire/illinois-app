@@ -104,6 +104,7 @@ class GroupDropDownButton<T> extends StatefulWidget{
   final GroupDropDownDescriptionDataBuilder<T>? constructDropdownDescription;
   final GroupDropDownDescriptionDataBuilder<T>? constructListItemDescription;
   final bool Function(T item)? isItemSelected;
+  final void Function(T item)? onItemSelected;
   final void Function(T item)? onValueChanged;
   final bool enabled;
   final bool multipleSelection;
@@ -113,7 +114,7 @@ class GroupDropDownButton<T> extends StatefulWidget{
 
   GroupDropDownButton({Key? key,
     this.emptySelectionText,this.buttonHint, this.initialSelectedValue, this.items, this.enabled = true, this.multipleSelection = false,
-    this.onValueChanged, this.isItemSelected, this.constructTitle, this.constructDescription, this.constructDropdownDescription, this.constructListItemDescription,
+    this.onValueChanged, this.isItemSelected, this.onItemSelected, this.constructTitle, this.constructDescription, this.constructDropdownDescription, this.constructListItemDescription,
     this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration}) : super(key: key);
 
   @override
@@ -270,7 +271,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
       bool isSelected = _isItemSelected(item);
       return DropdownMenuItem<T>(
         value: item,
-        child: item!=null? _buildDropDownItem(name!,description,isSelected): Container(),
+        child: (item != null) ? _buildDropDownItem(name!, description, isSelected) : Container(),
+        onTap: () => widget.onItemSelected?.call(item),
       );
     }).toList();
   }

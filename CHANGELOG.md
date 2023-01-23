@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Group filters moved to standalone panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Preserve Group filters dropdown popup when selecting items that are multiple selected [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
 ## [4.3.2] - 2022-01-20
 ### Fixed
