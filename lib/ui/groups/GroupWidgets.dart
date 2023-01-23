@@ -58,6 +58,37 @@ import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/service/Polls.dart' as illinois;
 
 /////////////////////////////////////
+// GroupSectionTitle
+
+class GroupSectionTitle extends StatelessWidget {
+  final String? title;
+  final String? description;
+  final bool? requiredMark;
+
+  GroupSectionTitle({Key? key, this.title, this.description, this.requiredMark,}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(padding: EdgeInsets.only(bottom: 8, top:16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Semantics(label: title, hint: description, header: true, excludeSemantics: true, child:
+          RichText(text:
+            TextSpan(text: title, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
+              children: [
+                TextSpan(text: (requiredMark == true) ?  " *" : "", style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 12, fontFamily: Styles().fontFamilies!.extraBold),
+              )
+            ],),
+          ),
+        ),
+        (description != null) ? Container(padding: EdgeInsets.only(top: 2), child:
+          Text(description ?? "", semanticsLabel: "", style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+        ) : Container(),
+      ],)
+    );
+  }
+}
+
+/////////////////////////////////////
 // GroupDropDownButton
 
 typedef GroupDropDownDescriptionDataBuilder<T> = String? Function(T item);
