@@ -103,7 +103,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
 
-    _contentFiltersSelection = _contentFilters?.selectionFromLabelSelection(_group?.filters) ?? <String, LinkedHashSet<String>>{};
+    _contentFiltersSelection = ContentFilterSet.selectionFromFilterSelection(_group?.filters) ?? Map<String, LinkedHashSet<String>>();
 
     // #2550: we need consent checkbox selected by default
     // #2626: Hide consent checkbox and edit control. Default it to false...
@@ -1094,7 +1094,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _group?.researchProfile = null;
       }
 
-      _group?.filters = _contentFilters?.selectionToLabelSelection(_contentFiltersSelection);
+      _group?.filters = ContentFilterSet.selectionToFilterSelection(_contentFiltersSelection);
 
       // if the group is not authman then clear authman group name
       if (_group?.authManEnabled != true) {
