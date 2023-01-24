@@ -342,7 +342,7 @@ class InfoButton extends StatelessWidget {
             Container(width: 10,),
             Container(
               padding: EdgeInsets.symmetric( vertical: 4),
-              child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+              child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
             ),
             Container(width: 16,)
           ],),

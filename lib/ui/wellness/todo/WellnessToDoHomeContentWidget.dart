@@ -187,7 +187,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                     color: Colors.transparent,
                     child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        child: Styles().images?.getImage('chevron-left', excludeFromSemantics: true)))),
+                        child: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true)))),
             Text(Localization().getStringEx('panel.wellness.todo.items.this_week.label', 'This Week'), style: smallStyle),
             GestureDetector(
                 onTap: _onTapNextWeek,
@@ -195,7 +195,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                     color: Colors.transparent,
                     child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true))))
+                        child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true))))
           ]),
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             Text('Su', style: smallStyle),

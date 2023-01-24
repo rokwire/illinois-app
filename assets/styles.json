@@ -513,8 +513,9 @@
 
     "chevron-up": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 10, "todo": "size issue?"},
     "chevron-down": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 10, "todo": "size issue?"},
-    "chevron-right": {"src": "images/chevron-right.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
-    "chevron-left": {"src": "images/chevron-left.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
+
+    "chevron-right-bold": {"src": "images/chevron-right.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
+    "chevron-left-bold": {"src": "images/chevron-left.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
 
     "plus-circle-large": {"src": "images/button-plus-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 34},
 

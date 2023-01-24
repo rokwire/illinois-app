@@ -825,7 +825,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 )),
                 Padding(
                   padding: EdgeInsets.only(left: 5),
-                  child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+                  child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                 )
               ]),
               Container(

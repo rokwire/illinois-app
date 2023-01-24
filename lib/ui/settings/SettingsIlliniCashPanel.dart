@@ -147,7 +147,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
         SliverHeaderBar(
           leadingIconKey: widget.scrollController == null
               ? 'chevron-left-white'
-              : 'chevron-left',
+              : 'chevron-left-bold',
           title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
           textColor: widget.scrollController == null
               ? Styles().colors!.white

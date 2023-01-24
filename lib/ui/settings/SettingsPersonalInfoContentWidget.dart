@@ -311,7 +311,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           //borderRadius: BorderRadius.all(Radius.circular(5)),
           label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
           textColor: (Questionnaires().participateInResearch == true)? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right' : 'chevron-right-gray',
+          rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
           onTap: _onResearchQuestionnaireClicked
         ),
       ]),

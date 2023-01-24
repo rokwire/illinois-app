@@ -81,7 +81,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         InkWell(onTap: onTap, child:
           SizedBox(width: 48, height: 48, child:
             Center(child:
-              Styles().images?.getImage('chevron-left', excludeFromSemantics: true
+              Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true
             ),
           ),
         ),
