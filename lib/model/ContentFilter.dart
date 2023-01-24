@@ -71,41 +71,34 @@ class ContentFilterSet {
     return null;
   }
 
-  Map<String, LinkedHashSet<String>> selectionFromLabelSelection(Map<String, dynamic>? labelSelection) {
-    Map<String, LinkedHashSet<String>> selection = <String, LinkedHashSet<String>>{};
-    if (labelSelection != null) {
-      int selectionLength;
-      do {
-        selectionLength = selection.length;
-        labelSelection.forEach((String filterId, dynamic value) {
-          if (selection[filterId] == null) {
-            ContentFilter? filter = findFilter(id: filterId);
-            LinkedHashSet<String>? filterSelection = filter?.selectionFromLabelSelection(value, selection: selection);
-            if (filterSelection != null) {
-              selection[filterId] = filterSelection;
-            }
-          }
-        });
+  static Map<String, LinkedHashSet<String>>? selectionFromFilterSelection(Map<String, dynamic>? filterSelection) {
+    Map<String, LinkedHashSet<String>>? selection;
+    filterSelection?.forEach((String filterId, dynamic value) {
+      if (value is String) {
+        selection ??= <String, LinkedHashSet<String>>{};
+        selection![filterId] = LinkedHashSet<String>.from(<String>[value]);
       }
-      while ((selectionLength < selection.length) && (selection.length < labelSelection.length));
-    }
+      else if (value is List) {
+        selection ??= <String, LinkedHashSet<String>>{};
+        selection![filterId] = LinkedHashSet<String>.from(JsonUtils.listStringsValue(value)?.reversed ?? <String>[]);
+      }
+    });
     return selection;
   }
 
-  Map<String, dynamic>? selectionToLabelSelection(Map<String, LinkedHashSet<String>> selection) {
-    Map<String, dynamic>? labelSelection;
-    for (String filterId in selection.keys) {
-      ContentFilter? filter = findFilter(id: filterId);
-      LinkedHashSet<String>? entryIds = selection[filterId];
-      if ((filter != null) && (entryIds != null) && entryIds.isNotEmpty) {
-        dynamic labelFilterSelection = filter.selectionToLabelSelection(entryIds);
-        if (labelFilterSelection != null) {
-          labelSelection ??= <String, dynamic>{};
-          labelSelection[filterId] = labelFilterSelection;
-        }
+  static Map<String, dynamic>? selectionToFilterSelection(Map<String, LinkedHashSet<String>>? selection) {
+    Map<String, dynamic>? filterSelection;
+    selection?.forEach((String filterId, LinkedHashSet<String> values) {
+      if (values.length == 1) {
+        filterSelection ??= <String, dynamic>{};
+        filterSelection![filterId] = values.first;
       }
-    }
-    return labelSelection;
+      else if (values.length > 1) {
+        filterSelection ??= <String, dynamic>{};
+        filterSelection![filterId] = List.from(List.from(values).reversed);
+      }
+    });
+    return filterSelection;
   }
 
   void validateSelection(Map<String, LinkedHashSet<String>> selection) {
@@ -232,47 +225,6 @@ class ContentFilter {
       }
     }
     return null;
-  }
-
-  LinkedHashSet<String>? selectionFromLabelSelection(dynamic labelSelection, { Map<String, LinkedHashSet<String>>? selection }) {
-    if (labelSelection is String) {
-      ContentFilterEntry? labelEntry = findEntry(label: labelSelection);
-      return ((labelEntry != null) && (labelEntry.id != null) && labelEntry.fulfillsSelection(selection)) ? LinkedHashSet<String>.from(<String>[labelEntry.id!]) : null;
-    }
-    else if (labelSelection is List) {
-      List<String>? listSelection;
-      for (dynamic entry in labelSelection) {
-        LinkedHashSet<String>? entrySelection = selectionFromLabelSelection(entry, selection: selection);
-        if (entrySelection != null) {
-          (listSelection ??= <String>[]).addAll(entrySelection.toList());
-        }
-      }
-      return (listSelection != null) ? LinkedHashSet<String>.from(listSelection.reversed) : null;
-    }
-    else {
-      return null;
-    }
-  }
-
-  dynamic selectionToLabelSelection(LinkedHashSet<String>? selectedEntryIds) {
-    dynamic labelSelection;
-    if ((selectedEntryIds != null) && selectedEntryIds.isNotEmpty) {
-      for (String entryId in selectedEntryIds) {
-        String? filterEntryName = findEntry(id: entryId)?.label;
-        if ((filterEntryName != null) && filterEntryName.isNotEmpty) {
-          if (labelSelection is List<String>) {
-            labelSelection.add(filterEntryName);
-          }
-          else if (labelSelection is String) {
-            labelSelection = <String>[labelSelection, filterEntryName];
-          }
-          else {
-            labelSelection = filterEntryName;
-          }
-        }
-      }
-    }
-    return (labelSelection is List) ? List.from(labelSelection.reversed) : labelSelection;
   }
 
   bool validateSelection(Map<String, LinkedHashSet<String>> selection) {

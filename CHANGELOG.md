@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Store filter selection in groups as {filter_id : option_id} mapping [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
 ## [4.3.3] - 2022-01-23
 ### Changed
 - Group filters moved to standalone panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
