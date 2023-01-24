@@ -97,8 +97,8 @@
     "test_overrides5" : {"extends": "test_overrides3",  "color":  "accentColor2", "inherit" :  false},
     "test_overrides6" : {"extends": "test_overrides5",  "font_family": "bold", "size":  32.0},
     "test_overrides7" : {"extends": "test_overrides4",  "font_family": "bold",  "color": "fillColorSecondary", "inherit" :  false},
-    "test_overrides8" : {"extends": "test_overrides3",  "size": 24.0, "color":  "fillColorSecondary", "override" :  false},
-    "test_overrides9" : {"extends": "test_overrides3", "size": 24.0, "color": "fillColorSecondary"},
+    "test_overrides8" : {"extends": "test_overrides3",  "size": 24.0, "color":  "fillColorPrimary", "override" :  false},
+    "test_overrides9" : {"extends": "test_overrides3", "size": 24.0, "color": "fillColorPrimary"},
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
 
