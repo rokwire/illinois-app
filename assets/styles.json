@@ -87,6 +87,19 @@
   },
   "text_style": {
     "tbd" : " Many buttons do not use Styles, they pass separate properties to the constructor",
+
+    "test_base" : {"font_family": "regular", "size": 24.0, "color": "fillColorSecondary"},
+    "test_extend" : {"extends": "test_base"},
+    "test_overrides" : {"extends": "test_extend", "font_family": "bold", "size":  32.0},
+    "test_overrides2" : {"extends": "test_overrides", "font_family": "extra_bold"},
+    "test_overrides3" : {"extends": "test_overrides2", "size":  42.0},
+    "test_overrides4" : {"extends": "test_overrides3",  "color":  "accentColor2"},
+    "test_overrides5" : {"extends": "test_overrides3",  "color":  "accentColor2", "inherit" :  false},
+    "test_overrides6" : {"extends": "test_overrides5",  "font_family": "bold", "size":  32.0},
+    "test_overrides7" : {"extends": "test_overrides4",  "font_family": "bold",  "color": "fillColorSecondary", "inherit" :  false},
+    "test_overrides8" : {"extends": "test_overrides3",  "size": 24.0, "color":  "fillColorSecondary", "override" :  false},
+    "test_overrides9" : {"extends": "test_overrides3", "size": 24.0, "color": "fillColorSecondary"},
+
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
 
     "widget.heading.large": { "font_family": "regular", "size": 20.0, "color": "white"},
