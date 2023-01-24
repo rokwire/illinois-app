@@ -531,41 +531,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   Widget _constructFilterContent() {
-    String filtersDescr = '';
-    List<ContentFilter>? filters = _contentFilters?.filters;
-    if (filters != null) {
-      for (ContentFilter filter in filters) {
-        String? filterTitle = _contentFilters?.stringValue(filter.title);
-        LinkedHashSet<String>? filterSelection = _contentFiltersSelection[filter.id];
-        List<ContentFilterEntry>? filterEntries = filter.entries;
-        if ((filterTitle != null) && filterTitle.isNotEmpty &&
-            (filterSelection != null) && filterSelection.isNotEmpty &&
-            (filterEntries != null) && filterEntries.isNotEmpty) {
-
-          String filterOptions = '';
-          for (ContentFilterEntry entry in filterEntries) {
-            if (filterSelection.contains(entry.id)) {
-              String? entryTitle = _contentFilters?.stringValue(entry.label);
-              if ((entryTitle != null) && entryTitle.isNotEmpty) {
-                if (filterOptions.isNotEmpty) {
-                  filterOptions += '/';
-                }
-                filterOptions += entryTitle;
-              }
-            }
-          }
-
-          if (filterOptions.isNotEmpty) {
-            if (filtersDescr.isNotEmpty) {
-              filtersDescr += ', ';
-            }
-            filtersDescr += "$filterTitle: $filterOptions";
-          }
-        }
-      }
-    }
-
-    return filtersDescr.isNotEmpty ? Padding(padding: EdgeInsets.zero, child:
+    String? filtersDescr = _contentFilters?.selectionDescription(_contentFiltersSelection);
+    return ((filtersDescr != null) && filtersDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
       Row(children: [
         Expanded(child:
           Text(filtersDescr, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold),),
@@ -576,7 +543,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onTapFilters() {
     Analytics().logSelect(target: "Filters");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: _contentFiltersSelection))).then((selection) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: _contentFiltersSelection, createMode: true,))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
           _contentFiltersSelection = selection;

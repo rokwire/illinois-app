@@ -13,10 +13,13 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 
 class GroupFiltersPanel extends StatefulWidget {
+  final bool createMode;
   final ContentFilterSet contentFilters;
   final Map<String, LinkedHashSet<String>>? selection;
 
-  GroupFiltersPanel({Key? key, required this.contentFilters, this.selection, }) : super(key: key);
+  GroupFiltersPanel({Key? key, required this.contentFilters, this.selection, this.createMode = false }) : super(key: key);
+
+  bool get editMode => !createMode;
 
   @override
   State<StatefulWidget> createState() => _GroupFiltersPanelState();
@@ -60,7 +63,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
         )
       ),
       // Container(height: 1, color: Styles().colors?.surfaceAccent),
-      _buildApplyButton(),
+      _buildCommands(),
     ]) : Container();
   }
 
@@ -86,7 +89,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
       GroupSectionTitle(
         title: widget.contentFilters.stringValue(filter.title)?.toUpperCase(),
         description: widget.contentFilters.stringValue(filter.description),
-        requiredMark: (0 < (filter.minSelectCount ?? 0)),
+        requiredMark: widget.createMode && (0 < (filter.minSelectCount ?? 0)),
       ),
       GroupDropDownButton<ContentFilterEntry>(
         key: filterKeys[filter.id ?? ''] ??= GlobalKey(),
@@ -94,7 +97,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
         buttonHint: widget.contentFilters.stringValue(filter.hint),
         items: entries,
         initialSelectedValue: selectedEntry,
-        multipleSelection: filter.isMultipleSelection,
+        multipleSelection: (widget.createMode && filter.isMultipleSelection) || widget.editMode,
         enabled: entries?.isNotEmpty ?? true,
         constructTitle: (ContentFilterEntry value) => _constructFilterEntryTitle(filter, value),
         isItemSelected: (ContentFilterEntry value) => _isFilterEntrySelected(filter, value),
@@ -146,7 +149,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
           selectedIds.add(valueId);
         }
         
-        if (filter.maxSelectCount != null) {
+        if (widget.createMode && (filter.maxSelectCount != null)) {
           while (filter.maxSelectCount! < selectedIds.length) {
             selectedIds.remove(selectedIds.first);
           }
@@ -156,7 +159,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
       });
     }
 
-    if (filter.isMultipleSelection) {
+    if ((widget.createMode && filter.isMultipleSelection) || widget.editMode) {
       // Ugly workaround: show again dropdown popup if filter supports multiple select.
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         final RenderObject? renderBox = filterKeys[filter.id]?.currentContext?.findRenderObject();
@@ -170,18 +173,39 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
     }
   }
 
-  Widget _buildApplyButton() {
-    bool canApply = (widget.contentFilters.unsatisfiedFilterFromSelection(_selection) == null);
+  Widget _buildCommands() {
+    List<Widget> widgets = <Widget>[];
+    if (widget.editMode) {
+      widgets.add(Expanded(child:
+        RoundedButton(
+          label: Localization().getStringEx('panel.group.filters.button.clear.title', 'Clear'),
+          textColor: Styles().colors?.fillColorPrimary,
+          borderColor: Styles().colors?.fillColorSecondary ,
+          backgroundColor: Styles().colors?.white,
+          onTap: _onTapClear
+        )
+      ));
+    }
+
+    if (widgets.isNotEmpty) {
+      widgets.add(Container(width: 6,));
+    }
+
+    bool canApply = (widget.createMode && (widget.contentFilters.unsatisfiedFilterFromSelection(_selection) == null)) || widget.editMode;
+    widgets.add(Expanded(child:
+      RoundedButton(
+        label: Localization().getStringEx('panel.group.filters.button.apply.title', 'Apply'),
+        textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+        borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
+        backgroundColor: Styles().colors?.white,
+        enabled: canApply,
+        onTap: _onTapApply
+      )
+    ));
+
     return SafeArea(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-        RoundedButton(
-          label: Localization().getStringEx('panel.group.tags.button.apply.title', 'Apply'),
-          textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
-          backgroundColor: Styles().colors?.white,
-          enabled: canApply,
-          onTap: _onTapApply
-        )
+        Row(children: widgets,)
       )
     );
   }
@@ -189,6 +213,13 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
   void _onTapApply() {
     Analytics().logSelect(target: 'Apply');
     Navigator.of(context).pop(_selection);
+  }
+
+  void _onTapClear() {
+    Analytics().logSelect(target: 'Clear');
+    setStateIfMounted(() {
+      _selection = <String, LinkedHashSet<String>>{};
+    });
   }
 }
 
