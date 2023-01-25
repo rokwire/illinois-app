@@ -404,7 +404,7 @@
     "panel.browse.entry.wallet.add_illini_cash.title": "Add Illini Cash",
     "panel.browse.entry.wallet.meal_plan_card.title": "Meal Plan",
     "panel.browse.entry.wallet.bus_pass_card.title": "Bus Pass",
-    "panel.browse.entry.wallet.illini_id_card.title": "Illini ID",
+    "panel.browse.entry.wallet.illini_id_card.title": "Mobile i-card",
     "panel.browse.entry.wallet.library_card.title": "Library Card",
 
     "panel.browse.entry.wellness.wellness_rings.title": "Rings",
@@ -2799,7 +2799,7 @@
     "widget.home.wallet.bus_pass.title": "MTD Bus Pass",
     "widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",
 
-    "widget.home.wallet.illini_id.title": "Illini ID",
+    "widget.home.wallet.illini_id.title": "Mobile i-card",
 
     "widget.home.wallet.library_card.title": "Library Card",
 
