@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Store filter selection in groups as {filter_id : option_id} mapping [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 ### Fixed
 - Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
+### Added
+- Added Group filters to groups home panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
 ## [4.3.3] - 2022-01-23
 ### Changed
