@@ -45,7 +45,7 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
                   button: true,
                   child: IconButton(
                       onPressed: _onTapPrevious,
-                      icon: Styles().images?.getImage('chevron-left', excludeFromSemantics: true) ?? Container()
+                      icon: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true) ?? Container()
                   )
               )
           ),
@@ -56,7 +56,7 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
                   button: true,
                   child: IconButton(
                       onPressed: _onTapNext,
-                      icon: Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container()
+                      icon: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container()
                   )
               )
           )

@@ -2241,6 +2241,7 @@
     "panel.groups_home.label.category": "Category",
     "panel.groups_home.filter.tag.all.label": "All Tags",
     "panel.groups_home.filter.tag.my.label": "My Tags",
+    "panel.groups_home.filter.content_filter.label": "Filters",
     "panel.groups_home.label.my_groups.empty": "You are not member of any groups yet",
     "panel.groups_home.label.my_groups.failed": "Failed to load groups",
     "panel.groups_home.label.all_groups.empty": "There are no groups created yet",
@@ -2306,6 +2307,7 @@
 
     "panel.group.filters.header.title": "Group Filters",
     "panel.group.filters.button.apply.title": "Apply",
+    "panel.group.filters.button.clear.title": "Clear",
 
     "panel.groups_event_detail.button.options.title": "Options",
     "panel.groups_event_detail.label.online_event": "Online Event",

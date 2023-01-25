@@ -121,6 +121,42 @@ class ContentFilterSet {
     while (modified);
   }
 
+  String selectionDescription(Map<String, LinkedHashSet<String>> selection, { String filtersSeparator = ', ', String entriesSeparator = '/', String titleDelimiter = ': '}) {
+    String filtersDescr = '';
+    if (filters != null) {
+      for (ContentFilter filter in filters!) {
+        String? filterTitle = stringValue(filter.title);
+        LinkedHashSet<String>? filterSelection = selection[filter.id];
+        List<ContentFilterEntry>? filterEntries = filter.entries;
+        if ((filterTitle != null) && filterTitle.isNotEmpty &&
+            (filterSelection != null) && filterSelection.isNotEmpty &&
+            (filterEntries != null) && filterEntries.isNotEmpty) {
+
+          String filterOptions = '';
+          for (ContentFilterEntry entry in filterEntries) {
+            if (filterSelection.contains(entry.id)) {
+              String? entryTitle = stringValue(entry.label);
+              if ((entryTitle != null) && entryTitle.isNotEmpty) {
+                if (filterOptions.isNotEmpty) {
+                  filterOptions += entriesSeparator;
+                }
+                filterOptions += entryTitle;
+              }
+            }
+          }
+
+          if (filterOptions.isNotEmpty) {
+            if (filtersDescr.isNotEmpty) {
+              filtersDescr += filtersSeparator;
+            }
+            filtersDescr += "$filterTitle$titleDelimiter$filterOptions";
+          }
+        }
+      }
+    }
+    return filtersDescr;
+  }
+
   ContentFilter? unsatisfiedFilterFromSelection(Map<String, LinkedHashSet<String>> selection) {
     if (filters != null) {
       for (ContentFilter filter in filters!) {
