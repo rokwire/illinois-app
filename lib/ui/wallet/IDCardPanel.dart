@@ -18,6 +18,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -28,6 +29,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Transportation.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -376,6 +378,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       ),
       Text(cardExpiresText, style:  Styles().textStyles?.getTextStyle("panel.id_card.detail.title.tiny")),
       Container(height: 30,),
+      _buildMobileAccessContent()
 
     ],)    );
   }
@@ -395,6 +398,44 @@ class _IDCardPanelState extends State<IDCardPanel>
             ))
       ),
     );
+  }
+
+  Widget _buildMobileAccessContent() {
+    return Padding(
+        padding: EdgeInsets.only(bottom: 30),
+        child: Column(children: [
+          Container(color: Styles().colors!.dividerLine, height: 1),
+          Padding(
+              padding: EdgeInsets.only(top: 20),
+              child: Styles().images?.getImage('mobile-access-logo', excludeFromSemantics: true)),
+          Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: Text(Localization().getStringEx('widget.id_card.label.mobile_access', 'Mobile Access'),
+                  style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.extra_large'))),
+          Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: RoundedButton(
+                  //TBD: check label "Request" vs "Renew"
+                  label: Localization().getStringEx('widget.id_card.button.mobile_access.request', 'Request'),
+                  hint: Localization().getStringEx('widget.id_card.button.mobile_access.request.hint', ''),
+                  backgroundColor: Colors.white,
+                  fontSize: 16.0,
+                  contentWeight: 0.0,
+                  textColor: Styles().colors!.fillColorPrimary,
+                  borderColor: Styles().colors!.fillColorSecondary,
+                  onTap: _onTapMobileAccessButton)),
+          //TBD: check text based on the existance of a mobile access
+          Padding(padding: EdgeInsets.symmetric(horizontal: 50), child: Text(
+              Localization().getStringEx('widget.id_card.label.mobile_access.i_card.not_available',
+                  'Access various services and buildings on campus with your mobile i-card.'),
+              textAlign: TextAlign.center,
+              style: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.italic')))
+        ]));
+  }
+
+  void _onTapMobileAccessButton() {
+    //TBD: analytics and handling
+    Analytics().logSelect(target: "Request");
   }
 
   void _onClose() {

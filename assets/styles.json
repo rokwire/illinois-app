@@ -321,6 +321,7 @@
     "panel.id_card.detail.title.medium": {"font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.title.small": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.title.tiny": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
+    "panel.id_card.detail.description.italic": {"font_family": "medium_italic", "size": 12.0, "color": "mediumGray"},
 
     "panel.settings.heading.title.large": {"font_family": "semi_bold", "size": 24.0, "color": "fillColorPrimary"},
     "panel.settings.detail.title.regular": {"font_family": "regular", "size": 16.0, "color": "textBackground"},
@@ -667,6 +668,8 @@
     "payment-credit-card": {"src": "images/icon-payment-type-credit-card.png", "type": "flutter.asset"},
     "payment-cash": {"src": "images/icon-payment-type-cache.png", "type": "flutter.asset"},
     "payment-google-pay": {"src": "images/icon-payment-type-google-pay.png", "type": "flutter.asset"},
-    "payment-apple-pay": {"src": "images/icon-payment-type-apple-pay.png", "type": "flutter.asset"}
+    "payment-apple-pay": {"src": "images/icon-payment-type-apple-pay.png", "type": "flutter.asset"},
+
+    "mobile-access-logo": {"src": "images/hid-logo.png", "type": "flutter.asset"}
   }
 }
