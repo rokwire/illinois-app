@@ -22,7 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/ContentFilter.dart';
 import 'package:illinois/service/ContentFilter.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/groups/GroupFilterPanel.dart';
+import 'package:illinois/ui/groups/GroupFiltersPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
