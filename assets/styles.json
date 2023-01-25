@@ -322,6 +322,7 @@
     "panel.id_card.detail.title.small": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.title.tiny": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.description.italic": {"font_family": "medium_italic", "size": 12.0, "color": "mediumGray"},
+    "panel.id_card.detail.description.medium": {"font_family": "medium", "size": 14.0, "color": "mediumGray"},
 
     "panel.settings.heading.title.large": {"font_family": "semi_bold", "size": 24.0, "color": "fillColorPrimary"},
     "panel.settings.detail.title.regular": {"font_family": "regular", "size": 16.0, "color": "textBackground"},

@@ -322,6 +322,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                         keyJson.put("card_number", key.getCardNumber());
                         keyJson.put("issuer", key.getIssuer());
                         keyJson.put("type", key.getType());
+                        //TBD: DD - send expiration date to flutter
+                        keyJson.put("expiration_date", "yyyy-MM-dd");
                         keysJson.add(keyJson);
                     }
                     return keysJson;
