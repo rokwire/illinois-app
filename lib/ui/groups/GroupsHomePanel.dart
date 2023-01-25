@@ -168,6 +168,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     Groups().loadGroups(
       contentType: GroupsContentType.all,
       category: (_selectedCategory != _allCategoriesValue) ? _selectedCategory : null,
+      filters: _contentFiltersSelection,
       tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
     );
 
@@ -496,6 +497,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             _contentFiltersSelection = ContentFilterSet.selectionToFilterSelection(selection) ?? <String, dynamic>{};
             _contentFiltersSelectionDescription = StringUtils.isNotEmpty(selectionText) ? "Filter: $selectionText" : null;
           });
+          _reloadAllGroupsContent();
         }
       });
     }
