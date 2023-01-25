@@ -21,7 +21,7 @@
 			"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 			"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "all_notifications"],
 			"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
-			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card", "mobile_access"],
+			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"],
 
 			"home.twitter.account": ["gies", "", "canvas"],
 			
@@ -44,7 +44,7 @@
 			"browse.polls": ["create_poll", "recent_polls"],
 			"browse.recent": ["recent_items"],
 			"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
-			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card", "mobile_access"],
+			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
 			"browse.wellness": ["wellness_resources", "wellness_rings", "wellness_todo", "my_appointments", "wellness_tips", "wellness_health_screener"],
 	
 			"settings": ["connect", "connected", "link", "linked", "feedback"],
@@ -84,7 +84,7 @@
 			
 			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs", "research_questionnaire"],
 	
-			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "mobile_access", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
+			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
 				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "student", "netid_login"],
@@ -258,7 +258,7 @@
 				"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 				"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "all_notifications"],
 				"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
-				"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card", "mobile_access"]
+				"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"]
 			},
 			"rules": {
 				"roles" : {

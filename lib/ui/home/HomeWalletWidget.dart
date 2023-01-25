@@ -14,7 +14,6 @@ import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -66,9 +65,6 @@ class _HomeWalletWidgetState extends HomeCompoundWidgetState<HomeWalletWidget> {
     }
     else if (code == 'library_card') {
       return HomeLibraryCardWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-    }
-    else if (code == 'mobile_access') {
-      return HomeMobileAccessWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
     }
     else {
       return null;
@@ -681,142 +677,6 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
         ((_libraryCode != null) && (_libraryCode != libraryCode)))
     {
       _loadLibraryBarcode();
-    }
-  }
-}
-
-class HomeMobileAccessWalletWidget extends StatefulWidget {
-  final HomeFavorite? favorite;
-  final StreamController<String>? updateController;
-
-  HomeMobileAccessWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
-
-  @override
-  State<HomeMobileAccessWalletWidget> createState() => _HomeMobileAccessWalletWidgetState();
-}
-
-class _HomeMobileAccessWalletWidgetState extends State<HomeMobileAccessWalletWidget> implements NotificationsListener {
-  List<dynamic>? _mobileAccessKeys;
-
-  @override
-  void initState() {
-    NotificationService().subscribe(this, [
-      Auth2.notifyLoginChanged,
-    ]);
-
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-          _loadMobileAccessKeys();
-        }
-      });
-    }
-
-    _loadMobileAccessKeys();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    super.dispose();
-  }
-
-  // NotificationsListener
-
-  void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyLoginChanged) {
-      _loadMobileAccessKeys();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String? message;
-    if (!Auth2().isOidcLoggedIn) {
-      message = Localization().getStringEx('widget.home.wallet.mobile_access.label.logged_out.mobile_access.short', 'You need to be logged in with your NetID to view Mobile Access.');
-    }
-    else if (CollectionUtils.isEmpty(_mobileAccessKeys)) {
-      message = Localization().getStringEx('widget.home.wallet.mobile_access.label.mobile_access.no_mobile_id', 'No Mobile ID issued.');
-    }
-
-    return GestureDetector(onTap: _onTap, child:
-      Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
-        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-          Row(children: <Widget>[
-            Expanded(child:
-              Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Expanded(child:
-                      Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                        Text(Localization().getStringEx('widget.home.wallet.mobile_access.title', 'Mobile Access'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
-                      ),
-                    ),
-                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true),
-                  ]),
-                ),
-                Container(color: Styles().colors!.backgroundVariant, height: 1,),
-                Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
-                    Row(children: <Widget>[
-                      Expanded(child:
-                        (message != null) ?
-                          VerticalTitleValueSection(
-                            title: message,
-                            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
-                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          ) :
-                          Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
-                            Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors?.fillColorSecondary ?? Colors.transparent, width: 3))), child:
-                              Padding(padding: EdgeInsets.only(left: 10), child:
-                                Text(StringUtils.ensureNotEmpty(_mobileAccessKeysLabel), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary)),
-                              ),
-                            ),
-                          ),
-                      ),
-                    ]),
-                  ),
-                ),
-              ]),
-            ),
-          ]),
-        ),
-      ),
-    );
-  }
-
-  String? get _mobileAccessKeysLabel {
-    if (CollectionUtils.isEmpty(_mobileAccessKeys)) {
-      return null;
-    }
-    String result = '';
-    for (Map<String, dynamic> key in _mobileAccessKeys!) {
-      String? keyLabel = JsonUtils.stringValue(key['label']);
-      if (keyLabel != null) {
-        if (StringUtils.isNotEmpty(result)) {
-          result += ', ';
-        }
-        result += keyLabel;
-      }
-    }
-    return result;
-  }
-
-  void _onTap() {
-    Analytics().logSelect(target: 'Mobile Access', source: widget.runtimeType.toString());
-    //TBD: mobile access implement
-  }
-
-  void _loadMobileAccessKeys() {
-    if (Auth2().isLoggedIn) {
-      NativeCommunicator().getMobileAccessKeys().then((List<dynamic>? mobileAccessKeys) {
-        setStateIfMounted(() {
-          _mobileAccessKeys = mobileAccessKeys;
-        });
-      });
-    } else {
-      _mobileAccessKeys = null;
     }
   }
 }

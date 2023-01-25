@@ -406,7 +406,6 @@
     "panel.browse.entry.wallet.bus_pass_card.title": "Bus Pass",
     "panel.browse.entry.wallet.illini_id_card.title": "Illini ID",
     "panel.browse.entry.wallet.library_card.title": "Library Card",
-    "panel.browse.entry.wallet.mobile_access.title": "Mobile Access",
 
     "panel.browse.entry.wellness.wellness_rings.title": "Rings",
     "panel.browse.entry.wellness.wellness_todo.title": "To-Do List",
@@ -2803,10 +2802,6 @@
     "widget.home.wallet.illini_id.title": "Illini ID",
 
     "widget.home.wallet.library_card.title": "Library Card",
-
-    "widget.home.wallet.mobile_access.title": "Mobile Access",
-    "widget.home.wallet.mobile_access.label.logged_out.mobile_access.short": "You need to be logged in with your NetID to view Mobile Access.",
-    "widget.home.wallet.mobile_access.label.mobile_access.no_mobile_id": "No Mobile ID issued.",
 
     "widget.home.radio.title": "WPGU 107.1 FM",
     "widget.home.radio.disabled.message": "WPGU 107.1 FM is not enabled.",
