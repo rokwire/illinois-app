@@ -7,6 +7,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -56,11 +57,24 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
     List<ContentFilter>? filters = widget.contentFilters.filters;
     return ((filters != null) && filters.isNotEmpty) ? Column(children: <Widget>[
       Expanded(child:
-        SingleChildScrollView(child:
-          Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
-            _buildFiltersContent(),
+        Stack(children: [
+          Container(padding: EdgeInsets.only(left: 16, right: 24, top: 8), child:
+            SingleChildScrollView(child:
+              _buildFiltersContent(),
+            ),
           ),
-        )
+          Align(alignment: Alignment.topRight,
+            child: GestureDetector(onTap: _onTapClear,
+              child:Semantics(label: Localization().getStringEx('panel.group.filters.button.clear.title', 'Clear'), button: true, excludeSemantics: true,
+                child: Container(width: 36, height: 36,
+                  child: Align(alignment: Alignment.center,
+                    child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],)
       ),
       // Container(height: 1, color: Styles().colors?.surfaceAccent),
       _buildCommands(),
@@ -174,38 +188,21 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
   }
 
   Widget _buildCommands() {
-    List<Widget> widgets = <Widget>[];
-    if (widget.editMode) {
-      widgets.add(Expanded(child:
-        RoundedButton(
-          label: Localization().getStringEx('panel.group.filters.button.clear.title', 'Clear'),
-          textColor: Styles().colors?.fillColorPrimary,
-          borderColor: Styles().colors?.fillColorSecondary ,
-          backgroundColor: Styles().colors?.white,
-          onTap: _onTapClear
-        )
-      ));
-    }
-
-    if (widgets.isNotEmpty) {
-      widgets.add(Container(width: 6,));
-    }
-
     bool canApply = (widget.createMode && (widget.contentFilters.unsatisfiedFilterFromSelection(_selection) == null)) || widget.editMode;
-    widgets.add(Expanded(child:
-      RoundedButton(
-        label: Localization().getStringEx('panel.group.filters.button.apply.title', 'Apply'),
-        textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-        borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
-        backgroundColor: Styles().colors?.white,
-        enabled: canApply,
-        onTap: _onTapApply
-      )
-    ));
-
     return SafeArea(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-        Row(children: widgets,)
+        Row(children: <Widget>[
+          Expanded(child:
+            RoundedButton(
+              label: Localization().getStringEx('panel.group.filters.button.apply.title', 'Apply'),
+              textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+              borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
+              backgroundColor: Styles().colors?.white,
+              enabled: canApply,
+              onTap: _onTapApply
+            )
+          )
+        ],)
       )
     );
   }
