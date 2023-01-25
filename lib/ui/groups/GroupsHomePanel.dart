@@ -362,8 +362,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildFunctionalBar() {
     return Padding(padding: const EdgeInsets.only(left: 16), child:
       Row(children: <Widget>[ Expanded(child:
-        Wrap(alignment: WrapAlignment.spaceBetween, runAlignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, children: <Widget>[
-          _buildFiltersBar(),
+        Wrap(alignment: WrapAlignment.spaceBetween, runAlignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.start, children: <Widget>[
+          IntrinsicWidth(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _buildFiltersBar(),
+            _buildContentFiltersDescription(),
+          ],),),
           _buildCommandsBar(),
         ],),
       )]),
@@ -381,12 +384,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildFilterButtons() {
     String filtersTitle = Localization().getStringEx("panel.groups_home.filter.content_filter.label", "Filters");
+    
     return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-      
       Visibility(visible: CollectionUtils.isNotEmpty(_categories), child:
         Padding(padding: EdgeInsets.only(right: 6), child:
           FilterSelector(
-            padding: EdgeInsets.symmetric(vertical: 14),
+            padding: EdgeInsets.only(top: 14, bottom: 8),
             title: _selectedCategory,
             active: (_activeFilterType == _FilterType.category),
             onTap: () {
@@ -401,7 +404,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       
       Padding(padding: EdgeInsets.only(right: 6), child:
         FilterSelector(
-          padding: EdgeInsets.symmetric(vertical: 14),
+          padding: EdgeInsets.only(top: 14, bottom: 8),
           title: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
           active: (_activeFilterType == _FilterType.tags),
           onTap: () {
@@ -416,7 +419,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Visibility(visible: _contentFilters?.isNotEmpty ?? false, child:
         Padding(padding: EdgeInsets.only(right: 6), child:
           InkWell(onTap: _onContentFilters, child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
+            Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
               Row(children: [
                 Text(filtersTitle, style: TextStyle(
                   fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
@@ -446,8 +449,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildContentFiltersDescription() {
     return StringUtils.isNotEmpty(_contentFiltersSelectionDescription) ? 
-      Padding(padding: EdgeInsets.only(top: 0, bottom: 2), child: 
-        Text(_contentFiltersSelectionDescription ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium),),
+      Padding(padding: EdgeInsets.only(top: 0, bottom: 4), child: 
+      Row(children: [Expanded(child:
+        Text(_contentFiltersSelectionDescription ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium,),),
+      ),],)
+        
       ) : Container();
   }
 
@@ -481,10 +487,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Map<String, LinkedHashSet<String>>? selection = ContentFilterSet.selectionFromFilterSelection(_contentFiltersSelection);
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: selection))).then((selection) {
         if ((selection != null) && mounted) {
-          String? selectionText = _contentFilters?.selectionDescription(selection);
+          String? selectionText = _contentFilters?.selectionDescription(selection,
+            filtersSeparator: ', ',
+            entriesSeparator: ' or ',
+            titleDelimiter: ' is '
+          );
           setState(() {
             _contentFiltersSelection = ContentFilterSet.selectionToFilterSelection(selection) ?? <String, dynamic>{};
-            _contentFiltersSelectionDescription = StringUtils.isNotEmpty(selectionText) ? "Filters: $selectionText" : null;
+            _contentFiltersSelectionDescription = StringUtils.isNotEmpty(selectionText) ? "Filter: $selectionText" : null;
           });
         }
       });
@@ -602,9 +612,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if(CollectionUtils.isNotEmpty(myGroups)) {
       for (Group group in myGroups) {
         if (group.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
+          EdgeInsetsGeometry padding = widgets.isNotEmpty ? const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.only(top: 6, bottom: 8);
+          widgets.add(Padding(padding: padding, child:
+            GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
               onImageTap: (){ onTapImage(group);},
@@ -622,16 +632,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if(CollectionUtils.isNotEmpty(myPendingGroups)) {
       List<Widget> widgets = [];
       widgets.add(Container(height: 8));
-      widgets.add(Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      widgets.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),)
         )
       );
       widgets.add(Container(height: 8,));
       for (Group group in myPendingGroups) {
         if (group.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
+          widgets.add(Padding(padding: const EdgeInsets.symmetric(vertical: 8), child:
+            GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
               key: _getGroupKey(group),
@@ -639,8 +648,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           ));
         }
       }
-      return
-        Stack(children: [
+      return Stack(children: [
           Container(height: 112, color: Styles().colors!.backgroundVariant, child:
             Column(children: [
               Container(height: 80,),
@@ -652,7 +660,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               ),
             ],)
           ),
-          Column(crossAxisAlignment: CrossAxisAlignment.start,children: widgets,)
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets,)
         ],);
     }
     return Container();
@@ -663,9 +671,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       List<Widget> widgets = [];
       for(Group group in _allGroups!) {
         if (group.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
+          EdgeInsetsGeometry padding = widgets.isNotEmpty ? const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.only(top: 6, bottom: 8);
+          widgets.add(Padding(padding: padding, child:
+            GroupCard(
               group: group,
               key: _getGroupKey(group),
             ),
