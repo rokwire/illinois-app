@@ -361,15 +361,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildFunctionalBar() {
     return Padding(padding: const EdgeInsets.only(left: 16), child:
+    Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
       Row(children: <Widget>[ Expanded(child:
         Wrap(alignment: WrapAlignment.spaceBetween, runAlignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.start, children: <Widget>[
-          IntrinsicWidth(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildFiltersBar(),
-            _buildContentFiltersDescription(),
-          ],),),
+          _buildFiltersBar(),
           _buildCommandsBar(),
         ],),
       )]),
+      _buildContentFiltersDescription(),
+    ],)
     );
   }
 
