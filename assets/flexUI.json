@@ -1,7 +1,7 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["favorites", "browse", "maps", "academics", "wellness"],
+			"tabbar": ["favorites", "browse", "maps", "maps2", "academics", "wellness"],
 	
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_todo", "wellness_rings", "wellness_tips",

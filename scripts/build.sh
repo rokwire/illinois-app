@@ -8,18 +8,45 @@ help() {
     echo "{BRAND} brand name | Default: Illinois if the param is missing or empty"
     echo "{ENV} Environment name Values: dev|prod|test Default: dev"
     echo "{PLATFORM} Target platform. Values: all|ios|android Default: all"
+    echo "{TAG} Designed for custom build names. Default empty"
     echo ""
     echo ""
 }
 
-cleanupResources(){
+printUtputUrls() {
+    echo "########################################################################"
+    echo "Generated URLs for the report"
+    if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "android" ]; then
+      echo "$BRAND $FLAVOR_ENV $TAG Android:"
+      echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.apk"
+      echo ""
+    fi
+    if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
+    echo "$BRAND $FLAVOR_ENV $TAG iOS:"
+    echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.ipa"
+    echo "itms-services://?action=download-manifest&url=https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.plist"
+    echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.png"
+    echo ""
+    echo "########################################################################"
+    fi
+}
+
+cleanupResources() {
     echo "Calling cleanup resource script"
     ./scripts/cleanup_app_resources.sh
     echo "Cleanup resource script finished"
 }
 
+prebuild() {
+    echo "Calling prebuild_illinois resource script"
+    ./scripts/prebuild_illinois.sh
+    echo "prebuild_illinois script finished"
+}
+
+
 help
 cleanupResources
+prebuild
 
 CURRENT_DIR=$(PWD)
 FILE_PUBSPEC=$(cat pubspec.yaml)
@@ -27,7 +54,7 @@ FILE_PUBSPEC=$(cat pubspec.yaml)
 BRAND="$1"
 ENV="$2"
 PLATFORM="$3"
-
+TAG="$4"
 
 if [ -z "$BRAND" ]
 then
@@ -63,31 +90,22 @@ fi
 FLAVOUR_ENV_NAME=$(tr '[:lower:]' '[:upper:]' <<<"${ENV_NAME:0:1}")${ENV_NAME:1} #Upper case the first letter
 APK_BUILD_PATH="${BUILD_DIR}/app/outputs/flutter-apk/app-illinois$ENV_NAME-release.apk"
 VERSION=$(grep "version:" pubspec.yaml | sed -e 's/.* //' | sed -e 's/+.*//')
-APK_OUT_PATH="${OUTPUT_DIR}/$BRAND-$VERSION-$ENV.apk"
-IPA_OUT_PATH="${OUTPUT_DIR}/$BRAND-$VERSION-$ENV.ipa"
-QR_BUILD_PATH="${OUTPUT_DIR}/$BRAND-$VERSION-$ENV.png"
+if [-z "$TAG"] || ["$TAG" = ""]
+then
+    BUILD_OUTPUT_NAME="$BRAND-$VERSION-$ENV"
+else
+    BUILD_OUTPUT_NAME="$BRAND-$VERSION-$TAG-$ENV"
+fi
+APK_OUT_PATH="${OUTPUT_DIR}/$BUILD_OUTPUT_NAME.apk"
+IPA_OUT_PATH="${OUTPUT_DIR}/$BUILD_OUTPUT_NAME.ipa"
+QR_BUILD_PATH="${OUTPUT_DIR}/$BUILD_OUTPUT_NAME.png"
 PLIST_TEMPLATE_PATH="$CURRENT_DIR/scripts/templates/template.plist"
-PLIST_BUILD_PATH="$OUTPUT_DIR/$BRAND-$VERSION-$ENV.plist"
+PLIST_BUILD_PATH="$OUTPUT_DIR/$BUILD_OUTPUT_NAME.plist"
 
 echo $PLIST_BUILD_PATH
-QR_PLIST_URL="itms-services://?action=download-manifest&url=https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BRAND-$VERSION-$ENV.plist"
+QR_PLIST_URL="itms-services://?action=download-manifest&url=https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.plist"
 
-
-echo "########################################################################"
-echo "Generated URLs for the report"
-if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "android" ]; then
-  echo "$BRAND $FLAVOR_ENV Android:"
-  echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BRAND-$VERSION-$ENV.apk"
-  echo ""
-fi
-if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
-echo "$BRAND $FLAVOR_ENV iOS:"
-echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BRAND-$VERSION-$ENV.ipa"
-echo "itms-services://?action=download-manifest&url=https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BRAND-$VERSION-$ENV.plist"
-echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BRAND-$VERSION-$ENV.png"
-echo ""
-echo "########################################################################"
-fi
+printUtputUrls
 
 echo "Cleaning the build environment."
 rm -rf $OUTPUT_DIR
@@ -150,15 +168,17 @@ if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
 
   cd ios
   xcodebuild -workspace Runner.xcworkspace -scheme Runner  -archivePath ../build/_output/tmp/Runner.xcarchive archive
-  xcodebuild -exportArchive -archivePath ../build/_output/tmp/Runner.xcarchive -exportPath ../build/_output/tmp/ -exportOptionsPlist ../build/_output/$BRAND-$VERSION-$ENV.plist
+  xcodebuild -exportArchive -archivePath ../build/_output/tmp/Runner.xcarchive -exportPath ../build/_output/tmp/ -exportOptionsPlist ../build/_output/$BUILD_OUTPUT_NAME.plist
   cd ..
-  cp ./build/_output/tmp/Illinois.ipa ./build/_output/$BRAND-$VERSION-$ENV.ipa
+  cp ./build/_output/tmp/Illinois.ipa ./build/_output/$BUILD_OUTPUT_NAME.ipa
   #rm -rf ./build/_output/tmp/
 
   aws s3 cp $QR_BUILD_PATH s3://rokwire-ios-beta/Installs/
   aws s3 cp $PLIST_BUILD_PATH s3://rokwire-ios-beta/Installs/
-  aws s3 cp ./build/_output/$BRAND-$VERSION-$ENV.ipa s3://rokwire-ios-beta/Installs/
+  aws s3 cp ./build/_output/$BUILD_OUTPUT_NAME.ipa s3://rokwire-ios-beta/Installs/
 fi
+
+printUtputUrls
 
 echo "Building finished!"
 echo -ne '\007'

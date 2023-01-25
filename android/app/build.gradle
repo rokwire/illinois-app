@@ -193,6 +193,9 @@ dependencies {
 
     //Security - also required by Origo 1.7.7 and above
     implementation "androidx.security:security-crypto:1.1.0-alpha03"
+
+    // Support foldable devices
+    implementation "androidx.window:window:1.0.0"
     //end Common
 
     //Google Maps

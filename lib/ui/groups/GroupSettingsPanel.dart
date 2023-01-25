@@ -488,7 +488,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 initialSelectedValue: _group?.category,
                 items: _groupCategories,
                 constructTitle: (dynamic item) => item,
-                onValueChanged: (value) {
+                onValueChanged: (String value) {
                   setState(() {
                     _group?.category = value;
                     Log.d("Selected Category: $value");

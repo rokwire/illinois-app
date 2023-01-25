@@ -19,7 +19,7 @@ import 'dart:typed_data';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
@@ -58,6 +58,37 @@ import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/service/Polls.dart' as illinois;
 
 /////////////////////////////////////
+// GroupSectionTitle
+
+class GroupSectionTitle extends StatelessWidget {
+  final String? title;
+  final String? description;
+  final bool? requiredMark;
+
+  GroupSectionTitle({Key? key, this.title, this.description, this.requiredMark,}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(padding: EdgeInsets.only(bottom: 8, top:16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Semantics(label: title, hint: description, header: true, excludeSemantics: true, child:
+          RichText(text:
+            TextSpan(text: title, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
+              children: [
+                TextSpan(text: (requiredMark == true) ?  " *" : "", style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 12, fontFamily: Styles().fontFamilies!.extraBold),
+              )
+            ],),
+          ),
+        ),
+        (description != null) ? Container(padding: EdgeInsets.only(top: 2), child:
+          Text(description ?? "", semanticsLabel: "", style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+        ) : Container(),
+      ],)
+    );
+  }
+}
+
+/////////////////////////////////////
 // GroupDropDownButton
 
 typedef GroupDropDownDescriptionDataBuilder<T> = String? Function(T item);
@@ -72,14 +103,19 @@ class GroupDropDownButton<T> extends StatefulWidget{
   final GroupDropDownDescriptionDataBuilder<T>? constructDescription;
   final GroupDropDownDescriptionDataBuilder<T>? constructDropdownDescription;
   final GroupDropDownDescriptionDataBuilder<T>? constructListItemDescription;
-  final Function? onValueChanged;
+  final bool Function(T item)? isItemSelected;
+  final void Function(T item)? onItemSelected;
+  final void Function(T item)? onValueChanged;
   final bool enabled;
+  final bool multipleSelection;
 
   final EdgeInsets padding;
   final BoxDecoration? decoration;
 
-  GroupDropDownButton({Key? key, this.emptySelectionText,this.buttonHint, this.initialSelectedValue, this.items, this.onValueChanged, this.enabled = true,
-    this.constructTitle, this.constructDescription, this.constructDropdownDescription, this.constructListItemDescription, this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration}) : super(key: key);
+  GroupDropDownButton({Key? key,
+    this.emptySelectionText,this.buttonHint, this.initialSelectedValue, this.items, this.enabled = true, this.multipleSelection = false,
+    this.onValueChanged, this.isItemSelected, this.onItemSelected, this.constructTitle, this.constructDescription, this.constructDropdownDescription, this.constructListItemDescription,
+    this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -87,7 +123,7 @@ class GroupDropDownButton<T> extends StatefulWidget{
   }
 }
 
-class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
+class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +186,9 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
   }
 
   Widget _buildDropDownItem(String title, String? description, bool isSelected){
+    String imageAsset = widget.multipleSelection ?
+      (isSelected ? "check-box-filled" : "box-outline-gray") :
+      (isSelected ? "check-circle-filled" : "circle-outline");
     return
       Container(
           color: (Colors.white),
@@ -171,9 +210,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                           style: isSelected? Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.selected") :  Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.not_selected")
                         ),
                       )),
-                  (isSelected
-                      ? Styles().images?.getImage('check-circle-filled', excludeFromSemantics: true)
-                      : Styles().images?.getImage('circle-outline', excludeFromSemantics: true)) ?? Container()
+                      Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
                 ]),
             description==null? Container() : Container(height: 6,),
             description==null? Container():
@@ -196,8 +233,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
 
   String? _getButtonDescriptionText(){
     if (widget.initialSelectedValue != null) {
-      GroupDropDownDescriptionDataBuilder<T?>? constructDescriptionFn = widget.constructDropdownDescription ?? widget.constructDescription;
-      return constructDescriptionFn!=null? constructDescriptionFn(widget.initialSelectedValue) : null;
+      GroupDropDownDescriptionDataBuilder<T>? constructDescriptionFn = widget.constructDropdownDescription ?? widget.constructDescription;
+      return (constructDescriptionFn != null) ? constructDescriptionFn(widget.initialSelectedValue!) : null;
     } else {
       //empty null for now
       return null;
@@ -206,26 +243,36 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
 
   String? _getButtonTitleText(){
     if (widget.initialSelectedValue != null) {
-      return widget.constructTitle != null ? widget.constructTitle!(widget.initialSelectedValue) : widget.initialSelectedValue?.toString();
+      return widget.constructTitle != null ? widget.constructTitle!(widget.initialSelectedValue!) : widget.initialSelectedValue?.toString();
     } else {
       return widget.emptySelectionText;
     }
   }
 
-  List<DropdownMenuItem<dynamic>>? _constructItems(){
+  bool _isItemSelected(T item) {
+    if (widget.isItemSelected != null) {
+      return widget.isItemSelected!(item);
+    }
+    else {
+      return (widget.initialSelectedValue != null) && (widget.initialSelectedValue == item);
+    }
+  }
+
+  List<DropdownMenuItem<T>>? _constructItems(){
     int optionsCount = widget.items?.length ?? 0;
     if (optionsCount == 0) {
       return null;
     }
 
-    return widget.items!.map((Object? item) {
+    return widget.items!.map((T item) {
       String? name = widget.constructTitle!=null? widget.constructTitle!(item) : item?.toString();
-      GroupDropDownDescriptionDataBuilder<T?>? constructDescriptionFn = widget.constructListItemDescription ?? widget.constructDescription;
-      String? description = constructDescriptionFn!=null? constructDescriptionFn(item as T?) : null;
-      bool isSelected = (widget.initialSelectedValue != null) && (widget.initialSelectedValue == item);
-      return DropdownMenuItem<dynamic>(
+      GroupDropDownDescriptionDataBuilder<T>? constructDescriptionFn = widget.constructListItemDescription ?? widget.constructDescription;
+      String? description = (constructDescriptionFn != null) ? constructDescriptionFn(item) : null;
+      bool isSelected = _isItemSelected(item);
+      return DropdownMenuItem<T>(
         value: item,
-        child: item!=null? _buildDropDownItem(name!,description,isSelected): Container(),
+        child: (item != null) ? _buildDropDownItem(name!, description, isSelected) : Container(),
+        onTap: () => widget.onItemSelected?.call(item),
       );
     }).toList();
   }
@@ -1185,16 +1232,23 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           flex: 2,
                           child: Container(
                             padding: EdgeInsets.only(top: 10, bottom: 10),
-                            child: Html(data: htmlBody, style: {
-                              "body": Style(
-                                  color: Styles().colors!.fillColorPrimary,
-                                  fontFamily: Styles().fontFamilies!.regular,
-                                  fontSize: FontSize(16),
-                                  maxLines: 3,
-                                  textOverflow: TextOverflow.ellipsis,
-                                  margin: EdgeInsets.zero,
-                              ),
-                            }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
+                            child:
+                            HtmlWidget(
+                                "<div style= text-overflow:ellipsis;max-lines:3> ${StringUtils.ensureNotEmpty(htmlBody)}</div>",
+                                onTapUrl : (url) {_onLinkTap(url); return true;},
+                                textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                            )
+                            // Html(data: htmlBody, style: {
+                            //   "body": Style(
+                            //       color: Styles().colors!.fillColorPrimary,
+                            //       fontFamily: Styles().fontFamilies!.regular,
+                            //       fontSize: FontSize(16),
+                            //       maxLines: 3,
+                            //       textOverflow: TextOverflow.ellipsis,
+                            //       margin: EdgeInsets.zero,
+                            //   ),
+                            // }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
+                          )),
                         StringUtils.isEmpty(imageUrl)? Container() :
                         Expanded(
                           flex: 1,
@@ -1310,6 +1364,11 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     if (widget.reply?.isUpdated ?? false) {
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
+      // bodyText += ' <span style=color:${ColorUtils.toHex(Styles().colors!.disabledTextColor  ?? Colors.blue)}>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
+      // bodyText += ' <a>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</a>';
+
+      // ' <span style=color:${ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)}} >(${"VERY VERY VERY VERY VERY VERY VEry  long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
+          // ' <span>(${"VERY VERY VERY VERY VERY VEry long Span so we can check it's overflow styling"/*Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')*/})</span>';
     }
     return Semantics(container: true, button: true,
       child:GestureDetector(
@@ -1358,25 +1417,35 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           child: Semantics( child:
                           Padding(
                               padding: EdgeInsets.only(top: 10),
-                              child: Html(
-                                data: bodyText,
-                                style: {
-                                "body": Style(
-                                    color: Styles().colors!.fillColorPrimary,
-                                    fontFamily: Styles().fontFamilies!.regular,
-                                    fontSize: FontSize(16),
-                                    maxLines: 3000,
-                                    textOverflow: TextOverflow.ellipsis,
-                                    margin: EdgeInsets.zero
-                                ),
-                                "span": Style(
-                                    color: Styles().colors!.blackTransparent018,
-                                    fontFamily: Styles().fontFamilies!.regular,
-                                    fontSize: FontSize(16),
-                                    maxLines: 1,
-                                    textOverflow: TextOverflow.ellipsis)
-                                },
-                                onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))))),
+                              child:
+                              HtmlWidget(
+                                  StringUtils.ensureNotEmpty(bodyText),
+                                  onTapUrl : (url) {_onLinkTap(url); return true;},
+                                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                                  customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors!.disabledTextColor ?? Colors.blue)}: null //Not able to use Transparent colour, it's not parsed correctly
+                                  // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.blackTransparent018 ?? Colors.blue)} : null
+                              )
+                              // Html(
+                              //   data: bodyText,
+                              //   style: {
+                              //   "body": Style(
+                              //       color: Styles().colors!.fillColorPrimary,
+                              //       fontFamily: Styles().fontFamilies!.regular,
+                              //       fontSize: FontSize(16),
+                              //       maxLines: 3000,
+                              //       textOverflow: TextOverflow.ellipsis,
+                              //       margin: EdgeInsets.zero
+                              //   ),
+                              //   "span": Style(
+                              //       color: Styles().colors!.blackTransparent018,
+                              //       fontFamily: Styles().fontFamilies!.regular,
+                              //       fontSize: FontSize(16),
+                              //       maxLines: 1,
+                              //       textOverflow: TextOverflow.ellipsis)
+                              //   },
+                              //   onLinkTap: (url, context, attributes, element) => _onLinkTap(url))
+
+                          )))),
                   StringUtils.isEmpty(widget.reply?.imageUrl)? Container() :
                   Expanded(
                       flex: 1,

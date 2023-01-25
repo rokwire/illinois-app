@@ -5,11 +5,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.4] - 2022-01-24
+### Changed
+- Store filter selection in groups as {filter_id : option_id} mapping [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+### Fixed
+- Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
+
+## [4.3.3] - 2022-01-23
+### Changed
+- Group filters moved to standalone panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Preserve Group filters dropdown popup when selecting items that are multiple selected [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.2] - 2022-01-20
 ### Fixed
 - Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
 ### Changed
 - Access MTD via content service [#2922](https://github.com/rokwire/illinois-app/issues/2922).
 - Removed access to shibboleth section from config secret keys (unused).
+- Fixed checkbox image style in research questionnaire.
+- Changed usage of HTMLWidget. Use flutter_widget_from_html for better Accessibility support. [#2912](https://github.com/rokwire/illinois-app/issues/2912).
+### Added
+- Acknwoledge Google Maps flutter plugin [#2904](https://github.com/rokwire/illinois-app/issues/2904).
+- Added filters in create group panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
 ## [4.3.1] - 2022-01-12
 ### Changed

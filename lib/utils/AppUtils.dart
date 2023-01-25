@@ -367,4 +367,15 @@ extension StateExt on State {
       setState(fn);
     }
   }
+
+  @protected
+  void applyStateIfMounted(VoidCallback fn) {
+    if (mounted) {
+      // ignore: invalid_use_of_protected_member
+      setState(fn);
+    }
+    else {
+      fn();
+    }
+  }
 }

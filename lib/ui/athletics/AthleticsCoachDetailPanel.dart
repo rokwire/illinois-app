@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -28,7 +29,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
-import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -81,11 +81,11 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                     padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
                     color: Styles().colors!.background,
                     child: Visibility(visible: StringUtils.isNotEmpty(widget.coach.htmlBio), child: Container(
-                      child: Html(
-                        data: StringUtils.ensureNotEmpty(widget.coach.htmlBio),
-                        onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                        style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-                      ),
+                      child: HtmlWidget(
+                          StringUtils.ensureNotEmpty(widget.coach.htmlBio),
+                          onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+                          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                      )
                     ))
                 )
               ],
