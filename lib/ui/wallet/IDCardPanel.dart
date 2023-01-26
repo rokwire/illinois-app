@@ -483,7 +483,7 @@ class _IDCardPanelState extends State<IDCardPanel>
                 LinkButton(
                     title: Localization().getStringEx('widget.id_card.label.mobile_access.permissions', 'Set mobile access permissions'),
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    textStyle: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.medium'),
+                    textStyle: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.medium.underline'),
                     onTap: _onTapMobileAccessPermissions)
               ])))
     ]);
