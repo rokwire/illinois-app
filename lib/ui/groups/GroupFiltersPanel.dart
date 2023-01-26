@@ -15,7 +15,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 class GroupFiltersPanel extends StatefulWidget {
   final bool createMode;
   final ContentFilterSet contentFilters;
-  final Map<String, LinkedHashSet<String>>? selection;
+  final Map<String, dynamic>? selection;
 
   GroupFiltersPanel({Key? key, required this.contentFilters, this.selection, this.createMode = false }) : super(key: key);
 
@@ -33,7 +33,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
   @override
   void initState() {
     if (widget.selection != null) {
-      _selection = widget.selection!;
+      _selection = ContentFilterSet.selectionFromFilterSelection(widget.selection) ?? Map<String, LinkedHashSet<String>>();
     }
     super.initState();
   }
@@ -208,7 +208,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
 
   void _onTapApply() {
     Analytics().logSelect(target: 'Apply');
-    Navigator.of(context).pop(_selection);
+    Navigator.of(context).pop(ContentFilterSet.selectionToFilterSelection(_selection) ?? <String, dynamic>{});
   }
 
   void _onTapClear() {
