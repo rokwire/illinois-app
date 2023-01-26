@@ -51,7 +51,4 @@ public class Constants {
     static final String DEFAULT_SHARED_PREFS_FILE_NAME = "default_shared_prefs";
     static final String SECURE_SHARED_PREFS_FILE_NAME = "secure_shared_prefs";
 
-    // HID / Origo
-    static final int ORIGO_LOCK_SERVICE_CODE = 2; //TBD: what is this code? Where do we get it from? We put the same as in the sample app for simplicity.
-
 }

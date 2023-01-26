@@ -87,13 +87,13 @@ public class App extends Application implements LifecycleObserver, PluginRegistr
     //region HID / Origo
 
     private void initializeOrigo() {
-        String appId = ""; //TBD place here application id and do not commit it. Instead read it from config
-        String appDescription = ""; //TBD place here application description and do not commit it.
+        String appId = BuildConfig.ORIGO_APP_ID;
+        String appDescription = "UIUC app test description"; //TBD: DD - check what should be the description.
 
         OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
                 new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(this),
                         new OrigoTwistAndGoOpeningTrigger(this),
-                        new OrigoSeamlessOpeningTrigger()}, Constants.ORIGO_LOCK_SERVICE_CODE)
+                        new OrigoSeamlessOpeningTrigger()}, BuildConfig.ORIGO_LOCK_SERVICE_CODE)
                 .setAllowBackgroundScanning(true)
                 .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
                 .build();
