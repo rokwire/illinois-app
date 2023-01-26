@@ -3051,6 +3051,10 @@
     "widget.id_card.button.mobile_access.renew": "Renew",
     "widget.id_card.label.mobile_access.i_card.not_available": "Access various services and buildings on campus with your mobile i-card.",
     "widget.id_card.label.mobile_access.permissions": "Set mobile access permissions",
+    "widget.id_card.dialog.text.renew_access": "Renewing your mobile i-card access could take up to 30 minutes to complete. Your <b>building access will be temporarily disabled</b> while being renewed. <p>Would you still like to renew right now?</p>",
+    "widget.id_card.dialog.button.mobile_access.renew.cancel": "Cancel",
+    "widget.id_card.dialog.button.mobile_access.renew_access": "Renew Access",
+
 	"widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",
     "widget.card.label.expires.title": "Expires",

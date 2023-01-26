@@ -18,6 +18,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
@@ -539,7 +540,53 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   void _onTapRenewMobileAccessButton() {
     Analytics().logSelect(target: 'Renew Mobile Access');
-    //TBD: DD - implement renew
+    AppAlert.showCustomDialog(
+        context: context,
+        contentPadding: EdgeInsets.all(0),
+        contentWidget: Container(
+            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
+            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+              Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                    Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: HtmlWidget(
+                            "<div style=text-align:center>${Localization().getStringEx('widget.id_card.dialog.text.renew_access', 'Renewing your mobile i-card access could take up to 30 minutes to complete. Your <b>building access will be temporarily disabled</b> while being renewed. <p>Would you still like to renew right now?</p>')}</div>",
+                            textStyle: Styles().textStyles?.getTextStyle("widget.detail.small"))),
+                    Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      RoundedButton(
+                          label: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew.cancel', 'Cancel'),
+                          hint: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew.cancel.hint', ''),
+                          backgroundColor: Colors.white,
+                          fontSize: 16.0,
+                          contentWeight: 0.0,
+                          textColor: Styles().colors!.fillColorPrimary,
+                          borderColor: Styles().colors!.fillColorSecondary,
+                          onTap: _onTapCancelRenew),
+                      RoundedButton(
+                          label: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew_access', 'Renew Access'),
+                          hint: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew_access.hint', ''),
+                          backgroundColor: Styles().colors!.fillColorSecondary,
+                          fontSize: 16.0,
+                          contentWeight: 0.0,
+                          textColor: Styles().colors!.white,
+                          borderColor: Styles().colors!.fillColorSecondary,
+                          onTap: _onTapRenewAccess)
+                    ])
+                  ]))
+            ])));
+  }
+
+  void _onTapCancelRenew() {
+    Analytics().logSelect(target: 'Cancel Renew Access');
+    Navigator.of(context).pop();
+  }
+
+  void _onTapRenewAccess() {
+    Analytics().logSelect(target: 'Renew Access');
+    //TBD: DD - implement renew access
+    Navigator.of(context).pop();
   }
 
   void _onTapMobileAccessPermissions() {

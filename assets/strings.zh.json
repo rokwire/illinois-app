@@ -3048,6 +3048,10 @@
     "widget.id_card.button.mobile_access.renew": "更新",
     "widget.id_card.label.mobile_access.i_card.not_available": "使用您的移動 i-card 訪問校園內的各種服務和建築物。",
     "widget.id_card.label.mobile_access.permissions": "設置移動訪問權限",
+    "widget.id_card.dialog.text.renew_access": "更新您的移動 i-card 訪問權限最多可能需要 30 分鐘才能完成。 續訂時，您的<b>建築物訪問權限將被暫時禁用</b>。 <p>您現在還想續訂嗎？</p>",
+    "widget.id_card.dialog.button.mobile_access.renew.cancel": "取消",
+    "widget.id_card.dialog.button.mobile_access.renew_access": "更新訪問權限",
+
 	"widget.bus_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",
 	"widget.card.label.expires.title": "Expires",
