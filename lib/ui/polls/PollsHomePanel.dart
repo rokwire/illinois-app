@@ -349,7 +349,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 100,),
           Text(message,
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
+            style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")
           ),
           Container(height: 16,),
           Text(description,
@@ -367,7 +367,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 46,),
           Text(Localization().getStringEx("panel.polls_home.text.error","Error"),
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
+            style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")
           ),
           Container(height: 16,),
           Text(error,

@@ -185,7 +185,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                       child: Semantics(
                           label: Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
                           child: Text(level.toString(),
-                              style: Styles().textStyles?.getTextStyle("widget.title.extra_large"))))),
+                              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat"))))),
               Container(width: 20),
               Expanded(
                   child: Text(Localization().getString(description.key, defaults: description.text) ?? '',
