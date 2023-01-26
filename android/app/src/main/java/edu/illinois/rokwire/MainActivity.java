@@ -43,11 +43,14 @@ import com.hid.origo.api.OrigoReaderConnectionController;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import edu.illinois.rokwire.maps.MapActivity;
@@ -312,18 +315,21 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             return null;
         }
         if (getMobileKeys() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             try {
                 List<OrigoMobileKey> origoMobileKeys = getMobileKeys().listMobileKeys();
                 if ((origoMobileKeys != null) && !origoMobileKeys.isEmpty()) {
                     List<HashMap<String, Object>> keysJson = new ArrayList<>();
                     for (OrigoMobileKey key : origoMobileKeys) {
+                        Calendar endCalendarDate = key.getEndDate();
                         HashMap<String, Object> keyJson = new HashMap<>();
                         keyJson.put("label", key.getLabel());
                         keyJson.put("card_number", key.getCardNumber());
                         keyJson.put("issuer", key.getIssuer());
                         keyJson.put("type", key.getType());
-                        //TBD: DD - send expiration date to flutter
-                        keyJson.put("expiration_date", "yyyy-MM-dd");
+                        if (endCalendarDate != null) {
+                            keyJson.put("expiration_date", dateFormat.format(endCalendarDate.getTime()));
+                        }
                         keysJson.add(keyJson);
                     }
                     return keysJson;
