@@ -38,6 +38,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class IDCardPanel extends StatefulWidget {
   IDCardPanel();
@@ -585,8 +587,64 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   void _onTapRenewAccess() {
     Analytics().logSelect(target: 'Renew Access');
-    //TBD: DD - implement renew access
     Navigator.of(context).pop();
+    //TBD: DD - implement renew access
+
+    final String phoneMacro = '{{mobile_access_phone}}';
+    final String emailMacro = '{{mobile_access_email}}';
+    final String urlMacro = '{{mobile_access_website_url}}';
+    final String externalLinkIconMacro = '{{external_link_icon}}';
+    String rescheduleContentHtml = Localization().getStringEx("widget.id_card.dialog.text.renew_access.done",
+        "If your mobile i-card does not work in 30 minutes, call <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, email <a href='mailto:{{mobile_access_email}}'>{{mobile_access_email}}</a>, or <a href='{{mobile_access_website_url}}'>visit the i-card website</a> <img src='asset:{{external_link_icon}}' alt=''/>");
+    //TBD: DD - read phone, email and website from config when we have them
+    rescheduleContentHtml = rescheduleContentHtml.replaceAll(phoneMacro, '555-555-555');
+    rescheduleContentHtml = rescheduleContentHtml.replaceAll(emailMacro, 'test@email.com');
+    rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlMacro, 'https://www.google.com');
+    rescheduleContentHtml = rescheduleContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
+    AppAlert.showCustomDialog(
+        context: context,
+        contentPadding: EdgeInsets.all(0),
+        contentWidget: Container(
+            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
+            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+              Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                    Padding(
+                        padding: EdgeInsets.only(top: 30),
+                        child: Text(
+                            Localization().getStringEx('widget.id_card.dialog.title.renew_access.done',
+                                'Please wait at least 30 minutes before trying your mobile access'), textAlign: TextAlign.center,
+                            style: Styles().textStyles?.getTextStyle('widget.title.medium.fat'))),
+                    Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        //TBD: DD - properly format html. Currently not able with this plugin
+                        child: HtmlWidget("<div style=text-align:center>$rescheduleContentHtml</div>",
+                            textStyle: Styles().textStyles?.getTextStyle("widget.detail.small"),
+                            onTapUrl: (url) => _onTapLinkUrl(url)))
+                  ])),
+              Positioned.fill(
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: InkWell(
+                          onTap: () {
+                            Analytics().logSelect(target: 'Close Renew Mobile Access popup');
+                            Navigator.of(context).pop();
+                          },
+                          child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', color: Styles().colors?.fillColorPrimary)))))
+            ])));
+  }
+
+  Future<bool> _onTapLinkUrl(String? url) async {
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if ((uri != null) && (await canLaunchUrl(uri))) {
+        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
+        launchUrl(uri, mode: launchMode);
+        return true;
+      }
+    }
+    return false;
   }
 
   void _onTapMobileAccessPermissions() {

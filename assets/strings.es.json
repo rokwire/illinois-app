@@ -3051,6 +3051,7 @@
     "widget.id_card.dialog.text.renew_access": "La renovación de su acceso a la i-card móvil puede tardar hasta 30 minutos en completarse. Su <b>acceso al edificio se desactivará temporalmente</b> mientras se renueva. <p>¿Aún te gustaría renovar ahora mismo?</p>",
     "widget.id_card.dialog.button.mobile_access.renew.cancel": "Cancelar",
     "widget.id_card.dialog.button.mobile_access.renew_access": "Renovar acceso",
+    "widget.id_card.dialog.text.renew_access.done": "Si su i-card móvil no funciona en 30 minutos, llame al <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, envíe un correo electrónico a <a href='mailto:{{mobile_access_email} }'>{{mobile_access_email}}</a>, o <a href='{{mobile_access_website_url}}'>visite el sitio web de i-card</a> <img src='asset:{{external_link_icon}}' alt =''/>",
 
     "widget.bus_pass.header.title": "MTD pase de autobús",
     "widget.card.label.uin.title": "UIN",

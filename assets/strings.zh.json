@@ -3051,6 +3051,7 @@
     "widget.id_card.dialog.text.renew_access": "更新您的移動 i-card 訪問權限最多可能需要 30 分鐘才能完成。 續訂時，您的<b>建築物訪問權限將被暫時禁用</b>。 <p>您現在還想續訂嗎？</p>",
     "widget.id_card.dialog.button.mobile_access.renew.cancel": "取消",
     "widget.id_card.dialog.button.mobile_access.renew_access": "更新訪問權限",
+    "widget.id_card.dialog.text.renew_access.done": "如果您的移動 i-card 在 30 分鐘內無法使用，請致電 <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>，發送電子郵件至 <a href='mailto:{{mobile_access_email} }'>{{mobile_access_email}}</a>，或<a href='{{mobile_access_website_url}}'>訪問 i-card 網站</a> <img src='asset:{{external_link_icon}}' alt =''/>",
 
 	"widget.bus_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",

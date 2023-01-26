@@ -3054,6 +3054,7 @@
     "widget.id_card.dialog.text.renew_access": "Renewing your mobile i-card access could take up to 30 minutes to complete. Your <b>building access will be temporarily disabled</b> while being renewed. <p>Would you still like to renew right now?</p>",
     "widget.id_card.dialog.button.mobile_access.renew.cancel": "Cancel",
     "widget.id_card.dialog.button.mobile_access.renew_access": "Renew Access",
+    "widget.id_card.dialog.text.renew_access.done": "If your mobile i-card does not work in 30 minutes, call <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, email <a href='mailto:{{mobile_access_email}}'>{{mobile_access_email}}</a>, or <a href='{{mobile_access_website_url}}'>visit the i-card website</a> <img src='asset:{{external_link_icon}}' alt=''/>",
 
 	"widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",
