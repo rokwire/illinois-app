@@ -18,10 +18,12 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -129,6 +131,9 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     String? userUuid = Auth2().accountId;
     String? pid = Auth2().profile?.id;
     String? firebaseProjectId = FirebaseCore().app?.options.projectId;
+    String sportOffset = (_offsetDate != null) ? AppDateTime().formatDateTime(_offsetDate, format: 'MM/dd/yyyy HH:mm a')! : "None";
+    String lastAppReviewTime = (AppReview().appReviewRequestTime != null) ? DateFormat('MM/dd/yyyy').format(DateTime.fromMillisecondsSinceEpoch(AppReview().appReviewRequestTime!)) : 'NA';
+
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx("panel.debug.header.title", "Debug"),),
       backgroundColor: Styles().colors!.background,
@@ -216,33 +221,47 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
                 
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  Row(children: <Widget>[
+                    Expanded(child:
+                      Text('Sport Offset: $sportOffset'),
+                    ),
                     RoundedButton(
-                      label: "Clear Offset",
+                      label: "Edit",
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      contentWeight: 0.0,
+                      onTap: _changeDate,
+                    ),
+                    Container(width: 5,),
+                    RoundedButton(
+                      label: "Clear",
                       backgroundColor: Styles().colors!.background,
                       fontSize: 16.0,
                       textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.fillColorPrimary,
                       contentWeight: 0.0,
                       onTap: _clearDateOffset,
-                    )
-                  ),
-                  Expanded(child:
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
-                      Text(_offsetDate != null ? AppDateTime().formatDateTime(_offsetDate, format: 'MM/dd/yyyy HH:mm:ss a')! : "None", textAlign: TextAlign.end),
-                    )
-                  )
-                ],),
+                    ),
+                  ],),
+                ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
-                  RoundedButton(
-                    label: "Sports Offset",
-                    backgroundColor: Styles().colors!.background,
-                    fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorPrimary,
-                    onTap: _changeDate,
-                  )
+                  Row(children: [
+                    Expanded(child:
+                      Text("Last App Review: $lastAppReviewTime"),
+                    ),
+                    RoundedButton(
+                      label: "Clear",
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      contentWeight: 0.0,
+                      onTap: _clearLastAppReview,
+                    ),
+                  ],)
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
@@ -474,13 +493,19 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     return (int.tryParse(value!) == null) ? 'Please enter a number.' : null;
   }
   
-  _clearDateOffset() {
+  void _clearDateOffset() {
     setState(() {
       Storage().offsetDate = _offsetDate = null;
     });
   }
 
-  _changeDate() async {
+  void _clearLastAppReview() {
+    setState(() {
+      AppReview().appReviewRequestTime = null;
+    });
+  }
+
+  void _changeDate() async {
     DateTime offset = _offsetDate ?? DateTime.now();
 
     DateTime firstDate = DateTime.fromMillisecondsSinceEpoch(offset.millisecondsSinceEpoch).add(Duration(days: -365));
