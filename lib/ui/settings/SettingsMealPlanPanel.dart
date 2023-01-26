@@ -141,7 +141,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       controller: widget.scrollController,
       slivers: <Widget>[
         SliverHeaderBar(
-          leadingIconKey: widget.scrollController == null ? 'chevron-left-white' : 'chevron-left',
+          leadingIconKey: widget.scrollController == null ? 'chevron-left-white' : 'chevron-left-bold',
           title: Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
           textColor: widget.scrollController == null
               ? Styles().colors!.white

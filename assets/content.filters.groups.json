@@ -8,11 +8,11 @@
 		"min-select-count": 1,
 		"max-select-count": 1,
 		"values": [
-			{ "id": "college.grainger", "label": "Grainger" },
-			{ "id": "college.gies",     "label": "Gies" }
+			{ "id": "college-grainger", "label": "Grainger" },
+			{ "id": "college-gies",     "label": "Gies" }
 		]
 	},{
-		"id": "college.department",
+		"id": "college-department",
 		"title": "Department",
 		"description": "Choose the department your group can be filtered by.",
 		"empty-label": "Select a department...",
@@ -20,14 +20,14 @@
 		"min-select-count": 1,
 		"max-select-count": 2,
 		"values": [
-			{ "id": "college.department.ece", "label": "ECE", "requirements": { "college" : "college.grainger" }},
-			{ "id": "college.department.cs", "label": "CS", "requirements": { "college" : "college.grainger" }},
-			{ "id": "college.department.mech_e", "label": "MechE", "requirements": { "college" : "college.grainger" }},
-			{ "id": "college.department.accounting", "label": "Accounting", "requirements": { "college" : "college.gies" }},
-			{ "id": "college.department.finance", "label": "Finance", "requirements": { "college" : "college.gies" }}
+			{ "id": "college-department-ece", "label": "ECE", "requirements": { "college" : "college-grainger" }},
+			{ "id": "college-department-cs", "label": "CS", "requirements": { "college" : "college-grainger" }},
+			{ "id": "college-department-mech_e", "label": "MechE", "requirements": { "college" : "college-grainger" }},
+			{ "id": "college-department-accounting", "label": "Accounting", "requirements": { "college" : "college-gies" }},
+			{ "id": "college-department-finance", "label": "Finance", "requirements": { "college" : "college-gies" }}
 		]
 	},{
-		"id":"college.department.major",
+		"id":"college-department-major",
 		"title":"Major",
 		"description": "Choose the major your group can be filtered by.",
 		"empty-label": "Select a major...",
@@ -35,16 +35,16 @@
 		"min-select-count": null,
 		"max-select-count": 1,
 		"values":[
-			{ "id":"college.department.major.comp_e", "label": "CompE", "requirements": { "college.department" : "college.department.ece" }},
-			{ "id":"college.department.major.ee", "label": "EE", "requirements": { "college.department" : "college.department.ece" }},
-			{ "id":"college.department.major.informatics", "label": "Informatics", "requirements": { "college.department" : "college.department.cs" }},
-			{ "id":"college.department.major.data_bases", "label": "Data Bases", "requirements": { "college.department" : "college.department.cs" }},
-			{ "id":"college.department.major.mechanics", "label": "Mechanics", "requirements": { "college.department" : "college.department.mech_e" }},
-			{ "id":"college.department.major.electronics", "label": "Electronics", "requirements": { "college.department" : "college.department.mech_e" }},
-			{ "id":"college.department.major.audit", "label": "Аudit", "requirements": { "college.department" : "college.department.accounting" }},
-			{ "id":"college.department.major.taxes", "label": "Taxes", "requirements": { "college.department" : "college.department.accounting" }},
-			{ "id":"college.department.major.investments", "label": "Investments", "requirements": { "college.department" : "college.department.finance" }},
-			{ "id":"college.department.major.shares", "label": "Shares", "requirements": { "college.department" : "college.department.finance" }}
+			{ "id":"college-department-major-comp_e", "label": "CompE", "requirements": { "college-department" : "college-department-ece" }},
+			{ "id":"college-department-major-ee", "label": "EE", "requirements": { "college-department" : "college-department-ece" }},
+			{ "id":"college-department-major-informatics", "label": "Informatics", "requirements": { "college-department" : "college-department-cs" }},
+			{ "id":"college-department-major-data_bases", "label": "Data Bases", "requirements": { "college-department" : "college-department-cs" }},
+			{ "id":"college-department-major-mechanics", "label": "Mechanics", "requirements": { "college-department" : "college-department-mech_e" }},
+			{ "id":"college-department-major-electronics", "label": "Electronics", "requirements": { "college-department" : "college-department-mech_e" }},
+			{ "id":"college-department-major-audit", "label": "Аudit", "requirements": { "college-department" : "college-department-accounting" }},
+			{ "id":"college-department-major-taxes", "label": "Taxes", "requirements": { "college-department" : "college-department-accounting" }},
+			{ "id":"college-department-major-investments", "label": "Investments", "requirements": { "college-department" : "college-department-finance" }},
+			{ "id":"college-department-major-shares", "label": "Shares", "requirements": { "college-department" : "college-department-finance" }}
 		]
 	},{
 		"id":"class",
@@ -55,8 +55,8 @@
 		"min-select-count": null,
 		"max-select-count": null,
 		"values":[
-			{ "id":"class.2023", "label": "2023" },
-			{ "id":"class.2024", "label": "2024" }
+			{ "id":"class-2023", "label": "2023" },
+			{ "id":"class-2024", "label": "2024" }
 		]
 	}],
   "strings": {

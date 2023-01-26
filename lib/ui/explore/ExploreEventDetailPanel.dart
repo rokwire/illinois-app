@@ -567,7 +567,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('chevron-left', excludeFromSemantics: true)),
+              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true)),
               Expanded(child: Text(widget.superEventTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium,
                   fontSize: 16,
                   color: Styles().colors!.fillColorPrimary,

@@ -15,11 +15,16 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/ContentFilter.dart';
+import 'package:illinois/service/ContentFilter.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/groups/GroupFiltersPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -69,6 +74,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   String? _selectedCategory;
   List<String>? _categories;
+
+  ContentFilterSet? _contentFilters;
+  Map<String, dynamic> _contentFiltersSelection = <String, dynamic>{};
+  String? _contentFiltersSelectionDescription;
 
   _TagFilter? _selectedTagFilter = _TagFilter.all;
   _FilterType __activeFilterType = _FilterType.none;
@@ -159,6 +168,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     Groups().loadGroups(
       contentType: GroupsContentType.all,
       category: (_selectedCategory != _allCategoriesValue) ? _selectedCategory : null,
+      filters: _contentFiltersSelection,
       tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
     );
 
@@ -178,16 +188,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _isFilterLoading = true;
     });
+    List<dynamic> results = await Future.wait([
+      Groups().loadCategories(),
+      ContentFilters().loadFilterSet('groups'),
+    ]);
+    
     List<String> categories = [];
     categories.add(_allCategoriesValue);
-    List<String>? groupCategories = await Groups().loadCategories();
+    List<String>? groupCategories = (0 < results.length) ? JsonUtils.stringListValue(results[0])  : null;
     if (CollectionUtils.isNotEmpty(groupCategories)) {
       categories.addAll(groupCategories!);
     }
-    _categories = categories;
-    _selectedCategory = _allCategoriesValue;
 
-    setState(() {
+    setStateIfMounted(() {
+      _categories = categories;
+      _selectedCategory = _allCategoriesValue;
+      _contentFilters = ((1 < results.length) && (results[1] is ContentFilterSet)) ? results[1] : null;
       _isFilterLoading = false;
     });
   }
@@ -332,86 +348,159 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildGroupsContentSelection() {
-    return Padding(
-              padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-              child: RibbonButton(
-                  progress: _myGroupsBusy,
-                  textColor: Styles().colors!.fillColorSecondary,
-                  backgroundColor: Styles().colors!.white,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
-                  label: _getContentLabel(_selectedContentType),
-                  onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null));
+    return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
+      progress: _myGroupsBusy,
+      textColor: Styles().colors!.fillColorSecondary,
+      backgroundColor: Styles().colors!.white,
+      borderRadius: BorderRadius.all(Radius.circular(5)),
+      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
+      label: _getContentLabel(_selectedContentType),
+      onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null
+    ));
   }
 
   Widget _buildFunctionalBar() {
-    return Container(
-        child: Padding(
-            padding: const EdgeInsets.only(left: 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                _buildFilterButtons(),
-                Expanded(child: Container()),
-                Visibility(visible: _canCreateGroup, child:
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10), child:
-                      InkWell(onTap: _onTapCreate, child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                        Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
-                        Padding(padding: EdgeInsets.only(left: 5), child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true))
-                      ])),
-                    ),
-                  ),
-                Semantics(label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
-                  IconButton(
-                    icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container(),
-                    onPressed: () {
-                      Analytics().logSelect(target: "Search");
-                      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
-                    },
-                  ),
-                )
-              ],
-            ),
-          ),
-      );
+    return Padding(padding: const EdgeInsets.only(left: 16), child:
+    Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+      Row(children: <Widget>[ Expanded(child:
+        Wrap(alignment: WrapAlignment.spaceBetween, runAlignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.start, children: <Widget>[
+          _buildFiltersBar(),
+          _buildCommandsBar(),
+        ],),
+      )]),
+      _buildContentFiltersDescription(),
+    ],)
+    );
+  }
+
+  Widget _buildFiltersBar() {
+    if (_isFilterLoading || (_selectedContentType == GroupsContentType.my)) {
+      return SizedBox();
+    }
+    else {
+      return _buildFilterButtons();
+    }
   }
 
   Widget _buildFilterButtons() {
-    bool hasCategories = CollectionUtils.isNotEmpty(_categories);
-    return (_isFilterLoading || (_selectedContentType == GroupsContentType.my))
-      ? Container()
-      : Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Visibility(visible: hasCategories, child: FilterSelector(
-                  padding: EdgeInsets.only(left: 4, top: 10, right: 2, bottom: 10),
-                  title: _selectedCategory,
-                  active: (_activeFilterType == _FilterType.category),
-                  onTap: (){
-                    Analytics().logSelect(target: "GroupFilter - Category");
-                    setState(() {
-                      _activeFilterType = (_activeFilterType != _FilterType.category) ? _FilterType.category : _FilterType.none;
-                    });
-                  }
-                )),
-                Visibility(visible: hasCategories, child: Container(width: 8)),
-                FilterSelector(
-                  padding: EdgeInsets.only(left: 2, top: 10, right: 2, bottom: 10),
-                  title: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
-                  hint: "",
-                  active: (_activeFilterType == _FilterType.tags),
-                  onTap: (){
-                    Analytics().logSelect(target: "GroupFilter - Tags");
-                    setState(() {
-                      _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
-                    });
-                  }
+    String filtersTitle = Localization().getStringEx("panel.groups_home.filter.content_filter.label", "Filters");
+    
+    return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+      Visibility(visible: CollectionUtils.isNotEmpty(_categories), child:
+        Padding(padding: EdgeInsets.only(right: 6), child:
+          FilterSelector(
+            padding: EdgeInsets.only(top: 14, bottom: 8),
+            title: _selectedCategory,
+            active: (_activeFilterType == _FilterType.category),
+            onTap: () {
+              Analytics().logSelect(target: "GroupFilter - Category");
+              setState(() {
+                _activeFilterType = (_activeFilterType != _FilterType.category) ? _FilterType.category : _FilterType.none;
+              });
+            }
+          )
+        )
+      ),
+      
+      Padding(padding: EdgeInsets.only(right: 6), child:
+        FilterSelector(
+          padding: EdgeInsets.only(top: 14, bottom: 8),
+          title: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
+          active: (_activeFilterType == _FilterType.tags),
+          onTap: () {
+            Analytics().logSelect(target: "GroupFilter - Tags");
+            setState(() {
+              _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
+            });
+          }
+        ),
+      ),
+      
+      Visibility(visible: _contentFilters?.isNotEmpty ?? false, child:
+        Padding(padding: EdgeInsets.only(right: 6), child:
+          InkWell(onTap: _onContentFilters, child:
+            Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
+              Row(children: [
+                Text(filtersTitle, style: TextStyle(
+                  fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
+                ),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 4), child:
+                  Styles().images?.getImage('chevron-right', width: 6, height: 10) ?? Container(),
                 )
-              ],
-            );
+              ],),
+              /*Container(
+                decoration: BoxDecoration(border:
+                  Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1.5, ))
+                ),
+                child: Text(filtersTitle, style: TextStyle(
+                  fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
+                ),),
+              ),*/
+              /*Text(filtersTitle, style: TextStyle(
+                fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
+                decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
+              ),)*/
+            )
+          ),
+        ),
+      ),
+    ],);
+  }
+
+  Widget _buildContentFiltersDescription() {
+    return StringUtils.isNotEmpty(_contentFiltersSelectionDescription) ? 
+      Padding(padding: EdgeInsets.only(top: 0, bottom: 4), child: 
+      Row(children: [Expanded(child:
+        Text(_contentFiltersSelectionDescription ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium,),),
+      ),],)
+        
+      ) : Container();
+  }
+
+  Widget _buildCommandsBar() {
+    return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        Visibility(visible: _canCreateGroup, child:
+          InkWell(onTap: _onTapCreate, child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+                Padding(padding: EdgeInsets.only(left: 4), child:
+                  Styles().images?.getImage('plus-circle', excludeFromSemantics: true)
+                )
+              ])
+            ),
+          ),
+        ),
+        Semantics(label: Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
+          IconButton(icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container(), onPressed: () {
+            Analytics().logSelect(target: "Search");
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+          },),
+        )
+    ],);
+  }
+
+  void _onContentFilters() {
+    Analytics().logSelect(target: 'Filters');
+    //_contentFiltersSelection = ContentFilterSet.selectionFromFilterSelection(_group?.filters) ?? Map<String, LinkedHashSet<String>>();
+    if (_contentFilters != null) {
+      Map<String, LinkedHashSet<String>>? selection = ContentFilterSet.selectionFromFilterSelection(_contentFiltersSelection);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: selection))).then((selection) {
+        if ((selection != null) && mounted) {
+          String? selectionText = _contentFilters?.selectionDescription(selection,
+            filtersSeparator: ', ',
+            entriesSeparator: ' or ',
+            titleDelimiter: ' is '
+          );
+          setState(() {
+            _contentFiltersSelection = ContentFilterSet.selectionToFilterSelection(selection) ?? <String, dynamic>{};
+            _contentFiltersSelectionDescription = StringUtils.isNotEmpty(selectionText) ? "Filter: $selectionText" : null;
+          });
+          _reloadAllGroupsContent();
+        }
+      });
+    }
   }
 
   Widget _buildFilterContent() {
@@ -525,9 +614,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if(CollectionUtils.isNotEmpty(myGroups)) {
       for (Group group in myGroups) {
         if (group.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
+          EdgeInsetsGeometry padding = widgets.isNotEmpty ? const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.only(top: 6, bottom: 8);
+          widgets.add(Padding(padding: padding, child:
+            GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
               onImageTap: (){ onTapImage(group);},
@@ -545,16 +634,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if(CollectionUtils.isNotEmpty(myPendingGroups)) {
       List<Widget> widgets = [];
       widgets.add(Container(height: 8));
-      widgets.add(Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      widgets.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),)
         )
       );
       widgets.add(Container(height: 8,));
       for (Group group in myPendingGroups) {
         if (group.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
+          widgets.add(Padding(padding: const EdgeInsets.symmetric(vertical: 8), child:
+            GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
               key: _getGroupKey(group),
@@ -562,8 +650,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           ));
         }
       }
-      return
-        Stack(children: [
+      return Stack(children: [
           Container(height: 112, color: Styles().colors!.backgroundVariant, child:
             Column(children: [
               Container(height: 80,),
@@ -575,7 +662,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               ),
             ],)
           ),
-          Column(crossAxisAlignment: CrossAxisAlignment.start,children: widgets,)
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets,)
         ],);
     }
     return Container();
@@ -586,9 +673,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       List<Widget> widgets = [];
       for(Group group in _allGroups!) {
         if (group.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
+          EdgeInsetsGeometry padding = widgets.isNotEmpty ? const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.only(top: 6, bottom: 8);
+          widgets.add(Padding(padding: padding, child:
+            GroupCard(
               group: group,
               key: _getGroupKey(group),
             ),

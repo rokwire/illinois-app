@@ -668,7 +668,7 @@ class _EventSmallCard extends StatelessWidget {
                             child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))
                         )),),
                     Visibility(visible: isMoreCardType, child: Padding(
-                      padding: EdgeInsets.only(left: 24, top: 4), child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true)))
+                      padding: EdgeInsets.only(left: 24, top: 4), child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)))
                   ],),),
                 Visibility(visible: !isMoreCardType, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(right: 10),

@@ -875,7 +875,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                               )),
                               Padding(
                                 padding: EdgeInsets.only(left: 4),
-                                child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+                                child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                               )
                             ],
                           ),
@@ -905,7 +905,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Styles().images?.getImage('chevron-left', excludeFromSemantics: true),
+                      image: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true),
                       onTap: decrementDateFilter,
                     ),
                   ),
@@ -915,7 +915,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+                      image: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                       onTap: incrementDateFilter,
                     ),
                   ),
@@ -1199,7 +1199,7 @@ class _ProductItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container(),
+                Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
               ],
             ),
           ),

@@ -558,7 +558,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       ],
                     ),
                     Expanded(child: Container()),
-                    Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container(),
+                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ])
                 ))));
           }
@@ -597,7 +597,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       ]
                     ),
                     Expanded(child: Container()),
-                    Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container(),
+                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ]),
                 ))));
           }
