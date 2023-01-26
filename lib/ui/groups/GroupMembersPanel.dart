@@ -588,7 +588,7 @@ class _PendingMemberCard extends StatelessWidget {
                         textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
                         fontSize: 16,
-                        rightIcon: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+                        rightIcon: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");

@@ -76,7 +76,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
                           padding: EdgeInsets.all(16),
                           child: Text(videoTitle,
                               style: Styles().textStyles?.getTextStyle("widget.button.title.enabled")))),
-                  Padding(padding: EdgeInsets.only(right: 16, top: 18, bottom: 18), child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true))
+                  Padding(padding: EdgeInsets.only(right: 16, top: 18, bottom: 18), child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true))
                 ]))));
   }
 

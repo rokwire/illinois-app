@@ -287,7 +287,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
           Styles().images?.getImage('external-link', excludeFromSemantics: true)
         ) : Container(),
         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
-          Styles().images?.getImage('chevron-right', excludeFromSemantics: true)
+          Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)
         ),
       ]),
     );

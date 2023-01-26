@@ -741,7 +741,7 @@ class _EventsListState extends State<_EventsList>{
                     Expanded(
                       child: Text(title, overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Colors.white),),
                     ),
-                    Styles().images?.getImage('chevron-right') ?? Container(),
+                    Styles().images?.getImage('chevron-right-bold') ?? Container(),
                   ],
                 ),
               ),

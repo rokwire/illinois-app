@@ -223,7 +223,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                             Padding(
                               padding: EdgeInsets.only(left: 8),
                             ),
-                            Visibility(visible: hasTickets, child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container())
+                            Visibility(visible: hasTickets, child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container())
                           ]))),
                 ))
           ],
