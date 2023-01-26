@@ -64,12 +64,13 @@ class GroupSectionTitle extends StatelessWidget {
   final String? title;
   final String? description;
   final bool? requiredMark;
+  final EdgeInsetsGeometry margin;
 
-  GroupSectionTitle({Key? key, this.title, this.description, this.requiredMark,}) : super(key: key);
+  GroupSectionTitle({Key? key, this.title, this.description, this.requiredMark, this.margin = const EdgeInsets.only(bottom: 8, top: 16)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(padding: EdgeInsets.only(bottom: 8, top:16), child:
+    return Container(padding: margin, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: title, hint: description, header: true, excludeSemantics: true, child:
           RichText(text:
