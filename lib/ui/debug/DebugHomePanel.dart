@@ -130,71 +130,71 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     String? pid = Auth2().profile?.id;
     String? firebaseProjectId = FirebaseCore().app?.options.projectId;
     return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.debug.header.title", "Debug"),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                color: Styles().colors!.background,
-                child: Column(
+      appBar: HeaderBar(title: Localization().getStringEx("panel.debug.header.title", "Debug"),),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar(),
+      body: Column(children: <Widget>[
+        Expanded(child:
+          SingleChildScrollView(child:
+            Container(color: Styles().colors!.background, child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Container(height: 16,),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
+                  Text(StringUtils.isNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid"),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
+                  Text(StringUtils.isNotEmpty(pid) ? 'PID: $pid' : "unknown pid"),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
+                  Text('Firebase: $firebaseProjectId'),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
+                  Text('GeoFence: $_geoFenceStatus'),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), child:
+                  Text('Beacon: $_beaconsStatus'),
+                ),
+                
+                Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent),),
 
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(height: 16,),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: Text(StringUtils.isNotEmpty(userUuid) ? 'Uuid: $userUuid' : "unknown uuid"),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: Text(StringUtils.isNotEmpty(pid) ? 'PID: $pid' : "unknown pid"),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: Text('Firebase: $firebaseProjectId'),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: Text('GeoFence: $_geoFenceStatus'),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      child: Text('Beacon: $_beaconsStatus'),
-                    ),
-
-                    Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent),),
-
-                    ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
-                    ToggleRibbonButton(label: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
-                    ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
-                    ToggleRibbonButton(label: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
-                    //Container(height: 1, color: Styles().colors!.surfaceAccent),
+                ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
+                ToggleRibbonButton(label: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
+                ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
+                ToggleRibbonButton(label: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
                     
-                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
-                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
-                          child: TextFormField(
-                              controller: _mapThresholdDistanceController,
-                              keyboardType: TextInputType.number,
-                              validator: _validateThresoldDistance,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(), hintText: "Enter map threshold distance in meters", labelText: 'Threshold Distance (meters)')),
-                        )),
+                Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                Container(color: Colors.white, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16), child:
+                    TextFormField(
+                      controller: _mapThresholdDistanceController,
+                      keyboardType: TextInputType.number,
+                      validator: _validateThresoldDistance,
+                      decoration: InputDecoration(
+                      border: OutlineInputBorder(), hintText: "Enter map threshold distance in meters", labelText: 'Threshold Distance (meters)')
+                    ),
+                  )
+                ),
                     
-                    Container(color: Colors.white,child: Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
-                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          child: TextFormField(
-                              controller: _geoFenceRegionRadiusController,
-                              keyboardType: TextInputType.number,
-                              validator: _validateGeoFenceRegionRadius,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(), hintText: "Enter geo fence region radius in meters", labelText: 'Geo Fence Region Radius (meters)')),
-                        )),
-                    Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Padding(
-                      padding: EdgeInsets.only(left: 16, bottom: 16), child: Text('Config Environment: ', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20 )),), ListView.separated(
+                Container(color: Colors.white,child: Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                Container(color: Colors.white, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), child:
+                    TextFormField(
+                      controller: _geoFenceRegionRadiusController,
+                      keyboardType: TextInputType.number,
+                      validator: _validateGeoFenceRegionRadius,
+                      decoration: InputDecoration(
+                      border: OutlineInputBorder(), hintText: "Enter geo fence region radius in meters", labelText: 'Geo Fence Region Radius (meters)')
+                    ),
+                  )
+                ),
+                Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
+                
+                Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
+                      Text('Config Environment: ', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20 )),
+                    ),
+                    ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       separatorBuilder: (context, index) => Divider(color: Colors.transparent),
@@ -202,234 +202,246 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       itemBuilder: (context, index) {
                         rokwire.ConfigEnvironment environment = rokwire.ConfigEnvironment.values[index];
                         RadioListTile widget = RadioListTile(
-                            title: Text(rokwire.configEnvToString(environment) ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16 )), value: environment, groupValue: _selectedEnv, onChanged: _onConfigChanged);
+                          title: Text(rokwire.configEnvToString(environment) ?? '',
+                          style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16 )),
+                          value: environment,
+                          groupValue: _selectedEnv,
+                          onChanged: _onConfigChanged
+                        );
                         return widget;
                       },
                     )
-                    ],),),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                            child: RoundedButton(
-                              label: "Clear Offset",
-                              backgroundColor: Styles().colors!.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorPrimary,
-                              contentWeight: 0.0,
-                              onTap: () {
-                                _clearDateOffset();
-                              },
-                            )),
-                        Expanded(
-                            child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: Text(_offsetDate != null ? AppDateTime().formatDateTime(_offsetDate, format: 'MM/dd/yyyy HH:mm:ss a')! : "None",
-                              textAlign: TextAlign.end),
-                        ))
-                      ],
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                          label: "Sports Offset",
-                          backgroundColor: Styles().colors!.background,
-                          fontSize: 16.0,
-                          textColor: Styles().colors!.fillColorPrimary,
-                          borderColor: Styles().colors!.fillColorPrimary,
-                          onTap: () {
-                            _changeDate();
-                          },
-                        )),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: "Clear Voting",
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onTapClearVoting)),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: _refreshTokenTitle,
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onTapRefreshToken)),
+                  ],),
+                ),
+                
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+                
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: "Clear Offset",
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      contentWeight: 0.0,
+                      onTap: _clearDateOffset,
+                    )
+                  ),
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                      Text(_offsetDate != null ? AppDateTime().formatDateTime(_offsetDate, format: 'MM/dd/yyyy HH:mm:ss a')! : "None", textAlign: TextAlign.end),
+                    )
+                  )
+                ],),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "Sports Offset",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _changeDate,
+                  )
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "Clear Voting",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onTapClearVoting
+                  )
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: _refreshTokenTitle,
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onTapRefreshToken
+                  )
+                ),
 
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
-                    Visibility(visible: true,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: RoundedButton(
-                              label: "Create Event",
-                              backgroundColor: Styles().colors!.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorPrimary,
-                              onTap: _onCreateEventClicked),),
-                    ),
-                    Visibility(visible: true,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: RoundedButton(
-                              label: "Create Message",
-                              backgroundColor: Styles().colors!.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorPrimary,
-                              onTap: _onCreateInboxMessageClicked),),
-                    ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "Create Event",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onCreateEventClicked
+                  ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "Create Message",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onCreateInboxMessageClicked
+                  ),
+                ),
 
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
-                    Visibility(visible: true,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: "Inbox User Info",
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onInboxUserInfoClicked),),
-                    ),
-                    Visibility(visible: true,
-                      child: Padding( padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: RoundedButton(
-                              label: "User Profile Info",
-                              backgroundColor: Styles().colors!.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorPrimary,
-                              onTap: _onUserProfileInfoClicked
-                              )),
-                    ),
-                    Visibility(visible: true,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: RoundedButton(
-                              label: "User Card Info",
-                              backgroundColor: Styles().colors!.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorPrimary,
-                              onTap: () { _onUserCardInfoClicked(); }
-                              )),
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: 'Canvas User Info',
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onTapCanvasUser)),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "Inbox User Info",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onInboxUserInfoClicked
+                  ),
+                ),
+                Padding( padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "User Profile Info",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onUserProfileInfoClicked
+                  )
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "User Card Info",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onUserCardInfoClicked
+                  )
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: 'Canvas User Info',
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onTapCanvasUser
+                  )
+                ),
 
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: "Campus Guide",
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapGuide
+                    )
+                  )
+                ),
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: "Student Courses",
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapStudentCourses
+                    )
+                  ),
+                ),
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: "Styles",
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapStyles
+                    )
+                  ),
+                ),
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: 'Rewards',
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapRewards
+                    )
+                  )
+                ),
 
-                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: RoundedButton(
-                              label: "Campus Guide",
-                              backgroundColor: Styles().colors!.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorPrimary,
-                              onTap: _onTapGuide))
-                    ),
-                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: RoundedButton(
-                              label: "Student Courses",
-                              backgroundColor: Styles().colors!.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorPrimary,
-                              onTap: _onTapStudentCourses)),
-                    ),
-                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: RoundedButton(
-                              label: "Styles",
-                              backgroundColor: Styles().colors!.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorPrimary,
-                              onTap: _onTapStyles)),
-                    ),
-                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: 'Rewards',
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onTapRewards))),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: 'Rate App',
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      progress: _preparingRatingApp,
+                      onTap: _onTapRateApp
+                    )
+                  )
+                ),
 
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: 'Review App',
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapReviewApp
+                    )
+                  )
+                ),
 
-                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: 'Rate App',
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            progress: _preparingRatingApp,
-                            onTap: _onTapRateApp))),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
-                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: 'Review App',
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onTapReviewApp))),
-
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
-
-
-                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
-                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: RoundedButton(
-                              label: "Http Proxy",
-                              backgroundColor: Styles().colors!.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorPrimary,
-                              onTap: _onTapHttpProxy)),
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: "Test Crash",
-                            backgroundColor: Styles().colors!.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors!.fillColorPrimary,
-                            borderColor: Styles().colors!.fillColorPrimary,
-                            onTap: _onTapCrash)),
-                    Container(height: 16),
-                  ],
-                                ),
-              ),
+                Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: "Http Proxy",
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapHttpProxy
+                    )
+                  ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "Test Crash",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onTapCrash
+                  )
+                ),
+                
+                Container(height: 16),
+              ],),
             ),
           ),
-        ],
-      ),
-      backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar(),
+        ),
+      ],),
     );
   }
 
