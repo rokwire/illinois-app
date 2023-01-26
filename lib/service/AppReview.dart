@@ -136,8 +136,8 @@ class AppReview with Service implements NotificationsListener {
   String? get _appPlatform  => Platform.operatingSystem.toLowerCase();
   
   String get _appReviewRequestTimeKey  => 'edu.illinois.rokwire.$_appPlatform.$_appVersion.app_review.request.time';
-  int? get _appReviewRequestTime => Auth2().prefs?.getIntSetting(_appReviewRequestTimeKey);
-  set _appReviewRequestTime(int? value) => Auth2().prefs?.applySetting(_appReviewRequestTimeKey, value);
+  int? get appReviewRequestTime => Auth2().prefs?.getIntSetting(_appReviewRequestTimeKey);
+  set appReviewRequestTime(int? value) => Auth2().prefs?.applySetting(_appReviewRequestTimeKey, value);
 
   bool get _canAccountRequestReview => Auth2().account?.isAnalyticsProcessed ?? false;
   bool get _canSessionsCountRequestReview => Config().appReviewSessionsCount <= Storage().appReviewSessionsCount;
@@ -165,7 +165,7 @@ class AppReview with Service implements NotificationsListener {
       return false; 
     }
 
-    int? lastRequestTime = _appReviewRequestTime;
+    int? lastRequestTime = appReviewRequestTime;
     if (lastRequestTime != null) {
       DateTime lastRequestDate = DateTime.fromMillisecondsSinceEpoch(lastRequestTime);
       if (_sessionStartDateTime?.isBefore(lastRequestDate) ?? false) {
@@ -190,7 +190,7 @@ class AppReview with Service implements NotificationsListener {
     final InAppReview inAppReview = InAppReview.instance;
     inAppReview.isAvailable().then((bool result) {
       if (result && _isValidSession) {
-        _appReviewRequestTime = DateTime.now().millisecondsSinceEpoch;
+        appReviewRequestTime = DateTime.now().millisecondsSinceEpoch;
         inAppReview.requestReview();
       }
     });
