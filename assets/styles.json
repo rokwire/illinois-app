@@ -313,6 +313,8 @@
     "panel.mtd_bus.role":  {"font_family": "medium", "size": 36.0, "color": "white"},
     "panel.mtd_bus.clock.time":  {"font_family": "medium", "size": 48.0, "color": "white"},
 
+    "panel.icard.content.faqs.mobile_card.usage.question": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
+
     "panel.id_card.heading.title": {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
     "panel.id_card.detail.title.extra_large": {"font_family": "extra_bold", "size": 28.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.title.large": {"font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
@@ -519,7 +521,11 @@
 
     "chevron-left-bold": {"src": "images/chevron-left.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
     "chevron-right-bold": {"src": "images/chevron-right.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
-
+    
+    "icon-up-orange": {"src": "images/icon-up.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
+    "icon-down-orange": {"src": "images/icon-down-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
+    "icon-up-blue": {"src": "images/icon-up.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 14, "todo": "size issue?"},
+    "icon-down-blue": {"src": "images/icon-down.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 14, "todo": "size issue?"},
 
     "plus-circle-large": {"src": "images/button-plus-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 34},
 

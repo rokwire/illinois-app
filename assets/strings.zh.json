@@ -2634,8 +2634,9 @@
 	"panel.appointment.detail.cancel.description": "<b>要取消預約</b>，前往<a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或在工作時間致電 <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}}</u>)</a>。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
 	"panel.appointment.detail.error.msg": "無法加載約會數據。",
 
-    "panel.icard.home.content.icard.label": "i-card",
-    "panel.icard.home.content.faqs.label": "FAQS",
+	"panel.icard.home.title.label": "i卡",
+    "panel.icard.home.content.icard.label": "移動i卡",
+    "panel.icard.home.content.faqs.label": "常見問題",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 

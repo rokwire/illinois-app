@@ -104,15 +104,15 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-          color: Styles().colors?.white,
-          child: Row(children: [
+    return Scaffold(
+        backgroundColor: Styles().colors?.white,
+        body: Column(children: [
+          Row(children: [
             Expanded(
                 child: Padding(
                     padding: EdgeInsets.only(left: 16),
-                    child:
-                        Text(_getContentLabel(_selectedContent), style: Styles().textStyles?.getTextStyle('panel.id_card.heading.title')))),
+                    child: Text(Localization().getStringEx('panel.icard.home.title.label', 'i-card'),
+                        style: Styles().textStyles?.getTextStyle('panel.id_card.heading.title')))),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -123,13 +123,13 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
                     child: Container(
                         padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
                         child: Styles().images?.getImage('close-circle', excludeFromSemantics: true))))
-          ])),
-      Container(color: Styles().colors?.surfaceAccent, height: 1),
-      Expanded(child: _buildPage())
-    ]);
+          ]),
+          Container(color: Styles().colors?.surfaceAccent, height: 1),
+          Expanded(child: _buildContent())
+        ]));
   }
 
-  Widget _buildPage() {
+  Widget _buildContent() {
     return Column(children: <Widget>[
       Expanded(
           child: SingleChildScrollView(
@@ -146,7 +146,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
                               backgroundColor: Styles().colors!.white,
                               borderRadius: BorderRadius.all(Radius.circular(5)),
                               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                              rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                              rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
                               label: _getContentLabel(_selectedContent),
                               onTap: _onTapContentDropdown)),
                       _buildContentValuesContainer()
@@ -231,7 +231,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
       case ICardContent.i_card:
         return Localization().getStringEx('panel.icard.home.content.icard.label', 'i-card');
       case ICardContent.faqs:
-        return Localization().getStringEx('panel.icard.home.content.faqs.label', 'FAQS');
+        return Localization().getStringEx('panel.icard.home.content.faqs.label', 'FAQs');
     }
   }
 }

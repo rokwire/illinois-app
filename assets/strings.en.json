@@ -2637,8 +2637,9 @@
     "panel.appointment.detail.cancel.description": "<b>To cancel an appointment,</b> go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
     "panel.appointment.detail.error.msg": "Failed to load appointment data.",
 
-    "panel.icard.home.content.icard.label": "i-card",
-    "panel.icard.home.content.faqs.label": "FAQS",
+    "panel.icard.home.title.label": "i-card",
+    "panel.icard.home.content.icard.label": "Mobile i-card",
+    "panel.icard.home.content.faqs.label": "FAQs",
 
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
