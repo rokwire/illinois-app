@@ -93,9 +93,9 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
   }
 
   Widget _buildFilterDropDown(ContentFilter filter) {
-    LinkedHashSet<String>? selectedIds = _selection[filter.id];
-    ContentFilterEntry? selectedEntry = ((selectedIds != null) && selectedIds.isNotEmpty) ?
-      ((1 < selectedIds.length) ? _ContentFilterMultipleEntries(selectedIds) : filter.findEntry(id: selectedIds.first)) : null;
+    LinkedHashSet<String>? selectedLabels = _selection[filter.title];
+    ContentFilterEntry? selectedEntry = ((selectedLabels != null) && selectedLabels.isNotEmpty) ?
+      ((1 < selectedLabels.length) ? _ContentFilterMultipleEntries(selectedLabels) : filter.findEntry(label: selectedLabels.first)) : null;
     List<ContentFilterEntry>? entries = filter.entriesFromSelection(_selection);
     
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -105,7 +105,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
         requiredMark: widget.createMode && (0 < (filter.minSelectCount ?? 0)),
       ),
       GroupDropDownButton<ContentFilterEntry>(
-        key: filterKeys[filter.id ?? ''] ??= GlobalKey(),
+        key: filterKeys[filter.title ?? ''] ??= GlobalKey(),
         emptySelectionText: widget.contentFilters.stringValue(filter.emptyLabel),
         buttonHint: widget.contentFilters.stringValue(filter.hint),
         items: entries,
@@ -123,9 +123,8 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
   String? _constructFilterEntryTitle(ContentFilter filter, ContentFilterEntry entry) {
     if (entry is _ContentFilterMultipleEntries) {
       String title = '';
-      for (String subEntryId in entry.entryIds) {
-        ContentFilterEntry? subEntry = filter.findEntry(id: subEntryId);
-        String? subEntryName = widget.contentFilters.stringValue(subEntry?.label);
+      for (String subEntryLabel in entry.entryLabels) {
+        String? subEntryName = widget.contentFilters.stringValue(subEntryLabel);
         if ((subEntryName != null) && subEntryName.isNotEmpty) {
           if (title.isNotEmpty) {
             title += ', ';
@@ -141,30 +140,30 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
   }
 
   bool _isFilterEntrySelected(ContentFilter filter, ContentFilterEntry entry) {
-    LinkedHashSet<String>? selectedIds = _selection[filter.id];
-    return selectedIds?.contains(entry.id) ?? false;
+    LinkedHashSet<String>? selectedLabels = _selection[filter.title];
+    return selectedLabels?.contains(entry.label) ?? false;
   }
 
   void _onContentFilterEntrySelected(ContentFilter filter, ContentFilterEntry value) {
   }
 
   void _onContentFilterEntry(ContentFilter filter, ContentFilterEntry value) {
-    String? filterId = filter.id;
-    String? valueId = value.id;
-    if ((filterId != null) && (valueId != null)) {
-      LinkedHashSet<String> selectedIds = (_selection[filterId] ??= LinkedHashSet<String>());
+    String? filterTitle = filter.title;
+    String? valueLabel = value.label;
+    if ((filterTitle != null) && (valueLabel != null)) {
+      LinkedHashSet<String> selectedLabels = (_selection[filterTitle] ??= LinkedHashSet<String>());
       setStateIfMounted(() {
         
-        if (selectedIds.contains(valueId)) {
-          selectedIds.remove(valueId);
+        if (selectedLabels.contains(valueLabel)) {
+          selectedLabels.remove(valueLabel);
         }
         else {
-          selectedIds.add(valueId);
+          selectedLabels.add(valueLabel);
         }
         
         if (widget.createMode && (filter.maxSelectCount != null)) {
-          while (filter.maxSelectCount! < selectedIds.length) {
-            selectedIds.remove(selectedIds.first);
+          while (filter.maxSelectCount! < selectedLabels.length) {
+            selectedLabels.remove(selectedLabels.first);
           }
         }
 
@@ -175,7 +174,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
     if ((widget.createMode && filter.isMultipleSelection) || widget.editMode) {
       // Ugly workaround: show again dropdown popup if filter supports multiple select.
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        final RenderObject? renderBox = filterKeys[filter.id]?.currentContext?.findRenderObject();
+        final RenderObject? renderBox = filterKeys[filter.title]?.currentContext?.findRenderObject();
         if (renderBox is RenderBox) {
           Offset globalOffset = renderBox.localToGlobal(Offset(renderBox.size.width / 2, renderBox.size.height / 2));
           GestureBinding.instance.handlePointerEvent(PointerDownEvent(position: globalOffset,));
@@ -220,7 +219,7 @@ class _GroupFiltersPanelState extends State<GroupFiltersPanel> {
 }
 
 class _ContentFilterMultipleEntries extends ContentFilterEntry {
-  final LinkedHashSet<String> entryIds;
-  _ContentFilterMultipleEntries(this.entryIds);
+  final LinkedHashSet<String> entryLabels;
+  _ContentFilterMultipleEntries(this.entryLabels);
 }
 
