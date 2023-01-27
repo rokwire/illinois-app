@@ -121,20 +121,22 @@ class ContentFilterSet {
     while (modified);
   }
 
-  String selectionDescription(Map<String, LinkedHashSet<String>> selection, { String filtersSeparator = ', ', String entriesSeparator = '/', String titleDelimiter = ': '}) {
+  String selectionDescription(Map<String, dynamic>? selection, { String filtersSeparator = ', ', String entriesSeparator = '/', String titleDelimiter = ': '}) {
     String filtersDescr = '';
-    if (filters != null) {
+    if ((filters != null) && (selection != null)) {
       for (ContentFilter filter in filters!) {
         String? filterTitle = stringValue(filter.title);
-        LinkedHashSet<String>? filterSelection = selection[filter.id];
+        dynamic filterSelection = selection[filter.id];
         List<ContentFilterEntry>? filterEntries = filter.entries;
         if ((filterTitle != null) && filterTitle.isNotEmpty &&
-            (filterSelection != null) && filterSelection.isNotEmpty &&
+            ((filterSelection is String) || ((filterSelection is List) && filterSelection.isNotEmpty)) &&
             (filterEntries != null) && filterEntries.isNotEmpty) {
 
           String filterOptions = '';
           for (ContentFilterEntry entry in filterEntries) {
-            if (filterSelection.contains(entry.id)) {
+            if (((filterSelection is String) && (filterSelection == entry.id)) ||
+                ((filterSelection is List) && filterSelection.contains(entry.id)))
+            {
               String? entryTitle = stringValue(entry.label);
               if ((entryTitle != null) && entryTitle.isNotEmpty) {
                 if (filterOptions.isNotEmpty) {
@@ -157,10 +159,11 @@ class ContentFilterSet {
     return filtersDescr;
   }
 
-  ContentFilter? unsatisfiedFilterFromSelection(Map<String, LinkedHashSet<String>> selection) {
+  ContentFilter? unsatisfiedFilterFromSelection(Map<String, dynamic>? selection) {
     if (filters != null) {
       for (ContentFilter filter in filters!) {
-        if (!filter.isSatisfiedFilterFromSelection(selection)) {
+        dynamic filterSelection = (selection != null) ? selection[filter.id] : null;
+        if (!filter.isSatisfiedFilterFromSelection(filterSelection)) {
           return filter;
         }
       }
@@ -277,8 +280,17 @@ class ContentFilter {
     return true;
   }
 
-  bool isSatisfiedFilterFromSelection(Map<String, LinkedHashSet<String>> selection) {
-    int selectedAnsersCount = selection[id]?.length ?? 0; 
+  bool isSatisfiedFilterFromSelection(dynamic selection) {
+    int selectedAnsersCount; 
+    if (selection is String) {
+      selectedAnsersCount = 1;
+    }
+    else if (selection is Iterable) {
+      selectedAnsersCount = selection.length;
+    }
+    else {
+      selectedAnsersCount = 0;
+    }
     return ((minSelectCount == null) || (minSelectCount! <= selectedAnsersCount)) &&
            ((maxSelectCount == null) || (selectedAnsersCount <= maxSelectCount!));
   }
