@@ -39,61 +39,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
-class IDCardPanel extends StatefulWidget {
-  IDCardPanel();
+class IDCardContentWidget extends StatefulWidget {
+  IDCardContentWidget();
 
-  static void present(BuildContext context) {
-    if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_id', 'You need to be logged in with your NetID to access Illini ID. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
-    }
-    else {
-      if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
-        AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active i-card. Please visit the ID Center.'));
-      }
-      else {
-        String? warning;
-        int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
-        if (expirationDays != null) {
-          if (expirationDays <= 0) {
-            warning = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your i-card expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
-          }
-          else if ((0 < expirationDays) && (expirationDays < 30)) {
-            warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id','Your ID will expire on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
-          }
-        }
-
-        if (warning != null) {
-          AppAlert.showMessage(context, warning).then((_) {
-            _present(context);
-          });
-        }
-        else {
-          _present(context);
-        }
-      }
-    }
-  }
-
-  static void _present(BuildContext context) {
-    MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
-    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors!.background,
-        constraints: BoxConstraints(maxHeight: height, minHeight: height),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-        builder: (context) => IDCardPanel());
-  }
-
-  _IDCardPanelState createState() => _IDCardPanelState();
+  _IDCardContentWidgetState createState() => _IDCardContentWidgetState();
 }
 
-class _IDCardPanelState extends State<IDCardPanel>
+class _IDCardContentWidgetState extends State<IDCardContentWidget>
   with SingleTickerProviderStateMixin
   implements NotificationsListener {
 
@@ -246,33 +199,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-        Container(color: Styles().colors?.white, child:
-          Row(children: [
-            Expanded(child:
-              Padding(padding: EdgeInsets.only(left: 16), child:
-                  Text(Localization().getStringEx('TBD: dd - proper label', 'i-card'), style: Styles().textStyles?.getTextStyle('panel.id_card.heading.title'))
-                ),
-            ),
-            Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-              InkWell(onTap : _onClose, child:
-                Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                  Styles().images?.getImage('close-circle', excludeFromSemantics: true),
-                ),
-              ),
-            ),
-
-          ],),
-        ),
-        Container(color: Styles().colors?.surfaceAccent, height: 1,),
-        Expanded(child:
-          _buildPage(),
-        )
-      ],);
-  }
-
-  Widget _buildPage() {
-    return Scaffold(body:
+    return Container(child:
       Stack(children: <Widget>[
           
           Column(children: <Widget>[
@@ -280,24 +207,7 @@ class _IDCardPanelState extends State<IDCardPanel>
             Container(height: _headingH2, color: _activeHeadingColor, child: CustomPaint(painter: TrianglePainter(painterColor: Colors.white), child: Container(),),),
           ],),
           
-          SafeArea(child: Column(children: <Widget>[
-            Expanded(child: (Auth2().authCard != null) ? _buildCardContent() : Container(),),
-
-            Align(alignment: Alignment.bottomCenter, child:
-              Padding(padding: EdgeInsets.only(), child:
-                Semantics(button:true,label: Localization().getStringEx('widget.id_card.header.button.close.title', "close"), child:
-                  InkWell(onTap : _onClose, child:
-                    Container(width: 64, height: 64, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Color(0xff0f2040), width: 3)), child:
-                      Align(alignment: Alignment.center, child:
-                        Padding(padding: EdgeInsets.only(top: 2), child:
-                          Semantics(excludeSemantics: true, child:
-                          Text('\u00D7', style: Styles().textStyles?.getTextStyle("panel.id_card.close_button"),), )),
-                        ),
-                    ),
-                  ),
-                )
-            ),),
-          ],),),
+          (Auth2().authCard != null) ? _buildCardContent() : Container(),
         ],
       
     ),);
@@ -340,8 +250,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     bool hasBuildingAccess = _hasBuildingAccess && (0 < (Auth2().authCard?.uin?.length ?? 0));
 
     
-    return SingleChildScrollView(scrollDirection: Axis.vertical, child:
-    Column(children: <Widget>[
+    return Column(children: <Widget>[
       Padding(padding: EdgeInsets.only(top: _headingH1 + _headingH2 / 5 - _photoSize / 2 - MediaQuery.of(context).padding.top), child:
         Stack(children: <Widget>[
           Align(alignment: Alignment.topCenter, child:
@@ -431,7 +340,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       Container(height: 30,),
       _buildMobileAccessContent()
 
-    ],)    );
+    ]);
   }
 
   Widget _buildPhotoImage(){

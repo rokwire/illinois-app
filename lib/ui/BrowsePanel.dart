@@ -53,7 +53,7 @@ import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
-import 'package:illinois/ui/wallet/IDCardPanel.dart';
+import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -786,7 +786,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapBuildingAccess(BuildContext context) {
     Analytics().logSelect(target: 'Building Access');
-    IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
   
   void _onTapTestLocations(BuildContext context) {
@@ -1075,7 +1075,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapIlliniId(BuildContext context) {
     Analytics().logSelect(target: "Illini ID");
-    IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
 
   void _onTapLibraryCard(BuildContext context) {

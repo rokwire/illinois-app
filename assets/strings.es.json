@@ -2634,6 +2634,9 @@
     "panel.appointment.detail.cancel.description": "<b>Para cancelar una cita,</b> vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> o llame al <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> durante el horario laboral. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
     "panel.appointment.detail.error.msg": "No se pudieron cargar los datos de la cita.",
 
+    "panel.icard.home.content.icard.label": "i-card",
+    "panel.icard.home.content.faqs.label": "FAQS",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",
@@ -3032,7 +3035,6 @@
     "widget.explore_display_type.header.map.title":"Mapa",
     "widget.explore_display_type.header.map.hint":"Ver mapa",
 
-    "widget.id_card.header.button.close.title": "Cerrar",
     "widget.id_card.label.update_i_card": "Actualiza tu i-card",
     "widget.id_card.label.building_access": "Acceso al edificio",
     "widget.id_card.label.building_access.granted": "OTORGADO",

@@ -313,7 +313,6 @@
     "panel.mtd_bus.role":  {"font_family": "medium", "size": 36.0, "color": "white"},
     "panel.mtd_bus.clock.time":  {"font_family": "medium", "size": 48.0, "color": "white"},
 
-    "panel.id_card.close_button": {"font_family": "light", "size": 48.0, "color": "fillColorPrimary"},
     "panel.id_card.heading.title": {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
     "panel.id_card.detail.title.extra_large": {"font_family": "extra_bold", "size": 28.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.title.large": {"font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},

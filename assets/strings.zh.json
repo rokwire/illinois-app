@@ -2634,6 +2634,9 @@
 	"panel.appointment.detail.cancel.description": "<b>要取消預約</b>，前往<a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或在工作時間致電 <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}}</u>)</a>。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
 	"panel.appointment.detail.error.msg": "無法加載約會數據。",
 
+    "panel.icard.home.content.icard.label": "i-card",
+    "panel.icard.home.content.faqs.label": "FAQS",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",
@@ -3032,7 +3035,6 @@
 	"widget.explore_display_type.header.map.title":"地图",
 	"widget.explore_display_type.header.map.hint":"查看地图",
 
-	"widget.id_card.header.button.close.title": "关闭",
 	"widget.id_card.label.update_i_card": "更新您的 i-card",
 	"widget.id_card.label.building_access": "建築通道",
 	"widget.id_card.label.building_access.granted": "的確",

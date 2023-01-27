@@ -11,7 +11,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/wallet/IDCardPanel.dart';
+import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -536,7 +536,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini ID', source: widget.runtimeType.toString());
-     IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
 }
 
