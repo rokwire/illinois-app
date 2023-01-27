@@ -338,11 +338,21 @@ class ContentFilterEntry {
 
   // JSON serialization
 
-  static ContentFilterEntry? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? ContentFilterEntry(
-      label: JsonUtils.stringValue(json['label']),
-      requirements: JsonUtils.mapValue(json['requirements']),
-    ) : null;
+  static ContentFilterEntry? fromJson(dynamic json) {
+    if (json is String) {
+      return ContentFilterEntry(
+        label: json,
+      );
+    }
+    else if (json is Map) {
+      return ContentFilterEntry(
+        label: JsonUtils.stringValue(json['label']),
+        requirements: JsonUtils.mapValue(json['requirements']),
+      );
+    }
+    else {
+      return null;
+    }
   }
 
   toJson() => {
@@ -406,7 +416,7 @@ class ContentFilterEntry {
     if (jsonList != null) {
       values = <ContentFilterEntry>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(values, ContentFilterEntry.fromJson(JsonUtils.mapValue(jsonEntry)));
+        ListUtils.add(values, ContentFilterEntry.fromJson(jsonEntry));
       }
     }
     return values;
