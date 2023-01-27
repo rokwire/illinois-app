@@ -60,10 +60,10 @@ class ContentFilterSet {
     return key;
   }
 
-  ContentFilter? findFilter({String? id}) {
+  ContentFilter? findFilter({String? title}) {
     if (filters != null) {
       for (ContentFilter filter in filters!) {
-        if (((id != null) && (filter.id == id))) {
+        if (((title != null) && (filter.title == title))) {
           return filter;
         }
       }
@@ -73,14 +73,14 @@ class ContentFilterSet {
 
   static Map<String, LinkedHashSet<String>>? selectionFromFilterSelection(Map<String, dynamic>? filterSelection) {
     Map<String, LinkedHashSet<String>>? selection;
-    filterSelection?.forEach((String filterId, dynamic value) {
+    filterSelection?.forEach((String filterTitle, dynamic value) {
       if (value is String) {
         selection ??= <String, LinkedHashSet<String>>{};
-        selection![filterId] = LinkedHashSet<String>.from(<String>[value]);
+        selection![filterTitle] = LinkedHashSet<String>.from(<String>[value]);
       }
       else if (value is List) {
         selection ??= <String, LinkedHashSet<String>>{};
-        selection![filterId] = LinkedHashSet<String>.from(JsonUtils.listStringsValue(value)?.reversed ?? <String>[]);
+        selection![filterTitle] = LinkedHashSet<String>.from(JsonUtils.listStringsValue(value)?.reversed ?? <String>[]);
       }
     });
     return selection;
@@ -88,14 +88,14 @@ class ContentFilterSet {
 
   static Map<String, dynamic>? selectionToFilterSelection(Map<String, LinkedHashSet<String>>? selection) {
     Map<String, dynamic>? filterSelection;
-    selection?.forEach((String filterId, LinkedHashSet<String> values) {
+    selection?.forEach((String filterTitle, LinkedHashSet<String> values) {
       if (values.length == 1) {
         filterSelection ??= <String, dynamic>{};
-        filterSelection![filterId] = values.first;
+        filterSelection![filterTitle] = values.first;
       }
       else if (values.length > 1) {
         filterSelection ??= <String, dynamic>{};
-        filterSelection![filterId] = List.from(List.from(values).reversed);
+        filterSelection![filterTitle] = List.from(List.from(values).reversed);
       }
     });
     return filterSelection;
@@ -105,10 +105,10 @@ class ContentFilterSet {
     bool modified;
     do {
       modified = false;
-      for (String filterId in selection.keys) {
-        ContentFilter? filter = findFilter(id: filterId);
+      for (String filterTitle in selection.keys) {
+        ContentFilter? filter = findFilter(title: filterTitle);
         if (filter == null) {
-          selection.remove(filterId);
+          selection.remove(filterTitle);
           modified = true;
           break;
         }
@@ -121,12 +121,16 @@ class ContentFilterSet {
     while (modified);
   }
 
-  String selectionDescription(Map<String, dynamic>? selection, { String filtersSeparator = ', ', String entriesSeparator = '/', String titleDelimiter = ': '}) {
+  String selectionDescription(Map<String, dynamic>? selection, {
+    String filtersSeparator = ', ',
+    String entriesSeparator = '; ',
+    String titleDelimiter = ': '
+  }) {
     String filtersDescr = '';
     if ((filters != null) && (selection != null)) {
       for (ContentFilter filter in filters!) {
         String? filterTitle = stringValue(filter.title);
-        dynamic filterSelection = selection[filter.id];
+        dynamic filterSelection = selection[filter.title];
         List<ContentFilterEntry>? filterEntries = filter.entries;
         if ((filterTitle != null) && filterTitle.isNotEmpty &&
             ((filterSelection is String) || ((filterSelection is List) && filterSelection.isNotEmpty)) &&
@@ -134,8 +138,8 @@ class ContentFilterSet {
 
           String filterOptions = '';
           for (ContentFilterEntry entry in filterEntries) {
-            if (((filterSelection is String) && (filterSelection == entry.id)) ||
-                ((filterSelection is List) && filterSelection.contains(entry.id)))
+            if (((filterSelection is String) && (filterSelection == entry.label)) ||
+                ((filterSelection is List) && filterSelection.contains(entry.label)))
             {
               String? entryTitle = stringValue(entry.label);
               if ((entryTitle != null) && entryTitle.isNotEmpty) {
@@ -162,7 +166,7 @@ class ContentFilterSet {
   ContentFilter? unsatisfiedFilterFromSelection(Map<String, dynamic>? selection) {
     if (filters != null) {
       for (ContentFilter filter in filters!) {
-        dynamic filterSelection = (selection != null) ? selection[filter.id] : null;
+        dynamic filterSelection = (selection != null) ? selection[filter.title] : null;
         if (!filter.isSatisfiedFilterFromSelection(filterSelection)) {
           return filter;
         }
@@ -187,7 +191,6 @@ class ContentFilterSet {
 // ContentFilter
 
 class ContentFilter {
-  final String? id;
   final String? title;
   final String? description;
   final String? emptyLabel;
@@ -196,13 +199,12 @@ class ContentFilter {
   final int? maxSelectCount;
   final List<ContentFilterEntry>? entries;
 
-  ContentFilter({this.id, this.title, this.description, this.emptyLabel, this.hint, this.minSelectCount, this.maxSelectCount, this.entries});
+  ContentFilter({this.title, this.description, this.emptyLabel, this.hint, this.minSelectCount, this.maxSelectCount, this.entries});
 
   // JSON serialization
 
   static ContentFilter? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? ContentFilter(
-      id: JsonUtils.stringValue(json['id']),
       title: JsonUtils.stringValue(json['title']),
       description: JsonUtils.stringValue(json['description']),
       emptyLabel: JsonUtils.stringValue(json['empty-label']),
@@ -214,7 +216,6 @@ class ContentFilter {
   }
 
   toJson() => {
-    'id': id,
     'title': title,
     'description': description,
     'empty-label': emptyLabel,
@@ -229,7 +230,6 @@ class ContentFilter {
   @override
   bool operator==(dynamic other) =>
     (other is ContentFilter) &&
-    (id == other.id) &&
     (title == other.title) &&
     (description == other.description) &&
     (emptyLabel == other.emptyLabel) &&
@@ -240,7 +240,6 @@ class ContentFilter {
 
   @override
   int get hashCode =>
-    (id?.hashCode ?? 0) ^
     (title?.hashCode ?? 0) ^
     (description?.hashCode ?? 0) ^
     (emptyLabel?.hashCode ?? 0) ^
@@ -254,11 +253,10 @@ class ContentFilter {
   bool get isRequired => (0 < (minSelectCount ?? 0));
   bool get isMultipleSelection => (maxSelectCount != 1);
 
-  ContentFilterEntry? findEntry({String? id, String? label}) {
+  ContentFilterEntry? findEntry({String? label}) {
     if (entries != null) {
       for (ContentFilterEntry entry in entries!) {
-        if (((id != null) && (entry.id == id)) ||
-            ((label != null) && (entry.label == label))) {
+        if ((label != null) && (entry.label == label)) {
           return entry;
         }
       }
@@ -267,12 +265,12 @@ class ContentFilter {
   }
 
   bool validateSelection(Map<String, LinkedHashSet<String>> selection) {
-    LinkedHashSet<String>? entryIds = selection[id];
-    if (entryIds != null) {
-      for (String entryId in entryIds) {
-        ContentFilterEntry? filterEntry = findEntry(id: entryId);
+    LinkedHashSet<String>? entryLabels = selection[title];
+    if (entryLabels != null) {
+      for (String entryLabel in entryLabels) {
+        ContentFilterEntry? filterEntry = findEntry(label: entryLabel);
         if ((filterEntry == null) || !filterEntry.fulfillsSelection(selection)) {
-          entryIds.remove(entryId);
+          entryLabels.remove(entryLabel);
           return false;
         }
       }
@@ -337,24 +335,31 @@ class ContentFilter {
 // ContentFilterEntry
 
 class ContentFilterEntry {
-  final String? id;
   final String? label;
   final Map<String, dynamic>? requirements;
 
-  ContentFilterEntry({this.id, this.label, this.requirements});
+  ContentFilterEntry({this.label, this.requirements});
 
   // JSON serialization
 
-  static ContentFilterEntry? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? ContentFilterEntry(
-      id: JsonUtils.stringValue(json['id']),
-      label: JsonUtils.stringValue(json['label']),
-      requirements: JsonUtils.mapValue(json['requirements']),
-    ) : null;
+  static ContentFilterEntry? fromJson(dynamic json) {
+    if (json is String) {
+      return ContentFilterEntry(
+        label: json,
+      );
+    }
+    else if (json is Map) {
+      return ContentFilterEntry(
+        label: JsonUtils.stringValue(json['label']),
+        requirements: JsonUtils.mapValue(json['requirements']),
+      );
+    }
+    else {
+      return null;
+    }
   }
 
   toJson() => {
-    'id': id,
     'label': label,
     'requirements': requirements,
   };
@@ -364,13 +369,11 @@ class ContentFilterEntry {
   @override
   bool operator==(dynamic other) =>
     (other is ContentFilterEntry) &&
-    (id == other.id) &&
     (label == other.label) &&
     DeepCollectionEquality().equals(requirements, other.requirements);
 
   @override
   int get hashCode =>
-    (id?.hashCode ?? 0) ^
     (label?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(requirements));
 
@@ -417,7 +420,7 @@ class ContentFilterEntry {
     if (jsonList != null) {
       values = <ContentFilterEntry>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(values, ContentFilterEntry.fromJson(JsonUtils.mapValue(jsonEntry)));
+        ListUtils.add(values, ContentFilterEntry.fromJson(jsonEntry));
       }
     }
     return values;
