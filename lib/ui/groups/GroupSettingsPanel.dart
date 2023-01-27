@@ -534,7 +534,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   Widget _constructFilterContent() {
-    String? filtersDescr = _contentFilters?.selectionDescription(_group?.filters);
+    String? filtersDescr = _contentFilters?.selectionDescription(_group?.filters,
+      filtersSeparator: '\n'
+    );
     return ((filtersDescr != null) && filtersDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
       Row(children: [
         Expanded(child:

@@ -121,7 +121,11 @@ class ContentFilterSet {
     while (modified);
   }
 
-  String selectionDescription(Map<String, dynamic>? selection, { String filtersSeparator = ', ', String entriesSeparator = '/', String titleDelimiter = ': '}) {
+  String selectionDescription(Map<String, dynamic>? selection, {
+    String filtersSeparator = ', ',
+    String entriesSeparator = '; ',
+    String titleDelimiter = ': '
+  }) {
     String filtersDescr = '';
     if ((filters != null) && (selection != null)) {
       for (ContentFilter filter in filters!) {
