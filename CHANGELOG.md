@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Edit lastAppReviewTime from SettingsDebugPanel [#2941](https://github.com/rokwire/illinois-app/issues/2941).
+- Added Filters to group settings [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
 ## [4.3.5] - 2022-01-25
 ### Added
