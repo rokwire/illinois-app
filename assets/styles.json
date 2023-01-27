@@ -314,7 +314,7 @@
     "panel.mtd_bus.clock.time":  {"font_family": "medium", "size": 48.0, "color": "white"},
 
     "panel.id_card.close_button": {"font_family": "light", "size": 48.0, "color": "fillColorPrimary"},
-    "panel.id_card.heading.title": {"font_family": "extra_bold", "size": 20.0, "color": "white"},
+    "panel.id_card.heading.title": {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
     "panel.id_card.detail.title.extra_large": {"font_family": "extra_bold", "size": 28.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.title.large": {"font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.title.regular": {"font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
@@ -524,6 +524,7 @@
 
     "plus-circle-large": {"src": "images/button-plus-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 34},
 
+    "close-circle": {"src": "images/close-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
     "close-circle-white": {"src": "images/close-white.png", "type": "flutter.asset", "color": "surface", "size": 24},
     "close-circle-white-large": {"src": "images/close-white-large.png", "type": "flutter.asset", "color": "surface", "size": 54},
     "more-white": {"src": "images/groups-more-inactive.png", "type": "flutter.asset", "color": "surface", "size": 24},

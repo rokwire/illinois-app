@@ -77,11 +77,17 @@ class IDCardPanel extends StatefulWidget {
   }
 
   static void _present(BuildContext context) {
-    showModalBottomSheet(context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-      builder: (context) => IDCardPanel());
+    MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        clipBehavior: Clip.antiAlias,
+        backgroundColor: Styles().colors!.background,
+        constraints: BoxConstraints(maxHeight: height, minHeight: height),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+        builder: (context) => IDCardPanel());
   }
 
   _IDCardPanelState createState() => _IDCardPanelState();
@@ -240,6 +246,32 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   @override
   Widget build(BuildContext context) {
+    return Column(children: [
+        Container(color: Styles().colors?.white, child:
+          Row(children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 16), child:
+                  Text(Localization().getStringEx('TBD: dd - proper label', 'i-card'), style: Styles().textStyles?.getTextStyle('panel.id_card.heading.title'))
+                ),
+            ),
+            Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+              InkWell(onTap : _onClose, child:
+                Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+                  Styles().images?.getImage('close-circle', excludeFromSemantics: true),
+                ),
+              ),
+            ),
+
+          ],),
+        ),
+        Container(color: Styles().colors?.surfaceAccent, height: 1,),
+        Expanded(child:
+          _buildPage(),
+        )
+      ],);
+  }
+
+  Widget _buildPage() {
     return Scaffold(body:
       Stack(children: <Widget>[
           
@@ -265,18 +297,6 @@ class _IDCardPanelState extends State<IDCardPanel>
                   ),
                 )
             ),),
-          ],),),
-
-          SafeArea(child: Stack(children: <Widget>[
-            Padding(padding: EdgeInsets.all(16), child:
-                Semantics(header:true, child:
-                  Text(Localization().getStringEx('widget.id_card.header.title', 'Illini ID'), style: Styles().textStyles?.getTextStyle("panel.id_card.heading.title")),)),
-            Align(alignment: Alignment.topRight, child:
-                Semantics(button: true, label: Localization().getStringEx('widget.id_card.header.button.close.title', "close"), child:
-                  InkWell(
-                    onTap : _onClose,
-                    child: Container(width: 48, height: 48, alignment: Alignment.center, child: Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))),
-                )),
           ],),),
         ],
       

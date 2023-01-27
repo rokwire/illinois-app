@@ -3032,7 +3032,6 @@
     "widget.explore_display_type.header.map.title":"Mapa",
     "widget.explore_display_type.header.map.hint":"Ver mapa",
 
-    "widget.id_card.header.title": "Illini ID",
     "widget.id_card.header.button.close.title": "Cerrar",
     "widget.id_card.label.update_i_card": "Actualiza tu i-card",
     "widget.id_card.label.building_access": "Acceso al edificio",

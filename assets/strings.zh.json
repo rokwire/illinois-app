@@ -3032,7 +3032,6 @@
 	"widget.explore_display_type.header.map.title":"地图",
 	"widget.explore_display_type.header.map.hint":"查看地图",
 
-	"widget.id_card.header.title": "Illini ID",
 	"widget.id_card.header.button.close.title": "关闭",
 	"widget.id_card.label.update_i_card": "更新您的 i-card",
 	"widget.id_card.label.building_access": "建築通道",
