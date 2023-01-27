@@ -24,6 +24,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -578,7 +579,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
 
   void _onTapMobileAccessPermissions() {
     Analytics().logSelect(target: 'Mobile Access Permissions');
-    //TBD: DD - implement permissions
+    SettingsHomeContentPanel.present(context, content: SettingsContent.i_card);
   }
 
   void _setMobileAccessKeysLoading(bool loading) {

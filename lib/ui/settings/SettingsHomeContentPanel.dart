@@ -24,6 +24,7 @@ import 'package:illinois/ui/settings/SettingsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsICardContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -35,7 +36,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments }
+enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card }
 
 class SettingsHomeContentPanel extends StatefulWidget {
   static final String routeName = 'settings_home_content_panel';
@@ -261,6 +262,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Container();
       case SettingsContent.assessments:
         return SettingsAssessmentsContentWidget();
+      case SettingsContent.i_card:
+        return SettingsICardContentWidget();
     }
   }
 
@@ -296,6 +299,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites');
       case SettingsContent.assessments:
         return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
+      case SettingsContent.i_card:
+        return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'i-card');
     }
   }
 }

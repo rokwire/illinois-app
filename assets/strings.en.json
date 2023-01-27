@@ -1326,6 +1326,7 @@
     "panel.settings.home.settings.sections.appointments.label": "MyMcKinley Appointments",
     "panel.settings.home.settings.sections.favorites.label": "Customize Favorites",
     "panel.settings.home.settings.sections.assessments.label": "My Assessments",
+    "panel.settings.home.settings.sections.i_card.label": "i-card",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign in to {{app_title}}",
     "panel.settings.home.connect.not_logged_in.netid.description.part_1": "Are you a ",
