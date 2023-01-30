@@ -18,17 +18,17 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/ContentFilter.dart';
-import 'package:illinois/service/ContentFilter.dart';
+import 'package:illinois/model/ContentAttributes.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/groups/GroupFiltersPanel.dart';
+import 'package:illinois/service/Groups.dart';
+import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/groups.dart' as rokwire;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
@@ -43,7 +43,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupsHomePanel extends StatefulWidget {
-  final GroupsContentType? contentType;
+  final rokwire.GroupsContentType? contentType;
   
   GroupsHomePanel({Key? key, this.contentType}) : super(key: key);
   
@@ -65,7 +65,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   String? _newGroupId;
   GlobalKey? _newGroupKey;
 
-  GroupsContentType? _selectedContentType;
+  rokwire.GroupsContentType? _selectedContentType;
   bool _contentTypesVisible = false;
 
   List<Group>? _allGroups;
@@ -74,9 +74,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   String? _selectedCategory;
   List<String>? _categories;
 
-  ContentFilterSet? _contentFilters;
-  Map<String, dynamic> _contentFiltersSelection = <String, dynamic>{};
-  String? _contentFiltersSelectionDescription;
+  ContentAttributes? _contentAttributes;
+  Map<String, dynamic> _contentAttributesSelection = <String, dynamic>{};
+  String? _contentAttributesSelectionDescription;
 
   _TagFilter? _selectedTagFilter = _TagFilter.all;
   _FilterType __activeFilterType = _FilterType.none;
@@ -161,19 +161,19 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Future<List<Group>?> _loadUserGroups() async =>
-    Groups().loadGroups(contentType: GroupsContentType.my);
+    Groups().loadGroups(contentType: rokwire.GroupsContentType.my);
 
   Future<List<Group>?> _loadAllGroups() async =>
     Groups().loadGroups(
-      contentType: GroupsContentType.all,
+      contentType: rokwire.GroupsContentType.all,
       category: (_selectedCategory != _allCategoriesValue) ? _selectedCategory : null,
-      filters: _contentFiltersSelection,
+      attributes: _contentAttributesSelection,
       tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
     );
 
   void _checkGroupsContentLoaded() {
     if (!_isGroupsLoading) {
-      _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? GroupsContentType.my : GroupsContentType.all);
+      _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all);
       _updateState();
     }
   }
@@ -189,7 +189,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
     List<dynamic> results = await Future.wait([
       Groups().loadCategories(),
-      ContentFilters().loadFilterSet('groups'),
+      Groups().loadContentAttributes(),
     ]);
     
     List<String> categories = [];
@@ -202,7 +202,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setStateIfMounted(() {
       _categories = categories;
       _selectedCategory = _allCategoriesValue;
-      _contentFilters = ((1 < results.length) && (results[1] is ContentFilterSet)) ? results[1] : null;
+      _contentAttributes = ((1 < results.length) && (results[1] is ContentAttributes)) ? results[1] : null;
       _isFilterLoading = false;
     });
   }
@@ -329,7 +329,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildTypesValuesWidget() {
     List<Widget> typeWidgetList = <Widget>[];
     typeWidgetList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    for (GroupsContentType type in GroupsContentType.values) {
+    for (rokwire.GroupsContentType type in rokwire.GroupsContentType.values) {
       if ((_selectedContentType != type)) {
         typeWidgetList.add(_buildContentItem(type));
       }
@@ -337,7 +337,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: typeWidgetList)));
   }
 
-  Widget _buildContentItem(GroupsContentType contentType) {
+  Widget _buildContentItem(rokwire.GroupsContentType contentType) {
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -368,13 +368,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           _buildCommandsBar(),
         ],),
       )]),
-      _buildContentFiltersDescription(),
+      _buildContentAttributesDescription(),
     ],)
     );
   }
 
   Widget _buildFiltersBar() {
-    if (_isFilterLoading || (_selectedContentType == GroupsContentType.my)) {
+    if (_isFilterLoading || (_selectedContentType == rokwire.GroupsContentType.my)) {
       return SizedBox();
     }
     else {
@@ -383,7 +383,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildFilterButtons() {
-    String filtersTitle = Localization().getStringEx("panel.groups_home.filter.content_filter.label", "Filters");
+    String filtersTitle = Localization().getStringEx("panel.groups_home.filter.filter.label", "Filters");
     
     return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
       Visibility(visible: CollectionUtils.isNotEmpty(_categories), child:
@@ -416,9 +416,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         ),
       ),
       
-      Visibility(visible: _contentFilters?.isNotEmpty ?? false, child:
+      Visibility(visible: _contentAttributes?.isNotEmpty ?? false, child:
         Padding(padding: EdgeInsets.only(right: 6), child:
-          InkWell(onTap: _onContentFilters, child:
+          InkWell(onTap: _onFilterAttributes, child:
             Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
               Row(children: [
                 Text(filtersTitle, style: TextStyle(
@@ -447,11 +447,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     ],);
   }
 
-  Widget _buildContentFiltersDescription() {
-    return StringUtils.isNotEmpty(_contentFiltersSelectionDescription) ? 
+  Widget _buildContentAttributesDescription() {
+    return StringUtils.isNotEmpty(_contentAttributesSelectionDescription) ? 
       Padding(padding: EdgeInsets.only(top: 0, bottom: 4), child: 
       Row(children: [Expanded(child:
-        Text(_contentFiltersSelectionDescription ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium,),),
+        Text(_contentAttributesSelectionDescription ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium,),),
       ),],)
         
       ) : Container();
@@ -480,19 +480,19 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     ],);
   }
 
-  void _onContentFilters() {
+  void _onFilterAttributes() {
     Analytics().logSelect(target: 'Filters');
-    if (_contentFilters != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: _contentFiltersSelection))).then((selection) {
+    if (_contentAttributes != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(contentAttributes: _contentAttributes!, selection: _contentAttributesSelection))).then((selection) {
         if ((selection != null) && mounted) {
-          String? selectionText = _contentFilters?.selectionDescription(selection,
-            filtersSeparator: ', ',
-            entriesSeparator: ' or ',
+          String? selectionText = _contentAttributes?.selectionDescription(selection,
+            categorySeparator: ', ',
+            attributeSeparator: ' or ',
             titleDelimiter: ' is '
           );
           setState(() {
-            _contentFiltersSelection = selection;
-            _contentFiltersSelectionDescription = StringUtils.isNotEmpty(selectionText) ? "Filter: $selectionText" : null;
+            _contentAttributesSelection = selection;
+            _contentAttributesSelectionDescription = StringUtils.isNotEmpty(selectionText) ? "Attributes: $selectionText" : null;
           });
           _reloadAllGroupsContent();
         }
@@ -577,10 +577,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildGroupsContent() {
-    if (_selectedContentType == GroupsContentType.my) {
+    if (_selectedContentType == rokwire.GroupsContentType.my) {
       return _buildMyGroupsContent();
     }
-    else if (_selectedContentType == GroupsContentType.all) {
+    else if (_selectedContentType == rokwire.GroupsContentType.all) {
       return _buildAllGroupsContent();
     }
     else {
@@ -707,11 +707,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  String _getContentLabel(GroupsContentType? contentType) {
+  String _getContentLabel(rokwire.GroupsContentType? contentType) {
     switch (contentType) {
-      case GroupsContentType.all:
+      case rokwire.GroupsContentType.all:
         return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups');
-      case GroupsContentType.my:
+      case rokwire.GroupsContentType.my:
         return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups');
       default:
         return '';
@@ -723,12 +723,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _updateState();
   }
 
-  void _onTapContentType(GroupsContentType contentType) {
+  void _onTapContentType(rokwire.GroupsContentType contentType) {
     Analytics().logSelect(target: _getContentLabel(contentType));
-    if (contentType == GroupsContentType.all) {
+    if (contentType == rokwire.GroupsContentType.all) {
       _onSelectAllGroups();
     }
-    else if (contentType == GroupsContentType.my) {
+    else if (contentType == rokwire.GroupsContentType.my) {
       _onSelectMyGroups();
     }
     _changeContentTypesVisibility();
@@ -756,17 +756,17 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   void _onSelectAllGroups(){
-    if(_selectedContentType != GroupsContentType.all){
+    if(_selectedContentType != rokwire.GroupsContentType.all){
       setState(() {
-        _selectedContentType = GroupsContentType.all;
+        _selectedContentType = rokwire.GroupsContentType.all;
       });
     }
   }
 
   void _onSelectMyGroups() {
-    if(_selectedContentType != GroupsContentType.my){
+    if(_selectedContentType != rokwire.GroupsContentType.my){
       if (Auth2().isOidcLoggedIn) {
-        setState(() { _selectedContentType = GroupsContentType.my; });
+        setState(() { _selectedContentType = rokwire.GroupsContentType.my; });
       }
       else {
         setState(() { _myGroupsBusy = true; });
@@ -776,7 +776,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             setState(() {
               _myGroupsBusy = false;
               if (result == Auth2OidcAuthenticateResult.succeeded) {
-                _selectedContentType = GroupsContentType.my;
+                _selectedContentType = rokwire.GroupsContentType.my;
               }
             });
           }

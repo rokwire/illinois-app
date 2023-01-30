@@ -18,17 +18,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
-import 'package:illinois/model/ContentFilter.dart';
+import 'package:illinois/model/ContentAttributes.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/ContentFilter.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
-import 'package:illinois/ui/groups/GroupFiltersPanel.dart';
+import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -60,10 +59,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
   List<String>? _groupCategories;
-  ContentFilterSet? _contentFilters;
+  ContentAttributes? _contentAttributes;
 
   bool _groupCategoeriesLoading = false;
-  bool _contentFiltersLoading = false;
+  bool _contentAttributesLoading = false;
   bool _creating = false;
   bool _researchRequiresConsentConfirmation = false;
 
@@ -71,7 +70,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void initState() {
     _initGroup();
     _initCategories();
-    _initContentFilters();
+    _initContentAttributes();
     _initResearchConsentDetails();
     super.initState();
   }
@@ -128,14 +127,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     });
   }
 
-  void _initContentFilters(){
+  void _initContentAttributes(){
     setState(() {
-      _contentFiltersLoading = true;
+      _contentAttributesLoading = true;
     });
-    ContentFilters().loadFilterSet('groups').then((ContentFilterSet? contentFilters){
+    Groups().loadContentAttributes().then((ContentAttributes? contentAttributes){
       setStateIfMounted(() {
-        _contentFilters = contentFilters;
-        _contentFiltersLoading = false;
+        _contentAttributes = contentAttributes;
+        _contentAttributesLoading = false;
       });
     });
   }
@@ -195,7 +194,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   ),
                   _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "search"),
                   _buildCategoryDropDown(),
-                  _buildFiltersLayout(),
+                  _buildAttributesLayout(),
                   _buildTagsLayout(),
                 ]),
               ),
@@ -496,55 +495,56 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   //
-  //Filters
-  Widget _buildFiltersLayout() {
-    return (_contentFilters?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+  //Attributes
+  Widget _buildAttributesLayout() {
+    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
             GroupSectionTitle(
-              title: Localization().getStringEx("panel.groups_create.filters.title", "FILTERS"),
-              description: Localization().getStringEx("panel.groups_create.filters.description", "Filters help people understand more about your group."),
-              requiredMark: _contentFilters?.hasRequired ?? false,
+              title: Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
+              description: Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
+              requiredMark: _contentAttributes?.hasRequired ?? false,
             )
           ),
           Container(width: 8),
           Expanded(flex: 2, child:
             RoundedButton(
-              label: Localization().getStringEx("panel.groups_create.button.filters.title", "Filters"),
-              hint: Localization().getStringEx("panel.groups_create.button.filters.hint", ""),
+              label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
+              hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              onTap: _onTapFilters,
+              onTap: _onTapAttributes,
             )
           )
         ]),
-        _constructFilterContent()
+        _constructAttributesContent()
       ])
     ) : Container();
   }
 
-  Widget _constructFilterContent() {
-    String? filtersDescr = _contentFilters?.selectionDescription(_group?.filters,
-      filtersSeparator: '\n'
+  Widget _constructAttributesContent() {
+    String? attributesDescr = _contentAttributes?.selectionDescription(_group?.attributes,
+      categorySeparator: '\n',
+      
     );
-    return ((filtersDescr != null) && filtersDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
+    return ((attributesDescr != null) && attributesDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
       Row(children: [
         Expanded(child:
-          Text(filtersDescr, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold),),
+          Text(attributesDescr, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold),),
         )
       ],)
     ) : Container();
   }
 
-  void _onTapFilters() {
-    Analytics().logSelect(target: "Filters");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: _group?.filters, createMode: true,))).then((selection) {
+  void _onTapAttributes() {
+    Analytics().logSelect(target: "Attributes");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(contentAttributes: _contentAttributes!, selection: _group?.attributes, createMode: true,))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
-          _group?.filters = selection;
+          _group?.attributes = selection;
         });
       }
     });
@@ -1160,11 +1160,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
         StringUtils.isNotEmpty(_group?.category) &&
-        (_contentFilters?.unsatisfiedFilterFromSelection(_group?.filters) == null) &&
+        (_contentAttributes?.unsatisfiedCategoryFromSelection(_group?.attributes) == null) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount > 0));
   }
 
-  bool get _loading => _groupCategoeriesLoading || _contentFiltersLoading;
+  bool get _loading => _groupCategoeriesLoading || _contentAttributesLoading;
 }

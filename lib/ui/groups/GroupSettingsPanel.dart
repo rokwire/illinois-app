@@ -16,18 +16,17 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/ContentFilter.dart';
+import 'package:illinois/model/ContentAttributes.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/ContentFilter.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
-import 'package:illinois/ui/groups/GroupFiltersPanel.dart';
+import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -65,7 +64,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   final List<GroupPrivacy>? _groupPrivacyOptions = GroupPrivacy.values;
   List<String>? _groupCategories;
-  ContentFilterSet? _contentFilters;
+  ContentAttributes? _contentAttributes;
 
   bool _nameIsValid = true;
   bool _updating = false;
@@ -91,7 +90,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       _group?.settings ??= GroupSettingsExt.initialDefaultSettings(); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
     }
     _initCategories();
-    _initContentFilters();
+    _initContentAttributes();
     super.initState();
   }
 
@@ -134,7 +133,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               "search"),
                         ),
                         _buildCategoryDropDown(),
-                        _buildFiltersLayout(),
+                        _buildAttributesLayout(),
                         _buildTagsLayout(),
                       ],)
                     ),
@@ -210,10 +209,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
 
-  void _initContentFilters(){
-    ContentFilters().loadFilterSet('groups').then((ContentFilterSet? contentFilters){
+  void _initContentAttributes(){
+    Groups().loadContentAttributes().then((ContentAttributes? contentAttributes){
       setStateIfMounted(() {
-        _contentFilters = contentFilters;
+        _contentAttributes = contentAttributes;
       });
     });
   }
@@ -504,54 +503,54 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   //
-  //Filters
-  Widget _buildFiltersLayout() {
-    return (_contentFilters?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+  //Attributes
+  Widget _buildAttributesLayout() {
+    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
             _buildInfoHeader(
-              Localization().getStringEx("panel.groups_create.filters.title", "FILTERS"),
-              Localization().getStringEx("panel.groups_create.filters.description", "Filters help people understand more about your group."),
+              Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
+              Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
             )
           ),
           Container(width: 8),
           Expanded(flex: 2, child:
             RoundedButton(
-              label: Localization().getStringEx("panel.groups_create.button.filters.title", "Filters"),
-              hint: Localization().getStringEx("panel.groups_create.button.filters.hint", ""),
+              label: 'Edit', // Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
+              hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              onTap: _onTapFilters,
+              onTap: _onTapAttributes,
             )
           )
         ]),
-        _constructFilterContent()
+        _constructAttributesContent()
       ])
     ) : Container();
   }
 
-  Widget _constructFilterContent() {
-    String? filtersDescr = _contentFilters?.selectionDescription(_group?.filters,
-      filtersSeparator: '\n'
+  Widget _constructAttributesContent() {
+    String? attributesDescr = _contentAttributes?.selectionDescription(_group?.attributes,
+      categorySeparator: '\n'
     );
-    return ((filtersDescr != null) && filtersDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
+    return ((attributesDescr != null) && attributesDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
       Row(children: [
         Expanded(child:
-          Text(filtersDescr, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold),),
+          Text(attributesDescr, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold),),
         )
       ],)
     ) : Container();
   }
 
-  void _onTapFilters() {
-    Analytics().logSelect(target: "Filters");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: _group?.filters, createMode: true,))).then((selection) {
+  void _onTapAttributes() {
+    Analytics().logSelect(target: "Attributes");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(contentAttributes: _contentAttributes!, selection: _group?.attributes, createMode: true,))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
-          _group?.filters = selection;
+          _group?.attributes = selection;
         });
       }
     });

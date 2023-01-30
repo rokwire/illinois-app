@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/model/ContentAttributes.dart';
 import 'package:rokwire_plugin/service/groups.dart' as rokwire;
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Groups extends rokwire.Groups {
 
@@ -47,4 +49,9 @@ class Groups extends rokwire.Groups {
     await super.initService();
   }
 
+  // Implementation
+
+  Future<ContentAttributes?> loadContentAttributes() async {
+    return ContentAttributes.fromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/content.attributes.groups.json')));
+  }
 }
