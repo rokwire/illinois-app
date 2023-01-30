@@ -10,6 +10,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:sprintf/sprintf.dart';
 
 
 class GroupAttributesPanel extends StatefulWidget {
@@ -93,10 +94,14 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   Widget _buildAttributesDropDown(ContentAttributesCategory category) {
-    LinkedHashSet<String>? attributeLabels = _selection[category.title];
-    ContentAttribute? selectedAttribute = ((attributeLabels != null) && attributeLabels.isNotEmpty) ?
-      ((1 < attributeLabels.length) ? _ContentCategoryMultipleAttributes(attributeLabels) : category.findAttribute(label: attributeLabels.first)) : null;
     List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
+    if ((attributes != null) && (0 < attributes.length) && widget.createMode && category.isSingleSelection /* && !category.requiresSelection*/) {
+      attributes.insert(0, _ContentNullAttribute());
+    }
+
+    LinkedHashSet<String>? categoryLabels = _selection[category.title];
+    ContentAttribute? selectedAttribute = ((categoryLabels != null) && categoryLabels.isNotEmpty) ?
+      ((1 < categoryLabels.length) ? _ContentMultipleAttributes(categoryLabels) : category.findAttribute(label: categoryLabels.first)) : null;
     
     return Visibility(visible: attributes?.isNotEmpty ?? false, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -115,6 +120,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
           enabled: attributes?.isNotEmpty ?? false,
           constructTitle: (ContentAttribute attribute) => _constructAttributeTitle(category, attribute),
           isItemSelected: (ContentAttribute attribute) => _isAttributeSelected(category, attribute),
+          isItemEnabled: (ContentAttribute attribute) => (attribute is! _ContentNullAttribute),
           onItemSelected: (ContentAttribute attribute) => _onAttributeSelected(category, attribute),
           onValueChanged: (ContentAttribute attribute) => _onAttributeChanged(category, attribute),
         ),
@@ -123,18 +129,11 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   String? _constructAttributeTitle(ContentAttributesCategory category, ContentAttribute attribute) {
-    if (attribute is _ContentCategoryMultipleAttributes) {
-      String title = '';
-      for (String attributeLabel in attribute.attributeLabels) {
-        String? attributeName = widget.contentAttributes.stringValue(attributeLabel);
-        if ((attributeName != null) && attributeName.isNotEmpty) {
-          if (title.isNotEmpty) {
-            title += ', ';
-          }
-          title += attributeName;
-        }
-      }
-      return title;
+    if (attribute is _ContentMultipleAttributes) {
+      return attribute.toString(contentAttributes: widget.contentAttributes);
+    }
+    else if (attribute is _ContentNullAttribute) {
+      return attribute.toString(contentAttributes: widget.contentAttributes, category: category);
     }
     else {
       return widget.contentAttributes.stringValue(attribute.label);
@@ -142,8 +141,16 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   bool _isAttributeSelected(ContentAttributesCategory category, ContentAttribute attribute) {
-    LinkedHashSet<String>? attributeLabels = _selection[category.title];
-    return attributeLabels?.contains(attribute.label) ?? false;
+    LinkedHashSet<String>? categoryLabels = _selection[category.title];
+    if (attribute is _ContentMultipleAttributes) {
+      return categoryLabels?.containsAll(attribute.labels) ?? false;
+    }
+    else if (attribute is _ContentNullAttribute) {
+      return false;
+    }
+    else {
+      return categoryLabels?.contains(attribute.label) ?? false;
+    }
   }
 
   void _onAttributeSelected(ContentAttributesCategory category, ContentAttribute attribute) {
@@ -151,21 +158,36 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
 
   void _onAttributeChanged(ContentAttributesCategory category, ContentAttribute attribute) {
     String? categoryTitle = category.title;
-    String? attributeLabel = attribute.label;
-    if ((categoryTitle != null) && (attributeLabel != null)) {
-      LinkedHashSet<String> attributeLabels = (_selection[categoryTitle] ??= LinkedHashSet<String>());
+    if (categoryTitle != null) {
+      LinkedHashSet<String> categoryLabels = (_selection[categoryTitle] ??= LinkedHashSet<String>());
       setStateIfMounted(() {
-        
-        if (attributeLabels.contains(attributeLabel)) {
-          attributeLabels.remove(attributeLabel);
+
+        if (attribute is _ContentMultipleAttributes) {
+          if (categoryLabels.containsAll(attribute.labels)) {
+            categoryLabels.removeAll(attribute.labels);
+          }
+          else {
+            categoryLabels.addAll(attribute.labels);
+          }
+        }
+        else if (attribute is _ContentNullAttribute) {
+          categoryLabels.clear();
         }
         else {
-          attributeLabels.add(attributeLabel);
+          String? attributeLabel = attribute.label;
+          if (attributeLabel != null) {
+            if (categoryLabels.contains(attributeLabel)) {
+              categoryLabels.remove(attributeLabel);
+            }
+            else {
+              categoryLabels.add(attributeLabel);
+            }
+          }
         }
-        
+
         if (widget.createMode && (category.maxRequiredCount != null)) {
-          while (category.maxRequiredCount! < attributeLabels.length) {
-            attributeLabels.remove(attributeLabels.first);
+          while (category.maxRequiredCount! < categoryLabels.length) {
+            categoryLabels.remove(categoryLabels.first);
           }
         }
 
@@ -220,8 +242,36 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 }
 
-class _ContentCategoryMultipleAttributes extends ContentAttribute {
-  final LinkedHashSet<String> attributeLabels;
-  _ContentCategoryMultipleAttributes(this.attributeLabels);
+class _ContentMultipleAttributes extends ContentAttribute {
+  final LinkedHashSet<String> labels;
+  _ContentMultipleAttributes(this.labels);
+
+  String toString({ContentAttributes? contentAttributes}) {
+    String title = '';
+    for (String attributeLabel in labels) {
+      String attributeName = contentAttributes?.stringValue(attributeLabel) ?? attributeLabel;
+      if (attributeName.isNotEmpty) {
+        if (title.isNotEmpty) {
+          title += ', ';
+        }
+        title += attributeName;
+      }
+    }
+    return title;
+  }
+}
+
+class _ContentNullAttribute extends ContentAttribute {
+  String toString({ContentAttributes? contentAttributes, ContentAttributesCategory? category}) {
+    String? categoryTitle = category?.title;
+    if ((categoryTitle != null) && categoryTitle.isNotEmpty) {
+      return sprintf(Localization().getStringEx('panel.group.attributes.label.no_selection.title.format', 'No %s'), [
+        contentAttributes?.stringValue(categoryTitle) ?? categoryTitle
+      ]);
+    }
+    else {
+      return Localization().getStringEx('panel.group.attributes.label.no_selection.title', 'None');
+    }
+  }
 }
 

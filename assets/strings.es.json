@@ -2306,6 +2306,8 @@
     "panel.group.attributes.header.title": "Group Filters",
     "panel.group.attributes.button.apply.title": "Apply",
     "panel.group.attributes.button.clear.title": "Clear",
+    "panel.group.attributes.label.no_selection.title": "None",
+    "panel.group.attributes.label.no_selection.title.format": "No %s",
 
     "panel.groups_event_detail.button.options.title": "Options",
     "panel.groups_event_detail.label.online_event": "Online Event",

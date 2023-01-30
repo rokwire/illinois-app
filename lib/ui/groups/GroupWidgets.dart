@@ -95,28 +95,36 @@ class GroupSectionTitle extends StatelessWidget {
 typedef GroupDropDownDescriptionDataBuilder<T> = String? Function(T item);
 
 class GroupDropDownButton<T> extends StatefulWidget{
+
+  final List<T>? items;
+  final T? initialSelectedValue;
   final String? emptySelectionText;
   final String? buttonHint;
-
-  final T? initialSelectedValue;
-  final List<T>? items;
+  final bool enabled;
+  final bool multipleSelection;
+  final EdgeInsets padding;
+  final BoxDecoration? decoration;
+  
   final GroupDropDownDescriptionDataBuilder<T>? constructTitle;
+  final GroupDropDownDescriptionDataBuilder<T>? constructDropdownTitle;
+  final GroupDropDownDescriptionDataBuilder<T>? constructListItemTitle;
+  
   final GroupDropDownDescriptionDataBuilder<T>? constructDescription;
   final GroupDropDownDescriptionDataBuilder<T>? constructDropdownDescription;
   final GroupDropDownDescriptionDataBuilder<T>? constructListItemDescription;
+  
   final bool Function(T item)? isItemSelected;
+  final bool Function(T item)? isItemEnabled;
   final void Function(T item)? onItemSelected;
   final void Function(T item)? onValueChanged;
-  final bool enabled;
-  final bool multipleSelection;
 
-  final EdgeInsets padding;
-  final BoxDecoration? decoration;
 
   GroupDropDownButton({Key? key,
-    this.emptySelectionText,this.buttonHint, this.initialSelectedValue, this.items, this.enabled = true, this.multipleSelection = false,
-    this.onValueChanged, this.isItemSelected, this.onItemSelected, this.constructTitle, this.constructDescription, this.constructDropdownDescription, this.constructListItemDescription,
-    this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration}) : super(key: key);
+    this.items, this.initialSelectedValue, this.emptySelectionText, this.buttonHint,
+    this.enabled = true, this.multipleSelection = false, this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration,
+    this.constructTitle, this.constructDropdownTitle, this.constructListItemTitle,
+    this.constructDescription, this.constructDropdownDescription, this.constructListItemDescription,
+    this.onValueChanged, this.isItemSelected, this.isItemEnabled, this.onItemSelected }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -134,96 +142,79 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
     String? buttonTitle = _getButtonTitleText();
     String? buttonDescription = _getButtonDescriptionText();
     return Container (
-        decoration: widget.decoration != null
-            ? widget.decoration
-            : BoxDecoration(
-            color: Styles().colors!.white,
-            border: Border.all(
-                color: Styles().colors!.surfaceAccent!,
-                width: 1),
-            borderRadius:
-            BorderRadius.all(Radius.circular(4))),
-        padding: widget.padding,
-        child:
-        Column( crossAxisAlignment: CrossAxisAlignment.start,
-            children:[
-              Semantics(
-                container: true,
-                label: buttonTitle,
-                hint: widget.buttonHint,
-                excludeSemantics: true,
-                child: Theme(
-                  data: ThemeData( /// This is as a workaround to make dropdown backcolor always white according to Miro & Zepplin wireframes
-                    hoverColor: Styles().colors!.white,
-                    focusColor: Styles().colors!.white,
-                    canvasColor: Styles().colors!.white,
-                    primaryColor: Styles().colors!.white,
-                    /*accentColor: Styles().colors!.white,*/
-                    highlightColor: Styles().colors!.white,
-                    splashColor: Styles().colors!.white,
-                  ),
-                  child: DropdownButton(
-                      icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
-                      isExpanded: true,
-                      focusColor: Styles().colors!.white,
-                      underline: Container(),
-                      hint: Text(buttonTitle ?? "", style: (widget.initialSelectedValue == null ? hintStyle : valueStyle)),
-                      items: _constructItems(),
-                      onChanged: (widget.enabled ? (dynamic value) => _onValueChanged(value) : null)),
-                ),
+      decoration: widget.decoration ?? BoxDecoration(
+        color: Styles().colors!.white,
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        borderRadius: BorderRadius.all(Radius.circular(4))
+      ),
+      padding: widget.padding,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+        Semantics(container: true, label: buttonTitle, hint: widget.buttonHint, excludeSemantics: true, child:
+          Theme(data: ThemeData(
+            /// This is as a workaround to make dropdown backcolor always white according to Miro & Zepplin wireframes
+            hoverColor: Styles().colors!.white,
+            focusColor: Styles().colors!.white,
+            canvasColor: Styles().colors!.white,
+            primaryColor: Styles().colors!.white,
+            /*accentColor: Styles().colors!.white,*/
+            highlightColor: Styles().colors!.white,
+            splashColor: Styles().colors!.white,),
+            child: DropdownButton(
+              icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
+              isExpanded: true,
+              focusColor: Styles().colors!.white,
+              underline: Container(),
+              hint: Text(buttonTitle ?? "", style: (widget.initialSelectedValue == null ? hintStyle : valueStyle)),
+              items: _constructItems(),
+              onChanged: (widget.enabled ? (dynamic value) => _onValueChanged(value) : null)
+            ),
+          ),
+        ),
+        Visibility(visible: buttonDescription != null, child:
+          Semantics(container: true, child:
+            Container(
+              padding: EdgeInsets.only(right: 42, bottom: 12),
+              child: Text(buttonDescription ?? '',
+                style: Styles().textStyles?.getTextStyle("widget.group.dropdown_button.hint"),
               ),
-              buttonDescription==null? Container():
-              Semantics(container: true, child:
-                Container(
-                  padding: EdgeInsets.only(right: 42, bottom: 12),
-                  child: Text(buttonDescription,
-                    style: Styles().textStyles?.getTextStyle("widget.group.dropdown_button.hint"),
-                  ),
-                )
-              )
-            ]
-        )
+            )
+          )
+        ),
+      ])
     );
   }
 
-  Widget _buildDropDownItem(String title, String? description, bool isSelected){
-    String imageAsset = widget.multipleSelection ?
-      (isSelected ? "check-box-filled" : "box-outline-gray") :
-      (isSelected ? "check-circle-filled" : "circle-outline");
-    return
-      Container(
-          color: (Colors.white),
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(height: 11),
-            Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text(
-                          title,
-                          overflow: TextOverflow.ellipsis,
-                          style: isSelected? Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.selected") :  Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.not_selected")
-                        ),
-                      )),
-                      Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
-                ]),
-            description==null? Container() : Container(height: 6,),
-            description==null? Container():
-            Container(
-              padding: EdgeInsets.only(right: 30),
-              child: Text(description,
-                style: Styles().textStyles?.getTextStyle("widget.group.dropdown_button.hint")
+  Widget _buildDropDownItem(String title, String? description, bool isSelected, bool isEnabled) {
+    String? imageAsset = isEnabled ?
+      (widget.multipleSelection ?
+        (isSelected ? "check-box-filled" : "box-outline-gray") :
+        (isSelected ? "check-circle-filled" : "circle-outline")
+      ) : null;
+
+    return Container(color: (Colors.white), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+        Container(height: 11),
+        Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+          Flexible(child:
+            Padding(padding: const EdgeInsets.only(right: 8), child:
+              Text(title, overflow: TextOverflow.ellipsis, style:
+                isSelected ? Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.selected") :  Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.not_selected")
               ),
+            )
+          ),
+          
+          Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
+        ]),
+        Visibility(visible: description != null, child: 
+          Container(padding: EdgeInsets.only(right: 30, top: 6),
+            child: Text(description ?? '',
+              style: Styles().textStyles?.getTextStyle("widget.group.dropdown_button.hint")
             ),
-            Container(height: 11),
-            Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
-          ],)
+          ),
+        ),
+        Container(height: 11),
+        Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
+      ],)
     );
   }
 
@@ -244,7 +235,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
 
   String? _getButtonTitleText(){
     if (widget.initialSelectedValue != null) {
-      return widget.constructTitle != null ? widget.constructTitle!(widget.initialSelectedValue!) : widget.initialSelectedValue?.toString();
+      GroupDropDownDescriptionDataBuilder<T>? constructTitleFn = widget.constructTitle ?? widget.constructDropdownTitle;
+      return constructTitleFn != null ? constructTitleFn(widget.initialSelectedValue!) : widget.initialSelectedValue?.toString();
     } else {
       return widget.emptySelectionText;
     }
@@ -259,6 +251,10 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
     }
   }
 
+  bool _isItemEnabled(T item) {
+    return (widget.isItemEnabled != null) ? widget.isItemEnabled!(item) : true;
+  }
+
   List<DropdownMenuItem<T>>? _constructItems(){
     int optionsCount = widget.items?.length ?? 0;
     if (optionsCount == 0) {
@@ -266,13 +262,15 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
     }
 
     return widget.items!.map((T item) {
-      String? name = widget.constructTitle!=null? widget.constructTitle!(item) : item?.toString();
+      GroupDropDownDescriptionDataBuilder<T>? constructTitleFn = widget.constructTitle ?? widget.constructListItemTitle;
+      String? name = (constructTitleFn != null) ? constructTitleFn(item) : item?.toString();
+
       GroupDropDownDescriptionDataBuilder<T>? constructDescriptionFn = widget.constructListItemDescription ?? widget.constructDescription;
       String? description = (constructDescriptionFn != null) ? constructDescriptionFn(item) : null;
-      bool isSelected = _isItemSelected(item);
+
       return DropdownMenuItem<T>(
         value: item,
-        child: (item != null) ? _buildDropDownItem(name!, description, isSelected) : Container(),
+        child: (item != null) ? _buildDropDownItem(name!, description, _isItemSelected(item), _isItemEnabled(item)) : Container(),
         onTap: () => widget.onItemSelected?.call(item),
       );
     }).toList();

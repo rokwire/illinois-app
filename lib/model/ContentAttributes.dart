@@ -252,6 +252,8 @@ class ContentAttributesCategory {
 
   bool get isRequired => (0 < (minRequiredCount ?? 0));
   bool get isMultipleSelection => (maxRequiredCount != 1);
+  bool get isSingleSelection => (maxRequiredCount == 1);
+  bool get requiresSelection => ((minRequiredCount ?? 0) > 0);
 
   ContentAttribute? findAttribute({String? label}) {
     if (attributes != null) {
