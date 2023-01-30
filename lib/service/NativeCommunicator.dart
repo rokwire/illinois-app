@@ -225,6 +225,16 @@ class NativeCommunicator with Service {
     return mobileAccessKeys;
   }
 
+  Future<bool> mobileAccessKeysEndpointSetup(String invitationCode) async {
+    bool result = false;
+    try {
+      result = await _platformChannel.invokeMethod('mobileAccessKeysEndpointSetup', invitationCode);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
   Future<String?> getDeepLinkScheme() async {
     String? result;
     try {

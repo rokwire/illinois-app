@@ -17,6 +17,7 @@
 package edu.illinois.rokwire;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -38,6 +39,7 @@ import com.hid.origo.OrigoKeysApiFacade;
 import com.hid.origo.OrigoKeysApiFactory;
 import com.hid.origo.api.OrigoMobileKey;
 import com.hid.origo.api.OrigoMobileKeys;
+import com.hid.origo.api.OrigoMobileKeysCallback;
 import com.hid.origo.api.OrigoMobileKeysException;
 import com.hid.origo.api.OrigoReaderConnectionController;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
@@ -53,6 +55,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import androidx.appcompat.app.AlertDialog;
 import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
@@ -62,7 +65,7 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler, OrigoKeysApiFacade {
+public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler, OrigoKeysApiFacade, OrigoMobileKeysCallback {
 
     private static final String TAG = "MainActivity";
 
@@ -90,6 +93,15 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         instance = this;
         initScreenOrientation();
         initializeOrigo();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // MainActivity is the OrigoMobileKeysApiFacade
+        if (isEndpointSetUpComplete()) {
+            onEndpointSetUpComplete();
+        }
     }
 
     @Override
@@ -532,6 +544,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     List<HashMap<String, Object>> keys = handleMobileAccessKeys(methodCall.arguments);
                     result.success(keys);
                     break;
+                case Constants.MOBILE_ACCESS_KEYS_ENDPOINT_SETUP:
+                    handleMobileAccessEndpointSetup(methodCall.arguments);
+                    result.success(true);
+                    break;
                 case Constants.TEST_KEY:
                     result.success(false);
                     break;
@@ -549,9 +565,20 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     //region Origo
 
+    // Initialization
+
     private void initializeOrigo() {
         mobileKeysApiFactory = (OrigoKeysApiFactory) getApplication();
         mobileKeys = mobileKeysApiFactory.getMobileKeys();
+    }
+
+    // Origo Endpoint setup
+
+    private void handleMobileAccessEndpointSetup(Object params) {
+        if (params instanceof String) {
+            String invitationCode = (String)params;
+            getMobileKeys().endpointSetup(this, invitationCode);
+        }
     }
 
     //OrigoKeysApiFacade implementation
@@ -596,6 +623,28 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     public OrigoScanConfiguration getOrigoScanConfiguration() {
         return mobileKeysApiFactory.getOrigoScanConfiguration();
+    }
+
+    // OrigoMobileKeysCallback implementation
+
+    @Override
+    public void handleMobileKeysTransactionCompleted() {
+        showSimpleToast("Endpoint setup completed: handleMobileKeysTransactionCompleted");
+        onEndpointSetUpComplete();
+    }
+
+    @Override
+    public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
+        Log.d(TAG, "Origo Endpoint setup failed: " + e.getErrorCode(), e);
+        showSimpleToast("Endpoint setup failed: handleMobileKeysTransactionFailed. " + e.getErrorCode());
+    }
+
+    //endregion
+
+    //region Utils
+
+    private void showSimpleToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     //endregion

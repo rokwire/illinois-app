@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/debug/DebugMobileAccessKeysEndpointSetupPanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -432,6 +433,19 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: 'Mobile Access Keys',
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapMobileAccessKeys
+                    )
+                  ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+
                 Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
@@ -795,6 +809,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapReviewApp() {
     InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
+  }
+
+  void _onTapMobileAccessKeys() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugMobileAccessKeysEndpointSetupPanel()));
   }
 
   void _onTapHttpProxy() {

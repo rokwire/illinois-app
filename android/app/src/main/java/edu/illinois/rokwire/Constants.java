@@ -30,6 +30,7 @@ public class Constants {
     static final String APP_ENABLED_ORIENTATIONS_KEY = "enabledOrientations";
     static final String DEEPLINK_SCHEME_KEY = "deepLinkScheme";
     static final String MOBILE_ACCESS_KEYS_KEY = "mobileAccessKeys";
+    static final String MOBILE_ACCESS_KEYS_ENDPOINT_SETUP = "mobileAccessKeysEndpointSetup";
     static final String BARCODE_KEY = "barcode";
     static final String TEST_KEY = "test";
 

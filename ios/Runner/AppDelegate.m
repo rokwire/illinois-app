@@ -251,6 +251,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
     else if ([call.method isEqualToString:@"mobileAccessKeys"]) {
         [self handleMobileAccessKeysWithParameters:parameters result:result];
     }
+    else if ([call.method isEqualToString:@"mobileAccessKeysEndpointSetup"]) {
+        [self handleMobileAccessKeysEndpointSetupWithParameters:parameters result:result];
+    }
 	else if ([call.method isEqualToString:@"test"]) {
 		[self handleTestWithParameters:parameters result:result];
 	}
@@ -454,6 +457,11 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)handleMobileAccessKeysWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
     //TBD: implement mobile access keys
+    result(nil);
+}
+
+- (void)handleMobileAccessKeysEndpointSetupWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+    //TBD: implement mobile access keys endpoint setup
     result(nil);
 }
 
