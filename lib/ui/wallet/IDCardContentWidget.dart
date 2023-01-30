@@ -453,10 +453,6 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     ]);
   }
 
-  void _onClose() {
-    Navigator.of(context).pop();
-  }
-
   Future<bool> _checkNetIdStatus() async {
     if (Auth2().authCard?.photoBase64?.isEmpty ?? true) {
       await AppAlert.showDialogResult(context, Localization().getStringEx('panel.covid19_passport.message.missing_id_info', 'No Illini ID information found. You may have an expired i-card. Please contact the ID Center.'));
