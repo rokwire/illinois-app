@@ -14,13 +14,11 @@ import 'package:sprintf/sprintf.dart';
 
 
 class GroupAttributesPanel extends StatefulWidget {
-  final bool createMode;
+  final bool filtersMode;
   final ContentAttributes contentAttributes;
   final Map<String, dynamic>? selection;
 
-  GroupAttributesPanel({Key? key, required this.contentAttributes, this.selection, this.createMode = false }) : super(key: key);
-
-  bool get editMode => !createMode;
+  GroupAttributesPanel({Key? key, required this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupAttributesPanelState();
@@ -46,8 +44,11 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
 
   @override
   Widget build(BuildContext context) {
+    String headerTitle = widget.filtersMode ?
+      Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters') : 
+      Localization().getStringEx('panel.group.attributes.attributes.header.title', 'Group Attributes');
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.group.attributes.header.title', 'Group Attributes'),),
+      appBar: HeaderBar(title: headerTitle),
       backgroundColor: Styles().colors?.background,
       body: _buildContent(),
     );
@@ -82,7 +83,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
 
   Widget _buildAttributesDropDown(ContentAttributesCategory category) {
     List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
-    if ((attributes != null) && (0 < attributes.length) && widget.createMode && category.isSingleSelection /* && !category.requiresSelection*/) {
+    if ((attributes != null) && (0 < attributes.length) && !widget.filtersMode && category.isSingleSelection /* && !category.requiresSelection*/) {
       attributes.insert(0, _ContentNullAttribute());
     }
 
@@ -95,7 +96,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
         GroupSectionTitle(
           title: widget.contentAttributes.stringValue(category.title)?.toUpperCase(),
           description: widget.contentAttributes.stringValue(category.description),
-          requiredMark: widget.createMode && (0 < (category.minRequiredCount ?? 0)),
+          requiredMark: !widget.filtersMode && (0 < (category.minRequiredCount ?? 0)),
         ),
         GroupDropDownButton<ContentAttribute>(
           key: dropdownKeys[category.title ?? ''] ??= GlobalKey(),
@@ -103,7 +104,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
           buttonHint: widget.contentAttributes.stringValue(category.hint),
           items: attributes,
           initialSelectedValue: selectedAttribute,
-          multipleSelection: (widget.createMode && category.isMultipleSelection) || widget.editMode,
+          multipleSelection: (!widget.filtersMode && category.isMultipleSelection) || widget.filtersMode,
           enabled: attributes?.isNotEmpty ?? false,
           itemHeight: null,
           constructTitle: (ContentAttribute attribute) => _constructAttributeTitle(category, attribute),
@@ -173,7 +174,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
           }
         }
 
-        if (widget.createMode && (category.maxRequiredCount != null)) {
+        if (!widget.filtersMode && (category.maxRequiredCount != null)) {
           while (category.maxRequiredCount! < categoryLabels.length) {
             categoryLabels.remove(categoryLabels.first);
           }
@@ -183,7 +184,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       });
     }
 
-    if ((widget.createMode && category.isMultipleSelection) || widget.editMode) {
+    if ((!widget.filtersMode && category.isMultipleSelection) || widget.filtersMode) {
       // Ugly workaround: show again dropdown popup if category supports multiple select.
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         final RenderObject? renderBox = dropdownKeys[category.title]?.currentContext?.findRenderObject();
@@ -197,22 +198,49 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
     }
   }
 
+  bool get _isSelectionNotEmpty {
+    for (LinkedHashSet<String> attributeLabels in _selection.values) {
+      if (attributeLabels.isNotEmpty) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   Widget _buildCommands() {
-    bool canApply = (widget.createMode && (widget.contentAttributes.unsatisfiedCategoryFromSelection(_selection) == null)) || widget.editMode;
+    List<Widget> buttons = <Widget>[];
+
+    if (widget.filtersMode) {
+      bool canClear = _isSelectionNotEmpty;
+      buttons.addAll(<Widget>[
+        Expanded(child: RoundedButton(
+          label: Localization().getStringEx('panel.group.attributes.button.clear.title', 'Clear'),
+          textColor: canClear ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+          borderColor: canClear ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
+          backgroundColor: Styles().colors?.white,
+          enabled: canClear,
+          onTap: _onTapClear
+        )
+      )]);
+    }
+
+    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes.unsatisfiedCategoryFromSelection(_selection) == null));
+    String applyTitle = widget.filtersMode ? 
+      Localization().getStringEx('panel.group.attributes.button.filter.title', 'Filter') :
+      Localization().getStringEx('panel.group.attributes.button.apply.title', 'Apply Attributes');
+    buttons.add(Expanded(child:
+      RoundedButton(
+        label: applyTitle,
+        textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+        borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
+        backgroundColor: Styles().colors?.white,
+        enabled: canApply,
+        onTap: _onTapApply
+      )
+    ));
     return SafeArea(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-        Row(children: <Widget>[
-          Expanded(child:
-            RoundedButton(
-              label: Localization().getStringEx('panel.group.attributes.button.apply.title', 'Apply Attributes'),
-              textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-              borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
-              backgroundColor: Styles().colors?.white,
-              enabled: canApply,
-              onTap: _onTapApply
-            )
-          )
-        ],)
+        Row(children: buttons,)
       )
     );
   }
@@ -220,6 +248,11 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   void _onTapApply() {
     Analytics().logSelect(target: 'Apply');
     Navigator.of(context).pop(ContentAttributes.selectionToAttributesSelection(_selection) ?? <String, dynamic>{});
+  }
+
+  void _onTapClear() {
+    Analytics().logSelect(target: 'Clear');
+    Navigator.of(context).pop(<String, dynamic>{});
   }
 }
 

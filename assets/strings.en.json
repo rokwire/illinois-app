@@ -2305,8 +2305,10 @@
     "panel.group.tags.search.button.title": "Search",
     "panel.group.tags.search.button.hint": "filter tags",
 
-    "panel.group.attributes.header.title": "Group Attributes",
+	"panel.group.attributes.attributes.header.title": "Group Attributes",
+	"panel.group.attributes.filters.header.title": "Group Filters",
     "panel.group.attributes.button.apply.title": "Apply Attributes",
+    "panel.group.attributes.button.filter.title": "Filter",
     "panel.group.attributes.button.clear.title": "Clear",
     "panel.group.attributes.label.no_selection.title": "None",
     "panel.group.attributes.label.no_selection.title.format": "No %s",
