@@ -44,8 +44,9 @@ import 'package:sprintf/sprintf.dart';
 
 class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
+  final GroupStats? groupStats;
   
-  GroupSettingsPanel({this.group});
+  GroupSettingsPanel({this.group, this.groupStats});
 
   @override
   _GroupSettingsPanelState createState() => _GroupSettingsPanelState();
@@ -69,6 +70,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   bool _nameIsValid = true;
   bool _updating = false;
   bool _deleting = false;
+  bool _confirmationProgress = false;
   bool _researchRequiresConsentConfirmation = false;
 
   Group? _group; // edit settings here until submit
@@ -1211,31 +1213,46 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
 
-  void _onDeleteTap(){
+  void _onDeleteTap() {
+    Analytics().logSelect(target: "Delete this group", attributes: _group?.analyticsAttributes);
+
+    if (!_deleting) {
+      int membersCount = widget.groupStats?.activeMembersCount ?? 0;
+      String? confirmMsg = (membersCount > 1)
+          ? sprintf(Localization().getStringEx("panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"), [membersCount])
+          : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
+
+      showDialog(context: context,builder: (context) => _buildConfirmationDialog(
+        confirmationTextMsg: confirmMsg,
+        positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+        negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+        onPositiveTap: _deleteGroup));
+    }
+  }
+
+  void _deleteGroup() {
+
+    Analytics().logSelect(target: 'Deleting group');
+
     if (_deleting) {
       return;
     }
 
-    if ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isEmpty) {
-      AppAlert.showDialogResult(context, 'Please enter participant consent text.');
-      return;
-    }
-    else {
-      _group?.researchConsentStatement = ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isNotEmpty) ? _researchConsentStatementController.text : null;
-
-    }
-
-    Analytics().logSelect(target: 'Deleting group');
-    setState(() {
-      _deleting = true;
+    setStateIfMounted(() {
+      _deleting = _confirmationProgress = true;
     });
     
-    Groups().deleteGroup(widget.group?.id).then((success){
-      setState(() {
-        _deleting = false;
+    Groups().deleteGroup(widget.group?.id).then((bool success){
+      setStateIfMounted(() {
+        _deleting = _confirmationProgress = false;
       });
-      if(success){
-        Navigator.of(context).pop(true);
+      Navigator.of(context).pop(); // Pop dialog
+      if (success == true) {
+        Navigator.of(context).pop(); // Pop to settings
+        Navigator.of(context).pop(); // Pop group detail
+      }
+      else {
+        AppAlert.showDialogResult(context, _isResearchProject ? 'Failed to delete project.' : Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.'));
       }
     });
   }
@@ -1357,6 +1374,59 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             ])
           ])),
     ));
+  }
+
+  Widget _buildConfirmationDialog({String? confirmationTextMsg,
+    
+    String? positiveButtonLabel,
+    int positiveButtonFlex = 1,
+    Function? onPositiveTap,
+    
+    String? negativeButtonLabel,
+    int negativeButtonFlex = 1,
+    
+    int leftAreaFlex = 0,
+  }) {
+    return Dialog(
+        backgroundColor: Styles().colors!.fillColorPrimary,
+        child: StatefulBuilder(builder: (context, setStateEx) {
+          return Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 26),
+                    child: Text(confirmationTextMsg!,
+                        textAlign: TextAlign.left, style:  Styles().textStyles?.getTextStyle('widget.dialog.message.medium'))),
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+                  Expanded(flex: leftAreaFlex, child: Container()),
+                  Expanded(flex: negativeButtonFlex, child: RoundedButton(
+                      label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
+                      fontFamily: "ProximaNovaRegular",
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.white,
+                      backgroundColor: Styles().colors!.white,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      onTap: () {
+                        Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
+                        Navigator.pop(context);
+                      }),),
+                  Container(width: 16),
+                  Expanded(flex: positiveButtonFlex, child: RoundedButton(
+                    label: positiveButtonLabel ?? '',
+                    fontFamily: "ProximaNovaBold",
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.white,
+                    backgroundColor: Styles().colors!.white,
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    progress: _confirmationProgress,
+                    onTap: () {
+                      Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
+                      onPositiveTap!();
+                    },
+                  ),),
+                ])
+              ]));
+        }));
   }
 
   void _onNameChanged(String name) {
