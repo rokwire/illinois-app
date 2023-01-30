@@ -195,11 +195,11 @@ class ContentAttributesCategory {
   final String? description;
   final String? emptyLabel;
   final String? hint;
-  final int? minSelectCount;
-  final int? maxSelectCount;
+  final int? minRequiredCount;
+  final int? maxRequiredCount;
   final List<ContentAttribute>? attributes;
 
-  ContentAttributesCategory({this.title, this.description, this.emptyLabel, this.hint, this.minSelectCount, this.maxSelectCount, this.attributes});
+  ContentAttributesCategory({this.title, this.description, this.emptyLabel, this.hint, this.minRequiredCount, this.maxRequiredCount, this.attributes});
 
   // JSON serialization
 
@@ -209,8 +209,8 @@ class ContentAttributesCategory {
       description: JsonUtils.stringValue(json['description']),
       emptyLabel: JsonUtils.stringValue(json['empty-label']),
       hint: JsonUtils.stringValue(json['hint']),
-      minSelectCount: JsonUtils.intValue(json['min-select-count']),
-      maxSelectCount: JsonUtils.intValue(json['max-select-count']),
+      minRequiredCount: JsonUtils.intValue(json['min-required-count']),
+      maxRequiredCount: JsonUtils.intValue(json['max-required-count']),
       attributes: ContentAttribute.listFromJson(JsonUtils.listValue(json['values'])),
     ) : null;
   }
@@ -220,8 +220,8 @@ class ContentAttributesCategory {
     'description': description,
     'empty-label': emptyLabel,
     'hint': hint,
-    'min-select-count' : minSelectCount,
-    'max-select-count' : maxSelectCount,
+    'min-required-count' : minRequiredCount,
+    'max-required-count' : maxRequiredCount,
     'values': attributes,
   };
 
@@ -234,8 +234,8 @@ class ContentAttributesCategory {
     (description == other.description) &&
     (emptyLabel == other.emptyLabel) &&
     (hint == other.hint) &&
-    (minSelectCount == other.minSelectCount) &&
-    (maxSelectCount == other.maxSelectCount) &&
+    (minRequiredCount == other.minRequiredCount) &&
+    (maxRequiredCount == other.maxRequiredCount) &&
     DeepCollectionEquality().equals(attributes, other.attributes);
 
   @override
@@ -244,14 +244,14 @@ class ContentAttributesCategory {
     (description?.hashCode ?? 0) ^
     (emptyLabel?.hashCode ?? 0) ^
     (hint?.hashCode ?? 0) ^
-    (minSelectCount?.hashCode ?? 0) ^
-    (maxSelectCount?.hashCode ?? 0) ^
+    (minRequiredCount?.hashCode ?? 0) ^
+    (maxRequiredCount?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(attributes));
 
   // Accessories
 
-  bool get isRequired => (0 < (minSelectCount ?? 0));
-  bool get isMultipleSelection => (maxSelectCount != 1);
+  bool get isRequired => (0 < (minRequiredCount ?? 0));
+  bool get isMultipleSelection => (maxRequiredCount != 1);
 
   ContentAttribute? findAttribute({String? label}) {
     if (attributes != null) {
@@ -289,8 +289,8 @@ class ContentAttributesCategory {
     else {
       selectedAttributesCount = 0;
     }
-    return ((minSelectCount == null) || (minSelectCount! <= selectedAttributesCount)) &&
-           ((maxSelectCount == null) || (selectedAttributesCount <= maxSelectCount!));
+    return ((minRequiredCount == null) || (minRequiredCount! <= selectedAttributesCount)) &&
+           ((maxRequiredCount == null) || (selectedAttributesCount <= maxRequiredCount!));
   }
 
   List<ContentAttribute>? attributesFromSelection(Map<String, LinkedHashSet<String>> selection) {

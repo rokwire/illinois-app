@@ -102,7 +102,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       GroupSectionTitle(
         title: widget.contentAttributes.stringValue(category.title)?.toUpperCase(),
         description: widget.contentAttributes.stringValue(category.description),
-        requiredMark: widget.createMode && (0 < (category.minSelectCount ?? 0)),
+        requiredMark: widget.createMode && (0 < (category.minRequiredCount ?? 0)),
       ),
       GroupDropDownButton<ContentAttribute>(
         key: dropdownKeys[category.title ?? ''] ??= GlobalKey(),
@@ -161,8 +161,8 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
           attributeLabels.add(attributeLabel);
         }
         
-        if (widget.createMode && (category.maxSelectCount != null)) {
-          while (category.maxSelectCount! < attributeLabels.length) {
+        if (widget.createMode && (category.maxRequiredCount != null)) {
+          while (category.maxRequiredCount! < attributeLabels.length) {
             attributeLabels.remove(attributeLabels.first);
           }
         }
