@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Content filters renamed to Content Attributes [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Use category id as category selection key [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Updated Group Attributes panel behavior [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
 ## [4.3.6] - 2022-01-27
 ### Added
