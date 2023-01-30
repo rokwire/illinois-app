@@ -98,26 +98,28 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       ((1 < attributeLabels.length) ? _ContentCategoryMultipleAttributes(attributeLabels) : category.findAttribute(label: attributeLabels.first)) : null;
     List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
     
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      GroupSectionTitle(
-        title: widget.contentAttributes.stringValue(category.title)?.toUpperCase(),
-        description: widget.contentAttributes.stringValue(category.description),
-        requiredMark: widget.createMode && (0 < (category.minRequiredCount ?? 0)),
-      ),
-      GroupDropDownButton<ContentAttribute>(
-        key: dropdownKeys[category.title ?? ''] ??= GlobalKey(),
-        emptySelectionText: widget.contentAttributes.stringValue(category.emptyLabel),
-        buttonHint: widget.contentAttributes.stringValue(category.hint),
-        items: attributes,
-        initialSelectedValue: selectedAttribute,
-        multipleSelection: (widget.createMode && category.isMultipleSelection) || widget.editMode,
-        enabled: attributes?.isNotEmpty ?? true,
-        constructTitle: (ContentAttribute attribute) => _constructAttributeTitle(category, attribute),
-        isItemSelected: (ContentAttribute attribute) => _isAttributeSelected(category, attribute),
-        onItemSelected: (ContentAttribute attribute) => _onAttributeSelected(category, attribute),
-        onValueChanged: (ContentAttribute attribute) => _onAttributeChanged(category, attribute),
-      )
-    ]);
+    return Visibility(visible: attributes?.isNotEmpty ?? false, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        GroupSectionTitle(
+          title: widget.contentAttributes.stringValue(category.title)?.toUpperCase(),
+          description: widget.contentAttributes.stringValue(category.description),
+          requiredMark: widget.createMode && (0 < (category.minRequiredCount ?? 0)),
+        ),
+        GroupDropDownButton<ContentAttribute>(
+          key: dropdownKeys[category.title ?? ''] ??= GlobalKey(),
+          emptySelectionText: widget.contentAttributes.stringValue(category.emptyLabel),
+          buttonHint: widget.contentAttributes.stringValue(category.hint),
+          items: attributes,
+          initialSelectedValue: selectedAttribute,
+          multipleSelection: (widget.createMode && category.isMultipleSelection) || widget.editMode,
+          enabled: attributes?.isNotEmpty ?? false,
+          constructTitle: (ContentAttribute attribute) => _constructAttributeTitle(category, attribute),
+          isItemSelected: (ContentAttribute attribute) => _isAttributeSelected(category, attribute),
+          onItemSelected: (ContentAttribute attribute) => _onAttributeSelected(category, attribute),
+          onValueChanged: (ContentAttribute attribute) => _onAttributeChanged(category, attribute),
+        ),
+      ]),
+    );
   }
 
   String? _constructAttributeTitle(ContentAttributesCategory category, ContentAttribute attribute) {
