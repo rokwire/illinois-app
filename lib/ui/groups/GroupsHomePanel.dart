@@ -15,7 +15,6 @@
  */
 
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -483,10 +482,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onContentFilters() {
     Analytics().logSelect(target: 'Filters');
-    //_contentFiltersSelection = ContentFilterSet.selectionFromFilterSelection(_group?.filters) ?? Map<String, LinkedHashSet<String>>();
     if (_contentFilters != null) {
-      Map<String, LinkedHashSet<String>>? selection = ContentFilterSet.selectionFromFilterSelection(_contentFiltersSelection);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: selection))).then((selection) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: _contentFiltersSelection))).then((selection) {
         if ((selection != null) && mounted) {
           String? selectionText = _contentFilters?.selectionDescription(selection,
             filtersSeparator: ', ',
@@ -494,7 +491,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             titleDelimiter: ' is '
           );
           setState(() {
-            _contentFiltersSelection = ContentFilterSet.selectionToFilterSelection(selection) ?? <String, dynamic>{};
+            _contentFiltersSelection = selection;
             _contentFiltersSelectionDescription = StringUtils.isNotEmpty(selectionText) ? "Filter: $selectionText" : null;
           });
           _reloadAllGroupsContent();
