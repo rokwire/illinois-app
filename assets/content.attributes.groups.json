@@ -16,6 +16,34 @@
 			"Recreation"
 		]
 	},{
+		"title": "Sports",
+		"description": "Choose the sport your group can be filtered by.",
+		"empty-label": "Select a sport...",
+		"hint": "Double tap to show sport options.",
+		"min-required-count": 0,
+		"max-required-count": 1,
+		"values": [
+      { "label": "Baseball", "requirements": { "Category" : "Athletics" }},
+      { "label": "Men's Basketball", "requirements": { "Category" : "Athletics" }},
+      { "label": "Men's Cross Country", "requirements": { "Category" : "Athletics" }},
+      { "label": "Football", "requirements": { "Category" : "Athletics" }},
+      { "label": "Men's Golf", "requirements": { "Category" : "Athletics" }},
+      { "label": "Men's Gymnastics", "requirements": { "Category" : "Athletics" }},
+      { "label": "Men's Tennis", "requirements": { "Category" : "Athletics" }},
+      { "label": "Men's Track Field", "requirements": { "Category" : "Athletics" }},
+      { "label": "Wrestling", "requirements": { "Category" : "Athletics" }},
+      { "label": "Women's Basketball", "requirements": { "Category" : "Athletics" }},
+      { "label": "Women's Cross Country", "requirements": { "Category" : "Athletics" }},
+      { "label": "Women's Golf", "requirements": { "Category" : "Athletics" }},
+      { "label": "Women's Gymnastics", "requirements": { "Category" : "Athletics" }},
+      { "label": "Women's Soccer", "requirements": { "Category" : "Athletics" }},
+      { "label": "Softball", "requirements": { "Category" : "Athletics" }},
+      { "label": "Swim Dive", "requirements": { "Category" : "Athletics" }},
+      { "label": "Women's Tennis", "requirements": { "Category" : "Athletics" }},
+      { "label": "Women's Track Field", "requirements": { "Category" : "Athletics" }},
+      { "label": "Volleyball", "requirements": { "Category" : "Athletics" }}
+		]
+	},{
 		"title": "College",
 		"description": "Choose the college your group can be filtered by.",
 		"empty-label": "Select a college...",
