@@ -68,8 +68,8 @@
 		"description": "Choose the department your group can be filtered by.",
 		"empty-label": "Select a department...",
 		"hint": "Double tap to show department options.",
-		"min-select-count": null,
-		"max-select-count": null,
+		"min-select-count": 0,
+		"max-select-count": 1,
 		"values": [
 			
 			{ "label": "ACES Technology Services", "requirements": { "College" : "Agr, Consumer & Env Sciences" }},
