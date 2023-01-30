@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +61,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
   List<String>? _groupCategories;
   ContentFilterSet? _contentFilters;
-  Map<String, LinkedHashSet<String>> _contentFiltersSelection = <String, LinkedHashSet<String>>{};
 
   bool _groupCategoeriesLoading = false;
   bool _contentFiltersLoading = false;
@@ -102,8 +100,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _groupDescriptionController.text = _group?.description ?? '';
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
-
-    _contentFiltersSelection = ContentFilterSet.selectionFromFilterSelection(_group?.filters) ?? Map<String, LinkedHashSet<String>>();
 
     // #2550: we need consent checkbox selected by default
     // #2626: Hide consent checkbox and edit control. Default it to false...
@@ -531,7 +527,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   Widget _constructFilterContent() {
-    String? filtersDescr = _contentFilters?.selectionDescription(_contentFiltersSelection);
+    String? filtersDescr = _contentFilters?.selectionDescription(_group?.filters,
+      filtersSeparator: '\n'
+    );
     return ((filtersDescr != null) && filtersDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
       Row(children: [
         Expanded(child:
@@ -543,10 +541,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onTapFilters() {
     Analytics().logSelect(target: "Filters");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: _contentFiltersSelection, createMode: true,))).then((selection) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupFiltersPanel(contentFilters: _contentFilters!, selection: _group?.filters, createMode: true,))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
-          _contentFiltersSelection = selection;
+          _group?.filters = selection;
         });
       }
     });
@@ -1061,8 +1059,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _group?.researchProfile = null;
       }
 
-      _group?.filters = ContentFilterSet.selectionToFilterSelection(_contentFiltersSelection);
-
       // if the group is not authman then clear authman group name
       if (_group?.authManEnabled != true) {
         _group?.authManGroupName = null;
@@ -1164,7 +1160,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
         StringUtils.isNotEmpty(_group?.category) &&
-        (_contentFilters?.unsatisfiedFilterFromSelection(_contentFiltersSelection) == null) &&
+        (_contentFilters?.unsatisfiedFilterFromSelection(_group?.filters) == null) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount > 0));

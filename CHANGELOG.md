@@ -5,8 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.6] - 2022-01-27
 ### Added
 - Edit lastAppReviewTime from SettingsDebugPanel [#2941](https://github.com/rokwire/illinois-app/issues/2941).
+- Added Filters to group settings [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+### Changed
+- Acknowledged University colleges and departments, added categories and tags filter for test purpose [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
 ## [4.3.5] - 2022-01-25
 ### Added
