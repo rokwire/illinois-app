@@ -57,24 +57,11 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
     List<ContentAttributesCategory>? categories = widget.contentAttributes.categories;
     return ((categories != null) && categories.isNotEmpty) ? Column(children: <Widget>[
       Expanded(child:
-        Stack(children: [
-          Container(padding: EdgeInsets.only(left: 16, right: 24, top: 8), child:
-            SingleChildScrollView(child:
-              _buildCategoriesContent(),
-            ),
+        Container(padding: EdgeInsets.only(left: 16, right: 24, top: 8), child:
+          SingleChildScrollView(child:
+            _buildCategoriesContent(),
           ),
-          Align(alignment: Alignment.topRight,
-            child: GestureDetector(onTap: _onTapClear,
-              child:Semantics(label: Localization().getStringEx('panel.group.attributes.button.clear.title', 'Clear'), button: true, excludeSemantics: true,
-                child: Container(width: 36, height: 36,
-                  child: Align(alignment: Alignment.center,
-                    child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],)
+        ),
       ),
       // Container(height: 1, color: Styles().colors?.surfaceAccent),
       _buildCommands(),
@@ -232,13 +219,6 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   void _onTapApply() {
     Analytics().logSelect(target: 'Apply');
     Navigator.of(context).pop(ContentAttributes.selectionToAttributesSelection(_selection) ?? <String, dynamic>{});
-  }
-
-  void _onTapClear() {
-    Analytics().logSelect(target: 'Clear');
-    setStateIfMounted(() {
-      _selection = <String, LinkedHashSet<String>>{};
-    });
   }
 }
 
