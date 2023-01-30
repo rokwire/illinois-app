@@ -102,6 +102,7 @@ class GroupDropDownButton<T> extends StatefulWidget{
   final String? buttonHint;
   final bool enabled;
   final bool multipleSelection;
+  final double? itemHeight;
   final EdgeInsets padding;
   final BoxDecoration? decoration;
   
@@ -121,7 +122,7 @@ class GroupDropDownButton<T> extends StatefulWidget{
 
   GroupDropDownButton({Key? key,
     this.items, this.initialSelectedValue, this.emptySelectionText, this.buttonHint,
-    this.enabled = true, this.multipleSelection = false, this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration,
+    this.enabled = true, this.multipleSelection = false, this.itemHeight = kMinInteractiveDimension, this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration,
     this.constructTitle, this.constructDropdownTitle, this.constructListItemTitle,
     this.constructDescription, this.constructDropdownDescription, this.constructListItemDescription,
     this.onValueChanged, this.isItemSelected, this.isItemEnabled, this.onItemSelected }) : super(key: key);
@@ -162,6 +163,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
             child: DropdownButton(
               icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
               isExpanded: true,
+              itemHeight: null,
               focusColor: Styles().colors!.white,
               underline: Container(),
               hint: Text(buttonTitle ?? "", style: (widget.initialSelectedValue == null ? hintStyle : valueStyle)),

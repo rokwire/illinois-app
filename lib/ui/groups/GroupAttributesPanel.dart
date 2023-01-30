@@ -105,6 +105,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
           initialSelectedValue: selectedAttribute,
           multipleSelection: (widget.createMode && category.isMultipleSelection) || widget.editMode,
           enabled: attributes?.isNotEmpty ?? false,
+          itemHeight: null,
           constructTitle: (ContentAttribute attribute) => _constructAttributeTitle(category, attribute),
           isItemSelected: (ContentAttribute attribute) => _isAttributeSelected(category, attribute),
           isItemEnabled: (ContentAttribute attribute) => (attribute is! _ContentNullAttribute),
@@ -203,7 +204,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
         Row(children: <Widget>[
           Expanded(child:
             RoundedButton(
-              label: Localization().getStringEx('panel.group.attributes.button.apply.title', 'Apply'),
+              label: Localization().getStringEx('panel.group.attributes.button.apply.title', 'Apply Attributes'),
               textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
               borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
               backgroundColor: Styles().colors?.white,
