@@ -87,7 +87,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       attributes.insert(0, _ContentNullAttribute());
     }
 
-    LinkedHashSet<String>? categoryLabels = _selection[category.title];
+    LinkedHashSet<String>? categoryLabels = _selection[category.id];
     ContentAttribute? selectedAttribute = ((categoryLabels != null) && categoryLabels.isNotEmpty) ?
       ((1 < categoryLabels.length) ? _ContentMultipleAttributes(categoryLabels) : category.findAttribute(label: categoryLabels.first)) : null;
     
@@ -99,12 +99,12 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
           requiredMark: !widget.filtersMode && (0 < (category.minRequiredCount ?? 0)),
         ),
         GroupDropDownButton<ContentAttribute>(
-          key: dropdownKeys[category.title ?? ''] ??= GlobalKey(),
+          key: dropdownKeys[category.id ?? ''] ??= GlobalKey(),
           emptySelectionText: widget.contentAttributes.stringValue(category.emptyLabel),
           buttonHint: widget.contentAttributes.stringValue(category.hint),
           items: attributes,
           initialSelectedValue: selectedAttribute,
-          multipleSelection: (!widget.filtersMode && category.isMultipleSelection) || widget.filtersMode,
+          multipleSelection: widget.filtersMode || category.isMultipleSelection,
           enabled: attributes?.isNotEmpty ?? false,
           itemHeight: null,
           constructTitle: (ContentAttribute attribute) => _constructAttributeTitle(category, attribute),
@@ -130,7 +130,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   bool _isAttributeSelected(ContentAttributesCategory category, ContentAttribute attribute) {
-    LinkedHashSet<String>? categoryLabels = _selection[category.title];
+    LinkedHashSet<String>? categoryLabels = _selection[category.id];
     if (attribute is _ContentMultipleAttributes) {
       return categoryLabels?.containsAll(attribute.labels) ?? false;
     }
@@ -146,9 +146,9 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   void _onAttributeChanged(ContentAttributesCategory category, ContentAttribute attribute) {
-    String? categoryTitle = category.title;
-    if (categoryTitle != null) {
-      LinkedHashSet<String> categoryLabels = (_selection[categoryTitle] ??= LinkedHashSet<String>());
+    String? categoryId = category.id;
+    if (categoryId != null) {
+      LinkedHashSet<String> categoryLabels = (_selection[categoryId] ??= LinkedHashSet<String>());
       setStateIfMounted(() {
 
         if (attribute is _ContentMultipleAttributes) {
@@ -184,10 +184,10 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       });
     }
 
-    if ((!widget.filtersMode && category.isMultipleSelection) || widget.filtersMode) {
+    if (widget.filtersMode || category.isMultipleSelection) {
       // Ugly workaround: show again dropdown popup if category supports multiple select.
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        final RenderObject? renderBox = dropdownKeys[category.title]?.currentContext?.findRenderObject();
+        final RenderObject? renderBox = dropdownKeys[category.id]?.currentContext?.findRenderObject();
         if (renderBox is RenderBox) {
           Offset globalOffset = renderBox.localToGlobal(Offset(renderBox.size.width / 2, renderBox.size.height / 2));
           GestureBinding.instance.handlePointerEvent(PointerDownEvent(position: globalOffset,));

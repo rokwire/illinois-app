@@ -60,10 +60,11 @@ class ContentAttributes {
     return key;
   }
 
-  ContentAttributesCategory? findCategory({String? title}) {
-    if (categories != null) {
+  ContentAttributesCategory? findCategory({String? id, String? title}) {
+    if ((categories != null) && ((id != null) || (title != null))) {
       for (ContentAttributesCategory category in categories!) {
-        if (category.title == title) {
+        if (((id == null) || (category.id == id)) &&
+            ((title == null) || (category.title == title))) {
           return category;
         }
       }
@@ -73,14 +74,14 @@ class ContentAttributes {
 
   static Map<String, LinkedHashSet<String>>? selectionFromAttributesSelection(Map<String, dynamic>? attributesSelection) {
     Map<String, LinkedHashSet<String>>? selection;
-    attributesSelection?.forEach((String categoryTitle, dynamic value) {
+    attributesSelection?.forEach((String categoryId, dynamic value) {
       if (value is String) {
         selection ??= <String, LinkedHashSet<String>>{};
-        selection![categoryTitle] = LinkedHashSet<String>.from(<String>[value]);
+        selection![categoryId] = LinkedHashSet<String>.from(<String>[value]);
       }
       else if (value is List) {
         selection ??= <String, LinkedHashSet<String>>{};
-        selection![categoryTitle] = LinkedHashSet<String>.from(JsonUtils.listStringsValue(value)?.reversed ?? <String>[]);
+        selection![categoryId] = LinkedHashSet<String>.from(JsonUtils.listStringsValue(value)?.reversed ?? <String>[]);
       }
     });
     return selection;
@@ -88,14 +89,14 @@ class ContentAttributes {
 
   static Map<String, dynamic>? selectionToAttributesSelection(Map<String, LinkedHashSet<String>>? selection) {
     Map<String, dynamic>? categorySelection;
-    selection?.forEach((String categoryTitle, LinkedHashSet<String> values) {
+    selection?.forEach((String categoryId, LinkedHashSet<String> values) {
       if (values.length == 1) {
         categorySelection ??= <String, dynamic>{};
-        categorySelection![categoryTitle] = values.first;
+        categorySelection![categoryId] = values.first;
       }
       else if (values.length > 1) {
         categorySelection ??= <String, dynamic>{};
-        categorySelection![categoryTitle] = List.from(List.from(values).reversed);
+        categorySelection![categoryId] = List.from(List.from(values).reversed);
       }
     });
     return categorySelection;
@@ -105,10 +106,10 @@ class ContentAttributes {
     bool modified;
     do {
       modified = false;
-      for (String categoryTitle in selection.keys) {
-        ContentAttributesCategory? category = findCategory(title: categoryTitle);
+      for (String categoryId in selection.keys) {
+        ContentAttributesCategory? category = findCategory(id: categoryId);
         if (category == null) {
-          selection.remove(categoryTitle);
+          selection.remove(categoryId);
           modified = true;
           break;
         }
@@ -130,7 +131,7 @@ class ContentAttributes {
     if ((categories != null) && (selection != null)) {
       for (ContentAttributesCategory category in categories!) {
         String? categoryTitle = stringValue(category.title);
-        dynamic categorySelection = selection[category.title];
+        dynamic categorySelection = selection[category.id];
         List<ContentAttribute>? categoryAttributes = category.attributes;
         if ((categoryTitle != null) && categoryTitle.isNotEmpty &&
             ((categorySelection is String) || ((categorySelection is List) && categorySelection.isNotEmpty)) &&
@@ -166,7 +167,7 @@ class ContentAttributes {
   ContentAttributesCategory? unsatisfiedCategoryFromSelection(Map<String, dynamic>? selection) {
     if (categories != null) {
       for (ContentAttributesCategory category in categories!) {
-        dynamic categorySelection = (selection != null) ? selection[category.title] : null;
+        dynamic categorySelection = (selection != null) ? selection[category.id] : null;
         if (!category.isSatisfiedFromSelection(categorySelection)) {
           return category;
         }
@@ -191,6 +192,7 @@ class ContentAttributes {
 // ContentAttributesCategory
 
 class ContentAttributesCategory {
+  final String? id;
   final String? title;
   final String? description;
   final String? emptyLabel;
@@ -199,12 +201,13 @@ class ContentAttributesCategory {
   final int? maxRequiredCount;
   final List<ContentAttribute>? attributes;
 
-  ContentAttributesCategory({this.title, this.description, this.emptyLabel, this.hint, this.minRequiredCount, this.maxRequiredCount, this.attributes});
+  ContentAttributesCategory({this.id, this.title, this.description, this.emptyLabel, this.hint, this.minRequiredCount, this.maxRequiredCount, this.attributes});
 
   // JSON serialization
 
   static ContentAttributesCategory? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? ContentAttributesCategory(
+      id: JsonUtils.stringValue(json['id']),
       title: JsonUtils.stringValue(json['title']),
       description: JsonUtils.stringValue(json['description']),
       emptyLabel: JsonUtils.stringValue(json['empty-label']),
@@ -216,6 +219,7 @@ class ContentAttributesCategory {
   }
 
   toJson() => {
+    'id': id,
     'title': title,
     'description': description,
     'empty-label': emptyLabel,
@@ -230,6 +234,7 @@ class ContentAttributesCategory {
   @override
   bool operator==(dynamic other) =>
     (other is ContentAttributesCategory) &&
+    (id == other.id) &&
     (title == other.title) &&
     (description == other.description) &&
     (emptyLabel == other.emptyLabel) &&
@@ -240,6 +245,7 @@ class ContentAttributesCategory {
 
   @override
   int get hashCode =>
+    (id?.hashCode ?? 0) ^
     (title?.hashCode ?? 0) ^
     (description?.hashCode ?? 0) ^
     (emptyLabel?.hashCode ?? 0) ^
@@ -267,7 +273,7 @@ class ContentAttributesCategory {
   }
 
   bool validateSelection(Map<String, LinkedHashSet<String>> selection) {
-    LinkedHashSet<String>? attributeLabels = selection[title];
+    LinkedHashSet<String>? attributeLabels = selection[id];
     if (attributeLabels != null) {
       for (String attributeLabel in attributeLabels) {
         ContentAttribute? attribute = findAttribute(label: attributeLabel);
