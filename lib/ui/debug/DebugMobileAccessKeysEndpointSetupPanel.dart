@@ -128,13 +128,6 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
     if (StringUtils.isNotEmpty(invitationCode) && (invitationCode!.length == 19) && RegExp(regExPattern).hasMatch(invitationCode)) {
       _setSetupProcessing(true);
       NativeCommunicator().mobileAccessKeysEndpointSetup(invitationCode).then((success) {
-        late String msg;
-        if (success == true) {
-          msg = 'Successfully submitted mobile access keys invitation code.';
-        } else {
-          msg = 'Failed to submit mobile access keys invitation code.';
-        }
-        AppAlert.showMessage(context, msg);
         _setSetupProcessing(false);
       });
     } else {
