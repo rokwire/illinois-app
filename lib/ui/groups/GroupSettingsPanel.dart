@@ -133,8 +133,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               "search"),
                         ),
                         _buildCategoryDropDown(),
-                        _buildAttributesLayout(),
                         _buildTagsLayout(),
+                        _buildAttributesLayout(),
                       ],)
                     ),
                     

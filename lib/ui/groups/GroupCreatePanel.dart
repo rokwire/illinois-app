@@ -194,8 +194,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   ),
                   _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "search"),
                   _buildCategoryDropDown(),
-                  _buildAttributesLayout(),
                   _buildTagsLayout(),
+                  _buildAttributesLayout(),
                 ]),
               ),
 
