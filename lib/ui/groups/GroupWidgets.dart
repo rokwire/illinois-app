@@ -172,10 +172,9 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton<T>>{
         ),
         Visibility(visible: buttonDescription != null, child:
           Semantics(container: true, child:
-            Container(
-              padding: EdgeInsets.only(right: 42, bottom: 12),
-              child: Text(buttonDescription ?? '',
-                style: Styles().textStyles?.getTextStyle("widget.group.dropdown_button.hint"),
+            Container(padding: EdgeInsets.only(right: 42, bottom: 12), child:
+              Text(buttonDescription ?? '', style:
+                Styles().textStyles?.getTextStyle("widget.group.dropdown_button.hint"),
               ),
             )
           )
