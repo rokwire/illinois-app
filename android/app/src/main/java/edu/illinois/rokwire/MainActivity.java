@@ -17,7 +17,6 @@
 package edu.illinois.rokwire;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -55,7 +54,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import androidx.appcompat.app.AlertDialog;
 import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
@@ -102,6 +100,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         if (isEndpointSetUpComplete()) {
             onEndpointSetUpComplete();
         }
+        origoMobileKeysStartup();
     }
 
     @Override
@@ -571,6 +570,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         mobileKeysApiFactory = (OrigoKeysApiFactory) getApplication();
         mobileKeys = mobileKeysApiFactory.getMobileKeys();
     }
+    private void origoMobileKeysStartup() {
+        mobileKeys.applicationStartup(this);
+    }
 
     // Origo Endpoint setup
 
@@ -629,22 +631,13 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     @Override
     public void handleMobileKeysTransactionCompleted() {
-        showSimpleToast("Endpoint setup completed: handleMobileKeysTransactionCompleted");
+        Log.d(TAG, "Origo: handleMobileKeysTransactionCompleted");
         onEndpointSetUpComplete();
     }
 
     @Override
     public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-        Log.d(TAG, "Origo Endpoint setup failed: " + e.getErrorCode(), e);
-        showSimpleToast("Endpoint setup failed: handleMobileKeysTransactionFailed. " + e.getErrorCode());
-    }
-
-    //endregion
-
-    //region Utils
-
-    private void showSimpleToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Origo: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
     }
 
     //endregion
