@@ -26,6 +26,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Explore.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/StudentCourses.dart';
@@ -84,7 +85,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/events.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final AppExitListener appExitListener = AppExitListener();
