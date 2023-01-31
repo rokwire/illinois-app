@@ -74,16 +74,24 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
     List<Widget> conentList = <Widget>[];
     if ((categories != null) && categories.isNotEmpty) {
       for (ContentAttributesCategory category in categories) {
-        conentList.add(_buildAttributesDropDown(category));
+        Widget? categoryWidget;
+        switch (category.widget) {
+          case ContentAttributesCategoryWidget.dropdown: categoryWidget = _buildCatgoryDropDown(category); break;
+          case ContentAttributesCategoryWidget.checkbox: categoryWidget = _buildCategoryCheckbox(category); break;
+          default: break;
+        }
+        if (categoryWidget != null) {
+          conentList.add(categoryWidget);
+        }
       }
     }
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: conentList,); 
   }
 
-  Widget _buildAttributesDropDown(ContentAttributesCategory category) {
+  Widget _buildCatgoryDropDown(ContentAttributesCategory category) {
     List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
-    if ((attributes != null) && (0 < attributes.length) && !widget.filtersMode && category.isSingleSelection /* && !category.requiresSelection*/) {
+    if ((attributes != null) && (0 < attributes.length) && !widget.filtersMode && category.isSingleSelection /* && !category.isRequired*/) {
       attributes.insert(0, _ContentNullAttribute());
     }
 
@@ -100,8 +108,8 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
         ),
         GroupDropDownButton<ContentAttribute>(
           key: dropdownKeys[category.id ?? ''] ??= GlobalKey(),
-          emptySelectionText: widget.contentAttributes.stringValue(category.emptyLabel),
-          buttonHint: widget.contentAttributes.stringValue(category.hint),
+          emptySelectionText: widget.contentAttributes.stringValue(category.emptyHint),
+          buttonHint: widget.contentAttributes.stringValue(category.semanticsHint),
           items: attributes,
           initialSelectedValue: selectedAttribute,
           multipleSelection: widget.filtersMode || category.isMultipleSelection,
@@ -146,6 +154,8 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   void _onAttributeChanged(ContentAttributesCategory category, ContentAttribute attribute) {
+    Analytics().logSelect(target: attribute.label, source: category.title);
+
     String? categoryId = category.id;
     if (categoryId != null) {
       LinkedHashSet<String> categoryLabels = (_selection[categoryId] ??= LinkedHashSet<String>());
@@ -196,6 +206,82 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
         }
       });
     }
+  }
+
+  Widget _buildCategoryCheckbox(ContentAttributesCategory category) {
+  
+
+    String imageAsset;
+    LinkedHashSet<String>? categoryLabels = _selection[category.id];
+    ContentAttribute? selectedAttribute = ((categoryLabels != null) && categoryLabels.isNotEmpty) ?
+      category.findAttribute(label: categoryLabels.first) : null;
+    switch (selectedAttribute?.value) {
+      case true:  imageAsset = "check-box-filled"; break;
+      case false: imageAsset = "box-outline-gray"; break;
+      default:    imageAsset = "box-inside-gray"; break;
+    }
+    String? text = (selectedAttribute?.value != null) ? category.text : category.emptyHint;
+    TextStyle? textStyle = Styles().textStyles?.getTextStyle((selectedAttribute?.value != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
+    
+    List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
+
+    return Visibility(visible: attributes?.isNotEmpty ?? false, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        GroupSectionTitle(
+          title: widget.contentAttributes.stringValue(category.title)?.toUpperCase(),
+          description: widget.contentAttributes.stringValue(category.description),
+          requiredMark: !widget.filtersMode && (0 < (category.minRequiredCount ?? 0)),
+        ),
+        Container (
+          decoration: BoxDecoration(
+            color: Styles().colors!.white,
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))
+          ),
+          //padding: const EdgeInsets.only(left: 12, right: 8),
+          child: InkWell(onTap: () => _onCategoryCheckbox(category),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Expanded(child:
+                Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
+                  Text(text ?? '', style: textStyle,)
+                ),
+              ),
+              Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+                Styles().images?.getImage(imageAsset, excludeFromSemantics: true,),
+              ),
+            ]),
+          ),
+
+
+        ),
+      ]),
+    );
+  }
+
+  void _onCategoryCheckbox(ContentAttributesCategory category) {
+    String? categoryId = category.id;
+    if (categoryId != null) {
+      LinkedHashSet<String> categoryLabels = _selection[categoryId] ??= LinkedHashSet<String>();
+      ContentAttribute? selectedAttribute = categoryLabels.isNotEmpty ?
+        category.findAttribute(label: categoryLabels.first) : null;
+
+      switch (selectedAttribute?.value) {
+        case true:  selectedAttribute = category.findAttribute(value: false); break;
+        case false: selectedAttribute = null; break;
+        default:    selectedAttribute = category.findAttribute(value: true); break;
+      }
+
+      String? selectedLabel = selectedAttribute?.label;
+      Analytics().logSelect(target: selectedAttribute?.label, source: category.title);
+      setStateIfMounted(() {
+        categoryLabels.clear();
+        if (selectedLabel != null) {
+          categoryLabels.add(selectedLabel);
+        }
+      });
+    }
+
+
   }
 
   bool get _isSelectionNotEmpty {
