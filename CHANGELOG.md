@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.7] - 2022-01-30
+### Changed
+- Content filters renamed to Content Attributes [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Use category id as category selection key [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Updated Group Attributes panel behavior [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
 ## [4.3.6] - 2022-01-27
 ### Added
 - Edit lastAppReviewTime from SettingsDebugPanel [#2941](https://github.com/rokwire/illinois-app/issues/2941).
