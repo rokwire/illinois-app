@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.8] - 2022-01-31
+### Added
+- Added RSO group attribute and checkbox attribute support [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
 ## [4.3.7] - 2022-01-30
 ### Changed
 - Content filters renamed to Content Attributes [#2926](https://github.com/rokwire/illinois-app/issues/2926).

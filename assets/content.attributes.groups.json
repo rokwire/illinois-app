@@ -3,8 +3,9 @@
 		"id": "category",
 		"title": "Category",
 		"description": "Choose the category your group can be filtered by.",
-		"empty-label": "Select a category...",
-		"hint": "Double tap to show category options.",
+		"empty-hint": "Select a category...",
+		"semantics-hint": "Double tap to show category options.",
+		"widget": "dropdown",
 		"min-required-count": 1,
 		"max-required-count": 1,
 		"values": [
@@ -20,8 +21,9 @@
 		"id": "sport",
 		"title": "Sport",
 		"description": "Choose the sport your group can be filtered by.",
-		"empty-label": "Select a sport...",
-		"hint": "Double tap to show sport options.",
+		"empty-hint": "Select a sport...",
+		"semantics-hint": "Double tap to show sport options.",
+		"widget": "dropdown",
 		"min-required-count": 0,
 		"max-required-count": 1,
 		"values": [
@@ -49,8 +51,9 @@
 		"id": "college",
 		"title": "College",
 		"description": "Choose the college your group can be filtered by.",
-		"empty-label": "Select a college...",
-		"hint": "Double tap to show college options.",
+		"empty-hint": "Select a college...",
+		"widget": "dropdown",
+		"semantics-hint": "Double tap to show college options.",
 		"min-required-count": 0,
 		"max-required-count": 1,
 		"values": [
@@ -98,8 +101,9 @@
 		"id": "department",
 		"title": "Department",
 		"description": "Choose the department your group can be filtered by.",
-		"empty-label": "Select a department...",
-		"hint": "Double tap to show department options.",
+		"empty-hint": "Select a department...",
+		"semantics-hint": "Double tap to show department options.",
+		"widget": "dropdown",
 		"min-required-count": 0,
 		"max-required-count": 1,
 		"values": [
@@ -525,8 +529,9 @@
 		"id": "tags",
 		"title": "Tags",
 		"description": "Tags help people understanding more about your gtoup",
-		"empty-label": "Select tags...",
-		"hint": "Double tap to show tags.",
+		"empty-hint": "Select tags...",
+		"widget": "dropdown",
+		"semantics-hint": "Double tap to show tags.",
 		"min-required-count": null,
 		"max-required-count": null,
 		"values": [
@@ -867,6 +872,20 @@
 			"workshop",
 			"Xfinity",
 			"yoga"
+		]
+	},{
+		"id": "rso",
+		"title": "RSO",
+		"description": "Choose whether your group is RSO.",
+		"text": "Registered Student Organization",
+		"empty-hint": "Select Registered Student Organization...",
+		"semantics-hint": "Double tap to show RSO options.",
+		"widget": "checkbox",
+		"min-required-count": 0,
+		"max-required-count": 1,
+		"values": [
+			{ "label": "Yes", "value": true },
+			{ "label": "No", "value" : false }
 		]
 	}],
   "strings": {

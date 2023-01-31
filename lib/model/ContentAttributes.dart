@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-/////////////////////////////
+/////////////////////////////////////
 // ContentAttributes
 
 class ContentAttributes {
@@ -188,20 +188,25 @@ class ContentAttributes {
   }
 }
 
-/////////////////////////////
+/////////////////////////////////////
 // ContentAttributesCategory
 
 class ContentAttributesCategory {
   final String? id;
   final String? title;
   final String? description;
-  final String? emptyLabel;
-  final String? hint;
+  final String? text;
+  final String? emptyHint;
+  final String? semanticsHint;
+  final ContentAttributesCategoryWidget? widget;
   final int? minRequiredCount;
   final int? maxRequiredCount;
   final List<ContentAttribute>? attributes;
 
-  ContentAttributesCategory({this.id, this.title, this.description, this.emptyLabel, this.hint, this.minRequiredCount, this.maxRequiredCount, this.attributes});
+  ContentAttributesCategory({this.id, this.title, this.description, this.text,
+    this.emptyHint, this.semanticsHint, this.widget,
+    this.minRequiredCount, this.maxRequiredCount,
+    this.attributes});
 
   // JSON serialization
 
@@ -210,8 +215,10 @@ class ContentAttributesCategory {
       id: JsonUtils.stringValue(json['id']),
       title: JsonUtils.stringValue(json['title']),
       description: JsonUtils.stringValue(json['description']),
-      emptyLabel: JsonUtils.stringValue(json['empty-label']),
-      hint: JsonUtils.stringValue(json['hint']),
+      text: JsonUtils.stringValue(json['text']),
+      emptyHint: JsonUtils.stringValue(json['empty-hint']),
+      semanticsHint: JsonUtils.stringValue(json['semantics-hint']),
+      widget: contentAttributesCategoryWidgetFromString(JsonUtils.stringValue(json['widget'])),
       minRequiredCount: JsonUtils.intValue(json['min-required-count']),
       maxRequiredCount: JsonUtils.intValue(json['max-required-count']),
       attributes: ContentAttribute.listFromJson(JsonUtils.listValue(json['values'])),
@@ -222,8 +229,10 @@ class ContentAttributesCategory {
     'id': id,
     'title': title,
     'description': description,
-    'empty-label': emptyLabel,
-    'hint': hint,
+    'text': text,
+    'empty-hint': emptyHint,
+    'semantics-hint': semanticsHint,
+    'widget': contentAttributesCategoryWidgetToString(widget),
     'min-required-count' : minRequiredCount,
     'max-required-count' : maxRequiredCount,
     'values': attributes,
@@ -237,8 +246,10 @@ class ContentAttributesCategory {
     (id == other.id) &&
     (title == other.title) &&
     (description == other.description) &&
-    (emptyLabel == other.emptyLabel) &&
-    (hint == other.hint) &&
+    (text == other.text) &&
+    (emptyHint == other.emptyHint) &&
+    (semanticsHint == other.semanticsHint) &&
+    (widget == other.widget) &&
     (minRequiredCount == other.minRequiredCount) &&
     (maxRequiredCount == other.maxRequiredCount) &&
     DeepCollectionEquality().equals(attributes, other.attributes);
@@ -248,8 +259,10 @@ class ContentAttributesCategory {
     (id?.hashCode ?? 0) ^
     (title?.hashCode ?? 0) ^
     (description?.hashCode ?? 0) ^
-    (emptyLabel?.hashCode ?? 0) ^
-    (hint?.hashCode ?? 0) ^
+    (text?.hashCode ?? 0) ^
+    (emptyHint?.hashCode ?? 0) ^
+    (semanticsHint?.hashCode ?? 0) ^
+    (widget?.hashCode ?? 0) ^
     (minRequiredCount?.hashCode ?? 0) ^
     (maxRequiredCount?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(attributes));
@@ -259,12 +272,16 @@ class ContentAttributesCategory {
   bool get isRequired => (0 < (minRequiredCount ?? 0));
   bool get isMultipleSelection => (maxRequiredCount != 1);
   bool get isSingleSelection => (maxRequiredCount == 1);
-  bool get requiresSelection => ((minRequiredCount ?? 0) > 0);
 
-  ContentAttribute? findAttribute({String? label}) {
+  bool get isDropdownWidget => (widget == ContentAttributesCategoryWidget.dropdown);
+  bool get isCheckboxWidget => (widget == ContentAttributesCategoryWidget.checkbox);
+
+  ContentAttribute? findAttribute({String? label, dynamic value}) {
     if (attributes != null) {
       for (ContentAttribute attribute in attributes!) {
-        if ((label != null) && (attribute.label == label)) {
+        if (((label == null) || (attribute.label == label)) &&
+            ((value == null) || (attribute.value == value)))
+        {
           return attribute;
         }
       }
@@ -339,14 +356,36 @@ class ContentAttributesCategory {
   }
 }
 
-/////////////////////////////
+/////////////////////////////////////
+// ContentAttributesCategoryWidget
+
+enum ContentAttributesCategoryWidget { dropdown, checkbox }
+
+ContentAttributesCategoryWidget? contentAttributesCategoryWidgetFromString(String? value) {
+  switch(value) {
+    case 'dropdown': return ContentAttributesCategoryWidget.dropdown;
+    case 'checkbox': return ContentAttributesCategoryWidget.checkbox;
+    default: return null;
+  }
+}
+
+String? contentAttributesCategoryWidgetToString(ContentAttributesCategoryWidget? value) {
+  switch(value) {
+    case ContentAttributesCategoryWidget.dropdown: return 'dropdown';
+    case ContentAttributesCategoryWidget.checkbox: return 'checkbox';
+    default: return null;
+  }
+}
+
+/////////////////////////////////////
 // ContentAttribute
 
 class ContentAttribute {
   final String? label;
+  final dynamic value;
   final Map<String, dynamic>? requirements;
 
-  ContentAttribute({this.label, this.requirements});
+  ContentAttribute({this.label, this.value, this.requirements});
 
   // JSON serialization
 
@@ -359,6 +398,7 @@ class ContentAttribute {
     else if (json is Map) {
       return ContentAttribute(
         label: JsonUtils.stringValue(json['label']),
+        value: json['value'],
         requirements: JsonUtils.mapValue(json['requirements']),
       );
     }
@@ -369,6 +409,7 @@ class ContentAttribute {
 
   toJson() => {
     'label': label,
+    'value': value,
     'requirements': requirements,
   };
 
@@ -378,11 +419,13 @@ class ContentAttribute {
   bool operator==(dynamic other) =>
     (other is ContentAttribute) &&
     (label == other.label) &&
+    (value == other.value) &&
     DeepCollectionEquality().equals(requirements, other.requirements);
 
   @override
   int get hashCode =>
     (label?.hashCode ?? 0) ^
+    (value?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(requirements));
 
   // Accessories
