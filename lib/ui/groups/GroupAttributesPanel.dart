@@ -293,11 +293,27 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
     return false;
   }
 
+  bool get _isInitialSelectionNotEmpty {
+
+    Iterable<dynamic>? selectionValues = widget.selection?.values;
+    if (selectionValues != null) {
+      for (dynamic attributeLabels in selectionValues) {
+        if (((attributeLabels is String)) ||
+            ((attributeLabels is List) && attributeLabels.isNotEmpty))
+        {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   Widget _buildCommands() {
     List<Widget> buttons = <Widget>[];
 
     if (widget.filtersMode) {
-      bool canClear = _isSelectionNotEmpty;
+      bool canClear = _isInitialSelectionNotEmpty;
       buttons.addAll(<Widget>[
         Expanded(child: RoundedButton(
           label: Localization().getStringEx('panel.group.attributes.button.clear.title', 'Clear'),
