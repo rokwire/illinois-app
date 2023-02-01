@@ -16,7 +16,9 @@
 
 import 'dart:io';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -265,7 +267,8 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   }
 
   void _onTapIOSSystemSettings() {
-    //TBD: DD - implement
+    Analytics().logSelect(target: 'Open System Settings');
+    AppSettings.openAppSettings();
   }
 
   bool get _isAndroid {
