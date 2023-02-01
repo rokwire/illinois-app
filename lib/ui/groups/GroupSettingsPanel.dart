@@ -31,7 +31,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -64,7 +63,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _authManGroupNameController = TextEditingController();
 
   final List<GroupPrivacy>? _groupPrivacyOptions = GroupPrivacy.values;
-  List<String>? _groupCategories;
   ContentAttributes? _contentAttributes;
 
   bool _nameIsValid = true;
@@ -91,7 +89,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if(_group!=null) {
       _group?.settings ??= GroupSettingsExt.initialDefaultSettings(); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
     }
-    _initCategories();
     _initContentAttributes();
     super.initState();
   }
@@ -127,18 +124,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     _buildDescriptionField(),
                     _buildLinkField(),
                           
-                    Visibility(visible: !_isResearchProject, child:
-                      Column(children: [
-                        Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"),
-                              "search"),
-                        ),
-                        _buildCategoryDropDown(),
-                        _buildTagsLayout(),
-                        _buildAttributesLayout(),
-                      ],)
-                    ),
+                    Column(children: [
+                      Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                        _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "search"),
+                      ),
+                      _buildAttributesLayout(),
+                    ],),
                     
                     Visibility(visible: _isResearchProject, child:
                       Column(children: [
@@ -203,13 +195,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   //Init
-  void _initCategories(){
-    Groups().loadCategories().then((categories){
-      setStateIfMounted(() {
-        _groupCategories = categories;
-      });
-    });
-  }
 
   void _initContentAttributes(){
     Groups().loadContentAttributes().then((ContentAttributes? contentAttributes){
@@ -474,37 +459,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   //
-  //Category
-  Widget _buildCategoryDropDown() {
-    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        _buildInfoHeader(
-          Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY"),
-          (_group?.researchProject == true) ?
-            "Choose the category your project can be filtered by." :
-            Localization().getStringEx("panel.groups_settings.category.description", "Choose the category your group can be filtered by."),
-        ),
-        Semantics(explicitChildNodes: true, child:
-          GroupDropDownButton(
-            enabled: _canUpdate,
-            emptySelectionText: Localization().getStringEx("panel.groups_settings.category.default_text", "Select a category.."),
-            buttonHint: Localization().getStringEx("panel.groups_settings.category.hint", "Double tap to show categories options"),
-            initialSelectedValue: _group?.category,
-            items: _groupCategories,
-            constructTitle: (dynamic item) => item,
-            onValueChanged: (String value) {
-              setState(() {
-                _group?.category = value;
-                Log.d("Selected Category: $value");
-              });
-            }
-          )
-        )
-      ],)
-    );
-  }
-
-  //
   //Attributes
   Widget _buildAttributesLayout() {
     return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -558,142 +512,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
 
-  //Tags
-  Widget _buildTagsLayout(){
-    String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
-    String? description = (_group?.researchProject == true) ?
-      "Tags help people understand more about your project." :
-      Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: [
-                Expanded(flex: 5, child: _buildInfoHeader(title, description)),
-                Container(width: 8),
-                Expanded(
-                    flex: 2,
-                    child:
-                    RoundedButton(
-                      label: Localization().getStringEx("panel.groups_settings.button.tags.title", "Tags"),
-                      hint: Localization().getStringEx("panel.groups_settings.button.tags.hint", ""),
-                      backgroundColor: Styles().colors!.white,
-                      borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                      textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      onTap: _onTapTags,
-                    )
-                )
-              ],
-            ),
-            Container(height: 10,),
-            _constructTagButtonsContent()
-          ],
-        ));
-  }
-
-  Widget _constructTagButtonsContent(){
-    List<Widget> buttons = _buildTagsButtons();
-    if(buttons.isEmpty)
-      return Container();
-
-    List<Widget> rows = [];
-    List<Widget>? lastRowChildren;
-    for(int i=0; i<buttons.length;i++){
-      if(i%2==0){
-        lastRowChildren =  [];
-        rows.add(SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(children:lastRowChildren,)));
-        rows.add(Container(height: 8,));
-      } else {
-        lastRowChildren?.add(Container(width: 13,));
-      }
-      lastRowChildren!.add(buttons[i]);
-    }
-    rows.add(Container(height: 24,));
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: rows,
-    );
-  }
-
-  List<Widget> _buildTagsButtons(){
-    List<String>? tags = _group?.tags;
-    List<Widget> result =  [];
-    if (CollectionUtils.isNotEmpty(tags)) {
-      tags!.forEach((String tag) {
-        result.add(_buildTagButton(tag));
-      });
-    }
-    return result;
-  }
-
-  Widget _buildTagButton(String tag){
-    return
-      Semantics(
-        label: sprintf(Localization().getStringEx("panel.groups_settings.tags.label.tag.format", "%s tag, "),[tag]),
-        hint: Localization().getStringEx("panel.groups_settings.tags.label.tag.hint", "double tab to remove tag"),
-        button: true,
-        excludeSemantics: true,
-        child:InkWell(
-          child: Container(
-              decoration: BoxDecoration(
-                  color: Styles().colors!.fillColorPrimary,
-                  borderRadius: BorderRadius.all(Radius.circular(4))),
-              child: Row(children: <Widget>[
-                Semantics(excludeSemantics: true, child:
-                  Container(
-                      padding: EdgeInsets.only(top:4,bottom: 4,left: 8),
-                      child: Text(tag,
-                        style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),
-                      )),
-                  ),
-                Container (
-                  padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
-                  child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
-                )
-
-              ],)
-          ),
-          onTap: () => onTagTap(tag)
-      ));
-  }
-
-  void onTagTap(String tag) {
-    if (!_canUpdate) {
-      return;
-    }
-    Analytics().logSelect(target: "Group tag: $tag");
-    if(_group!=null) {
-      if (_group!.tags == null) {
-        _group!.tags =  [];
-      }
-
-      if (_group!.tags!.contains(tag)) {
-        _group!.tags!.remove(tag);
-      } else {
-        _group!.tags!.add(tag);
-      }
-    }
-    setState(() {});
-  }
-
-  void _onTapTags() {
-    if (!_canUpdate) {
-      return;
-    }
-    Analytics().logSelect(target: "Tags");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group!.tags))).then((tags) {
-      // (tags == null) means that the user hit the back button
-      if (tags != null) {
-        setState(() {
-          _group!.tags = tags;
-        });
-      }
-    });
-  }
   //
   //Privacy
   Widget _buildPrivacyDropDown() {
