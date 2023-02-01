@@ -16,9 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/ContentAttributes.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Groups.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
@@ -27,6 +25,7 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -63,7 +62,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _authManGroupNameController = TextEditingController();
 
   final List<GroupPrivacy>? _groupPrivacyOptions = GroupPrivacy.values;
-  ContentAttributes? _contentAttributes;
 
   bool _nameIsValid = true;
   bool _updating = false;
@@ -89,7 +87,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if(_group!=null) {
       _group?.settings ??= GroupSettingsExt.initialDefaultSettings(); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
     }
-    _initContentAttributes();
     super.initState();
   }
 
@@ -192,16 +189,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         _buildButtonsLayout(),
       ],),
     );
-  }
-
-  //Init
-
-  void _initContentAttributes(){
-    Groups().loadContentAttributes().then((ContentAttributes? contentAttributes){
-      setStateIfMounted(() {
-        _contentAttributes = contentAttributes;
-      });
-    });
   }
 
   //
@@ -461,7 +448,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Attributes
   Widget _buildAttributesLayout() {
-    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return (Groups().contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
@@ -489,7 +476,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   Widget _constructAttributesContent() {
-    String? attributesDescr = _contentAttributes?.selectionDescription(_group?.attributes,
+    String? attributesDescr = Groups().contentAttributes?.selectionDescription(_group?.attributes,
       categorySeparator: '\n'
     );
     return ((attributesDescr != null) && attributesDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
@@ -503,7 +490,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onTapAttributes() {
     Analytics().logSelect(target: "Attributes");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(contentAttributes: _contentAttributes!, selection: _group?.attributes,))).then((selection) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(selection: _group?.attributes,))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
           _group?.attributes = selection;

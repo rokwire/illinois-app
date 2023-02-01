@@ -18,9 +18,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
-import 'package:illinois/model/ContentAttributes.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Groups.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
@@ -28,6 +26,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -57,16 +56,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Group? _group;
 
   final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
-  ContentAttributes? _contentAttributes;
 
-  bool _contentAttributesLoading = false;
   bool _creating = false;
   bool _researchRequiresConsentConfirmation = false;
 
   @override
   void initState() {
     _initGroup();
-    _initContentAttributes();
     _initResearchConsentDetails();
     super.initState();
   }
@@ -111,18 +107,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     if (StringUtils.isEmpty(_group?.category)) {
       _group?.category = 'TBD';
     }
-  }
-
-  void _initContentAttributes(){
-    setState(() {
-      _contentAttributesLoading = true;
-    });
-    Groups().loadContentAttributes().then((ContentAttributes? contentAttributes){
-      setStateIfMounted(() {
-        _contentAttributes = contentAttributes;
-        _contentAttributesLoading = false;
-      });
-    });
   }
 
   Future<void> _initResearchConsentDetails() async {
@@ -452,14 +436,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Attributes
   Widget _buildAttributesLayout() {
-    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return (Groups().contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
             GroupSectionTitle(
               title: Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
               description: Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              requiredMark: _contentAttributes?.hasRequired ?? false,
+              requiredMark: Groups().contentAttributes?.hasRequired ?? false,
             )
           ),
           Container(width: 8),
@@ -481,7 +465,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   Widget _constructAttributesContent() {
-    String? attributesDescr = _contentAttributes?.selectionDescription(_group?.attributes,
+    String? attributesDescr = Groups().contentAttributes?.selectionDescription(_group?.attributes,
       categorySeparator: '\n',
       
     );
@@ -496,7 +480,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onTapAttributes() {
     Analytics().logSelect(target: "Attributes");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(contentAttributes: _contentAttributes!, selection: _group?.attributes,))).then((selection) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(selection: _group?.attributes,))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
           _group?.attributes = selection;
@@ -999,11 +983,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
-        (_contentAttributes?.unsatisfiedCategoryFromSelection(_group?.attributes) == null) &&
+        (Groups().contentAttributes?.unsatisfiedCategoryFromSelection(_group?.attributes) == null) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount > 0));
   }
 
-  bool get _loading => _contentAttributesLoading;
+  bool get _loading => false;
 }
