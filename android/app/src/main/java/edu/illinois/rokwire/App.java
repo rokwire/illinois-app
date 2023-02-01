@@ -17,41 +17,21 @@
 package edu.illinois.rokwire;
 
 import android.app.Application;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
-import com.hid.origo.OrigoKeysApiFactory;
-import com.hid.origo.api.OrigoApiConfiguration;
-import com.hid.origo.api.OrigoMobileKeys;
-import com.hid.origo.api.OrigoMobileKeysApi;
-import com.hid.origo.api.OrigoReaderConnectionController;
-import com.hid.origo.api.ble.OrigoBluetoothMode;
-import com.hid.origo.api.ble.OrigoOpeningTrigger;
-import com.hid.origo.api.ble.OrigoScanConfiguration;
-import com.hid.origo.api.ble.OrigoSeamlessOpeningTrigger;
-import com.hid.origo.api.ble.OrigoTapOpeningTrigger;
-import com.hid.origo.api.ble.OrigoTwistAndGoOpeningTrigger;
-import com.hid.origo.api.hce.OrigoNfcConfiguration;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
+import edu.illinois.rokwire.mobile_access.MobileAccessKeysApiFactory;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.view.FlutterMain;
 
-public class App extends Application implements LifecycleObserver, PluginRegistry.PluginRegistrantCallback, OrigoKeysApiFactory {
+public class App extends Application implements LifecycleObserver, PluginRegistry.PluginRegistrantCallback {
 
     private static final String CHANNEL_ID = "Notifications_Channel_ID";
 
-    private OrigoMobileKeysApi mobileKeysFactory;
+    private MobileAccessKeysApiFactory mobileKeysFactory;
 
     public boolean inBackground = true;
 
@@ -63,7 +43,7 @@ public class App extends Application implements LifecycleObserver, PluginRegistr
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 
-        initializeOrigo();
+        mobileKeysFactory = new MobileAccessKeysApiFactory(this);
     }
 
 
@@ -84,46 +64,7 @@ public class App extends Application implements LifecycleObserver, PluginRegistr
        // FirebaseMessagingPlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
     }
 
-    //region HID / Origo
-
-    private void initializeOrigo() {
-        String appId = BuildConfig.ORIGO_APP_ID;
-        String appDescription = "UIUC app test description"; //TBD: DD - check what should be the description.
-
-        OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
-                new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(this),
-                        new OrigoTwistAndGoOpeningTrigger(this),
-                        new OrigoSeamlessOpeningTrigger()}, BuildConfig.ORIGO_LOCK_SERVICE_CODE)
-                .setAllowBackgroundScanning(true)
-                .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
-                .build();
-
-        OrigoApiConfiguration origoApiConfiguration = new OrigoApiConfiguration.Builder().setApplicationId(appId)
-                .setApplicationDescription(appDescription)
-                .setNfcParameters(new OrigoNfcConfiguration.Builder().build())
-                .build();
-
-        mobileKeysFactory = OrigoMobileKeysApi.getInstance();
-        mobileKeysFactory.initialize(this, origoApiConfiguration, origoScanConfiguration, appId);
-        if (!mobileKeysFactory.isInitialized()) {
-            throw new IllegalStateException();
-        }
+    public MobileAccessKeysApiFactory getMobileApiKeysFactory() {
+        return mobileKeysFactory;
     }
-
-    @Override
-    public OrigoMobileKeys getMobileKeys() {
-        return mobileKeysFactory.getMobileKeys();
-    }
-
-    @Override
-    public OrigoReaderConnectionController getReaderConnectionController() {
-        return mobileKeysFactory.getOrigiReaderConnectionController();
-    }
-
-    @Override
-    public OrigoScanConfiguration getOrigoScanConfiguration() {
-        return getReaderConnectionController().getScanConfiguration();
-    }
-
-    //endregion
 }

@@ -34,36 +34,26 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.hid.origo.OrigoKeysApiFacade;
-import com.hid.origo.OrigoKeysApiFactory;
-import com.hid.origo.api.OrigoMobileKey;
-import com.hid.origo.api.OrigoMobileKeys;
-import com.hid.origo.api.OrigoMobileKeysCallback;
-import com.hid.origo.api.OrigoMobileKeysException;
-import com.hid.origo.api.OrigoReaderConnectionController;
-import com.hid.origo.api.ble.OrigoScanConfiguration;
 
 import java.io.ByteArrayOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
 import edu.illinois.rokwire.maps.MapPickLocationActivity;
+import edu.illinois.rokwire.mobile_access.MobileAccessKeysApiFacade;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler, OrigoKeysApiFacade, OrigoMobileKeysCallback {
+public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler {
 
     private static final String TAG = "MainActivity";
 
@@ -81,8 +71,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private Toast statusToast;
 
-    private OrigoMobileKeys mobileKeys;
-    private OrigoKeysApiFactory mobileKeysApiFactory;
+    private MobileAccessKeysApiFacade mobileAccessKeysApiFacade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,17 +79,14 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
         instance = this;
         initScreenOrientation();
-        initializeOrigo();
+
+        mobileAccessKeysApiFacade = new MobileAccessKeysApiFacade(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        // MainActivity is the OrigoMobileKeysApiFacade
-        if (isEndpointSetUpComplete()) {
-            onEndpointSetUpComplete();
-        }
-        origoMobileKeysStartup();
+        mobileAccessKeysApiFacade.onApplicationStartup();
     }
 
     @Override
@@ -321,36 +307,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     }
 
     private List<HashMap<String, Object>> handleMobileAccessKeys(Object params) {
-        if (!isEndpointSetUpComplete()) {
-            Log.d(TAG, "handleMobileAccessId: Origo endpoint is not set up.");
-            return null;
-        }
-        if (getMobileKeys() != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            try {
-                List<OrigoMobileKey> origoMobileKeys = getMobileKeys().listMobileKeys();
-                if ((origoMobileKeys != null) && !origoMobileKeys.isEmpty()) {
-                    List<HashMap<String, Object>> keysJson = new ArrayList<>();
-                    for (OrigoMobileKey key : origoMobileKeys) {
-                        Calendar endCalendarDate = key.getEndDate();
-                        HashMap<String, Object> keyJson = new HashMap<>();
-                        keyJson.put("label", key.getLabel());
-                        keyJson.put("card_number", key.getCardNumber());
-                        keyJson.put("issuer", key.getIssuer());
-                        keyJson.put("type", key.getType());
-                        if (endCalendarDate != null) {
-                            keyJson.put("expiration_date", dateFormat.format(endCalendarDate.getTime()));
-                        }
-                        keysJson.add(keyJson);
-                    }
-                    return keysJson;
-                }
-            } catch (OrigoMobileKeysException e) {
-                Log.e(TAG, String.format("Origo failed to list mobile keys. Cause message: %s \nError code: %s", e.getCauseMessage(), e.getErrorCode()));
-                e.printStackTrace();
-            }
-        }
-        return null;
+        return mobileAccessKeysApiFacade.getKeysDetails();
     }
 
     private String handleBarcode(Object params) {
@@ -564,81 +521,12 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     //region Origo
 
-    // Initialization
-
-    private void initializeOrigo() {
-        mobileKeysApiFactory = (OrigoKeysApiFactory) getApplication();
-        mobileKeys = mobileKeysApiFactory.getMobileKeys();
-    }
-    private void origoMobileKeysStartup() {
-        mobileKeys.applicationStartup(this);
-    }
-
     // Origo Endpoint setup
 
     private void handleMobileAccessEndpointSetup(Object params) {
         if (params instanceof String) {
             String invitationCode = (String)params;
-            getMobileKeys().endpointSetup(this, invitationCode);
+            mobileAccessKeysApiFacade.setupEndpoint(invitationCode);
         }
     }
-
-    //OrigoKeysApiFacade implementation
-
-    @Override
-    public void onStartUpComplete() {
-        Log.d(TAG, "Origo: onStartUpComplete");
-    }
-
-    @Override
-    public void onEndpointSetUpComplete() {
-        Log.d(TAG, "Origo: onEndpointSetUpComplete");
-    }
-
-    @Override
-    public void endpointNotPersonalized() {
-        Log.d(TAG, "Origo: endpointNotPersonalized");
-    }
-
-    @Override
-    public boolean isEndpointSetUpComplete() {
-        boolean isEndpointSetup = false;
-        try {
-            isEndpointSetup = mobileKeys.isEndpointSetupComplete();
-        } catch (OrigoMobileKeysException e) {
-            Log.d(TAG, "Origo: isEndpointSetUpComplete: exception: " + e.getCauseMessage() + "\n\n" + e.getMessage());
-            e.printStackTrace();
-        }
-        return isEndpointSetup;
-    }
-
-    @Override
-    public OrigoMobileKeys getMobileKeys() {
-        return mobileKeysApiFactory.getMobileKeys();
-    }
-
-    @Override
-    public OrigoReaderConnectionController getReaderConnectionController() {
-        return mobileKeysApiFactory.getReaderConnectionController();
-    }
-
-    @Override
-    public OrigoScanConfiguration getOrigoScanConfiguration() {
-        return mobileKeysApiFactory.getOrigoScanConfiguration();
-    }
-
-    // OrigoMobileKeysCallback implementation
-
-    @Override
-    public void handleMobileKeysTransactionCompleted() {
-        Log.d(TAG, "Origo: handleMobileKeysTransactionCompleted");
-        onEndpointSetUpComplete();
-    }
-
-    @Override
-    public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-        Log.d(TAG, "Origo: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
-    }
-
-    //endregion
 }
