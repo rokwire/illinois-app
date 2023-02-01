@@ -27,7 +27,6 @@ class SettingsICardContentWidget extends StatefulWidget {
   _SettingsICardContentWidgetState createState() => _SettingsICardContentWidgetState();
 }
 
-//TBD: DD - localization
 class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget> {
   @override
   Widget build(BuildContext context) {
@@ -186,8 +185,10 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                           Padding(
                             padding: EdgeInsets.only(top: 5),
                             child: Text(
-                                Localization().getStringEx('panel.settings.icard.ios_settings.description.label',
-                                    'Return to the Illinois app by tapping the return arrow at top of the page.'), //TBD: DD - properly replace app name
+                                Localization()
+                                    .getStringEx('panel.settings.icard.ios_settings.description.label',
+                                        'Return to the {{app_title}} app by tapping the return arrow at top of the page.')
+                                    .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
                                 maxLines: 4,
                                 style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.variant.enabled')),
                           )
