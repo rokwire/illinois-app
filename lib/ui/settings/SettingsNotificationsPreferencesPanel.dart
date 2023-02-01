@@ -51,21 +51,21 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
               InfoButton(
                 title: Localization().getStringEx("panel.settings.notification_prefferences.button.location.title", "Location"),
                 description: Localization().getStringEx("panel.settings.notification_prefferences.button.location.description", "Manage your location settings"),
-                iconRes: "images/m.png",
+                iconKey: "location",
                 onTap: (){_onTapLocation(context);},
               ),
               Container(height: 8,),
               InfoButton(
                 title: Localization().getStringEx("panel.settings.notification_prefferences.button.notifications.title", "Notifications"),
                 description: Localization().getStringEx("panel.settings.notification_prefferences.button.notifications.description", "Customize your notifications"),
-                iconRes: "images/notifications-blue.png",
+                iconKey: "notification",
                 onTap: (){_onTapNotifications(context);},
               ),
               Container(height: 8,),
               InfoButton(
                 title: Localization().getStringEx("panel.settings.notification_prefferences.button.bluetooth.title", "Bluetooth"),
                 description: Localization().getStringEx("panel.settings.notification_prefferences.button.bluetooth.description", "Manage your bluetooth settings"),
-                iconRes: "images/bluetooth.png",
+                iconKey: "bluetooth",
                 onTap: (){_onTapBluetooth(context);},
               ),
             ],));

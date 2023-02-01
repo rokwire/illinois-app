@@ -76,7 +76,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
                     backgroundColor: Styles().colors!.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                    rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                    rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                     label: _getContentLabel(_selectedContent),
                     onTap: _changeSettingsContentValuesVisibility))),
           Expanded(
@@ -125,7 +125,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
   }

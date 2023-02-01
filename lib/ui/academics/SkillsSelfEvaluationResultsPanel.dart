@@ -40,7 +40,7 @@ class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
 
 class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationResultsPanel> {
   static const String _defaultComparisonResponseId = 'none';
-  
+
   Map<String, SkillsSelfEvaluationContent> _resultsContentItems = {};
   List<SkillsSelfEvaluationProfile> _profileContentItems = [];
   List<SurveyResponse> _responses = [];
@@ -125,7 +125,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
             DropdownButton<String>(
-              icon: Image.asset('images/icon-down.png', color: Styles().colors?.surface),
+              icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
               isExpanded: true,
               style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
               items: _buildResponseDateDropDownItems(),
@@ -183,7 +183,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
                     Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
                     Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)),
                     Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.past'), textAlign: TextAlign.center)),
-                    Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Image.asset('images/chevron-right.png', color: Styles().colors?.fillColorSecondary))),
+                    Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true))),
                   ],)),
                 )
               )
@@ -354,7 +354,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       messageTextAlign: TextAlign.center,
       buttons: buttons,
       buttonsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
-      closeButtonIcon: Image.asset('images/close-orange-small.png', color: Styles().colors?.fillColorPrimaryVariant),
+      closeButtonIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
     );
   }
 

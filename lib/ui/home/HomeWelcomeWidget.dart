@@ -91,7 +91,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
             Semantics(label: Localization().getStringEx('widget.home.welcome.button.close.label', 'Close'), button: true, excludeSemantics: true, child:
               InkWell(onTap : _onClose, child:
                 Padding(padding: EdgeInsets.all(16), child:
-                  Image.asset('images/close-white.png')
+                  Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
                 ),
               ),
             ),

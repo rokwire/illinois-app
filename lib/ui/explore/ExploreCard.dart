@@ -279,9 +279,9 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                     onTap: _onTapExploreCardStar,
                     child:Container(child: Padding(padding: EdgeInsets.only(
                       right: 16, top: 12, left: 24, bottom: 5),
-                      child: Image.asset(isFavorite
-                          ? 'images/icon-star-orange.png'
-                          : 'images/icon-star-gray-frame-thin.png',
+                      child: Styles().images?.getImage(isFavorite
+                          ? 'star-filled'
+                          : 'star-outline-gray',
                         excludeFromSemantics: true,)
                       ))
                   )),)))
@@ -338,7 +338,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       padding: _detailPadding,
       child: Row(
         children: <Widget>[
-          Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
+          Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
           Padding(
             padding: _iconPadding,
           ),
@@ -377,8 +377,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         InkWell(onTap: onLocationTap, child:
           Padding(padding: _detailPadding, child:
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(padding: _iconPadding, child:
-                Image.asset('images/icon-location.png', excludeFromSemantics: true,)
+              Padding(padding: _iconPadding, child: Styles().images?.getImage('location', excludeFromSemantics: true)
               ),
               Expanded(child:
                 Text(locationText, style: (onLocationTap != null) ? Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline') : Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular')
@@ -401,7 +400,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Image.asset("images/laptop.png", excludeFromSemantics: true,), //TBD update icon res
+              Styles().images?.getImage("laptop", excludeFromSemantics: true) ?? Container(), //TBD update icon res
               Padding(
                 padding: _iconPadding,
               ),
@@ -424,7 +423,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-time.png', excludeFromSemantics: true),
+            Styles().images?.getImage('time', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
@@ -447,9 +446,9 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
       for (PaymentType? paymentType in paymentTypes) {
-        Image? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
+        Widget? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
         if (image != null) {
-          details.add(Padding(padding: EdgeInsets.only(right: 6) ,child:image) );
+          details.add(Padding(padding: EdgeInsets.only(right: 6), child:image) );
         }
       }
     }
@@ -666,16 +665,14 @@ class _EventSmallCard extends StatelessWidget {
                                 'widget.card.button.favorite.on.hint', ''),
                             button: true,
                             excludeSemantics: true,
-                            child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Image.asset(
-                                isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
-                            ))
+                            child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))
                         )),),
                     Visibility(visible: isMoreCardType, child: Padding(
-                      padding: EdgeInsets.only(left: 24, top: 4), child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),),)
+                      padding: EdgeInsets.only(left: 24, top: 4), child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)))
                   ],),),
                 Visibility(visible: !isMoreCardType, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(right: 10),
-                    child: Image.asset('images/icon-time.png', excludeFromSemantics: true),),
+                    child: Styles().images?.getImage('time', excludeFromSemantics: true)),
                   Expanded(child: Text(_subTitle ?? '', overflow: TextOverflow.ellipsis, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.large') ,),)
                 ],),)
               ],),),),

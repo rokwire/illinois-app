@@ -103,7 +103,7 @@ class AppAlert {
           Stack(alignment: Alignment.center, children: [
             Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: [
-                Image.asset('images/block-i-orange.png'),
+                Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
                 Padding(padding: EdgeInsets.only(top: 18), child:
                   Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
                 ),
@@ -116,7 +116,7 @@ class AppAlert {
                   Navigator.of(context).pop();
                   }, child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Image.asset('images/icon-x-orange.png')
+                    Styles().images?.getImage('close', excludeFromSemantics: true)
                   )
                 )
               )
@@ -365,6 +365,17 @@ extension StateExt on State {
     if (mounted) {
       // ignore: invalid_use_of_protected_member
       setState(fn);
+    }
+  }
+
+  @protected
+  void applyStateIfMounted(VoidCallback fn) {
+    if (mounted) {
+      // ignore: invalid_use_of_protected_member
+      setState(fn);
+    }
+    else {
+      fn();
     }
   }
 }

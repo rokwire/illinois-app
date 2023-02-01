@@ -248,7 +248,7 @@ class WellnessLargeResourceButton extends StatelessWidget {
               ),
             ),
             hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
-              Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
+              Styles().images?.getImage('external-link', excludeFromSemantics: true)
             ) : Container(),
             FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
           ]),
@@ -284,10 +284,10 @@ class WellnessRegularResourceButton extends StatelessWidget {
           ),
         ),
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
-          Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
+          Styles().images?.getImage('external-link', excludeFromSemantics: true)
         ) : Container(),
         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
-          Image.asset('images/chevron-right.png')
+          Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)
         ),
       ]),
     );

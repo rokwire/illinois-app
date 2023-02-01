@@ -102,7 +102,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
     return Scaffold(backgroundColor: Styles().colors!.background, body:
       Stack(children: <Widget>[
-        Styles().images?.getImage("login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ) ?? Container(),
+        Styles().images?.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         SafeArea(child:
           Column(children:[
             Expanded(child:

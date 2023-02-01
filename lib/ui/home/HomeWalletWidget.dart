@@ -46,6 +46,7 @@ class _HomeWalletWidgetState extends HomeCompoundWidgetState<HomeWalletWidget> {
 
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeWalletWidget.title;
+  @override String? get titleIconKey => 'wallet';
   @override String? get emptyMessage => Localization().getStringEx("widget.home.wallet.text.empty.description", "Tap the \u2606 on items in Wallet so you can quickly find them here.");
 
   @override
@@ -173,7 +174,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                       ),
                       Visibility(visible: SettingsAddIlliniCashPanel.canPresent, child:
                         Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
-                          IconButton(color: Styles().colors!.fillColorPrimary, icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true), onPressed: _onTapPlus)
+                          IconButton(color: Styles().colors!.fillColorPrimary, icon: Styles().images?.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
                         ),
                       )
                     ]),

@@ -80,7 +80,7 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
         borderColor: Styles().colors!.fillColorPrimary,
         label: Localization().getStringEx('panel.laundry.issues_submitted.return.button', 'Return'),
         onTap: _onTapBack,
-        leftIcon: Image.asset('images/chevron-left-white.png'));
+        leftIcon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true));
   }
 
   void _onTapBack() {

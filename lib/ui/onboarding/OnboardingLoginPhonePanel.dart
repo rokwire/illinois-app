@@ -65,7 +65,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                       Stack(
                         children: <Widget>[
                           Styles().images?.getImage(
-                            "login-header.png",
+                            "header-login",
                             fit: BoxFit.fitWidth,
                             width: MediaQuery.of(context).size.width,
                             excludeFromSemantics: true,

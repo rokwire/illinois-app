@@ -122,7 +122,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.athletics_events.text.title', 'Athletics Events'),
-      titleIcon: Image.asset('images/icon-calendar.png'),
+      titleIconKey: 'calendar',
       child: _buildContent(),
     );
   }

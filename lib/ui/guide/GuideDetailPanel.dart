@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -115,7 +115,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                 button: true,
                 child: GestureDetector(onTap: _onTapFavorite, child:
                   Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
-                    Image.asset(_isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
+                  Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                   )
             ),),),),
           ],)
@@ -165,9 +165,14 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     if (StringUtils.isNotEmpty(titleHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-          Html(data: titleHtml,
-            onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-            style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: FontSize(36), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+        HtmlWidget(
+          titleHtml ?? "",
+          onTapUrl : (url) {_onTapLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 36),
+        )
+          // Html(data: titleHtml,
+          //   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+          //   style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: FontSize(36), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
       ),);
     }
     
@@ -185,10 +190,12 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     if (StringUtils.isNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-          Html(data: descriptionHtml,
-            onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-            style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-      ),),);
+        HtmlWidget(
+          descriptionHtml ?? "",
+          onTapUrl : (url) {_onTapLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+        )
+      ),);
     }
 
 
@@ -289,10 +296,12 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     if (StringUtils.isNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-          Html(data: descriptionHtml,
-            onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-            style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-      ),),);
+        HtmlWidget(
+          descriptionHtml ?? "",
+          onTapUrl : (url) {_onTapLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+        )
+      ),);
     }
 
     List<dynamic>? subDetails = JsonUtils.listValue(Guide().entryValue(_guideEntry, 'sub_details'));
@@ -303,10 +312,12 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           if (StringUtils.isNotEmpty(sectionHtml)) {
             contentList.add(
               Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-                Html(data: sectionHtml,
-                  onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-            ),),);
+                HtmlWidget(
+                  sectionHtml ?? "",
+                  onTapUrl : (url) {_onTapLink(url); return true;},
+                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20),
+                )
+            ),);
           }
 
           List<dynamic>? entries = JsonUtils.listValue(subDetail['entries']);
@@ -317,10 +328,12 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                 if (StringUtils.isNotEmpty(headingHtml)) {
                   contentList.add(
                     Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
-                      Html(data: headingHtml,
-                        onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                        style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-                  ),),);
+                      HtmlWidget(
+                        headingHtml ?? "",
+                        onTapUrl : (url) {_onTapLink(url); return true;},
+                        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                      )
+                    ),);
                 }
 
                 List<dynamic>? numbers = JsonUtils.listValue(entry['numbers']);
@@ -350,10 +363,12 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                             Padding(padding: EdgeInsets.only(left: numberLeftPadding, right: numberRightPadding), child:
                               Text(sprintf(numberTextFormat, [numberIndex + 1]), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),),
                             Expanded(child:
-                              Html(data: numberHtml,
-                              onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                                style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-                            ),),
+                              HtmlWidget(
+                                numberHtml,
+                                onTapUrl : (url) {_onTapLink(url); return true;},
+                                textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                              )
+                            ),
                           ],)
                         ),
                       );
@@ -386,10 +401,12 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                             Padding(padding: EdgeInsets.only(left: bulletLeftPadding, right: bulletRightPadding), child:
                               Text(bulletText, style: TextStyle(color: bulletColor, fontSize: bulletFontSize, fontFamily: bulletFontFamily),),),
                             Expanded(child:
-                              Html(data: bulletHtml,
-                              onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                                style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-                            ),),
+                              HtmlWidget(
+                                bulletHtml,
+                                onTapUrl : (url) {_onTapLink(url); return true;},
+                                textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                              )
+                            ),
                           ],)
                         ),
                       );
@@ -425,7 +442,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   onTap:() { _onTapLink(url);  },
-                  rightIcon: Image.asset('images/external-link.png', semanticLabel: "external link",),
+                  rightIcon: Styles().images?.getImage('external-link'),
                 )
               ),
             );
@@ -476,7 +493,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     return ((contentList != null) && (0 < contentList.length)) ?
       Container(padding: EdgeInsets.symmetric(vertical: 16), child:
         SectionSlantHeader(title: "Related",
-          titleIconAsset: 'images/icon-related.png',
+          titleIconKey: 'related',
           children: contentList,
       )) :
       Container();

@@ -119,7 +119,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                               style: Styles().textStyles?.getTextStyle("widget.heading.regular"),
                               children: [
                             TextSpan(text: headerMsgStart),
-                            WidgetSpan(alignment: PlaceholderAlignment.middle, child: Image.asset('images/example.png')),
+                            WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images?.getImage('check-circle-outline-gray-white') ?? Container()),
                             TextSpan(text: headerMsgEnd)
                           ]))))),
           Padding(
@@ -264,11 +264,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                 onTap: () {
                   _onCancelSearchTap();
                 },
-                child: Image.asset(
-                  'images/icon-x-orange.png',
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('close', excludeFromSemantics: true),
               ),
             ),
           ),
@@ -281,12 +277,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                 onTap: () {
                   _onSearchTap();
                 },
-                child: Image.asset(
-                  'images/icon-search.png',
-                  color: Styles().colors!.fillColorSecondary,
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('search', excludeFromSemantics: true),
               ))
         ],
       ),
@@ -460,9 +451,7 @@ class _SelectionItemWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: Styles().textStyles?.getTextStyle("widget.title.regular")
                       )),
-                  Image.asset(selected!
-                      ? 'images/deselected-dark.png'
-                      : 'images/deselected.png')
+                  Styles().images?.getImage(selected! ? 'check-circle-filled' : 'check-circle-outline-gray') ?? Container(),
                 ],
               ),
             ),

@@ -67,7 +67,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
                 children: <Widget>[
                   SectionRibbonHeader(
                       title: Localization().getStringEx("panel.athletics_news_list.title", 'Athletics News'),
-                      titleIconAsset: 'images/icon-news.png'),
+                      titleIconKey: 'news'),
                   Container(
                     //height: 28 + 20*(MediaQuery.of(context).textScaleFactor),
                     child:Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
@@ -157,7 +157,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
           return StringUtils.isNotEmpty(news.imageUrl) ? ImageSlantHeader(
             imageUrl: news.imageUrl,
             slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
-            slantImageAsset:  'images/slant-down-right-blue.png',
+            slantImageKey:  'slant-dark',
             child: _buildAthleticsNewsCard(news)
           ) : _buildAthleticsNewsCard(news);
         },

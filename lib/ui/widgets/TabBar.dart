@@ -32,8 +32,8 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.home.title', 'Home'),
         hint: Localization().getStringEx('tabbar.home.hint', ''),
-        iconAsset: 'images/tab-home.png',
-        selectedIconAsset: 'images/tab-home-selected.png',
+        iconKey: 'home-gray',
+        selectedIconKey: 'home',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -42,8 +42,8 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
         hint: Localization().getStringEx('tabbar.favorites.hint', ''),
-        iconAsset: 'images/tab-favorites.png',
-        selectedIconAsset: 'images/tab-favorites-selected.png',
+        iconKey: 'star-outline-gray',
+        selectedIconKey: 'star-filled',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -52,8 +52,8 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.explore.title', 'Explore'),
         hint: Localization().getStringEx('tabbar.explore.hint', ''),
-        iconAsset: 'images/tab-explore.png',
-        selectedIconAsset: 'images/tab-explore-selected.png',
+        iconKey: 'compass-gray',
+        selectedIconKey: 'compass',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -62,8 +62,8 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.browse.title', 'Browse'),
         hint: Localization().getStringEx('tabbar.browse.hint', ''),
-        iconAsset: 'images/tab-browse.png',
-        selectedIconAsset: 'images/tab-browse-selected.png',
+        iconKey: 'campus-tools-outline-gray',
+        selectedIconKey: 'campus-tools-filled',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -72,8 +72,18 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.map.title', 'Map'),
         hint: Localization().getStringEx('tabbar.map.hint', 'Map Page'),
-        iconAsset: 'images/tab-navigate.png',
-        selectedIconAsset: 'images/tab-navigate-selected.png',
+        iconKey: 'location-outline-gray',
+        selectedIconKey: 'location',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'maps2') {
+      return rokwire.TabWidget(
+        label: 'Map2',
+        hint: 'Map Page2',
+        iconKey: 'location-outline-gray',
+        selectedIconKey: 'location',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -82,8 +92,8 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.academics.title', 'Academics'),
         hint: Localization().getStringEx('tabbar.academics.hint', ''),
-        iconAsset: 'images/tab-academics.png',
-        selectedIconAsset: 'images/tab-academics-selected.png',
+        iconKey: 'academics-gray',
+        selectedIconKey: 'academics',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -92,8 +102,8 @@ class TabBar extends rokwire.TabBar {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.wellness.title', 'Wellness'),
         hint: Localization().getStringEx('tabbar.wellness.hint', ''),
-        iconAsset: 'images/tab-wellness.png',
-        selectedIconAsset: 'images/tab-wellness-selected.png',
+        iconKey: 'wellness-gray',
+        selectedIconKey: 'wellness',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );

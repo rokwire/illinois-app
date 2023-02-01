@@ -88,14 +88,14 @@ class Appointment with Explore, Favorite {
     return randomImageURL;
   }
 
-  String? get imageUrlBasedOnCategory { //Keep consistent images
+  String? get imageKeyBasedOnCategory { //Keep consistent images
       String? toutImageUrl;
       switch (type) {
         case AppointmentType.in_person:
-          toutImageUrl = 'images/appointment-detail-inperson-tout.png';
+          toutImageUrl = 'photo-building';
           break;
         case AppointmentType.online:
-          toutImageUrl = 'images/appointment-detail-online-tout.jpg';
+          toutImageUrl = 'photo-online';
           break;
         default:
           toutImageUrl = imageUrl!;

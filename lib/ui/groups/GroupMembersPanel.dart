@@ -275,7 +275,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
 
     return Column(children: <Widget>[
-      SectionRibbonHeader(title: _getSectionHeading(), titleIconAsset: 'images/icon-member.png'),
+      SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
       _buildMembersSearch(),
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
@@ -284,8 +284,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
               backgroundColor: Styles().colors!.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-              rightIconAsset: _statusValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png',
-              label: _memberStatusToString(_selectedMemberStatus),
+                rightIconKey: _statusValuesVisible ? 'chevron-up' : 'chevron-down',
+                label: _memberStatusToString(_selectedMemberStatus),
               onTap: _onTapRibbonButton))),
       Stack(children: [
         Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child: contentWidget),
@@ -338,12 +338,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                   padding: EdgeInsets.all(12),
                   child: GestureDetector(
                     onTap: _onTapClearSearch,
-                    child: Image.asset(
-                        'images/icon-x-orange.png',
-                        width: 25,
-                        height: 25,
-                        excludeFromSemantics: true
-                    ),
+                    child: Styles().images?.getImage('clear', excludeFromSemantics: true),
                   ),
                 )
             ),
@@ -356,13 +351,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                 padding: EdgeInsets.all(12),
                 child: GestureDetector(
                   onTap: _onTapSearch,
-                  child: Image.asset(
-                      'images/icon-search.png',
-                      color: Styles().colors!.fillColorSecondary,
-                      width: 25,
-                      height: 25,
-                      excludeFromSemantics: true
-                  ),
+                  child: Styles().images?.getImage('search', excludeFromSemantics: true),
                 ),
               ),
             ),
@@ -463,7 +452,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         rightIcon: null,
         label: _memberStatusToString(status),
         onTap: () => _onTapStatusItem(status));
@@ -599,7 +588,7 @@ class _PendingMemberCard extends StatelessWidget {
                         textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
                         fontSize: 16,
-                        rightIcon: Image.asset('images/chevron-right.png'),
+                        rightIcon: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");

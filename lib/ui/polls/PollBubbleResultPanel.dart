@@ -146,7 +146,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
     _progressKeys = [];
     int totalVotes = poll.results?.totalVotes ?? 0;
     for (int optionIndex = 0; optionIndex < poll.options!.length; optionIndex++) {
-      String checkboxImage = 'images/checkbox-unselected.png'; // (_vote[optionIndex] != null) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
+      String checkboxIconKey = 'check-circle-outline-gray'; // (_vote[optionIndex] != null) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
 
       String optionString = poll.options![optionIndex];
       String votesString;
@@ -170,7 +170,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
         Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
+            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage(checkboxIconKey, excludeFromSemantics: true)),
             Expanded(key: progressKey, child:Stack(children: <Widget>[
               CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(/*height:30, width: _progressWidth*/),),
               Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
@@ -235,7 +235,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
         excludeSemantics: true,
         child: InkWell(
             onTap : _onClose,
-            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-white.png'))));
+            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))));
   }
 
   void _evalProgressWidths() {

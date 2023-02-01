@@ -6,7 +6,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [5.0.1] - 2022-01-04
+## [4.3.8] - 2022-01-31
+### Added
+- Added RSO group attribute and checkbox attribute support [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.7] - 2022-01-30
+### Changed
+- Content filters renamed to Content Attributes [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Use category id as category selection key [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Updated Group Attributes panel behavior [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.6] - 2022-01-27
+### Added
+- Edit lastAppReviewTime from SettingsDebugPanel [#2941](https://github.com/rokwire/illinois-app/issues/2941).
+- Added Filters to group settings [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+### Changed
+- Acknowledged University colleges and departments, added categories and tags filter for test purpose [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.5] - 2022-01-25
+### Added
+- Added Group filters to groups home panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.4] - 2022-01-24
+### Changed
+- Store filter selection in groups as {filter_id : option_id} mapping [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+### Fixed
+- Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
+
+## [4.3.3] - 2022-01-23
+### Changed
+- Group filters moved to standalone panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Preserve Group filters dropdown popup when selecting items that are multiple selected [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.2] - 2022-01-20
+### Fixed
+- Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
+### Changed
+- Access MTD via content service [#2922](https://github.com/rokwire/illinois-app/issues/2922).
+- Removed access to shibboleth section from config secret keys (unused).
+- Fixed checkbox image style in research questionnaire.
+- Changed usage of HTMLWidget. Use flutter_widget_from_html for better Accessibility support. [#2912](https://github.com/rokwire/illinois-app/issues/2912).
+### Added
+- Acknwoledge Google Maps flutter plugin [#2904](https://github.com/rokwire/illinois-app/issues/2904).
+- Added filters in create group panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.1] - 2022-01-12
+### Changed
+- Use Styles().images [#2476](https://github.com/rokwire/illinois-app/issues/2476).
+- Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
+- Revert upcoming release version number to 4.3 [#2915](https://github.com/rokwire/illinois-app/issues/2915).
+### Added
+- Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
+- Display managed and membership date fields in GroupDetailPanel [#2907](https://github.com/rokwire/illinois-app/issues/2907).
+- Show current year in copyright statement [#2899](https://github.com/rokwire/illinois-app/issues/2899).
+### Fixed
+- Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
+- Handle tap action over poll and wellness todo items notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
+
+## [4.3.0] - 2022-01-04
 ### Changed
 - Switch to xCode 14.2.
 

@@ -62,7 +62,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                   Stack(
                     children: <Widget>[
                       Styles().images?.getImage(
-                        "login-header.png",
+                        "header-login",
                         fit: BoxFit.fitWidth,
                         width: MediaQuery.of(context).size.width,
                         excludeFromSemantics: true,

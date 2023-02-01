@@ -178,7 +178,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       contentList.add(
         HomeSlantWidget(
           title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          titleIconKey: 'campus-tools',
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: sectionsList,),
         )    
@@ -321,8 +321,8 @@ class _BrowseSection extends StatelessWidget {
                       Center(child:
                         _hasBrowseContent ? (
                           expanded ?
-                            Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
-                            Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
+                            Styles().images?.getImage('chevron-up', excludeFromSemantics: true) :
+                            Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
                         ) : Container()
                       ),
                     )
@@ -484,12 +484,12 @@ class _BrowseEntry extends StatelessWidget {
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
-                  Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
+                  Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold,
+                      fontSize: 20, color: Styles().colors!.fillColorPrimary)),
                 ),
               ),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18), child:
-                Image.asset('images/chevron-right.png'),
-              ),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)),
             ],),
         ),
       ),

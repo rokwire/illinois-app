@@ -16,13 +16,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 class OnboardingBackButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final GestureTapCallback? onTap;
-  final String image;
+  final String imageKey;
 
-  OnboardingBackButton({this.padding, this.onTap, this.image = 'images/chevron-left-gray.png'});
+  OnboardingBackButton({this.padding, this.onTap, this.imageKey = 'chevron-left-gray'});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class OnboardingBackButton extends StatelessWidget {
           child: Container(
               height: 32,
               width: 32,
-              child: Image.asset(image, excludeFromSemantics: true)
+              child: Styles().images?.getImage(imageKey, excludeFromSemantics: true)
           ),
         ),
       )

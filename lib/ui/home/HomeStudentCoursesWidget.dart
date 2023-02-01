@@ -138,7 +138,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
           child: Container(color: Styles().colors?.fillColorPrimary, child:
             Row(children: <Widget>[
 
-              HomeTitleIcon(image: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
+              HomeTitleIcon(image: Styles().images?.getImage('courses', excludeFromSemantics: true)),
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
@@ -188,7 +188,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
         DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down-white.png')),
+          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
           isExpanded: false,
           style: getTermDropDownItemStyle(selected: false),
           hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.white)) : null,

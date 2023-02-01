@@ -17,8 +17,8 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -225,7 +225,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child:Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child: Image.asset(isFavorite?'images/icon-star-orange.png':'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true))))
+                    child:Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true))))
             ),),
           ],
         ));
@@ -270,7 +270,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
       for (PaymentType? paymentType in paymentTypes) {
-        Image? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
+        Widget? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
         if (image != null) {
           details.add(Padding(padding: EdgeInsets.only(right: 6) ,child:
             Row(
@@ -403,7 +403,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-location.png', excludeFromSemantics: true),
+                  child: Styles().images?.getImage('location', excludeFromSemantics: true),
                 ),
                 Expanded(child: Text(locationText,
                     style: TextStyle(
@@ -441,7 +441,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.only(right: 10),
-                        child:Image.asset('images/icon-time.png', excludeFromSemantics: true),),
+                        child: Styles().images?.getImage('time', excludeFromSemantics: true)),
                       Expanded(child:
                         FilterSelector(
                           title: displayTime,
@@ -551,11 +551,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     }
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: Html(
-          data: dining!.exploreLongDescription,
-          onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-          style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-        ));
+        child:
+        HtmlWidget(
+            StringUtils.ensureNotEmpty(dining!.exploreLongDescription),
+            onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+        )
+    );
   }
 
   Widget _buildDiningDetail(){
@@ -873,7 +875,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                               )),
                               Padding(
                                 padding: EdgeInsets.only(left: 4),
-                                child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
+                                child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                               )
                             ],
                           ),
@@ -903,7 +905,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Image.asset('images/chevron-left.png', excludeFromSemantics: true),
+                      image: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true),
                       onTap: decrementDateFilter,
                     ),
                   ),
@@ -913,7 +915,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
+                      image: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                       onTap: incrementDateFilter,
                     ),
                   ),
@@ -1074,15 +1076,15 @@ class _StationItem extends StatefulWidget {
 
 class _StationItemState extends State<_StationItem>{
 
-  bool? expanded;
+  bool expanded;
 
-  _StationItemState({this.expanded});
+  _StationItemState({this.expanded = false});
 
   void onTap(){
     Analytics().logSelect(target: "Station Item: ${widget.title}");
     if(mounted) {
       setState(() {
-        expanded = !expanded!;
+        expanded = !expanded;
       });
     }
   }
@@ -1100,10 +1102,10 @@ class _StationItemState extends State<_StationItem>{
       children: <Widget>[
         Semantics(
           label: widget.title,
-          hint: expanded!
+          hint: expanded
               ? Localization().getStringEx("widget.food_detail.button.dining_station.expanded.hint","Double tap to collaps")
               : Localization().getStringEx("widget.food_detail.button.dining_station.collapsed.hint","Double tap to expand"),
-          value: expanded!
+          value: expanded
               ? Localization().getStringEx("widget.food_detail.button.dining_station.value.expanded","Expanded")
               : Localization().getStringEx("widget.food_detail.button.dining_station.value.collapsed","Collapsed"),
           button: true,
@@ -1126,7 +1128,7 @@ class _StationItemState extends State<_StationItem>{
                         ),
                       ),
                     ),
-                    expanded! ? Image.asset('images/chevron-down.png', excludeFromSemantics: true) : Image.asset('images/chevron-up.png', excludeFromSemantics: true)
+                    Styles().images?.getImage(expanded ? 'chevron-down' : 'chevron-up', excludeFromSemantics: true) ?? Container(),
                   ],
                 ),
               ),
@@ -1139,7 +1141,7 @@ class _StationItemState extends State<_StationItem>{
   }
 
   Widget _buildExpandedWidget(){
-    return (widget.productItems.isNotEmpty && expanded!) ?  Container(
+    return (widget.productItems.isNotEmpty && expanded) ?  Container(
         decoration: BoxDecoration(
             border: Border(
                 left: BorderSide(color: Styles().colors!.surfaceAccent!),
@@ -1197,7 +1199,7 @@ class _ProductItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                Image.asset('images/chevron-right.png', excludeFromSemantics: true)
+                Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
               ],
             ),
           ),
@@ -1208,7 +1210,7 @@ class _ProductItem extends StatelessWidget {
 }
 
 class _CircularButton extends StatelessWidget{
-  final Image image;
+  final Widget? image;
   final GestureTapCallback? onTap;
 
   _CircularButton({required this.image, this.onTap});

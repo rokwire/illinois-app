@@ -16,14 +16,14 @@ extension RecentItemExt on RecentItem {
     }
   }
 
-  String? get iconPath {
+  String? get iconKey {
     switch (type) {
-      case RecentItemType.event:   return 'images/icon-calendar.png';
-      case RecentItemType.dining:  return 'images/icon-dining-yellow.png';
-      case RecentItemType.game:    return 'images/icon-athletics-blue.png';
-      case RecentItemType.news:    return 'images/icon-news.png';
-      case RecentItemType.laundry: return 'images/icon-news.png';
-      case RecentItemType.guide:   return 'images/icon-news.png';
+      case RecentItemType.event:   return 'calendar';
+      case RecentItemType.dining:  return 'dining';
+      case RecentItemType.game:    return 'athletics';
+      case RecentItemType.news:    return 'news';
+      case RecentItemType.laundry: return 'laundry';
+      case RecentItemType.guide:   return 'guide';
       default:
         return null;
     }

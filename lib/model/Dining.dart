@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -21,6 +22,7 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 
@@ -123,6 +125,37 @@ class Dining with Explore implements Favorite {
       'PaymentTypes': PaymentTypeHelper.paymentTypesToList(paymentTypes),
     };
   }
+
+  @override
+  bool operator ==(other) =>
+    (other is Dining) &&
+      (other.id == id) &&
+      (other.title == title) &&
+      (other.subTitle == subTitle) &&
+      (other.diningType == diningType) &&
+      (other.shortDescription == shortDescription) &&
+      (other.longDescription == longDescription) &&
+      (other.imageURL == imageURL) &&
+      (DeepCollectionEquality().equals(other.onlineOrder, onlineOrder)) &&
+      (other.placeID == placeID) &&
+      (other.location == location) &&
+      (DeepCollectionEquality().equals(other.paymentTypes, paymentTypes)) &&
+      (DeepCollectionEquality().equals(other.diningSchedules, diningSchedules));
+
+  @override
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (title?.hashCode ?? 0) ^
+      (subTitle?.hashCode ?? 0) ^
+      (diningType?.hashCode ?? 0) ^
+      (shortDescription?.hashCode ?? 0) ^
+      (longDescription?.hashCode ?? 0) ^
+      (imageURL?.hashCode ?? 0) ^
+      (DeepCollectionEquality().hash(onlineOrder)) ^
+      (placeID?.hashCode ?? 0) ^
+      (location?.hashCode ?? 0) ^
+      (DeepCollectionEquality().hash(paymentTypes)) ^
+      (DeepCollectionEquality().hash(diningSchedules));
 
   static bool canJson(Map<String, dynamic>? json) {
     return (json != null) && (json['DiningOptionID'] != null);
@@ -405,26 +438,26 @@ class PaymentTypeHelper {
     }
     switch (paymentType) {
       case PaymentType.ClassicMeal:
-        return 'images/icon-payment-type-classic-meal.png';
+        return 'payment-meal';
       case PaymentType.DiningDollars:
-        return 'images/icon-payment-type-dining-dollars.png';
+        return 'payment-dining';
       case PaymentType.IlliniCash:
-        return 'images/icon-payment-type-ilini-cash.png';
+        return 'payment-student-cash';
       case PaymentType.CreditCard:
-        return 'images/icon-payment-type-credit-card.png';
+        return 'payment-credit-card';
       case PaymentType.Cash:
-        return 'images/icon-payment-type-cache.png';
+        return 'payment-cash';
       case PaymentType.GooglePay:
-        return 'images/icon-payment-type-google-pay.png';
+        return 'payment-google-pay';
       case PaymentType.ApplePay:
-        return 'images/icon-payment-type-apple-pay.png';
+        return 'payment-apple-pay';
       default:
         return null;
     }
   }
 
-  static Image? paymentTypeIcon(PaymentType? paymentType) {
-    return (paymentType != null) ? Image.asset(paymentTypeToImageAsset(paymentType)!, semanticLabel: paymentTypeToDisplayString(paymentType)) : null;
+  static Widget? paymentTypeIcon(PaymentType? paymentType) {
+    return (paymentType != null) ? Styles().images?.getImage(paymentTypeToImageAsset(paymentType)!, semanticLabel: paymentTypeToDisplayString(paymentType)) : null;
   }
 
   static List<PaymentType>? paymentTypesFromList(List<dynamic>? paymentTypesList) {

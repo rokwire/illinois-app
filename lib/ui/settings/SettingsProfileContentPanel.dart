@@ -109,8 +109,8 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
-              Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child: 
-                Image.asset('images/close-orange.png', semanticLabel: '',),
+              Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+                Styles().images?.getImage('close', excludeFromSemantics: true),
               ),
             ),
           ),
@@ -135,7 +135,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
                 backgroundColor: Styles().colors!.white,
                 borderRadius: BorderRadius.all(Radius.circular(5)),
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                 label: _getContentLabel(_selectedContent),
                 onTap: _changeSettingsContentValuesVisibility
               )
@@ -188,7 +188,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
   }

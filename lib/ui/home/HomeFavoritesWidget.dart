@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
@@ -88,10 +88,10 @@ class HomeFavoritesWidget extends StatefulWidget {
       case MTDStop.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_stops", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MTD Stops</b></a> for quick access here."); break;
       case ExplorePOI.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_destinations", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MTD Destinations</b></a> for quick access here."); break;
       case GuideFavorite.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.campus_guide", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide</b></a> for quick access here."); break;
-      case Appointment.favoriteKeyName: 
-        message = (Storage().appointmentsCanDisplay != true) ? 
-          Localization().getStringEx('widget.home.favorites.message.empty.appointments.not_to_display', 'There is nothing to display as you have chosen not to display any past or future appointments.') : 
-          Localization().getStringEx("widget.home.favorites.message.empty.appointments", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MyMcKinley Appointments</b></a> for quick access here."); 
+      case Appointment.favoriteKeyName:
+        message = (Storage().appointmentsCanDisplay != true) ?
+          Localization().getStringEx('widget.home.favorites.message.empty.appointments.not_to_display', 'There is nothing to display as you have chosen not to display any past or future appointments.') :
+          Localization().getStringEx("widget.home.favorites.message.empty.appointments", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MyMcKinley Appointments</b></a> for quick access here.");
         break;
     }
     return (message != null) ? message.replaceAll(localUrlMacro, '$localScheme://${key.toLowerCase()}') : null;
@@ -198,7 +198,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: headingTitle,
-      titleIcon: headingIcon,
+      titleIconKey: headingIconKey,
       child: _buildContent()
     );
   }
@@ -291,12 +291,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     }
 
     bool isFavorite = Auth2().isFavorite(item);
-    Image? favoriteStarIcon = item?.favoriteStarIcon(selected: isFavorite);
+    Widget? favoriteStarIcon = item?.favoriteStarIcon(selected: isFavorite);
     Color? headerColor = item?.favoriteHeaderColor;
     String? title = item?.favoriteTitle;
     String? cardDetailText = item?.favoriteDetailText;
     Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? Styles().colors?.textBackground;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
+    Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: () => _onTapItem(item), child:
       Semantics(label: title, child:
@@ -525,13 +525,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         padding: EdgeInsets.all(16),
-        child: Html(data: HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
-          onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'HomeFavoritesWidget(${widget.favoriteKey})'),
-          style: {
-            "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-            "a": Style(color: HomeFavoritesWidget.linkColor(widget.favoriteKey)),
-          },
-        ),
+        child:  HtmlWidget(
+            HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
+            onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'HomeFavoritesWidget(${widget.favoriteKey})'); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(widget.favoriteKey) ?? Colors.red)} : null
+        )
       ),
     );
   }
@@ -540,17 +539,17 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   String? get headingTitle => HomeFavoritesWidget.titleFromKey(favoriteKey: widget.favoriteKey);
 
 
-  Image? get headingIcon {
+  String? get headingIconKey {
     switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return Image.asset('images/icon-calendar.png', excludeFromSemantics: true,);
-      case Dining.favoriteKeyName: return Image.asset('images/icon-dining-orange.png', excludeFromSemantics: true,);
-      case Game.favoriteKeyName: return Image.asset('images/icon-calendar.png', excludeFromSemantics: true,);
-      case News.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
-      case LaundryRoom.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
-      case MTDStop.favoriteKeyName: return Image.asset('images/icon-location.png', excludeFromSemantics: true,);
-      case ExplorePOI.favoriteKeyName: return Image.asset('images/icon-location.png', excludeFromSemantics: true,);
-      case GuideFavorite.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
-      case Appointment.favoriteKeyName: return Image.asset('images/campus-tools.png', excludeFromSemantics: true,);
+      case Event.favoriteKeyName: return 'calendar';
+      case Dining.favoriteKeyName: return 'dining';
+      case Game.favoriteKeyName: return 'athletics';
+      case News.favoriteKeyName: return 'news';
+      case LaundryRoom.favoriteKeyName: return 'laundry';
+      case MTDStop.favoriteKeyName: return 'location';
+      case ExplorePOI.favoriteKeyName: return 'location';
+      case GuideFavorite.favoriteKeyName: return 'guide';
+      case Appointment.favoriteKeyName: return 'calendar';
     }
     return null;
   }

@@ -1,7 +1,7 @@
 
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -70,18 +70,25 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
         Text(reminderDate ?? '',
           style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 18, color: Styles().colors?.fillColorPrimary, ),),),
       Container(height: 4),
-      Html(data: titleHtml ?? '',
-        onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-        style: { "body": Style(fontFamily: Styles().fontFamilies?.medium, fontSize: FontSize(16), color: Styles().colors?.fillColorPrimary, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+      HtmlWidget(
+          StringUtils.ensureNotEmpty(titleHtml),
+          onTapUrl : (url) {_onTapLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+      )
     ] : <Widget>[
       Padding(padding: EdgeInsets.only(right: 17), child:
-        Html(data: titleHtml ?? '',
-          onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-          style: { "body": Style(fontFamily: Styles().fontFamilies?.extraBold, fontSize: FontSize(20), color: Styles().colors?.fillColorPrimary, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
+        HtmlWidget(
+          StringUtils.ensureNotEmpty(titleHtml),
+          onTapUrl : (url) {_onTapLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
+        ),
+      ),
       Container(height: 8),
-      Html(data: descriptionHtml ?? '',
-        onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-        style: { "body": Style(fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), color: Styles().colors?.textBackground, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+      HtmlWidget(
+        StringUtils.ensureNotEmpty(descriptionHtml),
+        onTapUrl : (url) {_onTapLink(url); return true;},
+        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+      ),
     ];
 
     return Container(
@@ -110,7 +117,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
             child:
             GestureDetector(onTap: _onTapFavorite, child:
               Container(padding: EdgeInsets.only(top:16, right:16, left: 20, bottom: 20), child:
-                Image.asset(_isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
+              Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
           ),)),),),
       ],),
     );

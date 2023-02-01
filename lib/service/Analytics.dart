@@ -259,6 +259,22 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogWellnessToDoReminderType        = "reminder";
   static const String   LogWellnessToDoWorkdays            = "workdays";
 
+  // Video Attributes
+  static const String   LogVideoEventName                  = "video";
+  static const String   LogAttributeVideoId                = "video_id";
+  static const String   LogAttributeVideoTitle             = "video_title";
+  static const String   LogAttributeVideoDuration          = "video_duration";
+  static const String   LogAttributeVideoPosition          = "video_position";
+  static const String   LogAttributeVideoEvent             = "video_event";
+  static const String   LogAttributeVideoEventStarted      = "started";
+  static const String   LogAttributeVideoEventPaused       = "paused";
+  static const String   LogAttributeVideoEventStopped      = "stopped";
+
+  // Research Questionnaire Event
+  // "event" : { "name":"research_questionnaire", "page":"...", "answers":["question": yes/no, ] } }
+  static const String   LogResearchQuestionnaireEventName  = "research_questionnaire";
+  static const String   LogResearchQuestionnaireAnswersName= "answers";
+
   // Event Attributes
   static const String   LogAttributeUrl                    = "url";
   static const String   LogAttributeEventId                = "event_id";
@@ -281,17 +297,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeGuideCategory          = "guide_category";
   static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
-
-  // Video Attributes
-  static const String   LogVideoEventName                  = "video";
-  static const String   LogAttributeVideoId                = "video_id";
-  static const String   LogAttributeVideoTitle             = "video_title";
-  static const String   LogAttributeVideoDuration          = "video_duration";
-  static const String   LogAttributeVideoPosition          = "video_position";
-  static const String   LogAttributeVideoEvent             = "video_event";
-  static const String   LogAttributeVideoEventStarted      = "started";
-  static const String   LogAttributeVideoEventPaused       = "paused";
-  static const String   LogAttributeVideoEventStopped      = "stopped";
 
   // Data
 
@@ -1032,6 +1037,21 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent(event);
   }
 
+  void logResearchQuestionnaiire({List<dynamic>? answers, Map<String, dynamic>? attributes}) {
+    // Build event data
+    Map<String, dynamic> event = {
+      LogEventName                        : LogResearchQuestionnaireEventName,
+      LogResearchQuestionnaireAnswersName : answers,
+    };
+
+    // Add optional attribute, if applied
+    if (attributes != null) {
+      event.addAll(attributes);
+    }
+
+    // Log the event
+    logEvent(event);
+  }
 }
 
 

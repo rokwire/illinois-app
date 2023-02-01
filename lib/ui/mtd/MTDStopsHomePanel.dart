@@ -139,7 +139,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
         backgroundColor: Styles().colors?.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: (_contentTypesDropdownExpanded ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+        rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
         label: _getContentTypeName(_selectedContentType),
         onTap: _onTapContentTypeDropdownButton
       )
@@ -167,7 +167,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     contentList.add(RibbonButton(
       backgroundColor: Styles().colors?.white,
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-      rightIconAsset: null,
+      rightIconKey: null,
       label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Stops'),
       onTap: _onTapSearch
     ),);
@@ -183,7 +183,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     return RibbonButton(
         backgroundColor: Styles().colors?.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: _getContentTypeName(contentType),
         onTap: () => _onTapContentTypeDropdownItem(contentType));
   }

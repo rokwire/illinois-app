@@ -21,6 +21,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -85,7 +86,6 @@ import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePanel extends StatefulWidget {
@@ -704,12 +704,18 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-                Html(data: StringUtils.ensureNotEmpty(description),
-                  onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
-                  style: { 
-                    "body": Style(color: Styles().colors!.textColorPrimaryVariant, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                    "b": Style(fontFamily: Styles().fontFamilies!.bold)
-                  })
+              HtmlWidget(
+                  StringUtils.ensureNotEmpty(description),
+                  onTapUrl : (url) {_onTapHtmlLink(url); return true;},
+                  textStyle:  TextStyle(color: Styles().colors!.textColorPrimaryVariant, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                  customStylesBuilder: (element) => (element.localName == "b") ? {"font-weight": "bold"} : null
+              )
+                // Html(data: StringUtils.ensureNotEmpty(description),
+                //   onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
+                //   style: {
+                //     "body": Style(color: Styles().colors!.textColorPrimaryVariant, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                //     "b": Style(fontFamily: Styles().fontFamilies!.bold)
+                //   })
               ),
             )
           ],),
@@ -902,7 +908,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                       onTap: _dismissUnstarConfirmationDialog,
-                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png', color: Colors.black))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true))))
             ])));
   }
 

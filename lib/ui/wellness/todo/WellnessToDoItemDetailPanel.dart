@@ -31,9 +31,10 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPageAttributes {
+  final String? itemId;
   final ToDoItem? item;
   final bool? optionalFieldsExpanded;
-  WellnessToDoItemDetailPanel({this.item, this.optionalFieldsExpanded});
+  WellnessToDoItemDetailPanel({this.itemId, this.item, this.optionalFieldsExpanded});
 
   @override
   State<WellnessToDoItemDetailPanel> createState() => _WellnessToDoItemDetailPanelState();
@@ -68,19 +69,23 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   late bool _optionalFieldsVisible;
   bool _reminderTypeDropDownValuesVisible = false;
   bool _categoriesDropDownVisible = false;
-  bool _loading = false;
+  int _loadingProgress = 0;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [Wellness.notifyToDoCategoryChanged, Wellness.notifyToDoCategoryDeleted]);
-    _item = widget.item;
-    _optionalFieldsVisible = widget.optionalFieldsExpanded ?? false;
-    if (_item != null) {
-      _populateItemFields();
+    if (StringUtils.isNotEmpty(widget.itemId)) {
+      _loadToDoItem();
     } else {
-      _selectedReminderType = ToDoReminderType.none;
+      _item = widget.item;
+      if (_item != null) {
+        _populateItemFields();
+      } else {
+        _selectedReminderType = ToDoReminderType.none;
+      }
     }
+    _optionalFieldsVisible = widget.optionalFieldsExpanded ?? false;
     _loadCategories();
   }
 
@@ -95,7 +100,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.wellness.home.header.title', 'Wellness')),
       body:
-          SingleChildScrollView(child: Padding(padding: EdgeInsets.all(16), child: (_loading ? _buildLoadingContent() : _buildContent()))),
+          SingleChildScrollView(child: Padding(padding: EdgeInsets.all(16), child: (_isLoading ? _buildLoadingContent() : _buildContent()))),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
@@ -172,8 +177,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                             style: Styles().textStyles?.getTextStyle("widget.title.small.fat")),
                         Padding(
                             padding: EdgeInsets.only(left: 8),
-                            child: Image.asset(_optionalFieldsVisible ? 'images/icon-up.png' : 'images/icon-down.png',
-                                color: Styles().colors!.fillColorPrimary))
+                            child: Styles().images?.getImage(_optionalFieldsVisible ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true))
                       ]))
                 ]))));
   }
@@ -200,7 +204,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                     Expanded(child: Container()),
                     Padding(
                         padding: EdgeInsets.only(left: 10),
-                        child: Image.asset(_categoriesDropDownVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'))
+                        child: Styles().images?.getImage(_categoriesDropDownVisible ? 'chevron-up' : 'chevron-down'))
                   ])))
         ]));
   }
@@ -238,7 +242,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(StringUtils.ensureNotEmpty(categoryName),
                   style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.item")),
-              Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
+              Styles().images?.getImage(isSelected ? 'radio-button-on' : 'radio-button-off') ?? Container()
             ])));
   }
 
@@ -259,7 +263,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                     Text(StringUtils.ensureNotEmpty(_formattedDueDate),
                         style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")),
                     Expanded(child: Container()),
-                    Image.asset('images/icon-calendar-grey.png')
+                    Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
                   ])))
         ]));
   }
@@ -308,7 +312,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                     Expanded(child: Container()),
                     Padding(
                         padding: EdgeInsets.only(left: 10),
-                        child: Image.asset(_reminderTypeDropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'))
+                        child: Styles().images?.getImage(_reminderTypeDropDownValuesVisible ? 'chevron-up' : 'chevron-down'))
                   ])))
         ]));
   }
@@ -353,7 +357,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(StringUtils.ensureNotEmpty(_getReminderTypeLabel(type)),
                   style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.item")),
-              Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
+              Styles().images?.getImage(isSelected ? 'radio-button-on' : 'radio-button-off', excludeFromSemantics: true) ?? Container()
             ])));
   }
 
@@ -405,7 +409,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                       color: Styles().colors!.lightGray,
                       child: Padding(
                           padding: EdgeInsets.only(left: 25, top: 7, right: 10, bottom: 7),
-                          child: Image.asset('images/icon-x-orange-small.png', color: Colors.black))))
+                          child: Styles().images?.getImage('close', excludeFromSemantics: true))))
             ])));
   }
 
@@ -599,7 +603,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _deleteToDoItem() {
-    _setLoading(true);
+    _increaseProgress();
     Analytics().logWellnessToDo(
       action: Analytics.LogWellnessActionClear,
       item: _item,
@@ -616,7 +620,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
           Navigator.of(context).pop();
         }
       });
-      _setLoading(false);
+      _decreaseProgress();
     });
   }
 
@@ -628,7 +632,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.item.empty.name.msg', 'Please, fill name.'));
       return;
     }
-    _setLoading(true);
+    _increaseProgress();
     bool hasDueTime = false;
     if (_dueDate != null) {
       if (_dueTime != null) {
@@ -679,14 +683,27 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
           Navigator.of(context).pop();
         }
       });
-      _setLoading(false);
+      _decreaseProgress();
   }
 
   void _loadCategories() {
-    _setLoading(true);
+    _increaseProgress();
     Wellness().loadToDoCategories().then((categories) {
       _categories = categories;
-      _setLoading(false);
+      _decreaseProgress();
+    });
+  }
+
+  void _loadToDoItem() {
+    _increaseProgress();
+    Wellness().loadToDoItem(widget.itemId).then((item) {
+      _item = item;
+      if (_item != null) {
+        _populateItemFields();
+      } else {
+        _selectedReminderType = ToDoReminderType.none;
+      }
+      _decreaseProgress();
     });
   }
 
@@ -741,9 +758,20 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
   }
 
-  void _setLoading(bool loading) {
-    _loading = loading;
-    _updateState();
+  void _increaseProgress() {
+    setStateIfMounted(() {
+      _loadingProgress++;
+    });
+  }
+
+  void _decreaseProgress() {
+    setStateIfMounted(() {
+      _loadingProgress--;
+    });
+  }
+
+  bool get _isLoading {
+    return (_loadingProgress > 0);
   }
 
   void _hideKeyboard() {

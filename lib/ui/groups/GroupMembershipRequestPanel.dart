@@ -85,7 +85,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
     return Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions'),
-        leadingAsset: 'images/icon-circle-close.png',
+        leadingIconKey: 'close-circle-white',
       ),
       body: Column(children: <Widget>[
         Expanded(child:
@@ -164,7 +164,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               InkWell(onTap: _onResearchProjectConsent, child:
                 Padding(padding: EdgeInsets.only(left: outerPadding, right: 8, top: 16, bottom: 16), child:
-                  Image.asset(_researchProjectConsent ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+                  Styles().images?.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
                 ),
               ),
               Expanded(child:

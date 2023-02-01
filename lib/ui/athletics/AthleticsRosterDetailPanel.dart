@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -27,7 +28,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
-import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsRosterDetailPanel extends StatefulWidget{
@@ -91,11 +91,11 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                     color: Styles().colors!.background,
                     child: Column(
                         children: <Widget>[
-                          Html(
-                            data: StringUtils.ensureNotEmpty(widget.roster.htmlBio),
-                            onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                            style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-                          ),
+                          HtmlWidget(
+                              StringUtils.ensureNotEmpty(widget.roster.htmlBio),
+                              onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+                              textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                          )
                         ]
                     )
                 ))
@@ -194,7 +194,7 @@ class _RosterDetailHeading extends StatelessWidget{
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Image.asset(sport!.iconPath!, width: 16, height: 16,),
+                                Styles().images?.getImage(sport?.iconPath, excludeFromSemantics: true) ?? Container(),
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),

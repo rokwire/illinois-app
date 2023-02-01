@@ -19,13 +19,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -45,6 +46,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsSectionsContentWidget extends StatefulWidget {
@@ -556,7 +558,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       ],
                     ),
                     Expanded(child: Container()),
-                    Image.asset('images/chevron-right.png')
+                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ])
                 ))));
           }
@@ -595,7 +597,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       ]
                     ),
                     Expanded(child: Container()),
-                    Image.asset('images/chevron-right.png')
+                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ]),
                 ))));
           }
@@ -826,13 +828,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         )
       ),
       Padding(padding: EdgeInsets.only(top: 20), child:
-        Html(
-          data: StringUtils.ensureNotEmpty(descriptionHtml),
-          onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
-          style: {
-            "body": Style(fontFamily: Styles().fontFamilies!.regularIt, color: Styles().colors!.textBackground, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero)
-          }
-        ),
+      HtmlWidget(
+          StringUtils.ensureNotEmpty(descriptionHtml),
+          onTapUrl : (url) {_onTapHtmlLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regularIt, fontSize: 16),
+      )
       ),
     ]);
   }
@@ -931,8 +931,10 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Copyright
   Widget _buildCopyright() {
-    String copyrightLabel =
-        Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © 2022 University of Illinois Board of Trustees');
+    final String currentYearFormatted = DateFormat('yyyy').format(DateTime.now());
+    String copyrightLabel = sprintf(
+        Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © %s University of Illinois Board of Trustees'),
+        [currentYearFormatted]);
     return Container(
         alignment: Alignment.center,
         child: Text(copyrightLabel, textAlign: TextAlign.center,

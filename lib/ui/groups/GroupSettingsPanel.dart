@@ -16,15 +16,17 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/ContentAttributes.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
+import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -42,8 +44,9 @@ import 'package:sprintf/sprintf.dart';
 
 class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
+  final GroupStats? groupStats;
   
-  GroupSettingsPanel({this.group});
+  GroupSettingsPanel({this.group, this.groupStats});
 
   @override
   _GroupSettingsPanelState createState() => _GroupSettingsPanelState();
@@ -62,10 +65,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   final List<GroupPrivacy>? _groupPrivacyOptions = GroupPrivacy.values;
   List<String>? _groupCategories;
+  ContentAttributes? _contentAttributes;
 
   bool _nameIsValid = true;
   bool _updating = false;
   bool _deleting = false;
+  bool _confirmationProgress = false;
   bool _researchRequiresConsentConfirmation = false;
 
   Group? _group; // edit settings here until submit
@@ -87,6 +92,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       _group?.settings ??= GroupSettingsExt.initialDefaultSettings(); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
     }
     _initCategories();
+    _initContentAttributes();
     super.initState();
   }
 
@@ -104,102 +110,96 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                color: Styles().colors!.background,
-                child: CustomScrollView(
-                  scrollDirection: Axis.vertical,
-                  slivers: <Widget>[
-                    SliverHeaderBar(
-                      title: (_group?.researchProject == true) ? "Project Settings" : Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),
+      backgroundColor: Styles().colors!.background,
+      body: Column(children: <Widget>[
+        Expanded(child:
+          Container(color: Styles().colors!.background, child:
+            CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
+              SliverHeaderBar(title: (_group?.researchProject == true) ? "Project Settings" : Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),),
+              SliverList(delegate: SliverChildListDelegate([
+                Container(color: Styles().colors!.background, child:
+                  Column(children: <Widget>[
+                    _buildImageSection(),
+                    Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                      _buildSectionTitle((_group?.researchProject == true) ? "General project information" : Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "info"),
                     ),
-                    SliverList(
-                      delegate: SliverChildListDelegate([
-                        Container(
-                          color: Styles().colors!.background,
-                          child: Column(children: <Widget>[
-                            _buildImageSection(),
-                            Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle((_group?.researchProject == true) ? "General project information" : Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "images/icon-schedule.png"),
-                            ),
-                            _buildNameField(),
-                            _buildDescriptionField(),
-                            _buildLinkField(),
-                            
-                            Visibility(visible: !_isResearchProject, child:
-                              Column(children: [
-                                Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                                Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                  _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "images/icon-schedule.png"),
-                                ),
-                                _buildCategoryDropDown(),
-                                _buildTagsLayout(),
-                              ],)
-                            ),
-                            
-                            Visibility(visible: _isResearchProject, child:
-                              Column(children: [
-                                Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                                Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                  _buildSectionTitle("Research", "images/icon-gear.png"),
-                                ),
-                                //_buildResearchOptionLayout(),
-                                _buildResearchConsentDetailsField(),
-                                // #2626: Hide consent checkbox and edit control.
-                                // _buildResearchConfirmationLayout(),
-                                _buildResearchOpenLayout(),
-                                _buildResearchAudienceLayout(),
-                              ])
-                            ),
-
-                            Visibility(visible: !_isResearchProject, child:
-                              Column(children: [
-                                Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
-                                  Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                                ),
-                                Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                  _buildSectionTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
-                                ),
-                                Container(height: 8),
-                                _buildPrivacyDropDown(),
-                                _buildHiddenForSearch(),
-                              ])
-                            ),
-
-                            Visibility(visible: _canViewManagedSettings && !_isResearchProject, child:
-                              _buildAuthManLayout()
-                            ),
-                            
-                            Visibility(visible: !_isAuthManGroup, child:
-                              _buildMembershipLayout()
-                            ),
-                          //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
-                          //Visibility(visible: !_isResearchProject, child:
-                          //  Padding(padding: EdgeInsets.only(top: 8), child:
-                          //    _buildAttendanceLayout(),
-                          //  )
-                          //),
-
-                            Visibility(visible: !_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildSettingsLayout(),
-                              )
-                            ),
-
-                            Container(height: 24,  color: Styles().colors!.background,),
-                          ],),)
-                      ]),
+                    _buildNameField(),
+                    _buildDescriptionField(),
+                    _buildLinkField(),
+                          
+                    Visibility(visible: !_isResearchProject, child:
+                      Column(children: [
+                        Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"),
+                              "search"),
+                        ),
+                        _buildCategoryDropDown(),
+                        _buildTagsLayout(),
+                        _buildAttributesLayout(),
+                      ],)
                     ),
-                  ],
-                ),
-              ),
-            ),
-            _buildButtonsLayout(),
-          ],
+                    
+                    Visibility(visible: _isResearchProject, child:
+                      Column(children: [
+                        Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                          _buildSectionTitle("Research", "settings"),
+                        ),
+                        //_buildResearchOptionLayout(),
+                        _buildResearchConsentDetailsField(),
+                        // #2626: Hide consent checkbox and edit control.
+                        // _buildResearchConfirmationLayout(),
+                        _buildResearchOpenLayout(),
+                        _buildResearchAudienceLayout(),
+                      ])
+                    ),
+
+                    Visibility(visible: !_isResearchProject, child:
+                      Column(children: [
+                        Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+                          Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                          _buildSectionTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
+                        ),
+                        Container(height: 8),
+                        _buildPrivacyDropDown(),
+                        _buildHiddenForSearch(),
+                      ])
+                    ),
+
+                    Visibility(visible: _canViewManagedSettings && !_isResearchProject, child:
+                      _buildAuthManLayout()
+                    ),
+                    
+                    Visibility(visible: !_isAuthManGroup, child:
+                      _buildMembershipLayout()
+                    ),
+
+                    //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
+                    //Visibility(visible: !_isResearchProject, child:
+                    //  Padding(padding: EdgeInsets.only(top: 8), child:
+                    //    _buildAttendanceLayout(),
+                    //  )
+                    //),
+
+                    Visibility(visible: !_isResearchProject, child:
+                      Padding(padding: EdgeInsets.only(top: 8), child:
+                        _buildSettingsLayout(),
+                      )
+                    ),
+
+                    Container(height: 24,  color: Styles().colors!.background,),
+                  ],),
+                )
+              ]),),
+            ],),
+          ),
         ),
-        backgroundColor: Styles().colors!.background);
+        _buildButtonsLayout(),
+      ],),
+    );
   }
 
   //Init
@@ -207,6 +207,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     Groups().loadCategories().then((categories){
       setStateIfMounted(() {
         _groupCategories = categories;
+      });
+    });
+  }
+
+  void _initContentAttributes(){
+    Groups().loadContentAttributes().then((ContentAttributes? contentAttributes){
+      setStateIfMounted(() {
+        _contentAttributes = contentAttributes;
       });
     });
   }
@@ -332,7 +340,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   BorderRadius.all(Radius.circular(4))),
               child: Row(
                 children: <Widget>[
-                  Image.asset('images/warning-orange.png'),
+                  Styles().images?.getImage('warning', excludeFromSemantics: true) ?? Container(),
                   Expanded(child:
                   Container(
                       padding: EdgeInsets.only(left: 12, right: 4),
@@ -464,36 +472,90 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         CupertinoPageRoute(
             builder: (context) => WebPanel(url: _linkController.text)));
   }
+
   //
   //Category
   Widget _buildCategoryDropDown() {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildInfoHeader(Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY"),
-              (_group?.researchProject == true) ?
-                "Choose the category your project can be filtered by." :
-                Localization().getStringEx("panel.groups_settings.category.description", "Choose the category your group can be filtered by."),),
-            Semantics(
-            explicitChildNodes: true,
-            child: GroupDropDownButton(
-                enabled: _canUpdate,
-                emptySelectionText: Localization().getStringEx("panel.groups_settings.category.default_text", "Select a category.."),
-                buttonHint: Localization().getStringEx("panel.groups_settings.category.hint", "Double tap to show categories options"),
-                initialSelectedValue: _group?.category,
-                items: _groupCategories,
-                constructTitle: (dynamic item) => item,
-                onValueChanged: (value) {
-                  setState(() {
-                    _group?.category = value;
-                    Log.d("Selected Category: $value");
-                  });
-                }
-            ))
-          ],
-        ));
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        _buildInfoHeader(
+          Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY"),
+          (_group?.researchProject == true) ?
+            "Choose the category your project can be filtered by." :
+            Localization().getStringEx("panel.groups_settings.category.description", "Choose the category your group can be filtered by."),
+        ),
+        Semantics(explicitChildNodes: true, child:
+          GroupDropDownButton(
+            enabled: _canUpdate,
+            emptySelectionText: Localization().getStringEx("panel.groups_settings.category.default_text", "Select a category.."),
+            buttonHint: Localization().getStringEx("panel.groups_settings.category.hint", "Double tap to show categories options"),
+            initialSelectedValue: _group?.category,
+            items: _groupCategories,
+            constructTitle: (dynamic item) => item,
+            onValueChanged: (String value) {
+              setState(() {
+                _group?.category = value;
+                Log.d("Selected Category: $value");
+              });
+            }
+          )
+        )
+      ],)
+    );
+  }
+
+  //
+  //Attributes
+  Widget _buildAttributesLayout() {
+    return (_contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Expanded(flex: 5, child:
+            _buildInfoHeader(
+              Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
+              Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
+            )
+          ),
+          Container(width: 8),
+          Expanded(flex: 2, child:
+            RoundedButton(
+              label: 'Edit', // Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
+              hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
+              backgroundColor: Styles().colors!.white,
+              textColor: Styles().colors!.fillColorPrimary,
+              borderColor: Styles().colors!.fillColorSecondary,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              onTap: _onTapAttributes,
+            )
+          )
+        ]),
+        _constructAttributesContent()
+      ])
+    ) : Container();
+  }
+
+  Widget _constructAttributesContent() {
+    String? attributesDescr = _contentAttributes?.selectionDescription(_group?.attributes,
+      categorySeparator: '\n'
+    );
+    return ((attributesDescr != null) && attributesDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
+      Row(children: [
+        Expanded(child:
+          Text(attributesDescr, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold),),
+        )
+      ],)
+    ) : Container();
+  }
+
+  void _onTapAttributes() {
+    Analytics().logSelect(target: "Attributes");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(contentAttributes: _contentAttributes!, selection: _group?.attributes,))).then((selection) {
+      if ((selection != null) && mounted) {
+        setState(() {
+          _group?.attributes = selection;
+        });
+      }
+    });
   }
 
   //Tags
@@ -590,7 +652,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   ),
                 Container (
                   padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
-                  child: Image.asset("images/small-add-orange.png", excludeFromSemantics: true,),
+                  child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
                 )
 
               ],)
@@ -745,7 +807,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column( children: <Widget>[
-          _buildSectionTitle(sectionTitle, "images/icon-member.png"),
+          _buildSectionTitle(sectionTitle, "person-circle"),
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
@@ -788,7 +850,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 5),
-                      child: Image.asset('images/chevron-right.png'),
+                      child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                     ),
                 ]),
                 Container(
@@ -976,7 +1038,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(children: <Widget>[
-          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "images/icon-member.png"),
+          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "person-circle"),
           Container(height: 12),
           Padding(
               padding: EdgeInsets.only(top: 12),
@@ -995,7 +1057,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         GestureDetector(
                             onTap: _onTapAuthMan,
                             child: Padding(
-                                padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
+                                padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(isAuthManGroup ? 'toggle-on' : 'toggle-off')))
                       ])
                     ])),
                 Visibility(
@@ -1151,31 +1213,46 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
 
-  void _onDeleteTap(){
+  void _onDeleteTap() {
+    Analytics().logSelect(target: "Delete this group", attributes: _group?.analyticsAttributes);
+
+    if (!_deleting) {
+      int membersCount = widget.groupStats?.activeMembersCount ?? 0;
+      String? confirmMsg = (membersCount > 1)
+          ? sprintf(Localization().getStringEx("panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"), [membersCount])
+          : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
+
+      showDialog(context: context,builder: (context) => _buildConfirmationDialog(
+        confirmationTextMsg: confirmMsg,
+        positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+        negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+        onPositiveTap: _deleteGroup));
+    }
+  }
+
+  void _deleteGroup() {
+
+    Analytics().logSelect(target: 'Deleting group');
+
     if (_deleting) {
       return;
     }
 
-    if ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isEmpty) {
-      AppAlert.showDialogResult(context, 'Please enter participant consent text.');
-      return;
-    }
-    else {
-      _group?.researchConsentStatement = ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isNotEmpty) ? _researchConsentStatementController.text : null;
-
-    }
-
-    Analytics().logSelect(target: 'Deleting group');
-    setState(() {
-      _deleting = true;
+    setStateIfMounted(() {
+      _deleting = _confirmationProgress = true;
     });
     
-    Groups().deleteGroup(widget.group?.id).then((success){
-      setState(() {
-        _deleting = false;
+    Groups().deleteGroup(widget.group?.id).then((bool success){
+      setStateIfMounted(() {
+        _deleting = _confirmationProgress = false;
       });
-      if(success){
-        Navigator.of(context).pop(true);
+      Navigator.of(context).pop(); // Pop dialog
+      if (success == true) {
+        Navigator.of(context).pop(); // Pop to settings
+        Navigator.of(context).pop(); // Pop group detail
+      }
+      else {
+        AppAlert.showDialogResult(context, _isResearchProject ? 'Failed to delete project.' : Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.'));
       }
     });
   }
@@ -1243,7 +1320,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  Widget _buildSectionTitle(String title, String iconRes){
+  Widget _buildSectionTitle(String title, String iconKey){
     return Container(
         padding: EdgeInsets.only(top:24),
         child:
@@ -1252,7 +1329,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
               Container(
                 padding: EdgeInsets.only(right: 10),
-                child: Image.asset(iconRes, excludeFromSemantics: true,)
+                child: Styles().images?.getImage(iconKey, excludeFromSemantics: true)
               ),
             Expanded(child:
               Semantics(
@@ -1293,10 +1370,63 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       onTap();
                       AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(value == true), title);
                   } : (){},
-                  child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
+                  child: Padding(padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(value ?? false ? 'toggle-on' : 'toggle-off')))
             ])
           ])),
     ));
+  }
+
+  Widget _buildConfirmationDialog({String? confirmationTextMsg,
+    
+    String? positiveButtonLabel,
+    int positiveButtonFlex = 1,
+    Function? onPositiveTap,
+    
+    String? negativeButtonLabel,
+    int negativeButtonFlex = 1,
+    
+    int leftAreaFlex = 0,
+  }) {
+    return Dialog(
+        backgroundColor: Styles().colors!.fillColorPrimary,
+        child: StatefulBuilder(builder: (context, setStateEx) {
+          return Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 26),
+                    child: Text(confirmationTextMsg!,
+                        textAlign: TextAlign.left, style:  Styles().textStyles?.getTextStyle('widget.dialog.message.medium'))),
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+                  Expanded(flex: leftAreaFlex, child: Container()),
+                  Expanded(flex: negativeButtonFlex, child: RoundedButton(
+                      label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
+                      fontFamily: "ProximaNovaRegular",
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.white,
+                      backgroundColor: Styles().colors!.white,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      onTap: () {
+                        Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
+                        Navigator.pop(context);
+                      }),),
+                  Container(width: 16),
+                  Expanded(flex: positiveButtonFlex, child: RoundedButton(
+                    label: positiveButtonLabel ?? '',
+                    fontFamily: "ProximaNovaBold",
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.white,
+                    backgroundColor: Styles().colors!.white,
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    progress: _confirmationProgress,
+                    onTap: () {
+                      Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
+                      onPositiveTap!();
+                    },
+                  ),),
+                ])
+              ]));
+        }));
   }
 
   void _onNameChanged(String name) {
