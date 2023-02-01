@@ -851,18 +851,12 @@ class _GroupCardState extends State<GroupCard> {
   static const double _smallImageSize = 64;
 
   GroupStats? _groupStats;
-
-  final GlobalKey _contentKey = GlobalKey();
-  Size? _contentSize;
   bool? _bussy;
 
   @override
   void initState() {
     super.initState();
     _loadGroupStats();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _evalContentSize();
-    });
   }
 
   @override
@@ -873,7 +867,7 @@ class _GroupCardState extends State<GroupCard> {
       Padding(padding: widget.margin, child:
         Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
           Stack(children: [
-            Column(key: _contentKey, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildHeading(),
               Container(height: 6),
               Row(children:[
@@ -914,13 +908,13 @@ class _GroupCardState extends State<GroupCard> {
               // : Container()
             ]),
             Visibility(visible: (_bussy == true), child:
-              (_contentSize != null) ? SizedBox(width: _contentSize!.width, height: _contentSize!.height, child:
+              Positioned.fill(child:
                 Align(alignment: Alignment.center, child:
                   SizedBox(height: 24, width: 24, child:
                     CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
                   ),
                 ),
-              ) : Container(),
+              ),
             ),
           ],),
         )
@@ -1145,21 +1139,6 @@ class _GroupCardState extends State<GroupCard> {
 
   String get _timeUpdatedText {
     return widget.group?.displayUpdateTime ?? '';
-  }
-
-  void _evalContentSize() {
-    try {
-      final RenderObject? renderBox = _contentKey.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
-        if (mounted) {
-          setState(() {
-            _contentSize = renderBox.size;
-          });
-        }
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
   }
 }
 
