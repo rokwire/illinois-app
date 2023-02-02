@@ -454,7 +454,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
             Row(children: [
               Text(
                 Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Notice "),
-                style: Styles().textStyles?.getTextStyle("widget.colourful_button.title.title.regular")
+                style: Styles().textStyles?.getTextStyle("widget.colourful_button.title.regular")
 
               ),
               Container(padding: EdgeInsets.only(bottom: 3),

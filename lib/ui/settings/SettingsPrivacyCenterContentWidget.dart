@@ -227,7 +227,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                             child: Text(
                               Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.title", "Manage and Understand Your Privacy"),
                               textAlign: TextAlign.left,
-                              style: Styles().textStyles?.getTextStyle("widget.title.regular")
+                              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                             )),
                           )
                         ],

@@ -730,7 +730,7 @@ class _DateValue extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(title!, style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
+          Text(title!, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),),
           Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
         ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
     ],),),);

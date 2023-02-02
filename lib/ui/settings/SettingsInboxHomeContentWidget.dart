@@ -456,7 +456,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
           Row(children:<Widget>[Expanded(child:
-            Text(headingText, style: Styles().textStyles?.getTextStyle("widget.title.regular"),)
+            Text(headingText, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),)
           )]),
         ),
 
