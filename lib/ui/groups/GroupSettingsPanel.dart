@@ -449,7 +449,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Attributes
   Widget _buildAttributesLayout() {
-    return (Groups().contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return (Groups().contentAttributes?.isNotEmpty ?? false) ? Container(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(flex: 5, child:
