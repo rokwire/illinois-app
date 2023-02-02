@@ -75,9 +75,9 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
     if ((categories != null) && categories.isNotEmpty) {
       for (ContentAttributesCategory category in categories) {
         Widget? categoryWidget;
-        switch (category.widget) {
-          case ContentAttributesCategoryWidget.dropdown: categoryWidget = _buildCatgoryDropDown(category); break;
-          case ContentAttributesCategoryWidget.checkbox: categoryWidget = _buildCategoryCheckbox(category); break;
+        switch (category.editWidget) {
+          case ContentAttributesCategoryEditWidget.dropdown: categoryWidget = _buildCatgoryDropDown(category); break;
+          case ContentAttributesCategoryEditWidget.checkbox: categoryWidget = _buildCategoryCheckbox(category); break;
           default: break;
         }
         if (categoryWidget != null) {
