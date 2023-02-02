@@ -862,7 +862,7 @@ class _GroupCardState extends State<GroupCard> {
   @override
   Widget build(BuildContext context) {
     String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty((_groupStats?.pendingCount ?? 0).toString())]);
-    String groupCategory = _isResearchProject ? '' : StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    // String groupCategory = _isResearchProject ? '' : StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
         Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
@@ -872,8 +872,8 @@ class _GroupCardState extends State<GroupCard> {
               Container(height: 6),
               Row(children:[
                 Expanded(child:
-                  Column(children:[
-                    groupCategory.isNotEmpty ? Row(children: [
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+                    /*groupCategory.isNotEmpty ? Row(children: [
                       Expanded(child:
                         Text(groupCategory,
                           overflow: TextOverflow.ellipsis,
@@ -881,7 +881,8 @@ class _GroupCardState extends State<GroupCard> {
                           style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat")
                         )
                       ),
-                    ]) : Container(),
+                    ]) : Container(),*/
+                    _buildAttributes(),
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
@@ -994,6 +995,40 @@ class _GroupCardState extends State<GroupCard> {
       color: Styles().colors?.fillColorSecondary,
       semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [text.toLowerCase()])
     );
+  }
+
+  Widget _buildAttributes() {
+    Map<String, dynamic>? attributes = widget.group?.attributes;
+    if (attributes != null) {
+      List<Widget> attribyteWidgets = <Widget>[];
+      for (String categoryId in attributes.keys) {
+        dynamic value = attributes[categoryId];
+        if (value is String) {
+          attribyteWidgets.add(_buildAttribute(value));
+        }
+      }
+      return attribyteWidgets.isNotEmpty ? Wrap(spacing: 8, runSpacing: 4, children: attribyteWidgets,) : Container();
+    }
+    return Container();
+  }
+
+  Widget _buildAttribute(String value) {
+
+    return Container(
+        decoration: BoxDecoration(
+            color: Styles().colors!.fillColorPrimary,
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Semantics(excludeSemantics: true, child:
+          Container(
+              padding: EdgeInsets.only(left: 8, right: 8, top:4, bottom: 4),
+              child: Text(value,
+                style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),
+              )),
+          ),
+    );
+
+
+
   }
 
   Widget _buildImage() {

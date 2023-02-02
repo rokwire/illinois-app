@@ -5,7 +5,7 @@
 		"description": "Choose the category your group can be filtered by.",
 		"empty-hint": "Select a category...",
 		"semantics-hint": "Double tap to show category options.",
-		"edit-widget": "dropdown",
+		"widget": "dropdown",
 		"min-required-count": 1,
 		"max-required-count": 1,
 		"values": [
@@ -23,7 +23,7 @@
 		"description": "Choose the sport your group can be filtered by.",
 		"empty-hint": "Select a sport...",
 		"semantics-hint": "Double tap to show sport options.",
-		"edit-widget": "dropdown",
+		"widget": "dropdown",
 		"min-required-count": 0,
 		"max-required-count": 1,
 		"values": [
@@ -52,7 +52,7 @@
 		"title": "College",
 		"description": "Choose the college your group can be filtered by.",
 		"empty-hint": "Select a college...",
-		"edit-widget": "dropdown",
+		"widget": "dropdown",
 		"semantics-hint": "Double tap to show college options.",
 		"min-required-count": 0,
 		"max-required-count": 1,
@@ -103,7 +103,7 @@
 		"description": "Choose the department your group can be filtered by.",
 		"empty-hint": "Select a department...",
 		"semantics-hint": "Double tap to show department options.",
-		"edit-widget": "dropdown",
+		"widget": "dropdown",
 		"min-required-count": 0,
 		"max-required-count": 1,
 		"values": [
@@ -530,7 +530,7 @@
 		"title": "Tags",
 		"description": "Tags help people understanding more about your gtoup",
 		"empty-hint": "Select tags...",
-		"edit-widget": "dropdown",
+		"widget": "dropdown",
 		"semantics-hint": "Double tap to show tags.",
 		"min-required-count": null,
 		"max-required-count": null,
@@ -880,7 +880,7 @@
 		"text": "Registered Student Organization",
 		"empty-hint": "Select Registered Student Organization...",
 		"semantics-hint": "Double tap to show RSO options.",
-		"edit-widget": "checkbox",
+		"widget": "checkbox",
 		"min-required-count": 0,
 		"max-required-count": 1,
 		"values": [
