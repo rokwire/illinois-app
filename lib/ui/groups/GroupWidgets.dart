@@ -1042,7 +1042,6 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   Widget _buildProperty(String title, String value) {
-    // widget.card.title.small
     return Row(children: [
       Text(title, overflow: TextOverflow.ellipsis, maxLines: 1, style:
         Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
