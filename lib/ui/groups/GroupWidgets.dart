@@ -1068,7 +1068,7 @@ class _GroupCardState extends State<GroupCard> {
           _timeUpdatedText,
           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
           overflow: TextOverflow.ellipsis,
-          style: Styles().textStyles?.getTextStyle("widget.card.detail.small_variant")
+          style: Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
     ));
   }
 
@@ -1104,7 +1104,7 @@ class _GroupCardState extends State<GroupCard> {
     }
     return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
       Text(membersLabel, style:
-        Styles().textStyles?.getTextStyle("widget.card.detail.small_variant")
+        Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
       ),
     );
   }

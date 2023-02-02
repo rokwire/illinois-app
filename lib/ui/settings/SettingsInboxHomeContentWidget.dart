@@ -964,7 +964,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
 
                     Row(children: [
                       Expanded(child:
-                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small_variant"))
+                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small.regular"))
                     )]),
                   ])
                 ),
