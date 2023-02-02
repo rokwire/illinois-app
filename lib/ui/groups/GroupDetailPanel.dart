@@ -21,6 +21,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -1102,8 +1103,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildBadgeOrCategoryWidget() {
+    List<Widget> contentList = <Widget>[];
     if (_showMembershipBadge) {
-      return Row(children: <Widget>[
+      contentList.addAll(<Widget>[
         Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
           Center(child:
             Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
@@ -1112,17 +1114,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ),
         ),
         Expanded(child: Container(),),
-        _buildPolicyButton(),
       ],);
     }
     else {
-      return Row(children: <Widget>[
-        Expanded(child:
-          Text(_isResearchProject ? '' : (_group?.category?.toUpperCase() ?? ''), style:  Styles().textStyles?.getTextStyle('widget.title.tiny'),),
+      List<String>? displayList = Groups().contentAttributes?.displayAttributesListFromSelection(widget.group?.attributes,
+        usage: ContentAttributesCategoryUsage.category);
+      contentList.add(
+        Expanded(child: (displayList?.isNotEmpty ?? false) ?
+          Text(displayList?.join(', ') ?? '', overflow: TextOverflow.ellipsis, style:
+            Styles().textStyles?.getTextStyle("widget.title.tiny'")
+          ) :
+          Container(),
         ),
-        _buildPolicyButton(),
-      ],);
+      );
     }
+    contentList.add(_buildPolicyButton());
+    return Row(children: contentList);
   }
 
   Widget _buildPolicyButton() {

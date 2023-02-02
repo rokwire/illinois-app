@@ -872,15 +872,6 @@ class _GroupCardState extends State<GroupCard> {
               Row(children:[
                 Expanded(child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
-                    /*groupCategory.isNotEmpty ? Row(children: [
-                      Expanded(child:
-                        Text(groupCategory,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-                          style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat")
-                        )
-                      ),
-                    ]) : Container(),*/
                     _buildCategories(),
                     _buildTitle(),
                     _buildProperties(),

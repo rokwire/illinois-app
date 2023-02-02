@@ -84,7 +84,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _group?.onlyAdminsCanCreatePolls ??= true;
     _group?.researchOpen ??= (_group?.researchProject == true) ? true : null;
     _group?.privacy ??= (_group?.researchProject == true) ? GroupPrivacy.public : GroupPrivacy.private;
-    _group?.category ??= (_group?.researchProject == true) ? 'Other' : null;
     _group?.settings ??= GroupSettingsExt.initialDefaultSettings();
 
     _groupTitleController.text = _group?.title ?? '';
@@ -101,11 +100,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
     else {
       _group?.researchConsentStatement = _researchConsentStatementController.text = 'I have read and I understand the consent details. I certify that I am 18 years old or older. By clicking the "Request to participate" button, I indicate my willingness to voluntarily take part in this study.';
-    }
-
-    //TMP:
-    if (StringUtils.isEmpty(_group?.category)) {
-      _group?.category = 'TBD';
     }
   }
 
