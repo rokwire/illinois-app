@@ -23,6 +23,7 @@ import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -453,23 +454,34 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             )
           )
         ]),
-        _constructAttributesContent()
+        ... _constructAttributesContent()
       ])
     ) : Container();
   }
 
-  Widget _constructAttributesContent() {
-    String? attributesDescr = Groups().contentAttributes?.selectionDescription(_group?.attributes,
-      categorySeparator: '\n',
-      
-    );
-    return ((attributesDescr != null) && attributesDescr.isNotEmpty) ? Padding(padding: EdgeInsets.zero, child:
-      Row(children: [
-        Expanded(child:
-          Text(attributesDescr, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold),),
-        )
-      ],)
-    ) : Container();
+  List<Widget> _constructAttributesContent() {
+    List<Widget> attributesList = <Widget>[];
+    Map<String, dynamic>? groupAttributes = _group?.attributes;
+    ContentAttributes? contentAttributes = Groups().contentAttributes;
+    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
+    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
+      for (ContentAttributesCategory category in categories) {
+        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes, complete: true);
+        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
+          attributesList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("${contentAttributes.stringValue(category.title)}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+              Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
+            ),
+            Expanded(child:
+              Text(displayAttributes.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
+                Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
+              ),
+            ),
+          ],),);
+        }
+      }
+    }
+    return attributesList;
   }
 
   void _onTapAttributes() {

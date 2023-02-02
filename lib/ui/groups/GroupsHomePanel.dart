@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -64,7 +65,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   List<Group>? _userGroups;
 
   Map<String, dynamic> _contentAttributesSelection = <String, dynamic>{};
-  String? _contentAttributesSelectionDescription;
 
   @override
   void initState() {
@@ -329,12 +329,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildContentAttributesDescription() {
-    return StringUtils.isNotEmpty(_contentAttributesSelectionDescription) ? 
-      Padding(padding: EdgeInsets.only(top: 0, bottom: 4), child: 
-      Row(children: [Expanded(child:
-        Text(_contentAttributesSelectionDescription ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium,),),
-      ),],)
-        
+
+    List<InlineSpan> attributesList = <InlineSpan>[];
+    ContentAttributes? contentAttributes = Groups().contentAttributes;
+    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
+    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.fat");
+    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (categories != null)) {
+      for (ContentAttributesCategory category in categories) {
+        List<String>? displayAttributes = category.displayAttributesListFromSelection(_contentAttributesSelection, contentAttributes: contentAttributes, complete: true);
+        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
+          displayAttributes = List.from(displayAttributes.map((String attribute) => "'$attribute'"));
+          if (attributesList.isNotEmpty) {
+            attributesList.add(TextSpan(text: " and " , style : regularStyle,));
+          }
+          attributesList.addAll(<InlineSpan>[
+            TextSpan(text: "${contentAttributes.stringValue(category.title)}" , style : boldStyle,),
+            TextSpan(text: " is ${displayAttributes.join(' or ')}" , style : regularStyle,),
+          ]);
+        }
+      }
+    }
+
+    return attributesList.isNotEmpty ? 
+      Padding(padding: EdgeInsets.only(top: 0, bottom: 4, right: 12), child: 
+        Row(children: [ Expanded(child:
+          RichText(text: TextSpan(style: regularStyle, children: attributesList))
+        ),],)
       ) : Container();
   }
 
@@ -366,14 +387,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if (Groups().contentAttributes != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(selection: _contentAttributesSelection, filtersMode: true,))).then((selection) {
         if ((selection != null) && mounted) {
-          String? selectionText = Groups().contentAttributes?.selectionDescription(selection,
-            categorySeparator: ', ',
-            attributeSeparator: ' or ',
-            titleDelimiter: ' is '
-          );
           setState(() {
             _contentAttributesSelection = selection;
-            _contentAttributesSelectionDescription = StringUtils.isNotEmpty(selectionText) ? "Attributes: $selectionText" : null;
           });
           _reloadAllGroupsContent();
         }
