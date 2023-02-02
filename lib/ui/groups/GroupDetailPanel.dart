@@ -713,7 +713,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     if (_isMemberOrAdmin) {
-      if(_isAdmin) {
+      if (_isAdmin) {
         commands.add(RibbonButton(
           label: _isResearchProject ? 'Manage Participants' : Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
           hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
