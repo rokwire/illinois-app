@@ -775,12 +775,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         commands.add(_buildWebsiteLink());
       }
 
-      String? tags = _group?.displayTags;
-      if (StringUtils.isNotEmpty(tags)) {
+      List<Widget> attributesList = _buildAttributes();
+      if (attributesList.isNotEmpty) {
         if (commands.isNotEmpty) {
           commands.add(Container(height: 12,));
         }
-        commands.add(_buildTags(tags));
+        commands.addAll(attributesList);
+        commands.add(Container(height: 4,));
       }
     }
 
@@ -1087,19 +1088,29 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     );
   }
 
-  Widget _buildTags(String? tags) {
-    return Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
-      Row(children: [
-        Expanded(child:
-          RichText(text:
-            TextSpan(style: Styles().textStyles?.getTextStyle('panel.group.detail.tag.heading'), children: <TextSpan>[
-              TextSpan(text: Localization().getStringEx("panel.group_detail.label.tags", "Group Tags: ")),
-              TextSpan(text: tags ?? '', style: Styles().textStyles?.getTextStyle('anel.group.detail.tag.title')),
-            ],),
-          )
-        )
-      ],),
-    );
+  List<Widget> _buildAttributes() {
+    List<Widget> attributesList = <Widget>[];
+    Map<String, dynamic>? groupAttributes = widget.group?.attributes;
+    ContentAttributes? contentAttributes = Groups().contentAttributes;
+    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
+    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
+      for (ContentAttributesCategory category in categories) {
+        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes, complete: true);
+        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
+          attributesList.add(Row(children: [
+            Text("${contentAttributes.stringValue(category.title)}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+              Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
+            ),
+            Expanded(child:
+              Text(displayAttributes.join(', '), maxLines: 1, style:
+                Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
+              ),
+            ),
+          ],),);
+        }
+      }
+    }
+    return attributesList;
   }
 
   Widget _buildBadgeOrCategoryWidget() {

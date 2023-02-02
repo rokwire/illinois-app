@@ -103,21 +103,6 @@ extension GroupExt on Group {
     return null;
   }
 
-  String get displayTags {
-    String tagsString = "";
-    if (tags != null) {
-      for (String tag in tags!) {
-        if (0 < tag.length) {
-          if (tagsString.isNotEmpty) {
-            tagsString += ", ";
-          }
-          tagsString += tag;
-        }
-      }
-    }
-    return tagsString;
-  }
-
   bool get canMemberCreatePoll {
     return !(onlyAdminsCanCreatePolls ?? true);
   }

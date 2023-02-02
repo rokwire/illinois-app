@@ -534,7 +534,7 @@
 		"title": "Tags",
 		"description": "Tags help people understanding more about your gtoup",
 		"empty-hint": "Select tags...",
-		"usage": null,
+		"usage": "tag",
 		"widget": "dropdown",
 		"semantics-hint": "Double tap to show tags.",
 		"min-required-count": null,
