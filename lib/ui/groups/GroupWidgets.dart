@@ -529,7 +529,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
                   InkWell(onTap: _onEventOptionsTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
-                      Styles().images?.getImage('options-circle'),
+                      Styles().images?.getImage('more'),
                     ),
                   ),
                 )
