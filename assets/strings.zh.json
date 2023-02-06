@@ -895,6 +895,7 @@
 	"panel.onboarding2.research.questionnaire.prompt.question": "Would you like to get invitations to become a research participant via the Illinois app?",
 	"panel.onboarding2.research.questionnaire.prompt.explanation": " Many studies offer incentives.",
 	"panel.onboarding2.research.questionnaire.acknowledgement.title": "Thank you! We will notify you when you become eligible for any upcoming research projects.",
+	"panel.onboarding2.research.questionnaire.acknowledgement.explanation": "View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.",
 	"panel.onboarding2.research.questionnaire.button.submit.title": "Submit",
 	"panel.onboarding2.research.questionnaire.button.submit.hint": "",
 	"panel.onboarding2.research.questionnaire.button.cancel.title": "Cancel",
