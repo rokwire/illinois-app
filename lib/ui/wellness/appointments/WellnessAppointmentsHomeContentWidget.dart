@@ -78,14 +78,17 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     } else if (_loading) {
       return _buildLoadingContent();
     } else {
-      return RefreshIndicator(onRefresh: _onPullToRefresh, child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: ListView(physics: AlwaysScrollableScrollPhysics(), shrinkWrap: true, children: [
-            _buildRescheduleDescription(),
-            _buildUpcomingAppointments(),
-            _buildPastAppointments(),
-            _buildDisplayAppointmentsSettings()
-          ])));
+      return RefreshIndicator(
+          onRefresh: _onPullToRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _buildRescheduleDescription(),
+                _buildUpcomingAppointments(),
+                _buildPastAppointments(),
+                _buildDisplayAppointmentsSettings()
+              ])));
     }
   }
 
