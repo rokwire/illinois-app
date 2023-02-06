@@ -11,6 +11,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 
@@ -70,9 +71,15 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   Widget _buildCategoriesContent() {
-    List<ContentAttributesCategory>? categories = Groups().contentAttributes?.categories;
     List<Widget> conentList = <Widget>[];
+    ContentAttributes? contentAttributes = Groups().contentAttributes;
+    List<ContentAttributesCategory>? categories = ListUtils.from<ContentAttributesCategory>(contentAttributes?.categories);
     if ((categories != null) && categories.isNotEmpty) {
+      categories.sort((ContentAttributesCategory category1, ContentAttributesCategory category2) {
+        String categoryTitle1 = contentAttributes?.stringValue(category1.title) ?? '';
+        String categoryTitle2 = contentAttributes?.stringValue(category2.title) ?? '';
+        return categoryTitle1.compareTo(categoryTitle2);
+      });
       for (ContentAttributesCategory category in categories) {
         Widget? categoryWidget;
         switch (category.widget) {
