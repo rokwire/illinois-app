@@ -895,6 +895,7 @@
 	"panel.onboarding2.research.questionnaire.prompt.question": "Would you like to get invitations to become a research participant via the Illinois app?",
 	"panel.onboarding2.research.questionnaire.prompt.explanation": " Many studies offer incentives.",
 	"panel.onboarding2.research.questionnaire.acknowledgement.title": "Thank you! We will notify you when you become eligible for any upcoming research projects.",
+	"panel.onboarding2.research.questionnaire.acknowledgement.explanation": "View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.",
 	"panel.onboarding2.research.questionnaire.button.submit.title": "Submit",
 	"panel.onboarding2.research.questionnaire.button.submit.hint": "",
 	"panel.onboarding2.research.questionnaire.button.cancel.title": "Cancel",
@@ -1385,7 +1386,7 @@
 	"panel.settings.home.button.review.hint": "",
 	"panel.settings.home.version.info.label": "{{app_title}}應用版本：",
 	"panel.settings.home.feedback.app.description.format": "伊利諾伊州應用程序是伊利諾伊大學厄巴納-香檳分校的官方校園應用程序。 該應用程序基於 <a href='{{rokwire_platform_url}}'>Rokwire</a> 開源軟件平台構建。 Rokwire 項目和伊利諾伊州應用程序是伊利諾伊大學教務長辦公室<a href='{{shci_url}}'>智能、健康社區倡議</a> 的成果。",
-	"panel.settings.home.copyright.text": "版權所有 © %s 伊利諾伊大學董事會",
+	"panel.settings.home.copyright.text": "版權所有 © {{COPYRIGHT_YEAR}} 伊利諾伊大學董事會",
 
 	"panel.settings.profile.content.profile.label": "我的簡歷",
 	"panel.settings.profile.content.who_are_you.label": "你是誰",
