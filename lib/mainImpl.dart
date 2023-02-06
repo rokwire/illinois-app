@@ -26,7 +26,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Explore.dart';
-import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/StudentCourses.dart';
@@ -66,6 +65,7 @@ import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';

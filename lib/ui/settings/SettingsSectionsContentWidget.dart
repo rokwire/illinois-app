@@ -931,14 +931,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Copyright
   Widget _buildCopyright() {
-    final String currentYearFormatted = DateFormat('yyyy').format(DateTime.now());
-    String copyrightLabel = sprintf(
-        Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © %s University of Illinois Board of Trustees'),
-        [currentYearFormatted]);
-    return Container(
-        alignment: Alignment.center,
-        child: Text(copyrightLabel, textAlign: TextAlign.center,
-            style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
+    String copyrightLabel = Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees')
+      .replaceAll('{{COPYRIGHT_YEAR}}', DateFormat('yyyy').format(DateTime.now()));
+    return Container(alignment: Alignment.center, child:
+      Text(copyrightLabel, textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+    );
   }
 
   // Utilities
