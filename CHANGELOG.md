@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Updated English strings [#2596](https://github.com/rokwire/illinois-app/issues/2596).
+- Updated English strings [#2956](https://github.com/rokwire/illinois-app/issues/2956).
+- Updated group attributes logic [#2954](https://github.com/rokwire/illinois-app/issues/2954).
 ### Fixed
 - Scrolling in wellness MyMcKinley Appointments [#2958](https://github.com/rokwire/illinois-app/issues/2958).
 - Appointments sort order [#2960](https://github.com/rokwire/illinois-app/issues/2960).
