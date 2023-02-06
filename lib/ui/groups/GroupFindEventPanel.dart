@@ -597,7 +597,7 @@ class _EventCardState extends State<_EventCard>{
         Container(width: 7,),
         Flexible(child: Text(displayTime!, overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            style: Styles().textStyles?.getTextStyle('widget.card.detail.small_variant2')
+            style: Styles().textStyles?.getTextStyle('widget.card.detail.small.medium')
     ),)
       ],
     ));

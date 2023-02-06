@@ -895,6 +895,7 @@
     "panel.onboarding2.research.questionnaire.prompt.question": "Would you like to get invitations to become a research participant via the Illinois app?",
     "panel.onboarding2.research.questionnaire.prompt.explanation": " Many studies offer incentives.",
     "panel.onboarding2.research.questionnaire.acknowledgement.title": "Thank you! We will notify you when you become eligible for any upcoming research projects.",
+    "panel.onboarding2.research.questionnaire.acknowledgement.explanation": "View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.",
     "panel.onboarding2.research.questionnaire.button.submit.title": "Submit",
     "panel.onboarding2.research.questionnaire.button.submit.hint": "",
     "panel.onboarding2.research.questionnaire.button.cancel.title": "Cancel",
@@ -1385,7 +1386,7 @@
     "panel.settings.home.button.review.hint": "",
     "panel.settings.home.version.info.label": "Versión de la aplicación de {{app_title}}:",
     "panel.settings.home.feedback.app.description.format": "La aplicación de Illinois es la aplicación oficial del campus de la Universidad de Illinois Urbana-Champaign. La aplicación se basa en la plataforma de software de código abierto <a href='{{rokwire_platform_url}}'>Rokwire</a>. El proyecto Rokwire y la aplicación de Illinois son esfuerzos de la <a href='{{shci_url}}'>Iniciativa de Comunidades Inteligentes y Saludables</a> en la oficina del Rector de la Universidad de Illinois.",
-    "panel.settings.home.copyright.text": "Copyright © %s Junta de Síndicos de la Universidad de Illinois",
+    "panel.settings.home.copyright.text": "Copyright © {{COPYRIGHT_YEAR}} Junta de Síndicos de la Universidad de Illinois",
 
     "panel.settings.profile.content.profile.label": "Mi perfil",
     "panel.settings.profile.content.who_are_you.label": "Quién eres tú",

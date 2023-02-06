@@ -18,23 +18,21 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/ContentAttributes.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Groups.dart';
 import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart' as rokwire;
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -50,14 +48,9 @@ class GroupsHomePanel extends StatefulWidget {
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
 }
 
-enum _FilterType { none, category, tags }
-enum _TagFilter { all, my }
-
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener {
-  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
   final Color _dimmedBackgroundColor = Color(0x99000000);
 
-  bool _isFilterLoading = false;
   int _groupsLoadingProgress = 0;
   Set<Completer<void>>? _reloadGroupsContentCompleters;
   bool _myGroupsBusy = false;
@@ -71,15 +64,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   List<Group>? _allGroups;
   List<Group>? _userGroups;
 
-  String? _selectedCategory;
-  List<String>? _categories;
-
-  ContentAttributes? _contentAttributes;
   Map<String, dynamic> _contentAttributesSelection = <String, dynamic>{};
-  String? _contentAttributesSelectionDescription;
-
-  _TagFilter? _selectedTagFilter = _TagFilter.all;
-  _FilterType __activeFilterType = _FilterType.none;
 
   @override
   void initState() {
@@ -96,7 +81,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Connectivity.notifyStatusChanged,
     ]);
     _selectedContentType = widget.contentType;
-    _loadFilters();
     _reloadGroupsContent();
   }
 
@@ -166,9 +150,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Future<List<Group>?> _loadAllGroups() async =>
     Groups().loadGroups(
       contentType: rokwire.GroupsContentType.all,
-      category: (_selectedCategory != _allCategoriesValue) ? _selectedCategory : null,
       attributes: _contentAttributesSelection,
-      tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
     );
 
   void _checkGroupsContentLoaded() {
@@ -181,41 +163,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _applyUserGroups() {
     _userGroups = Groups().userGroups;
     _updateState();
-  }
-
-  Future<void> _loadFilters() async{
-    setState(() {
-      _isFilterLoading = true;
-    });
-    List<dynamic> results = await Future.wait([
-      Groups().loadCategories(),
-      Groups().loadContentAttributes(),
-    ]);
-    
-    List<String> categories = [];
-    categories.add(_allCategoriesValue);
-    List<String>? groupCategories = (0 < results.length) ? JsonUtils.stringListValue(results[0])  : null;
-    if (CollectionUtils.isNotEmpty(groupCategories)) {
-      categories.addAll(groupCategories!);
-    }
-
-    setStateIfMounted(() {
-      _categories = categories;
-      _selectedCategory = _allCategoriesValue;
-      _contentAttributes = ((1 < results.length) && (results[1] is ContentAttributes)) ? results[1] : null;
-      _isFilterLoading = false;
-    });
-  }
-
-  static String? _tagFilterToDisplayString(_TagFilter? tagFilter) {
-    switch (tagFilter) {
-      case _TagFilter.all:
-        return Localization().getStringEx('panel.groups_home.filter.tag.all.label', 'All Tags');
-      case _TagFilter.my:
-        return Localization().getStringEx('panel.groups_home.filter.tag.my.label', 'My Tags');
-      default:
-        return null;
-    }
   }
 
   bool get _showMyGroups {
@@ -259,33 +206,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool get _isLoading {
-    return _isFilterLoading || _isGroupsLoading;
-  }
-
-  bool get _hasActiveFilter {
-    return _activeFilterType != _FilterType.none;
-  }
-
-  _FilterType get _activeFilterType {
-    return __activeFilterType;
-  }
-
-  set _activeFilterType(_FilterType value) {
-    if (__activeFilterType != value) {
-      __activeFilterType = value;
-      _updateState();
-    }
-  }
-
-  List<dynamic>? get _activeFilterList {
-    switch (_activeFilterType) {
-      case _FilterType.category:
-        return _categories;
-      case _FilterType.tags:
-        return _TagFilter.values;
-      default:
-        return null;
-    }
+    return _isGroupsLoading;
   }
 
   ///////////////////////////////////
@@ -300,18 +221,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             _buildFunctionalBar(),
             Expanded(child: _isLoading
               ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
-              : Stack(alignment: AlignmentDirectional.topCenter, children: <Widget>[
-                  Container(color: Styles().colors!.background, child:
-                    RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                      SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                        Column(children: <Widget>[ _buildGroupsContent(), ],),
-                      ),
+              : Container(color: Styles().colors!.background, child:
+                  RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                    SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                      Column(children: <Widget>[ _buildGroupsContent(), ],),
                     ),
                   ),
-                  Visibility(
-                    visible: _hasActiveFilter, child: _buildDimmedContainer()),
-                  _hasActiveFilter ? _buildFilterContent() : Container()
-                ],),
+                ),
             )
           ]),
           _buildContentTypesContainer()
@@ -374,49 +290,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildFiltersBar() {
-    if (_isFilterLoading || (_selectedContentType == rokwire.GroupsContentType.my)) {
-      return SizedBox();
-    }
-    else {
-      return _buildFilterButtons();
-    }
+    return (_selectedContentType == rokwire.GroupsContentType.my) ? SizedBox() : _buildFilterButtons();
   }
 
   Widget _buildFilterButtons() {
     String filtersTitle = Localization().getStringEx("panel.groups_home.filter.filter.label", "Filters");
     
     return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-      Visibility(visible: CollectionUtils.isNotEmpty(_categories), child:
-        Padding(padding: EdgeInsets.only(right: 6), child:
-          FilterSelector(
-            padding: EdgeInsets.only(top: 14, bottom: 8),
-            title: _selectedCategory,
-            active: (_activeFilterType == _FilterType.category),
-            onTap: () {
-              Analytics().logSelect(target: "GroupFilter - Category");
-              setState(() {
-                _activeFilterType = (_activeFilterType != _FilterType.category) ? _FilterType.category : _FilterType.none;
-              });
-            }
-          )
-        )
-      ),
-      
-      Padding(padding: EdgeInsets.only(right: 6), child:
-        FilterSelector(
-          padding: EdgeInsets.only(top: 14, bottom: 8),
-          title: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
-          active: (_activeFilterType == _FilterType.tags),
-          onTap: () {
-            Analytics().logSelect(target: "GroupFilter - Tags");
-            setState(() {
-              _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
-            });
-          }
-        ),
-      ),
-      
-      Visibility(visible: _contentAttributes?.isNotEmpty ?? false, child:
+      Visibility(visible: Groups().contentAttributes?.isNotEmpty ?? false, child:
         Padding(padding: EdgeInsets.only(right: 6), child:
           InkWell(onTap: _onFilterAttributes, child:
             Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
@@ -448,12 +329,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildContentAttributesDescription() {
-    return StringUtils.isNotEmpty(_contentAttributesSelectionDescription) ? 
-      Padding(padding: EdgeInsets.only(top: 0, bottom: 4), child: 
-      Row(children: [Expanded(child:
-        Text(_contentAttributesSelectionDescription ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium,),),
-      ),],)
-        
+
+    List<InlineSpan> attributesList = <InlineSpan>[];
+    ContentAttributes? contentAttributes = Groups().contentAttributes;
+    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
+    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.fat");
+    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (categories != null)) {
+      for (ContentAttributesCategory category in categories) {
+        List<String>? displayAttributes = category.displayAttributesListFromSelection(_contentAttributesSelection, contentAttributes: contentAttributes, complete: true);
+        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
+          displayAttributes = List.from(displayAttributes.map((String attribute) => "'$attribute'"));
+          if (attributesList.isNotEmpty) {
+            attributesList.add(TextSpan(text: " and " , style : regularStyle,));
+          }
+          attributesList.addAll(<InlineSpan>[
+            TextSpan(text: "${contentAttributes.stringValue(category.title)}" , style : boldStyle,),
+            TextSpan(text: " is ${displayAttributes.join(' or ')}" , style : regularStyle,),
+          ]);
+        }
+      }
+    }
+
+    return attributesList.isNotEmpty ? 
+      Padding(padding: EdgeInsets.only(top: 0, bottom: 4, right: 12), child: 
+        Row(children: [ Expanded(child:
+          RichText(text: TextSpan(style: regularStyle, children: attributesList))
+        ),],)
       ) : Container();
   }
 
@@ -482,98 +384,16 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onFilterAttributes() {
     Analytics().logSelect(target: 'Filters');
-    if (_contentAttributes != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(contentAttributes: _contentAttributes!, selection: _contentAttributesSelection, filtersMode: true,))).then((selection) {
+    if (Groups().contentAttributes != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(selection: _contentAttributesSelection, filtersMode: true,))).then((selection) {
         if ((selection != null) && mounted) {
-          String? selectionText = _contentAttributes?.selectionDescription(selection,
-            categorySeparator: ', ',
-            attributeSeparator: ' or ',
-            titleDelimiter: ' is '
-          );
           setState(() {
             _contentAttributesSelection = selection;
-            _contentAttributesSelectionDescription = StringUtils.isNotEmpty(selectionText) ? "Attributes: $selectionText" : null;
           });
           _reloadAllGroupsContent();
         }
       });
     }
-  }
-
-  Widget _buildFilterContent() {
-    return _buildFilterContentEx(
-        itemCount: _activeFilterList!.length,
-        itemBuilder: (context, index) {
-          return  FilterListItem(
-            title: StringUtils.ensureNotEmpty(_getFilterItemLabel(index)),
-            selected: _isFilterItemSelected(index),
-            onTap: ()=> _onTapFilterEntry(_activeFilterList![index]),
-          );
-        }
-    );
-  }
-
-  bool _isFilterItemSelected(int filterListIndex) {
-    if (CollectionUtils.isEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
-      return false;
-    }
-    switch (_activeFilterType) {
-      case _FilterType.category:
-        return (_selectedCategory == _activeFilterList![filterListIndex]);
-      case _FilterType.tags:
-        return (_selectedTagFilter == _activeFilterList![filterListIndex]);
-      default:
-        return false;
-    }
-  }
-
-  String? _getFilterItemLabel(int filterListIndex) {
-    if (CollectionUtils.isEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
-      return null;
-    }
-    switch (_activeFilterType) {
-      case _FilterType.category:
-        return _activeFilterList![filterListIndex];
-      case _FilterType.tags:
-        return _tagFilterToDisplayString(_activeFilterList![filterListIndex]);
-      default:
-        return null;
-    }
-  }
-
-  Widget _buildFilterContentEx({required int itemCount, required IndexedWidgetBuilder itemBuilder}){
-
-    return Semantics(child:Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 40),
-        child: Semantics(child:Container(
-          decoration: BoxDecoration(
-            color: Styles().colors!.fillColorSecondary,
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          child: Padding(
-            padding: EdgeInsets.only(top: 2),
-            child: Container(
-              color: Colors.white,
-              child: ListView.separated(
-                shrinkWrap: true,
-                separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
-                itemCount: itemCount,
-                itemBuilder: itemBuilder,
-              ),
-            ),
-          ),
-        ))));
-  }
-
-  Widget _buildDimmedContainer() {
-    return BlockSemantics(child:GestureDetector(
-      onTap: (){
-        setState(() {
-          _activeFilterType = _FilterType.none;
-        });
-      },
-        child: Container(color: _dimmedBackgroundColor))
-    );
   }
 
   Widget _buildGroupsContent() {
@@ -732,27 +552,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       _onSelectMyGroups();
     }
     _changeContentTypesVisibility();
-  }
-
-  void _onTapFilterEntry(dynamic entry) {
-    String? analyticsTarget;
-    switch (_activeFilterType) {
-      case _FilterType.category:
-        _selectedCategory = entry;
-        analyticsTarget = "CategoryFilter";
-        break;
-      case _FilterType.tags:
-        _selectedTagFilter = entry;
-        analyticsTarget = "TagFilter";
-        break;
-      default:
-        break;
-    }
-    Analytics().logSelect(target: "$analyticsTarget: $entry");
-    setState(() {
-      _activeFilterType = _FilterType.none;
-    });
-    _reloadAllGroupsContent();
   }
 
   void _onSelectAllGroups(){
