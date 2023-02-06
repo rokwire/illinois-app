@@ -319,23 +319,21 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   void _loadAppointments() {
     if (_appointmentsCanDisplay) {
       _setLoading(true);
-      Appointments().refreshAppointments().then((_) {
-        List<Appointment>? appointments = Appointments().getAppointments();
-        if (CollectionUtils.isNotEmpty(appointments)) {
-          _upcomingAppointments = <Appointment>[];
-          _pastAppointments = <Appointment>[];
-          for (Appointment appointment in appointments!) {
-            if (appointment.isUpcoming) {
-              _upcomingAppointments!.add(appointment);
-            } else {
-              _pastAppointments!.add(appointment);
-            }
+      List<Appointment>? appointments = Appointments().getAppointments();
+      if (CollectionUtils.isNotEmpty(appointments)) {
+        _upcomingAppointments = <Appointment>[];
+        _pastAppointments = <Appointment>[];
+        for (Appointment appointment in appointments!) {
+          if (appointment.isUpcoming) {
+            _upcomingAppointments!.add(appointment);
+          } else {
+            _pastAppointments!.add(appointment);
           }
-        } else {
-          _upcomingAppointments = _pastAppointments = null;
         }
-        _setLoading(false);
-      });
+      } else {
+        _upcomingAppointments = _pastAppointments = null;
+      }
+      _setLoading(false);
     }
   }
 
