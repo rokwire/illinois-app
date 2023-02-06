@@ -1374,7 +1374,7 @@
     "panel.settings.home.button.review.hint": "",
     "panel.settings.home.version.info.label": "{{app_title}} App Version:",
     "panel.settings.home.feedback.app.description.format": "The Illinois app is the official campus app of the University of Illinois Urbana-Champaign. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a> in the office of the Provost at the University of Illinois.",
-    "panel.settings.home.copyright.text": "Copyright © 2023 University of Illinois Board of Trustees",
+    "panel.settings.home.copyright.text": "Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees",
 
     "panel.settings.profile.content.profile.label": "My Profile",
     "panel.settings.profile.content.who_are_you.label": "Who Are You",

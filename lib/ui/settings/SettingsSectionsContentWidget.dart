@@ -26,6 +26,7 @@ import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -931,12 +932,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Copyright
   Widget _buildCopyright() {
-    String copyrightLabel =
-        Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © 2022 University of Illinois Board of Trustees');
-    return Container(
-        alignment: Alignment.center,
-        child: Text(copyrightLabel, textAlign: TextAlign.center,
-            style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
+    String copyrightLabel = Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees')
+      .replaceAll('{{COPYRIGHT_YEAR}}', DateFormat('yyyy').format(DateTime.now()));
+    return Container(alignment: Alignment.center, child:
+      Text(copyrightLabel, textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+    );
   }
 
   // Utilities
