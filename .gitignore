@@ -54,10 +54,10 @@ google-services.json
 keys.properties
 
 # HID / Origo libs
-mobilekeys-android-sdk-debug-8.0.2.aar
-mobilekeys-android-sdk-release-8.0.2.aar
-origo-sdk-debug-1.7.8.aar
-origo-sdk-release-1.7.8.aar
+mobilekeys-android-sdk-debug-?.?.?.aar
+mobilekeys-android-sdk-release-?.?.?.aar
+origo-sdk-debug-?.?.?.aar
+origo-sdk-release-?.?.?.aar
 
 # App Branding
 /app/assets/
