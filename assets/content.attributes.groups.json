@@ -7,7 +7,7 @@
 		"semantics-hint": "Double tap to show category options.",
 		"usage": "category",
 		"widget": "dropdown",
-		"min-required-count": 1,
+		"min-required-count": 0,
 		"max-required-count": 1,
 		"values": [
 			"Academic",
@@ -893,6 +893,9 @@
 			{ "label": "No", "value" : false }
 		]
 	}],
+	"requirements": {
+		"min-required-count": 1
+	},
   "strings": {
   	"en": {
   		"Shares": "Shares"
