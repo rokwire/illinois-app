@@ -175,7 +175,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
 
   Future<String?> _loadAppointmentsStringFromNet() async {
     //TMP: assets shortcut
-    //return await AppBundle.loadString('assets/appointments.json')
+    // return await AppBundle.loadString('assets/appointments.json');
     if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
       String? url = "${Config().appointmentsUrl}/services/appointments";
       http.Response? response = await Network().get(url, auth: Auth2());
@@ -205,10 +205,18 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   void _sortAppointments(List<Appointment>? appointments) {
     if (CollectionUtils.isNotEmpty(appointments)) {
       appointments!.sort((first, second) {
-        if (first.dateTimeUtc == null || second.dateTimeUtc == null) {
-          return 0;
+        if (first.isUpcoming) {
+          if (second.isUpcoming) {
+            return first.dateTimeUtc!.compareTo(second.dateTimeUtc!);
+          } else {
+            return -1;
+          }
         } else {
-          return (first.dateTimeUtc!.isBefore(second.dateTimeUtc!)) ? -1 : 1;
+          if (second.isUpcoming) {
+            return 1;
+          } else {
+            return second.dateTimeUtc!.compareTo(first.dateTimeUtc!);
+          }
         }
       });
     }
