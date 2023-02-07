@@ -256,7 +256,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                     ),
                     child: Center(child:
                       Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.label.new_privacy", "Privacy Level: "), child:
-                        Text(_sliderIntValue?.toString() ?? "", style: Styles().textStyles?.getTextStyle("widget.title.extra_large")),
+                        Text(_sliderIntValue?.toString() ?? "", style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")),
                       )
                     ),
                   ),
@@ -413,7 +413,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               child: Center(
                   child: Text(
                     title,
-                    style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
+                    style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")
                   )),
             )));
 
@@ -506,7 +506,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   ),
                   child: Semantics( label:Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
                     child: Text(level.toString(),
-                      style: Styles().textStyles?.getTextStyle("widget.title.extra_large")),
+                      style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")),
                   ),
                 )),
                 Container(width: 20,),

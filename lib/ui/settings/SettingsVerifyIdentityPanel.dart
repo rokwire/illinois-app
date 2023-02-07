@@ -63,7 +63,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles?.getTextStyle("widget.title.extra_large"),
+              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat"),
             ),
           ),
           Container(height: 8,),

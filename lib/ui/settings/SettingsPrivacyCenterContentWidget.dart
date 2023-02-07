@@ -185,7 +185,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                       child: Semantics(
                           label: Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
                           child: Text(level.toString(),
-                              style: Styles().textStyles?.getTextStyle("widget.title.extra_large"))))),
+                              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat"))))),
               Container(width: 20),
               Expanded(
                   child: Text(Localization().getString(description.key, defaults: description.text) ?? '',
@@ -227,7 +227,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                             child: Text(
                               Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.title", "Manage and Understand Your Privacy"),
                               textAlign: TextAlign.left,
-                              style: Styles().textStyles?.getTextStyle("widget.title.regular")
+                              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                             )),
                           )
                         ],

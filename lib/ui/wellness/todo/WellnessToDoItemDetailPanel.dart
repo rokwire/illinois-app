@@ -147,7 +147,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     return Padding(
         padding: EdgeInsets.only(top: 16),
         child: Text(Localization().getStringEx('panel.wellness.todo.item.add.label', 'Add an Item'),
-            style: Styles().textStyles?.getTextStyle("widget.title.regular")));
+            style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")));
   }
 
   Widget _buildItemName() {

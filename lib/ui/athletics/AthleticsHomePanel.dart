@@ -623,7 +623,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                           Padding(padding: EdgeInsets.only(top:24), child:
                             Container(color: Styles().colors!.fillColorPrimary, child:
                               Padding(padding: EdgeInsets.all(5), child:
-                                Text(sportName.toUpperCase(), style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.accent'),),
+                                Text(sportName.toUpperCase(), style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular.accent'),),
                               ),
                             ),
                           ),
