@@ -25,6 +25,8 @@ import com.hid.origo.api.OrigoMobileKey;
 import com.hid.origo.api.OrigoMobileKeys;
 import com.hid.origo.api.OrigoMobileKeysCallback;
 import com.hid.origo.api.OrigoMobileKeysException;
+import com.hid.origo.api.OrigoMobileKeysProgressCallback;
+import com.hid.origo.api.OrigoProgressEvent;
 import com.hid.origo.api.OrigoReaderConnectionController;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
 
@@ -58,7 +60,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
 
     public void setupEndpoint(String invitationCode) {
         if (!isEndpointSetUpComplete()) {
-            getMobileKeys().endpointSetup(mobileKeysEndpointCallBack, invitationCode);
+            getMobileKeys().endpointSetup(mobileKeysEndpointSetupCallBack, invitationCode);
         }
     }
 
@@ -102,6 +104,9 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
     @Override
     public void onStartUpComplete() {
         Log.d(TAG, "onStartUpComplete");
+        if (isEndpointSetUpComplete()) {
+            getMobileKeys().endpointUpdate(mobileKeysEndpointUpdateCallBack);
+        }
     }
 
     @Override
@@ -158,16 +163,39 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
         }
     };
 
-    private OrigoMobileKeysCallback mobileKeysEndpointCallBack = new OrigoMobileKeysCallback() {
+    private OrigoMobileKeysCallback mobileKeysEndpointSetupCallBack = new OrigoMobileKeysCallback() {
         @Override
         public void handleMobileKeysTransactionCompleted() {
-            Log.d(TAG, "mobileKeysEndpointCallBack: handleMobileKeysTransactionCompleted");
+            Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionCompleted");
             onEndpointSetUpComplete();
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-            Log.d(TAG, "mobileKeysEndpointCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
+            Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
+        }
+    };
+
+    //endregion
+
+    //region OrigoMobileKeysProgressCallback implementation
+
+    private OrigoMobileKeysProgressCallback mobileKeysEndpointUpdateCallBack = new OrigoMobileKeysProgressCallback() {
+
+        @Override
+        public void handleMobileKeysTransactionProgress(OrigoProgressEvent origoProgressEvent) {
+            Log.d(TAG, "mobileKeysEndpointUpdateCallBack: handleMobileKeysTransactionProgress: OrigoProgressEvent: " + origoProgressEvent.progressType());
+
+        }
+
+        @Override
+        public void handleMobileKeysTransactionCompleted() {
+            Log.d(TAG, "mobileKeysEndpointUpdateCallBack: handleMobileKeysTransactionCompleted");
+        }
+
+        @Override
+        public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
+            Log.d(TAG, "mobileKeysEndpointUpdateCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
         }
     };
 
