@@ -1,8 +1,8 @@
 import 'dart:collection';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/attributes/ContentAttributesCategoryPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -11,7 +11,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:sprintf/sprintf.dart';
 
 
 class ContentAttributesPanel extends StatefulWidget {
@@ -28,7 +27,6 @@ class ContentAttributesPanel extends StatefulWidget {
 
 class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
-  final Map<String, GlobalKey> dropdownKeys = <String, GlobalKey>{};
   Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
 
   @override
@@ -80,7 +78,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       for (ContentAttributesCategory category in categories) {
         Widget? categoryWidget;
         switch (category.widget) {
-          case ContentAttributesCategoryWidget.dropdown: categoryWidget = _buildCatgoryDropDown(category); break;
+          case ContentAttributesCategoryWidget.dropdown: categoryWidget = _buildCategoryDropDown(category); break;
           case ContentAttributesCategoryWidget.checkbox: categoryWidget = _buildCategoryCheckbox(category); break;
           default: break;
         }
@@ -93,18 +91,18 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: conentList,); 
   }
 
-  Widget _buildCatgoryDropDown(ContentAttributesCategory category) {
-    List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
-    if ((attributes != null) && (0 < attributes.length) && !widget.filtersMode && category.isSingleSelection /* && !category.isRequired*/) {
-      attributes.insert(0, _ContentNullAttribute());
-    }
-
+  Widget _buildCategoryDropDown(ContentAttributesCategory category) {
     LinkedHashSet<String>? categoryLabels = _selection[category.id];
-    ContentAttribute? selectedAttribute = ((categoryLabels != null) && categoryLabels.isNotEmpty) ?
-      ((1 < categoryLabels.length) ? _ContentMultipleAttributes(categoryLabels) : category.findAttribute(label: categoryLabels.first)) : null;
+    bool hasSelection = ((categoryLabels != null) && categoryLabels.isNotEmpty);
 
+    List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
     bool visible = (attributes?.isNotEmpty ?? false);
-    bool enabled = (attributes?.isNotEmpty ?? false) && ((selectedAttribute != null) || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
+    bool enabled = (attributes?.isNotEmpty ?? false) && (hasSelection || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
+
+    String? title = _constructAttributeTitle(category, categoryLabels);
+    String? hint = widget.contentAttributes?.stringValue(category.semanticsHint);
+    TextStyle? textStyle = Styles().textStyles?.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
+    void Function()? onTap = enabled ? () => _onCategoryDropdownTap(category: category, attributes: attributes) : null;
     
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -113,104 +111,54 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           description: widget.contentAttributes?.stringValue(category.description),
           requiredMark: !widget.filtersMode && category.isRequired,
         ),
-        GroupDropDownButton<ContentAttribute>(
-          key: dropdownKeys[category.id ?? ''] ??= GlobalKey(),
-          emptySelectionText: widget.contentAttributes?.stringValue(category.emptyHint),
-          buttonHint: widget.contentAttributes?.stringValue(category.semanticsHint),
-          items: attributes,
-          initialSelectedValue: selectedAttribute,
-          multipleSelection: widget.filtersMode || category.isMultipleSelection,
-          enabled: enabled,
-          itemHeight: null,
-          constructTitle: (ContentAttribute attribute) => _constructAttributeTitle(category, attribute),
-          isItemSelected: (ContentAttribute attribute) => _isAttributeSelected(category, attribute),
-          isItemEnabled: (ContentAttribute attribute) => (attribute is! _ContentNullAttribute),
-          onItemSelected: (ContentAttribute attribute) => _onAttributeSelected(category, attribute),
-          onValueChanged: (ContentAttribute attribute) => _onAttributeChanged(category, attribute),
+        _CategoryDropdownButton(
+          title: title, hint: hint, textStyle: textStyle, onTap: onTap,
         ),
       ]),
     );
   }
 
-  String? _constructAttributeTitle(ContentAttributesCategory category, ContentAttribute attribute) {
-    if (attribute is _ContentMultipleAttributes) {
-      return attribute.toString(contentAttributes: widget.contentAttributes);
+  String? _constructAttributeTitle(ContentAttributesCategory category, LinkedHashSet<String>? categoryLabels) {
+    if ((categoryLabels == null) || categoryLabels.isEmpty) {
+      return widget.contentAttributes?.stringValue(category.emptyHint);
     }
-    else if (attribute is _ContentNullAttribute) {
-      return attribute.toString(contentAttributes: widget.contentAttributes, category: category);
-    }
-    else {
-      return widget.contentAttributes?.stringValue(attribute.label);
-    }
-  }
-
-  bool _isAttributeSelected(ContentAttributesCategory category, ContentAttribute attribute) {
-    LinkedHashSet<String>? categoryLabels = _selection[category.id];
-    if (attribute is _ContentMultipleAttributes) {
-      return categoryLabels?.containsAll(attribute.labels) ?? false;
-    }
-    else if (attribute is _ContentNullAttribute) {
-      return false;
+    else if (categoryLabels.length == 1) {
+      return widget.contentAttributes?.stringValue(categoryLabels.first);
     }
     else {
-      return categoryLabels?.contains(attribute.label) ?? false;
+      String title = '';
+      for (String attributeLabel in categoryLabels) {
+        String attributeName = widget.contentAttributes?.stringValue(attributeLabel) ?? attributeLabel;
+        if (attributeName.isNotEmpty) {
+          if (title.isNotEmpty) {
+            title += ', ';
+          }
+          title += attributeName;
+        }
+      }
+      return title;
     }
   }
 
-  void _onAttributeSelected(ContentAttributesCategory category, ContentAttribute attribute) {
-  }
+  void _onCategoryDropdownTap({ContentAttributesCategory? category, List<ContentAttribute>? attributes}) {
+    Analytics().logSelect(target: category?.title);
+    String? categoryId = category?.id;
 
-  void _onAttributeChanged(ContentAttributesCategory category, ContentAttribute attribute) {
-    Analytics().logSelect(target: attribute.label, source: category.title);
-
-    String? categoryId = category.id;
-    if (categoryId != null) {
-      LinkedHashSet<String> categoryLabels = (_selection[categoryId] ??= LinkedHashSet<String>());
-      setStateIfMounted(() {
-
-        if (attribute is _ContentMultipleAttributes) {
-          if (categoryLabels.containsAll(attribute.labels)) {
-            categoryLabels.removeAll(attribute.labels);
-          }
-          else {
-            categoryLabels.addAll(attribute.labels);
-          }
-        }
-        else if (attribute is _ContentNullAttribute) {
-          categoryLabels.clear();
-        }
-        else {
-          String? attributeLabel = attribute.label;
-          if (attributeLabel != null) {
-            if (categoryLabels.contains(attributeLabel)) {
-              categoryLabels.remove(attributeLabel);
-            }
-            else {
-              categoryLabels.add(attributeLabel);
-            }
-          }
-        }
-
-        if (!widget.filtersMode) {
-          category.requirements?.validateAttributesSelection(categoryLabels);
-        }
-
-        widget.contentAttributes?.validateSelection(_selection);
-      });
-    }
-
-    if (widget.filtersMode || category.isMultipleSelection) {
-      // Ugly workaround: show again dropdown popup if category supports multiple select.
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        final RenderObject? renderBox = dropdownKeys[category.id]?.currentContext?.findRenderObject();
-        if (renderBox is RenderBox) {
-          Offset globalOffset = renderBox.localToGlobal(Offset(renderBox.size.width / 2, renderBox.size.height / 2));
-          GestureBinding.instance.handlePointerEvent(PointerDownEvent(position: globalOffset,));
-          //Future.delayed(Duration(milliseconds: 100)).then((_) =>);
-          GestureBinding.instance.handlePointerEvent(PointerUpEvent(position: globalOffset,));
-        }
-      });
-    }
+    ContentAttributesCategoryPanel.present(context,
+      contentAttributes: widget.contentAttributes,
+      category: category,
+      attributes: attributes,
+      selection: _selection[categoryId],
+      multipleSelection: widget.filtersMode || (category?.isMultipleSelection ?? false),
+      filtersMode: widget.filtersMode,
+    ).then((LinkedHashSet<String>? selection) {
+      if ((selection != null) && (categoryId != null)) {
+        setStateIfMounted(() {
+          _selection[categoryId] = selection;
+          widget.contentAttributes?.validateSelection(_selection);
+        });
+      }
+    });
   }
 
   Widget _buildCategoryCheckbox(ContentAttributesCategory category) {
@@ -370,36 +318,38 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 }
 
-class _ContentMultipleAttributes extends ContentAttribute {
-  final LinkedHashSet<String> labels;
-  _ContentMultipleAttributes(this.labels);
+class _CategoryDropdownButton extends StatelessWidget {
+  final String? title;
+  final String? hint;
+  final TextStyle? textStyle;
+  final Function()? onTap;
 
-  String toString({ContentAttributes? contentAttributes}) {
-    String title = '';
-    for (String attributeLabel in labels) {
-      String attributeName = contentAttributes?.stringValue(attributeLabel) ?? attributeLabel;
-      if (attributeName.isNotEmpty) {
-        if (title.isNotEmpty) {
-          title += ', ';
-        }
-        title += attributeName;
-      }
-    }
-    return title;
+  _CategoryDropdownButton({Key? key, this.title, this.hint, this.textStyle, this.onTap}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(onTap: onTap, child:
+      Container (
+        decoration: BoxDecoration(
+          color: Styles().colors!.white,
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(4))
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
+          Semantics(container: true, label: title, hint: hint, excludeSemantics: true, child:
+            Row(children: [
+              Expanded(child:
+                Padding(padding: EdgeInsets.only(left: 12, top: 18, bottom: 18), child:
+                  Text(title ?? '', style: textStyle),
+                ),
+              ),
+              Padding(padding: EdgeInsets.all(12), child:
+                Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? SizedBox(width: 10, height: 6),
+              ),
+            ],),
+          ),
+        ])
+      ),
+    );
   }
 }
-
-class _ContentNullAttribute extends ContentAttribute {
-  String toString({ContentAttributes? contentAttributes, ContentAttributesCategory? category}) {
-    String? categoryTitle = category?.title;
-    if ((categoryTitle != null) && categoryTitle.isNotEmpty) {
-      return sprintf(Localization().getStringEx('panel.content.attributes.label.no_selection.title.format', 'No %s'), [
-        contentAttributes?.stringValue(categoryTitle) ?? categoryTitle
-      ]);
-    }
-    else {
-      return Localization().getStringEx('panel.content.attributes.label.no_selection.title', 'None');
-    }
-  }
-}
-

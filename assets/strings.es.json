@@ -23,6 +23,8 @@
     "dialog.close.hint":"",
     "dialog.clear.title":"Clara",
     "dialog.clear.hint":"",
+    "dialog.apply.title":"Aplicar",
+    "dialog.apply.hint":"",
 
     "tabbar.home.title":"Inicio",
     "tabbar.home.hint":"Página de inicio",

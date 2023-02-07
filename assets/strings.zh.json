@@ -23,6 +23,8 @@
 	"dialog.close.hint":"",
 	"dialog.clear.title":"清除",
 	"dialog.clear.hint":"",
+	"dialog.apply.title":"申請",
+	"dialog.apply.hint":"",
 
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",
