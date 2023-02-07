@@ -2308,12 +2308,7 @@
 
 	"panel.group.attributes.attributes.header.title": "Group Attributes",
 	"panel.group.attributes.filters.header.title": "Group Filters",
-    "panel.group.attributes.button.apply.title": "Apply Attributes",
-    "panel.group.attributes.button.filter.title": "Filter",
-    "panel.group.attributes.button.clear.title": "Clear",
-    "panel.group.attributes.label.no_selection.title": "None",
-    "panel.group.attributes.label.no_selection.title.format": "No %s",
-
+    
     "panel.groups_event_detail.button.options.title": "Options",
     "panel.groups_event_detail.label.online_event": "Online Event",
     "panel.groups_event_detail.label.location.hint": "",
@@ -2403,6 +2398,12 @@
 	"panel.research_projects.home.status.error.my.text": "Failed to load your research projects.",
 	"panel.research_projects.home.status.empty.open.text": "There are no opened research projects at the moment.",
 	"panel.research_projects.home.status.empty.my.text": "You have not created and do not participate in any research projects.",
+
+    "panel.content.attributes.button.apply.title": "Apply Attributes",
+    "panel.content.attributes.button.filter.title": "Filter",
+    "panel.content.attributes.button.clear.title": "Clear",
+    "panel.content.attributes.label.no_selection.title": "None",
+    "panel.content.attributes.label.no_selection.title.format": "No %s",
 
     "panel.mtd_stops.home.header_bar.title": "MTD Stops",
     "panel.mtd_stops.home.content_type.all.title": "All Stops",

@@ -385,7 +385,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _onFilterAttributes() {
     Analytics().logSelect(target: 'Filters');
     if (Groups().contentAttributes != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(contentAttributes: Groups().contentAttributes, selection: _contentAttributesSelection, filtersMode: true,))).then((selection) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('panel.group.attributes.attributes.header.title', 'Group Attributes'),
+        contentAttributes: Groups().contentAttributes,
+        selection: _contentAttributesSelection,
+        filtersMode: true,
+      ))).then((selection) {
         if ((selection != null) && mounted) {
           setState(() {
             _contentAttributesSelection = selection;

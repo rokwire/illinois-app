@@ -15,11 +15,12 @@ import 'package:sprintf/sprintf.dart';
 
 
 class ContentAttributesPanel extends StatefulWidget {
+  final String? title;
   final bool filtersMode;
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
 
-  ContentAttributesPanel({Key? key, this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
+  ContentAttributesPanel({Key? key, this.title, this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesPanelState();
@@ -45,11 +46,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   @override
   Widget build(BuildContext context) {
-    String headerTitle = widget.filtersMode ?
-      Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters') : 
-      Localization().getStringEx('panel.group.attributes.attributes.header.title', 'Group Attributes');
     return Scaffold(
-      appBar: HeaderBar(title: headerTitle),
+      appBar: HeaderBar(title: widget.title),
       backgroundColor: Styles().colors?.background,
       body: _buildContent(),
     );
@@ -330,7 +328,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       bool canClear = _isInitialSelectionNotEmpty;
       buttons.addAll(<Widget>[
         Expanded(child: RoundedButton(
-          label: Localization().getStringEx('panel.group.attributes.button.clear.title', 'Clear'),
+          label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
           textColor: canClear ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
           borderColor: canClear ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
           backgroundColor: Styles().colors?.white,
@@ -342,8 +340,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
     String applyTitle = widget.filtersMode ? 
-      Localization().getStringEx('panel.group.attributes.button.filter.title', 'Filter') :
-      Localization().getStringEx('panel.group.attributes.button.apply.title', 'Apply Attributes');
+      Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter') :
+      Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes');
     buttons.add(Expanded(child:
       RoundedButton(
         label: applyTitle,
@@ -395,12 +393,12 @@ class _ContentNullAttribute extends ContentAttribute {
   String toString({ContentAttributes? contentAttributes, ContentAttributesCategory? category}) {
     String? categoryTitle = category?.title;
     if ((categoryTitle != null) && categoryTitle.isNotEmpty) {
-      return sprintf(Localization().getStringEx('panel.group.attributes.label.no_selection.title.format', 'No %s'), [
+      return sprintf(Localization().getStringEx('panel.content.attributes.label.no_selection.title.format', 'No %s'), [
         contentAttributes?.stringValue(categoryTitle) ?? categoryTitle
       ]);
     }
     else {
-      return Localization().getStringEx('panel.group.attributes.label.no_selection.title', 'None');
+      return Localization().getStringEx('panel.content.attributes.label.no_selection.title', 'None');
     }
   }
 }
