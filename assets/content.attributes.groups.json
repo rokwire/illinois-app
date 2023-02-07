@@ -7,7 +7,7 @@
 		"semantics-hint": "Double tap to show category options.",
 		"usage": "category",
 		"widget": "dropdown",
-		"min-required-count": 1,
+		"min-required-count": 0,
 		"max-required-count": 1,
 		"values": [
 			"Academic",
@@ -29,25 +29,25 @@
 		"min-required-count": 0,
 		"max-required-count": 1,
 		"values": [
-      { "label": "Baseball", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Basketball", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Cross Country", "requirements": { "category" : "Athletics" }},
-      { "label": "Football", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Golf", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Gymnastics", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Tennis", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Track Field", "requirements": { "category" : "Athletics" }},
-      { "label": "Wrestling", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Basketball", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Cross Country", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Golf", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Gymnastics", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Soccer", "requirements": { "category" : "Athletics" }},
-      { "label": "Softball", "requirements": { "category" : "Athletics" }},
-      { "label": "Swim Dive", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Tennis", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Track Field", "requirements": { "category" : "Athletics" }},
-      { "label": "Volleyball", "requirements": { "category" : "Athletics" }}
+      { "label": "Baseball" },
+      { "label": "Men's Basketball" },
+      { "label": "Men's Cross Country" },
+      { "label": "Football" },
+      { "label": "Men's Golf" },
+      { "label": "Men's Gymnastics" },
+      { "label": "Men's Tennis" },
+      { "label": "Men's Track Field" },
+      { "label": "Wrestling" },
+      { "label": "Women's Basketball" },
+      { "label": "Women's Cross Country" },
+      { "label": "Women's Golf" },
+      { "label": "Women's Gymnastics" },
+      { "label": "Women's Soccer" },
+      { "label": "Softball" },
+      { "label": "Swim Dive" },
+      { "label": "Women's Tennis" },
+      { "label": "Women's Track Field" },
+      { "label": "Volleyball" }
 		]
 	},{
 		"id": "college",
@@ -128,7 +128,6 @@
 			{ "label": "Human Dvlpmt & Family Studies", "requirements": { "college" : "Agr, Consumer & Env Sciences" }},
 			{ "label": "Natural Res & Env Sci", "requirements": { "college" : "Agr, Consumer & Env Sciences" }},
 			{ "label": "Nutritional Sciences", "requirements": { "college" : "Agr, Consumer & Env Sciences" }},
-
 
 			{ "label": "Applied Health Sci Courses", "requirements": { "college" : "Applied Health Sciences" }},
 			{ "label": "Applied Health Sci General Exp", "requirements": { "college" : "Applied Health Sciences" }},
@@ -894,6 +893,9 @@
 			{ "label": "No", "value" : false }
 		]
 	}],
+	"requirements": {
+		"min-required-count": 1
+	},
   "strings": {
   	"en": {
   		"Shares": "Shares"
