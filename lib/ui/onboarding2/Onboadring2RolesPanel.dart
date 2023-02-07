@@ -75,7 +75,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                 hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
                 child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?'),
-                  style: Styles().textStyles?.getTextStyle("widget.title.extra_large"),
+                  style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat"),
                 ),
               ),
             ],),),
