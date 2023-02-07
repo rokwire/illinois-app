@@ -7,8 +7,10 @@
 		"semantics-hint": "Double tap to show category options.",
 		"usage": "category",
 		"widget": "dropdown",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
 			"Academic",
 			"Athletics",
@@ -26,9 +28,11 @@
 		"semantics-hint": "Double tap to show sport options.",
 		"usage": "category",
 		"widget": "dropdown",
-		"requirements-mode": "exclusive",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"mode": "exclusive",
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
       { "label": "Baseball", "requirements": { "category" : "Athletics" }},
       { "label": "Men's Basketball", "requirements": { "category" : "Athletics" }},
@@ -58,8 +62,10 @@
 		"usage": "property",
 		"widget": "dropdown",
 		"semantics-hint": "Double tap to show college options.",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
 			"Agr, Consumer & Env Sciences",
 			"Applied Health Sciences",
@@ -109,9 +115,11 @@
 		"semantics-hint": "Double tap to show department options.",
 		"usage": "property",
 		"widget": "dropdown",
-		"requirements-mode": "inclusive",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"mode": "inclusive",
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
 			
 			{ "label": "ACES Technology Services", "requirements": { "college" : "Agr, Consumer & Env Sciences" }},
@@ -538,8 +546,7 @@
 		"usage": "tag",
 		"widget": "dropdown",
 		"semantics-hint": "Double tap to show tags.",
-		"min-required-count": null,
-		"max-required-count": null,
+		"requirements" : null,
 		"values": [
 			"20th century",
 			"57N",
@@ -888,15 +895,17 @@
 		"semantics-hint": "Double tap to show RSO options.",
 		"usage": "label",
 		"widget": "checkbox",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
 			{ "label": "Yes", "value": true },
 			{ "label": "No", "value" : false }
 		]
 	}],
 	"requirements": {
-		"min-required-count": 1
+		"min-selected-count": 1
 	},
   "strings": {
   	"en": {

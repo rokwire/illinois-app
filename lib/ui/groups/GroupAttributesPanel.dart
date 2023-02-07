@@ -109,14 +109,14 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       ((1 < categoryLabels.length) ? _ContentMultipleAttributes(categoryLabels) : category.findAttribute(label: categoryLabels.first)) : null;
 
     bool visible = (attributes?.isNotEmpty ?? false);
-    bool enabled = (attributes?.isNotEmpty ?? false) && (contentAttributes != null) && ((selectedAttribute != null) || (contentAttributes.requirements?.canSelectMore(_selection) ?? true));
+    bool enabled = (attributes?.isNotEmpty ?? false) && (contentAttributes != null) && ((selectedAttribute != null) || (contentAttributes.requirements?.canSelectMoreCategories(_selection) ?? true));
     
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
           title: contentAttributes?.stringValue(category.title)?.toUpperCase(),
           description: contentAttributes?.stringValue(category.description),
-          requiredMark: !widget.filtersMode && (0 < (category.minRequiredCount ?? 0)),
+          requiredMark: !widget.filtersMode && category.isRequired,
         ),
         GroupDropDownButton<ContentAttribute>(
           key: dropdownKeys[category.id ?? ''] ??= GlobalKey(),
@@ -196,10 +196,8 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
           }
         }
 
-        if (!widget.filtersMode && (category.maxRequiredCount != null)) {
-          while (category.maxRequiredCount! < categoryLabels.length) {
-            categoryLabels.remove(categoryLabels.first);
-          }
+        if (!widget.filtersMode) {
+          category.requirements?.validateAttributesSelection(categoryLabels);
         }
 
         Groups().contentAttributes?.validateSelection(_selection);
@@ -230,7 +228,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       category.findAttribute(label: categoryLabels.first) : null;
 
     bool visible = (attributes?.isNotEmpty ?? false);
-    bool enabled = (attributes?.isNotEmpty ?? false) && (contentAttributes != null) && ((selectedAttribute != null) || (contentAttributes.requirements?.canSelectMore(_selection) ?? true));
+    bool enabled = (attributes?.isNotEmpty ?? false) && (contentAttributes != null) && ((selectedAttribute != null) || (contentAttributes.requirements?.canSelectMoreCategories(_selection) ?? true));
 
     String imageAsset;
     if (enabled) {
@@ -252,7 +250,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
         GroupSectionTitle(
           title: contentAttributes?.stringValue(category.title)?.toUpperCase(),
           description: contentAttributes?.stringValue(category.description),
-          requiredMark: !widget.filtersMode && (0 < (category.minRequiredCount ?? 0)),
+          requiredMark: !widget.filtersMode && category.isRequired,
         ),
         Container (
           decoration: BoxDecoration(
