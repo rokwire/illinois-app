@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Created popup panel for editing attributes dropdown content [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+
 ## [4.3.10] - 2023-02-06
 ### Changed
 - Updated English strings [#2956](https://github.com/rokwire/illinois-app/issues/2956).
