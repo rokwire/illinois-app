@@ -7,7 +7,6 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -15,17 +14,18 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 
-class GroupAttributesPanel extends StatefulWidget {
+class ContentAttributesPanel extends StatefulWidget {
   final bool filtersMode;
   final Map<String, dynamic>? selection;
+  final ContentAttributes? contentAttributes;
 
-  GroupAttributesPanel({Key? key, this.selection, this.filtersMode = false }) : super(key: key);
+  ContentAttributesPanel({Key? key, this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _GroupAttributesPanelState();
+  State<StatefulWidget> createState() => _ContentAttributesPanelState();
 }
 
-class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
+class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   final Map<String, GlobalKey> dropdownKeys = <String, GlobalKey>{};
   Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
@@ -56,7 +56,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   Widget _buildContent() {
-    List<ContentAttributesCategory>? categories = Groups().contentAttributes?.categories;
+    List<ContentAttributesCategory>? categories = widget.contentAttributes?.categories;
     return ((categories != null) && categories.isNotEmpty) ? Column(children: <Widget>[
       Expanded(child:
         Container(padding: EdgeInsets.only(left: 16, right: 24, top: 8), child:
@@ -72,12 +72,11 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
 
   Widget _buildCategoriesContent() {
     List<Widget> conentList = <Widget>[];
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttributesCategory>? categories = ListUtils.from<ContentAttributesCategory>(contentAttributes?.categories);
+    List<ContentAttributesCategory>? categories = ListUtils.from<ContentAttributesCategory>(widget.contentAttributes?.categories);
     if ((categories != null) && categories.isNotEmpty) {
       categories.sort((ContentAttributesCategory category1, ContentAttributesCategory category2) {
-        String categoryTitle1 = contentAttributes?.stringValue(category1.title) ?? '';
-        String categoryTitle2 = contentAttributes?.stringValue(category2.title) ?? '';
+        String categoryTitle1 = widget.contentAttributes?.stringValue(category1.title) ?? '';
+        String categoryTitle2 = widget.contentAttributes?.stringValue(category2.title) ?? '';
         return categoryTitle1.compareTo(categoryTitle2);
       });
       for (ContentAttributesCategory category in categories) {
@@ -97,8 +96,6 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   Widget _buildCatgoryDropDown(ContentAttributesCategory category) {
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-
     List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
     if ((attributes != null) && (0 < attributes.length) && !widget.filtersMode && category.isSingleSelection /* && !category.isRequired*/) {
       attributes.insert(0, _ContentNullAttribute());
@@ -109,19 +106,19 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       ((1 < categoryLabels.length) ? _ContentMultipleAttributes(categoryLabels) : category.findAttribute(label: categoryLabels.first)) : null;
 
     bool visible = (attributes?.isNotEmpty ?? false);
-    bool enabled = (attributes?.isNotEmpty ?? false) && (contentAttributes != null) && ((selectedAttribute != null) || (contentAttributes.requirements?.canSelectMoreCategories(_selection) ?? true));
+    bool enabled = (attributes?.isNotEmpty ?? false) && ((selectedAttribute != null) || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
     
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: contentAttributes?.stringValue(category.title)?.toUpperCase(),
-          description: contentAttributes?.stringValue(category.description),
+          title: widget.contentAttributes?.stringValue(category.title)?.toUpperCase(),
+          description: widget.contentAttributes?.stringValue(category.description),
           requiredMark: !widget.filtersMode && category.isRequired,
         ),
         GroupDropDownButton<ContentAttribute>(
           key: dropdownKeys[category.id ?? ''] ??= GlobalKey(),
-          emptySelectionText: contentAttributes?.stringValue(category.emptyHint),
-          buttonHint: contentAttributes?.stringValue(category.semanticsHint),
+          emptySelectionText: widget.contentAttributes?.stringValue(category.emptyHint),
+          buttonHint: widget.contentAttributes?.stringValue(category.semanticsHint),
           items: attributes,
           initialSelectedValue: selectedAttribute,
           multipleSelection: widget.filtersMode || category.isMultipleSelection,
@@ -139,13 +136,13 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
 
   String? _constructAttributeTitle(ContentAttributesCategory category, ContentAttribute attribute) {
     if (attribute is _ContentMultipleAttributes) {
-      return attribute.toString(contentAttributes: Groups().contentAttributes);
+      return attribute.toString(contentAttributes: widget.contentAttributes);
     }
     else if (attribute is _ContentNullAttribute) {
-      return attribute.toString(contentAttributes: Groups().contentAttributes, category: category);
+      return attribute.toString(contentAttributes: widget.contentAttributes, category: category);
     }
     else {
-      return Groups().contentAttributes?.stringValue(attribute.label);
+      return widget.contentAttributes?.stringValue(attribute.label);
     }
   }
 
@@ -200,7 +197,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
           category.requirements?.validateAttributesSelection(categoryLabels);
         }
 
-        Groups().contentAttributes?.validateSelection(_selection);
+        widget.contentAttributes?.validateSelection(_selection);
       });
     }
 
@@ -219,7 +216,6 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
   }
 
   Widget _buildCategoryCheckbox(ContentAttributesCategory category) {
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
 
     List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
 
@@ -228,7 +224,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       category.findAttribute(label: categoryLabels.first) : null;
 
     bool visible = (attributes?.isNotEmpty ?? false);
-    bool enabled = (attributes?.isNotEmpty ?? false) && (contentAttributes != null) && ((selectedAttribute != null) || (contentAttributes.requirements?.canSelectMoreCategories(_selection) ?? true));
+    bool enabled = (attributes?.isNotEmpty ?? false) && ((selectedAttribute != null) || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
     String imageAsset;
     if (enabled) {
@@ -248,8 +244,8 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: contentAttributes?.stringValue(category.title)?.toUpperCase(),
-          description: contentAttributes?.stringValue(category.description),
+          title: widget.contentAttributes?.stringValue(category.title)?.toUpperCase(),
+          description: widget.contentAttributes?.stringValue(category.description),
           requiredMark: !widget.filtersMode && category.isRequired,
         ),
         Container (
@@ -344,7 +340,7 @@ class _GroupAttributesPanelState extends State<GroupAttributesPanel> {
       )]);
     }
 
-    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (Groups().contentAttributes?.isSelectionValid(_selection) ?? false));
+    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
     String applyTitle = widget.filtersMode ? 
       Localization().getStringEx('panel.group.attributes.button.filter.title', 'Filter') :
       Localization().getStringEx('panel.group.attributes.button.apply.title', 'Apply Attributes');
