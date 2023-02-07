@@ -43,8 +43,8 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
 
     private static final String TAG = "MobileAccessKeysApiFacade";
 
-    private OrigoMobileKeys mobileKeys;
-    private OrigoKeysApiFactory mobileKeysApiFactory;
+    private final OrigoMobileKeys mobileKeys;
+    private final OrigoKeysApiFactory mobileKeysApiFactory;
 
     public MobileAccessKeysApiFacade(Activity context) {
         App application = (App) context.getApplication();
@@ -150,7 +150,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
 
     //region OrigoMobileKeysCallback implementation
 
-    private OrigoMobileKeysCallback mobileKeysStartupCallBack = new OrigoMobileKeysCallback() {
+    private final OrigoMobileKeysCallback mobileKeysStartupCallBack = new OrigoMobileKeysCallback() {
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysStartupCallBack: handleMobileKeysTransactionCompleted");
@@ -163,7 +163,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
         }
     };
 
-    private OrigoMobileKeysCallback mobileKeysEndpointSetupCallBack = new OrigoMobileKeysCallback() {
+    private final OrigoMobileKeysCallback mobileKeysEndpointSetupCallBack = new OrigoMobileKeysCallback() {
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionCompleted");
@@ -180,7 +180,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
 
     //region OrigoMobileKeysProgressCallback implementation
 
-    private OrigoMobileKeysProgressCallback mobileKeysEndpointUpdateCallBack = new OrigoMobileKeysProgressCallback() {
+    private final OrigoMobileKeysProgressCallback mobileKeysEndpointUpdateCallBack = new OrigoMobileKeysProgressCallback() {
 
         @Override
         public void handleMobileKeysTransactionProgress(OrigoProgressEvent origoProgressEvent) {
