@@ -17,7 +17,9 @@
 package edu.illinois.rokwire.mobile_access;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.hid.origo.OrigoKeysApiFacade;
 import com.hid.origo.OrigoKeysApiFactory;
@@ -45,11 +47,13 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
 
     private final OrigoMobileKeys mobileKeys;
     private final OrigoKeysApiFactory mobileKeysApiFactory;
+    private final Context context;
 
     public MobileAccessKeysApiFacade(Activity context) {
+        this.context = context;
         App application = (App) context.getApplication();
-        mobileKeysApiFactory = application.getMobileApiKeysFactory();
-        mobileKeys = mobileKeysApiFactory.getMobileKeys();
+        this.mobileKeysApiFactory = application.getMobileApiKeysFactory();
+        this.mobileKeys = mobileKeysApiFactory.getMobileKeys();
     }
 
     //region Public APIs
@@ -167,12 +171,14 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionCompleted");
+            Toast.makeText(context, "Mobile Access: Endpoint setup - succeeded", Toast.LENGTH_SHORT).show();
             onEndpointSetUpComplete();
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
+            Toast.makeText(context, "Mobile Access: Endpoint setup - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
         }
     };
 
