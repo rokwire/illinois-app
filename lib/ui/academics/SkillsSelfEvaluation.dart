@@ -1,11 +1,11 @@
 // Copyright 2022 Board of Trustees of the University of Illinois.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +16,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Polls.dart';
+import 'package:illinois/ui/academics/OccupationList.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
+import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -34,7 +35,6 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SkillsSelfEvaluation extends StatefulWidget {
-
   SkillsSelfEvaluation();
 
   @override
@@ -60,59 +60,94 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   @override
   Widget build(BuildContext context) {
     return SectionSlantHeader(
-        headerWidget: _buildHeader(),
-        slantColor: Styles().colors?.gradientColorPrimary,
-        slantPainterHeadingHeight: 0,
-        backgroundColor: Styles().colors?.background,
-        children: _buildInfoAndSettings(),
-        childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        allowOverlap: false,
-      );
+      headerWidget: _buildHeader(),
+      slantColor: Styles().colors?.gradientColorPrimary,
+      slantPainterHeadingHeight: 0,
+      backgroundColor: Styles().colors?.background,
+      children: _buildInfoAndSettings(),
+      childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      allowOverlap: false,
+    );
   }
 
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.only(top: 32, bottom: 32),
-      child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
-          IconButton(
-            icon: Styles().images?.getImage('more-white', excludeFromSemantics: true) ?? Container(),
-            tooltip: Localization().getStringEx('panel.skills_self_evaluation.button.more.hint', 'Show more'),
-            onPressed: _onTapShowBottomSheet,
-            padding: EdgeInsets.zero,
+      child: Padding(
+        padding: EdgeInsets.only(left: 24, right: 8),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Flexible(
+                child: Text(
+              Localization()
+                  .getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'),
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'),
+              textAlign: TextAlign.left,
+            )),
+            IconButton(
+              icon: Styles().images?.getImage('more-white', excludeFromSemantics: true) ?? Container(),
+              tooltip: Localization().getStringEx('panel.skills_self_evaluation.button.more.hint', 'Show more'),
+              onPressed: _onTapShowBottomSheet,
+              padding: EdgeInsets.zero,
+            ),
+          ]),
+          Text(
+            Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'),
+            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.time.description'),
+            textAlign: TextAlign.left,
           ),
+          Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
+          Padding(
+              padding: EdgeInsets.only(top: 64, left: 64, right: 80),
+              child: RoundedButton(
+                  label: Localization()
+                      .getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
+                  textColor: Styles().colors?.fillColorPrimaryVariant,
+                  backgroundColor: Styles().colors?.surface,
+                  onTap: _onTapStartEvaluation)),
+          Padding(
+              padding: EdgeInsets.only(top: 64, left: 64, right: 80),
+              child: RoundedButton(
+                  label: Localization()
+                      .getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
+                  textColor: Styles().colors?.fillColorPrimaryVariant,
+                  backgroundColor: Styles().colors?.surface,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => OccupationList(
+                                // survey: Config().bessiSurveyID,
+                                // onComplete: _gotoResults,
+                                // offlineWidget: _buildOfflineWidget(),
+                                // tabBar: uiuc.TabBar(),
+                                )));
+                  })),
         ]),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
-        Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
-        Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
-          label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
-          textColor: Styles().colors?.fillColorPrimaryVariant,
-          backgroundColor: Styles().colors?.surface,
-          onTap: _onTapStartEvaluation
-        )),
-      ]),),
+      ),
       decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
+          shape: BoxShape.rectangle,
+          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
             Styles().colors?.fillColorPrimaryVariant ?? Colors.transparent,
             Styles().colors?.gradientColorPrimary ?? Colors.transparent,
-          ]
-        )
-      ),
+          ])),
     );
   }
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),),
-      Padding(padding: EdgeInsets.only(top: 8), child: Text(
-        Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
+      Text(
+        Localization().getStringEx(
+            "panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'),
         style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),
-      ))
+      ),
+      Padding(
+          padding: EdgeInsets.only(top: 8),
+          child: Text(
+            Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list",
+                '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
+            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),
+          ))
     ]);
   }
 
@@ -121,16 +156,21 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     return <Widget>[
       RibbonButton(
         leftIconKey: "info",
-        label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
-                Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
+        label: saveEnabled
+            ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description",
+                "Your results will be saved for you to revisit or compare to future results.")
+            : Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description",
+                "Your results will not be saved for you to compare to future results."),
         textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSavedResultsInfo,
       ),
       RibbonButton(
         leftIconKey: "settings",
-        label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
-                Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
+        label: saveEnabled
+            ? Localization()
+                .getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results")
+            : Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
         textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSettings,
@@ -151,79 +191,104 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   void _onTapShowBottomSheet() {
     showModalBottomSheet(
-      context: context,
-      backgroundColor: Styles().colors?.surface,
-      isScrollControlled: true,
-      isDismissible: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (context) {
-        return Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-            child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              SizedBox(height: 16),
-              Semantics(label: Localization().getStringEx("dialog.close.title", "Close"),
-                  child: GestureDetector(onTap: () => Navigator.of(context).pop(),
-                      child: Container(height: 8, width: 48,
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
-                              color: Styles().colors?.mediumGray)))),
-              SizedBox(height: 16),
-              RibbonButton(
-                rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
-                onTap: _onTapResults,
-              ),
-              RibbonButton(
-                rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label", "Where do my results go?"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
-                onTap: () => _onTapShowInfo("where_results_go"),
-              ),
-              RibbonButton(
-                rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label", "How are my results determined?"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
-                onTap: () => _onTapShowInfo("how_results_determined"),
-              ),
-              RibbonButton(
-                rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label", "Why do these skills matter?"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
-                onTap: () => _onTapShowInfo("why_skills_matter"),
-              ),
-              RibbonButton(
-                rightIconKey: "chevron-right-bold",
-                label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label", "Who created this assessment?"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
-                onTap: () => _onTapShowInfo("who_created_assessment"),
-              ),
-            ]));
-      });
+        context: context,
+        backgroundColor: Styles().colors?.surface,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                SizedBox(height: 16),
+                Semantics(
+                    label: Localization().getStringEx("dialog.close.title", "Close"),
+                    child: GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                            height: 8,
+                            width: 48,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8), color: Styles().colors?.mediumGray)))),
+                SizedBox(height: 16),
+                RibbonButton(
+                  rightIconKey: "chevron-right-bold",
+                  label: Localization().getStringEx(
+                      "panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
+                  textColor: Styles().colors?.fillColorPrimaryVariant,
+                  onTap: _onTapResults,
+                ),
+                RibbonButton(
+                  rightIconKey: "chevron-right-bold",
+                  label: Localization().getStringEx(
+                      "panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label",
+                      "Where do my results go?"),
+                  textColor: Styles().colors?.fillColorPrimaryVariant,
+                  onTap: () => _onTapShowInfo("where_results_go"),
+                ),
+                RibbonButton(
+                  rightIconKey: "chevron-right-bold",
+                  label: Localization().getStringEx(
+                      "panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label",
+                      "How are my results determined?"),
+                  textColor: Styles().colors?.fillColorPrimaryVariant,
+                  onTap: () => _onTapShowInfo("how_results_determined"),
+                ),
+                RibbonButton(
+                  rightIconKey: "chevron-right-bold",
+                  label: Localization().getStringEx(
+                      "panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label",
+                      "Why do these skills matter?"),
+                  textColor: Styles().colors?.fillColorPrimaryVariant,
+                  onTap: () => _onTapShowInfo("why_skills_matter"),
+                ),
+                RibbonButton(
+                  rightIconKey: "chevron-right-bold",
+                  label: Localization().getStringEx(
+                      "panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label",
+                      "Who created this assessment?"),
+                  textColor: Styles().colors?.fillColorPrimaryVariant,
+                  onTap: () => _onTapShowInfo("who_created_assessment"),
+                ),
+              ]));
+        });
   }
 
   void _onTapStartEvaluation() {
     Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
     if (Config().bessiSurveyID != null && result == null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => SurveyPanel(
+                  survey: Config().bessiSurveyID,
+                  onComplete: _gotoResults,
+                  offlineWidget: _buildOfflineWidget(),
+                  tabBar: uiuc.TabBar())));
     }
   }
 
   void _onTapSavedResultsInfo() {
     bool saveEnabled = Storage().assessmentsSaveResultsMap?['bessi'] != false;
     Widget textWidget = Text(
-      saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog",
-        "Your results will be saved for you to compare to future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.") :
-          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
+      saveEnabled
+          ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog",
+              "Your results will be saved for you to compare to future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.")
+          : Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description",
+              "Your results will not be saved for you to compare to future results."),
       style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
       textAlign: TextAlign.center,
     );
-    showDialog(context: context, builder: (_) => InfoPopup(
-      backColor: Styles().colors?.surface,
-      padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
-      alignment: Alignment.center,
-      infoTextWidget: textWidget,
-      closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
-    ),);
+    showDialog(
+      context: context,
+      builder: (_) => InfoPopup(
+        backColor: Styles().colors?.surface,
+        padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
+        alignment: Alignment.center,
+        infoTextWidget: textWidget,
+        closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
+      ),
+    );
   }
 
   void _onTapSettings() {
@@ -231,13 +296,14 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   Widget _buildOfflineWidget() {
-    return Padding(padding: EdgeInsets.all(28), child:
-      Center(child:
-        Text(
-          Localization().getStringEx('panel.skills_self_evaluation.get_started.offline.error.msg', 'Skills Self-Evaluation is not available while offline.'),
-          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
-        )
-      ),
+    return Padding(
+      padding: EdgeInsets.all(28),
+      child: Center(
+          child: Text(
+              Localization().getStringEx('panel.skills_self_evaluation.get_started.offline.error.msg',
+                  'Skills Self-Evaluation is not available while offline.'),
+              textAlign: TextAlign.center,
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
     );
   }
 
@@ -247,12 +313,14 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   void _gotoResults(SurveyResponse? response) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
+    Navigator.push(
+        context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
   }
 
   void _onTapShowInfo(String key) {
     Navigator.of(context).pop();
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _infoContentItems[key])));
+    Navigator.push(context,
+        CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _infoContentItems[key])));
   }
 
   // NotificationsListener
@@ -272,7 +340,8 @@ class SkillsSelfEvaluationProfile {
   final Map<String, dynamic> params;
   final Map<String, num> scores;
 
-  SkillsSelfEvaluationProfile({required this.id, required this.category, required this.key, required this.params, required this.scores});
+  SkillsSelfEvaluationProfile(
+      {required this.id, required this.category, required this.key, required this.params, required this.scores});
 
   factory SkillsSelfEvaluationProfile.fromJson(Map<String, dynamic> json) {
     Map<String, num> scores = {};
@@ -304,7 +373,14 @@ class SkillsSelfEvaluationContent {
   final Map<String, SkillsSelfEvaluationLink>? links;
   final Map<String, dynamic>? params;
 
-  SkillsSelfEvaluationContent({required this.id, required this.category, required this.key, this.header, this.sections, this.links, this.params});
+  SkillsSelfEvaluationContent(
+      {required this.id,
+      required this.category,
+      required this.key,
+      this.header,
+      this.sections,
+      this.links,
+      this.params});
 
   factory SkillsSelfEvaluationContent.fromJson(Map<String, dynamic> json) {
     Map<String, SkillsSelfEvaluationLink>? links;
@@ -352,7 +428,8 @@ class SkillsSelfEvaluationSection {
   final Map<String, dynamic>? params;
   final List<SkillsSelfEvaluationSection>? subsections;
 
-  SkillsSelfEvaluationSection({required this.type, required this.title, this.subtitle, this.body, this.params, this.subsections});
+  SkillsSelfEvaluationSection(
+      {required this.type, required this.title, this.subtitle, this.body, this.params, this.subsections});
 
   factory SkillsSelfEvaluationSection.fromJson(Map<String, dynamic> json) {
     return SkillsSelfEvaluationSection(
