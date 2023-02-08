@@ -105,12 +105,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: HeaderBar(title: (_group?.researchProject == true) ? "Project Settings" : Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),),
       backgroundColor: Styles().colors!.background,
       body: Column(children: <Widget>[
         Expanded(child:
           Container(color: Styles().colors!.background, child:
             CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-              SliverHeaderBar(title: (_group?.researchProject == true) ? "Project Settings" : Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),),
+              //SliverHeaderBar(title: (_group?.researchProject == true) ? "Project Settings" : Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),),
               SliverList(delegate: SliverChildListDelegate([
                 Container(color: Styles().colors!.background, child:
                   Column(children: <Widget>[
