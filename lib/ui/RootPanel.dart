@@ -125,7 +125,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
-      HomePanel.notifyCustomize,
+      HomePanel.notifySelect,
       ExplorePanel.notifySelectMap,
     ]);
 
@@ -247,7 +247,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyWellnessToDoItemNotification) {
       _onFirebaseWellnessToDoItemNotification(param);
     }
-    else if (name == HomePanel.notifyCustomize) {
+    else if (name == HomePanel.notifySelect) {
       _onSelectHome();
     }
     else if (name == ExplorePanel.notifySelectMap) {
