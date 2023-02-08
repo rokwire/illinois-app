@@ -28,7 +28,7 @@ class ContentAttributesCategoryPanel extends StatefulWidget {
 
 class _ContentAttributesCategoryPanelState extends State<ContentAttributesCategoryPanel> {
 
-  LinkedHashMap<String, List<ContentAttribute>> _contentMap = LinkedHashMap<String, List<ContentAttribute>>();
+  List<dynamic> _contentList = <dynamic>[];
   LinkedHashSet<String> _selection = LinkedHashSet<String>();
 
   @override
@@ -40,12 +40,36 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     }
 
     if (widget.attributes != null) {
+      LinkedHashMap<String, List<ContentAttribute>> contentMap = LinkedHashMap<String, List<ContentAttribute>>();
       for (ContentAttribute attribute in widget.attributes!) {
         Iterable<dynamic>? requirementAttributes = attribute.requirements?.values;
         dynamic requirementAttribute = (requirementAttributes?.isNotEmpty ?? false) ? requirementAttributes?.first : null;
         String contentMapKey = (requirementAttribute is String) ? requirementAttribute : '';
-        (_contentMap[contentMapKey] ??= <ContentAttribute>[]).add(attribute);
+          (contentMap[contentMapKey] ??= <ContentAttribute>[]).add(attribute);
       }
+
+      _contentList.add(_ContentItem.spacing);
+      contentMap.forEach((String section, List<ContentAttribute> sectionAttributes) {
+
+        // section heading
+        if (section.isEmpty) {
+          section = widget.category?.title ?? '';
+        }
+        section = widget.contentAttributes?.stringValue(section) ?? section;
+        _contentList.add(section); 
+
+        // section entries
+        int startCount = _contentList.length;
+        for (ContentAttribute attribute in sectionAttributes) {
+          if (startCount < _contentList.length) {
+            _contentList.add(_ContentItem.separator);
+          }
+          _contentList.add(attribute);
+        }
+
+        // spacing
+        _contentList.add(_ContentItem.spacing);
+      });
     }
   }
 
@@ -79,17 +103,15 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       backgroundColor: Styles().colors?.background,
       body: Column(children: [
         Expanded(child:
-          SingleChildScrollView(child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24,), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-                _buildContent(),
-              )
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+            ListView.builder(
+              itemBuilder: (BuildContext context, int index) => _buildListItem(context, index),
+              itemCount: _contentList.length
             ),
           ),
-        )
+        ),
       ]),
     );
-
   }
 
   Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) {
@@ -114,52 +136,47 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     );
   }
 
-  List<Widget> _buildContent() {
-    List<Widget> contentList = <Widget>[];
-    _contentMap.forEach((String section, List<ContentAttribute> sectionAttributes) {
-
-      if (contentList.isNotEmpty) {
-        contentList.add(Container(height: 24,));
-      }
-      
-      if (section.isEmpty) {
-        section = widget.category?.title ?? '';
-      }
-      String displaySection = widget.contentAttributes?.stringValue(section) ?? section;
-
-      contentList.add(Container(
-        decoration: BoxDecoration(
-          color: Styles().colors!.fillColorPrimary,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))
+  Widget _buildListItem(BuildContext context, int index) {
+    dynamic sourceData = ((0 <= index) && (index < _contentList.length)) ? _contentList[index] : null;
+    if (sourceData is String) {
+      return _buildCaptionWidget(sourceData);
+    }
+    else if (sourceData is ContentAttribute) {
+      return _buildAttributeWidget(sourceData);
+    }
+    else if (sourceData == _ContentItem.separator) {
+      return Container(color: Colors.white, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
+          Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
         ),
-        child: Semantics(label: displaySection, button: false, child: 
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-            Row(children: <Widget>[
-              Expanded(child:
-                Text(displaySection, textAlign: TextAlign.left, style:
-                  Styles().textStyles?.getTextStyle("panel.settings.food_filter.title")
-                ),
-              )
-            ],),
-          ),
-        ),
-      ),);
-      
-      List<Widget> attributesList = <Widget>[];
-      for (ContentAttribute attribute in sectionAttributes) {
-        if (attributesList.isNotEmpty) {
-          attributesList.add(Container(color: Colors.white, child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
-              Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
-            ),
-          ));
-        }
-        attributesList.add(_buildAttributeWidget(attribute));
-      }
-      contentList.addAll(attributesList);
-    });
+      );
+    }
+    else if (sourceData == _ContentItem.spacing) {
+      return Container(height: 24,);
+    }
+    else {
+      return Container();
+    }
+  }
 
-    return contentList;
+  Widget _buildCaptionWidget(String title) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Styles().colors!.fillColorPrimary,
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))
+      ),
+      child: Semantics(label: title, button: false, child: 
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+          Row(children: <Widget>[
+            Expanded(child:
+              Text(title, textAlign: TextAlign.left, style:
+                Styles().textStyles?.getTextStyle("panel.settings.food_filter.title")
+              ),
+            )
+          ],),
+        ),
+      ),
+    );
   }
 
   Widget _buildAttributeWidget(ContentAttribute attribute) {
@@ -235,3 +252,5 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     }
   }
 }
+
+enum _ContentItem { spacing, separator }
