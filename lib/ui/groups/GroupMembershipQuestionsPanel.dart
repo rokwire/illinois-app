@@ -75,9 +75,9 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(
-        title: (widget.group?.researchProject == true) ? 'Recruitment Questions' : Localization().getStringEx("panel.membership_questions.label.title", 'Membership Questions'),
-        leadingIconKey: 'close-circle-white',
+      appBar: HeaderBar(title: (widget.group?.researchProject == true) ?
+        'Recruitment Questions' :
+        Localization().getStringEx("panel.membership_questions.label.title", 'Membership Questions'),
       ),
       body: Column(
         children: <Widget>[
