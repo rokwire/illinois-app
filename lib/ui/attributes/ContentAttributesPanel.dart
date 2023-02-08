@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/attributes/ContentAttributesCategoryPanel.dart';
@@ -111,7 +112,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           description: widget.contentAttributes?.stringValue(category.description),
           requiredMark: !widget.filtersMode && category.isRequired,
         ),
-        _CategoryDropdownButton(
+        _CategoryRibbonButton(
           title: title, hint: hint, textStyle: textStyle, onTap: onTap,
         ),
       ]),
@@ -144,21 +145,21 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     Analytics().logSelect(target: category?.title);
     String? categoryId = category?.id;
 
-    ContentAttributesCategoryPanel.present(context,
+    Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
       contentAttributes: widget.contentAttributes,
       category: category,
       attributes: attributes,
       selection: _selection[categoryId],
       multipleSelection: widget.filtersMode || (category?.isMultipleSelection ?? false),
       filtersMode: widget.filtersMode,
-    ).then((LinkedHashSet<String>? selection) {
+    ),)).then(((LinkedHashSet<String>? selection) {
       if ((selection != null) && (categoryId != null)) {
         setStateIfMounted(() {
           _selection[categoryId] = selection;
           widget.contentAttributes?.validateSelection(_selection);
         });
       }
-    });
+    }));
   }
 
   Widget _buildCategoryCheckbox(ContentAttributesCategory category) {
@@ -318,13 +319,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 }
 
-class _CategoryDropdownButton extends StatelessWidget {
+class _CategoryRibbonButton extends StatelessWidget {
   final String? title;
   final String? hint;
   final TextStyle? textStyle;
   final Function()? onTap;
 
-  _CategoryDropdownButton({Key? key, this.title, this.hint, this.textStyle, this.onTap}) : super(key: key);
+  _CategoryRibbonButton({Key? key, this.title, this.hint, this.textStyle, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -344,7 +345,7 @@ class _CategoryDropdownButton extends StatelessWidget {
                 ),
               ),
               Padding(padding: EdgeInsets.all(12), child:
-                Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? SizedBox(width: 10, height: 6),
+                Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? SizedBox(width: 10, height: 6),
               ),
             ],),
           ),
