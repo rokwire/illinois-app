@@ -2286,6 +2286,8 @@
     "panel.groups_settings.button.update.title": "Update Settings",
     "panel.groups_settings.button.tags.title": "Tags",
     "panel.groups_settings.button.tags.hint": "",
+    "panel.groups_settings.button.attributes.title": "Edit",
+    "panel.groups_settings.button.attributes.hint": "",
     "panel.groups_settings.authman.section.title": "University managed membership",
     "panel.groups_settings.authman.enabled.label": "Is this a managed membership group?",
     "panel.groups_settings.authman.group.name.label": "Membership name",
@@ -2295,6 +2297,18 @@
     "panel.groups_settings.tags.label.question.format": "%s Question(s)",
     "panel.groups_settings.tags.label.tag.format": "%s tag, ",
     "panel.groups_settings.tags.label.tag.hint": "Double tap to remove tag",
+    "panel.groups_settings.button.delete.title": "Delete this Group",
+
+    "panel.project_settings.label.heading": "Project Settings",
+    "panel.project_settings.label.heading.general_info": "General project information",
+    "panel.project_settings.name.title": "PROJECT NAME",
+    "panel.project_settings.description.title": "PROJECT DESCRIPTION",
+    "panel.project_settings.description.field": "What’s the purpose of your project? Who should join? What will you do at your events?",
+    "panel.project_settings.description.field.hint": "",
+    "panel.project_settings.membership.title": "Participation",
+    "panel.project_settings.membership.button.question.title": "Recruitment Questions",
+    "panel.project_settings.button.delete.title": "Delete this Group",
+    "panel.project_detail.group.delete.failed.msg": "Failed to delete project.",
 
     "panel.group.tags.header.title": "Group Tags",
     "panel.group.tags.button.done.title": "Done",
@@ -2310,6 +2324,8 @@
 
 	"panel.group.attributes.attributes.header.title": "Group Attributes",
 	"panel.group.attributes.filters.header.title": "Group Filters",
+	"panel.project.attributes.attributes.header.title": "Project Attributes",
+	"panel.project.attributes.filters.header.title": "Project Filters",
     
     "panel.groups_event_detail.button.options.title": "Options",
     "panel.groups_event_detail.label.online_event": "Online Event",
