@@ -449,7 +449,7 @@ class _SelectionItemWidget extends StatelessWidget {
                       child: Text(
                         label!,
                         overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles?.getTextStyle("widget.title.regular")
+                        style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                       )),
                   Styles().images?.getImage(selected! ? 'check-circle-filled' : 'check-circle-outline-gray') ?? Container(),
                 ],

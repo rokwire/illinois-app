@@ -19,7 +19,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -385,7 +385,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _onFilterAttributes() {
     Analytics().logSelect(target: 'Filters');
     if (Groups().contentAttributes != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(selection: _contentAttributesSelection, filtersMode: true,))).then((selection) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('panel.group.attributes.attributes.header.title', 'Group Attributes'),
+        contentAttributes: Groups().contentAttributes,
+        selection: _contentAttributesSelection,
+        filtersMode: true,
+      ))).then((selection) {
         if ((selection != null) && mounted) {
           setState(() {
             _contentAttributesSelection = selection;

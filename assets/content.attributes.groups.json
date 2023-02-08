@@ -7,8 +7,10 @@
 		"semantics-hint": "Double tap to show category options.",
 		"usage": "category",
 		"widget": "dropdown",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
 			"Academic",
 			"Athletics",
@@ -26,28 +28,31 @@
 		"semantics-hint": "Double tap to show sport options.",
 		"usage": "category",
 		"widget": "dropdown",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"mode": "exclusive",
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
-      { "label": "Baseball" },
-      { "label": "Men's Basketball" },
-      { "label": "Men's Cross Country" },
-      { "label": "Football" },
-      { "label": "Men's Golf" },
-      { "label": "Men's Gymnastics" },
-      { "label": "Men's Tennis" },
-      { "label": "Men's Track Field" },
-      { "label": "Wrestling" },
-      { "label": "Women's Basketball" },
-      { "label": "Women's Cross Country" },
-      { "label": "Women's Golf" },
-      { "label": "Women's Gymnastics" },
-      { "label": "Women's Soccer" },
-      { "label": "Softball" },
-      { "label": "Swim Dive" },
-      { "label": "Women's Tennis" },
-      { "label": "Women's Track Field" },
-      { "label": "Volleyball" }
+      { "label": "Baseball", "requirements": { "category" : "Athletics" }},
+      { "label": "Men's Basketball", "requirements": { "category" : "Athletics" }},
+      { "label": "Men's Cross Country", "requirements": { "category" : "Athletics" }},
+      { "label": "Football", "requirements": { "category" : "Athletics" }},
+      { "label": "Men's Golf", "requirements": { "category" : "Athletics" }},
+      { "label": "Men's Gymnastics", "requirements": { "category" : "Athletics" }},
+      { "label": "Men's Tennis", "requirements": { "category" : "Athletics" }},
+      { "label": "Men's Track Field", "requirements": { "category" : "Athletics" }},
+      { "label": "Wrestling", "requirements": { "category" : "Athletics" }},
+      { "label": "Women's Basketball", "requirements": { "category" : "Athletics" }},
+      { "label": "Women's Cross Country", "requirements": { "category" : "Athletics" }},
+      { "label": "Women's Golf", "requirements": { "category" : "Athletics" }},
+      { "label": "Women's Gymnastics", "requirements": { "category" : "Athletics" }},
+      { "label": "Women's Soccer", "requirements": { "category" : "Athletics" }},
+      { "label": "Softball", "requirements": { "category" : "Athletics" }},
+      { "label": "Swim Dive", "requirements": { "category" : "Athletics" }},
+      { "label": "Women's Tennis", "requirements": { "category" : "Athletics" }},
+      { "label": "Women's Track Field", "requirements": { "category" : "Athletics" }},
+      { "label": "Volleyball", "requirements": { "category" : "Athletics" }}
 		]
 	},{
 		"id": "college",
@@ -57,8 +62,10 @@
 		"usage": "property",
 		"widget": "dropdown",
 		"semantics-hint": "Double tap to show college options.",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
 			"Agr, Consumer & Env Sciences",
 			"Applied Health Sciences",
@@ -108,8 +115,11 @@
 		"semantics-hint": "Double tap to show department options.",
 		"usage": "property",
 		"widget": "dropdown",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"mode": "inclusive",
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
 			
 			{ "label": "ACES Technology Services", "requirements": { "college" : "Agr, Consumer & Env Sciences" }},
@@ -536,8 +546,7 @@
 		"usage": "tag",
 		"widget": "dropdown",
 		"semantics-hint": "Double tap to show tags.",
-		"min-required-count": null,
-		"max-required-count": null,
+		"requirements" : null,
 		"values": [
 			"20th century",
 			"57N",
@@ -886,15 +895,17 @@
 		"semantics-hint": "Double tap to show RSO options.",
 		"usage": "label",
 		"widget": "checkbox",
-		"min-required-count": 0,
-		"max-required-count": 1,
+		"requirements" : {
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
 		"values": [
 			{ "label": "Yes", "value": true },
 			{ "label": "No", "value" : false }
 		]
 	}],
 	"requirements": {
-		"min-required-count": 1
+		"min-selected-count": 1
 	},
   "strings": {
   	"en": {

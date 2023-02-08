@@ -289,7 +289,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                       Styles().images?.getImage('settings', excludeFromSemantics: true) ?? Container(),
                       Padding(
                         padding: EdgeInsets.only(left: 10),
-                        child: Text(additionalSettingsText, style:  Styles().textStyles?.getTextStyle("widget.title.regular"),
+                        child: Text(additionalSettingsText, style:  Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
                         ),
                       )
                     ],
