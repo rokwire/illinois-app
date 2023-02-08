@@ -29,10 +29,10 @@ class HomeCustomizeFavoritesPanel extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _HomeCustomizeFavoritesPanelState();
 
-  static Future<LinkedHashSet<String>?> present(BuildContext context) {
+  static Future<void> present(BuildContext context) {
     MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
     double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-    return showModalBottomSheet<LinkedHashSet<String>?>(
+    return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
@@ -244,7 +244,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
 
   void _onTapClose() {
     Analytics().logSelect(target: 'Close');
-    Navigator.of(context).pop(null);
+    Navigator.of(context).pop();
   }
 
   Future<void> _onPullToRefresh() async {
@@ -376,38 +376,35 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   }
 
   void _showUnstarConfirmationDialog(List<String>? favorites) {
-    AppAlert.showCustomDialog(
-        context: context,
-        contentPadding: EdgeInsets.all(0),
-        contentWidget: Container(
-            height: 250,
-            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(15.0)),
-            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-              Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                            Localization().getStringEx('panel.home.edit.favorites.confirmation.dialog.msg',
-                                'Are you sure you want to REMOVE all items from your favorites? Items can always be added back later.'),
-                            textAlign: TextAlign.center,
-                            style:  Styles().textStyles?.getTextStyle("widget.detail.small"))),
-                    Padding(padding: EdgeInsets.only(top: 40), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                      Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.no.title', 'No'), borderColor: Styles().colors!.fillColorPrimary, onTap: _dismissUnstarConfirmationDialog)),
-                      Container(width: 16),
-                      Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.yes.title', 'Yes'), borderColor: Styles().colors!.fillColorSecondary, onTap: () {
-                        _dismissUnstarConfirmationDialog();
-                        _unstarAvailableFavorites(favorites);
-                      } ))
-                    ]))
-                  ])),
-              Align(
-                  alignment: Alignment.topRight,
-                  child: GestureDetector(
-                      onTap: _dismissUnstarConfirmationDialog,
-                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true))))
-            ])));
+    AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget:
+      Container(height: 250, decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(15.0)), child:
+        Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+          Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                Text(Localization().getStringEx('panel.home.edit.favorites.confirmation.dialog.msg', 'Are you sure you want to REMOVE all items from your favorites? Items can always be added back later.'), textAlign: TextAlign.center, style:
+                  Styles().textStyles?.getTextStyle("widget.detail.small")
+                )
+              ),
+              Padding(padding: EdgeInsets.only(top: 40), child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.no.title', 'No'), borderColor: Styles().colors!.fillColorPrimary, onTap: _dismissUnstarConfirmationDialog)),
+                  Container(width: 16),
+                  Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.yes.title', 'Yes'), borderColor: Styles().colors!.fillColorSecondary, onTap: () { _dismissUnstarConfirmationDialog(); _unstarAvailableFavorites(favorites);} ))
+                ])
+              )
+            ])
+          ),
+          Align(alignment: Alignment.topRight, child:
+            GestureDetector(onTap: _dismissUnstarConfirmationDialog, child:
+              Padding(padding: EdgeInsets.all(16), child:
+                Styles().images?.getImage('close', excludeFromSemantics: true)
+              )
+            )
+          )
+        ])
+      )
+    );
   }
 
   void _dismissUnstarConfirmationDialog() {

@@ -83,7 +83,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomePanel extends StatefulWidget {
   static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
-  static const String notifyCustomize    = "edu.illinois.rokwire.home.customize";
+  static const String notifySelect       = "edu.illinois.rokwire.home.select";
 
   @override
   _HomePanelState createState() => _HomePanelState();
@@ -529,7 +529,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Styles.notifyChanged,
       Assets.notifyChanged,
       HomeSaferWidget.notifyNeedsVisiblity,
-      HomePanel.notifyCustomize,
     ]);
     super.initState();
   }
@@ -710,9 +709,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (name == HomeSaferWidget.notifyNeedsVisiblity) {
       _ensureSaferWidgetVisibiity();
-    }
-    else if (name == HomePanel.notifyCustomize) {
-      //TBD:
     }
     else if (((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) ||
         (name == Localization.notifyStringsUpdated) ||
