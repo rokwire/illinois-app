@@ -179,13 +179,14 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     LinkedHashSet<String>? categoryLabels = _selection[category.id];
     ContentAttribute? selectedAttribute = ((categoryLabels != null) && categoryLabels.isNotEmpty) ?
       category.findAttribute(label: categoryLabels.first) : null;
+    dynamic displayValue = selectedAttribute?.value ?? category.nullValue;
 
     bool visible = (attributes?.isNotEmpty ?? false);
     bool enabled = (attributes?.isNotEmpty ?? false) && ((selectedAttribute != null) || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
     String imageAsset;
     if (enabled) {
-      switch (selectedAttribute?.value) {
+      switch (displayValue) {
         case true:  imageAsset = "check-box-filled"; break;
         case false: imageAsset = "box-outline-gray"; break;
         default:    imageAsset = "box-inside-light-gray"; break;
@@ -195,8 +196,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       imageAsset = "box-inside-gray";
     }
     
-    String? text = (selectedAttribute?.value != null) ? category.text : (widget.filtersMode ? category.emptyFilterHint : category.emptyHint);
-    TextStyle? textStyle = Styles().textStyles?.getTextStyle((selectedAttribute?.value != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
+    String? text = (displayValue != null) ? category.text : (widget.filtersMode ? category.emptyFilterHint : category.emptyHint);
+    TextStyle? textStyle = Styles().textStyles?.getTextStyle((selectedAttribute != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
 
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -232,15 +233,23 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   void _onCategoryCheckbox(ContentAttributesCategory category) {
     String? categoryId = category.id;
     if (categoryId != null) {
+      List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
       LinkedHashSet<String> categoryLabels = _selection[categoryId] ??= LinkedHashSet<String>();
       ContentAttribute? selectedAttribute = categoryLabels.isNotEmpty ?
-        category.findAttribute(label: categoryLabels.first) : null;
-
-      switch (selectedAttribute?.value) {
-        case true:  selectedAttribute = category.findAttribute(value: false); break;
-        case false: selectedAttribute = null; break;
-        default:    selectedAttribute = category.findAttribute(value: true); break;
+        ContentAttribute.findInList(attributes, label: categoryLabels.first) : null;
+      
+      dynamic selectedValue = selectedAttribute?.value;
+      if (category.nullValue != null) {
+        selectedValue ??= category.nullValue;
+        selectedValue = (selectedValue ?? false) == false;
+        selectedValue = (selectedValue != category.nullValue) ? selectedValue : null;
       }
+      else switch(selectedValue) {
+        case true:  selectedValue = false; break;
+        case false: selectedValue = null; break;
+        default:    selectedValue = true; break;
+      }
+      selectedAttribute = (selectedValue != null) ? ContentAttribute.findInList(attributes, value: selectedValue) : null;
 
       String? selectedLabel = selectedAttribute?.label;
       Analytics().logSelect(target: selectedAttribute?.label, source: category.title);

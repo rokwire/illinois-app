@@ -894,6 +894,7 @@
 		"empty-hint": "Select Registered Student Organization...",
 		"empty-filter-hint": "Show Registered Student Organization...",
 		"semantics-hint": "Double tap to show RSO options.",
+		"null-value": false,
 		"usage": "label",
 		"widget": "checkbox",
 		"requirements" : {
