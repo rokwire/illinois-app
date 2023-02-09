@@ -515,8 +515,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     Analytics().logSelect(target: "Attributes");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
       title: (_group?.researchProject == true) ?
-        Localization().getStringEx('panel.project.attributes.filters.header.title', 'Project Filters') :
-        Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
+        Localization().getStringEx('panel.project.attributes.attributes.header.title', 'Project Attributes') :
+        Localization().getStringEx('panel.group.attributes.attributes.header.title', 'Group Attributes'),
+      description: (_group?.researchProject == true) ?
+        Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
+        Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
     ))).then((selection) {
