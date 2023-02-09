@@ -183,7 +183,7 @@ class ExplorePanelState extends State<ExplorePanel>
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
       MTD.notifyStopsChanged,
-      Appointments.notifyAppointmentsChanged,
+      Appointments.notifyUpcomingAppointmentsChanged,
       ExplorePanel.notifySelectMap,
       RootPanel.notifyTabChanged,
       AppLivecycle.notifyStateChanged,
@@ -655,7 +655,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   Future<List<Explore>?> _loadAppointments() async {
-    return Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+    return Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming, type: AppointmentType.in_person);
   }
 
   void _showMessagePopup(String message) {
@@ -1979,7 +1979,7 @@ class ExplorePanelState extends State<ExplorePanel>
         _loadExplores(updateOnly: true);
       }
     }
-    else if (name == Appointments.notifyAppointmentsChanged) {
+    else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
       if ((_selectedItem == ExploreItem.Appointments) && mounted && widget.rootTabDisplay) {
         _loadExplores(updateOnly: true);
       }
