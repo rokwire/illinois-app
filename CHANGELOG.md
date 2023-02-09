@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Open appointments list panel on tap over appointment inbox message if appointment id does not exist [#2969](https://github.com/rokwire/illinois-app/issues/2969).
 - Group/Project attribute/filters updates [#2974](https://github.com/rokwire/illinois-app/issues/2974).
+- Retrieve sorted appointments from the backend [#2971](https://github.com/rokwire/illinois-app/issues/2971).
 
 ## [4.3.12] - 2023-02-08
 ### Changed
