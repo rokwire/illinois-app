@@ -487,7 +487,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onTapAttributes() {
     Analytics().logSelect(target: "Attributes");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-      title: Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
+      title: (_group?.researchProject == true) ?
+        Localization().getStringEx('panel.project.attributes.attributes.header.title', 'Project Attributes') :
+        Localization().getStringEx('panel.group.attributes.attributes.header.title', 'Group Attributes'),
+      description: (_group?.researchProject == true) ?
+        Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
+        Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
     ))).then((selection) {

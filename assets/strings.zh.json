@@ -2324,9 +2324,13 @@
 	"panel.group.tags.search.button.hint": "filter tags",
 
 	"panel.group.attributes.attributes.header.title": "Group Attributes",
+	"panel.group.attributes.attributes.header.description": "Choose one or more attributes that help describe this group.",
 	"panel.group.attributes.filters.header.title": "Group Filters",
+	"panel.group.attributes.filters.header.description": "Choose one or more attributes to filter the list of groups.",
 	"panel.project.attributes.attributes.header.title": "Project Attributes",
+	"panel.project.attributes.attributes.header.description": "Choose one or more attributes that help describe this project.",
 	"panel.project.attributes.filters.header.title": "Project Filters",
+	"panel.project.attributes.filters.header.description": "Choose one or more attributes to filter the list of projects.",
 
 	"panel.groups_event_detail.button.options.title": "Options",
 	"panel.groups_event_detail.label.online_event": "Online Event",
