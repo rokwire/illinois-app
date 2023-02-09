@@ -105,10 +105,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   Widget _buildCategoryDropDown(ContentAttributesCategory category) {
     LinkedHashSet<String>? categoryLabels = _selection[category.id];
     bool hasSelection = ((categoryLabels != null) && categoryLabels.isNotEmpty);
-    LinkedHashSet<String>? displayCategoryLabels = categoryLabels;
-    if (((displayCategoryLabels == null) || displayCategoryLabels.isEmpty) && (category.nullValue is String)) {
-      displayCategoryLabels = LinkedHashSet<String>.from([category.nullValue]);
-    }
+    LinkedHashSet<String>? displayCategoryLabels = (CollectionUtils.isEmpty(categoryLabels) && (category.nullValue is String)) ?
+      LinkedHashSet<String>.from([category.nullValue]) : categoryLabels;
 
     List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
     bool visible = (attributes?.isNotEmpty ?? false);
@@ -160,10 +158,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     String? categoryId = category?.id;
 
     LinkedHashSet<String>? categoryLabels = _selection[category?.id];
-    LinkedHashSet<String>? displayCategoryLabels = categoryLabels;
-    if (((displayCategoryLabels == null) || displayCategoryLabels.isEmpty) && (category?.nullValue is String)) {
-      displayCategoryLabels = LinkedHashSet<String>.from([category?.nullValue]);
-    }
+    LinkedHashSet<String>? displayCategoryLabels = (CollectionUtils.isEmpty(categoryLabels) && (category?.nullValue is String)) ?
+      LinkedHashSet<String>.from([category?.nullValue]) : categoryLabels;
 
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
       contentAttributes: widget.contentAttributes,
