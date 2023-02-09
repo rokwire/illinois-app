@@ -120,7 +120,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: widget.contentAttributes?.stringValue(category.title)?.toUpperCase(),
+          title: widget.contentAttributes?.stringValue(category.longTitle ?? category.title)?.toUpperCase(),
           description: widget.contentAttributes?.stringValue(category.description),
           requiredMark: !widget.filtersMode && category.isRequired,
         ),
@@ -211,7 +211,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: widget.contentAttributes?.stringValue(category.title)?.toUpperCase(),
+          title: widget.contentAttributes?.stringValue(category.longTitle ?? category.title)?.toUpperCase(),
           description: widget.contentAttributes?.stringValue(category.description),
           requiredMark: !widget.filtersMode && category.isRequired,
         ),

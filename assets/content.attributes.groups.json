@@ -888,7 +888,8 @@
 		]
 	},{
 		"id": "rso",
-		"title": "Registered Student Organization",
+		"title": "RSO",
+		"long-title": "Registered Student Organization",
 		"description": "Choose whether your group is an RSO.",
 		"text": "Registered Student Organization",
 		"empty-hint": "Select Registered Student Organization...",
