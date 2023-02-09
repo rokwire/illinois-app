@@ -105,12 +105,16 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   Widget _buildCategoryDropDown(ContentAttributesCategory category) {
     LinkedHashSet<String>? categoryLabels = _selection[category.id];
     bool hasSelection = ((categoryLabels != null) && categoryLabels.isNotEmpty);
+    LinkedHashSet<String>? displayCategoryLabels = categoryLabels;
+    if (((displayCategoryLabels == null) || displayCategoryLabels.isEmpty) && (category.nullValue is String)) {
+      displayCategoryLabels = LinkedHashSet<String>.from([category.nullValue]);
+    }
 
     List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
     bool visible = (attributes?.isNotEmpty ?? false);
     bool enabled = (attributes?.isNotEmpty ?? false) && (hasSelection || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
-    String? title = _constructAttributeDropdownTitle(category, categoryLabels);
+    String? title = _constructAttributeDropdownTitle(category, displayCategoryLabels);
     String? hint = widget.contentAttributes?.stringValue(widget.filtersMode ? category.semanticsFilterHint : category.semanticsHint);
     TextStyle? textStyle = Styles().textStyles?.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
     void Function()? onTap = enabled ? () => _onCategoryDropdownTap(category: category, attributes: attributes) : null;
@@ -155,15 +159,24 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     Analytics().logSelect(target: category?.title);
     String? categoryId = category?.id;
 
+    LinkedHashSet<String>? categoryLabels = _selection[category?.id];
+    LinkedHashSet<String>? displayCategoryLabels = categoryLabels;
+    if (((displayCategoryLabels == null) || displayCategoryLabels.isEmpty) && (category?.nullValue is String)) {
+      displayCategoryLabels = LinkedHashSet<String>.from([category?.nullValue]);
+    }
+
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
       contentAttributes: widget.contentAttributes,
       category: category,
       attributes: attributes,
-      selection: _selection[categoryId],
+      selection: displayCategoryLabels,
       multipleSelection: widget.filtersMode || (category?.isMultipleSelection ?? false),
       filtersMode: widget.filtersMode,
     ),)).then(((LinkedHashSet<String>? selection) {
       if ((selection != null) && (categoryId != null)) {
+        if ((category?.nullValue is String) && selection.contains(category?.nullValue)) {
+          selection.remove(category?.nullValue);
+        }
         setStateIfMounted(() {
           _selection[categoryId] = selection;
           widget.contentAttributes?.validateSelection(_selection);

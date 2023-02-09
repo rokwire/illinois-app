@@ -24,6 +24,8 @@ class ContentAttributesCategoryPanel extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
+
+  LinkedHashSet<String> get emptySelection => (category?.nullValue != null) ? LinkedHashSet<String>.from([category?.nullValue]) : LinkedHashSet<String>();
 }
 
 class _ContentAttributesCategoryPanelState extends State<ContentAttributesCategoryPanel> {
@@ -83,8 +85,8 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     String? title = widget.contentAttributes?.stringValue(widget.category?.title);
 
     List<Widget> actions = <Widget>[];
-    
-    if ((0 < (widget.attributes?.length ?? 0)) && !widget.filtersMode && (widget.category?.isSingleSelection ?? false) && _selection.isNotEmpty) {
+
+    if ((0 < (widget.attributes?.length ?? 0)) && !widget.filtersMode && (widget.category?.isSingleSelection ?? false) && !DeepCollectionEquality().equals(_selection, widget.emptySelection)) {
       actions.add(_buildHeaderBarButton(
         title:  Localization().getStringEx('dialog.clear.title', 'Clear'),
         onTap: _onTapClear,
@@ -243,7 +245,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 
   void _onTapClear() {
-    _selection.clear();
+    _selection = widget.emptySelection;
     if (widget.multipleSelection) {
       setStateIfMounted(() {});
     }
