@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.13] - 2023-02-09
 ### Changed
 - Open appointments list panel on tap over appointment inbox message if appointment id does not exist [#2969](https://github.com/rokwire/illinois-app/issues/2969).
 - Group/Project attribute/filters updates [#2974](https://github.com/rokwire/illinois-app/issues/2974).
