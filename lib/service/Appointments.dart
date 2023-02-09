@@ -193,10 +193,10 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
       String url = "${Config().appointmentsUrl}/services/appointments";
       switch (timeSource) {
-        case AppointmentsTimeSource.past:
+        case AppointmentsTimeSource.upcoming:
           url += '?start-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=asc';
           break;
-        case AppointmentsTimeSource.upcoming:
+        case AppointmentsTimeSource.past:
           url += '?end-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=desc';
           break;
       }
