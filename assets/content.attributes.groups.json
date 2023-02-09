@@ -55,6 +55,25 @@
       { "label": "Volleyball", "requirements": { "category" : "Athletics" }}
 		]
 	},{
+		"id": "student-classification",
+		"title": "Student Classification",
+		"description": "Choose the student classification your group can be filtered by.",
+		"empty-hint": "Select a student classification...",
+		"semantics-hint": "Double tap to show student classification options.",
+		"usage": "category",
+		"widget": "dropdown",
+		"requirements" : {
+			"min-selected-count": 0,
+			"max-selected-count": null
+		},
+		"values": [
+			"Graduate",
+			"Freshman",
+			"Sophomore",
+			"Junior",
+			"Senior"
+		]
+	},{
 		"id": "college",
 		"title": "College",
 		"description": "Choose the college your group can be filtered by.",
