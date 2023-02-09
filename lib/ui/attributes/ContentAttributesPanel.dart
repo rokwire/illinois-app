@@ -16,11 +16,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class ContentAttributesPanel extends StatefulWidget {
   final String? title;
+  final String? description;
   final bool filtersMode;
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
 
-  ContentAttributesPanel({Key? key, this.title, this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
+  ContentAttributesPanel({Key? key, this.title, this.description, this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesPanelState();
@@ -69,6 +70,15 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   Widget _buildCategoriesContent() {
     List<Widget> conentList = <Widget>[];
+
+    if (StringUtils.isNotEmpty(widget.description)) {
+      conentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
+        Text(widget.description ?? '', style:
+          TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary, )
+        ),
+      ));
+    }
+
     List<ContentAttributesCategory>? categories = ListUtils.from<ContentAttributesCategory>(widget.contentAttributes?.categories);
     if ((categories != null) && categories.isNotEmpty) {
       categories.sort((ContentAttributesCategory category1, ContentAttributesCategory category2) {
