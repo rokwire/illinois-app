@@ -110,8 +110,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     bool visible = (attributes?.isNotEmpty ?? false);
     bool enabled = (attributes?.isNotEmpty ?? false) && (hasSelection || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
-    String? title = _constructAttributeTitle(category, categoryLabels);
-    String? hint = widget.contentAttributes?.stringValue(category.semanticsHint);
+    String? title = _constructAttributeDropdownTitle(category, categoryLabels);
+    String? hint = widget.contentAttributes?.stringValue(widget.filtersMode ? category.semanticsFilterHint : category.semanticsHint);
     TextStyle? textStyle = Styles().textStyles?.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
     void Function()? onTap = enabled ? () => _onCategoryDropdownTap(category: category, attributes: attributes) : null;
     
@@ -129,9 +129,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     );
   }
 
-  String? _constructAttributeTitle(ContentAttributesCategory category, LinkedHashSet<String>? categoryLabels) {
+  String? _constructAttributeDropdownTitle(ContentAttributesCategory category, LinkedHashSet<String>? categoryLabels) {
     if ((categoryLabels == null) || categoryLabels.isEmpty) {
-      return widget.contentAttributes?.stringValue(category.emptyHint);
+      return widget.contentAttributes?.stringValue(widget.filtersMode ? category.emptyFilterHint : category.emptyHint);
     }
     else if (categoryLabels.length == 1) {
       return widget.contentAttributes?.stringValue(categoryLabels.first);
@@ -195,7 +195,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       imageAsset = "box-inside-gray";
     }
     
-    String? text = (selectedAttribute?.value != null) ? category.text : category.emptyHint;
+    String? text = (selectedAttribute?.value != null) ? category.text : (widget.filtersMode ? category.emptyFilterHint : category.emptyHint);
     TextStyle? textStyle = Styles().textStyles?.getTextStyle((selectedAttribute?.value != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
 
     return Visibility(visible: visible, child:

@@ -888,10 +888,11 @@
 		]
 	},{
 		"id": "rso",
-		"title": "RSO",
-		"description": "Choose whether your group is RSO.",
+		"title": "Registered Student Organization",
+		"description": "Choose whether your group is an RSO.",
 		"text": "Registered Student Organization",
 		"empty-hint": "Select Registered Student Organization...",
+		"empty-filter-hint": "Show Registered Student Organization...",
 		"semantics-hint": "Double tap to show RSO options.",
 		"usage": "label",
 		"widget": "checkbox",
