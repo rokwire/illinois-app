@@ -176,6 +176,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         setStateIfMounted(() {
           _selection[categoryId] = selection;
           widget.contentAttributes?.validateSelection(_selection);
+          if (!widget.filtersMode) {
+            widget.contentAttributes?.extendSelection(_selection, categoryId);
+          }
         });
       }
     }));
