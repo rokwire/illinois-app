@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.14] - 2023-02-10
 ### Fixed
 - Fixed group-5 image references in styles.json.
 - Fixed the most obvious color issues with style images [#2979](https://github.com/rokwire/illinois-app/issues/2979).
