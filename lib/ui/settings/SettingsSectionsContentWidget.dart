@@ -46,7 +46,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
-import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsSectionsContentWidget extends StatefulWidget {
@@ -931,14 +930,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Copyright
   Widget _buildCopyright() {
-    final String currentYearFormatted = DateFormat('yyyy').format(DateTime.now());
-    String copyrightLabel = sprintf(
-        Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © %s University of Illinois Board of Trustees'),
-        [currentYearFormatted]);
-    return Container(
-        alignment: Alignment.center,
-        child: Text(copyrightLabel, textAlign: TextAlign.center,
-            style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
+    String copyrightLabel = Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees')
+      .replaceAll('{{COPYRIGHT_YEAR}}', DateFormat('yyyy').format(DateTime.now()));
+    return Container(alignment: Alignment.center, child:
+      Text(copyrightLabel, textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+    );
   }
 
   // Utilities

@@ -276,7 +276,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                       Expanded(child:
                         Padding(
                           padding: EdgeInsets.only(left: 10),
-                          child: Text(additionalSettingsText, style: Styles().textStyles?.getTextStyle("widget.title.regular"),
+                          child: Text(additionalSettingsText, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
                           ),
                         )
                       )

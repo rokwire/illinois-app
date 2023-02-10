@@ -169,7 +169,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                 Expanded(
                     child: Text(Localization().getStringEx('panel.wellness.categories.manage.existing.label', 'Manage Existing Categories'),
                         overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles?.getTextStyle("widget.title.regular")))
+                        style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")))
               ])),
           Padding(
               padding: EdgeInsets.only(top: 8),

@@ -6,39 +6,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [4.3.8] - 2022-01-31
+## [4.3.13] - 2023-02-09
+### Changed
+- Open appointments list panel on tap over appointment inbox message if appointment id does not exist [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+- Group/Project attribute/filters updates [#2974](https://github.com/rokwire/illinois-app/issues/2974).
+- Retrieve sorted appointments from the backend [#2971](https://github.com/rokwire/illinois-app/issues/2971).
+
+## [4.3.12] - 2023-02-08
+### Changed
+- Removed the popup panel for editing attributes dropdown content, use cupertino navigation route instead [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+- Updated group sub-panels to use cupertino navigation route instead of popup-like [#2967](https://github.com/rokwire/illinois-app/issues/2967).
+- Created standalone HomeCustomizeFavoritesPanel for Favorites panel content customization [#2972](https://github.com/rokwire/illinois-app/issues/2972).
+### Fixed
+- Open appointment detail panel on tap over appointment inbox message [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+
+## [4.3.11] - 2023-02-07
+### Changed
+- Created popup panel for editing attributes dropdown content [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+
+## [4.3.10] - 2023-02-06
+### Changed
+- Updated English strings [#2956](https://github.com/rokwire/illinois-app/issues/2956).
+- Updated group attributes logic [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+### Fixed
+- Scrolling in wellness MyMcKinley Appointments [#2958](https://github.com/rokwire/illinois-app/issues/2958).
+- Appointments sort order [#2960](https://github.com/rokwire/illinois-app/issues/2960).
+
+## [4.3.9] - 2023-02-02
+### Changed
+- Group's category and tags replaced by attributes [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.8] - 2023-01-31
 ### Added
 - Added RSO group attribute and checkbox attribute support [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
-## [4.3.7] - 2022-01-30
+## [4.3.7] - 2023-01-30
 ### Changed
 - Content filters renamed to Content Attributes [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 - Use category id as category selection key [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 - Updated Group Attributes panel behavior [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
-## [4.3.6] - 2022-01-27
+## [4.3.6] - 2023-01-27
 ### Added
 - Edit lastAppReviewTime from SettingsDebugPanel [#2941](https://github.com/rokwire/illinois-app/issues/2941).
 - Added Filters to group settings [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 ### Changed
 - Acknowledged University colleges and departments, added categories and tags filter for test purpose [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
-## [4.3.5] - 2022-01-25
+## [4.3.5] - 2023-01-25
 ### Added
 - Added Group filters to groups home panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
-## [4.3.4] - 2022-01-24
+## [4.3.4] - 2023-01-24
 ### Changed
 - Store filter selection in groups as {filter_id : option_id} mapping [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 ### Fixed
 - Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
 
-## [4.3.3] - 2022-01-23
+## [4.3.3] - 2023-01-23
 ### Changed
 - Group filters moved to standalone panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 - Preserve Group filters dropdown popup when selecting items that are multiple selected [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
-## [4.3.2] - 2022-01-20
+## [4.3.2] - 2023-01-20
 ### Fixed
 - Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
 ### Changed
@@ -50,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Acknwoledge Google Maps flutter plugin [#2904](https://github.com/rokwire/illinois-app/issues/2904).
 - Added filters in create group panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
-## [4.3.1] - 2022-01-12
+## [4.3.1] - 2023-01-12
 ### Changed
 - Use Styles().images [#2476](https://github.com/rokwire/illinois-app/issues/2476).
 - Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
@@ -63,11 +93,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
 - Handle tap action over poll and wellness todo items notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
 
-## [4.3.0] - 2022-01-04
+## [4.3.0] - 2023-01-04
 ### Changed
 - Switch to xCode 14.2.
 
-## [4.2.49] - 2022-01-05
+## [4.2.49] - 2023-01-05
 ### Fixed
 - Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
 - Fixed dropdown menu needs extending in Groups Manage Members [#2407](https://github.com/rokwire/illinois-app/issues/2407).
@@ -78,7 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
 - Text update: Settings - Sign In/Sign Out [#2457](https://github.com/rokwire/illinois-app/issues/2457).
 
-## [4.2.48] - 2022-01-03
+## [4.2.48] - 2023-01-03
 ### Fixed
 - Refresh issue with appointments [#2843](https://github.com/rokwire/illinois-app/issues/2843).
 - Added appointments default end date time [#2842](https://github.com/rokwire/illinois-app/issues/2842).

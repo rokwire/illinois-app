@@ -125,7 +125,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
-      HomePanel.notifyCustomize,
+      HomePanel.notifySelect,
       ExplorePanel.notifySelectMap,
     ]);
 
@@ -247,7 +247,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyWellnessToDoItemNotification) {
       _onFirebaseWellnessToDoItemNotification(param);
     }
-    else if (name == HomePanel.notifyCustomize) {
+    else if (name == HomePanel.notifySelect) {
       _onSelectHome();
     }
     else if (name == ExplorePanel.notifySelectMap) {
@@ -774,6 +774,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? appointmentId = JsonUtils.stringValue(param['appointment_id']);
       if (StringUtils.isNotEmpty(appointmentId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+      } else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.appointments)));
       }
     }
   }

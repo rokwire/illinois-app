@@ -31,6 +31,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: HeaderBar(title: "Advanced Settings"),
       body: Column(
           children: <Widget>[
             Expanded(
@@ -39,7 +40,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
                 child: CustomScrollView(
                     scrollDirection: Axis.vertical,
                     slivers: <Widget>[
-                      SliverHeaderBar(title: "Advanced Settings"),
+                      //SliverHeaderBar(title: "Advanced Settings"),
                       SliverList(
                         delegate: SliverChildListDelegate([
                         Container(
