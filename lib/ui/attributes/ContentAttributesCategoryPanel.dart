@@ -186,7 +186,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     String? imageAsset = StringUtils.isNotEmpty(attribute.label) ?
       (widget.multipleSelection ?
         (isSelected ? "check-box-filled" : "box-outline-gray") :
-        (isSelected ? "check-circle-filled" : "circle-outline")
+        (isSelected ? "check-circle-filled" : "circle-outline-gray")
       ) : null;
     String? title = StringUtils.isNotEmpty(attribute.label) ?
       widget.contentAttributes?.stringValue(attribute.label) :

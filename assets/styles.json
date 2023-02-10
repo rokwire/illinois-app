@@ -545,8 +545,8 @@
     "star-filled": {"src": "images/icon-star-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "thumbs-up-filled": {"src": "images/icon-thumbs-up-solid.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "campus-tools-filled": {"src": "images/tab-browse-selected.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size"},
-    "check-box-filled": {"src": "images/selected-checkbox.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 24, "todo": "when to use box vs circle, color issue"},
-    "check-circle-filled": {"src": "images/deselected-dark.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 24, "todo": "color issue"},
+    "check-box-filled": {"src": "images/selected-checkbox.png", "type": "flutter.asset", "color-todo": "fillColorPrimary", "size": 24, "todo": "when to use box vs circle, color issue"},
+    "check-circle-filled": {"src": "images/deselected-dark.png", "type": "flutter.asset", "color-todo": "fillColorPrimary", "size": 24, "todo": "color issue"},
 
     "circle-outline": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
     "location-outline": {"src": "images/icon-map-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size issue"},
@@ -584,7 +584,7 @@
     "chevron-up-white": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "surface", "size": 10, "todo": "size issue?"},
     "chevron-down-white": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "surface", "size": 10, "todo": "size issue?"},
     "edit-white": {"src": "images/icon-edit-white.png", "type": "flutter.asset", "color": "surface", "size": 18},
-    "star-white": {"src": "images/icon-star-white.png", "type": "flutter.asset", "color": "surface", "size": 18},
+    "star-white": {"src": "images/icon-star-white.png", "type": "flutter.asset", "color-todo": "surface", "size": 18, "todo": "color issue?"},
     "drag-white": {"src": "images/icon-drag-white.png", "type": "flutter.asset", "size": 18, "todo": "color issue?"},
     "radio-white": {"src": "images/radio-white.png", "type": "flutter.asset", "color": "surface", "size": 18},
     "person-circle-white": {"src": "images/person-white.png", "type": "flutter.asset", "color": "surface", "size": 18},
@@ -595,6 +595,7 @@
     "clock-white": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
 
     "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"},
+    "circle-outline-gray": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "chevron-up-gray": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-down-gray": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-right-gray": {"src": "images/chevron-right-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 14, "todo": "size issue?"},
