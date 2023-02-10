@@ -664,8 +664,8 @@
 
     "university-logo": {"src": "images/block-i-orange.png", "type": "flutter.asset"},
     "university-logo-dark": {"src": "images/illinois-blockI-blue.png", "type": "flutter.asset"},
-    "university-logo-circle-white": {"src": "'images/group-5-white.png'", "type": "flutter.asset"},
-    "university-logo-circle-dark": {"src": "'images/group-5-blue.png'", "type": "flutter.asset"},
+    "university-logo-circle-white": {"src": "images/group-5-white.png", "type": "flutter.asset"},
+    "university-logo-circle-dark": {"src": "images/group-5-blue.png", "type": "flutter.asset"},
     "transit-logo": {"src": "images/mtd-logo.png", "type": "flutter.asset"},
     "facebook-logo": {"src": "images/fb-16x32.png", "type": "flutter.asset", "todo": "size?"},
     "twitter-logo": {"src": "images/twitter-32x28.png", "type": "flutter.asset", "todo": "size?"},
