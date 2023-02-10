@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed group-5 image references in styles.json.
+- Fixed the most obvious color issues with style images [#2979](https://github.com/rokwire/illinois-app/issues/2979).
 
 ## [4.3.13] - 2023-02-09
 ### Changed
