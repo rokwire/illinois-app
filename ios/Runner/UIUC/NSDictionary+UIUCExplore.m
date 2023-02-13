@@ -22,6 +22,7 @@
 
 #import "NSDictionary+InaTypedValue.h"
 #import "NSDictionary+InaPathKey.h"
+#import "Navigation+Utils.h"
 #import "NSDate+InaUtils.h"
 #import "NSDate+UIUCUtils.h"
 
@@ -162,19 +163,42 @@
 	}
 }
 
-- (NSDictionary*)uiucExploreDestinationLocation {
+- (NSDictionary*)uiucExploreDestinationLocationFromOrigin:(CLLocationCoordinate2D)origin requireAda:(bool)requireAda {
+	NSDictionary* building = nil;
 	switch (self.uiucExploreType) {
-		case UIUCExploreType_StudentCourse: {
-			NSDictionary *building = [self inaDictForPathKey:@"coursesection.building"];
-			NSArray *entrances = [building inaArrayForKey:@"entrances"];
-			NSDictionary *entrance = entrances.firstObject;
-			return [entrance isKindOfClass: [NSDictionary class]] ? entrance : building;
-		}
-		case UIUCExploreType_Building:       return self;
-		case UIUCExploreType_MTDStop:        return self;
-		case UIUCExploreType_Parking:        return [self inaDictForKey:@"entrance"];
-		default:														 return [self inaDictForKey:@"location"];
+		case UIUCExploreType_Building:       building = self; break;
+		case UIUCExploreType_StudentCourse:  building = [self inaDictForPathKey:@"coursesection.building"]; break;
+		default:                             break;
 	}
+	if (building != nil) {
+		double minDistance = -1.0, minAdaDistance = -1.0;
+		NSDictionary *minEntrance = nil, *minAdaEntrance = nil;
+		NSArray *entrances = [building inaArrayForKey:@"entrances"];
+		for (NSDictionary *entrance in entrances) {
+			CLLocationCoordinate2D entranceLocation = entrance.uiucLocationCoordinate;
+			if (CLLocationCoordinate2DIsValid(entranceLocation)) {
+				double distance = navComputeDistanceBetween(origin, entranceLocation);
+				if ((minDistance < 0.0) || (distance < minDistance)) {
+					minDistance = distance;
+					minEntrance = entrance;
+				}
+				if (requireAda && ([entrance inaBoolForKey:@"adaCompliant"] == true) && ((minAdaDistance < 0.0) || (distance < minAdaDistance))) {
+					minAdaDistance = distance;
+					minAdaEntrance = entrance;
+				}
+			}
+		}
+		if (requireAda && (minAdaEntrance != nil)) {
+			return minAdaEntrance;
+		}
+		else if (minEntrance != nil) {
+			return minEntrance;
+		}
+		else {
+			return building;
+		}
+	}
+	return self.uiucExploreLocation;
 }
 
 - (NSString*)uiucExploreAddress {

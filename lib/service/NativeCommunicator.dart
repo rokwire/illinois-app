@@ -19,6 +19,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/StudentCourses.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -111,6 +112,7 @@ class NativeCommunicator with Service {
       Map<String, dynamic> optionsParam = {
         'showDebugLocation': Storage().debugMapLocationProvider,
         'enableLevels': Storage().debugMapShowLevels,
+        'requireAda': StudentCourses().requireAda,
       };
       if (options != null) {
         optionsParam.addAll(options);
