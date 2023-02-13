@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.15] - 2023-02-13
+### Fixed
 - Fixed navigation target when requesting directions to building in embedded map plugin [#2955](https://github.com/rokwire/illinois-app/issues/2955).
 
 ## [4.3.14] - 2023-02-10
@@ -28,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.3.10] - 2023-02-06
 ### Changed
-- Updated English strings [#2956](https://github.com/rokwire/illinois-app/issues/2956).
 - Updated group attributes logic [#2954](https://github.com/rokwire/illinois-app/issues/2954).
 
 ## [4.3.9] - 2023-02-02
@@ -92,7 +94,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.2.50] - 2023-02-13
 ### Changed
 - Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
-- Updated English strings [#2596](https://github.com/rokwire/illinois-app/issues/2596).
+- Updated English strings [#2956](https://github.com/rokwire/illinois-app/issues/2956).
 ### Fixed
 - Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
 - Handle tap action over poll and wellness todo items notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
