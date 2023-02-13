@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
 - Scrolling in wellness MyMcKinley Appointments [#2958](https://github.com/rokwire/illinois-app/issues/2958).
 - Open appointments list panel on tap over appointment inbox message if appointment id does not exist [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+- Fixed navigation target when requesting directions to building [#2955](https://github.com/rokwire/illinois-app/issues/2955).
 ### Added
 - Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
 
