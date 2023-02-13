@@ -353,8 +353,8 @@ class Building with Explore {
     DeepCollectionEquality().hash(entrances);
 
   // Accessories
-  BuildingEntrance? nearstEntrance(Position? position, {bool adaOnly = false}) => 
-    BuildingEntrance.nearstEntrance(entrances, position, adaOnly: adaOnly);
+  BuildingEntrance? nearstEntrance(Position? position, {bool requireAda = false}) => 
+    BuildingEntrance.nearstEntrance(entrances, position, requireAda: requireAda);
 
   // Explore implementation
 
@@ -488,7 +488,7 @@ class BuildingEntrance {
   }
 
   // Accessories
-  static BuildingEntrance? nearstEntrance(List<BuildingEntrance>?entrances, Position? position, {bool adaOnly = false}) {
+  static BuildingEntrance? nearstEntrance(List<BuildingEntrance>?entrances, Position? position, {bool requireAda = false}) {
     if ((entrances != null) && (position != null)) {
       double? minDistance, minAdaDistance;
       BuildingEntrance? minEntrance, minAdaEntrance;
@@ -499,13 +499,13 @@ class BuildingEntrance {
             minDistance = distance;
             minEntrance = entrance;
           }
-          if (adaOnly && (entrance.adaCompliant == true) && ((minAdaDistance == null) || (distance < minAdaDistance))) {
+          if (requireAda && (entrance.adaCompliant == true) && ((minAdaDistance == null) || (distance < minAdaDistance))) {
             minAdaDistance = distance;
             minAdaEntrance = entrance;
           }
         }
       }
-      return (adaOnly && (minAdaEntrance != null)) ? minAdaEntrance : minEntrance;
+      return (requireAda && (minAdaEntrance != null)) ? minAdaEntrance : minEntrance;
     }
     return null;    
   }
