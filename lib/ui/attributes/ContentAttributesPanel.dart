@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/attributes/ContentAttributesCategoryPanel.dart';
@@ -15,11 +16,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class ContentAttributesPanel extends StatefulWidget {
   final String? title;
+  final String? description;
   final bool filtersMode;
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
 
-  ContentAttributesPanel({Key? key, this.title, this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
+  ContentAttributesPanel({Key? key, this.title, this.description, this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesPanelState();
@@ -68,6 +70,15 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   Widget _buildCategoriesContent() {
     List<Widget> conentList = <Widget>[];
+
+    if (StringUtils.isNotEmpty(widget.description)) {
+      conentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
+        Text(widget.description ?? '', style:
+          TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary, )
+        ),
+      ));
+    }
+
     List<ContentAttributesCategory>? categories = ListUtils.from<ContentAttributesCategory>(widget.contentAttributes?.categories);
     if ((categories != null) && categories.isNotEmpty) {
       categories.sort((ContentAttributesCategory category1, ContentAttributesCategory category2) {
@@ -94,33 +105,35 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   Widget _buildCategoryDropDown(ContentAttributesCategory category) {
     LinkedHashSet<String>? categoryLabels = _selection[category.id];
     bool hasSelection = ((categoryLabels != null) && categoryLabels.isNotEmpty);
+    LinkedHashSet<String>? displayCategoryLabels = (CollectionUtils.isEmpty(categoryLabels) && (category.nullValue is String)) ?
+      LinkedHashSet<String>.from([category.nullValue]) : categoryLabels;
 
     List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
     bool visible = (attributes?.isNotEmpty ?? false);
     bool enabled = (attributes?.isNotEmpty ?? false) && (hasSelection || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
-    String? title = _constructAttributeTitle(category, categoryLabels);
-    String? hint = widget.contentAttributes?.stringValue(category.semanticsHint);
+    String? title = _constructAttributeDropdownTitle(category, displayCategoryLabels);
+    String? hint = widget.contentAttributes?.stringValue(widget.filtersMode ? (category.semanticsFilterHint ?? category.semanticsHint) : category.semanticsHint);
     TextStyle? textStyle = Styles().textStyles?.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
     void Function()? onTap = enabled ? () => _onCategoryDropdownTap(category: category, attributes: attributes) : null;
     
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: widget.contentAttributes?.stringValue(category.title)?.toUpperCase(),
+          title: widget.contentAttributes?.stringValue(category.longTitle ?? category.title)?.toUpperCase(),
           description: widget.contentAttributes?.stringValue(category.description),
           requiredMark: !widget.filtersMode && category.isRequired,
         ),
-        _CategoryDropdownButton(
+        _CategoryRibbonButton(
           title: title, hint: hint, textStyle: textStyle, onTap: onTap,
         ),
       ]),
     );
   }
 
-  String? _constructAttributeTitle(ContentAttributesCategory category, LinkedHashSet<String>? categoryLabels) {
+  String? _constructAttributeDropdownTitle(ContentAttributesCategory category, LinkedHashSet<String>? categoryLabels) {
     if ((categoryLabels == null) || categoryLabels.isEmpty) {
-      return widget.contentAttributes?.stringValue(category.emptyHint);
+      return widget.contentAttributes?.stringValue(widget.filtersMode ? (category.emptyFilterHint ?? category.emptyHint) : category.emptyHint);
     }
     else if (categoryLabels.length == 1) {
       return widget.contentAttributes?.stringValue(categoryLabels.first);
@@ -144,21 +157,31 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     Analytics().logSelect(target: category?.title);
     String? categoryId = category?.id;
 
-    ContentAttributesCategoryPanel.present(context,
+    LinkedHashSet<String>? categoryLabels = _selection[category?.id];
+    LinkedHashSet<String>? displayCategoryLabels = (CollectionUtils.isEmpty(categoryLabels) && (category?.nullValue is String)) ?
+      LinkedHashSet<String>.from([category?.nullValue]) : categoryLabels;
+
+    Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
       contentAttributes: widget.contentAttributes,
       category: category,
       attributes: attributes,
-      selection: _selection[categoryId],
+      selection: displayCategoryLabels,
       multipleSelection: widget.filtersMode || (category?.isMultipleSelection ?? false),
       filtersMode: widget.filtersMode,
-    ).then((LinkedHashSet<String>? selection) {
+    ),)).then(((LinkedHashSet<String>? selection) {
       if ((selection != null) && (categoryId != null)) {
+        if ((category?.nullValue is String) && selection.contains(category?.nullValue)) {
+          selection.remove(category?.nullValue);
+        }
         setStateIfMounted(() {
           _selection[categoryId] = selection;
           widget.contentAttributes?.validateSelection(_selection);
+          if (!widget.filtersMode) {
+            widget.contentAttributes?.extendSelection(_selection, categoryId);
+          }
         });
       }
-    });
+    }));
   }
 
   Widget _buildCategoryCheckbox(ContentAttributesCategory category) {
@@ -168,13 +191,14 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     LinkedHashSet<String>? categoryLabels = _selection[category.id];
     ContentAttribute? selectedAttribute = ((categoryLabels != null) && categoryLabels.isNotEmpty) ?
       category.findAttribute(label: categoryLabels.first) : null;
+    dynamic displayValue = selectedAttribute?.value ?? category.nullValue;
 
     bool visible = (attributes?.isNotEmpty ?? false);
     bool enabled = (attributes?.isNotEmpty ?? false) && ((selectedAttribute != null) || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
     String imageAsset;
     if (enabled) {
-      switch (selectedAttribute?.value) {
+      switch (displayValue) {
         case true:  imageAsset = "check-box-filled"; break;
         case false: imageAsset = "box-outline-gray"; break;
         default:    imageAsset = "box-inside-light-gray"; break;
@@ -184,13 +208,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       imageAsset = "box-inside-gray";
     }
     
-    String? text = (selectedAttribute?.value != null) ? category.text : category.emptyHint;
-    TextStyle? textStyle = Styles().textStyles?.getTextStyle((selectedAttribute?.value != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
+    String? text = (displayValue != null) ? category.text : (widget.filtersMode ? (category.emptyFilterHint ?? category.emptyHint) : category.emptyHint);
+    TextStyle? textStyle = Styles().textStyles?.getTextStyle((selectedAttribute != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
 
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: widget.contentAttributes?.stringValue(category.title)?.toUpperCase(),
+          title: widget.contentAttributes?.stringValue(category.longTitle ?? category.title)?.toUpperCase(),
           description: widget.contentAttributes?.stringValue(category.description),
           requiredMark: !widget.filtersMode && category.isRequired,
         ),
@@ -221,15 +245,23 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   void _onCategoryCheckbox(ContentAttributesCategory category) {
     String? categoryId = category.id;
     if (categoryId != null) {
+      List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
       LinkedHashSet<String> categoryLabels = _selection[categoryId] ??= LinkedHashSet<String>();
       ContentAttribute? selectedAttribute = categoryLabels.isNotEmpty ?
-        category.findAttribute(label: categoryLabels.first) : null;
-
-      switch (selectedAttribute?.value) {
-        case true:  selectedAttribute = category.findAttribute(value: false); break;
-        case false: selectedAttribute = null; break;
-        default:    selectedAttribute = category.findAttribute(value: true); break;
+        ContentAttribute.findInList(attributes, label: categoryLabels.first) : null;
+      
+      dynamic selectedValue = selectedAttribute?.value;
+      if (category.nullValue != null) {
+        selectedValue ??= category.nullValue;
+        selectedValue = (selectedValue ?? false) == false;
+        selectedValue = (selectedValue != category.nullValue) ? selectedValue : null;
       }
+      else switch(selectedValue) {
+        case true:  selectedValue = false; break;
+        case false: selectedValue = null; break;
+        default:    selectedValue = true; break;
+      }
+      selectedAttribute = (selectedValue != null) ? ContentAttribute.findInList(attributes, value: selectedValue) : null;
 
       String? selectedLabel = selectedAttribute?.label;
       Analytics().logSelect(target: selectedAttribute?.label, source: category.title);
@@ -318,13 +350,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 }
 
-class _CategoryDropdownButton extends StatelessWidget {
+class _CategoryRibbonButton extends StatelessWidget {
   final String? title;
   final String? hint;
   final TextStyle? textStyle;
   final Function()? onTap;
 
-  _CategoryDropdownButton({Key? key, this.title, this.hint, this.textStyle, this.onTap}) : super(key: key);
+  _CategoryRibbonButton({Key? key, this.title, this.hint, this.textStyle, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -344,7 +376,7 @@ class _CategoryDropdownButton extends StatelessWidget {
                 ),
               ),
               Padding(padding: EdgeInsets.all(12), child:
-                Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? SizedBox(width: 10, height: 6),
+                Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? SizedBox(width: 10, height: 6),
               ),
             ],),
           ),

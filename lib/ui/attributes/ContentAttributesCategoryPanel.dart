@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -19,52 +20,17 @@ class ContentAttributesCategoryPanel extends StatefulWidget {
   final bool multipleSelection;
   final bool filtersMode;
 
-  ContentAttributesCategoryPanel._({this.contentAttributes, this.category, this.attributes, this.selection, this.multipleSelection = false, this.filtersMode = false});
+  ContentAttributesCategoryPanel({this.contentAttributes, this.category, this.attributes, this.selection, this.multipleSelection = false, this.filtersMode = false});
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
 
-  static Future<LinkedHashSet<String>?> present(BuildContext context, {
-    ContentAttributes? contentAttributes,
-    ContentAttributesCategory? category,
-    List<ContentAttribute>? attributes,
-    LinkedHashSet<String>? selection,
-    bool multipleSelection = false,
-    bool filtersMode = false,
-  }) {
-    MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
-    double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
-    return showModalBottomSheet<LinkedHashSet<String>?>(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      useRootNavigator: true,
-      clipBehavior: Clip.antiAlias,
-      backgroundColor: Styles().colors?.background,
-      constraints: BoxConstraints(maxHeight: height, minHeight: height),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-      builder: (context) {
-        return ContentAttributesCategoryPanel._(
-          contentAttributes: contentAttributes,
-          category: category,
-          attributes: attributes,
-          selection: selection,
-          multipleSelection: multipleSelection,
-          filtersMode: filtersMode,
-        );
-      }
-    );
-    /*Navigator.push(context, PageRouteBuilder(
-      pageBuilder: (context, animation1, animation2) => ContentAttributesCategoryPanel._(contentAttributes: contentAttributes),
-      transitionDuration: Duration.zero,
-      reverseTransitionDuration: Duration.zero
-    ));*/
-  }
+  LinkedHashSet<String> get emptySelection => (category?.nullValue != null) ? LinkedHashSet<String>.from([category?.nullValue]) : LinkedHashSet<String>();
 }
 
 class _ContentAttributesCategoryPanelState extends State<ContentAttributesCategoryPanel> {
 
-  LinkedHashMap<String, List<ContentAttribute>> _contentMap = LinkedHashMap<String, List<ContentAttribute>>();
+  List<dynamic> _contentList = <dynamic>[];
   LinkedHashSet<String> _selection = LinkedHashSet<String>();
 
   @override
@@ -76,12 +42,36 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     }
 
     if (widget.attributes != null) {
+      LinkedHashMap<String, List<ContentAttribute>> contentMap = LinkedHashMap<String, List<ContentAttribute>>();
       for (ContentAttribute attribute in widget.attributes!) {
         Iterable<dynamic>? requirementAttributes = attribute.requirements?.values;
         dynamic requirementAttribute = (requirementAttributes?.isNotEmpty ?? false) ? requirementAttributes?.first : null;
         String contentMapKey = (requirementAttribute is String) ? requirementAttribute : '';
-        (_contentMap[contentMapKey] ??= <ContentAttribute>[]).add(attribute);
+          (contentMap[contentMapKey] ??= <ContentAttribute>[]).add(attribute);
       }
+
+      _contentList.add(_ContentItem.spacing);
+      contentMap.forEach((String section, List<ContentAttribute> sectionAttributes) {
+
+        // section heading
+        if (section.isEmpty) {
+          section = widget.category?.title ?? '';
+        }
+        section = widget.contentAttributes?.stringValue(section) ?? section;
+        _contentList.add(section); 
+
+        // section entries
+        int startCount = _contentList.length;
+        for (ContentAttribute attribute in sectionAttributes) {
+          if (startCount < _contentList.length) {
+            _contentList.add(_ContentItem.separator);
+          }
+          _contentList.add(attribute);
+        }
+
+        // spacing
+        _contentList.add(_ContentItem.spacing);
+      });
     }
   }
 
@@ -92,108 +82,103 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   @override
   Widget build(BuildContext context) {
-    bool canClear = (0 < (widget.attributes?.length ?? 0)) && !widget.filtersMode && (widget.category?.isSingleSelection ?? false) && _selection.isNotEmpty;
-    String clearTitle = Localization().getStringEx('dialog.clear.title', 'Clear');
-    
-    String applyTitle = Localization().getStringEx('dialog.apply.title', 'Apply');
-    bool canApply = widget.multipleSelection && !DeepCollectionEquality().equals(widget.selection ?? LinkedHashSet<String>(), _selection);
+    String? title = widget.contentAttributes?.stringValue(widget.category?.title);
 
-    return Column(children: [
-      Container(color: Styles().colors?.white, child:
-        Row(children: [
-          Expanded(child:
-              Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(widget.contentAttributes?.stringValue(widget.category?.title) ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),)
-              )
-          ),
-          Visibility(visible: canApply, child:
-            Semantics(label: applyTitle, hint: Localization().getStringEx('dialog.clear.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-              InkWell(onTap : _onTapApply, child:
-                Container(padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12), child:
-                  Text(applyTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary, decoration: TextDecoration.underline,)
-                  ),
-                ),
-              ),
+    List<Widget> actions = <Widget>[];
+
+    if ((0 < (widget.attributes?.length ?? 0)) && !widget.filtersMode && (widget.category?.isSingleSelection ?? false) && !DeepCollectionEquality().equals(_selection, widget.emptySelection)) {
+      actions.add(_buildHeaderBarButton(
+        title:  Localization().getStringEx('dialog.clear.title', 'Clear'),
+        onTap: _onTapClear,
+      ));
+    }
+
+    if (widget.multipleSelection && !DeepCollectionEquality().equals(widget.selection ?? LinkedHashSet<String>(), _selection)) {
+      actions.add(_buildHeaderBarButton(
+        title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
+        onTap: _onTapApply,
+      ));
+    }
+
+    return Scaffold(
+      appBar: HeaderBar(title: title, actions: actions,),
+      backgroundColor: Styles().colors?.background,
+      body: Column(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+            ListView.builder(
+              itemBuilder: (BuildContext context, int index) => _buildListItem(context, index),
+              itemCount: _contentList.length
             ),
-          ),
-          Visibility(visible: canClear, child:
-            Semantics(label: clearTitle, hint: Localization().getStringEx('dialog.clear.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-              InkWell(onTap : _onTapClear, child:
-                Container(padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12), child:
-                  Text(clearTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary, decoration: TextDecoration.underline,)
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
-            InkWell(onTap : _onTapClose, child:
-              Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                Styles().images?.getImage('close', excludeFromSemantics: true),
-              ),
-            ),
-          ),
-        ],),
-      ),
-      Container(color: Styles().colors?.surfaceAccent, height: 1,),
-      Expanded(child:
-        SingleChildScrollView(child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24,), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-              _buildContent(),
-            )
           ),
         ),
-      )
-    ],);
+      ]),
+    );
   }
 
-  List<Widget> _buildContent() {
-    List<Widget> contentList = <Widget>[];
-    _contentMap.forEach((String section, List<ContentAttribute> sectionAttributes) {
-
-      if (contentList.isNotEmpty) {
-        contentList.add(Container(height: 24,));
-      }
-      
-      if (section.isEmpty) {
-        section = widget.category?.title ?? '';
-      }
-      String displaySection = widget.contentAttributes?.stringValue(section) ?? section;
-
-      contentList.add(Container(
-        decoration: BoxDecoration(
-          color: Styles().colors!.fillColorPrimary,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))
-        ),
-        child: Semantics(label: displaySection, button: false, child: 
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-            Row(children: <Widget>[
-              Expanded(child:
-                Text(displaySection, textAlign: TextAlign.left, style:
-                  Styles().textStyles?.getTextStyle("panel.settings.food_filter.title")
+  Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) {
+    return Semantics(label: title, button: true, excludeSemantics: true, child: 
+      InkWell(onTap: onTap, child:
+        Align(alignment: Alignment.center, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                child: Text(title ?? '',
+                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.white,)
                 ),
-              )
-            ],),
+              ),
+            ],)
           ),
         ),
-      ),);
-      
-      List<Widget> attributesList = <Widget>[];
-      for (ContentAttribute attribute in sectionAttributes) {
-        if (attributesList.isNotEmpty) {
-          attributesList.add(Container(color: Colors.white, child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
-              Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
-            ),
-          ));
-        }
-        attributesList.add(_buildAttributeWidget(attribute));
-      }
-      contentList.addAll(attributesList);
-    });
+        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //),
+      ),
+    );
+  }
 
-    return contentList;
+  Widget _buildListItem(BuildContext context, int index) {
+    dynamic sourceData = ((0 <= index) && (index < _contentList.length)) ? _contentList[index] : null;
+    if (sourceData is String) {
+      return _buildCaptionWidget(sourceData);
+    }
+    else if (sourceData is ContentAttribute) {
+      return _buildAttributeWidget(sourceData);
+    }
+    else if (sourceData == _ContentItem.separator) {
+      return Container(color: Colors.white, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
+          Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
+        ),
+      );
+    }
+    else if (sourceData == _ContentItem.spacing) {
+      return Container(height: 24,);
+    }
+    else {
+      return Container();
+    }
+  }
+
+  Widget _buildCaptionWidget(String title) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Styles().colors!.fillColorPrimary,
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))
+      ),
+      child: Semantics(label: title, button: false, child: 
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+          Row(children: <Widget>[
+            Expanded(child:
+              Text(title, textAlign: TextAlign.left, style:
+                Styles().textStyles?.getTextStyle("panel.settings.food_filter.title")
+              ),
+            )
+          ],),
+        ),
+      ),
+    );
   }
 
   Widget _buildAttributeWidget(ContentAttribute attribute) {
@@ -201,7 +186,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     String? imageAsset = StringUtils.isNotEmpty(attribute.label) ?
       (widget.multipleSelection ?
         (isSelected ? "check-box-filled" : "box-outline-gray") :
-        (isSelected ? "check-circle-filled" : "circle-outline")
+        (isSelected ? "check-circle-filled" : "circle-outline-gray")
       ) : null;
     String? title = StringUtils.isNotEmpty(attribute.label) ?
       widget.contentAttributes?.stringValue(attribute.label) :
@@ -260,7 +245,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 
   void _onTapClear() {
-    _selection.clear();
+    _selection = widget.emptySelection;
     if (widget.multipleSelection) {
       setStateIfMounted(() {});
     }
@@ -268,9 +253,6 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       Navigator.of(context).pop(_selection);
     }
   }
-
-  void _onTapClose() {
-    Analytics().logSelect(target: 'Close');
-    Navigator.of(context).pop(null);
-  }
 }
+
+enum _ContentItem { spacing, separator }

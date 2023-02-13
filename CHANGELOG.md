@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.14] - 2023-02-10
+### Fixed
+- Fixed group-5 image references in styles.json.
+- Fixed the most obvious color issues with style images [#2979](https://github.com/rokwire/illinois-app/issues/2979).
+
+## [4.3.13] - 2023-02-09
+### Changed
+- Open appointments list panel on tap over appointment inbox message if appointment id does not exist [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+- Group/Project attribute/filters updates [#2974](https://github.com/rokwire/illinois-app/issues/2974).
+- Retrieve sorted appointments from the backend [#2971](https://github.com/rokwire/illinois-app/issues/2971).
+
+## [4.3.12] - 2023-02-08
+### Changed
+- Removed the popup panel for editing attributes dropdown content, use cupertino navigation route instead [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+- Updated group sub-panels to use cupertino navigation route instead of popup-like [#2967](https://github.com/rokwire/illinois-app/issues/2967).
+- Created standalone HomeCustomizeFavoritesPanel for Favorites panel content customization [#2972](https://github.com/rokwire/illinois-app/issues/2972).
+### Fixed
+- Open appointment detail panel on tap over appointment inbox message [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+
 ## [4.3.11] - 2023-02-07
 ### Changed
 - Created popup panel for editing attributes dropdown content [#2954](https://github.com/rokwire/illinois-app/issues/2954).

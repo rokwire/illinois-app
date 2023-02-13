@@ -140,7 +140,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
       MTD.notifyStopsChanged,
-      Appointments.notifyAppointmentsChanged,
+      Appointments.notifyUpcomingAppointmentsChanged,
       ExplorePanel.notifySelectMap,
       RootPanel.notifyTabChanged,
       Storage.notifySettingChanged,
@@ -222,7 +222,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         _refreshExplores();
       }
     }
-    else if (name == Appointments.notifyAppointmentsChanged) {
+    else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
       if ((_selectedExploreItem == ExploreItem.Appointments) && mounted) {
         _refreshExplores();
       }
@@ -1684,7 +1684,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   Future<List<Explore>?> _loadAppointments() async {
-    return Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+    return Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming, type: AppointmentType.in_person);
   }
 
   void _updateSelectedMapStopRoutes() {

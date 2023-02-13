@@ -144,7 +144,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Guide.notifyChanged,
       Config.notifyConfigChanged,
       Storage.notifySettingChanged,
-      Appointments.notifyAppointmentsChanged
+      Appointments.notifyUpcomingAppointmentsChanged
     ]);
     
     if (widget.updateController != null) {
@@ -187,7 +187,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         _initFavorites((_favoriteIds ?? LinkedHashSet<String>()), showProgress: true);
       }
     }
-    else if (name == Appointments.notifyAppointmentsChanged) {
+    else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
       if (widget.favoriteKey == Appointment.favoriteKeyName) {
         _initFavorites((_favoriteIds ?? LinkedHashSet<String>()), showProgress: false);
       }
@@ -491,7 +491,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Future<List<Favorite>?> _loadFavoriteAppointments(LinkedHashSet<String>? favoriteIds) async =>
       (CollectionUtils.isNotEmpty(favoriteIds) && (Storage().appointmentsCanDisplay == true))
-          ? _buildFavoritesList(Appointments().getAppointments(onlyUpcoming: true), favoriteIds)
+          ? _buildFavoritesList(Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming), favoriteIds)
           : null;
 
   List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, LinkedHashSet<String>? favoriteIds) {
