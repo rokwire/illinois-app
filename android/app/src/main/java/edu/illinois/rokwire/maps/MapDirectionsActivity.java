@@ -139,7 +139,7 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
         super.onCreate(savedInstanceState);
         initUiViews();
         initCoreLocation();
-        initExplore();
+        initExplore(null);
         initNavigation();
         buildTravelModes();
     }
@@ -254,6 +254,7 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
         if (coreLocation != null) {
             if (!firstLocationUpdatePassed) {
                 firstLocationUpdatePassed = true;
+                initExplore(coreLocation);
                 handleFirstLocationUpdate();
             }
 
@@ -290,7 +291,7 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
 
     //region Explores
 
-    private void initExplore() {
+    private void initExplore(android.location.Location origin) {
         Serializable exploreSerializable = getIntent().getSerializableExtra("explore");
         if (exploreSerializable == null) {
             return;
@@ -299,13 +300,13 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
             HashMap singleExplore;
             singleExplore = (HashMap) exploreSerializable;
             this.explore = singleExplore;
-            initExploreLocation(singleExplore);
+            initExploreLocation(singleExplore, origin);
         } else if (exploreSerializable instanceof ArrayList) {
             ArrayList explores = (ArrayList) exploreSerializable;
             this.explore = explores;
             Object firstExplore = (explores.size() > 0) ? explores.get(0) : null;
             if (firstExplore instanceof HashMap) {
-                initExploreLocation((HashMap) firstExplore);
+                initExploreLocation((HashMap) firstExplore, origin);
             }
         }
     }
@@ -367,15 +368,20 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
         cameraZoom = currentCameraZoom;
     }
 
-    private void initExploreLocation(HashMap singleExplore) {
+    private void initExploreLocation(HashMap singleExplore, Location location) {
         Utils.ExploreType exploreType = Utils.Explore.getExploreType(singleExplore);
         if ((exploreType == Utils.ExploreType.PARKING) || (exploreType == Utils.ExploreType.MTD_STOP)) {
             LatLng latLng = Utils.Explore.optLocationLatLng(singleExplore);
             if (latLng != null) {
                 this.exploreLocation = Utils.Explore.createLocationMap(latLng);
             }
+        } else if (exploreType == Utils.ExploreType.BUILDING) {
+            boolean requireAda = Utils.Map.getValueFromPath(options, "requireAda", false);
+            this.exploreLocation = Utils.Explore.optBuildingDestinationLocation(singleExplore, location, requireAda);
         } else if (exploreType == Utils.ExploreType.STUDENT_COURSE) {
-            this.exploreLocation = Utils.Explore.optStudentCourseLocation(singleExplore, true);
+            boolean requireAda = Utils.Map.getValueFromPath(options, "requireAda", false);
+            HashMap buildingMap = Utils.Explore.optStudentCourseBuilding(singleExplore);
+            this.exploreLocation = Utils.Explore.optBuildingDestinationLocation(singleExplore, location, requireAda);
         } else {
             this.exploreLocation = Utils.Explore.optLocation(singleExplore);
         }
