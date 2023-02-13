@@ -176,7 +176,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   Future<String?> _loadAppointmentsStringFromNet() async {
     //TMP: assets shortcut
     //return await AppBundle.loadString('assets/appointments.json')
-    if (StringUtils.isNotEmpty(Config().appointmentsUrl)) {
+    if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
       String? url = "${Config().appointmentsUrl}/services/appointments";
       http.Response? response = await Network().get(url, auth: Auth2());
       int? responseCode = response?.statusCode;
