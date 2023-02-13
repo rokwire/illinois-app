@@ -770,6 +770,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? appointmentId = JsonUtils.stringValue(param['appointment_id']);
       if (StringUtils.isNotEmpty(appointmentId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+      } else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.appointments)));
       }
     }
   }
