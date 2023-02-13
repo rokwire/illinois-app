@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Fixed navigation target when requesting directions to building in embedded map plugin [#2955](https://github.com/rokwire/illinois-app/issues/2955).
 
 ## [4.3.14] - 2023-02-10
 ### Fixed

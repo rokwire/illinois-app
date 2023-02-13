@@ -64,7 +64,7 @@ class GeoMapUtils {
   }
 
   // Distance in meters
-  static double getDistance(double lat1, double lng1, double lat2, double  lng2) {
+  static double getDistance(double lat1, double lng1, double lat2, double lng2) {
     double p = 0.017453292519943295;
     double a = 0.5 - math.cos((lat2 - lat1) * p)/2 + 
                math.cos(lat1 * p) * math.cos(lat2 * p) * 
