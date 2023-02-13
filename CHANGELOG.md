@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.50] - 2023-02-13
 ### Changed
 - Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
 - Updated English strings [#2596](https://github.com/rokwire/illinois-app/issues/2596).
@@ -18,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
 
-## [4.2.49] - 2022-01-05
+## [4.2.49] - 2023-01-05
 ### Fixed
 - Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
 - Fixed dropdown menu needs extending in Groups Manage Members [#2407](https://github.com/rokwire/illinois-app/issues/2407).
@@ -29,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
 - Text update: Settings - Sign In/Sign Out [#2457](https://github.com/rokwire/illinois-app/issues/2457).
 
-## [4.2.48] - 2022-01-03
+## [4.2.48] - 2023-01-03
 ### Fixed
 - Refresh issue with appointments [#2843](https://github.com/rokwire/illinois-app/issues/2843).
 - Added appointments default end date time [#2842](https://github.com/rokwire/illinois-app/issues/2842).
