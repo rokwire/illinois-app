@@ -179,6 +179,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
     else if (name == Connectivity.notifyStatusChanged) {
       if ((Connectivity().isNotOffline) && mounted) {
+        _initLocationServicesStatus();
         _initEventCategories();
         _initExplores();
       }
@@ -262,6 +263,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           if (mounted) {
+            _initLocationServicesStatus();
             _refreshExplores();
           }
         }
