@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
 - Handle tap action over poll and wellness todo items notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
 - Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
+- Scrolling in wellness MyMcKinley Appointments [#2958](https://github.com/rokwire/illinois-app/issues/2958).
 ### Added
 - Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
 
