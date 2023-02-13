@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.location.Location;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
@@ -178,33 +179,60 @@ public class Utils {
             return null;
         }
 
-        public static HashMap optStudentCourseLocation(HashMap explore) {
-            return optStudentCourseLocation(explore, false);
-        }
-
-        public static HashMap optStudentCourseLocation(HashMap explore, boolean destinaton) {
-            Object sectionObj = explore.get("coursesection");
+        public static HashMap optStudentCourseBuilding(HashMap explore) {
+            Object sectionObj = (explore != null) ? explore.get("coursesection") : null;
             if (sectionObj instanceof HashMap) {
                 HashMap sectionMap = (HashMap) sectionObj;
                 Object buildingObj = sectionMap.get("building");
                 if (buildingObj instanceof HashMap) {
                     HashMap buildingMap = (HashMap) buildingObj;
-                    if (destinaton) {
-                        Object entracesObj = buildingMap.get("entrances");
-                        if (entracesObj instanceof ArrayList) {
-                            ArrayList entracesList = (ArrayList) entracesObj;
-                            if (entracesList.size() > 0) {
-                                Object entraceObj = entracesList.get(0);
-                                if (entraceObj instanceof HashMap) {
-                                    return (HashMap) entraceObj;
-                                }
-                            }
-                        }
-                    }
                     return buildingMap;
                 }
             }
             return null;
+        }
+
+        public static HashMap optStudentCourseLocation(HashMap explore) {
+            return optStudentCourseBuilding(explore);
+        }
+
+        public static HashMap optBuildingDestinationLocation(HashMap buildingMap, android.location.Location origin, boolean requireAda) {
+            Object entracesObj = (buildingMap != null) ? buildingMap.get("entrances") : null;
+            if ((entracesObj instanceof ArrayList) && (origin != null)) {
+                LatLng orgLatLng = new LatLng(origin.getLatitude(), origin.getLongitude());
+                HashMap minEntrance = null, minAdaEntrance = null;
+                double minDistance = -1.0, minAdaDistance = -1.0;
+                ArrayList entracesList = (ArrayList) entracesObj;
+                for (Object entraceObj : entracesList) {
+                    if (entraceObj instanceof HashMap) {
+                        HashMap entraceMap = (HashMap) entraceObj;
+                        LatLng entraceLatLng = optLatLng(entraceMap);
+                        if (entraceLatLng != null) {
+                            double distance = Location.getDistanceBetween(orgLatLng, entraceLatLng);
+                            if ((minDistance < 0.0) || (distance < minDistance)) {
+                        	    minDistance = distance;
+                        	    minEntrance = entraceMap;
+                        	}
+
+                            Object adaObj = entraceMap.get("adaCompliant");
+                            boolean adaEntrance = (adaObj instanceof Boolean) ? (Boolean)adaObj : false;
+                        	if (requireAda && (adaEntrance == true) && ((minAdaDistance < 0.0) || (distance < minAdaDistance))) {
+                        	    minAdaDistance = distance;
+                        	    minAdaEntrance = entraceMap;
+                        	}
+                        }
+                    }
+                }
+
+
+                if (requireAda && (minAdaEntrance != null)) {
+              		return minAdaEntrance;
+              	}
+                else if (minEntrance != null) {
+              		return minEntrance;
+              	}
+            }
+            return buildingMap;
         }
 
         public static Integer optLocationFloor(HashMap explore) {
