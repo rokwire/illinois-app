@@ -432,6 +432,26 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
+    //region Mobile Access Keys
+
+    private void handleMobileAccessRegisterEndpoint(Object params) {
+        String invitationCode = null;
+        if (params instanceof String) {
+            invitationCode = (String)params;
+        }
+        mobileAccessKeysApiFacade.setupEndpoint(invitationCode);
+    }
+
+    private void handleMobileAccessUnregisterEndpoint() {
+        mobileAccessKeysApiFacade.unregisterEndpoint();
+    }
+
+    private boolean handleMobileAccessIsEndpointRegistered() {
+        return mobileAccessKeysApiFacade.isEndpointSetUpComplete();
+    }
+
+    //endregion
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.SELECT_LOCATION_ACTIVITY_RESULT_CODE) {
@@ -500,9 +520,17 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     List<HashMap<String, Object>> keys = handleMobileAccessKeys(methodCall.arguments);
                     result.success(keys);
                     break;
-                case Constants.MOBILE_ACCESS_KEYS_ENDPOINT_SETUP:
-                    handleMobileAccessEndpointSetup(methodCall.arguments);
+                case Constants.MOBILE_ACCESS_KEYS_REGISTER_ENDPOINT:
+                    handleMobileAccessRegisterEndpoint(methodCall.arguments);
                     result.success(true);
+                    break;
+                case Constants.MOBILE_ACCESS_KEYS_UNREGISTER_ENDPOINT:
+                    handleMobileAccessUnregisterEndpoint();
+                    result.success(true);
+                    break;
+                case Constants.MOBILE_ACCESS_KEYS_ENDPOINT_REGISTERED:
+                    boolean isRegistered = handleMobileAccessIsEndpointRegistered();
+                    result.success(isRegistered);
                     break;
                 case Constants.TEST_KEY:
                     result.success(false);
@@ -516,17 +544,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             String errorMsg = String.format("Ignoring exception '%s'. See https://github.com/flutter/flutter/issues/29092 for details.", exception.toString());
             Log.e(TAG, errorMsg);
             exception.printStackTrace();
-        }
-    }
-
-    //region Origo
-
-    // Origo Endpoint setup
-
-    private void handleMobileAccessEndpointSetup(Object params) {
-        if (params instanceof String) {
-            String invitationCode = (String)params;
-            mobileAccessKeysApiFacade.setupEndpoint(invitationCode);
         }
     }
 }

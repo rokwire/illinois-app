@@ -251,8 +251,14 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
     else if ([call.method isEqualToString:@"mobileAccessKeys"]) {
         [self handleMobileAccessKeysWithParameters:parameters result:result];
     }
-    else if ([call.method isEqualToString:@"mobileAccessKeysEndpointSetup"]) {
-        [self handleMobileAccessKeysEndpointSetupWithParameters:parameters result:result];
+    else if ([call.method isEqualToString:@"mobileAccessKeysRegisterEndpoint"]) {
+        [self handleMobileAccessKeysRegisterEndpointWithParameters:parameters result:result];
+    }
+    else if ([call.method isEqualToString:@"mobileAccessKeysUnregisterEndpoint"]) {
+        [self handleMobileAccessKeysUnregisterEndpointWithParameters:parameters result:result];
+    }
+    else if ([call.method isEqualToString:@"mobileAccessKeysIsEndpointRegistered"]) {
+        [self handleMobileAccessKeysIsEndpointRegisteredWithParameters:parameters result:result];
     }
 	else if ([call.method isEqualToString:@"test"]) {
 		[self handleTestWithParameters:parameters result:result];
@@ -460,8 +466,18 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
     result(nil);
 }
 
-- (void)handleMobileAccessKeysEndpointSetupWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    //TBD: implement mobile access keys endpoint setup
+- (void)handleMobileAccessKeysRegisterEndpointWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+    //TBD: implement mobile access keys register endpoint
+    result(nil);
+}
+
+- (void)handleMobileAccessKeysUnregisterEndpointWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+    //TBD: implement mobile access keys unregister endpoint
+    result(nil);
+}
+
+- (void)handleMobileAccessKeysIsEndpointRegisteredWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+    //TBD: implement mobile access keys is endpoint registered
     result(nil);
 }
 

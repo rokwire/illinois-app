@@ -31,12 +31,18 @@ class DebugMobileAccessKeysEndpointSetupPanel extends StatefulWidget {
 class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAccessKeysEndpointSetupPanel> {
   TextEditingController? _invitationCodeController;
 
-  bool? _setupProcessing;
+  int _loadingProgress = 0;
+  bool? _isRegistered;
 
   @override
   void initState() {
     super.initState();
     _invitationCodeController = TextEditingController();
+    _increaseProgress();
+    NativeCommunicator().isMobileAccessKeysEndpointRegistered().then((registered) {
+      _isRegistered = registered;
+      _decreaseProgress();
+    });
   }
 
   @override
@@ -52,7 +58,32 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
         body: SafeArea(
             child: Column(children: <Widget>[
           Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.all(16), child: _buildContent()))),
-          _buildSetup()
+          Padding(padding: EdgeInsets.all(16), child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            RoundedButton(
+                label: "Register",
+                enabled: (_isRegistered == false),
+                textColor: (_isRegistered == false) ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor,
+                borderColor: (_isRegistered == false) ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
+                backgroundColor: Styles().colors!.white,
+                fontFamily: Styles().fontFamilies!.bold,
+                contentWeight: 0.0,
+                fontSize: 16,
+                borderWidth: 2,
+                progress: _isLoading,
+                onTap: _onRegister),
+            RoundedButton(
+                label: "Unregister",
+                enabled: (_isRegistered == true),
+                textColor: (_isRegistered == true) ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor,
+                borderColor: (_isRegistered == true) ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
+                backgroundColor: Styles().colors!.white,
+                fontFamily: Styles().fontFamilies!.bold,
+                contentWeight: 0.0,
+                fontSize: 16,
+                borderWidth: 2,
+                progress: _isLoading,
+                onTap: _onUnregister)
+          ]))
         ])),
         backgroundColor: Styles().colors!.background);
   }
@@ -102,42 +133,45 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
     ]);
   }
 
-  Widget _buildSetup() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(children: <Widget>[
-          Expanded(child: Container()),
-          RoundedButton(
-              label: "Setup",
-              textColor: Styles().colors!.fillColorPrimary,
-              borderColor: Styles().colors!.fillColorSecondary,
-              backgroundColor: Styles().colors!.white,
-              fontFamily: Styles().fontFamilies!.bold,
-              contentWeight: 0.0,
-              fontSize: 16,
-              borderWidth: 2,
-              progress: _setupProcessing,
-              onTap: _onSetup),
-          Expanded(child: Container())
-        ]));
-  }
-
-  void _onSetup() {
+  void _onRegister() {
+    if (_isLoading || (_isRegistered == true)) {
+      return;
+    }
     final String regExPattern = '[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}';
     String? invitationCode = _invitationCodeController?.text;
     if (StringUtils.isNotEmpty(invitationCode) && (invitationCode!.length == 19) && RegExp(regExPattern).hasMatch(invitationCode)) {
-      _setSetupProcessing(true);
-      NativeCommunicator().mobileAccessKeysEndpointSetup(invitationCode).then((success) {
-        _setSetupProcessing(false);
+      _increaseProgress();
+      NativeCommunicator().mobileAccessKeysRegisterEndpoint(invitationCode).then((success) {
+        _decreaseProgress();
       });
     } else {
       AppAlert.showMessage(context, 'Please, fill valid code in format XXXX-XXXX-XXXX-XXXX');
     }
   }
 
-  void _setSetupProcessing(bool processing) {
+  void _onUnregister() {
+    if (_isLoading || (_isRegistered == false)) {
+      return;
+    }
+    _increaseProgress();
+    NativeCommunicator().mobileAccessKeysUnregisterEndpoint().then((success) {
+      _decreaseProgress();
+    });
+  }
+
+  bool get _isLoading {
+    return (_loadingProgress > 0);
+  }
+
+  void _increaseProgress() {
     setStateIfMounted(() {
-      _setupProcessing = processing;
+      _loadingProgress++;
+    });
+  }
+
+  void _decreaseProgress() {
+    setStateIfMounted(() {
+      _loadingProgress--;
     });
   }
 }

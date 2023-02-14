@@ -68,6 +68,12 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
         }
     }
 
+    public void unregisterEndpoint() {
+        if (isEndpointSetUpComplete()) {
+            getMobileKeys().unregisterEndpoint(mobileKeysUnregisterEndpointCallBack);
+        }
+    }
+
     public List<HashMap<String, Object>> getKeysDetails() {
         if (!isEndpointSetUpComplete()) {
             Log.d(TAG, "getKeysDetails: Mobile Access Keys endpoint is not set up.");
@@ -171,14 +177,14 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionCompleted");
-            Toast.makeText(context, "Mobile Access: Endpoint setup - succeeded", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Mobile Access: Register Endpoint - succeeded", Toast.LENGTH_SHORT).show();
             onEndpointSetUpComplete();
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
-            Toast.makeText(context, "Mobile Access: Endpoint setup - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Mobile Access: Register Endpoint - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -202,6 +208,27 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysEndpointUpdateCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
+        }
+    };
+
+    private final OrigoMobileKeysProgressCallback mobileKeysUnregisterEndpointCallBack = new OrigoMobileKeysProgressCallback() {
+
+        @Override
+        public void handleMobileKeysTransactionProgress(OrigoProgressEvent origoProgressEvent) {
+            Log.d(TAG, "mobileKeysUnregisterEndpointCallBack: handleMobileKeysTransactionProgress: OrigoProgressEvent: " + origoProgressEvent.progressType());
+
+        }
+
+        @Override
+        public void handleMobileKeysTransactionCompleted() {
+            Log.d(TAG, "mobileKeysUnregisterEndpointCallBack: handleMobileKeysTransactionCompleted");
+            Toast.makeText(context, "Mobile Access: Unregister Endpoint - succeeded", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
+            Log.d(TAG, "mobileKeysUnregisterEndpointCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
+            Toast.makeText(context, "Mobile Access: Unregister Endpoint - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
         }
     };
 

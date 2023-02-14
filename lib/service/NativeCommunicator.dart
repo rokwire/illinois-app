@@ -227,10 +227,30 @@ class NativeCommunicator with Service {
     return mobileAccessKeys;
   }
 
-  Future<bool> mobileAccessKeysEndpointSetup(String invitationCode) async {
+  Future<bool> mobileAccessKeysRegisterEndpoint(String invitationCode) async {
     bool result = false;
     try {
-      result = await _platformChannel.invokeMethod('mobileAccessKeysEndpointSetup', invitationCode);
+      result = await _platformChannel.invokeMethod('mobileAccessKeysRegisterEndpoint', invitationCode);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
+  Future<bool> mobileAccessKeysUnregisterEndpoint() async {
+    bool result = false;
+    try {
+      result = await _platformChannel.invokeMethod('mobileAccessKeysUnregisterEndpoint', null);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
+  Future<bool> isMobileAccessKeysEndpointRegistered() async {
+    bool result = false;
+    try {
+      result = await _platformChannel.invokeMethod('mobileAccessKeysIsEndpointRegistered', null);
     } catch (e) {
       print(e.toString());
     }
