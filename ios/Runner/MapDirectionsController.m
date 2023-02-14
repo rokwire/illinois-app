@@ -138,7 +138,7 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 //		_explore = @{@"title" : @"Mens Restroom",@"location":@{@"latitude":@(40.0964976), @"longitude":@(-88.2364674), @"floor": @(20), @"building":@"State Farm"}};
 //#endif
 
-		_exploreLocation = _explore.uiucExploreDestinationLocation;
+		_exploreLocation = _explore.uiucExploreLocation;
 		_exploreAddress = _explore.uiucExploreAddress;
 	}
 	return self;
@@ -289,6 +289,8 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 		
 		if (!_navDidFirstLocationUpdate) {
 			_navDidFirstLocationUpdate = true;
+			NSDictionary *options = [self.parameters inaDictForKey:@"options"];
+			_exploreLocation = [_explore uiucExploreDestinationLocationFromOrigin:_clLocation.coordinate requireAda:[options inaBoolForKey:@"requireAda"]];
 			[self didFirstLocationUpdate];
 		}
 
@@ -332,7 +334,12 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 #pragma mark Navigation
 
 - (void)prepare {
-	if (_exploreLocation != nil) {
+	if (!_navDidFirstLocationUpdate) {
+		self.gmsMapView.hidden = true;
+		[_activityIndicator startAnimating];
+		[_activityStatus setText:NSLocalizedString(@"Detecting current location...",nil)];
+	}
+	else if (_exploreLocation != nil) {
 		self.gmsMapView.hidden = true;
 		[_activityIndicator startAnimating];
 		[_activityStatus setText:NSLocalizedString(@"Detecting current location...",nil)];
