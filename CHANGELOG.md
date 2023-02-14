@@ -5,6 +5,158 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.16] - 2023-02-14
+### Fixed
+- Fixed scrolling issues in research questionnaire prompt and acknowledgement panels [#2985](https://github.com/rokwire/illinois-app/issues/2985).
+
+## [4.3.15] - 2023-02-13
+### Fixed
+- Fixed navigation target when requesting directions to building in embedded map plugin [#2955](https://github.com/rokwire/illinois-app/issues/2955).
+
+## [4.3.14] - 2023-02-10
+### Fixed
+- Fixed group-5 image references in styles.json.
+- Fixed the most obvious color issues with style images [#2979](https://github.com/rokwire/illinois-app/issues/2979).
+
+## [4.3.13] - 2023-02-09
+### Changed
+- Group/Project attribute/filters updates [#2974](https://github.com/rokwire/illinois-app/issues/2974).
+
+## [4.3.12] - 2023-02-08
+### Changed
+- Removed the popup panel for editing attributes dropdown content, use cupertino navigation route instead [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+- Updated group sub-panels to use cupertino navigation route instead of popup-like [#2967](https://github.com/rokwire/illinois-app/issues/2967).
+- Created standalone HomeCustomizeFavoritesPanel for Favorites panel content customization [#2972](https://github.com/rokwire/illinois-app/issues/2972).
+
+## [4.3.11] - 2023-02-07
+### Changed
+- Created popup panel for editing attributes dropdown content [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+
+## [4.3.10] - 2023-02-06
+### Changed
+- Updated group attributes logic [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+
+## [4.3.9] - 2023-02-02
+### Changed
+- Group's category and tags replaced by attributes [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.8] - 2023-01-31
+### Added
+- Added RSO group attribute and checkbox attribute support [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.7] - 2023-01-30
+### Changed
+- Content filters renamed to Content Attributes [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Use category id as category selection key [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Updated Group Attributes panel behavior [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.6] - 2023-01-27
+### Added
+- Edit lastAppReviewTime from SettingsDebugPanel [#2941](https://github.com/rokwire/illinois-app/issues/2941).
+- Added Filters to group settings [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+### Changed
+- Acknowledged University colleges and departments, added categories and tags filter for test purpose [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.5] - 2023-01-25
+### Added
+- Added Group filters to groups home panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.4] - 2023-01-24
+### Changed
+- Store filter selection in groups as {filter_id : option_id} mapping [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+### Fixed
+- Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
+
+## [4.3.3] - 2023-01-23
+### Changed
+- Group filters moved to standalone panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+- Preserve Group filters dropdown popup when selecting items that are multiple selected [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.2] - 2023-01-20
+### Changed
+- Access MTD via content service [#2922](https://github.com/rokwire/illinois-app/issues/2922).
+- Removed access to shibboleth section from config secret keys (unused).
+- Fixed checkbox image style in research questionnaire.
+- Changed usage of HTMLWidget. Use flutter_widget_from_html for better Accessibility support. [#2912](https://github.com/rokwire/illinois-app/issues/2912).
+### Added
+- Acknwoledge Google Maps flutter plugin [#2904](https://github.com/rokwire/illinois-app/issues/2904).
+- Added filters in create group panel [#2926](https://github.com/rokwire/illinois-app/issues/2926).
+
+## [4.3.1] - 2023-01-12
+### Changed
+- Use Styles().images [#2476](https://github.com/rokwire/illinois-app/issues/2476).
+- Revert upcoming release version number to 4.3 [#2915](https://github.com/rokwire/illinois-app/issues/2915).
+### Added
+- Display managed and membership date fields in GroupDetailPanel [#2907](https://github.com/rokwire/illinois-app/issues/2907).
+- Show current year in copyright statement [#2899](https://github.com/rokwire/illinois-app/issues/2899).
+
+## [4.3.0] - 2023-01-04
+### Changed
+- Switch to xCode 14.2.
+
+## [4.2.50] - 2023-02-13
+### Changed
+- Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
+- Updated English strings [#2956](https://github.com/rokwire/illinois-app/issues/2956).
+### Fixed
+- Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
+- Handle tap action over poll and wellness todo items notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
+- Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
+- Scrolling in wellness MyMcKinley Appointments [#2958](https://github.com/rokwire/illinois-app/issues/2958).
+- Open appointments list panel on tap over appointment inbox message if appointment id does not exist [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+- Open appointment detail panel on tap over appointment inbox message [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+- Fixed navigation target when requesting directions to building [#2955](https://github.com/rokwire/illinois-app/issues/2955).
+- Retrieve sorted appointments from the backend [#2971](https://github.com/rokwire/illinois-app/issues/2971).
+### Added
+- Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
+
+## [4.2.49] - 2023-01-05
+### Fixed
+- Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
+- Fixed dropdown menu needs extending in Groups Manage Members [#2407](https://github.com/rokwire/illinois-app/issues/2407).
+- Fixed empty iCard expiration date processing for retired faculty/staff [#2892](https://github.com/rokwire/illinois-app/issues/2892).
+- Fixed update privacy dialog scrolling (+ some other nonsense items) [#2891](https://github.com/rokwire/illinois-app/issues/2891).
+- Formatting date times in events [#2719](https://github.com/rokwire/illinois-app/issues/2719).
+### Changed
+- Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
+- Text update: Settings - Sign In/Sign Out [#2457](https://github.com/rokwire/illinois-app/issues/2457).
+
+## [4.2.48] - 2023-01-03
+### Fixed
+- Refresh issue with appointments [#2843](https://github.com/rokwire/illinois-app/issues/2843).
+- Added appointments default end date time [#2842](https://github.com/rokwire/illinois-app/issues/2842).
+- Remove dimmed foreground decoration from video tutorial thumbnails [#2823](https://github.com/rokwire/illinois-app/issues/2823).
+- Fixed "Add Cover Image" button background color [#2868](https://github.com/rokwire/illinois-app/issues/2868).
+### Added
+- Added muted indicator to inbox message card [#2877](https://github.com/rokwire/illinois-app/issues/2877).
+- Show not logged in message in Illini Cash and MTD Buss Wallet cards [#2867](https://github.com/rokwire/illinois-app/issues/2877).
+### Deleted
+- Removed explanation message "View current studies that match ..." from questionnaire acknowledgement panel [#2873](https://github.com/rokwire/illinois-app/issues/2873).
+### Changed
+- Always use orange favorite icon, removed all references to the blue favorite icon [#2165](https://github.com/rokwire/illinois-app/issues/2165).
+
+## [4.2.47] - 2022-12-22
+### Changed
+- Polls :: not-signed-in error - needs better message [#2777](https://github.com/rokwire/illinois-app/issues/2777).
+- Updated favorite star behavior of compound MTD stops [#2822](https://github.com/rokwire/illinois-app/issues/2822).
+- Updated research questionnaire prompt message [#2849](https://github.com/rokwire/illinois-app/issues/2849).
+- Updated no research projects message text in favorite widget [#2845](https://github.com/rokwire/illinois-app/issues/2845).
+- Updated View Email Address setting entry text [#2830](https://github.com/rokwire/illinois-app/issues/2830).
+- Updated "Event" to "Events" in group notification settings [#2829](https://github.com/rokwire/illinois-app/issues/2829).
+- "Search Stop" is updated to "Search Stops" in MTD home panel dropdown [#2821](https://github.com/rokwire/illinois-app/issues/2821).
+- Updated checkbox images in PollCard [#2802](https://github.com/rokwire/illinois-app/issues/2802).
+### Fixed
+- Remove loading card from home inbox widget [#2846](https://github.com/rokwire/illinois-app/issues/2846).
+- Fixed expanding compund MTD bus stops [#2851](https://github.com/rokwire/illinois-app/issues/2851).
+- Fixed detail open from single MTD Stop [#2851](https://github.com/rokwire/illinois-app/issues/2851).
+- Fixed Illinois Health Screener in Browse / Wellness section [#2848](https://github.com/rokwire/illinois-app/issues/2848).
+- Fixed NetID and Sign-in prompted at Privacy Level 3 during onboarding [#2826](https://github.com/rokwire/illinois-app/issues/2826).
+- Fixed Dining Locations loading in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
+- Fixed never ending progress indicator in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
+- Implement appointments notifications and reminders [#2621](https://github.com/rokwire/illinois-app/issues/2621).
+- Fixed error and empty status in All/Unread Notifications favorite card [#2847](https://github.com/rokwire/illinois-app/issues/2847).
+
 ## [4.2.46] - 2022-12-21
 ### Fixed
 - Fix BESSI content items response handling [#2820](https://github.com/rokwire/illinois-app/issues/2820).

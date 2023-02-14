@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
@@ -26,6 +27,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HeaderBar extends rokwire.HeaderBar {
 
@@ -240,12 +242,15 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
       );
 }*/
 
+enum RootHeaderBarLeading { Home, Back }
+
 class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   final String? title;
+  final RootHeaderBarLeading leading;
   final void Function()? onSettings;
 
-  RootHeaderBar({Key? key, this.title, this.onSettings}) : super(key: key);
+  RootHeaderBar({Key? key, this.title, this.leading = RootHeaderBarLeading.Home, this.onSettings}) : super(key: key);
 
   @override
   State<RootHeaderBar> createState() => _RootHeaderBarState();
@@ -253,115 +258,6 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   // PreferredSizeWidget
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-
-  // Implamentation
-
-  Widget buildHeaderHomeButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapHome(context),),);
-  }
-
-  Widget buildHeaderTitle(BuildContext context) {
-    return WPGUFMRadio().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
-      buildHeaderTitleText(context),
-      buildHeaderRadioButton(context),
-    ],) : buildHeaderTitleText(context);
-  }
-
-  Widget buildHeaderTitleText(BuildContext context) {
-    return Semantics(label: title, excludeSemantics: true, child:
-      Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
-  }
-
-  Widget buildHeaderRadioButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU 107.1 FM'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('radio-white', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapRadio(context),),);
-  }
-
-  List<Widget> buildHeaderActions(BuildContext context) {
-    return <Widget>[
-      buildHeaderPersonalInfoButton(context),
-      buildHeaderNotificationsButton(context),
-      buildHeaderSettingsButton(context)
-    ];
-  }
-
-  Widget buildHeaderSettingsButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images?.getImage('images/settings-white.png', excludeFromSemantics: true), onPressed: () => onTapSettings(context))
-      InkWell(onTap: () => onTapSettings(context), child:
-        Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
-          Styles().images?.getImage('settings-white', excludeFromSemantics: true),
-        )
-      )
-    );
-  }
-
-  Widget buildHeaderNotificationsButton(BuildContext context) {
-    int unreadMsgsCount = Inbox().unreadMessagesCount;
-    return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images?.getImage('images/notifications-white.png', excludeFromSemantics: true), onPressed: () => onTapNotifications(context))
-      InkWell(onTap: () => onTapNotifications(context), child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 2), child:
-          Stack(alignment: Alignment.topRight, children: [
-            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Styles().images?.getImage('notification-white', excludeFromSemantics: true,))),
-            Visibility(visible: (unreadMsgsCount > 0), child: 
-              Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child: 
-                Text(unreadMsgsCount.toString(), style: TextStyle(color: Styles().colors!.white, fontSize: 10, fontFamily: Styles().fontFamilies!.medium)))))
-          ])
-        )
-      )
-    );
-  }
-
-  Widget buildHeaderPersonalInfoButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Styles().images?.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations(context))
-      InkWell(onTap: () => onTapPersonalInformation(context), child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
-          Styles().images?.getImage('person-circle-white', excludeFromSemantics: true,),
-        )
-      )
-    );
-  }
-
-  void onTapHome(BuildContext context) {
-    Analytics().logSelect(target: "Home");
-    Navigator.of(context).popUntil((route) => route.isFirst);
-  }
-
-  void onTapRadio(BuildContext context) {
-    Analytics().logSelect(target: "WPGU FM Radio");
-    WPGUFMRadio().pause();
-  }
-
-  void onTapSettings(BuildContext context) {
-    Analytics().logSelect(target: "Settings");
-    if (onSettings != null) {
-      onSettings!();
-    }
-    else {
-      SettingsHomeContentPanel.present(context);
-    }
-  }
-
-  void onTapNotifications(BuildContext context) {
-    String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != SettingsNotificationsContentPanel.routeName) {
-      Analytics().logSelect(target: "Notifications");
-      SettingsNotificationsContentPanel.present(context,
-          content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
-    }
-  }
-
-  void onTapPersonalInformation(BuildContext context) {
-    String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != SettingsProfileContentPanel.routeName) {
-      Analytics().logSelect(target: "Personal Information");
-      SettingsProfileContentPanel.present(context);
-    }
-  }
-
 }
 
 class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsListener {
@@ -371,6 +267,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     NotificationService().subscribe(this, [
       WPGUFMRadio.notifyPlayerStateChanged,
       Inbox.notifyInboxUnreadMessagesCountChanged,
+      Auth2.notifyPictureChanged,
     ]);
     super.initState();
   }
@@ -381,14 +278,6 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) => AppBar(
-    backgroundColor: Styles().colors?.fillColorPrimaryVariant,
-    leading: widget.buildHeaderHomeButton(context),
-    title: widget.buildHeaderTitle(context),
-    actions: widget.buildHeaderActions(context),
-  );
-
   // NotificationsListener
 
   @override
@@ -397,32 +286,159 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       if (mounted) {
         setState(() {});
       }
-    } else if (name == Inbox.notifyInboxUnreadMessagesCountChanged) {
+    }
+    else if (name == Inbox.notifyInboxUnreadMessagesCountChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == Auth2.notifyPictureChanged) {
       if (mounted) {
         setState(() {});
       }
     }
   }
-}
-
-class RootBackHeaderBar extends RootHeaderBar {
-
-  RootBackHeaderBar({Key? key, String? title}) : super(key: key, title: title);
 
   @override
-  Widget buildHeaderHomeButton(BuildContext context) {
-    return Semantics(
-        label: Localization().getStringEx('headerbar.back.title', 'Back'),
-        hint: Localization().getStringEx('headerbar.back.hint', ''),
-        button: true,
-        excludeSemantics: true,
-        child: IconButton(
-            icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
-            onPressed: () => _onTapBack(context)));
+  Widget build(BuildContext context) => AppBar(
+    backgroundColor: Styles().colors?.fillColorPrimaryVariant,
+    leading: _buildHeaderLeading(),
+    title: _buildHeaderTitle(),
+    actions: _buildHeaderActions(),
+  );
+
+  // Implamentation
+
+  Widget _buildHeaderLeading() {
+    switch(widget.leading)
+    {
+      case RootHeaderBarLeading.Home: return _buildHeaderHomeButton();
+      case RootHeaderBarLeading.Back: return _buildHeaderBackButton();
+    }
   }
 
-  void _onTapBack(BuildContext context) {
+  Widget _buildHeaderHomeButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapHome(),),);
+  }
+
+  Widget _buildHeaderBackButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapBack()));
+  }
+
+  Widget _buildHeaderTitle() {
+    return WPGUFMRadio().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
+      _buildHeaderTitleText(),
+      _buildHeaderRadioButton(),
+    ],) : _buildHeaderTitleText();
+  }
+
+  Widget _buildHeaderTitleText() {
+    return Semantics(label: widget.title, excludeSemantics: true, child:
+      Text(widget.title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+  }
+
+  Widget _buildHeaderRadioButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU 107.1 FM'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Styles().images?.getImage('radio-white', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapRadio(),),);
+  }
+
+  List<Widget> _buildHeaderActions() {
+    return <Widget>[
+      _buildHeaderPersonalInfoButton(),
+      _buildHeaderNotificationsButton(),
+      _buildHeaderSettingsButton()
+    ];
+  }
+
+  Widget _buildHeaderSettingsButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
+//    IconButton(icon: Styles().images?.getImage('images/settings-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapSettings())
+      InkWell(onTap: () => _onTapSettings(), child:
+        Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
+          Styles().images?.getImage('settings-white', excludeFromSemantics: true),
+        )
+      )
+    );
+  }
+
+  Widget _buildHeaderNotificationsButton() {
+    int unreadMsgsCount = Inbox().unreadMessagesCount;
+    return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
+//    IconButton(icon: Styles().images?.getImage('images/notifications-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapNotifications())
+      InkWell(onTap: () => _onTapNotifications(), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 2), child:
+          Stack(alignment: Alignment.topRight, children: [
+            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Styles().images?.getImage('notification-white', excludeFromSemantics: true,))),
+            Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child:
+              Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child: 
+                Text(unreadMsgsCount.toString(), style: TextStyle(color: Styles().colors!.white, fontSize: 10, fontFamily: Styles().fontFamilies!.medium)))))
+          ])
+        )
+      )
+    );
+  }
+
+  Widget _buildHeaderPersonalInfoButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
+//    IconButton(icon: Styles().images?.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
+      InkWell(onTap: () => _onTapPersonalInformation(), child:
+        CollectionUtils.isNotEmpty(Auth2().authPicture) ?
+          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
+            Container(width: 20, height: 20, decoration:
+              BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
+                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().authPicture!).image)
+              )
+            )
+          ) :
+          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
+            Styles().images?.getImage('person-circle-white', excludeFromSemantics: true),
+          ),
+      )
+    );
+  }
+
+  void _onTapHome() {
+    Analytics().logSelect(target: "Home");
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  void _onTapBack() {
     Analytics().logSelect(target: 'Back');
     Navigator.of(context).pop();
   }
+
+  void _onTapRadio() {
+    Analytics().logSelect(target: "WPGU FM Radio");
+    WPGUFMRadio().pause();
+  }
+
+  void _onTapSettings() {
+    Analytics().logSelect(target: "Settings");
+    if (widget.onSettings != null) {
+      widget.onSettings!();
+    }
+    else {
+      SettingsHomeContentPanel.present(context);
+    }
+  }
+
+  void _onTapNotifications() {
+    String? currentRouteName = ModalRoute.of(context)?.settings.name;
+    if (currentRouteName != SettingsNotificationsContentPanel.routeName) {
+      Analytics().logSelect(target: "Notifications");
+      SettingsNotificationsContentPanel.present(context,
+          content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
+    }
+  }
+
+  void _onTapPersonalInformation() {
+    String? currentRouteName = ModalRoute.of(context)?.settings.name;
+    if (currentRouteName != SettingsProfileContentPanel.routeName) {
+      Analytics().logSelect(target: "Personal Information");
+      SettingsProfileContentPanel.present(context);
+    }
+  }
 }
+

@@ -15,8 +15,8 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
@@ -567,7 +567,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('chevron-left', excludeFromSemantics: true)),
+              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true)),
               Expanded(child: Text(widget.superEventTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium,
                   fontSize: 16,
                   color: Styles().colors!.fillColorPrimary,
@@ -676,11 +676,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     String updatedDesc = longDescription!.replaceAll('\r\n', '<br/>');
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: Html(
-          data: updatedDesc,
-          onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-          style: { "body": Style(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-        ));
+        child: HtmlWidget(
+            updatedDesc,
+            onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+        )
+    );
   }
 
   Widget _buildPreviewHeader(){

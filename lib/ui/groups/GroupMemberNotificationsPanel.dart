@@ -150,7 +150,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                     _EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.group_member_notifications.event.label", "Event"),
+                        label: Localization().getStringEx("panel.group_member_notifications.events.label", "Events"),
                         toggled: !(memberPreferences?.muteEvents ?? false),
                         defaultValue: FirebaseMessaging().notifyGroupEventsUpdates == true,
                         onTap: _groupSubNotificationsEnabled ? _onToggleEvents : null,
@@ -215,7 +215,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
       ),
       _DisabledToggleButton(
           toggled: groupEventsNotificationsEnabled,
-          label: Localization().getStringEx("panel.settings.notifications.group_updates.event.label", "Event"),
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.events.label", "Event"),
           textStyle: groupEventsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(

@@ -29,8 +29,10 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
             Styles().images?.getImage('questionnaire', excludeFromSemantics: true),
           ),
         ),
-        SafeArea(child:
-          _buildContent(context)
+        Positioned.fill(child:
+          SafeArea(child:
+            _buildContent(context)
+          ),
         ),
         SafeArea(child: 
           OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () => _onBack(context)),
@@ -40,39 +42,30 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
   }
 
   Widget _buildContent(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 148), child: 
-    Column(children: [
-      Padding(padding: EdgeInsets.only(top: 48), child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Expanded(child: 
-              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement.title', 'Thank you! We will notify you when you become eligible for any upcoming research projects.'), textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 24), child: 
+      Column(children: [
+        Expanded(child: 
+          Padding(padding: EdgeInsets.only(top: 148), child:
+            SingleChildScrollView(child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 32), child:
+                Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement.title', 'Thank you! We will notify you when you become eligible for any upcoming research projects.'), textAlign: TextAlign.center,
+                  style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
+                ),
               ),
-            )
-          ],),
-          Container(height: 32,),
-          Row(children: [
-            Expanded(child:
-              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement.explanation', 'View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.'), textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle("widget.message.regular"),
-              ),
-            )
-          ],),
-        ],),
-      ),
-      Expanded(child: Container(),),
-      Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
-        RoundedButton(
-          label: Localization().getStringEx('dialog.OK.title', 'OK'),
-          fontSize: 16,
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          backgroundColor: Styles().colors!.white,
-          borderColor: Styles().colors!.fillColorSecondaryVariant,
-          textColor: Styles().colors!.fillColorPrimary,
-          onTap: () => _onContinue(context),
+            ),
+          ),
         ),
-      )
+        Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+          RoundedButton(
+            label: Localization().getStringEx('dialog.OK.title', 'OK'),
+            fontSize: 16,
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            backgroundColor: Styles().colors!.white,
+            borderColor: Styles().colors!.fillColorSecondaryVariant,
+            textColor: Styles().colors!.fillColorPrimary,
+            onTap: () => _onContinue(context),
+          ),
+        )
     ],),
     );
   }

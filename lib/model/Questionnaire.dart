@@ -184,6 +184,8 @@ class Question {
 }
 
 class Answer {
+  static const String _analyticsSkipHint = 'NA';
+
   final String? id;
   final String? title;
   final String? hint;
@@ -221,6 +223,10 @@ class Answer {
     (title?.hashCode ?? 0) ^
     (hint?.hashCode ?? 0);
 
+  // Accessories
+  
+  bool get isAnalyticsSkipAnswer => hint == _analyticsSkipHint; // TBD: better skip answer identification
+
   // List<Answer> JSON Serialization
 
   static List<Answer>? listFromJson(List<dynamic>? jsonList) {
@@ -243,6 +249,19 @@ class Answer {
       }
     }
     return jsonList;
+  }
+
+  // List<Answer> Accessories
+
+  static Answer? answerInList(List<Answer>? answers, { String? answerId }) {
+    if (answers != null) {
+      for (Answer answer in answers) {
+        if ((answerId != null) && (answerId == answer.id)) {
+          return answer;
+        }
+      }
+    }
+    return null;
   }
 
   // Accessories

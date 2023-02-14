@@ -42,19 +42,19 @@ class IDCardPanel extends StatefulWidget {
       AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_id', 'You need to be logged in with your NetID to access Illini ID. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else {
-      DateTime? expirationDateTimeUtc = Auth2().authCard?.expirationDateTimeUtc;
-      if (StringUtils.isEmpty(Auth2().authCard?.cardNumber) || (expirationDateTimeUtc == null)) {
+      if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
         AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active i-card. Please visit the ID Center.'));
       }
       else {
         String? warning;
-        DateTime nowUtc = DateTime.now().toUtc();
-        int expirationDays = expirationDateTimeUtc.difference(nowUtc).inDays;
-        if (nowUtc.isAfter(expirationDateTimeUtc)) {
-          warning = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your i-card expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
-        }
-        else if ((0 < expirationDays) && (expirationDays < 30)) {
-          warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id','Your ID will expire on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+        int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
+        if (expirationDays != null) {
+          if (expirationDays <= 0) {
+            warning = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your i-card expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+          }
+          else if ((0 < expirationDays) && (expirationDays < 30)) {
+            warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id','Your ID will expire on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+          }
         }
 
         if (warning != null) {

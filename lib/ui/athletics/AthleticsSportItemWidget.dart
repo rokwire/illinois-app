@@ -70,7 +70,7 @@ class AthleticsSportItemWidget extends StatelessWidget {
                   showChevron
                       ? Padding(
                           padding: EdgeInsets.symmetric(horizontal: 6),
-                          child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+                          child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                         )
                       : Container(),
                   checkMarkVisibility ? GestureDetector(

@@ -415,19 +415,21 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   Widget _buildStatusDismissLayer() {
-    return Positioned.fill(child:
-      BlockSemantics(child:
-        GestureDetector(
-          onTap: () {
-            Analytics().logSelect(target: 'Close Dropdown');
-            setState(() {
-              _statusValuesVisible = false;
-            });
-          },
-          child: Container(color: Styles().colors!.blackTransparent06)
-        )
-      )
-    );
+    return
+    Container(
+        constraints: BoxConstraints(minHeight:  MediaQuery.of(context).size.height),
+        child: BlockSemantics(child:
+            GestureDetector(
+              onTap: () {
+                Analytics().logSelect(target: 'Close Dropdown');
+                setState(() {
+                  _statusValuesVisible = false;
+                });
+              },
+              child: Container(color: Styles().colors!.blackTransparent06)
+            )
+          )
+        );
   }
 
   Widget _buildStatusValuesWidget() {
@@ -586,7 +588,7 @@ class _PendingMemberCard extends StatelessWidget {
                         textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
                         fontSize: 16,
-                        rightIcon: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+                        rightIcon: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");

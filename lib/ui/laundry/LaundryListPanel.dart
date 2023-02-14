@@ -123,7 +123,7 @@ class LaundryRoomRibbonButton extends StatelessWidget {
               Expanded(child:
                 Text(label ?? '', style: TextStyle(fontFamily: labelFontFamily ?? Styles().fontFamilies?.medium, fontSize: 16,  color: Styles().colors?.fillColorPrimary,), ),
               ),
-              Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container(),
+              Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
             ],),
           ),
         ),

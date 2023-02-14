@@ -16,7 +16,7 @@
 
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -131,7 +131,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
     //List<TextBox> boxes = renderObject.getBoxesForSelection(TextSelection(baseOffset: 0, extentOffset: special.title.length));
     //double _imageHeight = (boxes.last.bottom - boxes.first.top) + _textPadding.top + _textPadding.bottom;
 
-    Html html = Html(key:_keyHtml, data: widget.special!.title);
+    HtmlWidget html = HtmlWidget(StringUtils.ensureNotEmpty(widget.special!.title), key:_keyHtml, );
 
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 0),

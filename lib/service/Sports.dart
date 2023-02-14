@@ -569,7 +569,8 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
       Log.d('Missing game id to load.');
       return null;
     }
-    List<Game>? games = await loadGames(id: gameId, sports: [sportKey]);
+    final DateTime startDate = DateTime(2010, 1, 1); // Explicitly set old start date because Sports BB automatically sets start date = now and ignores old events
+    List<Game>? games = await loadGames(id: gameId, sports: [sportKey], startDate: startDate);
     return games?.first;
   }
 

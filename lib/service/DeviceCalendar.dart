@@ -134,12 +134,18 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
       ) : null;
   }
 
-  static _DeviceCalendarEvent? fromAppointment(Appointment? appointment){
-    return (appointment != null) ? _DeviceCalendarEvent(
+  static _DeviceCalendarEvent? fromAppointment(Appointment? appointment) {
+    if (appointment == null) {
+      return null;
+    }
+    DateTime? calendarEventStartDateTime = AppDateTime().getUniLocalTimeFromUtcTime(appointment.dateTimeUtc);
+    DateTime? calendarEventEndDateTime = calendarEventStartDateTime?.add(Duration(hours: 1));
+    return _DeviceCalendarEvent(
       title: appointment.title,
       internalEventId: appointment.id,
-      startDate: AppDateTime().getUniLocalTimeFromUtcTime(appointment.dateTimeUtc),
+      startDate: calendarEventStartDateTime,
+      endDate: calendarEventEndDateTime,
       deepLinkUrl: "${Appointments().appointmentDetailUrl}?appointment_id=${appointment.id}"
-    ) : null;
+    );
   }
 }

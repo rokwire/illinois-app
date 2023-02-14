@@ -43,7 +43,7 @@ class WellnessHealthScreenerHomeWidget extends StatefulWidget {
 }
 
 class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreenerHomeWidget> implements NotificationsListener {
-  String resourceName = 'wellness.health_screener.features';
+  String resourceName = 'wellness.health_screener';
   List<String> _timeframes = ["Today", "This Week", "This Month", "All Time"];
 
   String? _selectedTimeframe = "This Week";
@@ -154,7 +154,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
           children: [
             Row(
               children: [
-                Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.timeframe.title", "Time:"), style: Styles().textStyles?.getTextStyle('widget.title.regular'),),
+                Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.timeframe.title", "Time:"), style: Styles().textStyles?.getTextStyle('widget.title.regular.fat'),),
                 Container(width: 8.0),
                 Expanded(
                   child: DropdownButton(value: _selectedTimeframe, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
@@ -169,7 +169,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
             ),
             // Row(
             //   children: [
-            //     Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular'),),
+            //     Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular.fat'),),
             //     Container(width: 8.0),
             //     Expanded(
             //       child: DropdownButton(value: _selectedSurveyType, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),

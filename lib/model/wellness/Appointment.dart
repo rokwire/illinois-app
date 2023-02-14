@@ -329,3 +329,30 @@ class AppointmentHost {
     (firstName?.hashCode ?? 0) ^
     (lastName?.hashCode ?? 0);
 }
+
+class AppointmentsAccount {
+  bool? notificationsAppointmentNew;
+  bool? notificationsAppointmentReminderMorning;
+  bool? notificationsAppointmentReminderNight;
+
+  AppointmentsAccount(
+      {this.notificationsAppointmentNew, this.notificationsAppointmentReminderMorning, this.notificationsAppointmentReminderNight});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'notifications_appointment_new': notificationsAppointmentNew,
+      'notifications_appointment_reminder_morning': notificationsAppointmentReminderMorning,
+      'notifications_appointment_reminder_night': notificationsAppointmentReminderNight
+    };
+  }
+
+  static AppointmentsAccount? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AppointmentsAccount(
+        notificationsAppointmentNew: JsonUtils.boolValue(json['notifications_appointment_new']),
+        notificationsAppointmentReminderMorning: JsonUtils.boolValue(json['notifications_appointment_reminder_morning']),
+        notificationsAppointmentReminderNight: JsonUtils.boolValue(json['notifications_appointment_reminder_night']));
+  }
+}

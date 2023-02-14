@@ -85,19 +85,22 @@ extension GroupExt on Group {
     return null;
   }
 
-  String get displayTags {
-    String tagsString = "";
-    if (tags != null) {
-      for (String tag in tags!) {
-        if (0 < tag.length) {
-          if (tagsString.isNotEmpty) {
-            tagsString += ", ";
-          }
-          tagsString += tag;
-        }
-      }
+  String? get displayManagedMembershipUpdateTime {
+    DateTime? deviceManagedDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateManagedMembershipUpdatedUtc);
+    if (deviceManagedDateTime != null) {
+      String formattedManagedDateTime = DateFormat('yyyy/MM/dd h:mma').format(deviceManagedDateTime);
+      return formattedManagedDateTime;
     }
-    return tagsString;
+    return null;
+  }
+
+  String? get displayMembershipUpdateTime {
+    DateTime? deviceMembershipDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateMembershipUpdatedUtc);
+    if (deviceMembershipDateTime != null) {
+      String formattedMembershipDateTime = DateFormat('yyyy/MM/dd h:mma').format(deviceMembershipDateTime);
+      return formattedMembershipDateTime;
+    }
+    return null;
   }
 
   bool get canMemberCreatePoll {

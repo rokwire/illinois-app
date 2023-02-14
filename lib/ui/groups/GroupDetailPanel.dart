@@ -21,6 +21,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -202,10 +203,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupPostsUpdated,
       Polls.notifyCreated,
+      Polls.notifyDeleted,
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
-      Polls.notifyLifecycleDelete,
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
@@ -511,8 +512,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
     } 
-    else if ((name == Polls.notifyCreated)
-             || (name == Polls.notifyLifecycleDelete)) {
+    else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
       _refreshPolls();
     } 
     else if (name == Polls.notifyVoteChanged
@@ -586,6 +586,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildGroupContent() {
     List<Widget> content = [
       _buildImageHeader(),
+      _buildDateUpdatedFields(),
       _buildGroupInfo()
     ];
     if (_isMemberOrAdmin) {
@@ -635,6 +636,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ],
       ),
     );
+  }
+
+  Widget _buildDateUpdatedFields() {
+    if (!_isAdmin) {
+      return Container();
+    }
+    return Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(top: 10, left: 16, right: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Managed Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
+        Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+      ]),
+      Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Membership Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
+        Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+      ]))
+    ])));
   }
 
   Widget _buildGroupInfo() {
@@ -696,7 +713,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     if (_isMemberOrAdmin) {
-      if(_isAdmin) {
+      if (_isAdmin) {
         commands.add(RibbonButton(
           label: _isResearchProject ? 'Manage Participants' : Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
           hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
@@ -758,12 +775,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         commands.add(_buildWebsiteLink());
       }
 
-      String? tags = _group?.displayTags;
-      if (StringUtils.isNotEmpty(tags)) {
+      List<Widget> attributesList = _buildAttributes();
+      if (attributesList.isNotEmpty) {
         if (commands.isNotEmpty) {
           commands.add(Container(height: 12,));
         }
-        commands.add(_buildTags(tags));
+        commands.addAll(attributesList);
+        commands.add(Container(height: 4,));
       }
     }
 
@@ -1070,24 +1088,35 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     );
   }
 
-  Widget _buildTags(String? tags) {
-    return Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
-      Row(children: [
-        Expanded(child:
-          RichText(text:
-            TextSpan(style: Styles().textStyles?.getTextStyle('panel.group.detail.tag.heading'), children: <TextSpan>[
-              TextSpan(text: Localization().getStringEx("panel.group_detail.label.tags", "Group Tags: ")),
-              TextSpan(text: tags ?? '', style: Styles().textStyles?.getTextStyle('anel.group.detail.tag.title')),
-            ],),
-          )
-        )
-      ],),
-    );
+  List<Widget> _buildAttributes() {
+    List<Widget> attributesList = <Widget>[];
+    Map<String, dynamic>? groupAttributes = widget.group?.attributes;
+    ContentAttributes? contentAttributes = Groups().contentAttributes;
+    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
+    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
+      for (ContentAttributesCategory category in categories) {
+        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes, complete: true);
+        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
+          attributesList.add(Row(children: [
+            Text("${contentAttributes.stringValue(category.title)}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+              Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
+            ),
+            Expanded(child:
+              Text(displayAttributes.join(', '), maxLines: 1, style:
+                Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
+              ),
+            ),
+          ],),);
+        }
+      }
+    }
+    return attributesList;
   }
 
   Widget _buildBadgeOrCategoryWidget() {
+    List<Widget> contentList = <Widget>[];
     if (_showMembershipBadge) {
-      return Row(children: <Widget>[
+      contentList.addAll(<Widget>[
         Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
           Center(child:
             Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
@@ -1096,17 +1125,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ),
         ),
         Expanded(child: Container(),),
-        _buildPolicyButton(),
       ],);
     }
     else {
-      return Row(children: <Widget>[
-        Expanded(child:
-          Text(_isResearchProject ? '' : (_group?.category?.toUpperCase() ?? ''), style:  Styles().textStyles?.getTextStyle('widget.title.tiny'),),
+      List<String>? displayList = Groups().contentAttributes?.displayAttributesListFromSelection(widget.group?.attributes,
+        usage: ContentAttributesCategoryUsage.category);
+      contentList.add(
+        Expanded(child: (displayList?.isNotEmpty ?? false) ?
+          Text(displayList?.join(', ') ?? '', overflow: TextOverflow.ellipsis, style:
+            Styles().textStyles?.getTextStyle("widget.title.tiny'")
+          ) :
+          Container(),
         ),
-        _buildPolicyButton(),
-      ],);
+      );
     }
+    contentList.add(_buildPolicyButton());
+    return Row(children: contentList);
   }
 
   Widget _buildPolicyButton() {

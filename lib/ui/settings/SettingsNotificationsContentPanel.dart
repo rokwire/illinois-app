@@ -81,7 +81,10 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeGameDetail,
       FirebaseMessaging.payloadTypeAthleticsGameStarted,
       FirebaseMessaging.payloadTypeAthleticsNewDetail,
-      FirebaseMessaging.payloadTypeGroup
+      FirebaseMessaging.payloadTypeGroup,
+      FirebaseMessaging.payloadTypeWellnessToDoItem,
+      FirebaseMessaging.payloadTypeAppointment,
+      FirebaseMessaging.payloadTypePoll
     });
   }
 

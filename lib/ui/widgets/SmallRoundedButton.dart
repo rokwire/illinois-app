@@ -78,7 +78,7 @@ class SmallRoundedButton extends RoundedButton {
     leftIcon: leftIcon,
     leftIconPadding: leftIconPadding,
   
-    rightIcon: rightIcon ?? Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+    rightIcon: rightIcon ?? Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
     rightIconPadding: rightIconPadding,
 
     iconPadding: iconPadding,

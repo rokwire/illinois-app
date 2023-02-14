@@ -75,9 +75,9 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(
-        title: (widget.group?.researchProject == true) ? 'Recruitment Questions' : Localization().getStringEx("panel.membership_questions.label.title", 'Membership Questions'),
-        leadingIconKey: 'close-circle-white',
+      appBar: HeaderBar(title: (widget.group?.researchProject == true) ?
+        Localization().getStringEx("panel.recruitment_questions.label.title", "Recruitment Questions")  :
+        Localization().getStringEx("panel.membership_questions.label.title", 'Membership Questions'),
       ),
       body: Column(
         children: <Widget>[
@@ -101,7 +101,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
 
   Widget _buildHeading() {
     String description = (widget.group?.researchProject == true) ?
-      'Learn more about people who want to participate to your research project by asking them some questions. Only the principal investigator(s) of your research project will see the answers.' :
+      Localization().getStringEx("panel.recruitment_questions.label.description", 'Learn more about people who want to participate to your research project by asking them some questions. Only the principal investigator(s) of your research project will see the answers.') :
       Localization().getStringEx("panel.membership_questions.label.description", 'Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.');
     return Container(color:Colors.white,
       child: Padding(padding: EdgeInsets.all(32),

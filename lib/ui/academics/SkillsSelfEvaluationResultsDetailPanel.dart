@@ -38,7 +38,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results_detail.header.title', 'Skills Self-Evaluation'),),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results_detail.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: SingleChildScrollView(child: content != null ? SectionSlantHeader(
         headerWidget: content!.header != null ? _buildHeader() : null,
         slantColor: Styles().colors?.gradientColorPrimary,

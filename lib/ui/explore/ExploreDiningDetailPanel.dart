@@ -17,8 +17,8 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -551,11 +551,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     }
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: Html(
-          data: dining!.exploreLongDescription,
-          onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-          style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-        ));
+        child:
+        HtmlWidget(
+            StringUtils.ensureNotEmpty(dining!.exploreLongDescription),
+            onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+        )
+    );
   }
 
   Widget _buildDiningDetail(){
@@ -873,7 +875,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                               )),
                               Padding(
                                 padding: EdgeInsets.only(left: 4),
-                                child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+                                child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                               )
                             ],
                           ),
@@ -903,7 +905,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Styles().images?.getImage('chevron-left', excludeFromSemantics: true),
+                      image: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true),
                       onTap: decrementDateFilter,
                     ),
                   ),
@@ -913,7 +915,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
+                      image: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                       onTap: incrementDateFilter,
                     ),
                   ),
@@ -1197,7 +1199,7 @@ class _ProductItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container(),
+                Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
               ],
             ),
           ),

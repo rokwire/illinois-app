@@ -30,14 +30,7 @@ import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/RootPanel.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
-import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
-import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
-import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -190,6 +183,7 @@ class ExplorePanelState extends State<ExplorePanel>
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
       MTD.notifyStopsChanged,
+      Appointments.notifyUpcomingAppointmentsChanged,
       ExplorePanel.notifySelectMap,
       RootPanel.notifyTabChanged,
       AppLivecycle.notifyStateChanged,
@@ -499,7 +493,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return -1;
   }
 
-  Future<void> _loadExplores({bool progress = true, bool updateOnly = false}) async {
+  Future<void> _loadExplores({bool? progress, bool updateOnly = false}) async {
     Future<List<Explore>?>? task;
     if (Connectivity().isNotOffline) {
       List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
@@ -520,7 +514,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (task != null) {
       _refresh(() {
         _loadingTask = task;
-        _loadingProgress = (progress == true);
+        _loadingProgress = progress ?? !updateOnly;
       });
       
       List<Explore>? explores = await task;
@@ -529,6 +523,15 @@ class ExplorePanelState extends State<ExplorePanel>
         if ((updateOnly == false) || ((explores != null) && !DeepCollectionEquality().equals(explores, _displayExplores))) {
           _applyExplores(explores, updateOnly: updateOnly);
         }
+        else {
+          _refresh(() {
+            _loadingTask = null;
+            _loadingProgress = null;
+          });
+        }
+      }
+      else {
+        // Do not do anything, _loadingTask will finish the loading.
       }
     }
     else if (updateOnly == false) {
@@ -609,14 +612,9 @@ class ExplorePanelState extends State<ExplorePanel>
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
+    _diningSpecials = await Dinings().loadDiningSpecials();
     _locationData = _userLocationEnabled() ? await LocationServices().location : null;
-    List<List<dynamic>?> results = await Future.wait([
-      Dinings().loadDiningSpecials(),
-      Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData),
-    ]);
-
-    _diningSpecials = (0 < results.length) ? (results[0] as List<DiningSpecial>) : null;
-    return (1 < results.length) ? (results[1] as List<Dining>) : null;
+    return Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData);
   }
 
   Future<List<Explore>?> _loadLaundry() async {
@@ -657,7 +655,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   Future<List<Explore>?> _loadAppointments() async {
-    return Appointments().loadAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+    return Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming, type: AppointmentType.in_person);
   }
 
   void _showMessagePopup(String message) {
@@ -689,7 +687,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _showOptionalMessagePopup(String message, { String? showPopupStorageKey }) {
-    showDialog(context: context, builder: (context) => _OptionalMessagePopup(
+    showDialog(context: context, builder: (context) => ExploreOptionalMessagePopup(
       message: message,
       showPopupStorageKey: showPopupStorageKey,
     )).then((_) => _fixMap());
@@ -1449,54 +1447,14 @@ class ExplorePanelState extends State<ExplorePanel>
   
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
-
-    Route? route;
-    if (_selectedMapExplore is Event) {
-      if (_selectedMapExplore.isGameEvent) {
-        route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: _selectedMapExplore.speaker, sportName: _selectedMapExplore.registrationLabel,),);
-      }
-      else if (_selectedMapExplore.isComposite) {
-        route = CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: _selectedMapExplore),);
-      }
-      else {
-        route = CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: _selectedMapExplore, initialLocationData: _locationData),);
-      }
-    }
-    else if (_selectedMapExplore is Dining) {
-      route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: _selectedMapExplore, initialLocationData: _locationData),);
-    }
-    else if (_selectedMapExplore is LaundryRoom) {
-      route = CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: _selectedMapExplore),);
-    }
-    else if (_selectedMapExplore is Game) {
-      route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: _selectedMapExplore),);
-    }
-    else if (_selectedMapExplore is Building) {
-      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: _selectedMapExplore),);
-    }
-    else if (_selectedMapExplore is MTDStop) {
-      route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: _selectedMapExplore,),);
-    }
-    else if (_selectedMapExplore is StudentCourse) {
-      route = CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: _selectedMapExplore,),);
-    }
-    else if (_selectedMapExplore is Appointment) {
-      route = CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: _selectedMapExplore),);
-    }
-    else if (_selectedMapExplore is ExplorePOI) {
-      // Not supported
-    }
-    else if (_selectedMapExplore is Explore) {
-      route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: _selectedMapExplore, initialLocationData: _locationData,),);
+    if (this is Explore) {
+      (this as Explore).exploreLaunchDetail(context, initialLocationData: _locationData);
     }
     else if (_selectedMapExplore is List<Explore>) {
-      route = CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore),);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore),));
     }
-
-    if (route != null) {
-      _selectMapExplore(null);
-      Navigator.push(context, route);
-    }
+    
+    _selectMapExplore(null);
   }
 
   void _onTapMapClear() {
@@ -2021,6 +1979,11 @@ class ExplorePanelState extends State<ExplorePanel>
         _loadExplores(updateOnly: true);
       }
     }
+    else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
+      if ((_selectedItem == ExploreItem.Appointments) && mounted && widget.rootTabDisplay) {
+        _loadExplores(updateOnly: true);
+      }
+    }
     else if (name == ExplorePanel.notifySelectMap) {
       if (mounted && ((_displayType != ListMapDisplayType.Map) || (_selectedItem != param))) {
         setState(() {
@@ -2159,18 +2122,18 @@ class ExplorePanelState extends State<ExplorePanel>
 }
 
 /////////////////////////
-// _OptionalMessagePopup
+// ExploreOptionalMessagePopup
 
-class _OptionalMessagePopup extends StatefulWidget {
+class ExploreOptionalMessagePopup extends StatefulWidget {
   final String message;
   final String? showPopupStorageKey;
-  _OptionalMessagePopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
+  ExploreOptionalMessagePopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
 
   @override
-  State<_OptionalMessagePopup> createState() => _MTDInstructionsPopupState();
+  State<ExploreOptionalMessagePopup> createState() => _MTDInstructionsPopupState();
 }
 
-class _MTDInstructionsPopupState extends State<_OptionalMessagePopup> {
+class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
   bool? showInstructionsPopup;
   
   @override

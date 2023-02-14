@@ -116,6 +116,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           Column(children: contentList,),
         ),
       ),
+      Container(height: 1, color: Styles().colors!.surfaceAccent),
       Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
         Row(children: [
           Expanded(child:
@@ -238,12 +239,12 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     String title = _questionnaireString(answer.title);
     String imageAsset = (question.maxAnswers == 1) ?
       (selected ? "radio-button-on" : "radio-button-off") :
-      (selected ? "check-box-filled" : "check-box-outline-gray");
+      (selected ? "check-box-filled" : "box-outline-gray");
     return
       Semantics(
         label: title, button: true,
         value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
-        child:InkWell(onTap: (){_onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
+        child: InkWell(onTap: () { _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
         Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: selected ? Styles().colors!.fillColorPrimary! : Styles().colors!.white!, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
@@ -265,9 +266,9 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
   void _onAnswer(Answer answer, { required Question question }) {
 
-    String answerTitle = _questionnaireString(answer.title, languageCode: 'en');
-    String? questionTitle = _questionnaireString(question.title, languageCode: 'en');
-    Analytics().logSelect(target: '$questionTitle => $answerTitle');
+    //String answerTitle = _questionnaireString(answer.title, languageCode: 'en');
+    //String? questionTitle = _questionnaireString(question.title, languageCode: 'en');
+    //Analytics().logSelect(target: '$questionTitle => $answerTitle');
 
     String? answerId = answer.id;
     String? questionId = question.id;
@@ -316,6 +317,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         AppAlert.showDialogResult(context, displayPrompt);
       }
       else {
+        Analytics().logResearchQuestionnaiire(answers: _analyticsAnswers);
+
         Auth2().profile?.setResearchQuestionnaireAnswers(_questionnaire?.id, _selection);
         
         Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
@@ -342,6 +345,32 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       }
     }
     return -1;
+  }
+
+  List<dynamic>? get _analyticsAnswers {
+    List<dynamic>? answers;
+    List<Question>? questions = _questionnaire?.questions;
+    if (questions != null) {
+      answers = [];
+      for (int index = 0; index < questions.length; index++) {
+        Question question = questions[index];
+        answers.add({ (question.title ?? '') : _isAnalyticsQuestionAnswered(question) });
+      }
+    }
+    return answers;
+  }
+
+  bool _isAnalyticsQuestionAnswered(Question question) {
+    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+    if (selectedAnswers != null) {
+      for (String answerId in selectedAnswers) {
+        Answer? answer = Answer.answerInList(question.answers, answerId: answerId);
+        if ((answer != null) && !answer.isAnalyticsSkipAnswer) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   String _questionnaireString(String? key, { String? languageCode }) => _questionnaire?.stringValue(key, languageCode: languageCode) ?? key ?? '';

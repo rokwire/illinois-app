@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
@@ -144,6 +144,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Guide.notifyChanged,
       Config.notifyConfigChanged,
       Storage.notifySettingChanged,
+      Appointments.notifyUpcomingAppointmentsChanged
     ]);
     
     if (widget.updateController != null) {
@@ -184,6 +185,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     else if (name == Storage.notifySettingChanged) {
       if ((widget.favoriteKey == Appointment.favoriteKeyName) && (param == Storage().appointmentsDisplayEnabledKey)) {
         _initFavorites((_favoriteIds ?? LinkedHashSet<String>()), showProgress: true);
+      }
+    }
+    else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
+      if (widget.favoriteKey == Appointment.favoriteKeyName) {
+        _initFavorites((_favoriteIds ?? LinkedHashSet<String>()), showProgress: false);
       }
     }
   }
@@ -485,7 +491,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Future<List<Favorite>?> _loadFavoriteAppointments(LinkedHashSet<String>? favoriteIds) async =>
       (CollectionUtils.isNotEmpty(favoriteIds) && (Storage().appointmentsCanDisplay == true))
-          ? _buildFavoritesList(await Appointments().loadAppointments(onlyUpcoming: true), favoriteIds)
+          ? _buildFavoritesList(Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming), favoriteIds)
           : null;
 
   List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, LinkedHashSet<String>? favoriteIds) {
@@ -519,13 +525,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         padding: EdgeInsets.all(16),
-        child: Html(data: HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
-          onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'HomeFavoritesWidget(${widget.favoriteKey})'),
-          style: {
-            "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-            "a": Style(color: HomeFavoritesWidget.linkColor(widget.favoriteKey)),
-          },
-        ),
+        child:  HtmlWidget(
+            HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
+            onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'HomeFavoritesWidget(${widget.favoriteKey})'); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(widget.favoriteKey) ?? Colors.red)} : null
+        )
       ),
     );
   }

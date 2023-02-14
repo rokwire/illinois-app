@@ -41,6 +41,7 @@ class VideoPlayButton extends StatelessWidget {
                           horzDir: TriangleHorzDirection.rightToLeft,
                           vertDir: TriangleVertDirection.topToBottom),
                       child: Container(height: (buttonHeight / 4)))),
+              Container(width: (buttonHeight / 2), height: 1, color: Styles().colors!.white),
               Container(
                   width: (buttonHeight / 2),
                   child: CustomPaint(

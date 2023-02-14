@@ -5,7 +5,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum FavoriteIconStyle { SlantHeader, Handle, Button, BlueButton }
+enum FavoriteIconStyle { SlantHeader, Handle, Button }
 
 class FavoriteStarIcon extends StatelessWidget {
 
@@ -41,13 +41,6 @@ class FavoriteStarIcon extends StatelessWidget {
     else if (style == FavoriteIconStyle.Button) {
       switch (selected) {
         case true:  imageKey = 'star-filled'; break;
-        case false: imageKey = 'star-white'; break;
-        default:    imageKey = 'star-gray'; break;
-      }
-    }
-    else if (style == FavoriteIconStyle.BlueButton) {
-      switch (selected) {
-        case true:  imageKey = 'star-dark'; break;
         case false: imageKey = 'star-white'; break;
         default:    imageKey = 'star-gray'; break;
       }

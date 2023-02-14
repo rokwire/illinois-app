@@ -54,26 +54,31 @@ class _AccessCardState extends State<AccessCard> implements NotificationsListene
 
   @override
   Widget build(BuildContext context) {
-    String titleRuleKey = _AccessContent.titleStringRuleKey(widget.resource) ?? '';
-    String defaultTitle = _AccessContent.defaultStringKey(titleRuleKey);
+    List<String> messageKeys = _AccessContent.getMessageKeys(widget.resource);
+    if (messageKeys.isNotEmpty) {
+      String titleKey = messageKeys.last.split('.').first;
+      String defaultTitle = _AccessContent.defaultStringKey(titleKey);
+      String resourceName = Localization().getStringEx('widget.access.${widget.resource}.name', widget.resource);
 
-    return Padding(padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0), child:
-      Container(
-        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-        child: Column(children: <Widget>[
-          Row(children: <Widget>[
-            Expanded(child:
-              Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child:
-                Text(sprintf(Localization().getStringEx('widget.access.$titleRuleKey.title', defaultTitle), [Localization().getStringEx('widget.access.${widget.resource}.name', widget.resource)]),
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',
-                )
-              ),
-            )
-          ]),
-          _AccessContent(resource: widget.resource,),
-        ])
-      )
-    );
+      return Padding(padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0), child:
+        Container(
+          decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+          child: Column(children: <Widget>[
+            Row(children: <Widget>[
+              Expanded(child:
+                Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child:
+                  Text(sprintf(Localization().getStringEx('widget.access.$titleKey.unsatisfied.title', defaultTitle), [resourceName]),
+                    style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',
+                  )
+                ),
+              )
+            ]),
+            _AccessContent(messageKeys: messageKeys, resourceName: resourceName,),
+          ])
+        )
+      );
+    }
+    return Container();
   }
 
   // Notifications Listener
@@ -126,15 +131,20 @@ class _AccessDialogState extends State<AccessDialog> implements NotificationsLis
 
   @override
   Widget build(BuildContext context) {
-    String titleRuleKey = _AccessContent.titleStringRuleKey(widget.resource) ?? '';
-    String defaultTitle = _AccessContent.defaultStringKey(titleRuleKey);
-    
-    return ActionsMessage(
-      title: sprintf(Localization().getStringEx('widget.access.$titleRuleKey.title', defaultTitle), [Localization().getStringEx('widget.access.${widget.resource}.name', widget.resource)]),
-      titleTextStyle: Styles().textStyles?.getTextStyle('widget.heading.regular.fat'),
-      titleBarColor: Styles().colors?.fillColorPrimary,
-      bodyWidget: _AccessContent(resource: widget.resource),
-    );
+    List<String> messageKeys = _AccessContent.getMessageKeys(widget.resource);
+    if (messageKeys.isNotEmpty) {
+      String titleKey = messageKeys.last.split('.').first;
+      String defaultTitle = _AccessContent.defaultStringKey(titleKey);
+      String resourceName = Localization().getStringEx('widget.access.${widget.resource}.name', widget.resource);
+
+      return ActionsMessage(
+        title: sprintf(Localization().getStringEx('widget.access.$titleKey.title', defaultTitle), [resourceName]),
+        titleTextStyle: Styles().textStyles?.getTextStyle('widget.heading.regular.fat'),
+        titleBarColor: Styles().colors?.fillColorPrimary,
+        bodyWidget: _AccessContent(messageKeys: messageKeys, resourceName: resourceName,),
+      );
+    }
+    return Container();
   }
 
   // Notifications Listener
@@ -155,58 +165,39 @@ class _AccessDialogState extends State<AccessDialog> implements NotificationsLis
 }
 
 class _AccessContent extends StatelessWidget {
-  static const List<String> rulePriority = ['roles', 'privacy', 'auth'];
-  static const Map<String, String> authRuleStringKeys = {
-    'loggedIn': 'widget.access.auth.login.message',
-    'shibbolethLoggedIn': 'widget.access.auth.netid.login.message',
-    'phoneLoggedIn': 'widget.access.auth.phone.login.message',
-    'emailLoggedIn': 'widget.access.auth.email.login.message',
-    'shibbolethLinked': 'widget.access.auth.netid.linked.message',
-    'phoneLinked': 'widget.access.auth.phone.linked.message',
-    'emailLinked': 'widget.access.auth.email.linked.message',
-  };
+  final List<String> messageKeys;
+  final String resourceName;
 
-  final String resource;
-
-  const _AccessContent({required this.resource});
+  const _AccessContent({required this.messageKeys, required this.resourceName});
 
   @override
   Widget build(BuildContext context) {
-    List<String>? features = JsonUtils.stringListValue(FlexUI()[resource]);
-
     String message = '';
     Widget? button;
     int stepNum = 1;
-    for (String ruleType in rulePriority) {
-      if (features?.contains('${ruleType}_access') == false) {
-        if (message.isNotEmpty) {
-          message += '\n';
-        }
+    for (String messageKey in messageKeys) {
+      if (message.isNotEmpty) {
+        message += '\n';
+      }
+      message += '$stepNum. ';
 
-        dynamic unsatisfied = MapPathKey.entry(FlexUI().defaultRules, '$ruleType.$resource.${ruleType}_access') ?? MapPathKey.entry(FlexUI().defaultRules, '$ruleType.${ruleType}_access');
-        message += '$stepNum. ';
-        if (unsatisfied is Map) {
-          String authKey = unsatisfied.keys.first;
-          message += Localization().getStringEx(authRuleStringKeys[authKey] ?? 'widget.access.auth.login.message', 'Sign in');
-        } else if (unsatisfied is List) {
-          message += Localization().getStringEx('widget.access.$resource.roles.unsatisfied.message', 'You must be ${unsatisfied.join(' ')}');
-        } else {
-          message += Localization().getStringEx('widget.access.privacy.unsatisfied.message', 'Update your privacy level to at least ') + unsatisfied.toString();
-        }
-        stepNum++;
+      String ruleType = messageKey.split('.').first;
+      dynamic rule = MapPathKey.entry(FlexUI().defaultRules, messageKey);
+      switch (ruleType) {
+        case 'roles': message += sprintf(Localization().getStringEx('widget.access.$messageKey.unsatisfied.message', '%s is currently only available to ${(rule as List).join(' ')}'), [resourceName]); break;
+        case 'privacy': message += Localization().getStringEx('widget.access.$messageKey.unsatisfied.message', 'Update your privacy level to at least ') + rule.toString(); break;
+        case 'auth': message += Localization().getStringEx('widget.access.$messageKey.unsatisfied.message', 'Sign in'); break;
+      }
+      stepNum++;
 
-        if (ruleType != 'roles') {
-          button ??= Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
-            label: Localization().getStringEx('widget.access.$ruleType.unsatisfied.button.label', ruleType == 'privacy' ? 'Update privacy level' : 'Sign in'),
-            borderColor: Styles().colors?.fillColorSecondary,
-            backgroundColor: Styles().colors?.surface,
-            textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
-            onTap: () => _onTapUpdateButton(context, ruleType),
-          ));
-        } else {
-          // roles rule is unsatisfied, so show only roles message with no action button
-          break;
-        }
+      if (ruleType != 'roles') {
+        button ??= Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
+          label: Localization().getStringEx('widget.access.$ruleType.unsatisfied.button.label', ruleType == 'privacy' ? 'Update privacy level' : 'Sign in'),
+          borderColor: Styles().colors?.fillColorSecondary,
+          backgroundColor: Styles().colors?.surface,
+          textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+          onTap: () => _onTapUpdateButton(context, ruleType),
+        ));
       }
     }
 
@@ -234,22 +225,36 @@ class _AccessContent extends StatelessWidget {
   }
 
   static bool mayAccessResource(String resource) {
-    List<String>? features = JsonUtils.stringListValue(FlexUI()[resource]);
-    return ListUtils.contains(features, ['roles_access', 'privacy_access', 'auth_access'], checkAll: true) ?? true;
+    List<String>? requiredFeatures = JsonUtils.stringListValue(FlexUI()['$resource.features']);
+    for (String feature in requiredFeatures ?? []) {
+      if (!FlexUI().hasFeature(feature)) {
+        return false;
+      }
+    }
+    return true;
   }
 
-  static String? titleStringRuleKey(String resource) {
-    List<String>? features = JsonUtils.stringListValue(FlexUI()[resource]);
-    if (features?.contains('roles_access') == false) {
-      return 'roles';
+  static List<String> getMessageKeys(String resource) {
+    List<String> messageKeys = [];
+    List<String>? requiredFeatures = JsonUtils.stringListValue(FlexUI()['$resource.features']);
+    for (String feature in requiredFeatures ?? []) {
+      if (!FlexUI().hasFeature(feature)) {
+        for (MapEntry<String, dynamic> ruleCategory in FlexUI().defaultRules.entries) {
+          if (ruleCategory.value is Map) {
+            dynamic rule = MapPathKey.entry(ruleCategory.value, 'features.$feature');
+            if (rule != null) {
+              messageKeys.add('${ruleCategory.key}.features.$feature');
+              if (ruleCategory.key == 'roles') {
+                // roles rule is unsatisfied, so show only roles message
+                return messageKeys;
+              }
+              break;
+            }
+          }
+        }
+      }
     }
-    if (features?.contains('auth_access') == false) {
-      return 'auth';
-    }
-    if (features?.contains('privacy_access') == false) {
-      return 'privacy';
-    }
-    return null;
+    return messageKeys;
   }
 
   static String defaultStringKey(String titleStringRuleKey) {

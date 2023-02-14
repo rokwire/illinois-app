@@ -19,13 +19,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -129,9 +130,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       contentList.add(_buildDebug());
     }
 
-    contentList.add(_buildVersionInfo());
-    
     contentList.add(Container(height: 24,),);
+
+    contentList.add(_buildVersionInfo());
 
     contentList.add(_buildCopyright());
 
@@ -556,7 +557,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       ],
                     ),
                     Expanded(child: Container()),
-                    Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container(),
+                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ])
                 ))));
           }
@@ -595,7 +596,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       ]
                     ),
                     Expanded(child: Container()),
-                    Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container(),
+                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ]),
                 ))));
           }
@@ -826,13 +827,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         )
       ),
       Padding(padding: EdgeInsets.only(top: 20), child:
-        Html(
-          data: StringUtils.ensureNotEmpty(descriptionHtml),
-          onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
-          style: {
-            "body": Style(fontFamily: Styles().fontFamilies!.regularIt, color: Styles().colors!.textBackground, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero)
-          }
-        ),
+      HtmlWidget(
+          StringUtils.ensureNotEmpty(descriptionHtml),
+          onTapUrl : (url) {_onTapHtmlLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regularIt, fontSize: 16),
+      )
       ),
     ]);
   }
@@ -891,7 +890,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   Widget _buildDebug() {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
+        padding: EdgeInsets.only(top: 24),
         child: RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,
@@ -906,11 +905,19 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Version Info
   Widget _buildVersionInfo() {
-    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) + _versionName;
+    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     return Container(
         alignment: Alignment.center,
-        child: Text(versionLabel,
-            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
+        child: RichText(
+            textAlign: TextAlign.left,
+            text: TextSpan(
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                children:[
+                  TextSpan(text: versionLabel,),
+                  TextSpan(text:  " $_versionName", style : TextStyle(fontFamily: "ProximaNovaBold")),
+                ]
+            ))
+      );
   }
 
   void _loadVersionInfo() async {
@@ -923,12 +930,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Copyright
   Widget _buildCopyright() {
-    String copyrightLabel =
-        Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © 2022 University of Illinois Board of Trustees');
-    return Container(
-        alignment: Alignment.center,
-        child: Text(copyrightLabel, textAlign: TextAlign.center,
-            style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
+    String copyrightLabel = Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees')
+      .replaceAll('{{COPYRIGHT_YEAR}}', DateFormat('yyyy').format(DateTime.now()));
+    return Container(alignment: Alignment.center, child:
+      Text(copyrightLabel, textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+    );
   }
 
   // Utilities

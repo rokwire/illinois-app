@@ -56,7 +56,7 @@ class Onboarding2BackButton extends StatelessWidget {
   final String imageKey;
   final Color? color;
 
-  Onboarding2BackButton({this.padding, this.onTap, this.imageKey = 'chevron-left', this.color});
+  Onboarding2BackButton({this.padding, this.onTap, this.imageKey = 'chevron-left-bold', this.color});
 
   @override
   Widget build(BuildContext context) {

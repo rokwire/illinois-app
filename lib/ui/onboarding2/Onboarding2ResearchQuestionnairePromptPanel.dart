@@ -31,8 +31,10 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
             Styles().images?.getImage('questionnaire', excludeFromSemantics: true),
           ),
         ),
-        SafeArea(child:
-          _buildContent(context)
+        Positioned.fill(child:
+          SafeArea(child:
+            _buildContent(context)
+          ),
         ),
         Visibility(visible: Navigator.canPop(context), child:
           SafeArea(child: 
@@ -48,21 +50,18 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
   
   return Padding(padding: EdgeInsets.symmetric(horizontal: 24), child: 
     Column(children: [
-      Padding(padding: EdgeInsets.only(top: 180), child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Expanded(child: 
-              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. Become a citizen scientist and take part in the discovery by participating in research at Illinois.'), textAlign: TextAlign.center,
+      Expanded(child: 
+        Padding(padding: EdgeInsets.only(top: 148), child:
+          SingleChildScrollView(child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(height: 32,),
+              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. As a member of the university, you can help scientists answer questions that lead to new discoveries.'), textAlign: TextAlign.center,
                 style: Styles().textStyles?.getTextStyle("widget.message.large"),
               ),
-            )
-          ],),
-          Container(height: 32,),
-          Row(children: [
-            Expanded(child:
+              Container(height: 32,),
               RichText(text:
                 TextSpan(children: [
-                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.question', 'Would you like to get invitations to participate in research studies via the Illinois app?'),
+                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.question', 'Would you like to get invitations to become a research participant via the Illinois app?'),
                     style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
                   ),
                   TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.explanation', ' Many studies offer incentives.'),
@@ -71,11 +70,11 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
                 ]),
                 textAlign: TextAlign.center,
               ),
-            )
-          ],),
-        ],),
+              Container(height: 32,),
+            ],),
+          ),
+        ),
       ),
-      Expanded(child: Container(),),
       Padding(padding: EdgeInsets.only(top: 24), child:
         Column(children: [
           Row(children: [

@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
@@ -44,11 +44,11 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   List<Appointment>? _upcomingAppointments;
   List<Appointment>? _pastAppointments;
   late bool _appointmentsCanDisplay;
-  bool _loading = false;
+  int _loadingProgress = 0;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Storage.notifySettingChanged, FlexUI.notifyChanged]);
+    NotificationService().subscribe(this, [Storage.notifySettingChanged, FlexUI.notifyChanged, Appointments.notifyUpcomingAppointmentsChanged, Appointments.notifyPastAppointmentsChanged]);
     _initAppointments();
     super.initState();
   }
@@ -65,7 +65,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildContent() {
-    Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments.features');
+    Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments');
     if (accessWidget != null) {
       return accessWidget;
     }
@@ -75,17 +75,20 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [_buildRescheduleDescription(), _buildNothingToDisplayMsg(), _buildDisplayAppointmentsSettings()]));
-    } else if (_loading) {
+    } else if (_isLoading) {
       return _buildLoadingContent();
     } else {
-      return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildRescheduleDescription(),
-            _buildUpcomingAppointments(),
-            _buildPastAppointments(),
-            _buildDisplayAppointmentsSettings()
-          ]));
+      return RefreshIndicator(
+          onRefresh: _onPullToRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _buildRescheduleDescription(),
+                _buildUpcomingAppointments(),
+                _buildPastAppointments(),
+                _buildDisplayAppointmentsSettings()
+              ])));
     }
   }
 
@@ -142,16 +145,14 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(appTitleMacro, Localization().getStringEx('app.title', 'Illinois'));
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 16),
-        child: Html(data: emptyUpcommingContentHtml, onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url), style: {
-          "body": Style(
-              textAlign: TextAlign.center,
-              color: Styles().colors!.fillColorPrimary,
-              fontFamily: Styles().fontFamilies!.regular,
-              fontSize: FontSize(18),
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero),
-          "a": Style(color: Styles().colors?.fillColorPrimary)
-        }));
+        child:
+        HtmlWidget(
+            "<div style=text-align:center> $emptyUpcommingContentHtml </div>",
+            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 18),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+        )
+    );
   }
 
   Widget _buildPastAppointments() {
@@ -199,16 +200,14 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
     return Padding(
         padding: EdgeInsets.only(left: 20, right: 20, top: 16),
-        child: Html(data: descriptionHtml, onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url), style: {
-          "body": Style(
-              textAlign: TextAlign.center,
-              color: Styles().colors!.fillColorPrimary,
-              fontFamily: Styles().fontFamilies!.regular,
-              fontSize: FontSize(16),
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero),
-          "a": Style(color: Styles().colors?.fillColorPrimary)
-        }));
+        child:
+        HtmlWidget(
+            "<div style=text-align:center> $descriptionHtml </div>",
+            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
+            textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+        )
+    );
   }
 
   List<Widget> _buildAppointmentsWidgetList(List<Appointment>? appointments) {
@@ -269,25 +268,26 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                     Styles().images?.getImage('university-logo') ?? Container(),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: Html(
-                            data: rescheduleContentHtml,
-                            onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url),
-                            style: {
-                              "body": Style(
-                                  color: Styles().colors!.fillColorPrimary,
-                                  fontFamily: Styles().fontFamilies!.regular,
-                                  fontSize: FontSize(14),
-                                  padding: EdgeInsets.zero,
-                                  margin: EdgeInsets.zero),
-                              "a": Style(color: Styles().colors?.fillColorPrimary)
-                            }))
-                  ])),
+                        child:
+                        HtmlWidget(
+                            rescheduleContentHtml,
+                            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
+                            textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14),
+                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+                        )
+                    )
+                  ])
+              ),
               Positioned.fill(child: Align(
                   alignment: Alignment.topRight,
                   child: InkWell(
                       onTap: _onTapCloseReschedulePopup,
                       child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true)))))
             ])));
+  }
+
+  Future<void> _onPullToRefresh() async {
+    await Appointments().refreshAppointments();
   }
 
   void _onTapCloseReschedulePopup() {
@@ -320,30 +320,39 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   void _loadAppointments() {
+    _loadPastAppointments();
+    _loadUpcomingAppointments();
+  }
+
+  void _loadUpcomingAppointments() {
     if (_appointmentsCanDisplay) {
-      _setLoading(true);
-      Appointments().loadAppointments().then((appointments) {
-        if (CollectionUtils.isNotEmpty(appointments)) {
-          _upcomingAppointments = <Appointment>[];
-          _pastAppointments = <Appointment>[];
-          for (Appointment appointment in appointments!) {
-            if (appointment.isUpcoming) {
-              _upcomingAppointments!.add(appointment);
-            } else {
-              _pastAppointments!.add(appointment);
-            }
-          }
-        } else {
-          _upcomingAppointments = _pastAppointments = null;
-        }
-        _setLoading(false);
-      });
+      _increaseProgress();
+      _upcomingAppointments = Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming);
+      _decreaseProgress();
     }
   }
 
-  void _setLoading(bool loading) {
+  void _loadPastAppointments() {
+    if (_appointmentsCanDisplay) {
+      _increaseProgress();
+      _pastAppointments = Appointments().getAppointments(timeSource: AppointmentsTimeSource.past);
+      _decreaseProgress();
+    }
+  }
+
+  bool get _isLoading {
+    return (_loadingProgress > 0);
+  }
+
+  void _increaseProgress() {
     setStateIfMounted(() {
-      _loading = loading;
+      _loadingProgress++;
+    });
+  }
+
+  void _decreaseProgress() {
+    setStateIfMounted(() {
+      _loadingProgress--;
     });
   }
 
@@ -357,6 +366,10 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
       if (mounted) {
         setState(() {});
       }
+    } else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
+      _loadUpcomingAppointments();
+    } else if (name == Appointments.notifyPastAppointmentsChanged) {
+      _loadPastAppointments();
     }
   }
 }

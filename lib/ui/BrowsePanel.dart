@@ -489,7 +489,7 @@ class _BrowseEntry extends StatelessWidget {
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true)),
+                  child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)),
             ],),
         ),
       ),
@@ -1099,7 +1099,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapWellnessHealthScreener(BuildContext context) {
-    Analytics().logSelect(target: "Wellness Health Screener");
+    Analytics().logSelect(target: "Illinois Health Screener");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.healthScreener,)));
   }
 
