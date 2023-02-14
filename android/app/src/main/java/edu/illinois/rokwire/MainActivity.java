@@ -306,10 +306,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return getString(R.string.app_scheme);
     }
 
-    private List<HashMap<String, Object>> handleMobileAccessKeys(Object params) {
-        return mobileAccessKeysApiFacade.getKeysDetails();
-    }
-
     private String handleBarcode(Object params) {
         String barcodeImageData = null;
         String content = Utils.Map.getValueFromPath(params, "content", null);
@@ -433,6 +429,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     }
 
     //region Mobile Access Keys
+
+    private List<HashMap<String, Object>> handleMobileAccessKeys(Object params) {
+        return mobileAccessKeysApiFacade.getKeysDetails();
+    }
 
     private void handleMobileAccessRegisterEndpoint(Object params) {
         String invitationCode = null;
