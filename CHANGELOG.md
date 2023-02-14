@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.16] - 2023-02-14
+### Fixed
+- Fixed scrolling issues in research questionnaire prompt and acknowledgement panels [#2985](https://github.com/rokwire/illinois-app/issues/2985).
+
 ## [4.3.15] - 2023-02-13
 ### Fixed
 - Fixed navigation target when requesting directions to building in embedded map plugin [#2955](https://github.com/rokwire/illinois-app/issues/2955).

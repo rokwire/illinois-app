@@ -116,6 +116,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           Column(children: contentList,),
         ),
       ),
+      Container(height: 1, color: Styles().colors!.surfaceAccent),
       Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
         Row(children: [
           Expanded(child:
