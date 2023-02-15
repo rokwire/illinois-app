@@ -7,8 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [4.3.16] - 2023-02-14
-### Fixed
-- Fixed scrolling issues in research questionnaire prompt and acknowledgement panels [#2985](https://github.com/rokwire/illinois-app/issues/2985).
+- N/A
 
 ## [4.3.15] - 2023-02-13
 ### Fixed
@@ -65,8 +64,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.3.4] - 2023-01-24
 ### Changed
 - Store filter selection in groups as {filter_id : option_id} mapping [#2926](https://github.com/rokwire/illinois-app/issues/2926).
-### Fixed
-- Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
 
 ## [4.3.3] - 2023-01-23
 ### Changed
@@ -94,6 +91,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.3.0] - 2023-01-04
 ### Changed
 - Switch to xCode 14.2.
+
+## [4.2.51] - 2023-02-15
+### Fixed
+- Fixed scrolling issues in research questionnaire prompt and acknowledgement panels [#2985](https://github.com/rokwire/illinois-app/issues/2985).
+- Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
 
 ## [4.2.50] - 2023-02-13
 ### Changed
