@@ -109,14 +109,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         appBar: AppBar(
             leading: HeaderBackButton(),
             title: Text(
-              Localization()
-                  .getStringEx('panel.group.detail.post.header.title', 'Post'),
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontFamily: Styles().fontFamilies!.extraBold,
-                  letterSpacing: 1),
-            ),
+              Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
+              style:  Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat"),),
             centerTitle: false),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar(),
@@ -142,8 +136,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               Row(children: [
                 Expanded(child:
                   Semantics(sortKey: OrdinalSortKey(1), container: true, child:
-                    Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis, style:
-                      TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 24, color: Styles().colors!.fillColorPrimary)
+                    Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
+                        style: Styles().textStyles?.getTextStyle("widget.detail.extra_large.fat"),
                     )
                   )
                 ),
@@ -224,7 +218,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               HtmlWidget(
                                   StringUtils.ensureNotEmpty(_post?.body),
                                   onTapUrl : (url) {_onTapPostLink(url); return true;},
-                                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                                  textStyle:  Styles().textStyles?.getTextStyle("widget.detail.large"),
                               )
                           )),
                       Visibility(
@@ -246,10 +240,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                 borderSide: BorderSide(
                                                     color: Styles().colors!.mediumGray!,
                                                     width: 0.0))),
-                                        style: TextStyle(
-                                            color: Styles().colors!.textBackground,
-                                            fontSize: 16,
-                                            fontFamily: Styles().fontFamilies!.regular))),
+                                        style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+                                       )),
                                 Row(children: [
                                   Flexible(
                                       flex: 1,
@@ -272,13 +264,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   StringUtils.ensureNotEmpty(
                                       _post?.member?.displayShortName ),
-                                  style: TextStyle(
-                                      fontFamily:
-                                      Styles().fontFamilies!.medium,
-                                      fontSize: 20,
-                                      color: Styles()
-                                          .colors!
-                                          .fillColorPrimary)))),
+                                  style: Styles().textStyles?.getTextStyle("widget.detail.large.thin"),
+                                  ))),
                       Semantics(
                           sortKey: OrdinalSortKey(3),
                           container: true,
@@ -288,13 +275,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                   StringUtils.ensureNotEmpty(
                                       _post?.displayDateTime),
                                   semanticsLabel:  sprintf(Localization().getStringEx("panel.group.detail.post.updated.ago.format", "Updated %s ago"),[widget.post?.displayDateTime ?? ""]),
-                                  style: TextStyle(
-                                      fontFamily:
-                                      Styles().fontFamilies!.medium,
-                                      fontSize: 16,
-                                      color: Styles()
-                                          .colors!
-                                          .fillColorPrimary)))),
+                                  style: Styles().textStyles?.getTextStyle("widget.detail.medium"),))),
                       Container(height: 6,),
                       GroupMembersSelectionWidget(
                         selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:(_isEditMainPost ? _mainPostUpdateData?.members : _post?.members), upToDateMembers: _allMembersAllowedToPost),
@@ -484,10 +465,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
                 color: Styles().colors!.fillColorPrimary,
                 child: Text("Replies",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: Styles().fontFamilies!.medium,
-                        color: Styles().colors!.white)
+                    style: Styles().textStyles?.getTextStyle("widget.heading.medium"),
                 ),
               )
         )

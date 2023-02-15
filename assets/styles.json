@@ -61,6 +61,7 @@
     "dividerLine"                           :"#535353",
 
     "mango"                                 :"#f29835",
+    "greenAccent"                       :"#69F0AE",
 
     "saferLocationWaitTimeColorRed"        :"#ff0000",
     "saferLocationWaitTimeColorYellow"     :"#ffff00",
@@ -99,15 +100,19 @@
     "test_overrides7" : {"extends": "test_overrides4",  "font_family": "bold",  "color": "fillColorSecondary", "inherit" :  false},
     "test_overrides8" : {"extends": "test_overrides3",  "size": 24.0, "color":  "fillColorPrimary", "override" :  false},
     "test_overrides9" : {"extends": "test_overrides3", "size": 24.0, "color": "fillColorPrimary"},
+    "usage" : "Styles().textStyles?.getTextStyle()",
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
 
+    "widget.heading.extra_large": { "font_family": "regular", "size": 24.0, "color": "white"},
+    "widget.heading.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "white"},
     "widget.heading.large": { "font_family": "regular", "size": 20.0, "color": "white"},
     "widget.heading.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "white"},
+    "widget.heading.medium": { "font_family": "medium", "size": 18.0, "color": "white"},
     "widget.heading.regular": { "font_family": "regular", "size": 16.0, "color": "white"},
     "widget.heading.regular.fat": { "font_family": "bold", "size": 16.0, "color": "white"},
     "widget.heading.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "white"},
-    "widget.heading.medium": { "font_family": "bold", "size": 14.0, "color": "white"},
+    "widget.heading.medium_small": { "font_family": "bold", "size": 14.0, "color": "white"},
     "widget.heading.small": { "font_family": "bold", "size": 12.0, "color": "white"},
 
     "widget.message.dark.extra_large": {"font_family": "regular", "size": 24.0, "color": "black"},
@@ -146,6 +151,7 @@
     "widget.title.light.medium.fat": {"font_family": "bold", "size": 18.0, "color": "white"},
     "widget.title.light.small.fat": {"font_family": "bold", "size": 14.0, "color": "white"},
 
+    "widget.detail.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.detail.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.large.thin": { "font_family": "medium", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
@@ -171,6 +177,8 @@
     "widget.error.regular": { "font_family": "regular", "size": 16.0, "color": "alert"},
     "widget.error.regular.fat": { "font_family": "bold", "size": 16.0, "color": "alert"},
 
+    "widget.item.large": { "font_family": "regular", "size": 20.0, "color": "textBackground"},
+    "widget.item.large.fat": { "font_family": "bold", "size": 20.0, "color": "textBackground"},
     "widget.item.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textBackground"},
     "widget.item.medium": { "font_family": "regular", "size": 18.0, "color": "textBackground"},
     "widget.item.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
@@ -195,6 +203,7 @@
     "widget.tab.selected": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
 
+    "widget.button.title.extra_large": { "font_family": "bold", "size": 26.0, "color": "fillColorPrimary"},
     "widget.button.title.regular": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.medium": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
@@ -230,9 +239,11 @@
     "widget.dialog.button.close" : {"font_family": "medium", "size": 50.0, "color": "white"},
     "widget.dialog.message.medium" : {"font_family": "medium", "size": 16.0, "color": "white"},
     "widget.dialog.message.medium.thin" : {"font_family": "regular", "size": 16.0, "color": "white"},
+    "widget.dialog.message.regular" : {"font_family": "regular", "size": 20.0, "color": "white"},
     "widget.dialog.message.regular.fat" : {"font_family": "bold", "size": 20.0, "color": "white"},
     "widget.dialog.message.regular.extra_fat" : {"font_family": "extra_bold", "size": 20.0, "color": "white"},
-    "widget.dialog.message.large": { "font_family": "medium", "size": 24.0, "color": "white"},
+    "widget.dialog.message.large": { "font_family": "regular", "size": 24.0, "color": "white"},
+    "widget.dialog.message.large.thin": { "font_family": "medium", "size": 24.0, "color": "white"},
     "widget.dialog.message.large.fat": { "font_family": "bold", "size": 24.0, "color": "white"},
     "widget.dialog.message.large.extra_fat": { "font_family": "extra_bold", "size": 24.0, "color": "white"},
 
@@ -302,6 +313,18 @@
     "widget.settings.dialog.button.title.enabled": {"font_family": "bold", "size": 16.0, "color": "white"},
     "widget.settings.dialog.button.title.disabled": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
 
+    "widget.checklist.content.step.title": {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
+    "widget.checklist.content.step.title.display": {"font_family": "bold", "size": 20.0, "color": "fillColorSecondary"},
+    "widget.checklist.content.page.title": {"font_family": "extra_bold", "size": 24.0, "color": "white"},
+    "widget.checklist.content.page.title.display": {"font_family": "extra_bold", "size": 32.0, "color": "white"},
+    "widget.checklist.content.progress.title.completed": {"font_family": "medium", "size": 15.0, "color": "greenAccent", "decoration": "underline"},
+    "widget.checklist.content.progress.title.not_completed": {"font_family": "regular", "size": 15.0, "color": "white", "decoration": "underline"},
+    "widget.checklist.content.progress.title.current_step": {"font_family": "extra_bold", "size": 15.0, "color": "fillColorPrimary", "decoration": "underline"},
+    "widget.checklist.content.tab.title.completed": {"font_family": "regular", "size": 16.0, "color": "greenAccent", "decoration": "underline"},
+    "widget.checklist.content.tab.title.not_completed": {"font_family": "regular", "size": 16.0, "color": "white", "decoration": "underline"},
+    "widget.checklist.content.tab.title.current_tab.completed": {"font_family": "extra_bold", "size": 16.0, "color": "greenAccent", "decoration": "underline"},
+    "widget.checklist.content.tab.title.current_tab.not_completed": {"font_family": "extra_bold", "size": 16.0, "color": "white", "decoration": "underline"},
+
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
     "panel.event_schedule.map.description": {"font_family": "medium", "size": 16.0, "color": "blackTransparent038"},
@@ -321,6 +344,8 @@
     "panel.group_member_notifications.toggle_button.title.fat.disabled": {"extends": "widget.toggle_button.title.regular.disabled"},
     "panel.group_member_notifications.toggle_button.title.small.enabled": {"extends": "widget.toggle_button.title.small.enabled"},
     "panel.group_member_notifications.toggle_button.title.small.disabled": {"extends": "widget.toggle_button.title.small.disabled"},
+
+    "panel.group_post_create.heading.regular": {"extends": "widget.toggle_button.title.small.disabled", "letter_spacing" :  1.0},
 
     "panel.wellness.ring.select_predefined.message.regular": {"extends": "widget.info.small"},
     "panel.wellness.ring.select_predefined.button.label.regular": {"font_family": "bold", "size": 18.0, "color": "black"},
