@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed scrolling issues in research questionnaire prompt and acknowledgement panels [#2985](https://github.com/rokwire/illinois-app/issues/2985).
+- Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
 
 ## [4.2.50] - 2023-02-13
 ### Changed
