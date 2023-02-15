@@ -92,6 +92,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
                         keyJson.put("card_number", key.getCardNumber());
                         keyJson.put("issuer", key.getIssuer());
                         keyJson.put("type", key.getType());
+                        keyJson.put("external_id", key.getExternalId());
                         if (endCalendarDate != null) {
                             keyJson.put("expiration_date", dateFormat.format(endCalendarDate.getTime()));
                         }

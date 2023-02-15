@@ -17,6 +17,7 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -26,6 +27,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
@@ -67,8 +69,9 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   late bool _loadingBuildingAccess;
   late AnimationController _animationController;
 
-  Map<String, dynamic>? _mobileAccessKey;
+  List<dynamic>? _mobileAccessKeys;
   bool _mobileAccessKeysLoading = false;
+  PageController? _mobileKeysPageController;
 
   @override
   void initState() {
@@ -150,21 +153,12 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     if (Auth2().isLoggedIn) {
       _setMobileAccessKeysLoading(true);
       NativeCommunicator().getMobileAccessKeys().then((List<dynamic>? mobileAccessKeys) {
-        _mobileAccessKey = null;
-        if (CollectionUtils.isNotEmpty(mobileAccessKeys)) {
-          for (Map<String, dynamic> key in mobileAccessKeys!) {
-            //TBD: DD - define how to check which is the proper key when we have more knowledge?
-            if (JsonUtils.stringValue(key['issuer']) == 'Illinois') {
-              _mobileAccessKey = key;
-              break;
-            }
-          }
-        }
+        _mobileAccessKeys = mobileAccessKeys;
         _setMobileAccessKeysLoading(false);
       });
     } else {
       setStateIfMounted(() {
-        _mobileAccessKey = null;
+        _mobileAccessKeys = null;
       });
     }
   }
@@ -173,6 +167,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   void dispose() {
     NotificationService().unsubscribe(this);
     _animationController.dispose();
+    _mobileKeysPageController?.dispose();
     super.dispose();
   }
 
@@ -371,29 +366,63 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
         child: Column(children: [
           Container(color: Styles().colors!.dividerLine, height: 1),
           Padding(padding: EdgeInsets.only(top: 20), child: Styles().images?.getImage('mobile-access-logo', excludeFromSemantics: true)),
-          (_hasMobileAccessKey ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessExistsContent())
+          (_hasMobileAccessKeys ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessExistsContent())
         ]));
   }
 
   Widget _buildExistingMobileAccessContent() {
-    if (!_hasMobileAccessKey) {
+    if (!_hasMobileAccessKeys) {
       return Container();
     }
-    String? mobileAccessCardNumber = JsonUtils.stringValue(_mobileAccessKey!['card_number']);
-    String? mobileAccessExpirationDateString = JsonUtils.stringValue(_mobileAccessKey!['expiration_date']);
+    if (_mobileKeysPageController == null) {
+      _mobileKeysPageController = PageController();
+    }
+    int keysCount = _mobileAccessKeys!.length;
+    List<Widget> keyWidgets = <Widget>[];
+    for(dynamic key in _mobileAccessKeys!) {
+      Map<String, dynamic>? keyMap = JsonUtils.mapValue(key);
+      Widget keyWidget = _buildSingleMobileAccessKeyContent(keyMap);
+      keyWidgets.add(keyWidget);
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      ExpandablePageView(children: keyWidgets, controller: _mobileKeysPageController),
+      AccessibleViewPagerNavigationButtons(controller: _mobileKeysPageController, pagesCount: () => keysCount),
+      Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: InkWell(
+              onTap: _onTapMobileAccessPermissions,
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Padding(padding: EdgeInsets.only(right: 0), child: (Styles().images?.getImage('settings') ?? Container())),
+                LinkButton(
+                    title: Localization().getStringEx('widget.id_card.label.mobile_access.permissions', 'Set mobile access permissions'),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    textStyle: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.medium.underline'),
+                    onTap: _onTapMobileAccessPermissions)
+              ])))
+    ]);
+  }
+
+  Widget _buildSingleMobileAccessKeyContent(Map<String, dynamic>? mobileAccessKey) {
+    if (mobileAccessKey == null) {
+      return Container();
+    }
+
+    String? mobileAccessExternalId = JsonUtils.stringValue(mobileAccessKey['external_id']);
+    String? mobileAccessExpirationDateString = JsonUtils.stringValue(mobileAccessKey['expiration_date']);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Padding(
           padding: EdgeInsets.only(left: 16, bottom: 2, right: 16),
           child: Text(
               sprintf(
-                  Localization().getStringEx('widget.id_card.label.mobile_access.my', 'My Mobile Access: %s'), [mobileAccessCardNumber]),
+                  Localization().getStringEx('widget.id_card.label.mobile_access.my', 'My Mobile Access: %s'), [mobileAccessExternalId]),
+              textAlign: TextAlign.center,
               style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.large'))),
       Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: Text(
               sprintf(Localization().getStringEx('widget.id_card.label.mobile_access.expires', 'Expires: %s'),
-                  [mobileAccessExpirationDateString]),
+                  [mobileAccessExpirationDateString ?? '---']),
               style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.tiny'))),
       Padding(
           padding: EdgeInsets.only(bottom: 10),
@@ -406,24 +435,11 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               onTap: _onTapRenewMobileAccessButton)),
-      Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: InkWell(
-              onTap: _onTapMobileAccessPermissions,
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Padding(padding: EdgeInsets.only(right: 0), child: (Styles().images?.getImage('settings') ?? Container())),
-                //TBD: DD - fix missing underline
-                LinkButton(
-                    title: Localization().getStringEx('widget.id_card.label.mobile_access.permissions', 'Set mobile access permissions'),
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    textStyle: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.medium.underline'),
-                    onTap: _onTapMobileAccessPermissions)
-              ])))
     ]);
   }
 
   Widget _buildMissingMobileAccessExistsContent() {
-    if (_hasMobileAccessKey) {
+    if (_hasMobileAccessKeys) {
       return Container();
     }
 
@@ -591,8 +607,8 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
 
   bool get _hasBuildingAccess => FlexUI().isSaferAvailable;
 
-  bool get _hasMobileAccessKey {
-    return (_mobileAccessKey != null);
+  bool get _hasMobileAccessKeys {
+    return (_mobileAccessKeys != null) && _mobileAccessKeys!.isNotEmpty;
   }
 }
 
