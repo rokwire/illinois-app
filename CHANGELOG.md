@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Launch privacy policy web content in an external web browser on iOS platforms [#2909](https://github.com/rokwire/illinois-app/issues/2909).
 
 ## [4.2.51] - 2023-02-15
 ### Fixed
