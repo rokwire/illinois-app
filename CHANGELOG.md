@@ -92,6 +92,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Switch to xCode 14.2.
 
+## [4.2.52] - 2023-02-16
+- Launch privacy policy web content in an external web browser on iOS platforms [#2909](https://github.com/rokwire/illinois-app/issues/2909).
+- Launch feedback web content in an external web browser on iOS platforms [#2909](https://github.com/rokwire/illinois-app/issues/2909).
+
 ## [4.2.51] - 2023-02-15
 ### Fixed
 - Fixed scrolling issues in research questionnaire prompt and acknowledgement panels [#2985](https://github.com/rokwire/illinois-app/issues/2985).
