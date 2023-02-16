@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/PrivacyData.dart';
@@ -33,6 +35,7 @@ import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPrivacyCenterContentWidget extends StatefulWidget{
   @override
@@ -286,7 +289,15 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   void _onTapPrivacyPolicy(){
     Analytics().logSelect(target: "Privacy Statement");
     if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Statement"),)));
+      if (Platform.isIOS) {
+        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
+        if (privacyPolicyUri != null) {
+          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+        }
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+      }
     }
   }
 
