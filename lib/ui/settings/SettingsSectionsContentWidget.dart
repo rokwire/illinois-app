@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -838,36 +839,25 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     ]);
   }
 
-  String _constructFeedbackParams(String? email, String? phone, String? name) {
-    Map params = Map();
-    params['email'] = Uri.encodeComponent(email != null ? email : "");
-    params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
-    params['name'] = Uri.encodeComponent(name != null ? name : "");
-
-    String result = "";
-    if (params.length > 0) {
-      result += "?";
-      params.forEach((key, value) =>
-      result+= key + "=" + value + "&"
-      );
-      result = result.substring(0, result.length - 1); //remove the last symbol &
-    }
-    return result;
-  }
-
   void _onFeedbackClicked() {
     Analytics().logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String? email = Auth2().email;
-      String? name =  Auth2().fullName;
-      String? phone = Auth2().phone;
-      String params = _constructFeedbackParams(email, phone, name);
-      String feedbackUrl = Config().feedbackUrl! + params;
+      String email = Uri.encodeComponent(Auth2().email ?? '');
+      String name =  Uri.encodeComponent(Auth2().fullName ?? '');
+      String phone = Uri.encodeComponent(Auth2().phone ?? '');
+      String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
-      String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
+      if (Platform.isIOS) {
+        Uri? feedbackUri = Uri.tryParse(feedbackUrl);
+        if (feedbackUri != null) {
+          launchUrl(feedbackUri, mode: LaunchMode.externalApplication);
+        }
+      }
+      else {
+        String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
+      }
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.feedback', 'Providing a Feedback is not available while offline.'));
