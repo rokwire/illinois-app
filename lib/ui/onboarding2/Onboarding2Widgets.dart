@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -8,6 +10,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;
@@ -205,7 +208,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                             text: new TextSpan(
                                 children:[
                                   TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
-                                  WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: _openPrivacyPolicy, padding: EdgeInsets.all(0),fontFamily: Styles().fontFamilies!.regular,fontSize: 14,)),
+                                  WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: () => _openPrivacyPolicy(context), padding: EdgeInsets.all(0),fontFamily: Styles().fontFamilies!.regular,fontSize: 14,)),
                                   WidgetSpan(child: Container(
                                       decoration: BoxDecoration(
                                           border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1, ),)
@@ -228,10 +231,18 @@ class Onboarding2InfoDialog extends StatelessWidget{
     );
   }
 
-  void _openPrivacyPolicy(){
+  void _openPrivacyPolicy(BuildContext context) {
     Analytics().logSelect(target: "Privacy Policy");
     if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+      if (Platform.isIOS) {
+        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
+        if (privacyPolicyUri != null) {
+          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+        }
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+      }
     }
   }
 }

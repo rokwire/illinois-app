@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -739,9 +740,16 @@ class _BrowseEntry extends StatelessWidget {
       String phone = Uri.encodeComponent(Auth2().phone ?? '');
       String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
-      String? panelTitle = Localization().getStringEx('widget.home.app_help.feedback.panel.title', 'PROVIDE FEEDBACK');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
+      if (Platform.isIOS) {
+        Uri? feedbackUri = Uri.tryParse(feedbackUrl);
+        if (feedbackUri != null) {
+          launchUrl(feedbackUri, mode: LaunchMode.externalApplication);
+        }
+      }
+      else {
+        String? panelTitle = Localization().getStringEx('widget.home.app_help.feedback.panel.title', 'PROVIDE FEEDBACK');
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
+      }
     }
   }
 
