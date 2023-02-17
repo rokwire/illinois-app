@@ -21,7 +21,7 @@ class Onboarding2TitleWidget extends StatelessWidget{
   Widget build(BuildContext context) {
     Color? backColor = Styles().colors!.fillColorSecondary;
     Color? leftTriangleColor = Styles().colors!.background;
-    Color? rightTriangleColor = UiColors.fromHex("cc3e1e");
+    Color? rightTriangleColor = Styles().colors!.fillColorSecondary;
 
     return Container(child:
       Container(color: backColor, child:

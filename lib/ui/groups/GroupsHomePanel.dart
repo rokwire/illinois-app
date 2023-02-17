@@ -570,24 +570,24 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onSelectMyGroups() {
     if(_selectedContentType != rokwire.GroupsContentType.my){
-      if (Auth2().isOidcLoggedIn) {
+      // if (Auth2().isOidcLoggedIn) {
         setState(() { _selectedContentType = rokwire.GroupsContentType.my; });
-      }
-      else {
-        setState(() { _myGroupsBusy = true; });
-        
-        Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-          if (mounted) {
-            setState(() {
-              _myGroupsBusy = false;
-              if (result == Auth2OidcAuthenticateResult.succeeded) {
-                _selectedContentType = rokwire.GroupsContentType.my;
-              }
-            });
-          }
-        });
-
-      }
+      // }
+      // else {
+      //   setState(() { _myGroupsBusy = true; });
+      //
+      //   Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      //     if (mounted) {
+      //       setState(() {
+      //         _myGroupsBusy = false;
+      //         if (result == Auth2OidcAuthenticateResult.succeeded) {
+      //           _selectedContentType = rokwire.GroupsContentType.my;
+      //         }
+      //       });
+      //     }
+      //   });
+      //
+      // }
     }
   }
 

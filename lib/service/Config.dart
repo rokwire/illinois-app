@@ -28,6 +28,7 @@ class Config extends rokwire.Config {
   static String get notifyOnboardingRequired  => rokwire.Config.notifyOnboardingRequired;
   static String get notifyConfigChanged       => rokwire.Config.notifyConfigChanged;
   static String get notifyEnvironmentChanged  => rokwire.Config.notifyEnvironmentChanged;
+  static String get notifyResetUI             => 'edu.illinois.rokwire.config.reset.ui';
 
   static const String twitterDefaultAccountKey = '';
 

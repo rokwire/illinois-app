@@ -446,6 +446,16 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
+                    label: "Test Onboarding",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onTapOnboarding
+                  )
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
                     label: "Test Crash",
                     backgroundColor: Styles().colors!.background,
                     fontSize: 16.0,
@@ -805,6 +815,11 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapCrash(){
     FirebaseCrashlytics.instance.crash();
+  }
+
+  void _onTapOnboarding() {
+    Storage().onBoardingPassed = false;
+    NotificationService().notify(Config.notifyResetUI);
   }
 
   String get _refreshTokenTitle {

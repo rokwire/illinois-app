@@ -229,6 +229,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Config.notifyOnboardingRequired,
+      Config.notifyResetUI,
       Storage.notifySettingChanged,
       Auth2.notifyUserDeleted,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
@@ -424,6 +425,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       if (_checkForceOnboarding()) {
         _resetUI();
       }
+    }
+    else if (name == Config.notifyResetUI) {
+      _resetUI();
     }
     else if (name == Auth2.notifyUserDeleted) {
       _resetUI();

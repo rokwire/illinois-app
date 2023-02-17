@@ -42,8 +42,8 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
     if (isInboxContent(content) && Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
     }
-    else if (isInboxContent(content) && !Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context,Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
+    else if (isInboxContent(content) && !Auth2().isLoggedIn) {
+      AppAlert.showMessage(context,Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);

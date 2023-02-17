@@ -10,9 +10,9 @@
     "fillColorSecondary"                    :"#ebc03f",
     "fillColorSecondaryTransparent05"       :"#80ebc03f",
     "textColorSecondary"                    :"#FFFFFF",
-    "fillColorSecondaryVariant"             :"#B00029",
+    "fillColorSecondaryVariant"             :"#ebc03f",
     "textColorSecondaryVariant"             :"#FFFFFF",
-    "gradientColorPrimary"                  :"#244372",
+    "gradientColorPrimary"                  :"#343537",
 
     "surface"                               :"#FFFFFF",
     "surfaceAccent"                         :"#DADDE1",
@@ -664,7 +664,7 @@
     "radio-button-off": {"src": "images/icon-favorite-deselected.png", "type": "flutter.asset", "todo": "color issue"},
 
     "university-logo": {"src": "app/images/university-logo.png", "size": 36, "type": "flutter.asset"},
-    "university-logo-dark": {"src": "app/images/university-logo.png", "size": 48, "type": "flutter.asset"},
+    "university-logo-dark": {"src": "app/images/university-logo.png", "size": 56, "type": "flutter.asset"},
     "university-logo-circle-white": {"src": "'images/group-5-white.png'", "type": "flutter.asset"},
     "university-logo-circle-dark": {"src": "'images/group-5-blue.png'", "type": "flutter.asset"},
     "transit-logo": {"src": "images/mtd-logo.png", "type": "flutter.asset"},
