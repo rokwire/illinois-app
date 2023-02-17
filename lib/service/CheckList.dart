@@ -8,7 +8,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -69,7 +69,7 @@ abstract class CheckList with Service implements NotificationsListener{
       Groups.notifyGroupUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyUserGroupsUpdated,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2.notifyLoginSucceeded
     ]);
     super.createService();
@@ -673,14 +673,14 @@ abstract class CheckList with Service implements NotificationsListener{
         name == Groups.notifyUserGroupsUpdated) {
       _loadPageVerification(notify: true);
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    else if (name == AppLifecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
         //TMP: test
       }
      }
   }
 
-  void onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

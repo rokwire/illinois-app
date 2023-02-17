@@ -29,7 +29,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -67,7 +67,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
 
     NotificationService().subscribe(this, [
       Assets.notifyChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -96,12 +96,12 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
     if (name == Assets.notifyChanged) {
       _refresh();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

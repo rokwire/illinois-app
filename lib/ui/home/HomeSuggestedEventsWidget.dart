@@ -29,7 +29,7 @@ import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -87,7 +87,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
       Auth2UserPrefs.notifyInterestsChanged,
       Events.notifyEventCreated,
       Events.notifyEventUpdated,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
     
     if (widget.updateController != null) {
@@ -133,12 +133,12 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
     else if (name == Events.notifyEventUpdated) {
       _loadEvents();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

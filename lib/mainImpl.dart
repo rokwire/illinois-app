@@ -73,7 +73,7 @@ import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
@@ -97,14 +97,14 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
   String? platformVersion = await RokwirePlugin.platformVersion;
   Log.d("RokwirePlugin.platformVersion: $platformVersion");
 
-  NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
+  NotificationService().subscribe(appExitListener, AppLifecycle.notifyStateChanged);
 
   illinois.Services().create([
     // Add highest priority services at top
 
     FirebaseCore(),
     FirebaseCrashlytics(),
-    AppLivecycle(),
+    AppLifecycle(),
     Connectivity(),
     LocationServices(),
 
@@ -167,7 +167,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
   }
 
   // Log app create analytics event
-  Analytics().logLivecycle(name: Analytics.LogLivecycleEventCreate);
+  Analytics().logLifecycle(name: Analytics.LogLifecycleEventCreate);
 
   runZonedGuarded(() async {
     runApp(App(initializeError: serviceError));
@@ -179,7 +179,7 @@ class AppExitListener implements NotificationsListener {
   // NotificationsListener
   @override
   void onNotification(String name, param) {
-    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
+    if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
         NotificationService().unsubscribe(appExitListener);
         illinois.Services().destroy();
@@ -232,7 +232,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       Storage.notifySettingChanged,
       Auth2.notifyUserDeleted,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     _initializeError = widget.initializeError;
@@ -436,12 +436,12 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       setState(() { });
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

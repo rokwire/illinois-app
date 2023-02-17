@@ -7,7 +7,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -52,7 +52,7 @@ class WellnessRings with Service implements NotificationsListener{
   @override
   void createService() {
     NotificationService().subscribe(this,[
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2.notifyLoginSucceeded
     ]);
   }
@@ -752,12 +752,12 @@ class WellnessRings with Service implements NotificationsListener{
     if(name == Auth2.notifyLoginSucceeded){
       _reInit();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

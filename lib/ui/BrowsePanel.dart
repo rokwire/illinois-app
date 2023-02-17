@@ -63,7 +63,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -1152,7 +1152,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     widget.updateController?.stream.listen((String command) {
@@ -1231,7 +1231,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+    if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
       _update();
     }
   }

@@ -14,7 +14,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -74,7 +74,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
       Inbox.notifyInboxUserInfoChanged,
       Inbox.notifyInboxMessageRead,
@@ -118,8 +118,8 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     if (name == Connectivity.notifyStatusChanged) {
       _refresh();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Auth2.notifyLoginChanged) {
       setStateIfMounted(() {});
@@ -132,7 +132,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

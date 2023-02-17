@@ -22,7 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -44,7 +44,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
       Appointments.notifyAppointmentsAccountChanged,
@@ -448,7 +448,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
 
   @override
   void onNotification(String name, param) {
-    if (name == AppLivecycle.notifyStateChanged) {
+    if (name == AppLifecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
         _checkNotificationsEnabled();
       }

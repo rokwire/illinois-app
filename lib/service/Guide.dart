@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -56,7 +56,7 @@ class Guide with Service implements NotificationsListener {
   void createService() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       DeepLink.notifyUri,
     ]);
     _guideUriCache = <Uri>[];
@@ -118,14 +118,14 @@ class Guide with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
       _initDefaultFavorites();
-    } else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    } else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     } else if (name == DeepLink.notifyUri) {
       _processDeepLinkUri(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

@@ -18,7 +18,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -58,7 +58,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
 
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Config.notifyConfigChanged,
     ]);
 
@@ -97,8 +97,8 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
     if (name == Connectivity.notifyStatusChanged) {
       _refreshLaundry();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Config.notifyConfigChanged) {
       if (mounted) {
@@ -107,7 +107,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

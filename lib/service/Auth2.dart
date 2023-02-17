@@ -111,7 +111,7 @@ class Auth2 extends rokwire.Auth2 {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
@@ -142,9 +142,9 @@ class Auth2 extends rokwire.Auth2 {
   // Overrides
 
   @override
-  void onAppLivecycleStateChanged(AppLifecycleState? state) {
-    super.onAppLivecycleStateChanged(state);
-    _onAppLivecycleStateChanged(state);
+  void onAppLifecycleStateChanged(AppLifecycleState? state) {
+    super.onAppLifecycleStateChanged(state);
+    _onAppLifecycleStateChanged(state);
   }
 
   @override

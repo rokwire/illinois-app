@@ -40,7 +40,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -130,7 +130,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Connectivity.notifyStatusChanged,
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
@@ -174,8 +174,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if (name == Connectivity.notifyStatusChanged) {
       if ((Connectivity().isNotOffline) && mounted) {
@@ -254,7 +254,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
   
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

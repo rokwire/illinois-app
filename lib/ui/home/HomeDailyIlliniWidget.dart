@@ -28,7 +28,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -63,7 +63,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged]);
+    NotificationService().subscribe(this, [AppLifecycle.notifyStateChanged]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
@@ -91,12 +91,12 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     } else if (state == AppLifecycleState.resumed) {

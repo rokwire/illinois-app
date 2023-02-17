@@ -8,7 +8,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -39,7 +39,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     widget.updateController?.stream.listen((String command) {
@@ -216,7 +216,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
         setState(() {});
       }
     }
-    else if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+    else if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
       _update();
     }
   }

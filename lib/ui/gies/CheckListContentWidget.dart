@@ -23,7 +23,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -1045,7 +1045,7 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
     NotificationService().subscribe(this, [
       Auth2.notifyLoginSucceeded,
       Auth2.notifyLogout,
-      AppLivecycle.notifyStateChanged,]
+      AppLifecycle.notifyStateChanged,]
     );
     _loadStudentInfo();
     super.initState();
@@ -1078,8 +1078,8 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
       }
       _loadStudentInfo();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
@@ -1294,7 +1294,7 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
     });
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
   if (state == AppLifecycleState.paused) {
     _pausedDateTime = DateTime.now();
   }
@@ -1328,7 +1328,7 @@ class _CoursesListState extends State<CoursesListWidget> with NotificationsListe
     NotificationService().subscribe(this, [
       Auth2.notifyLoginSucceeded,
       Auth2.notifyLogout,
-      AppLivecycle.notifyStateChanged,]
+      AppLifecycle.notifyStateChanged,]
     );
     _loadData();
     super.initState();
@@ -1361,8 +1361,8 @@ class _CoursesListState extends State<CoursesListWidget> with NotificationsListe
       }
       _loadData();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
   }
 
@@ -1475,7 +1475,7 @@ class _CoursesListState extends State<CoursesListWidget> with NotificationsListe
     });
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

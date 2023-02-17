@@ -58,7 +58,7 @@ import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -522,7 +522,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
 
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
@@ -710,7 +710,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     else if (name == HomeSaferWidget.notifyNeedsVisiblity) {
       _ensureSaferWidgetVisibiity();
     }
-    else if (((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) ||
+    else if (((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged) ||
         (name == Assets.notifyChanged) ||

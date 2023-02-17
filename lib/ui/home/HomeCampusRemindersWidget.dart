@@ -25,7 +25,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
@@ -66,7 +66,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     NotificationService().subscribe(this, [
       Config.notifyConfigChanged,
       Guide.notifyChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -99,7 +99,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     else if (name == Guide.notifyChanged) {
       _updateReminderItems();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    else if (name == AppLifecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
         _updateReminderItems(); // update on each resume for time interval filtering
       }

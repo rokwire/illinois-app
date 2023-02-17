@@ -23,7 +23,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -63,7 +63,7 @@ class Canvas with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
       Connectivity.notifyStatusChanged,
     ]);
@@ -272,8 +272,8 @@ class Canvas with Service implements NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
       updateCourses();
     } else if (name == Connectivity.notifyStatusChanged) {
@@ -283,7 +283,7 @@ class Canvas with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

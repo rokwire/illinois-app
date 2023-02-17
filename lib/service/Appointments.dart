@@ -22,7 +22,7 @@ import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -67,7 +67,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   void createService() {
     NotificationService().subscribe(this, [
       DeepLink.notifyUri,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2.notifyLoginChanged
     ]);
     Explore.addJsonHandler(this);
@@ -455,15 +455,15 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   void onNotification(String name, dynamic param) {
     if (name == DeepLink.notifyUri) {
       _onDeepLinkUri(param);
-    } else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    } else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
       _initAccount();
       _updateAllAppointments();
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

@@ -13,7 +13,7 @@ import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -226,7 +226,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
@@ -254,7 +254,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
         setState(() {});
       }
     }
-    else if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+    else if ((name == AppLifecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
       if (mounted) {
         _refreshDepartures();
       }

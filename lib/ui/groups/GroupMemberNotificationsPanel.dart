@@ -23,7 +23,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -51,7 +51,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
     ]);
@@ -428,7 +428,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
 
   @override
   void onNotification(String name, param) {
-    if (name == AppLivecycle.notifyStateChanged) {
+    if (name == AppLifecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
         _checkNotificationsEnabled();
       }

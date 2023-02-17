@@ -28,7 +28,7 @@ import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -196,7 +196,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     super.initState();
 
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
@@ -520,8 +520,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             || name == Polls.notifyStatusChanged) {
       _onPollUpdated(param); // Deep collection update single element (do not reload whole list)
     } 
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     } 
     else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {});
@@ -533,7 +533,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

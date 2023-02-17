@@ -224,7 +224,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
               HtmlWidget(
                   StringUtils.ensureNotEmpty(description),
                   onTapUrl : (url) {_onTapHtmlLink(url); return true;},
-                  textStyle:  TextStyle(color: Styles().colors!.textColorPrimaryVariant, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                  textStyle:  TextStyle(color: Styles().colors?.textColorPrimaryVariant, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
                   customStylesBuilder: (element) => (element.localName == "b") ? {"font-weight": "bold"} : null
               )
                 // Html(data: StringUtils.ensureNotEmpty(description),

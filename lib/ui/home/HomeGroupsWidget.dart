@@ -9,7 +9,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -65,7 +65,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       Groups.notifyGroupDeleted,
       Groups.notifyUserGroupsUpdated,
       Auth2.notifyLoginChanged,
-      AppLivecycle.notifyStateChanged,]);
+      AppLifecycle.notifyStateChanged,]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
@@ -208,8 +208,8 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
 
   @override
   void onNotification(String name, param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
+    if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param);
     }
     else if ((name == Groups.notifyGroupCreated) ||
       (name == Groups.notifyGroupUpdated) ||
@@ -223,7 +223,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }

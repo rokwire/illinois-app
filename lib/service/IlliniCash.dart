@@ -21,7 +21,7 @@ import 'dart:ui';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -71,7 +71,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
     ]);
   }
@@ -102,8 +102,8 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   @override
   void onNotification(String name, dynamic param) {
     if(_enabled) {
-      if (name == AppLivecycle.notifyStateChanged) {
-        _onAppLivecycleStateChanged(param);
+      if (name == AppLifecycle.notifyStateChanged) {
+        _onAppLifecycleStateChanged(param);
       }
       else if (name == Auth2.notifyLoginChanged) {
         updateBalance();
@@ -111,7 +111,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();

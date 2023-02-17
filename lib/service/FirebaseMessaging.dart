@@ -22,7 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_lifecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/firebase_messaging.dart' as rokwire;
@@ -165,7 +165,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
       Auth2.notifyProfileChanged,
       Auth2.notifyUserDeleted,
       FlexUI.notifyChanged,
-      AppLivecycle.notifyStateChanged,
+      AppLifecycle.notifyStateChanged,
       Inbox.notifyInboxUserInfoChanged
     ]);
   }
@@ -205,15 +205,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (name == FlexUI.notifyChanged) {
       _updateNotifySettingsSubscriptions();
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param); 
+    else if (name == AppLifecycle.notifyStateChanged) {
+      _onAppLifecycleStateChanged(param); 
     }
     else if (name == Inbox.notifyInboxUserInfoChanged) {
       _updateSubscriptions();
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  void _onAppLifecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
