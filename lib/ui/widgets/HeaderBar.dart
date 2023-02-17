@@ -336,7 +336,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
 
   Widget _buildHeaderTitleText() {
     return Semantics(label: widget.title, excludeSemantics: true, child:
-      Text(widget.title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+      Text(widget.title ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat"),),);
   }
 
   Widget _buildHeaderRadioButton() {
@@ -373,7 +373,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
             Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Styles().images?.getImage('notification-white', excludeFromSemantics: true,))),
             Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child:
               Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child: 
-                Text(unreadMsgsCount.toString(), style: TextStyle(color: Styles().colors!.white, fontSize: 10, fontFamily: Styles().fontFamilies!.medium)))))
+                Text(unreadMsgsCount.toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.tiny")))))
           ])
         )
       )

@@ -546,7 +546,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               child: Text(
                 Localization().getStringEx("panel.profile_info.logout.message", promptEn),
                 textAlign: TextAlign.left,
-                style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium")
+                style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular")
               ),
             ),
             Row(
