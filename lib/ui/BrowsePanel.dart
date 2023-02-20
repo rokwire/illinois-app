@@ -511,6 +511,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
+      case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
 
       case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
@@ -1099,6 +1100,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapWellnessToDo(BuildContext context) {
     Analytics().logSelect(target: "Wellness To Do");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo,)));
+  }
+
+  void _onTapAcademicsToDo(BuildContext context) {
+    Analytics().logSelect(target: "Academics To Do");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list,)));
   }
 
   void _onTapWellnessTips(BuildContext context) {
