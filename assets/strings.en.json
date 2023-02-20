@@ -436,6 +436,7 @@
     "panel.academics.section.canvas_courses.label": "My Gies Canvas Courses",
     "panel.academics.section.student_courses.label": "My Courses",
     "panel.academics.section.skills_self_evaluation.label": "Skills Self-Evaluation",
+    "panel.academics.section.todo_list.label": "To-Do List",
     "panel.academics.section.due_date_catalog.label": "Due Date Catalog",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "No academic events are available while offline.",

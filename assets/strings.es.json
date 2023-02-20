@@ -435,6 +435,7 @@
     "panel.academics.section.canvas_courses.label": "Mis cursos Gies Canvas",
     "panel.academics.section.student_courses.label": "Mis cursos",
     "panel.academics.section.skills_self_evaluation.label": "Autoevaluación de habilidades",
+    "panel.academics.section.todo_list.label": "Lista de quehaceres",
     "panel.academics.section.due_date_catalog.label": "Catálogo de fecha de vencimiento",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "No hay eventos académicos disponibles sin conexión.",
