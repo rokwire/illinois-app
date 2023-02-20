@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.53] - 2023-02-20
 - Update MTD text to include “Bus” [#2952](https://github.com/rokwire/illinois-app/issues/2952).
 - Move To-Do List to Academics Section [#2951](https://github.com/rokwire/illinois-app/issues/2951).
 
