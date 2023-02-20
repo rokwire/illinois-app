@@ -42,7 +42,7 @@ class Occupation {
       'description': description,
       'matchPercentage': matchPercentage,
       'onetLink': onetLink,
-      'skills': skills.map((x) => x?.toMap()).toList(),
+      'skills': skills?.map((x) => x?.toMap()).toList(),
     };
   }
 
