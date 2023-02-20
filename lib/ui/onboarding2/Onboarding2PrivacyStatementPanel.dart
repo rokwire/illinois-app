@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Config.dart';
@@ -24,6 +26,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2ExploreCampusPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'Onboarding2Widgets.dart';
 
@@ -166,7 +169,15 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
   void _openPrivacyPolicy(){
     Analytics().logSelect(target: "Privacy Statement");
     if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+      if (Platform.isIOS) {
+        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
+        if (privacyPolicyUri != null) {
+          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+        }
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+      }
     }
   }
 
