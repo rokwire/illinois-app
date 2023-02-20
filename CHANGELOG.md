@@ -91,6 +91,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.3.0] - 2023-01-04
 ### Changed
 - Switch to xCode 14.2.
+## [4.2.53] - 2023-02-20
+- Update MTD text to include “Bus” [#2952](https://github.com/rokwire/illinois-app/issues/2952).
+- Move To-Do List to Academics Section [#2951](https://github.com/rokwire/illinois-app/issues/2951).
 
 ## [4.2.52] - 2023-02-16
 - Launch privacy policy web content in an external web browser on iOS platforms [#2909](https://github.com/rokwire/illinois-app/issues/2909).
