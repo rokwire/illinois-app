@@ -313,6 +313,7 @@
     "panel.browse.entry.academics.student_courses.title": "My Courses",
     "panel.browse.entry.academics.my_illini.title": "My Illini",
     "panel.browse.entry.academics.campus_reminders.title": "Campus Reminders",
+    "panel.browse.entry.academics.wellness_todo.title": "To-Do List",
     "panel.browse.entry.academics.due_date_catalog.title": "Due Date Catalog",
 
     "panel.browse.entry.app_help.video_tutorial.title": "Video Tutorial",
@@ -436,6 +437,7 @@
     "panel.academics.section.canvas_courses.label": "My Gies Canvas Courses",
     "panel.academics.section.student_courses.label": "My Courses",
     "panel.academics.section.skills_self_evaluation.label": "Skills Self-Evaluation",
+    "panel.academics.section.todo_list.label": "To-Do List",
     "panel.academics.section.due_date_catalog.label": "Due Date Catalog",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "No academic events are available while offline.",

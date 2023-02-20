@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
@@ -25,12 +26,14 @@ import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeConten
 import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -47,7 +50,10 @@ class WellnessHomePanel extends StatefulWidget {
   _WellnessHomePanelState createState() => _WellnessHomePanelState();
 }
 
-class _WellnessHomePanelState extends State<WellnessHomePanel> {
+class _WellnessHomePanelState extends State<WellnessHomePanel>
+  with AutomaticKeepAliveClientMixin<WellnessHomePanel>
+  implements NotificationsListener
+{
   static WellnessContent? _lastSelectedContent;
   late WellnessContent _selectedContent;
   bool _contentValuesVisible = false;
@@ -57,12 +63,34 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   @override
   void initState() {
     super.initState();
-
+    NotificationService().subscribe(this, [FlexUI.notifyChanged]);
     _selectedContent = _selectableContent(widget.content) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
   }
 
   @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      setStateIfMounted((){});
+    }
+  }
+
+  // AutomaticKeepAliveClientMixin
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
         appBar: _headerBar,
         body: Column(children: <Widget>[
@@ -121,9 +149,14 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    for (WellnessContent section in WellnessContent.values) {
-      if ((_selectedContent != section)) {
-        sectionList.add(_buildContentItem(section));
+
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['wellness']);
+    if (contentCodes != null) {
+      for (String contentCode in contentCodes) {
+        WellnessContent? section = _getContentValueFromCode(contentCode);
+        if ((section != null) && (_selectedContent != section)) {
+          sectionList.add(_buildContentItem(section));
+        }
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
@@ -156,6 +189,28 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
     _contentValuesVisible = !_contentValuesVisible;
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  WellnessContent? _getContentValueFromCode(String? code) {
+    if (code == 'daily_tips') {
+      return WellnessContent.dailyTips;
+    } else if (code == 'rings') {
+      return WellnessContent.rings;
+    } else if (code == 'todo_list') {
+      return WellnessContent.todo;
+    } else if (code == 'appointments') {
+      return WellnessContent.appointments;
+    } else if (code == 'health_screener') {
+      return WellnessContent.healthScreener;
+    } else if (code == 'podcast') {
+      return WellnessContent.podcast;
+    } else if (code == 'resources') {
+      return WellnessContent.resources;
+    } else if (code == 'struggling') {
+      return WellnessContent.struggling;
+    } else {
+      return null;
     }
   }
 
