@@ -889,7 +889,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMTDStops(BuildContext context) {
-    Analytics().logSelect(target: "All MTD Stops");
+    Analytics().logSelect(target: "All Bus Stops");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all,)));
   }
 
@@ -1013,12 +1013,12 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMyMTDStops(BuildContext context) {
-    Analytics().logSelect(target: "My MTD Stops");
+    Analytics().logSelect(target: "My Bus Stops");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
   }
 
   void _onTapMyMTDDestinations(BuildContext context) {
-    Analytics().logSelect(target: "My MTD Destinations");
+    Analytics().logSelect(target: "My Destinations");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
   }
 

@@ -119,7 +119,7 @@ extension ExploreExt on Explore {
       return Localization().getStringEx('panel.explore.item.buildings.name', 'Buildings');
     }
     else if (exploresType == "mtdstop") {
-      return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'MTD Stops');
+      return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'Bus Stops');
     }
     else if (exploresType == "studentcourse") {
       return Localization().getStringEx('panel.explore.item.courses.name', 'Courses');

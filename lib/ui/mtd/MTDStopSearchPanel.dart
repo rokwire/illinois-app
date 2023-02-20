@@ -159,7 +159,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
   String get _searchLabel {
     return (_searchValue != null) ?
       sprintf(Localization().getStringEx('panel.mtd_stops.search.label.results_for', 'Results for %s'), [_searchValue!]) :
-      Localization().getStringEx('panel.mtd_stops.search.label.search_for', 'Searching MTD Stops');
+      Localization().getStringEx('panel.mtd_stops.search.label.search_for', 'Searching Bus Stops');
   }
 
   String get _resultsCountLabel {
@@ -251,7 +251,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
   }
 
   void _onTapSearch() {
-    Analytics().logSelect(target: "Search MTD Stops");
+    Analytics().logSelect(target: "Search Bus Stops");
     String searchValue = _searchController.text.trim();
     if (searchValue.isNotEmpty) {
       FocusScope.of(context).requestFocus(FocusNode());
@@ -283,14 +283,14 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
   }
 
   void _onSelectStop(MTDStop? stop) {
-    Analytics().logSelect(target: "MTD Stop: ${stop?.name}" );
+    Analytics().logSelect(target: "Bus Stop: ${stop?.name}" );
     if (stop != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: stop)));
     }
   }
 
   void _onExpandStop(MTDStop? stop) {
-    Analytics().logSelect(target: "MTD Stop: ${stop?.name}" );
+    Analytics().logSelect(target: "Bus Stop: ${stop?.name}" );
     if (mounted && (stop?.id != null)) {
       setState(() {
         SetUtils.toggle(_expanded, stop?.id);
