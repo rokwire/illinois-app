@@ -5,11 +5,10 @@ import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/model/occupation/skill.dart';
 import 'package:illinois/ui/academics/DetailsOccupation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-
 
 class OccupationList extends StatelessWidget {
   OccupationList({Key? key}) : super(key: key);
@@ -71,7 +70,11 @@ class OccupationList extends StatelessWidget {
       appBar: HeaderBar(
         title: 'Matched Occupations',
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.list)),
+          IconButton(
+            onPressed: () {},
+            // TODO: Change the icon to a more appropriate one
+            icon: Styles().images?.getImage('edit') ?? Icon(Icons.list),
+          ),
         ],
       ),
       body: Column(
@@ -131,7 +134,7 @@ class OccupationListTile extends StatelessWidget {
       ),
       title: Text(occupation.name.toString()),
       subtitle: Text(occupation.description.toString()),
-      trailing: Icon(Icons.chevron_right),
+      trailing: Styles().images?.getImage('chevron-right'),
       onTap: () {
         Navigator.push(
             context,
