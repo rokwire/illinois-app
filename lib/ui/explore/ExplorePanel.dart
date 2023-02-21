@@ -199,7 +199,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     _displayType = widget.mapDisplayType;
     _mapAllowed = (_displayType == ListMapDisplayType.Map);
-    _selectedItem = widget.initialItem ?? _defaultExploreItem ?? ExploreItem.Events;
+    _selectedItem = widget.initialItem ?? _defaultExploreItem ?? ExploreItem.Buildings;
     _selectedEventsDisplayType = widget.eventsDisplayType ?? EventsDisplayType.single;
     _studentCourseTerms = StudentCourses().terms;
     _initFilters();
