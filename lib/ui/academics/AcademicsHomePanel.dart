@@ -25,6 +25,7 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
+import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -229,12 +230,14 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.student_courses;
     } else if (code == 'academics_events') {
       return AcademicsContent.events;
+    } else if (code == 'skills_self_evaluation') {
+      return AcademicsContent.skills_self_evaluation;
+    } else if (code == 'todo_list') {
+      return AcademicsContent.todo_list;
     } else if (code == 'due_date_catalog') {
       return AcademicsContent.due_date_catalog;
     } else if (code == 'my_illini') {
       return AcademicsContent.my_illini;
-    } else if (code == 'skills_self_evaluation') {
-      return AcademicsContent.skills_self_evaluation;
     } else {
       return null;
     }
@@ -331,6 +334,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return StudentCoursesContentWidget();
       case AcademicsContent.skills_self_evaluation:
         return SkillsSelfEvaluation();
+      case AcademicsContent.todo_list:
+        return WellnessToDoHomeContentWidget();
       default:
         return Container();
     }
@@ -358,12 +363,14 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
       case AcademicsContent.student_courses:
         return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
+      case AcademicsContent.skills_self_evaluation:
+        return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation');
+      case AcademicsContent.todo_list:
+        return Localization().getStringEx('panel.academics.section.todo_list.label', 'To-Do List');
       case AcademicsContent.due_date_catalog:
         return Localization().getStringEx('panel.academics.section.due_date_catalog.label', 'Due Date Catalog');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
-      case AcademicsContent.skills_self_evaluation:
-        return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation');
     }
   }
 
@@ -379,4 +386,4 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 }
 
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, due_date_catalog, my_illini, skills_self_evaluation }
+enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, skills_self_evaluation, todo_list, due_date_catalog, my_illini }
