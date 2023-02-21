@@ -51,6 +51,8 @@
 		261784D228C8ED6A009172BB /* button-icon-nav-next.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E822DDFB6500299773 /* button-icon-nav-next.png */; };
 		261784D428C8ED6A009172BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		261784D628C8ED6A009172BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
+		2621A24029A4CB3500587376 /* OrigoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2621A23F29A4CB3500587376 /* OrigoController.m */; };
+		2621A24129A4CB3500587376 /* OrigoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2621A23F29A4CB3500587376 /* OrigoController.m */; };
 		2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94922DC99C700F6BC2F /* NSString+InaJson.m */; };
 		2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
 		264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
@@ -102,7 +104,7 @@
 		B681B2B923DEFD9E00093A67 /* NSData+InaHex.m in Sources */ = {isa = PBXBuildFile; fileRef = B681B2B823DEFD9E00093A67 /* NSData+InaHex.m */; };
 		B6BDCD37242CCF5F002F7364 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		B6EA372423A7EF76001D78A5 /* Bluetooth+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */; };
-		BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		BB7BF12F5D3356D25889D23A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -146,6 +148,8 @@
 		2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		261784E928C8ED6A009172BB /* Illinois.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Illinois.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2621A23E29A4CB3500587376 /* OrigoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OrigoController.h; sourceTree = "<group>"; };
+		2621A23F29A4CB3500587376 /* OrigoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OrigoController.m; sourceTree = "<group>"; };
 		2626D94922DC99C700F6BC2F /* NSString+InaJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+InaJson.m"; sourceTree = "<group>"; };
 		2626D94A22DC99C700F6BC2F /* NSString+InaJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+InaJson.h"; sourceTree = "<group>"; };
 		2626D94C22DCB80000F6BC2F /* MapMarkerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapMarkerView.h; sourceTree = "<group>"; };
@@ -304,7 +308,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */,
+				BB7BF12F5D3356D25889D23A /* (null) in Frameworks */,
 				D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -496,6 +500,8 @@
 				2696997F22C3A14A00B3290E /* MapView.m */,
 				2626D94C22DCB80000F6BC2F /* MapMarkerView.h */,
 				2626D94D22DCB80000F6BC2F /* MapMarkerView.m */,
+				2621A23E29A4CB3500587376 /* OrigoController.h */,
+				2621A23F29A4CB3500587376 /* OrigoController.m */,
 				26B34034233112320031CF70 /* FlutterCompletion.h */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 				1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */,
@@ -966,6 +972,7 @@
 				261784AA28C8ED6A009172BB /* Navigation.m in Sources */,
 				261784AB28C8ED6A009172BB /* NSData+InaHex.m in Sources */,
 				261784AC28C8ED6A009172BB /* NSDictionary+InaTypedValue.m in Sources */,
+				2621A24129A4CB3500587376 /* OrigoController.m in Sources */,
 				261784AD28C8ED6A009172BB /* NSString+InaJson.m in Sources */,
 				261784AE28C8ED6A009172BB /* NSDictionary+InaPathKey.m in Sources */,
 				261784AF28C8ED6A009172BB /* Security+UIUCUtils.m in Sources */,
@@ -1001,6 +1008,7 @@
 				26F7953028AFA9F200AFC37E /* Navigation.m in Sources */,
 				B681B2B923DEFD9E00093A67 /* NSData+InaHex.m in Sources */,
 				26FA06BE22CCA9B5003B78E4 /* NSDictionary+InaTypedValue.m in Sources */,
+				2621A24029A4CB3500587376 /* OrigoController.m in Sources */,
 				2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */,
 				26C90CED2361CF480092E07F /* NSDictionary+InaPathKey.m in Sources */,
 				26ECB3262487AD0900479487 /* Security+UIUCUtils.m in Sources */,

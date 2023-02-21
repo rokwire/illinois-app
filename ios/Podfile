@@ -34,6 +34,11 @@ target 'Runner' do
     pod 'GoogleMaps', '7.2.0'
     pod 'ZXingObjC', '3.6.4'
 
+    pod 'SeosMobileKeysSDK-Debug', :configuration => ['Debug'], :path => 'Libs/Origo/Debug/SeosMobileKeysSDK-Debug.podspec'
+    pod 'SeosMobileKeysSDK-Release', :configuration => ['Release'], :path => 'Libs/Origo/Release/SeosMobileKeysSDK-Release.podspec'
+    pod 'OrigoSDK-Debug', :configuration => ['Debug'], :path => 'Libs/Origo/Debug/OrigoSDK-Debug.podspec'
+    pod 'OrigoSDK-Release', :configuration => ['Release'], :path => 'Libs/Origo/Release/OrigoSDK-Release.podspec'
+
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
@@ -43,6 +48,11 @@ target 'Illinois' do
 
     pod 'GoogleMaps', '7.2.0'
     pod 'ZXingObjC', '3.6.4'
+
+    pod 'SeosMobileKeysSDK-Debug', :configuration => ['Debug'], :path => 'Libs/Origo/Debug/SeosMobileKeysSDK-Debug.podspec'
+    pod 'SeosMobileKeysSDK-Release', :configuration => ['Release'], :path => 'Libs/Origo/Release/SeosMobileKeysSDK-Release.podspec'
+    pod 'OrigoSDK-Debug', :configuration => ['Debug'], :path => 'Libs/Origo/Debug/OrigoSDK-Debug.podspec'
+    pod 'OrigoSDK-Release', :configuration => ['Release'], :path => 'Libs/Origo/Release/OrigoSDK-Release.podspec'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end

@@ -25,6 +25,7 @@
 #import "MapController.h"
 #import "MapDirectionsController.h"
 #import "MapLocationPickerController.h"
+#import "OrigoController.h"
 
 #import "NSArray+InaTypedValue.h"
 #import "NSDictionary+InaTypedValue.h"
@@ -273,6 +274,10 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	if (0 < googleMapsAPIKey.length) {
 		[GMSServices provideAPIKey:googleMapsAPIKey];
 	}
+
+	// Initialize Орiго SDK
+	[OrigoController.sharedInstance initializeWithAppId:@"HID-ILLINOIS -DEV"]; // TBD: [self.secretKeys uiucConfigStringForPathKey:@"origo.app_id"]
+	[OrigoController.sharedInstance startWithCompletion:nil];
 
 	result(@(YES));
 }

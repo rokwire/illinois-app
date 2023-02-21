@@ -58,6 +58,7 @@ mobilekeys-android-sdk-debug-?.?.?.aar
 mobilekeys-android-sdk-release-?.?.?.aar
 origo-sdk-debug-?.?.?.aar
 origo-sdk-release-?.?.?.aar
+/ios/Libs/Origo/
 
 # App Branding
 /app/assets/
