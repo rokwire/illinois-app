@@ -159,14 +159,14 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
   }
 
   void _onTapMTDStop(MTDStop? stop) {
-    Analytics().logSelect(target: "MTD Stop: ${stop?.name}" );
+    Analytics().logSelect(target: "Bus Stop: ${stop?.name}" );
     if (stop != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: stop)));
     }
   }
 
   void _onExpandMTDStop(MTDStop? stop) {
-    Analytics().logSelect(target: "MTD Stop: ${stop?.name}" );
+    Analytics().logSelect(target: "Bus Stop: ${stop?.name}" );
     if (mounted && (stop?.id != null)) {
       setState(() {
         SetUtils.toggle(_mtdExpanded, stop?.id);
