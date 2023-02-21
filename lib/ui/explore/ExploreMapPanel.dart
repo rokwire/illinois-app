@@ -66,7 +66,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   implements NotificationsListener {
 
   static const double _filterLayoutSortKey = 1.0;
-  static const ExploreItem _defaultExploreItem = ExploreItem.Events;
+  static const ExploreItem _defaultExploreItem = ExploreItem.Buildings;
 
   List<ExploreItem> _exploreItems = [];
   ExploreItem _selectedExploreItem = _defaultExploreItem;
