@@ -35,7 +35,7 @@ import edu.illinois.rokwire.BuildConfig;
 
 public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
-    private OrigoMobileKeysApi mobileKeysFactory;
+    private OrigoMobileKeysApi mobileKeysApi;
 
     public MobileAccessKeysApiFactory(Context context) {
         initFactory(context);
@@ -58,9 +58,9 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
                 .setNfcParameters(new OrigoNfcConfiguration.Builder().build())
                 .build();
 
-        mobileKeysFactory = OrigoMobileKeysApi.getInstance();
-        mobileKeysFactory.initialize(context, origoApiConfiguration, origoScanConfiguration, appId);
-        if (!mobileKeysFactory.isInitialized()) {
+        mobileKeysApi = OrigoMobileKeysApi.getInstance();
+        mobileKeysApi.initialize(context, origoApiConfiguration, origoScanConfiguration, appId);
+        if (!mobileKeysApi.isInitialized()) {
             throw new IllegalStateException();
         }
     }
@@ -69,12 +69,12 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
     @Override
     public OrigoMobileKeys getMobileKeys() {
-        return mobileKeysFactory.getMobileKeys();
+        return mobileKeysApi.getMobileKeys();
     }
 
     @Override
     public OrigoReaderConnectionController getReaderConnectionController() {
-        return mobileKeysFactory.getOrigiReaderConnectionController();
+        return mobileKeysApi.getOrigiReaderConnectionController();
     }
 
     @Override

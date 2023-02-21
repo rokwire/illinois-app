@@ -16,8 +16,11 @@
 
 package edu.illinois.rokwire.mobile_access;
 
+import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
+import android.app.Notification;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,6 +28,7 @@ import com.hid.origo.OrigoKeysApiFacade;
 import com.hid.origo.OrigoKeysApiFactory;
 import com.hid.origo.api.OrigoMobileKey;
 import com.hid.origo.api.OrigoMobileKeys;
+import com.hid.origo.api.OrigoMobileKeysApi;
 import com.hid.origo.api.OrigoMobileKeysCallback;
 import com.hid.origo.api.OrigoMobileKeysException;
 import com.hid.origo.api.OrigoMobileKeysProgressCallback;
@@ -39,19 +43,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import edu.illinois.rokwire.App;
+import io.flutter.plugin.common.PluginRegistry;
 
-public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
+public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegistry.RequestPermissionsResultListener {
 
     private static final String TAG = "MobileAccessKeysApiFacade";
 
+    private static final int REQUEST_LOCATION_PERMISSION_CODE = 10;
+
     private final OrigoMobileKeys mobileKeys;
     private final OrigoKeysApiFactory mobileKeysApiFactory;
-    private final Context context;
+    private final Activity activity;
 
-    public MobileAccessKeysApiFacade(Activity context) {
-        this.context = context;
-        App application = (App) context.getApplication();
+    public MobileAccessKeysApiFacade(Activity activity) {
+        this.activity = activity;
+        App application = (App) activity.getApplication();
         this.mobileKeysApiFactory = application.getMobileApiKeysFactory();
         this.mobileKeys = mobileKeysApiFactory.getMobileKeys();
     }
@@ -60,6 +69,16 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
 
     public void onApplicationStartup() {
         getMobileKeys().applicationStartup(mobileKeysStartupCallBack);
+    }
+
+    public void onActivityResume() {
+        if (canStartScanning()) {
+            startScanning();
+        }
+    }
+
+    public void onActivityPause() {
+        stopScanning();
     }
 
     public void setupEndpoint(String invitationCode) {
@@ -80,10 +99,10 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
             return null;
         }
         if (getMobileKeys() != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             try {
                 List<OrigoMobileKey> origoMobileKeys = getMobileKeys().listMobileKeys();
                 if ((origoMobileKeys != null) && !origoMobileKeys.isEmpty()) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     List<HashMap<String, Object>> keysJson = new ArrayList<>();
                     for (OrigoMobileKey key : origoMobileKeys) {
                         Calendar endCalendarDate = key.getEndDate();
@@ -178,14 +197,14 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionCompleted");
-            Toast.makeText(context, "Mobile Access: Register Endpoint - succeeded", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Mobile Access: Register Endpoint - succeeded", Toast.LENGTH_SHORT).show();
             onEndpointSetUpComplete();
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
-            Toast.makeText(context, "Mobile Access: Register Endpoint - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Mobile Access: Register Endpoint - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -223,15 +242,107 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade {
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysUnregisterEndpointCallBack: handleMobileKeysTransactionCompleted");
-            Toast.makeText(context, "Mobile Access: Unregister Endpoint - succeeded", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Mobile Access: Unregister Endpoint - succeeded", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysUnregisterEndpointCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
-            Toast.makeText(context, "Mobile Access: Unregister Endpoint - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Mobile Access: Unregister Endpoint - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    //endregion
+
+    //region Reader Scanning
+
+    private boolean canStartScanning() {
+        boolean hasKeys = false;
+        if (isEndpointSetUpComplete()) {
+            if (getMobileKeys() != null) {
+                try {
+                    List<OrigoMobileKey> keys = getMobileKeys().listMobileKeys();
+                    hasKeys = (keys != null) && !keys.isEmpty();
+                } catch (OrigoMobileKeysException e) {
+                    Log.e(TAG, "canStartScanning: listMobileKeys threw exception.");
+                    e.printStackTrace();
+                }
+            }
+        }
+        return hasKeys;
+    }
+
+    private void startScanning() {
+        if (hasLocationPermissions()) {
+            Log.d(TAG, "Starting BLE service and enabling HCE");
+            OrigoReaderConnectionController controller = OrigoMobileKeysApi.getInstance().getOrigiReaderConnectionController();
+            controller.enableHce();
+
+            Notification notification = MobileAccessUnlockNotification.create(activity);
+            controller.startForegroundScanning(notification);
+        } else {
+            requestLocationPermission();
+        }
+    }
+
+    private void stopScanning() {
+        OrigoReaderConnectionController controller = OrigoMobileKeysApi.getInstance().getOrigiReaderConnectionController();
+        controller.stopScanning();
+    }
+
+    //endregion
+
+    //region Permissions
+
+    /**
+     * Request location permission, location permission is required for BLE scanning when running Marshmallow or above
+     */
+    private void requestLocationPermission() {
+        if (!hasLocationPermissions()) {
+            ActivityCompat.requestPermissions(activity, getPermissions(), REQUEST_LOCATION_PERMISSION_CODE);
+        }
+    }
+
+    private boolean hasLocationPermissions() {
+        boolean permissionGranted = true;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            permissionGranted &= ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_ADVERTISE) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
+            return permissionGranted;
+        }
+
+        permissionGranted &= ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permissionGranted &= ContextCompat.checkSelfPermission(activity,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        }
+
+        return permissionGranted;
+    }
+
+    private String[] getPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.BLUETOOTH_CONNECT};
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+        } else {
+            return new String[]{Manifest.permission.ACCESS_COARSE_LOCATION};
+        }
+    }
+
+    @Override
+    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION_CODE) {
+            startScanning();
+            return true;
+        }
+        return false;
+    }
 
     //endregion
 }

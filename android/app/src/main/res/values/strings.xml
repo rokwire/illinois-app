@@ -60,4 +60,9 @@
 
     <!-- Navigation -->
     <string name="invalid_server_response">Invalid Server Response</string>
+
+    <!-- Mobile Access -->
+    <string name="mobile_access_notif_content_title">Mobile Access is running</string>
+    <string name="mobile_access_notif_big_content_title">Mobile Access is running</string>
+    <string name="mobile_access_notif_foreground_service_title">Running foreground scan service</string>
 </resources>

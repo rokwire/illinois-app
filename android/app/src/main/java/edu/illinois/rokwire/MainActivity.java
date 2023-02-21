@@ -90,6 +90,18 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mobileAccessKeysApiFacade.onActivityResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mobileAccessKeysApiFacade.onActivityPause();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
