@@ -11,6 +11,7 @@ class Task {
   String? name;
   int? importance;
   JobCategory? category;
+
   Task({
     this.name,
     this.importance,
@@ -33,7 +34,7 @@ class Task {
     return <String, dynamic>{
       'name': name,
       'importance': importance,
-      'category': category?.toMap(),
+      'category': category.toString(),
     };
   }
 
@@ -41,7 +42,12 @@ class Task {
     return Task(
       name: map['name'] != null ? map['name'] as String : null,
       importance: map['importance'] != null ? map['importance'] as int : null,
-      category: map['category'] != null ? JobCategory.fromMap(map['category'] as Map<String, dynamic>) : null,
+      category: map['category'] != null
+          ? JobCategory.values.firstWhere(
+              (jobCategory) => jobCategory == map['category'],
+              orElse: () => JobCategory.notAvailable,
+            )
+          : null,
     );
   }
 
