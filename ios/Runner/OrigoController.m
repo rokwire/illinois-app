@@ -26,6 +26,7 @@
 @interface OrigoController()<OrigoKeysManagerDelegate>
 @property (nonatomic, strong) OrigoKeysManager*    origoKeysManager;
 @property (nonatomic, strong) NSMutableSet* startCompletions;
+@property (nonatomic, assign) bool isStarted;
 @end
 
 ///////////////////////////////////////////
@@ -76,7 +77,15 @@
 	//NSError *error = NULL;
 	//if ([_origoKeysManager isEndpointSetup:&error] != TRUE)
 
-	if (_startCompletions != nil) {
+	if (_origoKeysManager == nil) {
+		if (completion != nil) {
+			completion([NSError errorWithDomain:@"edu.illinois.rokwire" code: 1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }]);
+		}
+	}
+	else if (_isStarted) {
+		completion(nil);
+	}
+	else if (_startCompletions != nil) {
 			if (completion != nil) {
 				[_startCompletions addObject:completion];
 			}
@@ -91,6 +100,8 @@
 }
 
 - (void)didStartupWithError:(NSError*)error {
+	_isStarted = (error == nil);
+
 	if (_startCompletions != nil) {
 		NSSet *startCompletions = _startCompletions;
 		_startCompletions = nil;
