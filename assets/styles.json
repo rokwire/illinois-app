@@ -140,6 +140,7 @@
     "widget.title.extra_large.extra_fat": { "font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.extra_large.semi_fat": { "font_family": "semi_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "fillColorPrimary"},
+    "widget.title.medium_large": {"font_family": "regular", "size": 22.0, "color": "fillColorPrimary"},
     "widget.title.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.title.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary"},
@@ -200,7 +201,8 @@
 
     "widget.info.medium": { "font_family": "regular", "size": 18.0, "color": "textSurface"},
     "widget.info.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textSurface"},
-    "widget.info.regular": { "font_family": "regular", "size": 16.0, "color": "textSurface"},
+    "widget.info.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textSurface"},
+    "widget.info.regular": { "font_family": "medium", "size": 16.0, "color": "textSurface"},
     "widget.info.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textSurface"},
     "widget.info.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textSurface"},
     "widget.info.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
@@ -223,6 +225,11 @@
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.description.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
     "widget.button.description.tiny": { "font_family": "regular", "size": 12.0, "color": "textSurface"},
+
+    "widget.button.light.title.medium": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
+    "widget.button.light.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
+    "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
+    "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
@@ -363,7 +370,7 @@
     "panel.wellness.ring.select_predefined.button.label.regular": {"font_family": "bold", "size": 18.0, "color": "black"},
     "panel.wellness.ring.select_predefined.button.description.regular": {"font_family": "regular", "size": 14.0, "color": "black"},
 
-    "panel.wellness.ring.home.detail.message": {"extends": "widget.info.regular"},
+    "panel.wellness.ring.home.detail.message": {"extends": "widget.info.regular.thin"},
     "panel.wellness.ring.home.detail.message.fat": {"extends": "widget.info.regular.fat"},
     "panel.wellness.ring.home.popup.heading": {"font_family": "bold", "size": 20.0, "color": "fillColorSecondary"},
     "panel.wellness.ring.home.button.create_ring.title.enabled": {"font_family": "bold", "size": 14.0, "color": "black"},
@@ -378,7 +385,7 @@
     "panel.wellness.todo.category.card.title.regular": {"extends": "widget.title.light.small.fat"},
     "panel.wellness.todo.category.empty.msg": {"extends": "widget.info.small"},
 
-    "panel.wellness.todo.item_detail.title": {"extends": "widget.info.regular"},
+    "panel.wellness.todo.item_detail.title": {"extends": "widget.info.regular.thin"},
     "panel.wellness.todo.item_detail.item": {"font_family": "regular", "size": 16.0, "color": "textSurfaceAccent"},
     "panel.wellness.todo.item_detail.empty": {"font_family": "bold", "size": 12.0, "color": "textSurfaceAccent"},
     "panel.wellness.todo.item_detail.work_date": {"font_family": "regular", "size": 11.0, "color": "black"},
@@ -434,14 +441,14 @@
     "panel.settings.login.title.large": {"extends": "widget.title.extra_huge.fat"},
 
     "panel.settings.privacy_center.title.medium.fat": {"extends": "widget.info.regular.extra_fat"},
-    "panel.settings.privacy_center.title.regular": {"extends": "widget.info.regular"},
+    "panel.settings.privacy_center.title.regular": {"extends": "widget.info.regular.thin"},
     "panel.settings.privacy_center.button.underline": {"font_family": "regular", "size": 16.0, "color": "textBackground", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.settings.privacy_center.message.tiny": {"extends": "widget.info.tiny"},
 
     "panel.settings.privacy_panel.update.message": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.settings.privacy_panel.update.message.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.settings.privacy_panel.privacy.label.medium": {"extends": "widget.info.medium.fat"},
-    "panel.settings.privacy_panel.privacy.label.regular": {"extends": "widget.info.regular"},
+    "panel.settings.privacy_panel.privacy.label.regular": {"extends": "widget.info.regular.thin"},
     "panel.settings.privacy_panel.privacy.description.large": {"extends": "widget.description.large.fat"},
     "panel.settings.privacy_panel.privacy.entry.title.enabled": {"extends": "widget.toggle_button.title.regular.fat.enabled"},
     "panel.settings.privacy_panel.privacy.entry.title.disabled": {"extends": "widget.toggle_button.title.regular.fat.disabled"},
@@ -503,7 +510,9 @@
     "panel.skills_self_evaluation.content.link.fat":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
 
     "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
-    "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"}
+    "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
+
+    "panel.appointment_detail.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "accentColor1"}
   },
   "image": {
     "campus-tools": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},

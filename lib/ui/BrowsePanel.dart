@@ -310,7 +310,7 @@ class _BrowseSection extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(bottom: 16), child:
-                  Text(_description, style: Styles().textStyles?.getTextStyle("widget.info.regular"))
+                  Text(_description, style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"))
                 )
               ),
               Semantics(

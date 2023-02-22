@@ -213,7 +213,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           Expanded(
               child: Text(_appointment!.title!,
-                  maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 22, color: Styles().colors!.fillColorPrimary))),
+                  maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.title.medium_large"))),
           Visibility(
               visible: starVisible,
               child: GestureDetector(
@@ -309,7 +309,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
               Padding(padding: EdgeInsets.only(right: 7), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
               Expanded(
                   child: Text(displayTime!,
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular")))
             ])));
   }
 
@@ -320,7 +320,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     return Padding(
         padding: EdgeInsets.only(left: 7),
         child: Text(Localization().getStringEx('panel.appointment.detail.cancelled.label', 'Cancelled'),
-            style: TextStyle(color: Styles().colors!.accentColor1, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)));
+            style: Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large")));
   }
 
   Widget? _buildLocationDetail() {
@@ -354,13 +354,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('location', excludeFromSemantics: true)),
                     Text(typeLabel,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            fontSize: 16,
-                            color: Styles().colors!.textBackground,
-                            decoration: TextDecoration.underline,
-                            decorationColor: Styles().colors!.fillColorSecondary,
-                            decorationThickness: 1))
+                        style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline"))
                   ]),
                   Container(height: 4),
                   Visibility(
@@ -370,13 +364,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                           child: Container(
                               padding: EdgeInsets.only(bottom: 2),
                               child: Text(StringUtils.ensureNotEmpty(locationTextValue),
-                                  style: TextStyle(
-                                      fontFamily: Styles().fontFamilies!.medium,
-                                      fontSize: 16,
-                                      color: Styles().colors!.textBackground,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Styles().colors!.fillColorSecondary,
-                                      decorationThickness: 1)))))
+                                  style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")))))
                 ])));
   }
 
@@ -402,7 +390,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                 Container(
                     padding: EdgeInsets.only(bottom: 2),
                     child: Text(typeLabel,
-                        style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                        style: Styles().textStyles?.getTextStyle("widget.item.regular")))
               ]),
               Visibility(
                   visible: StringUtils.isNotEmpty(meetingUrl),
@@ -430,8 +418,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                             padding: EdgeInsets.only(bottom: 2),
                             child: Text(
                                 Localization().getStringEx('panel.appointment.detail.meeting.id.label', 'Meeting ID:') + ' $meetingId',
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))))
+                                style: Styles().textStyles?.getTextStyle("widget.item.regular"))))
                   ])),
               Visibility(
                   visible: StringUtils.isNotEmpty(meetingPasscode),
@@ -444,8 +431,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                             child: Text(
                                 Localization().getStringEx('panel.appointment.detail.meeting.passcode.label', 'Passcode:') +
                                     ' $meetingPasscode',
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))))
+                                style: Styles().textStyles?.getTextStyle("widget.item.regular"))))
                   ]))
             ]));
   }
@@ -461,7 +447,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
           Padding(padding: EdgeInsets.only(right: 12), child: Styles().images?.getImage('person', excludeFromSemantics: true)),
           Expanded(
               child: Text(hostDisplayName!,
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                  style: Styles().textStyles?.getTextStyle("widget.item.regular")))
         ]));
   }
 
@@ -475,7 +461,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
           Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('info', excludeFromSemantics: true)),
           Expanded(
               child: Text(Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                  style: Styles().textStyles?.getTextStyle("widget.item.regular")))
         ]));
   }
 
@@ -490,7 +476,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
           Padding(padding: EdgeInsets.only(right: 11), child: Styles().images?.getImage('phone', excludeFromSemantics: true)),
           Expanded(
               child: Text(phone!,
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                  style: Styles().textStyles?.getTextStyle("widget.item.regular")))
         ]));
   }
 
@@ -507,7 +493,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
               Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('external-link', excludeFromSemantics: true)),
               Expanded(
                   child: Text(url!,
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                      style:Styles().textStyles?.getTextStyle("widget.item.regular")))
             ])));
   }
 
@@ -524,7 +510,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         HtmlWidget(
             StringUtils.ensureNotEmpty(instructionsHtml),
             onTapUrl : (url) {_launchUrl(url); return true;},
-            textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+            textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
         )
     );
@@ -546,7 +532,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         child: HtmlWidget(
             StringUtils.ensureNotEmpty(descriptionHtml),
             onTapUrl : (url) {_launchUrl(url); return true;},
-            textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+            textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
         )
     );
