@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/model/occupation/skill.dart';
 import 'package:illinois/service/skills/OccupationsService.dart';
-import 'package:illinois/ui/academics/DetailsOccupation.dart';
+import 'package:illinois/ui/academics/OccupationDetails.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -184,7 +184,7 @@ class OccupationListTile extends StatelessWidget {
         Navigator.push(
             context,
             CupertinoPageRoute(
-                builder: (context) => DetailsOccupation(
+                builder: (context) => OccupationDetails(
                       occupation: occupation,
                       // survey: Config().bessiSurveyID,
                       // onComplete: _gotoResults,

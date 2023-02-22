@@ -3,8 +3,8 @@ import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/model/occupation/skill.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
-class DetailsOccupation extends StatelessWidget {
-  DetailsOccupation({Key? key, required this.occupation}) : super(key: key);
+class OccupationDetails extends StatelessWidget {
+  OccupationDetails({Key? key, required this.occupation}) : super(key: key);
 
   final Occupation occupation;
 
