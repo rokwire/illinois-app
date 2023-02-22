@@ -1,14 +1,15 @@
 import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/model/occupation/skill.dart';
+import 'package:illinois/service/skills/OccupationsService.dart';
 import 'package:illinois/ui/academics/DetailsOccupation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class OccupationList extends StatelessWidget {
   OccupationList({Key? key}) : super(key: key);
@@ -37,6 +38,24 @@ class OccupationList extends StatelessWidget {
           jobZone: 1,
         ),
       ],
+      technicalSkills: [
+        Skill(
+          name: 'Communication',
+          description: 'How well do you talk to others?',
+          matchPercentage: 98.32,
+          importance: 5,
+          level: 2,
+          jobZone: 1,
+        ),
+        Skill(
+          name: 'Public Speaking',
+          description: 'How well do you talk to others?',
+          matchPercentage: 12.42,
+          importance: 1,
+          level: 2,
+          jobZone: 1,
+        ),
+      ],
     ),
     Occupation(
       name: 'Architect',
@@ -44,6 +63,24 @@ class OccupationList extends StatelessWidget {
       matchPercentage: 20.0,
       onetLink: '',
       skills: [
+        Skill(
+          name: 'Communication',
+          description: 'How well do you talk to others?',
+          matchPercentage: 98.32,
+          importance: 5,
+          level: 2,
+          jobZone: 1,
+        ),
+        Skill(
+          name: 'Public Speaking',
+          description: 'How well do you talk to others?',
+          matchPercentage: 12.42,
+          importance: 1,
+          level: 2,
+          jobZone: 1,
+        ),
+      ],
+      technicalSkills: [
         Skill(
           name: 'Communication',
           description: 'How well do you talk to others?',
@@ -86,12 +123,12 @@ class OccupationList extends StatelessWidget {
           Padding(
               padding: EdgeInsets.only(top: 64, left: 64, right: 80),
               child: RoundedButton(
-                  label: Localization()
-                      .getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Learn More'),
+                  label:
+                      Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Learn More'),
                   textColor: Styles().colors?.fillColorPrimaryVariant,
                   backgroundColor: Styles().colors?.surface,
-                  onTap: () {
-                  })),],
+                  onTap: () {})),
+        ],
       ),
     );
   }
@@ -112,12 +149,20 @@ class OccupationList extends StatelessWidget {
   }
 
   Widget _buildOccupationListView() {
-    return ListView.builder(
-      itemBuilder: (context, index) => OccupationListTile(
-        occupation: occupations[index],
-      ),
-      itemCount: occupations.length,
-    );
+    return FutureBuilder(
+        future: OccupationsService().getAllOccupations(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Center(child: CircularProgressIndicator());
+          }
+          List<Occupation> occupations = (snapshot.data as List).cast<Occupation>();
+          return ListView.builder(
+            itemBuilder: (context, index) => OccupationListTile(
+              occupation: occupations[index],
+            ),
+            itemCount: occupations.length,
+          );
+        });
   }
 }
 
@@ -140,12 +185,12 @@ class OccupationListTile extends StatelessWidget {
             context,
             CupertinoPageRoute(
                 builder: (context) => DetailsOccupation(
-                  occupation: occupation,
-                  // survey: Config().bessiSurveyID,
-                  // onComplete: _gotoResults,
-                  // offlineWidget: _buildOfflineWidget(),
-                  // tabBar: uiuc.TabBar(),
-                )));
+                      occupation: occupation,
+                      // survey: Config().bessiSurveyID,
+                      // onComplete: _gotoResults,
+                      // offlineWidget: _buildOfflineWidget(),
+                      // tabBar: uiuc.TabBar(),
+                    )));
       },
     );
   }
