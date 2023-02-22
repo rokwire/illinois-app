@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeContentWidget.dart';
@@ -36,7 +35,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling }
 
@@ -58,6 +56,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   late WellnessContent _selectedContent;
   bool _contentValuesVisible = false;
 
+  UniqueKey _podcastKey = UniqueKey();
+  UniqueKey _strugglingKey = UniqueKey();
   ScrollController _contentScrollController = ScrollController();
 
   @override
@@ -173,15 +173,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
 
   void _onTapContentItem(WellnessContent contentItem) {
     Analytics().logSelect(target: _getContentLabel(contentItem));
-    if (contentItem == WellnessContent.podcast) {
-      _loadWellcomeResource('podcast');
-    }
-    else if (contentItem == WellnessContent.struggling) {
-      _loadWellcomeResource('where_to_start');
-    }
-    else {
-      _selectedContent = _lastSelectedContent = contentItem;
-    }
+    _selectedContent = _lastSelectedContent = contentItem;
     _changeSettingsContentValuesVisibility();
   }
 
@@ -242,14 +234,18 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessAppointmentsHomeContentWidget();
       case WellnessContent.healthScreener:
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
+      case WellnessContent.podcast:
+        return GuideDetailWidget(key: _podcastKey, guideEntryId: _loadWellcomeResourceGuideId('podcast'), headingColor: Styles().colors?.background);
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
+      case WellnessContent.struggling:
+        return GuideDetailWidget(key: _strugglingKey, guideEntryId: _loadWellcomeResourceGuideId('where_to_start'), headingColor: Styles().colors?.background);
       default:
         return Container();
     }
   }
 
-  void _loadWellcomeResource(String resourceId) {
+  String? _loadWellcomeResourceGuideId(String resourceId) {
     Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.resources']) ;
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     if (commands != null) {
@@ -258,33 +254,17 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         if (command != null) {
           String? id = JsonUtils.stringValue(command['id']);
           if (id == resourceId) {
-            _launchUrl(JsonUtils.stringValue(command['url']));
-            break;
+            String? url = JsonUtils.stringValue(command['url']);
+            Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+            return Guide().detailIdFromUri(uri);
           }
         }
       }
     }
-  }
-
-  void _launchUrl(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else if (UrlUtils.launchInternal(url)){
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      }
-      else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
-      }
-    }
+    return null;
   }
 
   // Utilities
-
   static String _getContentLabel(WellnessContent section, { String? language }) {
     switch (section) {
       case WellnessContent.dailyTips:
