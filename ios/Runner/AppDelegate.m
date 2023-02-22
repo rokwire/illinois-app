@@ -276,8 +276,11 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 
 	// Initialize Орiго SDK
-	[OrigoController.sharedInstance initializeWithAppId:@"HID-ILLINOIS -DEV"]; // TBD: [self.secretKeys uiucConfigStringForPathKey:@"origo.app_id"]
-	[OrigoController.sharedInstance startWithCompletion:nil];
+	NSString *origoAppId = [self.secretKeys uiucConfigStringForPathKey:@"origo.app_id"];
+	if (0 < origoAppId.length) {
+		[OrigoController.sharedInstance initializeWithAppId:origoAppId];
+		[OrigoController.sharedInstance startWithCompletion:nil];
+	}
 
 	result(@(YES));
 }
