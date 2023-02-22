@@ -20,13 +20,23 @@
 #import "OrigoController.h"
 
 #import "NSDictionary+InaTypedValue.h"
+#import "NSDate+InaUtils.h"
 
 #import <OrigoSDK/OrigoSDK.h>
 
 @interface OrigoController()<OrigoKeysManagerDelegate>
 @property (nonatomic, strong) OrigoKeysManager*    origoKeysManager;
+
 @property (nonatomic, strong) NSMutableSet* startCompletions;
 @property (nonatomic, assign) bool isStarted;
+
+@property (nonatomic, strong) void (^registerEndpointCompletion)(NSError* error);
+@property (nonatomic, strong) void (^unregisterEndpointCompletion)(NSError* error);
+
+@end
+
+@interface OrigoKeysKey(UIUC)
+@property (nonatomic, readonly) NSDictionary* uiucJson;
 @end
 
 ///////////////////////////////////////////
@@ -86,9 +96,9 @@
 		completion(nil);
 	}
 	else if (_startCompletions != nil) {
-			if (completion != nil) {
-				[_startCompletions addObject:completion];
-			}
+		if (completion != nil) {
+			[_startCompletions addObject:completion];
+		}
 	}
 	else {
 		_startCompletions = [[NSMutableSet alloc] init];
@@ -111,6 +121,82 @@
 	}
 }
 
+- (NSArray*)mobileKeys {
+	NSMutableArray* result = nil;
+	if ([_origoKeysManager isEndpointSetup: NULL]) {
+		NSArray<OrigoKeysKey*>* oregoKeys = [_origoKeysManager listMobileKeys: NULL];
+		if (oregoKeys != nil) {
+			result = [[NSMutableArray alloc] init];
+			for (OrigoKeysKey* oregoKey in oregoKeys) {
+				[result addObject:oregoKey.uiucJson];
+			}
+		}
+	}
+	return result;
+}
+
+- (bool)isEndpointRegistered {
+	return (_origoKeysManager != nil) && _isStarted && [_origoKeysManager isEndpointSetup:NULL];
+}
+
+- (void)registerEndpointWithInvitationCode:(NSString*)invitationCode completion:(void (^)(NSError* error))completion {
+	NSError *errorResult = nil;
+	if ((_origoKeysManager == nil) || !_isStarted) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
+	}
+	else if ([_origoKeysManager isEndpointSetup:NULL]) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:2 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint already setup", nil) }];
+	}
+	else if (_registerEndpointCompletion != nil) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:3 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently setup", nil) }];
+	}
+	else {
+		_registerEndpointCompletion = completion;
+		[_origoKeysManager setupEndpoint:invitationCode];
+	}
+
+	if ((errorResult != nil) && (completion != nil)) {
+		completion(errorResult);
+	}
+}
+
+- (void)didRegisterEndpointWithError:(NSError*)error {
+	if (_registerEndpointCompletion != nil) {
+		void (^ completion)(NSError* error) = _registerEndpointCompletion;
+		_registerEndpointCompletion = nil;
+		completion(error);
+	}
+}
+
+- (void)unregisterEndpointWithCompletion:(void (^)(NSError* error))completion {
+	NSError *errorResult = nil;
+	if ((_origoKeysManager == nil) || !_isStarted) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
+	}
+	else if (![_origoKeysManager isEndpointSetup:NULL]) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:4 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint not setup", nil) }];
+	}
+	else if (_unregisterEndpointCompletion != nil) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:5 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently unregister", nil) }];
+	}
+	else {
+		_unregisterEndpointCompletion = completion;
+		[_origoKeysManager unregisterEndpoint];
+	}
+
+	if ((errorResult != nil) && (completion != nil)) {
+		completion(errorResult);
+	}
+}
+
+- (void)didUnregisterEndpointWithError:(NSError*)error {
+	if (_unregisterEndpointCompletion != nil) {
+		void (^ completion)(NSError* error) = _unregisterEndpointCompletion;
+		_unregisterEndpointCompletion = nil;
+		completion(error);
+	}
+}
+
 #pragma mark OrigoKeysManagerDelegate
 
 - (void)origoKeysDidStartup {
@@ -121,12 +207,48 @@
 	[self didStartupWithError:error];
 }
 
-- (void)origoKeysDidSetupEndpoint {}
-- (void)origoKeysDidFailToSetupEndpoint:(NSError *)error {}
+- (void)origoKeysDidSetupEndpoint {
+	[self didRegisterEndpointWithError:nil];
+}
+
+- (void)origoKeysDidFailToSetupEndpoint:(NSError *)error {
+	[self didRegisterEndpointWithError:error];
+}
 
 - (void)origoKeysDidUpdateEndpoint {}
 - (void)origoKeysDidUpdateEndpointWithSummary:(OrigoKeysEndpointUpdateSummary *)endpointUpdateSummary {}
 - (void)origoKeysDidFailToUpdateEndpoint:(NSError *)error {}
-- (void)origoKeysDidTerminateEndpoint {}
+
+- (void)origoKeysDidTerminateEndpoint {
+	[self didUnregisterEndpointWithError:nil];
+}
+
+@end
+
+///////////////////////////////////////////
+// OrigoKeysKey+UIUC
+
+@implementation OrigoKeysKey(UIUC)
+
+- (NSDictionary*)uiucJson {
+	return @{
+		@"type": self.keyType ?: [NSNull null],
+		@"card_number": self.cardNumber ?: [NSNull null],
+		@"active": [NSNumber numberWithBool:self.active],
+		@"key_identifier": self.keyId ?: [NSNull null],
+		@"unique_identifier": self.uniqueIdentifier ?: [NSNull null],
+		@"external_id": self.externalId ?: [NSNull null],
+
+		@"name": self.name ?: [NSNull null],
+		@"suffix": self.suffix ?: [NSNull null],
+		@"access_token": self.accessToken ?: [NSNull null],
+
+		@"label": self.label ?: [NSNull null],
+		@"issuer": self.issuer ?: [NSNull null],
+		
+		@"begin_date": [self.beginDate inaStringWithFormat:@"yyyy-MM-dd"] ?: [NSNull null],
+		@"expiration_date": [self.endDate inaStringWithFormat:@"yyyy-MM-dd"] ?: [NSNull null],
+	};
+}
 
 @end

@@ -249,18 +249,18 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"deepLinkScheme"]) {
 		[self handleDeepLinkSchemeWithParameters:parameters result:result];
 	}
-    else if ([call.method isEqualToString:@"mobileAccessKeys"]) {
-        [self handleMobileAccessKeysWithParameters:parameters result:result];
-    }
-    else if ([call.method isEqualToString:@"mobileAccessKeysRegisterEndpoint"]) {
-        [self handleMobileAccessKeysRegisterEndpointWithParameters:parameters result:result];
-    }
-    else if ([call.method isEqualToString:@"mobileAccessKeysUnregisterEndpoint"]) {
-        [self handleMobileAccessKeysUnregisterEndpointWithParameters:parameters result:result];
-    }
-    else if ([call.method isEqualToString:@"mobileAccessKeysIsEndpointRegistered"]) {
-        [self handleMobileAccessKeysIsEndpointRegisteredWithParameters:parameters result:result];
-    }
+	else if ([call.method isEqualToString:@"mobileAccessKeys"]) {
+		[self handleMobileAccessKeysWithParameters:parameters result:result];
+	}
+	else if ([call.method isEqualToString:@"mobileAccessKeysRegisterEndpoint"]) {
+		[self handleMobileAccessKeysRegisterEndpointWithArgument:call.arguments result:result];
+	}
+	else if ([call.method isEqualToString:@"mobileAccessKeysUnregisterEndpoint"]) {
+		[self handleMobileAccessKeysUnregisterEndpointWithParameters:parameters result:result];
+	}
+	else if ([call.method isEqualToString:@"mobileAccessKeysIsEndpointRegistered"]) {
+		[self handleMobileAccessKeysIsEndpointRegisteredWithParameters:parameters result:result];
+	}
 	else if ([call.method isEqualToString:@"test"]) {
 		[self handleTestWithParameters:parameters result:result];
 	}
@@ -470,23 +470,24 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 #pragma mark Mobile Access Id
 
 - (void)handleMobileAccessKeysWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    //TBD: implement mobile access keys
-    result(nil);
+  result(OrigoController.sharedInstance.mobileKeys);
 }
 
-- (void)handleMobileAccessKeysRegisterEndpointWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    //TBD: implement mobile access keys register endpoint
-    result(nil);
+- (void)handleMobileAccessKeysRegisterEndpointWithArgument:(id)argument result:(FlutterResult)result {
+	NSString* invitationCode = [argument isKindOfClass:[NSString class]] ? argument : nil;
+	[OrigoController.sharedInstance registerEndpointWithInvitationCode:invitationCode completion:^(NSError *error) {
+		result([NSNumber numberWithBool:(error == nil)]);
+	}];
 }
 
 - (void)handleMobileAccessKeysUnregisterEndpointWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    //TBD: implement mobile access keys unregister endpoint
-    result(nil);
+	[OrigoController.sharedInstance unregisterEndpointWithCompletion:^(NSError *error) {
+		result([NSNumber numberWithBool:(error == nil)]);
+	}];
 }
 
 - (void)handleMobileAccessKeysIsEndpointRegisteredWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    //TBD: implement mobile access keys is endpoint registered
-    result(nil);
+	result([NSNumber numberWithBool:OrigoController.sharedInstance.isEndpointRegistered]);
 }
 
 #pragma mark Orientations

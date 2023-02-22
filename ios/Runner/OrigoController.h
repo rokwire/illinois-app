@@ -27,5 +27,10 @@
 
 - (void)start;
 - (void)startWithCompletion:(void (^)(NSError* error))completion;
+
+- (NSArray*)mobileKeys;
+- (void)registerEndpointWithInvitationCode:(NSString*)invitationCode completion:(void (^)(NSError* error))completion;
+- (void)unregisterEndpointWithCompletion:(void (^)(NSError* error))completion;
+- (bool)isEndpointRegistered;
 @end
 
