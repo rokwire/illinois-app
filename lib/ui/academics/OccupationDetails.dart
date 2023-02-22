@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/model/occupation/skill.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class OccupationDetails extends StatelessWidget {
   OccupationDetails({Key? key, required this.occupation}) : super(key: key);
@@ -12,7 +13,7 @@ class OccupationDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: '',
+        title: 'Occupation Details',
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -37,10 +38,14 @@ class OccupationDetails extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
                 child: LinearProgressIndicator(
-                  backgroundColor: Color.lerp(Colors.red[100], Colors.green[100], occupation.matchPercentage! / 100.0,),
-                  color: Color.lerp(Colors.red, Colors.green, occupation.matchPercentage! / 100.0,),
+                  backgroundColor: LinearProgressColorUtils.linearProgressIndicatorBackgroundColor(
+                    occupation.matchPercentage! / 100.0,
+                  ),
+                  color: LinearProgressColorUtils.linearProgressIndicatorColor(
+                    occupation.matchPercentage! / 100.0,
+                  ),
                   minHeight: 20,
-                  value: 75 / 100,
+                  value: occupation.matchPercentage! / 100,
                 ),
               ),
             ),
@@ -65,11 +70,12 @@ class OccupationDetails extends StatelessWidget {
                       ),
                       children: occupation.skills!.map((e) => SkillListTile(skill: e)).toList()),
                   ExpansionTile(
-                      title: Text(
-                        "Technical Skills",
-                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                      ),
-                      children: occupation.technicalSkills!.map((e) => SkillListTile(skill: e)).toList()),
+                    title: Text(
+                      "Technical Skills",
+                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
+                    children: occupation.technicalSkills!.map((e) => SkillListTile(skill: e)).toList(),
+                  ),
                   ExpansionTile(
                     title: Text(
                       "Other Sections",
@@ -115,8 +121,12 @@ class SkillListTile extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(20)),
           child: LinearProgressIndicator(
-            backgroundColor: Color.lerp(Colors.red[100], Colors.green[100], skill.matchPercentage! / 100.0,),
-            color: Color.lerp(Colors.red, Colors.green, skill.matchPercentage! / 100.0,),
+            backgroundColor: LinearProgressColorUtils.linearProgressIndicatorBackgroundColor(
+              skill.matchPercentage! / 100.0,
+            ),
+            color: LinearProgressColorUtils.linearProgressIndicatorColor(
+              skill.matchPercentage! / 100.0,
+            ),
             // valueColor: AlwaysStoppedAnimation(,),
             minHeight: 10,
             value: skill.matchPercentage! / 100,

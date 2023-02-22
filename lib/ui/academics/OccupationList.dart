@@ -7,6 +7,7 @@ import 'package:illinois/model/occupation/skill.dart';
 import 'package:illinois/service/skills/OccupationsService.dart';
 import 'package:illinois/ui/academics/OccupationDetails.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -210,7 +211,12 @@ class OccupationMatchCircle extends StatelessWidget {
           transform: Matrix4.rotationY(math.pi),
           child: CircularProgressIndicator(
             strokeWidth: 8.0,
-            color: Color.lerp(Colors.red, Colors.green, matchPercentage / 100.0),
+            backgroundColor: LinearProgressColorUtils.linearProgressIndicatorBackgroundColor(
+              matchPercentage / 100.0,
+            ),
+            color: LinearProgressColorUtils.linearProgressIndicatorColor(
+              matchPercentage / 100.0,
+            ),
             value: matchPercentage / 100,
           ),
         ),
