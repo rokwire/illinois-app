@@ -11,13 +11,15 @@ class Occupation {
   double? matchPercentage;
   String? onetLink;
   List<Skill>? skills;
+  List<Skill>? technicalSkills;
 
   Occupation({
-    this.name,
-    this.description,
-    this.matchPercentage,
-    this.onetLink,
-    this.skills,
+    required this.name,
+    required this.description,
+    required this.matchPercentage,
+    required this.onetLink,
+    required this.skills,
+    required this.technicalSkills,
   });
 
   Occupation copyWith({
@@ -26,6 +28,7 @@ class Occupation {
     double? matchPercentage,
     String? onetLink,
     List<Skill>? skills,
+    List<Skill>? technicalSkills,
   }) {
     return Occupation(
       name: name ?? this.name,
@@ -33,6 +36,7 @@ class Occupation {
       matchPercentage: matchPercentage ?? this.matchPercentage,
       onetLink: onetLink ?? this.onetLink,
       skills: skills ?? this.skills,
+      technicalSkills: technicalSkills ?? this.technicalSkills,
     );
   }
 
@@ -42,7 +46,8 @@ class Occupation {
       'description': description,
       'matchPercentage': matchPercentage,
       'onetLink': onetLink,
-      'skills': skills?.map((x) => x?.toMap()).toList(),
+      'skills': skills?.map((x) => x.toJson()).toList() ?? [],
+      'technicalSkills': technicalSkills?.map((x) => x.toJson()).toList() ?? [],
     };
   }
 
@@ -52,13 +57,8 @@ class Occupation {
       description: map['description'] != null ? map['description'] as String : null,
       matchPercentage: map['matchPercentage'] != null ? map['matchPercentage'] as double : null,
       onetLink: map['onetLink'] != null ? map['onetLink'] as String : null,
-      skills: map['skills'] != null
-          ? List<Skill>.from(
-              (map['skills'] as List<int>).map<Skill?>(
-                (x) => Skill.fromMap(x as Map<String, dynamic>),
-              ),
-            )
-          : null,
+      skills: map['skills'] != null ? List<Skill>.from((map['skills'] as List<int>).map<Skill?>((x) => Skill.fromMap(x as Map<String,dynamic>),),) : null,
+      technicalSkills: map['technicalSkills'] != null ? List<Skill>.from((map['technicalSkills'] as List<int>).map<Skill?>((x) => Skill.fromMap(x as Map<String,dynamic>),),) : null,
     );
   }
 
@@ -68,22 +68,29 @@ class Occupation {
 
   @override
   String toString() {
-    return 'Occupation(name: $name, description: $description, matchPercentage: $matchPercentage, onetLink: $onetLink, skills: $skills)';
+    return 'Occupation(name: $name, description: $description, matchPercentage: $matchPercentage, onetLink: $onetLink, skills: $skills, technicalSkills: $technicalSkills)';
   }
 
   @override
   bool operator ==(covariant Occupation other) {
     if (identical(this, other)) return true;
-
-    return other.name == name &&
-        other.description == description &&
-        other.matchPercentage == matchPercentage &&
-        other.onetLink == onetLink &&
-        listEquals(other.skills, skills);
+  
+    return 
+      other.name == name &&
+      other.description == description &&
+      other.matchPercentage == matchPercentage &&
+      other.onetLink == onetLink &&
+      listEquals(other.skills, skills) &&
+      listEquals(other.technicalSkills, technicalSkills);
   }
 
   @override
   int get hashCode {
-    return name.hashCode ^ description.hashCode ^ matchPercentage.hashCode ^ onetLink.hashCode ^ skills.hashCode;
+    return name.hashCode ^
+      description.hashCode ^
+      matchPercentage.hashCode ^
+      onetLink.hashCode ^
+      skills.hashCode ^
+      technicalSkills.hashCode;
   }
 }
