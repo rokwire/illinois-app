@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/model/occupation/skill.dart';
@@ -17,100 +16,85 @@ class DetailsOccupation extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
-            children: [
-              SizedBox(height: 12,),
-              Text(occupation.name!, textAlign: TextAlign.center, style: TextStyle(fontSize: 25),),
-              SizedBox(height: 12,),
-              Text("Match Percentage: ${occupation.matchPercentage!.toInt()}%"),
-              SizedBox(height: 12,),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  child: LinearProgressIndicator(
-                    backgroundColor: Color(0xffcde8b5),
-                    valueColor: AlwaysStoppedAnimation(Colors.green),
-                    minHeight: 20,
-                    value: 75 / 100,
-                  ),
+          children: [
+            SizedBox(
+              height: 12,
+            ),
+            Text(
+              occupation.name!,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 25),
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Text("Match Percentage: ${occupation.matchPercentage!.toInt()}%"),
+            SizedBox(
+              height: 12,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                child: LinearProgressIndicator(
+                  backgroundColor: Color.lerp(Colors.red[100], Colors.green[100], occupation.matchPercentage! / 100.0,),
+                  color: Color.lerp(Colors.red, Colors.green, occupation.matchPercentage! / 100.0,),
+                  minHeight: 20,
+                  value: 75 / 100,
                 ),
               ),
-              SizedBox(height: 12,),
-              Text(occupation.description!, textAlign: TextAlign.center, style: TextStyle(fontFamily: "regular", fontSize: 16, color: Colors.black)),
-              SizedBox(height: 12,),
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: <Widget>[
-              SizedBox(height:20.0),
-              ExpansionTile(
-                title: Text(
-                  "Soft Skills",
-                  style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-                children: occupation.skills!.map((e) => SkillListTile(skill: e)).toList()
-              ),
-              ExpansionTile(
-                title: Text(
-                  "Technical Skills",
-                  style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Text(occupation.description!,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontFamily: "regular", fontSize: 16, color: Colors.black)),
+            SizedBox(
+              height: 12,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
                 children: <Widget>[
-                  ListTile(
-                    title: Text('Python'),
+                  SizedBox(height: 20.0),
+                  ExpansionTile(
+                      title: Text(
+                        "Soft Skills",
+                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                      ),
+                      children: occupation.skills!.map((e) => SkillListTile(skill: e)).toList()),
+                  ExpansionTile(
+                      title: Text(
+                        "Technical Skills",
+                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                      ),
+                      children: occupation.technicalSkills!.map((e) => SkillListTile(skill: e)).toList()),
+                  ExpansionTile(
+                    title: Text(
+                      "Other Sections",
+                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
+                    children: <Widget>[
+                      ListTile(
+                        title: Text('Learn More'),
+                      ),
+                      ListTile(
+                        title: Text('?'),
+                      ),
+                      ListTile(
+                        title: Text('?'),
+                      )
+                    ],
                   ),
-                  ListTile(
-                    title: Text('Dart'),
-                  ),
-                  ListTile(
-                    title: Text('C++'),
-                  )
                 ],
               ),
-
-              ExpansionTile(
-                title: Text(
-                  "Other Sections",
-                  style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-                children: <Widget>[
-                  ListTile(
-                    title: Text('Learn More'),
-                  ),
-                  ListTile(
-                    title: Text('?'),
-                  ),
-                  ListTile(
-                    title: Text('?'),
-                  )
-                ],
-              ),
-                ],
-              ),
-          ),
-
-    ]),
+            ),
+          ],
+        ),
       ),
     );
   }
-  // Widget _buildSkillListView() {
-  //   return ListView.builder(
-  //     itemBuilder: (context, index) => SkillListTile(
-  //       skill: skills[index],
-  //     ),
-  //     itemCount: skills.length,
-  //   );
-  // }
 }
 
 class SkillListTile extends StatelessWidget {
@@ -131,8 +115,9 @@ class SkillListTile extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(20)),
           child: LinearProgressIndicator(
-            backgroundColor: Color(0xffcde8b5),
-            valueColor: AlwaysStoppedAnimation(Colors.green),
+            backgroundColor: Color.lerp(Colors.red[100], Colors.green[100], skill.matchPercentage! / 100.0,),
+            color: Color.lerp(Colors.red, Colors.green, skill.matchPercentage! / 100.0,),
+            // valueColor: AlwaysStoppedAnimation(,),
             minHeight: 10,
             value: skill.matchPercentage! / 100,
           ),
@@ -141,4 +126,3 @@ class SkillListTile extends StatelessWidget {
     );
   }
 }
-
