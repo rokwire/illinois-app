@@ -19,7 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeContentWidget.dart';
@@ -58,6 +60,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   late WellnessContent _selectedContent;
   bool _contentValuesVisible = false;
 
+  UniqueKey _podcastKey = UniqueKey();
+  UniqueKey _strugglingKey = UniqueKey();
   ScrollController _contentScrollController = ScrollController();
 
   @override
@@ -173,11 +177,15 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
 
   void _onTapContentItem(WellnessContent contentItem) {
     Analytics().logSelect(target: _getContentLabel(contentItem));
+    String? launchUrl;
     if (contentItem == WellnessContent.podcast) {
-      _loadWellcomeResource('podcast');
+      launchUrl = _loadWellcomeResourceUrl('podcast');
     }
     else if (contentItem == WellnessContent.struggling) {
-      _loadWellcomeResource('where_to_start');
+      launchUrl = _loadWellcomeResourceUrl('where_to_start');
+    }
+    if ((launchUrl != null) && (Guide().detailIdFromUrl(launchUrl) == null)) {
+      _launchUrl(launchUrl);
     }
     else {
       _selectedContent = _lastSelectedContent = contentItem;
@@ -242,14 +250,20 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessAppointmentsHomeContentWidget();
       case WellnessContent.healthScreener:
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
+      case WellnessContent.podcast:
+        String? guideId = _loadWellcomeResourceGuideId('podcast');
+        return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
+      case WellnessContent.struggling:
+        String? guideId = _loadWellcomeResourceGuideId('where_to_start');
+        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
       default:
         return Container();
     }
   }
 
-  void _loadWellcomeResource(String resourceId) {
+  String? _loadWellcomeResourceUrl(String resourceId) {
     Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.resources']) ;
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     if (commands != null) {
@@ -258,13 +272,16 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         if (command != null) {
           String? id = JsonUtils.stringValue(command['id']);
           if (id == resourceId) {
-            _launchUrl(JsonUtils.stringValue(command['url']));
-            break;
+            return JsonUtils.stringValue(command['url']);
           }
         }
       }
     }
+    return null;
   }
+
+  String? _loadWellcomeResourceGuideId(String resourceId) =>
+    Guide().detailIdFromUrl(_loadWellcomeResourceUrl(resourceId));
 
   void _launchUrl(String? url) {
     if (StringUtils.isNotEmpty(url)) {
