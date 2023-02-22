@@ -162,6 +162,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                         ])),
                         Padding(
                             padding: EdgeInsets.only(left: 16),
+                            // ignore: dead_code
                             child: Styles().images?.getImage(twistAndGoToggled ? 'toggle-on' : 'toggle-off'))
                       ]))))
         ]));
@@ -229,6 +230,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                         ])),
                         Padding(
                             padding: EdgeInsets.only(left: 16),
+                            // ignore: dead_code
                             child: Styles().images?.getImage(notificationDrawerSelected ? 'toggle-on' : 'toggle-off'))
                       ]))))
         ]));
