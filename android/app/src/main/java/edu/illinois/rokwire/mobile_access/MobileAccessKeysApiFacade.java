@@ -34,7 +34,9 @@ import com.hid.origo.api.OrigoMobileKeysException;
 import com.hid.origo.api.OrigoMobileKeysProgressCallback;
 import com.hid.origo.api.OrigoProgressEvent;
 import com.hid.origo.api.OrigoReaderConnectionController;
+import com.hid.origo.api.ble.OrigoOpeningTrigger;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
+import com.hid.origo.api.ble.OrigoTapOpeningTrigger;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
     private final OrigoMobileKeys mobileKeys;
     private final OrigoKeysApiFactory mobileKeysApiFactory;
+    private final OrigoOpeningTrigger openingTrigger;
     private final Activity activity;
 
     public MobileAccessKeysApiFacade(Activity activity) {
@@ -63,6 +66,8 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         App application = (App) activity.getApplication();
         this.mobileKeysApiFactory = application.getMobileApiKeysFactory();
         this.mobileKeys = mobileKeysApiFactory.getMobileKeys();
+        //TBD: DD - check how to init the correct trigger from flutter based on the user selection
+        this.openingTrigger = new OrigoTapOpeningTrigger(activity);
     }
 
     //region Public APIs
@@ -72,13 +77,18 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     }
 
     public void onActivityResume() {
-        if (canStartScanning()) {
+        //TBD: DD - check when to start / stop scanning based on the user selection
+        if (canScan()) {
             startScanning();
+            getOrigoScanConfiguration().getRootOpeningTrigger().add(openingTrigger);
         }
     }
 
     public void onActivityPause() {
-        stopScanning();
+        if (canScan()) {
+            getOrigoScanConfiguration().getRootOpeningTrigger().remove(openingTrigger);
+            stopScanning();
+        }
     }
 
     public void setupEndpoint(String invitationCode) {
@@ -256,7 +266,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
     //region Reader Scanning
 
-    private boolean canStartScanning() {
+    private boolean canScan() {
         boolean hasKeys = false;
         if (isEndpointSetUpComplete()) {
             if (getMobileKeys() != null) {
