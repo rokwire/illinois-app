@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated default initial selection in Maps [#1942](https://github.com/rokwire/illinois-app/issues/1942).
+- Removed To-Do List from Wellness Section [#2951](https://github.com/rokwire/illinois-app/issues/2951).
 
 ## [4.2.53] - 2023-02-20
 ### Changed
