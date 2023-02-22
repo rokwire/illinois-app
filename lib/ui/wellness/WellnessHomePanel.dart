@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
@@ -35,6 +38,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling }
 
@@ -173,7 +177,19 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
 
   void _onTapContentItem(WellnessContent contentItem) {
     Analytics().logSelect(target: _getContentLabel(contentItem));
-    _selectedContent = _lastSelectedContent = contentItem;
+    String? launchUrl;
+    if (contentItem == WellnessContent.podcast) {
+      launchUrl = _loadWellcomeResourceUrl('podcast');
+    }
+    else if (contentItem == WellnessContent.struggling) {
+      launchUrl = _loadWellcomeResourceUrl('where_to_start');
+    }
+    if ((launchUrl != null) && (Guide().detailIdFromUrl(launchUrl) == null)) {
+      _launchUrl(launchUrl);
+    }
+    else {
+      _selectedContent = _lastSelectedContent = contentItem;
+    }
     _changeSettingsContentValuesVisibility();
   }
 
@@ -235,17 +251,19 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       case WellnessContent.healthScreener:
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.podcast:
-        return GuideDetailWidget(key: _podcastKey, guideEntryId: _loadWellcomeResourceGuideId('podcast'), headingColor: Styles().colors?.background);
+        String? guideId = _loadWellcomeResourceGuideId('podcast');
+        return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       case WellnessContent.struggling:
-        return GuideDetailWidget(key: _strugglingKey, guideEntryId: _loadWellcomeResourceGuideId('where_to_start'), headingColor: Styles().colors?.background);
+        String? guideId = _loadWellcomeResourceGuideId('where_to_start');
+        return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
       default:
         return Container();
     }
   }
 
-  String? _loadWellcomeResourceGuideId(String resourceId) {
+  String? _loadWellcomeResourceUrl(String resourceId) {
     Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.resources']) ;
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     if (commands != null) {
@@ -254,9 +272,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         if (command != null) {
           String? id = JsonUtils.stringValue(command['id']);
           if (id == resourceId) {
-            String? url = JsonUtils.stringValue(command['url']);
-            Uri? uri = (url != null) ? Uri.tryParse(url) : null;
-            return Guide().detailIdFromUri(uri);
+            return JsonUtils.stringValue(command['url']);
           }
         }
       }
@@ -264,7 +280,28 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     return null;
   }
 
+  String? _loadWellcomeResourceGuideId(String resourceId) =>
+    Guide().detailIdFromUrl(_loadWellcomeResourceUrl(resourceId));
+
+  void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (UrlUtils.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      }
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
+      }
+    }
+  }
+
   // Utilities
+
   static String _getContentLabel(WellnessContent section, { String? language }) {
     switch (section) {
       case WellnessContent.dailyTips:

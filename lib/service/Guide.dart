@@ -497,6 +497,10 @@ class Guide with Service implements NotificationsListener {
   String get guideDetailUrl => '${DeepLink().appUrl}/guide_detail';
   String get guideListUrl => '${DeepLink().appUrl}/guide_list';
 
+  String? detailIdFromUrl(String? url) {
+    return (url != null) ? detailIdFromUri(Uri.tryParse(url)) : null;
+  }
+
   String? detailIdFromUri(Uri? uri) {
     if (uri != null) {
       Uri? guideUri = Uri.tryParse('${DeepLink().appUrl}');
