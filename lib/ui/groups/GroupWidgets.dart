@@ -473,7 +473,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                   excludeSemantics: true,
                   child: InkWell(onTap: _onFavoriteTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
-                      Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png'),
+                      Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png'),
                     ),
                 ))),
 

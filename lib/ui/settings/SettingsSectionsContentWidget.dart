@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,6 +27,7 @@ import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -129,9 +131,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       contentList.add(_buildDebug());
     }
 
-    contentList.add(_buildVersionInfo());
-    
     contentList.add(Container(height: 24,),);
+
+    contentList.add(_buildVersionInfo());
 
     contentList.add(_buildCopyright());
 
@@ -837,36 +839,25 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     ]);
   }
 
-  String _constructFeedbackParams(String? email, String? phone, String? name) {
-    Map params = Map();
-    params['email'] = Uri.encodeComponent(email != null ? email : "");
-    params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
-    params['name'] = Uri.encodeComponent(name != null ? name : "");
-
-    String result = "";
-    if (params.length > 0) {
-      result += "?";
-      params.forEach((key, value) =>
-      result+= key + "=" + value + "&"
-      );
-      result = result.substring(0, result.length - 1); //remove the last symbol &
-    }
-    return result;
-  }
-
   void _onFeedbackClicked() {
     Analytics().logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String? email = Auth2().email;
-      String? name =  Auth2().fullName;
-      String? phone = Auth2().phone;
-      String params = _constructFeedbackParams(email, phone, name);
-      String feedbackUrl = Config().feedbackUrl! + params;
+      String email = Uri.encodeComponent(Auth2().email ?? '');
+      String name =  Uri.encodeComponent(Auth2().fullName ?? '');
+      String phone = Uri.encodeComponent(Auth2().phone ?? '');
+      String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
-      String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
+      if (Platform.isIOS) {
+        Uri? feedbackUri = Uri.tryParse(feedbackUrl);
+        if (feedbackUri != null) {
+          launchUrl(feedbackUri, mode: LaunchMode.externalApplication);
+        }
+      }
+      else {
+        String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
+      }
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.feedback', 'Providing a Feedback is not available while offline.'));
@@ -891,7 +882,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   Widget _buildDebug() {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
+        padding: EdgeInsets.only(top: 24),
         child: RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,
@@ -906,11 +897,19 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Version Info
   Widget _buildVersionInfo() {
-    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) + _versionName;
+    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     return Container(
         alignment: Alignment.center,
-        child: Text(versionLabel,
-            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
+        child: RichText(
+            textAlign: TextAlign.left,
+            text: TextSpan(
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                children:[
+                  TextSpan(text: versionLabel,),
+                  TextSpan(text:  " $_versionName", style : TextStyle(fontFamily: "ProximaNovaBold")),
+                ]
+            ))
+      );
   }
 
   void _loadVersionInfo() async {
@@ -923,12 +922,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Copyright
   Widget _buildCopyright() {
-    String copyrightLabel =
-        Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © 2022 University of Illinois Board of Trustees');
-    return Container(
-        alignment: Alignment.center,
-        child: Text(copyrightLabel, textAlign: TextAlign.center,
-            style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
+    String copyrightLabel = Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees')
+      .replaceAll('{{COPYRIGHT_YEAR}}', DateFormat('yyyy').format(DateTime.now()));
+    return Container(alignment: Alignment.center, child:
+      Text(copyrightLabel, textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+    );
   }
 
   // Utilities

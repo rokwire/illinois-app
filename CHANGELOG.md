@@ -6,6 +6,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.2.52] - 2023-02-16
+- Launch privacy policy web content in an external web browser on iOS platforms [#2909](https://github.com/rokwire/illinois-app/issues/2909).
+- Launch feedback web content in an external web browser on iOS platforms [#2909](https://github.com/rokwire/illinois-app/issues/2909).
+
+## [4.2.51] - 2023-02-15
+### Fixed
+- Fixed scrolling issues in research questionnaire prompt and acknowledgement panels [#2985](https://github.com/rokwire/illinois-app/issues/2985).
+- Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
+
+## [4.2.50] - 2023-02-13
+### Changed
+- Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
+- Updated English strings [#2596](https://github.com/rokwire/illinois-app/issues/2596).
+### Fixed
+- Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
+- Handle tap action over poll and wellness todo items notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
+- Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
+- Scrolling in wellness MyMcKinley Appointments [#2958](https://github.com/rokwire/illinois-app/issues/2958).
+- Open appointments list panel on tap over appointment inbox message if appointment id does not exist [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+- Open appointment detail panel on tap over appointment inbox message [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+- Fixed navigation target when requesting directions to building [#2955](https://github.com/rokwire/illinois-app/issues/2955).
+- Retrieve sorted appointments from the backend [#2971](https://github.com/rokwire/illinois-app/issues/2971).
+### Added
+- Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
+
+## [4.2.49] - 2023-01-05
+### Fixed
+- Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
+- Fixed dropdown menu needs extending in Groups Manage Members [#2407](https://github.com/rokwire/illinois-app/issues/2407).
+- Fixed empty iCard expiration date processing for retired faculty/staff [#2892](https://github.com/rokwire/illinois-app/issues/2892).
+- Fixed update privacy dialog scrolling (+ some other nonsense items) [#2891](https://github.com/rokwire/illinois-app/issues/2891).
+- Formatting date times in events [#2719](https://github.com/rokwire/illinois-app/issues/2719).
+### Changed
+- Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
+- Text update: Settings - Sign In/Sign Out [#2457](https://github.com/rokwire/illinois-app/issues/2457).
+
+## [4.2.48] - 2023-01-03
+### Fixed
+- Refresh issue with appointments [#2843](https://github.com/rokwire/illinois-app/issues/2843).
+- Added appointments default end date time [#2842](https://github.com/rokwire/illinois-app/issues/2842).
+- Remove dimmed foreground decoration from video tutorial thumbnails [#2823](https://github.com/rokwire/illinois-app/issues/2823).
+- Fixed "Add Cover Image" button background color [#2868](https://github.com/rokwire/illinois-app/issues/2868).
+### Added
+- Added muted indicator to inbox message card [#2877](https://github.com/rokwire/illinois-app/issues/2877).
+- Show not logged in message in Illini Cash and MTD Buss Wallet cards [#2867](https://github.com/rokwire/illinois-app/issues/2877).
+### Deleted
+- Removed explanation message "View current studies that match ..." from questionnaire acknowledgement panel [#2873](https://github.com/rokwire/illinois-app/issues/2873).
+### Changed
+- Always use orange favorite icon, removed all references to the blue favorite icon [#2165](https://github.com/rokwire/illinois-app/issues/2165).
+
 ## [4.2.47] - 2022-12-22
 ### Changed
 - Polls :: not-signed-in error - needs better message [#2777](https://github.com/rokwire/illinois-app/issues/2777).

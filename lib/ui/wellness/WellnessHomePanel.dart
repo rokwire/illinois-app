@@ -83,13 +83,21 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
               child: Stack(children: [
             Padding(
                 padding: EdgeInsets.only(top: 16),
-                child: SingleChildScrollView(controller: _contentScrollController,
+                child: _buildScrollableContentWidget(
                     child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget))),
             _buildContentValuesContainer()
           ]))
         ]),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: _navigationBar);
+  }
+
+  Widget _buildScrollableContentWidget({required Widget child}) {
+    if (_selectedContent == WellnessContent.appointments) {
+      return Container(child: child);
+    } else {
+      return SingleChildScrollView(controller: _contentScrollController, child: child);
+    }
   }
 
   Widget _buildContentValuesContainer() {

@@ -24,7 +24,6 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import "package:illinois/service/Config.dart";
 import "package:illinois/service/FlexUI.dart";
 import "package:rokwire_plugin/service/localization.dart";
-import 'package:illinois/utils/AppUtils.dart';
 import "package:rokwire_plugin/service/notification_service.dart";
 import "package:rokwire_plugin/service/onboarding.dart";
 import "package:illinois/service/Storage.dart";
@@ -214,126 +213,95 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   }
 
   Widget _buildUpdatePrivacyDialog(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Material(
-          color: Styles().colors!.fillColorPrimary,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.button.back.title", "Back"),
-                      child: IconButton(onPressed: () => Navigator.pop(context), icon: Image.asset('images/close-white-large.png'))),
+    return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+      Material(color: Styles().colors!.fillColorPrimary, child:
+        Padding(padding: const EdgeInsets.all(16.0), child:
+          Column(children: [
+            Align(alignment: Alignment.centerRight, child:
+              Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.button.back.title", "Back"), child:
+                IconButton(icon: Image.asset('images/close-white-large.png'), onPressed: () => Navigator.pop(context))
+              ),
+            ),
+            Padding(padding: EdgeInsets.all(8), child:
+              Semantics(button:false, hint: "${_sliderIntValue?.toString() ?? ""}", child:
+                Text(
+                  Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.title", "Your New\nPrivacy Level"),
+                  textAlign: TextAlign.center,
+                  style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.fat"),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Semantics(button:false, hint: "${_sliderIntValue?.toString() ?? ""}",
-                    child: Text(
-                      Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.title", "Your New\nPrivacy Level"),
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.fat"),
-                      textAlign: TextAlign.center,
+              ),
+            ),
+          ],),
+        ),
+      ),
+      Column(children: <Widget>[
+        Stack(alignment: Alignment.center, children: <Widget>[
+          Column(children: <Widget>[
+            Container(height: 48, color: Styles().colors!.fillColorPrimary,),
+            Container(height: 48, color: Styles().colors!.white,),
+          ],),
+          Center(child:
+            Container(height: 86, width: 86, child:
+              Padding(padding: EdgeInsets.all(6), child:
+                Container(padding: EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    color: Styles().colors!.white,
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(width:2, color: Styles().colors!.fillColorPrimary!,)),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Styles().colors!.white,
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(width:2, color: Styles().colors!.fillColorSecondary!,)
+                    ),
+                    child: Center(child:
+                      Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.label.new_privacy", "Privacy Level: "), child:
+                        Text(_sliderIntValue?.toString() ?? "", style: Styles().textStyles?.getTextStyle("widget.title.extra_large")),
+                      )
                     ),
                   ),
                 ),
-              ],
+              )
             ),
+          )
+        ],),
+        SizedBox(height: 16),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 26), child:
+          Text(
+            Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.label2", "This change requires us to make the following changes where applicable:"),
+            textAlign: TextAlign.center,
+            style: Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.update.message.fat")
           ),
         ),
-        SingleChildScrollView(
-          child: Column(children: <Widget>[
-            Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Container(
-                  child: Column(children: <Widget>[
-                    Container(height: 48, color: Styles().colors!.fillColorPrimary,),
-                    Container(height: 48, color: Styles().colors!.white,),
-                  ],),
-                ),
-                Center(
-                  child: Container(
-                      height: 86,
-                      width: 86,
-                      child: Padding(
-                          padding: EdgeInsets.all(6),
-                          child: Container(
-                            padding: EdgeInsets.all(1),
-                            decoration: BoxDecoration(
-                                color: Styles().colors!.white,
-                                borderRadius: BorderRadius.circular(100),
-                                border: Border.all(width:2, color: Styles().colors!.fillColorPrimary!,)
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Styles().colors!.white,
-                                  borderRadius: BorderRadius.circular(100),
-                                  border: Border.all(width:2, color: Styles().colors!.fillColorSecondary!,)
-                              ),
-                              child: Center(
-                                child: Semantics(
-                                  label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.label.new_privacy", "Privacy Level: "),
-                                  child: Text(
-                                    _sliderIntValue?.toString() ?? "",
-                                    style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
-                                  ),
-                                )
-                              ),
-                            ),))
-                  ),
-                )
-              ],),
-            SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 26),
-              child: Text(
-                Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.label2", "This change requires us to make the following changes where applicable:"),
-                textAlign: TextAlign.center,
-                style:  Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.update.message.fat")
-              ),
+        _buildPrivacyFeature2DialogEntries(),
+        SizedBox(height: 16),
+        Text(
+          Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.confirm", "Are you sure?"),
+          textAlign: TextAlign.center,
+          style: Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.update.message.fat")
+        ),
+        SizedBox(height: 16),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 24), child:
+          Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+            Expanded(child:
+              RoundedButton(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.yes", "Yes"), onTap: () {
+                Navigator.pop(context);
+                Analytics().logAlert(text: "Update privacy", selection: "Yes");
+                _save();
+              },),
             ),
-            _buildPrivacyFeature2DialogEntries(),
-            SizedBox(height: 16),
-            Text(
-              Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.confirm", "Are you sure?"),
-              textAlign: TextAlign.center,
-              style:  Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.update.message.fat")
-            ),
-            SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: RoundedButton(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Analytics().logAlert(text: "Update privacy", selection: "Yes");
-                        _save();
-                      },
-                      label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.yes", "Yes")),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: RoundedButton(
-                      onTap: () {
-                        Analytics().logAlert(text: "Update privacy", selection: "No");
-                        Navigator.pop(context);
-                      },
-                      label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.no", "No")),
-                  )
-                ],
-              ),
-            ),
-            Container(height:20)
-          ],),),
-      ],
-    );
+            SizedBox(width: 16),
+            Expanded(child:
+              RoundedButton(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.no", "No"), onTap: () {
+                Analytics().logAlert(text: "Update privacy", selection: "No");
+                Navigator.pop(context);
+              },),
+            )
+          ],),
+        ),
+        SizedBox(height:20)
+      ],),
+    ],);
   }
 
   Widget _buildPrivacyFeature2DialogEntries() {
@@ -373,7 +341,9 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     if (!_disabled) {
       Analytics().logSelect(target: "Set Privacy");
       if ((widget.mode == SettingsPrivacyPanelMode.regular) && (_sliderIntValue! < this._privacyLevel)) {
-        AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.all(0), contentWidget: _buildUpdatePrivacyDialog(context));
+        showDialog(context: context, builder: (context) {
+          return AlertDialog(content: _buildUpdatePrivacyDialog(context), scrollable: true, contentPadding: EdgeInsets.zero,);
+        });
       }
       else {
         _save();

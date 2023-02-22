@@ -202,10 +202,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupPostsUpdated,
       Polls.notifyCreated,
+      Polls.notifyDeleted,
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
-      Polls.notifyLifecycleDelete,
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
@@ -513,8 +513,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
     } 
-    else if ((name == Polls.notifyCreated)
-             || (name == Polls.notifyLifecycleDelete)) {
+    else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
       _refreshPolls();
     } 
     else if (name == Polls.notifyVoteChanged

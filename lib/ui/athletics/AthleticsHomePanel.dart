@@ -639,7 +639,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                             hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx( 'widget.card.button.favorite.on.hint', ''),
                             excludeSemantics: true, child:
                             Padding(padding: EdgeInsets.only(right: 24, top: 24, left: 24, bottom: 8), child:
-                              Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
+                              Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
                             ),
                           ),
                         ),

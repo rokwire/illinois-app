@@ -44,11 +44,11 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   List<Appointment>? _upcomingAppointments;
   List<Appointment>? _pastAppointments;
   late bool _appointmentsCanDisplay;
-  bool _loading = false;
+  int _loadingProgress = 0;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Storage.notifySettingChanged, FlexUI.notifyChanged]);
+    NotificationService().subscribe(this, [Storage.notifySettingChanged, FlexUI.notifyChanged, Appointments.notifyUpcomingAppointmentsChanged, Appointments.notifyPastAppointmentsChanged]);
     _initAppointments();
     super.initState();
   }
@@ -75,17 +75,20 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [_buildRescheduleDescription(), _buildNothingToDisplayMsg(), _buildDisplayAppointmentsSettings()]));
-    } else if (_loading) {
+    } else if (_isLoading) {
       return _buildLoadingContent();
     } else {
-      return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildRescheduleDescription(),
-            _buildUpcomingAppointments(),
-            _buildPastAppointments(),
-            _buildDisplayAppointmentsSettings()
-          ]));
+      return RefreshIndicator(
+          onRefresh: _onPullToRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _buildRescheduleDescription(),
+                _buildUpcomingAppointments(),
+                _buildPastAppointments(),
+                _buildDisplayAppointmentsSettings()
+              ])));
     }
   }
 
@@ -290,6 +293,10 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
             ])));
   }
 
+  Future<void> _onPullToRefresh() async {
+    await Appointments().refreshAppointments();
+  }
+
   void _onTapCloseReschedulePopup() {
     Analytics().logSelect(target: 'Close reschedule appointment popup');
     Navigator.of(context).pop();
@@ -320,30 +327,39 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   void _loadAppointments() {
+    _loadPastAppointments();
+    _loadUpcomingAppointments();
+  }
+
+  void _loadUpcomingAppointments() {
     if (_appointmentsCanDisplay) {
-      _setLoading(true);
-      Appointments().loadAppointments().then((appointments) {
-        if (CollectionUtils.isNotEmpty(appointments)) {
-          _upcomingAppointments = <Appointment>[];
-          _pastAppointments = <Appointment>[];
-          for (Appointment appointment in appointments!) {
-            if (appointment.isUpcoming) {
-              _upcomingAppointments!.add(appointment);
-            } else {
-              _pastAppointments!.add(appointment);
-            }
-          }
-        } else {
-          _upcomingAppointments = _pastAppointments = null;
-        }
-        _setLoading(false);
-      });
+      _increaseProgress();
+      _upcomingAppointments = Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming);
+      _decreaseProgress();
     }
   }
 
-  void _setLoading(bool loading) {
+  void _loadPastAppointments() {
+    if (_appointmentsCanDisplay) {
+      _increaseProgress();
+      _pastAppointments = Appointments().getAppointments(timeSource: AppointmentsTimeSource.past);
+      _decreaseProgress();
+    }
+  }
+
+  bool get _isLoading {
+    return (_loadingProgress > 0);
+  }
+
+  void _increaseProgress() {
     setStateIfMounted(() {
-      _loading = loading;
+      _loadingProgress++;
+    });
+  }
+
+  void _decreaseProgress() {
+    setStateIfMounted(() {
+      _loadingProgress--;
     });
   }
 
@@ -357,6 +373,10 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
       if (mounted) {
         setState(() {});
       }
+    } else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
+      _loadUpcomingAppointments();
+    } else if (name == Appointments.notifyPastAppointmentsChanged) {
+      _loadPastAppointments();
     }
   }
 }

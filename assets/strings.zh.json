@@ -225,7 +225,9 @@
 	"panel.browse.label.offline.inbox": "離線時通知不可用。",
 
 	"panel.browse.label.logged_out.illini_cash": "您需要使用您的 NetID 登錄才能訪問 Illini Cash。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
+	"panel.browse.label.logged_out.illini_cash.short": "您需要使用您的 NetID 登錄才能訪問 Illini Cash。",
 	"panel.browse.label.logged_out.meal_plan": "您需要使用您的 NetID 登錄才能訪問大學住房膳食計劃。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
+	"panel.browse.label.logged_out.meal_plan.short": "您需要使用您的 NetID 登錄才能訪問大學住宿膳食計劃。",
 	"panel.browse.label.logged_out.bus_pass": "您需要使用您的 NetID 登錄才能訪問 MTD Bus Pass。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
 	"panel.browse.label.logged_out.bus_pass.short": "您需要使用您的 NetID 登錄才能訪問 MTD Bus Pass。",
 	"panel.browse.label.logged_out.illini_id": "您需要使用您的 NetID 登錄才能訪問 Illini ID。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
@@ -1371,7 +1373,7 @@
 	"panel.settings.home.button.review.hint": "",
 	"panel.settings.home.version.info.label": "{{app_title}}應用版本：",
 	"panel.settings.home.feedback.app.description.format": "伊利諾伊州應用程序是伊利諾伊大學厄巴納-香檳分校的官方校園應用程序。 該應用程序基於 <a href='{{rokwire_platform_url}}'>Rokwire</a> 開源軟件平台構建。 Rokwire 項目和伊利諾伊州應用程序是伊利諾伊大學教務長辦公室<a href='{{shci_url}}'>智能、健康社區倡議</a> 的成果。",
-	"panel.settings.home.copyright.text": "版權所有 © 2022 伊利諾伊大學董事會",
+	"panel.settings.home.copyright.text": "版權所有 © {{COPYRIGHT_YEAR}} 伊利諾伊大學董事會",
 
 	"panel.settings.profile.content.profile.label": "我的簡歷",
 	"panel.settings.profile.content.who_are_you.label": "你是誰",
@@ -1779,6 +1781,9 @@
 	"panel.poll_pin_bouble.unable_to_load_poll": "无法加载调查",
 	"panel.poll_pin_bouble.poll_not_opened": "投票还未开放",
 	"panel.poll_pin_bouble.poll_closed": "投票已结束",
+
+    "panel.poll.detail.header.title": "輪詢",
+    "panel.poll.detail.error.msg": "此民意調查已不存在。",
 
 	"panel.parking_events.label.loading": "正在加載停車事件. 請耐心等待...",
 	"panel.parking_events.label.no_events": "Currently there is no parking information for any State Farm Center events.",
@@ -2401,9 +2406,16 @@
 	"panel.inbox.label.time.last_week": "上個星期",
 	"panel.inbox.label.time.this_month": "這個月",
 	"panel.inbox.label.time.last_month": "上個月",
-    "panel.inbox.label.muted.show": "顯示靜音",
-    "panel.inbox.label.muted.hide": "隱藏靜音",
-    "panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
+	"panel.inbox.label.muted.show": "顯示靜音",
+	"panel.inbox.label.muted.hide": "隱藏靜音",
+	"panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
+
+	"widget.inbox_message_card.selected.hint": "已選",
+	"widget.inbox_message_card.unselected.hint": "未選中的",
+	"widget.inbox_message_card.status.muted": "靜音",
+	"widget.inbox_message_card.status.hint": "狀態：%s，用於：",
+	"widget.inbox_message_card.subject.hint": "主題：%s",
+	"widget.inbox_message_card.body.hint": "身體：%s",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
 

@@ -103,9 +103,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(
-        title: Localization().getStringEx('panel.mtd_stops.home.header_bar.title', 'MTD Stops'),
-      ),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.mtd_stops.home.header_bar.title', 'MTD Stops'), leading: RootHeaderBarLeading.Back,),
       body: _buildPage(),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: uiuc.TabBar(),

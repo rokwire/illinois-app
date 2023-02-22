@@ -96,6 +96,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       FlexUI.notifyChanged,
       Assets.notifyChanged,
       Guide.notifyChanged,
+      Appointments.notifyUpcomingAppointmentsChanged,
     ]);
     _refreshFavorites();
     _requestPermissionsStatus();
@@ -130,6 +131,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
     else if (name == Guide.notifyChanged) {
       _refreshFavorites(favoriteCategories: {GuideFavorite.favoriteKeyName}, showProgress: false);
+    }
+    else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
+      _refreshFavorites(favoriteCategories: {Appointment.favoriteKeyName}, showProgress: false);
     }
   }
 
@@ -396,7 +400,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   Future<List<Favorite>?> _loadFavoriteAppointments(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Appointments().loadAppointments(onlyUpcoming: true), favoriteIds) : null;
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming), favoriteIds) : null;
 
   List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, LinkedHashSet<String>? favoriteIds) {
     if ((sourceList != null) && (favoriteIds != null)) {

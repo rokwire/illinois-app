@@ -77,10 +77,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   void initState() {
     NotificationService().subscribe(this, [
       Polls.notifyCreated,
+      Polls.notifyDeleted,
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
-      Polls.notifyLifecycleDelete,
       GeoFence.notifyCurrentRegionsUpdated,
       FlexUI.notifyChanged,
       Groups.notifyUserMembershipUpdated,
@@ -635,16 +635,16 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
   }
 
-  void _deletePoll(Poll? poll) {
-    _deletePollInList(poll, _myPolls);
-    _deletePollInList(poll, _recentPolls);
-    _deletePollInList(poll, _recentLocalPolls);
+  void _deletePoll(String? pollId) {
+    _deletePollInList(pollId, _myPolls);
+    _deletePollInList(pollId, _recentPolls);
+    _deletePollInList(pollId, _recentLocalPolls);
   }
 
-  void _deletePollInList(Poll? poll, List<Poll>?polls) {
-    if ((poll != null) && (polls != null)) {
+  void _deletePollInList(String? pollId, List<Poll>?polls) {
+    if ((pollId != null) && (polls != null)) {
       for (int index = polls.length - 1; 0 <= index; index--) {
-        if (polls[index].pollId == poll.pollId) {
+        if (polls[index].pollId == pollId) {
           polls.removeAt(index);
         }
       }
@@ -678,10 +678,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
   }
 
-  void _onPollDeleted(Poll? poll) {
-    if (poll != null) {
+  void _onPollDeleted(String? pollId) {
+    if (pollId != null) {
       setStateIfMounted(() {
-        _deletePoll(poll);
+        _deletePoll(pollId);
       });
     }
   }
@@ -697,6 +697,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     if (name == Polls.notifyCreated) {
       _onPollCreated(param);
     }
+    else if (name == Polls.notifyDeleted) {
+      _onPollDeleted(param);
+    }
     else if (name == Polls.notifyVoteChanged) {
       _onPollUpdated(param);
     }
@@ -705,9 +708,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
     else if (name == Polls.notifyStatusChanged) {
       _onPollUpdated(param);
-    }
-    else if (name == Polls.notifyLifecycleDelete) {
-      _onPollDeleted(param);
     }
     else if (name == GeoFence.notifyCurrentRegionsUpdated) {
       setStateIfMounted(() { });
