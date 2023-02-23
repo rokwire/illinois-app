@@ -115,7 +115,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                      Text(
                       (category != null) ? category.toUpperCase() : "",
                       softWrap: true,
-                      style: Styles().textStyles?.getTextStyle('widget.heading.medium'),
+                      style: Styles().textStyles?.getTextStyle('widget.heading.medium_small'),
                     )
                  ),
               ),

@@ -68,7 +68,7 @@ class _AccessCardState extends State<AccessCard> implements NotificationsListene
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child:
                   Text(sprintf(Localization().getStringEx('widget.access.$titleKey.unsatisfied.title', defaultTitle), [resourceName]),
-                    style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',
+                    style: Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"), semanticsLabel: '',
                   )
                 ),
               )

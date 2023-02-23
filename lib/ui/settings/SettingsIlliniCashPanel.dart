@@ -486,7 +486,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   Widget _buildBalanceTableHeaderItem(String text){
       return _buildBalanceTableItem(text: text, backColor: Styles().colors!.fillColorPrimaryVariant,
           showBorder: false,
-          textStyle: Styles().textStyles?.getTextStyle("widget.heading.medium"));
+          textStyle: Styles().textStyles?.getTextStyle("widget.heading.medium_small"));
   }
 
   Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle}) {

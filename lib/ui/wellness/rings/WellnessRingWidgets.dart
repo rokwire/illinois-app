@@ -185,8 +185,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                             shape: BoxShape.circle
                         ),
                         child: childWidget ??
-                            Center(child: Text("TBD",
-                              style: TextStyle(fontSize: 40),)),
+                            Center(child: Text("TBD",)),
                       )
                   ),
                 ],

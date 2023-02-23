@@ -76,8 +76,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                         Row(children: [
                           Expanded(
                               child: Text(StringUtils.ensureNotEmpty(widget.appointment.category),
-                                  style: TextStyle(
-                                      color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.semiBold, fontSize: 14))),
+                                  style:Styles().textStyles?.getTextStyle("widget.item.small.semi_fat"))),
                           Visibility(
                               visible: starVisible,
                               child: Semantics(
@@ -105,10 +104,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 Expanded(
                                     child: Text(StringUtils.ensureNotEmpty(widget.appointment.title),
-                                        style: TextStyle(
-                                            color: Styles().colors?.fillColorPrimary,
-                                            fontFamily: Styles().fontFamilies?.extraBold,
-                                            fontSize: 20))),
+                                        style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))),
                                 Visibility(
                                     visible: StringUtils.isNotEmpty(imageKey),
                                     child: Padding(
@@ -133,10 +129,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                     Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
                                     Expanded(
                                         child: Text(StringUtils.ensureNotEmpty(widget.appointment.displayDate),
-                                            style: TextStyle(
-                                                color: Styles().colors?.textBackground,
-                                                fontFamily: Styles().fontFamilies?.medium,
-                                                fontSize: 16)))
+                                            style: Styles().textStyles?.getTextStyle("widget.item.regular")))
                                   ])),
                               Padding(
                                   padding: EdgeInsets.only(top: 5),
@@ -148,19 +141,13 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                     Expanded(
                                         child: Text(StringUtils.ensureNotEmpty(Appointment.typeToDisplayString(widget.appointment.type)),
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                color: Styles().colors?.textBackground,
-                                                fontFamily: Styles().fontFamilies?.medium,
-                                                fontSize: 16))),
+                                            style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
                                     Visibility(
                                         visible: (widget.appointment.cancelled == true),
                                         child: Padding(
                                             padding: EdgeInsets.only(left: 7),
                                             child: Text(Localization().getStringEx('widget.appointment.card.cancelled.label', 'Cancelled'),
-                                                style: TextStyle(
-                                                    color: Styles().colors!.accentColor1,
-                                                    fontSize: 22,
-                                                    fontFamily: Styles().fontFamilies!.extraBold))))
+                                                style: Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large"))))
                                   ]))
                             ]))
                       ]))),

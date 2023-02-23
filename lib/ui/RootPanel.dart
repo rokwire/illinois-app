@@ -380,7 +380,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       child: Center(
                         child: Text(
                           Localization().getStringEx("app.title", "Illinois"),
-                          style: TextStyle(fontSize: 20, color: Colors.white),
+                          style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular"),
                         ),
                       ),
                     ),
@@ -393,10 +393,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Localization().getStringEx(
                   "common.message.exit_app", "Are you sure you want to exit?"),
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 16,
-                  color: Colors.black),
+              style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular.fat")
             ),
             Container(height: 26,),
             Padding(
