@@ -175,6 +175,10 @@ class Storage extends rokwire.Storage {
   bool? get debugUseStudentCoursesContent => getBoolWithName(debugUseStudentCoursesContentKey);
   set debugUseStudentCoursesContent(bool? value) => setBoolWithName(debugUseStudentCoursesContentKey, value);
 
+  static const String debugUseCanvasLmsKey  = 'debug_use_canvas_lms';
+  bool? get debugUseCanvasLms => getBoolWithName(debugUseCanvasLmsKey);
+  set debugUseCanvasLms(bool? value) => setBoolWithName(debugUseCanvasLmsKey, value);
+
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
@@ -393,10 +397,5 @@ class Storage extends rokwire.Storage {
   static const String participateInResearchPromptedKey  = 'participate_in_research_prompted';
   bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
   set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
-
-  // Canvas API
-  static const String useCanvasApiKey  = 'use_canvas_api';
-  bool? get useCanvasApi => getBoolWithName(useCanvasApiKey);
-  set useCanvasApi(bool? value) => setBoolWithName(useCanvasApiKey, value);
 
 }

@@ -111,7 +111,7 @@ class Canvas with Service implements NotificationsListener {
       StringUtils.isNotEmpty(Config().canvasToken) &&
       StringUtils.isNotEmpty(Config().canvasTokenType);
 
-  bool get _useCanvasApi => (Storage().useCanvasApi == true);
+  bool get _useCanvasApi => (Storage().debugUseCanvasLms == true);
 
   Map<String, String>? get _canvasAuthHeaders => _isCanvasAvailable
       ? {HttpHeaders.authorizationHeader: "${Config().canvasTokenType} ${Config().canvasToken}"}
@@ -348,7 +348,7 @@ class Canvas with Service implements NotificationsListener {
         _updateCourses();
       }
     } else if (name == Storage.notifySettingChanged) {
-      if (param == Storage.useCanvasApiKey) {
+      if (param == Storage.debugUseCanvasLmsKey) {
         _updateCourses();
       }
     }
