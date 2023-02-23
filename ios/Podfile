@@ -6,8 +6,28 @@ ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
   'Debug' => :debug,
+  'Debug-Dev' => :debug,
+  'Debug-IllinoisDev' => :debug,
+  'Debug-Prod' => :debug,
+  'Debug-IllinoisProd' => :debug,
+  'Debug-Tst' => :debug,
+  'Debug-IllinoisTst' => :debug,
+
   'Profile' => :release,
+  'Profile-Dev' => :release,
+  'Profile-IllinoisDev' => :release,
+  'Profile-Prod' => :release,
+  'Profile-IllinoisProd' => :release,
+  'Profile-Tst' => :release,
+  'Profile-IllinoisTst' => :release,
+
   'Release' => :release,
+  'Release-Dev' => :release,
+  'Release-IllinoisDev' => :release,
+  'Release-Prod' => :release,
+  'Release-IllinoisProd' => :release,
+  'Release-Tst' => :release,
+  'Release-IllinoisTst' => :release,
 }
 
 def flutter_root
@@ -27,33 +47,30 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
-target 'Runner' do
-  use_frameworks!
-  use_modular_headers!
-
+def applibs
     pod 'GoogleMaps', '7.2.0'
     pod 'ZXingObjC', '3.6.4'
 
-    pod 'SeosMobileKeysSDK-Debug', :configuration => ['Debug'], :path => 'Libs/Origo/Debug/SeosMobileKeysSDK-Debug.podspec'
-    pod 'SeosMobileKeysSDK-Release', :configuration => ['Release'], :path => 'Libs/Origo/Release/SeosMobileKeysSDK-Release.podspec'
-    pod 'OrigoSDK-Debug', :configuration => ['Debug'], :path => 'Libs/Origo/Debug/OrigoSDK-Debug.podspec'
-    pod 'OrigoSDK-Release', :configuration => ['Release'], :path => 'Libs/Origo/Release/OrigoSDK-Release.podspec'
+#   pod 'SeosMobileKeysSDK', :path => 'Libs/Origo/Debug/SeosMobileKeysSDK.podspec'
+#   pod 'OrigoSDK', :path => 'Libs/Origo/Debug/OrigoSDK.podspec'
 
+    pod 'SeosMobileKeysSDK-Debug', :configuration => ['Debug', 'Debug-Dev', 'Debug-IllinoisDev', 'Debug-Prod', 'Debug-IllinoisProd', 'Debug-Tst', 'Debug-IllinoisTst'], :path => 'Libs/Origo/Debug/SeosMobileKeysSDK-Debug.podspec'
+    pod 'SeosMobileKeysSDK-Release', :configuration => ['Release', 'Release-Dev', 'Release-IllinoisDev', 'Release-Prod', 'Release-IllinoisProd', 'Release-Tst', 'Release-IllinoisTst'], :path => 'Libs/Origo/Release/SeosMobileKeysSDK-Release.podspec'
+    pod 'OrigoSDK-Debug', :configuration => ['Debug', 'Debug-Dev', 'Debug-IllinoisDev', 'Debug-Prod', 'Debug-IllinoisProd', 'Debug-Tst', 'Debug-IllinoisTst'], :path => 'Libs/Origo/Debug/OrigoSDK-Debug.podspec'
+    pod 'OrigoSDK-Release', :configuration => ['Release', 'Release-Dev', 'Release-IllinoisDev', 'Release-Prod', 'Release-IllinoisProd', 'Release-Tst', 'Release-IllinoisTst'], :path => 'Libs/Origo/Release/OrigoSDK-Release.podspec'
+end
+
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+  applibs
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 target 'Illinois' do
   use_frameworks!
   use_modular_headers!
-
-    pod 'GoogleMaps', '7.2.0'
-    pod 'ZXingObjC', '3.6.4'
-
-    pod 'SeosMobileKeysSDK-Debug', :configuration => ['Debug'], :path => 'Libs/Origo/Debug/SeosMobileKeysSDK-Debug.podspec'
-    pod 'SeosMobileKeysSDK-Release', :configuration => ['Release'], :path => 'Libs/Origo/Release/SeosMobileKeysSDK-Release.podspec'
-    pod 'OrigoSDK-Debug', :configuration => ['Debug'], :path => 'Libs/Origo/Debug/OrigoSDK-Debug.podspec'
-    pod 'OrigoSDK-Release', :configuration => ['Release'], :path => 'Libs/Origo/Release/OrigoSDK-Release.podspec'
-
+  applibs
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
