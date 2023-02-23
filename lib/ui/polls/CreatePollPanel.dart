@@ -424,7 +424,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                     child: Text(
                       Localization().getStringEx("panel.create_poll.cancel_dialog.message", "Are you sure you want to cancel this Quick Poll?"),
                       textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium"),
+                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular"),
                     ),
                   ),
                   Row(

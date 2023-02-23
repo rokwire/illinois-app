@@ -423,7 +423,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                     child: Text(
                       Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.message", "Are you sure you want to cancel this Stadium Poll"),
                       textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium"),
+                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular"),
                     ),
                   ),
                   Row(
