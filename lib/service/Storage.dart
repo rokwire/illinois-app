@@ -394,4 +394,9 @@ class Storage extends rokwire.Storage {
   bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
   set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
 
+  // Canvas API
+  static const String useCanvasApiKey  = 'use_canvas_api';
+  bool? get useCanvasApi => getBoolWithName(useCanvasApiKey);
+  set useCanvasApi(bool? value) => setBoolWithName(useCanvasApiKey, value);
+
 }
