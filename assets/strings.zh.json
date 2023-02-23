@@ -2578,9 +2578,6 @@
 	"panel.home_canvas_course.button.assignments.title": "作業",
 	"panel.home_canvas_course.button.launch.title": "啟動畫布",
 
-	"panel.syllabus_html.header.title": "教學大綱",
-	"panel.syllabus_html.load.failed.error.msg": "未能加載課程內容. 請稍後再試.",
-
 	"panel.canvas.common.all_courses.label": "所有課程",
 
 	"panel.canvas_announcements.header.title": "公告",
