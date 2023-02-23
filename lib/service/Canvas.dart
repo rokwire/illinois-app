@@ -86,7 +86,7 @@ class Canvas with Service implements NotificationsListener {
     _cacheFile = await _getCacheFile();
     _courses = await _loadCoursesFromCache();
     if (_courses != null) {
-      updateCourses();
+      _updateCourses();
     } else {
       String? jsonString = await _loadCoursesStringFromNet();
       _courses = _loadCoursesFromString(jsonString);
@@ -119,7 +119,7 @@ class Canvas with Service implements NotificationsListener {
 
   // Courses
 
-  Future<void> updateCourses() async {
+  Future<void> _updateCourses() async {
     String? jsonString = await _loadCoursesStringFromNet();
     List<CanvasCourse>? canvasCourses = _loadCoursesFromString(jsonString);
     if ((canvasCourses != null) && !DeepCollectionEquality().equals(_courses, canvasCourses)) {
@@ -342,14 +342,14 @@ class Canvas with Service implements NotificationsListener {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
-      updateCourses();
+      _updateCourses();
     } else if (name == Connectivity.notifyStatusChanged) {
       if (Connectivity().isNotOffline) {
-        updateCourses();
+        _updateCourses();
       }
     } else if (name == Storage.notifySettingChanged) {
       if (param == Storage.useCanvasApiKey) {
-        updateCourses();
+        _updateCourses();
       }
     }
   }
@@ -362,7 +362,7 @@ class Canvas with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          updateCourses();
+          _updateCourses();
         }
       }
     }
