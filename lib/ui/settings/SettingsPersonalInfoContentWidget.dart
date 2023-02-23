@@ -414,7 +414,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return await AppAlert.showCustomDialog(context: context,
       contentWidget:
         Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),
-          style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
+          style: Styles().textStyles?.getTextStyle("widget.message.regular"),
         ),
       actions: [
         TextButton(
@@ -804,7 +804,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     AppAlert.showCustomDialog(context: context,
         contentWidget:
         Text(promptEn,
-          style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
+          style: Styles().textStyles?.getTextStyle("widget.message.regular"),
         ),
         actions: [
           TextButton(

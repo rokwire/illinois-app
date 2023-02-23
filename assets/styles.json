@@ -200,6 +200,8 @@
     "widget.item.tiny": { "font_family": "medium", "size": 12.0, "color": "textBackground"},
     "widget.item.tiny.thin": { "font_family": "regular", "size": 12.0, "color": "textBackground"},
 
+    "widget.label.medium.fat": { "font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
+
     "widget.info.medium": { "font_family": "regular", "size": 18.0, "color": "textSurface"},
     "widget.info.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textSurface"},
     "widget.info.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textSurface"},
@@ -513,7 +515,9 @@
     "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
     "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
 
-    "panel.appointment_detail.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "accentColor1"}
+    "panel.appointment_detail.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "accentColor1"},
+
+    "panel.settings.section_content.htm.title.regular":  {"extends": "widget.item.regular", "font_family": "regular_italic"}
   },
   "image": {
     "campus-tools": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
