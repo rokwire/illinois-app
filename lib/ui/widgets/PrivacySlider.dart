@@ -62,7 +62,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             trackHeight: 10,
                             inactiveTickMarkColor: _inactiveTrackColor,
                             showValueIndicator: ShowValueIndicator.never,
-                            valueIndicatorTextStyle: TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies!.extraBold, color: Styles().colors!.fillColorPrimary)),
+                            valueIndicatorTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
                         child: MergeSemantics(
                             child: Semantics(
                                 label: Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),

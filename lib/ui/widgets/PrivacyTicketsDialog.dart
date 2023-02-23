@@ -97,7 +97,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                                       excludeSemantics: true,
                                       child: Text(
                                         title,
-                                        style: TextStyle(color: Styles().colors!.white, fontSize: 24),
+                                        style: Styles().textStyles?.getTextStyle("widget.dialog.message.large"),
                                         textAlign: TextAlign.center,
                                       )),
                                 )),
@@ -122,19 +122,14 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                       padding: EdgeInsets.all(12),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(Localization().getStringEx("widget.privacy_tickets_modal.label.your_privacy", "Your privacy setting"),
-                            style: TextStyle(
-                              color: Styles().colors!.textBackground,
-                              fontSize: 18,
-                              fontFamily: Styles().fontFamilies!.extraBold,
-                            )),
+                            style: Styles().textStyles?.getTextStyle("widget.item.medium.extra_fat")
+                        ),
                         Padding(
                             padding: EdgeInsets.all(15),
                             child: CustomPaint(
                               painter: ShapesPainter(),
                               child: Text(Auth2().prefs?.privacyLevel?.toString() ?? "",
-                                  style: TextStyle(
-                                    color: Styles().colors!.white,
-                                  )),
+                                  style: Styles().textStyles?.getTextStyle("widget.dialog.message.small")),
                             )),
                         Container(
                           height: 10,
@@ -142,11 +137,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                         Text(
                           Localization().getStringEx("widget.privacy_tickets_modal.label.not_allowed", "Does not allow us to collect payment information"),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: Styles().fontFamilies!.extraBold,
-                            color: Styles().colors!.textBackground,
-                          ),
+                          style: Styles().textStyles?.getTextStyle("widget.item.medium.extra_fat")
                         ),
                         Container(
                           height: 10,
@@ -154,11 +145,8 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                         Text(
                             Localization().getStringEx("widget.privacy_tickets_modal.label.understand",
                                 "I understand that my information will be collected in the purchase process for any tickets I purchase."),
-                            style: TextStyle(
-                              color: Styles().colors!.textBackground,
-                              fontSize: 16,
-                              fontFamily: Styles().fontFamilies!.regular,
-                            )),
+                            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                        ),
                         Container(
                           height: 10,
                         ),
@@ -179,13 +167,9 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                           height: 20,
                         ),
                         Text(
-                            Localization()
-                                .getStringEx("widget.privacy_tickets_modal.label.change_privacy", "Change my privacy setting to allow tickets purchase"),
-                            style: TextStyle(
-                              color: Styles().colors!.textBackground,
-                              fontSize: 16,
-                              fontFamily: Styles().fontFamilies!.regular,
-                            )),
+                            Localization().getStringEx("widget.privacy_tickets_modal.label.change_privacy", "Change my privacy setting to allow tickets purchase"),
+                            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                        ),
                         Container(
                           height: 10,
                         ),

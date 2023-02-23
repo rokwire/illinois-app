@@ -142,7 +142,7 @@ class Onboarding2ToggleButton extends StatelessWidget{
 
 class Onboarding2InfoDialog extends StatelessWidget{
   static final TextStyle titleStyle = Styles().textStyles?.getTextStyle("widget.title.large.fat") ?? TextStyle(fontSize: 20.0, color: Styles().colors!.fillColorPrimary,fontFamily: Styles().fontFamilies!.bold);
-  static final TextStyle contentStyle = Styles().textStyles?.getTextStyle("widget.info.regular") ?? TextStyle(fontSize: 16.0, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular);
+  static final TextStyle contentStyle = Styles().textStyles?.getTextStyle("widget.info.regular.thin") ?? TextStyle(fontSize: 16.0, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular);
 
   final Widget? content;
   final BuildContext? context;

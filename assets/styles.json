@@ -61,6 +61,7 @@
     "dividerLine"                           :"#535353",
 
     "mango"                                 :"#f29835",
+    "greenAccent"                       :"#69F0AE",
 
     "saferLocationWaitTimeColorRed"        :"#ff0000",
     "saferLocationWaitTimeColorYellow"     :"#ffff00",
@@ -99,15 +100,19 @@
     "test_overrides7" : {"extends": "test_overrides4",  "font_family": "bold",  "color": "fillColorSecondary", "inherit" :  false},
     "test_overrides8" : {"extends": "test_overrides3",  "size": 24.0, "color":  "fillColorPrimary", "override" :  false},
     "test_overrides9" : {"extends": "test_overrides3", "size": 24.0, "color": "fillColorPrimary"},
+    "usage" : "Styles().textStyles?.getTextStyle()",
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
 
+    "widget.heading.extra_large": { "font_family": "regular", "size": 24.0, "color": "white"},
+    "widget.heading.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "white"},
     "widget.heading.large": { "font_family": "regular", "size": 20.0, "color": "white"},
     "widget.heading.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "white"},
+    "widget.heading.medium": { "font_family": "medium", "size": 18.0, "color": "white"},
     "widget.heading.regular": { "font_family": "regular", "size": 16.0, "color": "white"},
     "widget.heading.regular.fat": { "font_family": "bold", "size": 16.0, "color": "white"},
     "widget.heading.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "white"},
-    "widget.heading.medium": { "font_family": "bold", "size": 14.0, "color": "white"},
+    "widget.heading.medium_small": { "font_family": "bold", "size": 14.0, "color": "white"},
     "widget.heading.small": { "font_family": "bold", "size": 12.0, "color": "white"},
 
     "widget.message.dark.extra_large": {"font_family": "regular", "size": 24.0, "color": "black"},
@@ -118,6 +123,8 @@
     "widget.message.large.fat": {"font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.message.large": {"font_family": "medium", "size": 20.0, "color": "fillColorPrimary"},
     "widget.message.medium": {"font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
+    "widget.message.medium.semi_thin": {"font_family": "medium", "size": 18.0, "color": "fillColorPrimary"},
+    "widget.message.medium.thin": {"font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.message.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.extra_fat": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
@@ -132,6 +139,8 @@
     "widget.title.extra_large": { "font_family": "regular", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.extra_large.extra_fat": { "font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.extra_large.semi_fat": { "font_family": "semi_bold", "size": 24.0, "color": "fillColorPrimary"},
+    "widget.title.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "fillColorPrimary"},
+    "widget.title.medium_large": {"font_family": "regular", "size": 22.0, "color": "fillColorPrimary"},
     "widget.title.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.title.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary"},
@@ -143,9 +152,13 @@
     "widget.title.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.tiny": {"font_family": "bold", "size": 12.0, "color": "fillColorPrimary"},
+    "widget.title.light.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "white"},
     "widget.title.light.medium.fat": {"font_family": "bold", "size": 18.0, "color": "white"},
+    "widget.title.light.regular": {"font_family": "regular", "size": 16.0, "color": "white"},
     "widget.title.light.small.fat": {"font_family": "bold", "size": 14.0, "color": "white"},
+    "widget.title.light.tiny": {"font_family": "medium", "size": 10.0, "color": "white"},
 
+    "widget.detail.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.detail.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.large.thin": { "font_family": "medium", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
@@ -171,7 +184,10 @@
     "widget.error.regular": { "font_family": "regular", "size": 16.0, "color": "alert"},
     "widget.error.regular.fat": { "font_family": "bold", "size": 16.0, "color": "alert"},
 
+    "widget.item.large": { "font_family": "regular", "size": 20.0, "color": "textBackground"},
+    "widget.item.large.fat": { "font_family": "bold", "size": 20.0, "color": "textBackground"},
     "widget.item.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textBackground"},
+    "widget.item.medium.extra_fat": { "font_family": "extra_bold", "size": 18.0, "color": "textBackground"},
     "widget.item.medium": { "font_family": "regular", "size": 18.0, "color": "textBackground"},
     "widget.item.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
@@ -179,13 +195,17 @@
     "widget.item.small.fat": { "font_family": "bold", "size": 14.0, "color": "textBackground"},
     "widget.item.small": { "font_family": "medium", "size": 14.0, "color": "textBackground"},
     "widget.item.small.thin": { "font_family": "regular", "size": 14.0, "color": "textBackground"},
+    "widget.item.small.semi_fat": { "font_family": "semi_bold", "size": 14.0, "color": "textBackground"},
     "widget.item.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "textBackground"},
     "widget.item.tiny": { "font_family": "medium", "size": 12.0, "color": "textBackground"},
     "widget.item.tiny.thin": { "font_family": "regular", "size": 12.0, "color": "textBackground"},
 
+    "widget.label.medium.fat": { "font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
+
     "widget.info.medium": { "font_family": "regular", "size": 18.0, "color": "textSurface"},
     "widget.info.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textSurface"},
-    "widget.info.regular": { "font_family": "regular", "size": 16.0, "color": "textSurface"},
+    "widget.info.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textSurface"},
+    "widget.info.regular": { "font_family": "medium", "size": 16.0, "color": "textSurface"},
     "widget.info.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textSurface"},
     "widget.info.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textSurface"},
     "widget.info.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
@@ -195,7 +215,10 @@
     "widget.tab.selected": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
 
+    "widget.button.title.extra_large": { "font_family": "bold", "size": 26.0, "color": "fillColorPrimary"},
     "widget.button.title.regular": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
+    "widget.button.title.regular.thin": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
+    "widget.button.title.regular.thin.underline": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
@@ -205,6 +228,11 @@
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.description.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
     "widget.button.description.tiny": { "font_family": "regular", "size": 12.0, "color": "textSurface"},
+
+    "widget.button.light.title.medium": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
+    "widget.button.light.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
+    "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
+    "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
@@ -230,19 +258,24 @@
     "widget.dialog.button.close" : {"font_family": "medium", "size": 50.0, "color": "white"},
     "widget.dialog.message.medium" : {"font_family": "medium", "size": 16.0, "color": "white"},
     "widget.dialog.message.medium.thin" : {"font_family": "regular", "size": 16.0, "color": "white"},
+    "widget.dialog.message.small" : {"font_family": "regular", "size": 14.0, "color": "white"},
+    "widget.dialog.message.regular" : {"font_family": "regular", "size": 20.0, "color": "white"},
     "widget.dialog.message.regular.fat" : {"font_family": "bold", "size": 20.0, "color": "white"},
     "widget.dialog.message.regular.extra_fat" : {"font_family": "extra_bold", "size": 20.0, "color": "white"},
-    "widget.dialog.message.large": { "font_family": "medium", "size": 24.0, "color": "white"},
+    "widget.dialog.message.large": { "font_family": "regular", "size": 24.0, "color": "white"},
+    "widget.dialog.message.large.thin": { "font_family": "medium", "size": 24.0, "color": "white"},
     "widget.dialog.message.large.fat": { "font_family": "bold", "size": 24.0, "color": "white"},
     "widget.dialog.message.large.extra_fat": { "font_family": "extra_bold", "size": 24.0, "color": "white"},
 
     "widget.dialog.message.dark.large.fat": { "font_family": "bold", "size": 24.0, "color": "black"},
     "widget.dialog.message.dark.large": { "font_family": "regular", "size": 24.0, "color": "black"},
-    "widget.dialog.message.dark.medium": { "font_family": "medium", "size": 16.0, "color": "black"},
+    "widget.dialog.message.dark.regular": { "font_family": "medium", "size": 16.0, "color": "black"},
+    "widget.dialog.message.dark.regular.fat": { "font_family": "bold", "size": 16.0, "color": "black"},
 
     "widget.card.title.large": { "font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.card.title.medium": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.card.title.medium.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.card.title.medium.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.card.title.regular.fat": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.regular.extra_fat": { "font_family": "extra_bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.small": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
@@ -302,6 +335,18 @@
     "widget.settings.dialog.button.title.enabled": {"font_family": "bold", "size": 16.0, "color": "white"},
     "widget.settings.dialog.button.title.disabled": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
 
+    "widget.checklist.content.step.title": {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
+    "widget.checklist.content.step.title.display": {"font_family": "bold", "size": 20.0, "color": "fillColorSecondary"},
+    "widget.checklist.content.page.title": {"font_family": "extra_bold", "size": 24.0, "color": "white"},
+    "widget.checklist.content.page.title.display": {"font_family": "extra_bold", "size": 32.0, "color": "white"},
+    "widget.checklist.content.progress.title.completed": {"font_family": "medium", "size": 15.0, "color": "greenAccent", "decoration": "underline"},
+    "widget.checklist.content.progress.title.not_completed": {"font_family": "regular", "size": 15.0, "color": "white", "decoration": "underline"},
+    "widget.checklist.content.progress.title.current_step": {"font_family": "extra_bold", "size": 15.0, "color": "fillColorPrimary", "decoration": "underline"},
+    "widget.checklist.content.tab.title.completed": {"font_family": "regular", "size": 16.0, "color": "greenAccent", "decoration": "underline"},
+    "widget.checklist.content.tab.title.not_completed": {"font_family": "regular", "size": 16.0, "color": "white", "decoration": "underline"},
+    "widget.checklist.content.tab.title.current_tab.completed": {"font_family": "extra_bold", "size": 16.0, "color": "greenAccent", "decoration": "underline"},
+    "widget.checklist.content.tab.title.current_tab.not_completed": {"font_family": "extra_bold", "size": 16.0, "color": "white", "decoration": "underline"},
+
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
     "panel.event_schedule.map.description": {"font_family": "medium", "size": 16.0, "color": "blackTransparent038"},
@@ -322,11 +367,13 @@
     "panel.group_member_notifications.toggle_button.title.small.enabled": {"extends": "widget.toggle_button.title.small.enabled"},
     "panel.group_member_notifications.toggle_button.title.small.disabled": {"extends": "widget.toggle_button.title.small.disabled"},
 
+    "panel.group_post_create.heading.regular": {"extends": "widget.toggle_button.title.small.disabled", "letter_spacing" :  1.0},
+
     "panel.wellness.ring.select_predefined.message.regular": {"extends": "widget.info.small"},
     "panel.wellness.ring.select_predefined.button.label.regular": {"font_family": "bold", "size": 18.0, "color": "black"},
     "panel.wellness.ring.select_predefined.button.description.regular": {"font_family": "regular", "size": 14.0, "color": "black"},
 
-    "panel.wellness.ring.home.detail.message": {"extends": "widget.info.regular"},
+    "panel.wellness.ring.home.detail.message": {"extends": "widget.info.regular.thin"},
     "panel.wellness.ring.home.detail.message.fat": {"extends": "widget.info.regular.fat"},
     "panel.wellness.ring.home.popup.heading": {"font_family": "bold", "size": 20.0, "color": "fillColorSecondary"},
     "panel.wellness.ring.home.button.create_ring.title.enabled": {"font_family": "bold", "size": 14.0, "color": "black"},
@@ -341,7 +388,7 @@
     "panel.wellness.todo.category.card.title.regular": {"extends": "widget.title.light.small.fat"},
     "panel.wellness.todo.category.empty.msg": {"extends": "widget.info.small"},
 
-    "panel.wellness.todo.item_detail.title": {"extends": "widget.info.regular"},
+    "panel.wellness.todo.item_detail.title": {"extends": "widget.info.regular.thin"},
     "panel.wellness.todo.item_detail.item": {"font_family": "regular", "size": 16.0, "color": "textSurfaceAccent"},
     "panel.wellness.todo.item_detail.empty": {"font_family": "bold", "size": 12.0, "color": "textSurfaceAccent"},
     "panel.wellness.todo.item_detail.work_date": {"font_family": "regular", "size": 11.0, "color": "black"},
@@ -397,14 +444,14 @@
     "panel.settings.login.title.large": {"extends": "widget.title.extra_huge.fat"},
 
     "panel.settings.privacy_center.title.medium.fat": {"extends": "widget.info.regular.extra_fat"},
-    "panel.settings.privacy_center.title.regular": {"extends": "widget.info.regular"},
+    "panel.settings.privacy_center.title.regular": {"extends": "widget.info.regular.thin"},
     "panel.settings.privacy_center.button.underline": {"font_family": "regular", "size": 16.0, "color": "textBackground", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.settings.privacy_center.message.tiny": {"extends": "widget.info.tiny"},
 
     "panel.settings.privacy_panel.update.message": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.settings.privacy_panel.update.message.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.settings.privacy_panel.privacy.label.medium": {"extends": "widget.info.medium.fat"},
-    "panel.settings.privacy_panel.privacy.label.regular": {"extends": "widget.info.regular"},
+    "panel.settings.privacy_panel.privacy.label.regular": {"extends": "widget.info.regular.thin"},
     "panel.settings.privacy_panel.privacy.description.large": {"extends": "widget.description.large.fat"},
     "panel.settings.privacy_panel.privacy.entry.title.enabled": {"extends": "widget.toggle_button.title.regular.fat.enabled"},
     "panel.settings.privacy_panel.privacy.entry.title.disabled": {"extends": "widget.toggle_button.title.regular.fat.disabled"},
@@ -463,7 +510,14 @@
     "panel.skills_self_evaluation.content.body":  {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.skills_self_evaluation.content.body.small":  {"font_family": "regular", "size": 12.0, "color": "fillColorPrimaryVariant"},
     "panel.skills_self_evaluation.content.link":  {"font_family": "regular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
-    "panel.skills_self_evaluation.content.link.fat":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"}
+    "panel.skills_self_evaluation.content.link.fat":  {"font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
+
+    "panel.wellness_appointments.button.title.underline":  {"extends": "widget.button.title.regular.thin.underline", "decoration_color":  "fillColorPrimary"},
+    "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
+
+    "panel.appointment_detail.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "accentColor1"},
+
+    "panel.settings.section_content.htm.title.regular":  {"extends": "widget.item.regular", "font_family": "regular_italic"}
   },
   "image": {
     "campus-tools": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
