@@ -2580,9 +2580,6 @@
     "panel.home_canvas_course.button.assignments.title": "Assignments",
     "panel.home_canvas_course.button.launch.title": "Launch Canvas",
 
-    "panel.syllabus_html.header.title": "Syllabus",
-    "panel.syllabus_html.load.failed.error.msg": "Failed to load syllabus content. Please, try again later.",
-
     "panel.canvas.common.all_courses.label": "All Courses",
 
     "panel.canvas_announcements.header.title": "Announcements",

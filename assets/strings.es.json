@@ -2577,9 +2577,6 @@
     "panel.home_canvas_course.button.assignments.title": "Tareas",
     "panel.home_canvas_course.button.launch.title": "Lienzo de lanzamiento",
 
-    "panel.syllabus_html.header.title": "Programa de estudios",
-    "panel.syllabus_html.load.failed.error.msg": "No se pudo cargar el contenido del programa de estudios. Por favor, inténtelo de nuevo más tarde.",
-
     "panel.canvas.common.all_courses.label": "Todos los cursos",
 
     "panel.canvas_announcements.header.title": "Anuncios",
