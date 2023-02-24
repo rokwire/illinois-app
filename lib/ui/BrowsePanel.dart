@@ -296,7 +296,7 @@ class _BrowseSection extends StatelessWidget {
             Row(children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 16), child:
-                  Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                  Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
                 )
               ),
               Opacity(opacity: _hasBrowseContent ? 1 : 0, child:
@@ -310,7 +310,7 @@ class _BrowseSection extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(bottom: 16), child:
-                  Text(_description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface))
+                  Text(_description, style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"))
                 )
               ),
               Semantics(
@@ -485,8 +485,7 @@ class _BrowseEntry extends StatelessWidget {
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
-                  Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold,
-                      fontSize: 20, color: Styles().colors!.fillColorPrimary)),
+                  Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),)
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
@@ -511,6 +510,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
+      case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
 
       case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
@@ -889,7 +889,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMTDStops(BuildContext context) {
-    Analytics().logSelect(target: "All MTD Stops");
+    Analytics().logSelect(target: "All Bus Stops");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all,)));
   }
 
@@ -1013,12 +1013,12 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapMyMTDStops(BuildContext context) {
-    Analytics().logSelect(target: "My MTD Stops");
+    Analytics().logSelect(target: "My Bus Stops");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
   }
 
   void _onTapMyMTDDestinations(BuildContext context) {
-    Analytics().logSelect(target: "My MTD Destinations");
+    Analytics().logSelect(target: "My Destinations");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
   }
 
@@ -1099,6 +1099,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapWellnessToDo(BuildContext context) {
     Analytics().logSelect(target: "Wellness To Do");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo,)));
+  }
+
+  void _onTapAcademicsToDo(BuildContext context) {
+    Analytics().logSelect(target: "Academics To Do");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list,)));
   }
 
   void _onTapWellnessTips(BuildContext context) {

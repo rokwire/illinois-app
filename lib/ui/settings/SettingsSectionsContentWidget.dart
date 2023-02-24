@@ -831,7 +831,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       HtmlWidget(
           StringUtils.ensureNotEmpty(descriptionHtml),
           onTapUrl : (url) {_onTapHtmlLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regularIt, fontSize: 16),
+          textStyle:  Styles().textStyles?.getTextStyle("panel.settings.section_content.htm.title.regula")
       )
       ),
     ]);
@@ -904,7 +904,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                 style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 children:[
                   TextSpan(text: versionLabel,),
-                  TextSpan(text:  " $_versionName", style : TextStyle(fontFamily: "ProximaNovaBold")),
+                  TextSpan(text:  " $_versionName", style : Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
                 ]
             ))
       );

@@ -682,7 +682,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                     padding: EdgeInsets.only(left: 10, top: 10),
                     child: Text(
                       Localization().getStringEx("widget.add_image.heading", "Select Image"),
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.large")
+                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.thin")
                     ),
                   ),
                   Spacer(),

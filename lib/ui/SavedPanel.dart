@@ -182,9 +182,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
+        Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),),
         Container(height:8),
-        Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+        Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline"), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
         Expanded(child: Container(), flex: 3),
     ],),);
   }
@@ -251,7 +251,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           Row(children: <Widget>[
             Expanded(child:
               Padding(padding: EdgeInsets.all(16), child:
-                Text(Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.white),)
+                Text(Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."), style: Styles().textStyles?.getTextStyle("widget.title.light.regular"),)
               ),
             ),
             InkWell(onTap: _onAuthorizeSkip, child: 
@@ -278,9 +278,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return Dialog(child:
       Padding(padding: EdgeInsets.all(18), child:
         Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx('app.title', 'Illinois'), style: TextStyle(fontSize: 24, color: Colors.black), ),
+          Text(Localization().getStringEx('app.title', 'Illinois'), style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.large"), ),
             Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
-              Text(message ?? '', textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),),
+              Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular"),),
             ),
             Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                 TextButton(onPressed: _onAuthorizeOK, child:
@@ -441,8 +441,8 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
       case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
-      case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My MTD Stops');
-      case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.mtd_destinations', 'My MTD Destinations');
+      case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My Bus Stops');
+      case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.mtd_destinations', 'My Destinations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
       case Appointment.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.appointments', 'MyMcKinley Appointments');
     }
@@ -603,7 +603,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     return <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+        Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
         Expanded(child: Container(), flex: 3),
     ],),)];
   
@@ -645,7 +645,7 @@ class _SavedItem extends StatelessWidget {
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.title.medium"), ),
                       ),
                       Visibility(visible: Auth2().canFavorite, child:
                         GestureDetector(behavior: HitTestBehavior.opaque,
@@ -676,10 +676,10 @@ class _SavedItem extends StatelessWidget {
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                           Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
                           )
                         ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
                   )),)
                 ]),
               ),

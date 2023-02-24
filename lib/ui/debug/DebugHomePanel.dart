@@ -166,6 +166,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
                 ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
                 ToggleRibbonButton(label: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
+                ToggleRibbonButton(label: 'Canvas LMS', toggled: (Storage().debugUseCanvasLms == true), onTap: _onUseCanvasLms),
                     
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
                 Container(color: Colors.white, child:
@@ -628,6 +629,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   void _onMapShowLevels() {
     setState(() {
       Storage().debugMapShowLevels = (Storage().debugMapShowLevels != true);
+    });
+  }
+
+  void _onUseCanvasLms() {
+    setState(() {
+      Storage().debugUseCanvasLms = (Storage().debugUseCanvasLms != true);
     });
   }
 

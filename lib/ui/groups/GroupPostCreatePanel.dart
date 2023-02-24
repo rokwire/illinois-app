@@ -57,11 +57,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
           leading: HeaderBackButton(),
           title: Text(
             Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1),
+            style: Styles().textStyles?.getTextStyle("panel.group_post_create.heading.regular")
           ),
           centerTitle: false),
         backgroundColor: Styles().colors!.background,
@@ -88,10 +84,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   _buildNudgesWidget(),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: Styles().fontFamilies!.bold,
-                        color: Styles().colors!.fillColorPrimary)),
+                    style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),),
                   Padding(
                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
                     child: TextField(
@@ -105,10 +98,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                           borderSide: BorderSide(
                               color: Styles().colors!.mediumGray!,
                               width: 0.0))),
-                      style: TextStyle(
-                        color: Styles().colors!.textBackground,
-                        fontSize: 16,
-                        fontFamily: Styles().fontFamilies!.regular))),
+                      style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"))),
                   PostInputField(
                     text: _postData.body,
                     onBodyChanged: (text) => _postData.body = text,
@@ -177,7 +167,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         padding: EdgeInsets.only(bottom: 12),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(Localization().getStringEx('panel.group.detail.post.create.nudges.label', 'Nudges'),
-              style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)),
+              style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")),
           Padding(
               padding: EdgeInsets.only(top: 5),
               child: Container(
@@ -191,8 +181,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                           child: DropdownButton<GroupPostNudge?>(
                               icon: Icon(Icons.arrow_drop_down, color: Styles().colors!.fillColorSecondary),
                               isExpanded: true,
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
+                              style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                               items: _nudgesDropDownItems,
                               value: _selectedNudge,
                               onChanged: _onNudgeChanged)))))
