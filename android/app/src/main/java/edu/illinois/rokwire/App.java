@@ -18,29 +18,20 @@ package edu.illinois.rokwire;
 
 import android.app.Application;
 
-import edu.illinois.rokwire.mobile_access.MobileAccessKeysApiFactory;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.view.FlutterMain;
 
 public class App extends Application implements PluginRegistry.PluginRegistrantCallback {
-
-    private MobileAccessKeysApiFactory mobileKeysFactory;
 
     @Override
     public void onCreate() {
         super.onCreate();
         FlutterMain.startInitialization(this);
         //FlutterFirebaseMessagingService.setPluginRegistrant(this);
-
-        mobileKeysFactory = new MobileAccessKeysApiFactory(this);
     }
 
     @Override
     public void registerWith(PluginRegistry registry) {
        // FirebaseMessagingPlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
-    }
-
-    public MobileAccessKeysApiFactory getMobileApiKeysFactory() {
-        return mobileKeysFactory;
     }
 }

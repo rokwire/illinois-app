@@ -16,7 +16,11 @@
 
 package edu.illinois.rokwire.mobile_access;
 
+import android.app.Activity;
 import android.util.Log;
+
+import java.util.HashMap;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import edu.illinois.rokwire.Constants;
@@ -30,28 +34,51 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     private MethodChannel methodChannel;
 
+    private final MobileAccessKeysApiFacade apiFacade;
+
+    public MobileAccessPlugin(Activity activity) {
+        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(activity);
+        this.apiFacade = new MobileAccessKeysApiFacade(activity, keysApiFactory);
+    }
+
+    //region Activity APIs
+
+    public void onActivityStart() {
+        apiFacade.onApplicationStartup();
+    }
+
+    public void onActivityResume() {
+        apiFacade.onActivityResume();
+    }
+
+    public void onActivityPause() {
+        apiFacade.onActivityPause();
+    }
+
+    //endregion
+
+    //region Method Handler
+
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         String method = call.method;
         try {
             switch (method) {
                 case Constants.MOBILE_ACCESS_AVAILABLE_KEYS_KEY:
-//                    List<HashMap<String, Object>> keys = handleMobileAccessKeys(methodCall.arguments);
-//                    result.success(keys);
-                    result.success(null);
+                    List<HashMap<String, Object>> keys = handleMobileAccessKeys();
+                    result.success(keys);
                     break;
                 case Constants.MOBILE_ACCESS_REGISTER_ENDPOINT_KEY:
-//                    handleMobileAccessRegisterEndpoint(methodCall.arguments);
-                    result.success(false);
+                    handleMobileAccessRegisterEndpoint(call.arguments);
+                    result.success(true);
                     break;
                 case Constants.MOBILE_ACCESS_UNREGISTER_ENDPOINT_KEY:
-//                    handleMobileAccessUnregisterEndpoint();
-                    result.success(false);
+                    handleMobileAccessUnregisterEndpoint();
+                    result.success(true);
                     break;
                 case Constants.MOBILE_ACCESS_IS_ENDPOINT_REGISTERED_KEY:
-//                    boolean isRegistered = handleMobileAccessIsEndpointRegistered();
-//                    result.success(isRegistered);
-                    result.success(false);
+                    boolean isRegistered = handleMobileAccessIsEndpointRegistered();
+                    result.success(isRegistered);
                     break;
                 default:
                     result.notImplemented();
@@ -59,11 +86,37 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
             }
         } catch (IllegalStateException exception) {
-            String errorMsg = String.format("Ignoring exception '%s'. See https://github.com/flutter/flutter/issues/29092 for details.", exception.toString());
+            String errorMsg = String.format("Ignoring exception '%s'. See https://github.com/flutter/flutter/issues/29092 for details.", exception);
             Log.e(TAG, errorMsg);
             exception.printStackTrace();
         }
     }
+
+    //endregion
+
+    //region Native methods implementation
+
+    private List<HashMap<String, Object>> handleMobileAccessKeys() {
+        return apiFacade.getKeysDetails();
+    }
+
+    private void handleMobileAccessRegisterEndpoint(Object params) {
+        String invitationCode = null;
+        if (params instanceof String) {
+            invitationCode = (String) params;
+        }
+        apiFacade.setupEndpoint(invitationCode);
+    }
+
+    private void handleMobileAccessUnregisterEndpoint() {
+        apiFacade.unregisterEndpoint();
+    }
+
+    private boolean handleMobileAccessIsEndpointRegistered() {
+        return apiFacade.isEndpointSetUpComplete();
+    }
+
+    //endregion
 
     //region Flutter Plugin implementation
 

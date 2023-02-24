@@ -61,10 +61,9 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     private final OrigoOpeningTrigger openingTrigger;
     private final Activity activity;
 
-    public MobileAccessKeysApiFacade(Activity activity) {
+    public MobileAccessKeysApiFacade(Activity activity, OrigoKeysApiFactory apiFactory) {
         this.activity = activity;
-        App application = (App) activity.getApplication();
-        this.mobileKeysApiFactory = application.getMobileApiKeysFactory();
+        this.mobileKeysApiFactory = apiFactory;
         this.mobileKeys = mobileKeysApiFactory.getMobileKeys();
         //TBD: DD - check how to init the correct trigger from flutter based on the user selection
         this.openingTrigger = new OrigoTapOpeningTrigger(activity);
