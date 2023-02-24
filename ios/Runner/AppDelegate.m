@@ -26,7 +26,6 @@
 #import "MapDirectionsController.h"
 #import "MapLocationPickerController.h"
 #import "MobileAccessPlugin.h"
-#import "OrigoController.h"
 
 #import "NSArray+InaTypedValue.h"
 #import "NSDictionary+InaTypedValue.h"
@@ -253,18 +252,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"deepLinkScheme"]) {
 		[self handleDeepLinkSchemeWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"mobileAccessKeys"]) {
-		[self handleMobileAccessKeysWithParameters:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"mobileAccessKeysRegisterEndpoint"]) {
-		[self handleMobileAccessKeysRegisterEndpointWithArgument:call.arguments result:result];
-	}
-	else if ([call.method isEqualToString:@"mobileAccessKeysUnregisterEndpoint"]) {
-		[self handleMobileAccessKeysUnregisterEndpointWithParameters:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"mobileAccessKeysIsEndpointRegistered"]) {
-		[self handleMobileAccessKeysIsEndpointRegisteredWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"test"]) {
 		[self handleTestWithParameters:parameters result:result];
 	}
@@ -282,8 +269,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	// Initialize Орiго SDK
 	NSString *origoAppId = [self.secretKeys uiucConfigStringForPathKey:@"origo.app_id"];
 	if (0 < origoAppId.length) {
-		[OrigoController.sharedInstance initializeWithAppId:origoAppId];
-		[OrigoController.sharedInstance startWithCompletion:nil];
+		[MobileAccessPlugin.sharedInstance initializeWithAppId:origoAppId];
+		[MobileAccessPlugin.sharedInstance startWithCompletion:nil];
 	}
 
 	result(@(YES));
@@ -469,29 +456,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		}
 	}
 	result(deepLinkScheme);
-}
-
-#pragma mark Mobile Access Id
-
-- (void)handleMobileAccessKeysWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-  result(OrigoController.sharedInstance.mobileKeys);
-}
-
-- (void)handleMobileAccessKeysRegisterEndpointWithArgument:(id)argument result:(FlutterResult)result {
-	NSString* invitationCode = [argument isKindOfClass:[NSString class]] ? argument : nil;
-	[OrigoController.sharedInstance registerEndpointWithInvitationCode:invitationCode completion:^(NSError *error) {
-		result([NSNumber numberWithBool:(error == nil)]);
-	}];
-}
-
-- (void)handleMobileAccessKeysUnregisterEndpointWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	[OrigoController.sharedInstance unregisterEndpointWithCompletion:^(NSError *error) {
-		result([NSNumber numberWithBool:(error == nil)]);
-	}];
-}
-
-- (void)handleMobileAccessKeysIsEndpointRegisteredWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	result([NSNumber numberWithBool:OrigoController.sharedInstance.isEndpointRegistered]);
 }
 
 #pragma mark Orientations

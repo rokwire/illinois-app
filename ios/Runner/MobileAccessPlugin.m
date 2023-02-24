@@ -18,68 +18,269 @@
 //
 
 #import "MobileAccessPlugin.h"
-#import <Flutter/Flutter.h>
-#import <Foundation/Foundation.h>
 
-@interface MobileAccessPlugin()
+#import "NSDictionary+InaTypedValue.h"
+#import "NSDate+InaUtils.h"
+
+#import <OrigoSDK/OrigoSDK.h>
+
+@interface MobileAccessPlugin()<OrigoKeysManagerDelegate>
 @property (nonatomic, strong) FlutterMethodChannel* channel;
+
+@property (nonatomic, strong) OrigoKeysManager* origoKeysManager;
+
+@property (nonatomic, strong) NSMutableSet* startCompletions;
+@property (nonatomic, assign) bool isStarted;
+
+@property (nonatomic, strong) void (^registerEndpointCompletion)(NSError* error);
+@property (nonatomic, strong) void (^unregisterEndpointCompletion)(NSError* error);
 @end
+
+@interface OrigoKeysKey(UIUC)
+@property (nonatomic, readonly) NSDictionary* uiucJson;
+@end
+
+
+///////////////////////////////////////////
+// MobileAccessPlugin
 
 @implementation MobileAccessPlugin
 
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar{
-	FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:@"edu.illinois.rokwire/mobile_access" binaryMessenger:registrar.messenger];
-	MobileAccessPlugin *instance = [[MobileAccessPlugin alloc] initWithChannel:channel];
-	[registrar addMethodCallDelegate:instance channel:channel];
++ (instancetype)sharedInstance {
+    static MobileAccessPlugin *_sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _sharedInstance = [[self alloc] init];
+    });
+	
+    return _sharedInstance;
 }
 
-- (instancetype)initWithChannel:(FlutterMethodChannel*)channel{
-	if (self = [self init]) {
-		_channel = channel;
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar{
+	MobileAccessPlugin *instance = self.sharedInstance;
+	instance.channel = [FlutterMethodChannel methodChannelWithName:@"edu.illinois.rokwire/mobile_access" binaryMessenger:registrar.messenger];
+	[registrar addMethodCallDelegate:instance channel:instance.channel];
+}
+
+- (instancetype)init {
+	if (self = [super init]) {
 	}
 	return self;
 }
 
+
 #pragma mark MethodCall
 
--(void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result{
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result{
 	NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
 	if ([call.method isEqualToString:@"availableKeys"]) {
-		[self handleMobileAccessKeysWithParameters:parameters result:result];
+		result(self.mobileKeys);
 	}
 	else if ([call.method isEqualToString:@"registerEndpoint"]) {
-		[self handleMobileAccessKeysRegisterEndpointWithArgument:call.arguments result:result];
+		NSString* invitationCode = [call.arguments isKindOfClass:[NSString class]] ? call.arguments : nil;
+		[self registerEndpointWithInvitationCode:invitationCode completion:^(NSError *error) {
+			result([NSNumber numberWithBool:(error == nil)]);
+		}];
 	}
 	else if ([call.method isEqualToString:@"unregisterEndpoint"]) {
-		[self handleMobileAccessKeysUnregisterEndpointWithParameters:parameters result:result];
+		[self unregisterEndpointWithCompletion:^(NSError *error) {
+			result([NSNumber numberWithBool:(error == nil)]);
+		}];
 	}
 	else if ([call.method isEqualToString:@"isEndpointRegistered"]) {
-		[self handleMobileAccessKeysIsEndpointRegisteredWithParameters:parameters result:result];
+		result([NSNumber numberWithBool:self.isEndpointRegistered]);
 	}
 }
 
-- (void)handleMobileAccessKeysWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	//TBD: implement
-	NSLog(@"Mobile Keys: not implemented 1");
-	result(nil);
+// Implementation
+
+- (void)initializeWithAppId:(NSString*)appId {
+	NSDictionary *bundleInfo = [[NSBundle mainBundle] infoDictionary];
+	NSString *version = [NSString stringWithFormat:@"%@-%@ (%@)", appId,
+		[bundleInfo inaStringForKey:@"CFBundleShortVersionString"],
+		[bundleInfo inaStringForKey:@"CFBundleVersion"]
+	];
+	
+	@try {
+		_origoKeysManager = [[OrigoKeysManager alloc] initWithDelegate:self options:@{
+			OrigoKeysOptionApplicationId: appId,
+			OrigoKeysOptionVersion: version,
+			OrigoKeysOptionSuppressApplePay: [NSNumber numberWithBool:TRUE],
+		//OrigoKeysOptionBeaconUUID: @"...",
+		}];
+	}
+	@catch (NSException *exception) {
+		NSLog(@"Failed to initialize OrigoKeysManager: %@", exception);
+	}
 }
 
-- (void)handleMobileAccessKeysRegisterEndpointWithArgument:(id)argument result:(FlutterResult)result {
-	//TBD: implement
-	NSLog(@"Mobile Keys: not implemented 2");
-	result(nil);
+- (void)start {
+	[self startWithCompletion:nil];
 }
 
-- (void)handleMobileAccessKeysUnregisterEndpointWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	//TBD: implement
-	NSLog(@"Mobile Keys: not implemented 3");
-	result(nil);
+- (void)startWithCompletion:(void (^)(NSError* error))completion {
+	if (_origoKeysManager == nil) {
+		if (completion != nil) {
+			completion([NSError errorWithDomain:@"edu.illinois.rokwire" code: 1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }]);
+		}
+	}
+	else if (_isStarted) {
+		completion(nil);
+	}
+	else if (_startCompletions != nil) {
+		if (completion != nil) {
+			[_startCompletions addObject:completion];
+		}
+	}
+	else {
+		_startCompletions = [[NSMutableSet alloc] init];
+		if (completion != nil) {
+			[_startCompletions addObject:completion];
+		}
+		[_origoKeysManager startup];
+	}
 }
 
-- (void)handleMobileAccessKeysIsEndpointRegisteredWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	//TBD: implement
-	NSLog(@"Mobile Keys: not implemented 4");
-	result(nil);
+- (void)didStartupWithError:(NSError*)error {
+	_isStarted = (error == nil);
+
+	if (_startCompletions != nil) {
+		NSSet *startCompletions = _startCompletions;
+		_startCompletions = nil;
+		for (void (^completion)(NSError* error) in startCompletions) {
+			completion(error);
+		}
+	}
+}
+
+- (NSArray*)mobileKeys {
+	NSMutableArray* result = nil;
+	if ([_origoKeysManager isEndpointSetup: NULL]) {
+		NSArray<OrigoKeysKey*>* oregoKeys = [_origoKeysManager listMobileKeys: NULL];
+		if (oregoKeys != nil) {
+			result = [[NSMutableArray alloc] init];
+			for (OrigoKeysKey* oregoKey in oregoKeys) {
+				[result addObject:oregoKey.uiucJson];
+			}
+		}
+	}
+	return result;
+}
+
+- (bool)isEndpointRegistered {
+	return (_origoKeysManager != nil) && _isStarted && [_origoKeysManager isEndpointSetup:NULL];
+}
+
+- (void)registerEndpointWithInvitationCode:(NSString*)invitationCode completion:(void (^)(NSError* error))completion {
+	NSError *errorResult = nil;
+	if ((_origoKeysManager == nil) || !_isStarted) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
+	}
+	else if ([_origoKeysManager isEndpointSetup:NULL]) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:2 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint already setup", nil) }];
+	}
+	else if (_registerEndpointCompletion != nil) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:3 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently setup", nil) }];
+	}
+	else {
+		_registerEndpointCompletion = completion;
+		[_origoKeysManager setupEndpoint:invitationCode];
+	}
+
+	if ((errorResult != nil) && (completion != nil)) {
+		completion(errorResult);
+	}
+}
+
+- (void)didRegisterEndpointWithError:(NSError*)error {
+	if (_registerEndpointCompletion != nil) {
+		void (^ completion)(NSError* error) = _registerEndpointCompletion;
+		_registerEndpointCompletion = nil;
+		completion(error);
+	}
+}
+
+- (void)unregisterEndpointWithCompletion:(void (^)(NSError* error))completion {
+	NSError *errorResult = nil;
+	if ((_origoKeysManager == nil) || !_isStarted) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
+	}
+	else if (![_origoKeysManager isEndpointSetup:NULL]) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:4 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint not setup", nil) }];
+	}
+	else if (_unregisterEndpointCompletion != nil) {
+		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:5 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently unregister", nil) }];
+	}
+	else {
+		_unregisterEndpointCompletion = completion;
+		[_origoKeysManager unregisterEndpoint];
+	}
+
+	if ((errorResult != nil) && (completion != nil)) {
+		completion(errorResult);
+	}
+}
+
+- (void)didUnregisterEndpointWithError:(NSError*)error {
+	if (_unregisterEndpointCompletion != nil) {
+		void (^ completion)(NSError* error) = _unregisterEndpointCompletion;
+		_unregisterEndpointCompletion = nil;
+		completion(error);
+	}
+}
+
+#pragma mark OrigoKeysManagerDelegate
+
+- (void)origoKeysDidStartup {
+	[self didStartupWithError:nil];
+}
+
+- (void)origoKeysDidFailToStartup:(NSError *)error {
+	[self didStartupWithError:error];
+}
+
+- (void)origoKeysDidSetupEndpoint {
+	[self didRegisterEndpointWithError:nil];
+}
+
+- (void)origoKeysDidFailToSetupEndpoint:(NSError *)error {
+	[self didRegisterEndpointWithError:error];
+}
+
+- (void)origoKeysDidUpdateEndpoint {}
+- (void)origoKeysDidUpdateEndpointWithSummary:(OrigoKeysEndpointUpdateSummary *)endpointUpdateSummary {}
+- (void)origoKeysDidFailToUpdateEndpoint:(NSError *)error {}
+
+- (void)origoKeysDidTerminateEndpoint {
+	[self didUnregisterEndpointWithError:nil];
+}
+
+@end
+
+///////////////////////////////////////////
+// OrigoKeysKey+UIUC
+
+@implementation OrigoKeysKey(UIUC)
+
+- (NSDictionary*)uiucJson {
+	return @{
+		@"type": self.keyType ?: [NSNull null],
+		@"card_number": self.cardNumber ?: [NSNull null],
+		@"active": [NSNumber numberWithBool:self.active],
+		@"key_identifier": self.keyId ?: [NSNull null],
+		@"unique_identifier": self.uniqueIdentifier ?: [NSNull null],
+		@"external_id": self.externalId ?: [NSNull null],
+
+		@"name": self.name ?: [NSNull null],
+		@"suffix": self.suffix ?: [NSNull null],
+		@"access_token": self.accessToken ?: [NSNull null],
+
+		@"label": self.label ?: [NSNull null],
+		@"issuer": self.issuer ?: [NSNull null],
+		
+		@"begin_date": [self.beginDate inaStringWithFormat:@"yyyy-MM-dd"] ?: [NSNull null],
+		@"expiration_date": [self.endDate inaStringWithFormat:@"yyyy-MM-dd"] ?: [NSNull null],
+	};
 }
 
 @end

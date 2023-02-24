@@ -21,6 +21,11 @@
 #import <Flutter/Flutter.h>
 
 @interface MobileAccessPlugin : NSObject<FlutterPlugin>
-- (instancetype)initWithChannel:(FlutterMethodChannel*)_channel;
++ (instancetype)sharedInstance;
+
+- (void)initializeWithAppId:(NSString*)appId;
+
+- (void)start;
+- (void)startWithCompletion:(void (^)(NSError* error))completion;
 @end
 
