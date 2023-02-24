@@ -95,7 +95,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   final String _mapStylesExplorePoiKey = 'explore-poi';
   final String _mapStylesMtdStopKey = 'mtd-stop';
   final Map<String, BitmapDescriptor> _markerIconCache = <String, BitmapDescriptor>{};
-  static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
+
+  CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
+
   static const double _mapPadding = 50;
   static const double _mapGroupMarkerSize = 24;
   static const double _groupMarkersUpdateThresoldDelta = 0.3;
@@ -160,6 +162,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         setStateIfMounted(() {
         });
       });
+
+    double? lat = Config().mapDefaultLatitude;
+    double? long = Config().mapDefaultLongitude;
+    double? zoom = Config().mapDefaultZoom;
+
+    if (lat != null && long != null && zoom != null) {
+      _defaultCameraPosition = CameraPosition(target: LatLng(lat, long), zoom: zoom);
+    }
 
     super.initState();
   }

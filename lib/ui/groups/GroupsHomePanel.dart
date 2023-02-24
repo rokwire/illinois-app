@@ -419,7 +419,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
 
     if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
-      String text = Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet");
+      String text = Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any groups yet");
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
         Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
       );
@@ -609,7 +609,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
   
   bool get _canCreateGroup {
-    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
+    return Auth2().isLoggedIn && FlexUI().isSharingAvailable;
   }
 
   bool get _canTapGroupsContentType {

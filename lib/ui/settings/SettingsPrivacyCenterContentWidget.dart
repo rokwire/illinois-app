@@ -260,16 +260,14 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   Widget _buildDeleteButton(){
     return Padding(
       padding: EdgeInsets.only(top: 40),
-      child: Column(children: <Widget>[
+      child: Column(children: [
         RoundedButton(
-          backgroundColor: Styles().colors!.white,
-          borderColor: Styles().colors!.white,
-          textColor: UiColors.fromHex("#f54400"),
-          fontSize: 16,
-          fontFamily: Styles().fontFamilies!.regular,
+          backgroundColor: Styles().colors?.surface,
+          borderColor: Styles().colors?.surface,
+          textStyle: Styles().textStyles?.getTextStyle('widget.error.regular'),
           label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
           hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-          borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+          elevation: 2,
           onTap: _onTapDeleteData,
         ),
         Container(height: 16,),

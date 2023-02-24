@@ -2248,7 +2248,7 @@
     "panel.groups_home.filter.tag.all.label": "All Tags",
     "panel.groups_home.filter.tag.my.label": "My Tags",
     "panel.groups_home.filter.filter.label": "Filters",
-    "panel.groups_home.label.my_groups.empty": "You are not member of any groups yet",
+    "panel.groups_home.label.my_groups.empty": "You are not a member of any groups yet",
     "panel.groups_home.label.my_groups.failed": "Failed to load groups",
     "panel.groups_home.label.all_groups.empty": "There are no groups created yet",
     "panel.groups_home.label.all_groups.failed": "Failed to load groups",

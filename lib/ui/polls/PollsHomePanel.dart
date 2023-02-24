@@ -190,7 +190,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   Widget _buildPollsTabbar() {
     return Container(
-      color: Styles().colors!.backgroundVariant,
+      color: Styles().colors?.background,
       padding: EdgeInsets.only(left: 16, top: 16, right: 16),
       child: Row(
         children: <Widget>[
@@ -259,14 +259,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       pollsContent = _buildEmptyContent();
     }
 
-    return
-      Stack(
-        alignment: Alignment.topCenter,
-        children: <Widget>[
-          Styles().images?.getImage("slant-dark") ?? Container(),
-          Padding( padding: EdgeInsets.symmetric(horizontal: 16),
-              child: pollsContent,
-          )]);
+    return Padding( padding: EdgeInsets.symmetric(horizontal: 16), child: pollsContent,);
   }
 
   List<Poll>? get _polls {

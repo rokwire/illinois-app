@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -27,6 +28,7 @@ import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -35,6 +37,7 @@ import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments }
 
@@ -80,11 +83,32 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   static SettingsContent? _lastSelectedContent;
   late SettingsContent _selectedContent;
   bool _contentValuesVisible = false;
+  List<SettingsContent>? _contentValues;
 
   @override
   void initState() {
     super.initState();
+    _buildContentValues();
     _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.sections);
+  }
+
+  void _buildContentValues() {
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['settings']);
+    List<SettingsContent>? contentValues;
+    if (contentCodes != null) {
+      contentValues = [];
+      for (String code in contentCodes) {
+        SettingsContent? value = _getSettingsValueFromCode(code);
+        if (value != null) {
+          contentValues.add(value);
+        }
+      }
+    }
+
+    _contentValues = contentValues;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -201,9 +225,9 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   }
 
   Widget _buildContentValuesWidget() {
-    List<Widget> sectionList = <Widget>[];
+    List<Widget> sectionList = [];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    for (SettingsContent section in SettingsContent.values) {
+    for (SettingsContent section in _contentValues ?? []) {
       if ((_selectedContent != section)) {
         sectionList.add(_buildContentItem(section));
       }
@@ -242,6 +266,29 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         _contentValuesVisible = !_contentValuesVisible;
       });
     }
+  }
+
+
+  SettingsContent? _getSettingsValueFromCode(String? code) {
+    switch (code) {
+      case "login":
+        return SettingsContent.sections;
+      case "interests":
+        return SettingsContent.interests;
+      case "food":
+        return SettingsContent.food_filters;
+      case "sports":
+        return SettingsContent.sports;
+      case "calendar":
+        return SettingsContent.calendar;
+      case "appointments":
+        return SettingsContent.appointments;
+      case "favorites":
+        return SettingsContent.favorites;
+      case "assessments":
+        return SettingsContent.assessments;
+    }
+    return null;
   }
 
   Widget get _contentWidget {

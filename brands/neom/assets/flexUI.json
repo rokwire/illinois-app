@@ -1,17 +1,17 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["favorites", "browse", "maps", "academics", "wellness"],
+			"tabbar": ["favorites", "browse", "maps2", "academics", "wellness"],
 
 			"home": [
 				"wellness_resources", "wellness_todo", "wellness_rings", "wellness_tips",
-				"twitter", "all_groups", "my_groups",
+				"all_groups", "my_groups",
 				"open_research_projects", "my_research_projects", "create_poll", "recent_polls",
 				"my_campus_guide", "campus_reminders", "all_notifications", "unread_notifications",
 				"app_help", "video_tutorials",
 				"new_student_checklist",
 				"campus_highlights", "campus_safety_resources", "campus_resources",
-				"recent_items", "my_news"
+				"recent_items"
 			],
 			"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
 			"home.connect": ["phone_or_email"],
@@ -24,7 +24,7 @@
 
 			"home.twitter.account": ["gies", "", "canvas"],
 
-			"browse": ["academics", "app_help", "campus_guide", "campus_resources", "feeds", "groups", "my", "inbox", "polls", "recent", "research_projects", "wellness"],
+			"browse": ["academics", "app_help", "campus_guide", "campus_resources", "groups", "my", "inbox", "polls", "recent", "research_projects", "wellness"],
 			"browse.academics": ["skills_self_evaluation", "campus_reminders"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
 			"browse.athletics": ["my_game_day", "sport_events", "my_athletics", "sport_news", "my_news"],
@@ -45,30 +45,31 @@
 			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
 			"browse.wellness": ["wellness_rings", "wellness_todo", "wellness_tips", "wellness_health_screener"],
 
-			"settings": ["connect", "connected", "link", "linked", "feedback"],
-			"settings.connect": ["phone_or_email"],
-			"settings.connected": ["phone", "email"],
-			"settings.link": ["phone", "email"],
-			"settings.linked": ["phone", "email"],
-			"settings.connected.netid": ["info", "disconnect"],
-			"settings.connected.phone": ["info", "disconnect", "verify"],
-			"settings.connected.email": ["info", "disconnect", "login"],
-			"settings.linked.netid": ["info", "remove"],
-			"settings.linked.phone": ["info", "remove", "verify"],
-			"settings.linked.email": ["info", "remove", "verify"],
+			"settings": ["login", "favorites", "assessments"],
+			"settings.login": ["connect", "connected", "link", "linked", "feedback"],
+			"settings.login.connect": ["phone_or_email"],
+			"settings.login.connected": ["phone", "email"],
+			"settings.login.link": ["phone", "email"],
+			"settings.login.linked": ["phone", "email"],
+			"settings.login.connected.netid": ["info", "disconnect"],
+			"settings.login.connected.phone": ["info", "disconnect", "verify"],
+			"settings.login.connected.email": ["info", "disconnect", "login"],
+			"settings.login.linked.netid": ["info", "remove"],
+			"settings.login.linked.phone": ["info", "remove", "verify"],
+			"settings.login.linked.email": ["info", "remove", "verify"],
 
-			"academics": ["academics_events", "skills_self_evaluation"],
-			"academics.skills_self_evaluation.features": ["roles_access", "privacy_access"],
+			"academics": ["skills_self_evaluation"],
+			"academics.skills_self_evaluation.features": ["authentication"],
 
-			"polls.features": ["authentication", "netid_login"],
+			"polls.features": ["authentication"],
 
 			"wellness": ["daily_tips", "rings", "todo", "health_screener", "resources", "struggling"],
 			"wellness.appointments.features": ["authentication", "netid_login"],
 			"wellness.health_screener": ["history"],
-			"wellness.health_screener.features": ["student", "authentication", "netid_login"],
+			"wellness.health_screener.features": ["student", "authentication"],
 
 			"explore.list": ["events"],
-			"explore.map":  ["events"],
+			"explore.map":  ["buildings"],
 
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 
@@ -85,8 +86,8 @@
 
 			"campus_guide.features":["groups", "quick_polls", "saved"],
 
-			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "sharing",
-				"new_student"],
+			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
+				"new_student", "student"],
 
 			"launch":["emergency"]
 
@@ -120,9 +121,9 @@
 			"privacy" : {
 				"connect"                         : 4,
 
-				"settings.connected"              : 4,
-				"settings.link"                   : 4,
-				"settings.linked"                 : 4,
+				"settings.login.connected"        : 4,
+				"settings.login.link"             : 4,
+				"settings.login.linked"           : 4,
 
 				"onboarding.notifications_auth"   : 4,
 				"onboarding.location_auth"        : 2,
@@ -152,34 +153,34 @@
 				"canvas_courses"                      : { "shibbolethLoggedIn": true },
 				"student_courses"                     : { "shibbolethLoggedIn": true },
 
-				"settings.connect"                    : { "loggedIn": false },
-				"settings.connected"                  : { "loggedIn": true },
-				"settings.connected.netid"            : { "shibbolethLoggedIn": true },
-				"settings.connected.netid.info"       : { "shibbolethLoggedIn": true },
-				"settings.connected.netid.disconnect" : { "shibbolethLoggedIn": true },
-				"settings.connected.netid.connect"    : { "shibbolethLoggedIn": false },
-				"settings.connected.phone"            : { "phoneLoggedIn": true },
-				"settings.connected.phone.info"       : { "phoneLoggedIn": true },
-				"settings.connected.phone.disconnect" : { "phoneLoggedIn": true },
-				"settings.connected.phone.verify"     : { "phoneLoggedIn": false },
-				"settings.connected.email"            : { "emailLoggedIn": true },
-				"settings.connected.email.info"       : { "emailLoggedIn": true },
-				"settings.connected.email.disconnect" : { "emailLoggedIn": true },
-				"settings.connected.email.login"      : { "emailLoggedIn": false },
-				"settings.link"                       : { "loggedIn": true },
-				"settings.link.netid"                 : { "shibbolethLinked": false },
-				"settings.link.phone"                 : { "phoneLinked": false },
-				"settings.link.email"                 : { "emailLinked": false },
-				"settings.linked"                     : { "loggedIn": true },
-				"settings.linked.netid"               : { "shibbolethLinked": true },
-				"settings.linked.netid.info"          : { "shibbolethLinked": true },
-				"settings.linked.netid.remove"        : { "shibbolethLinked": true },
-				"settings.linked.phone"               : { "phoneLinked": true },
-				"settings.linked.phone.info"          : { "phoneLinked": true },
-				"settings.linked.phone.remove"        : { "phoneLinked": true },
-				"settings.linked.email"               : { "emailLinked": true },
-				"settings.linked.email.info"          : { "emailLinked": true },
-				"settings.linked.email.remove"        : { "emailLinked": true },
+				"settings.login.connect"                    : { "loggedIn": false },
+				"settings.login.connected"                  : { "loggedIn": true },
+				"settings.login.connected.netid"            : { "shibbolethLoggedIn": true },
+				"settings.login.connected.netid.info"       : { "shibbolethLoggedIn": true },
+				"settings.login.connected.netid.disconnect" : { "shibbolethLoggedIn": true },
+				"settings.login.connected.netid.connect"    : { "shibbolethLoggedIn": false },
+				"settings.login.connected.phone"            : { "phoneLoggedIn": true },
+				"settings.login.connected.phone.info"       : { "phoneLoggedIn": true },
+				"settings.login.connected.phone.disconnect" : { "phoneLoggedIn": true },
+				"settings.login.connected.phone.verify"     : { "phoneLoggedIn": false },
+				"settings.login.connected.email"            : { "emailLoggedIn": true },
+				"settings.login.connected.email.info"       : { "emailLoggedIn": true },
+				"settings.login.connected.email.disconnect" : { "emailLoggedIn": true },
+				"settings.login.connected.email.login"      : { "emailLoggedIn": false },
+				"settings.login.link"                       : { "loggedIn": true },
+				"settings.login.link.netid"                 : { "shibbolethLinked": false },
+				"settings.login.link.phone"                 : { "phoneLinked": false },
+				"settings.login.link.email"                 : { "emailLinked": false },
+				"settings.login.linked"                     : { "loggedIn": true },
+				"settings.login.linked.netid"               : { "shibbolethLinked": true },
+				"settings.login.linked.netid.info"          : { "shibbolethLinked": true },
+				"settings.login.linked.netid.remove"        : { "shibbolethLinked": true },
+				"settings.login.linked.phone"               : { "phoneLinked": true },
+				"settings.login.linked.phone.info"          : { "phoneLinked": true },
+				"settings.login.linked.phone.remove"        : { "phoneLinked": true },
+				"settings.login.linked.email"               : { "emailLinked": true },
+				"settings.login.linked.email.info"          : { "emailLinked": true },
+				"settings.login.linked.email.remove"        : { "emailLinked": true },
 
 				"onboarding.research_questionnaire"   : { "shibbolethLoggedIn": true },
 

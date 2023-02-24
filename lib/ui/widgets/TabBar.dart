@@ -80,7 +80,7 @@ class TabBar extends rokwire.TabBar {
     }
     else if (code == 'maps2') {
       return rokwire.TabWidget(
-        label: 'Map2',
+        label: 'Map',
         hint: 'Map Page2',
         iconKey: 'location-outline-gray',
         selectedIconKey: 'location',

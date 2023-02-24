@@ -19,12 +19,26 @@
     "surfaceAccentTransparent15"            :"#26DADDE1",
     "background"                            :"#F5F5F5",
     "backgroundVariant"                     :"#E8E9EA",
+
     "textSurface"                           :"#404040",
     "textSurfaceTransparent15"              :"#26404040",
     "textSurfaceAccent"                     :"#404040",
     "textVariant"                           :"#ff494949",
     "textBackground"                        :"#404040",
     "textbackgroundVariant"                 :"#404040",
+
+    "textPrimary"                           :"#FFFFFF",
+    "textAccent"                            :"#ebc03f",
+    "textDark"                              :"#404040",
+    "textMedium"                            :"#717372",
+    "textLight"                             :"#FFFFFF",
+    "textDisabled"                          :"#BDBDBD",
+
+    "iconPrimary"                           :"#E84A27",
+    "iconLight"                             :"#FFFFFF",
+    "iconDark"                              :"#404040",
+    "iconMedium"                            :"#FFFFFF",
+    "iconDisabled"                          :"#BDBDBD",
 
     "accentColor1"                          :"#D50032",
     "accentColor2"                          :"#00AEC7",

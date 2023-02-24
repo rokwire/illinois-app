@@ -1,0 +1,1060 @@
+{
+	"dining": {
+		"food_types": ["Halal", "Kosher", "Sustainable Seafood", "Vegan", "Vegetarian"],
+		"food_ingredients": ["Alcohol", "Coconut", "Corn", "Eggs", "Fish", "Gelatin", "Gluten", "Milk", "MSG", "Peanuts", "Pork", "Red Dye", "Sesame", "Shellfish", "Soy", "Sulfites", "Tree Nuts", "Wheat"],
+		"strings": {
+			"en": {"Halal":"Halal", "Kosher":"Kosher", "Sustainable Seafood":"Sustainable Seafood", "Vegan":"Vegan", "Vegetarian":"Vegetarian", "Alcohol":"Alcohol", "Coconut":"Coconut", "Corn":"Corn", "Eggs":"Eggs", "Fish":"Fish", "Gelatin":"Gelatin", "Gluten":"Gluten", "Milk":"Milk", "MSG":"MSG", "Peanuts":"Peanuts", "Pork":"Pork", "Red Dye":"Red Dye", "Sesame":"Sesame", "Shellfish":"Shellfish", "Soy":"Soy", "Sulfites":"Sulfites", "Tree Nuts":"Tree Nuts", "Wheat":"Wheat", "Serving":"Serving", "Calories":"Calories", "CaloriesFromFat":"Calories From Fat",    "SaturatedFat":"Saturated Fat",    "Transfat":"Transfat",    "PolyUnsaturatedFat":"Poly Unsaturated Fat", "CalciumPercent":"Calcium Percent",      "IronPercent":"Iron Percent",         "Sugars":"Sugars",   "TotalCarbs":"Total Carbs",           "DietaryFiber":"Dietary Fiber",   "Protein":"Protein", "TotalFat":"Total Fat",    "Cholesterol":"Cholesterol", "Sodium":"Sodium"},
+			"es": {"Halal":"Halal", "Kosher":"Kosher", "Sustainable Seafood":"Sustainable Seafood", "Vegan":"Vegan", "Vegetarian":"Vegetarian", "Alcohol":"Alcohol", "Coconut":"Coconut", "Corn":"Corn", "Eggs":"Eggs", "Fish":"Fish", "Gelatin":"Gelatin", "Gluten":"Gluten", "Milk":"Milk", "MSG":"MSG", "Peanuts":"Peanuts", "Pork":"Pork", "Red Dye":"Red Dye", "Sesame":"Sesame", "Shellfish":"Shellfish", "Soy":"Soy", "Sulfites":"Sulfites", "Tree Nuts":"Tree Nuts", "Wheat":"Wheat", "Serving":"Porción", "Calories":"Calorías", "CaloriesFromFat":"Calorías de la grasa", "SaturatedFat":"Grasas saturadas", "Transfat":"Grasa Trans", "PolyUnsaturatedFat":"Grasa poliinsaturada", "CalciumPercent":"Porcentaje de calcio", "IronPercent":"Porcentaje de hierro", "Sugars":"Azúcares", "TotalCarbs":"Carbohidratos totales", "DietaryFiber":"Fibra dietética", "Protein":"Proteína", "TotalFat":"Grasa total", "Cholesterol":"Colesterol",  "Sodium":"Sodio"},
+			"zh": {"Halal":"Halal", "Kosher":"Kosher", "Sustainable Seafood":"Sustainable Seafood", "Vegan":"Vegan", "Vegetarian":"Vegetarian", "Alcohol":"Alcohol", "Coconut":"Coconut", "Corn":"Corn", "Eggs":"Eggs", "Fish":"Fish", "Gelatin":"Gelatin", "Gluten":"Gluten", "Milk":"Milk", "MSG":"MSG", "Peanuts":"Peanuts", "Pork":"Pork", "Red Dye":"Red Dye", "Sesame":"Sesame", "Shellfish":"Shellfish", "Soy":"Soy", "Sulfites":"Sulfites", "Tree Nuts":"Tree Nuts", "Wheat":"Wheat", "Serving":"服务",     "Calories":"卡路里",    "CaloriesFromFat":"来自脂肪的卡路里",        "SaturatedFat":"饱和脂肪",          "Transfat":"反式脂肪",     "PolyUnsaturatedFat":"多不饱和脂肪",            "CalciumPercent":"钙百分比",              "IronPercent":"铁百分比",              "Sugars":"糖",       "TotalCarbs":"碳水化合物总量",           "DietaryFiber":"膳食纤维",         "Protein":"蛋白质",    "TotalFat":"总脂肪",       "Cholesterol":"胆固醇",       "Sodium":"钠"}
+		}
+	},
+
+	"images": {
+		"random": {
+			"events":{
+				"Academic": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/536ab9a5-c9c8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ba94d55d-c9ca-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8d80c73d-cab8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/5c8ecdc2-cab8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e7eac331-cab8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1901c69c-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/41b41fcd-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/41b41fcd-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/98296276-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b2ef73d2-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d24aa5df-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/fe1ce39d-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2b12d45f-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/50436052-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/86e656ff-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/bff31abc-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e1f30139-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/02ea99ca-cabb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/31840f7d-cabb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/604d7a95-cabb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ae46c0de-cabb-11e9-88b6-0a58a9feac2a.webp"],
+				"Entertainment": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a200ab0c-c9cc-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/dc059d5d-c9cc-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4bd2d215-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/960743f8-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b5c38d95-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d752bce5-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ef962306-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/0b591886-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/231194d6-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3f742b15-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/6149506f-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/76a50491-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/909f42ab-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a82f30df-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c43ba19d-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e409138f-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ff7f0567-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/16dd1855-cde4-11e9-88b6-0a58a9feac2a.webp"],
+				"Community": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3adfe066-c9ce-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/6bb3f9ad-c9ce-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4085db95-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/5a807ff5-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b2c378cf-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/cb2c02a8-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e41bc78a-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ffaeef8a-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/179a9726-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3081cc2e-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/49256c79-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/68254af9-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/860161c1-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/9e2c7cfd-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b2178b24-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c92a1089-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/df397ce2-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/f8a5f87e-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/121d971e-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2c900ef3-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/42fcbae0-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/5b5335cd-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/707bc956-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8b8c01c8-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a383594c-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b989b49e-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d0e119a8-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e5bca07a-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/00ac8410-cdfb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/13aa3f3e-cdfb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2978c9dc-cdfb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3da9c481-cdfb-11e9-88b6-0a58a9feac2a.webp"],
+				"Career Development": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/31c7ffd8-c9d4-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/6f192cf4-c9d4-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/35b8a0a3-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4d7c80f3-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/6a1b897c-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/991422fd-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/aec5f88a-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d130c6c5-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/efccd5cd-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/10d5f5af-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3d3741b6-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/5c99bfb1-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/76c5201c-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8b203e82-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/aa884883-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c1f1b2f2-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/dd587562-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/f95bc33b-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/12e89ad3-cf65-11e9-88b6-0a58a9feac2a.webp"],
+				"Athletics": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b475bd11-c9d4-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d604fc38-c9d4-11e9-88b6-0a58a9feac2a.webp"],
+				"Other": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2890eff7-c9d5-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/51cb8f85-c9d5-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ec0606d4-d260-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/05874ca8-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1fa1b6f0-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/36b454f9-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4d715915-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/73410ea5-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/89b66a33-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a06eaea5-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b86cb864-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/04e35b53-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3fc504de-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/59e10e64-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/7a8735e6-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/97131e28-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ad2a0f39-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c725839a-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e4aa8b4a-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ff7d982d-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1d45ec8a-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3b49b1c0-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/53943299-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/73441f37-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8cada753-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a7fc273c-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c711f5f2-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/f93611a0-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/108cec19-d264-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2f74f16b-d264-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4d8e7b51-d264-11e9-88b6-0a58a9feac2a.webp"],
+				"Recreation": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c085d844-c9d5-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1d89fdf1-c9d6-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/0ecf5ef2-d265-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/24bba90b-d265-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1299a8cb-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/37803339-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/51e00fb5-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/740bca52-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/9a3871f5-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b4dd8f5c-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/dd84d091-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/fe42ecf2-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/23cd21e7-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4b499ff8-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/74dbadd4-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8bc0c32b-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a654ab5d-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/bfd6a22d-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e2a4b86c-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/fb4c18a2-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1b26aa99-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/36aada45-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4fac59ef-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/741709bd-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8a794bad-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a2c995d6-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b8169210-d298-11e9-88b6-0a58a9feac2a.webp"]
+			},
+			"sports":{
+				"baseball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/7746fb3f-d36f-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/cb753691-d36f-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/e807bab6-d9b0-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/03ed7808-d9b1-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/1fa33439-d9b1-11e9-88b6-0a58a9feac2a.webp"],
+				"mbball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/01dbdaff-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/25ebd2ee-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/4595ef6b-d370-11e9-88b6-0a58a9feac2a.webp"],
+				"mcross": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/200cd2f3-d29a-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/8d435b9b-d29a-11e9-88b6-0a58a9feac2a.webp"],
+				"football": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/d8cbf697-cab6-11e9-88b6-0a58a9feac2a.webp","https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/038e18c5-cab7-11e9-88b6-0a58a9feac2a.webp","https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/24870af6-cab7-11e9-88b6-0a58a9feac2a.webp","https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/4455ebec-cab7-11e9-88b6-0a58a9feac2a.webp","https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/63fda99f-cab7-11e9-88b6-0a58a9feac2a.webp"],
+				"mgolf": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/8b0c9120-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/aaf66464-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/cb0c922f-d370-11e9-88b6-0a58a9feac2a.webp"],
+				"mgym": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/f677a5c2-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/16e511a6-d371-11e9-88b6-0a58a9feac2a.webp"],
+				"mten": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/5b20eef9-d371-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/769e10f6-d371-11e9-88b6-0a58a9feac2a.webp"],
+				"mtrack": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/c58e5654-d29c-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/aaf95c42-d29d-11e9-88b6-0a58a9feac2a.webp"],
+				"wrestling": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/04783cae-d29b-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/10cfd476-d29c-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/f9da35cb-d9af-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/15f81545-d9b0-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/2d85f86c-d9b0-11e9-88b6-0a58a9feac2a.webp"],
+				"wbball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/b663be7a-d371-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/ded21df5-d371-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/fcdac77b-d371-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/611e2428-d816-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/80d688eb-d816-11e9-88b6-0a58a9feac2a.webp"],
+				"wcross": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/33b3ac5b-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/5008312a-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/482d69f4-d9af-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/696e1fe8-d9af-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/81933383-d9af-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/9840bee9-d9af-11e9-88b6-0a58a9feac2a.webp"],
+				"wgolf": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/7a3276a7-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/8dbba2b8-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/be5fce7b-d9ad-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/da5837f3-d9ad-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/f4da3ab2-d9ad-11e9-88b6-0a58a9feac2a.webp"],
+				"wgym": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/ae63d3c2-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/cc48ed21-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/e6d01799-d372-11e9-88b6-0a58a9feac2a.webp"],
+				"wsoc": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/79cdfd2e-d29f-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/119a5d80-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/fc95e333-d8d3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/1efe4a3a-d8d4-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/40140e24-d8d4-11e9-88b6-0a58a9feac2a.webp"],
+				"softball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/42213b9c-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/5f4c633c-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/62fdc77b-d817-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/93dfecae-d817-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/b0a2bdb0-d817-11e9-88b6-0a58a9feac2a.webp"],
+				"wswim": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/a027b8dc-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/c0c87e50-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/d81943ef-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/0b6484ab-d8d5-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/3237cfb7-d8d5-11e9-88b6-0a58a9feac2a.webp"],
+				"wten": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/0a965cd0-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/61c1817d-d815-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/85318155-d815-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/ac9c35c6-d815-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/cfc157cf-d815-11e9-88b6-0a58a9feac2a.webp"],
+				"wtrack": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/3912674b-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/55934f55-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/6f84a592-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/85507adb-d374-11e9-88b6-0a58a9feac2a.webp"],
+				"wvball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/b5b2c188-d29e-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/e25bc8f6-d29e-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/642c5674-d814-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/907ac2c7-d814-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/b6963a95-d814-11e9-88b6-0a58a9feac2a.webp"]
+			},
+			"home": {
+				"tout": {
+					"morning": ["https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/hrh-announces-theline-designs-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/oxagon-hackathon-pr-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-exhibition-riyadh-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/progress-jan-2023-v2-gallery.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/Marc-Le-Cornu_DJI_0334_Yabou_-Island_lowres_TOURISM1.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/benthouard_2019_NEOM_1326_Yabou%E2%80%99%20Island_TOURISM_lowres1.JPG", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-public-exhibition-cover.jpg"],
+					"afternoon": ["https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/hrh-announces-theline-designs-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/oxagon-hackathon-pr-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-exhibition-riyadh-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/progress-jan-2023-v2-gallery.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/Marc-Le-Cornu_DJI_0334_Yabou_-Island_lowres_TOURISM1.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/benthouard_2019_NEOM_1326_Yabou%E2%80%99%20Island_TOURISM_lowres1.JPG", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-public-exhibition-cover.jpg"],
+					"evening": ["https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/hrh-announces-theline-designs-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/oxagon-hackathon-pr-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-exhibition-riyadh-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/progress-jan-2023-v2-gallery.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/Marc-Le-Cornu_DJI_0334_Yabou_-Island_lowres_TOURISM1.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/benthouard_2019_NEOM_1326_Yabou%E2%80%99%20Island_TOURISM_lowres1.JPG", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-public-exhibition-cover.jpg"],
+					"night": ["https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/hrh-announces-theline-designs-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/oxagon-hackathon-pr-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-exhibition-riyadh-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/progress-jan-2023-v2-gallery.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/Marc-Le-Cornu_DJI_0334_Yabou_-Island_lowres_TOURISM1.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/benthouard_2019_NEOM_1326_Yabou%E2%80%99%20Island_TOURISM_lowres1.JPG", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-public-exhibition-cover.jpg"]
+				}
+			},
+			"browse": {
+				"tout": ["https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/hrh-announces-theline-designs-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/oxagon-hackathon-pr-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-exhibition-riyadh-cover.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/progress-jan-2023-v2-gallery.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/Marc-Le-Cornu_DJI_0334_Yabou_-Island_lowres_TOURISM1.jpg", "https://www.neom.com/content/dam/neom/newsroom/gallery/neom-islands/benthouard_2019_NEOM_1326_Yabou%E2%80%99%20Island_TOURISM_lowres1.JPG", "https://www.neom.com/content/dam/neom/newsroom/gallery/news-en/the-line-public-exhibition-cover.jpg"]
+			}
+		}
+	},
+
+	"privacy": {
+		"description":[
+			{"level":1, "key": "privacy.category.description.1", "text": "You may not be able to use all features, but you are anonymous, and we don't ask you for any identifying information or store any data. Anonymous data will be collected and used to optimize app performance."},
+			{"level":2, "key": "privacy.category.description.2", "text": "See what's happening around you. We use Wi-Fi and Bluetooth location services to improve your experience, but we never store that data."},
+			{"level":3, "key": "privacy.category.description.3", "text": "You can personalize and customize the app. Wi-Fi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience."},
+			{"level":4, "key": "privacy.category.description.4", "text": "Let the app work for you.\nYou can access your i-card, save credit cards to make future purchases easier, use Illini ID, and get notifications based on your specific interests."},
+			{"level":5, "key": "privacy.category.description.5", "text": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends can all enjoy."}
+		],
+		"categories":[
+			{
+				"title":"Events and Dining \nAround Campus",
+				"title_key": "privacy.category.event_and_dining.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-dark",
+						"off_icon_resource": "view-dark",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.event_and_dining.view.only.title",
+						"description" : "View events and dining locations around campus.",
+						"description_key" :"privacy.entry.event_and_dining.view.only.description",
+						"dataUsage" : "These features do not use or store your location.",
+						"dataUsage_key" :"privacy.entry.event_and_dining.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-dark",
+						"off_icon_resource": "location-disabled-dark",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.event_and_dining.location.sharing.title",
+						"description" : "View events and dining locations near you.",
+						"description_key" :"privacy.entry.event_and_dining.location.sharing.description",
+						"dataUsage" : "This feature uses location services but does not store your location.",
+						"dataUsage_key" :"privacy.entry.event_and_dining.location.sharing.data_usage"
+					},
+					{
+						"min_level": 3,
+						"icon_resource": "sliders-dark",
+						"off_icon_resource": "sliders-disabled-dark",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.event_and_dining.personalizations.title",
+						"description" : "View events and dining locations near you.",
+						"description_key" :"privacy.entry.event_and_dining.personalizations.description",
+						"dataUsage" : "This feature uses location services, personal information and items you have starred in the app.",
+						"dataUsage_key" :"privacy.entry.event_and_dining.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notification-dark",
+						"off_icon_resource": "notification-disabled-dark",
+						"title" : "Notifications",
+						"title_key" :"privacy.entry.event_and_dining.notifications.title",
+						"description" : "Get notifications including reminders about events you have starred in the app.",
+						"description_key" :"privacy.entry.event_and_dining.notifications.description",
+						"dataUsage" : "This feature sends notifications utilizing location services, personal information and places you have starred in the app.",
+						"dataUsage_key" :"privacy.entry.event_and_dining.notifications.data_usage"
+					}
+				]
+			},
+			{
+				"title":"Athletics",
+				"title_key": "privacy.category.athletics.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-dark",
+						"off_icon_resource": "view-dark",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.athletics.view.only.title",
+						"description" : "See all upcoming schedules for athletic events, real-time scoring, rosters and athletic news.",
+						"description_key" :"privacy.entry.athletics.view.only.description",
+						"dataUsage" : "This feature does not use or store your location.",
+						"dataUsage_key" :"privacy.entry.athletics.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-dark",
+						"off_icon_resource": "location-disabled-dark",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.athletics.location.sharing.title",
+						"description" : "Find seats, nearby restrooms & concession stands. See real-time parking availability and directions.",
+						"description_key" :"privacy.entry.athletics.location.sharing.description",
+						"dataUsage" : "This feature uses location services but does not store your location.",
+						"dataUsage_key" :"privacy.entry.athletics.location.sharing.data_usage"
+					},
+					{
+						"min_level": 3,
+						"icon_resource": "sliders-dark",
+						"off_icon_resource": "sliders-disabled-dark",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.athletics.personalizations.title",
+						"description" : "Customize your experience to see schedules, rosters, scores and news for your favorite Illini teams.",
+						"description_key" :"privacy.entry.athletics.personalizations.description",
+						"dataUsage" : "This feature uses location services, personal preferences and events you have starred in the app.",
+						"dataUsage_key" :"privacy.entry.athletics.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notification-dark",
+						"off_icon_resource": "notification-disabled-dark",
+						"title" : "Notifications",
+						"title_key" :"privacy.entry.athletics.notifications.title",
+						"description" : "Receive notifications of event start and final scores for your favorite teams.",
+						"description_key" :"privacy.entry.athletics.notifications.description",
+						"dataUsage" : "This feature uses location services, personal preferences and events you have starred in the app.",
+						"dataUsage_key" :"privacy.entry.athletics.notifications.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "person-dark",
+						"off_icon_resource": "person-disabled-dark",
+						"title" : "Identity",
+						"title_key" :"privacy.entry.athletics.sharing.title",
+						"description" : "May store credit card information to buy tickets for athletic events.",
+						"description_key" :"privacy.entry.athletics.sharing.description",
+						"dataUsage" : "This feature uses location services, personal preferences, credit card information and starred items.",
+						"dataUsage_key" :"privacy.entry.athletics.sharing.data_usage"
+					}
+				]
+			},
+			{
+				"title":"Wallet",
+				"title_key": "privacy.category.wallet.title",
+				"entries2": [
+					{
+						"min_level": 4,
+						"icon_resource": "sliders-dark",
+						"off_icon_resource": "sliders-disabled-dark",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.wallet.personalizations.title",
+						"description" : "Check your Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
+						"description_key" :"privacy.entry.wallet.personalizations.description",
+						"dataUsage" : "These features use your personal university credentials.",
+						"dataUsage_key" :"privacy.entry.wallet.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "person-dark",
+						"off_icon_resource": "person-disabled-dark",
+						"title" : "Identity",
+						"title_key" :"privacy.entry.wallet.sharing.title",
+						"description" : "Check your Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
+						"description_key" :"privacy.entry.wallet.sharing.description",
+						"dataUsage" : "These features use your personal university credentials.",
+						"dataUsage_key" :"privacy.entry.wallet.sharing.data_usage"
+					}
+				]
+			},
+			{
+				"title":"Health and Wellness",
+				"title_key": "privacy.category.health.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-dark",
+						"off_icon_resource": "view-dark",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.health.view.only.title",
+						"description" : "Locate and connect to resources to assist you with your EIGHT DIMENSIONS of health and wellness.",
+						"description_key" :"privacy.entry.health.view.only.description",
+						"dataUsage" : "This feature does not use or store your location.",
+						"dataUsage_key" :"privacy.entry.health.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-dark",
+						"off_icon_resource": "location-disabled-dark",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.health.location.sharing.title",
+						"description" : "Get wayfinding assistance to health and wellness resources on campus.",
+						"description_key" :"privacy.entry.health.location.sharing.description",
+						"dataUsage" : "This feature uses location services but does not store your location.",
+						"dataUsage_key" :"privacy.entry.health.location.sharing.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notifications-blue.png",
+						"off_icon_resource": "notifications-blue-off.png",
+						"title" : "Notifications",
+						"title_key" :"privacy.entry.health.notifications.title",
+						"description" : "Get notifications of upcoming appointments and additional screening you should take.",
+						"description_key" :"privacy.entry.health.notifications.description",
+						"dataUsage" : "This feature sends notifications based on your upcoming appointments and screenings.",
+						"dataUsage_key" :"privacy.entry.health.notifications.data_usage"
+					}
+				]
+			},
+			{
+				"title":"Wayfinding",
+				"title_key": "privacy.category.wayfinding.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-dark",
+						"off_icon_resource": "view-dark",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.wayfinding.view.only.title",
+						"description" : "View a map of campus with places of interest, MTD bus stops and schedules.",
+						"description_key" :"privacy.entry.wayfinding.view.only.description",
+						"dataUsage" : "This feature does not use or store your location.",
+						"dataUsage_key" :"privacy.entry.wayfinding.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-dark",
+						"off_icon_resource": "location-disabled-dark",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.wayfinding.location.sharing.title",
+						"description" : "View a map of campus with places of interest, MTD bus destinations and stops with bus directions.",
+						"description_key" :"privacy.entry.wayfinding.location.sharing.description",
+						"dataUsage" : "This feature uses location services but does not store your location.",
+						"dataUsage_key" :"privacy.entry.wayfinding.location.sharing.data_usage"
+					},
+					{
+						"min_level": 3,
+						"icon_resource": "sliders-dark",
+						"off_icon_resource": "sliders-disabled-dark",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.wayfinding.personalizations.title",
+						"description" : "Navigate campus with places of interest to you.",
+						"description_key" :"privacy.entry.wayfinding.personalizations.description",
+						"dataUsage" : "This feature uses location services, personal information and places you have starred in the app.",
+						"dataUsage_key" :"privacy.entry.wayfinding.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notification-dark",
+						"off_icon_resource": "notification-disabled-dark",
+						"title" : "Notifications",
+						"title_key" :"privacy.entry.wayfinding.notifications.title",
+						"description" : "Receive personalized notifications based on your location.",
+						"description_key" :"privacy.entry.wayfinding.notifications.description",
+						"dataUsage" : "This feature sends notifications utilizing location services, personal information and places you have starred in the app.",
+						"dataUsage_key" :"privacy.entry.wayfinding.notifications.data_usage"
+					},
+					{
+						"min_level": 5,
+						"icon_resource": "share-dark",
+						"off_icon_resource": "share-disabled-dark",
+						"title" : "Sharing",
+						"title_key" :"privacy.entry.wayfinding.sharing.title",
+						"description" : "Potentially share your location with others.",
+						"description_key" :"privacy.entry.wayfinding.sharing.description",
+						"dataUsage" : "This feature uses location services and may share your location with others.",
+						"dataUsage_key" :"privacy.entry.wayfinding.sharing.data_usage"
+					}
+				]
+			},
+			{
+				"title":"Groups",
+				"title_key": "privacy.category.groups.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-dark",
+						"off_icon_resource": "view-dark",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.groups.view.only.title",
+						"description" : "View a list of existing groups.",
+						"description_key" :"privacy.entry.groups.view.only.description",
+						"dataUsage" : "This feature does not use any of your data.",
+						"dataUsage_key" :"privacy.entry.groups.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-dark",
+						"off_icon_resource": "location-disabled-dark",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.groups.location.sharing.title",
+						"description" : "View a list of existing groups.",
+						"description_key" :"privacy.entry.groups.location.sharing.description",
+						"dataUsage" : "This feature does not use any of your data.",
+						"dataUsage_key" :"privacy.entry.groups.location.sharing.data_usage"
+					},
+					{
+						"min_level": 3,
+						"icon_resource": "sliders-dark",
+						"off_icon_resource": "sliders-disabled-dark",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.groups.personalizations.title",
+						"description" : "View a list of existing groups.",
+						"description_key" :"privacy.entry.groups.personalizations.description",
+						"dataUsage" : "This feature does not use any of your data.",
+						"dataUsage_key" :"privacy.entry.groups.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notification-dark",
+						"off_icon_resource": "notification-disabled-dark",
+						"title" : "Notifications",
+						"title_key" :"privacy.entry.groups.notifications.title",
+						"description" : "Join, view and interact with groups when signed in. Get notifications on group events, posts and polls for groups you belong to.",
+						"description_key" :"privacy.entry.groups.notifications.description",
+						"dataUsage" : "These features use information that you and others contribute to a group.",
+						"dataUsage_key" :"privacy.entry.groups.notifications.data_usage"
+					},
+					{
+						"min_level": 5,
+						"icon_resource": "share-dark",
+						"off_icon_resource": "share-disabled-dark",
+						"title" : "Sharing",
+						"title_key" :"privacy.entry.groups.sharing.title",
+						"description" : "Create group events, posts and polls for groups you belong to.",
+						"description_key" :"privacy.entry.groups.sharing.description",
+						"dataUsage" : "These features share information that you contribute to a group.",
+						"dataUsage_key" :"privacy.entry.groups.sharing.data_usage"
+					}
+				]
+			},
+			{
+				"title":"General",
+				"title_key": "privacy.category.general.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-dark",
+						"off_icon_resource": "view-dark",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.general.view.only.title",
+						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc.",
+						"description_key" :"privacy.entry.general.view.only.description",
+						"dataUsage" : "Building access and due date catalog require a university sign in.",
+						"dataUsage_key" :"privacy.entry.general.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-dark",
+						"off_icon_resource": "location-disabled-dark",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.general.location.sharing.title",
+						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
+						"description_key" :"privacy.entry.general.location.sharing.description",
+						"dataUsage" : "Building access and due date catalog require a university sign in.",
+						"dataUsage_key" :"privacy.entry.general.location.sharing.data_usage"
+					},
+					{
+						"min_level": 3,
+						"icon_resource": "sliders-dark",
+						"off_icon_resource": "sliders-disabled-dark",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.general.personalizations.title",
+						"description" : "View your Research projects, building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc.",
+						"description_key" :"privacy.entry.general.personalizations.description",
+						"dataUsage" : "Research projects, building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in a research project.",
+						"dataUsage_key" :"privacy.entry.general.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notification-dark",
+						"off_icon_resource": "notification-disabled-dark",
+						"title" : "Notifications",
+						"title_key" :"privacy.entry.general.notifications.title",
+						"description" : "You may receive notifications when content is updated, research project qualification, appointments, group membership and you can star various content.",
+						"description_key" :"privacy.entry.general.notifications.description",
+						"dataUsage" : "Research participation, Building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in research projects.",
+						"dataUsage_key" :"privacy.entry.general.notifications.data_usage"
+					},
+					{
+						"min_level": 5,
+						"icon_resource": "share-dark",
+						"off_icon_resource": "share-disabled-dark",
+						"title" : "Sharing",
+						"title_key" :"privacy.entry.general.sharing.title",
+						"description" : "You may receive notifications when content is updated, research project qualification, appointments, group membership and you can star various content.",
+						"description_key" :"privacy.entry.general.sharing.description",
+						"dataUsage" : "Research participation, Building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in research projects.",
+						"dataUsage_key" :"privacy.entry.general.sharing.data_usage"
+					}
+				]
+			}
+		],
+		"features2": [
+			{
+				"key":"privacy.features2.entry.disable_location_awareness",
+				"text":"Disable location awareness.",
+				"max_level":1
+			},
+			{
+				"key":"privacy.features2.entry.dont_store_location",
+				"text":"Not store your location.",
+				"max_level":2
+			},
+			{
+				"key":"privacy.features2.entry.remove_preferences",
+				"text":"Remove your preferences.",
+				"max_level":2
+			},
+			{
+				"key":"privacy.features2.entry.log_out",
+				"text":"Log you off system.",
+				"max_level":3
+			},
+			{
+				"key":"privacy.features2.entry.disable_notifications",
+				"text":"Turn off notifications.",
+				"max_level":3
+			},
+			{
+				"key":"privacy.features2.entry.remove_credit_card",
+				"text":"Remove your credit card info.",
+				"max_level":3
+			},
+			{
+				"key":"privacy.features2.entry.dont_share_location",
+				"text":"Not share your data with others.",
+				"max_level":4
+			}
+		]
+	},
+
+	"voter": {
+		"rules": [
+			{
+				"date_start": null,
+				"date_end": "2020/02/05",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.register_online.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					},
+					{
+						"label": "widget.voter.option.register_now",
+						"value": "nrv_place"
+					}
+				],
+				"NRV_place_title": "widget.voter.nrv_place_title.place_to_vote.question",
+				"NRV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "https://ova.elections.il.gov/"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "https://illinois.turbovote.org/"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+				"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "vbm_yes"
+					},
+					{
+						"label": "widget.voter.option.vote_by_mail",
+						"value": "rv_url"
+					},
+					{
+						"label": "widget.voter.option.no_thanks",
+						"value": "vbm_no"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside"
+			},
+			{
+				"date_start": "2020/02/06",
+				"date_end": "2020/02/18",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.register_online.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					},
+					{
+						"label": "widget.voter.option.register_now",
+						"value": "nrv_place"
+					}
+				],
+				"NRV_place_title": "widget.voter.nrv_place_title.place_to_vote.question",
+				"NRV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "https://ova.elections.il.gov/"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "https://illinois.turbovote.org/"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+				"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "vbm_yes"
+					},
+					{
+						"label": "widget.voter.option.vote_by_mail",
+						"value": "rv_url"
+					},
+					{
+						"label": "widget.voter.option.no_thanks",
+						"value": "vbm_no"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside",
+				"RV_alert": "widget.voter.rv_alert.vote_early.text",
+				"VBM_text": "widget.voter.vbm_text.early_voting_clerk.text",
+				"VBM_button": "widget.voter.option.more_info",
+				"VBM_url": "https://www.champaigncountyclerk.com/elections/early-voting"
+			},
+			{
+				"date_start": "2020/02/19",
+				"date_end": "2020/03/01",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.register_vote_today.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+				"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "vbm_yes"
+					},
+					{
+						"label": "widget.voter.option.vote_by_mail",
+						"value": "rv_url"
+					},
+					{
+						"label": "widget.voter.option.no_thanks",
+						"value": "vbm_no"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside",
+				"RV_alert": "widget.voter.rv_alert.vote_early.text",
+				"VBM_text": "widget.voter.vbm_text.early_voting_clerk.text",
+				"VBM_button": "widget.voter.option.more_info",
+				"VBM_url": "https://www.champaigncountyclerk.com/elections/early-voting"
+			},
+			{
+				"date_start": "2020/03/02",
+				"date_end": "2020/03/11",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.register_vote_today.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+				"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "vbm_yes"
+					},
+					{
+						"label": "widget.voter.option.vote_by_mail",
+						"value": "rv_url"
+					},
+					{
+						"label": "widget.voter.option.no_thanks",
+						"value": "vbm_no"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside",
+				"RV_alert": "widget.voter.rv_alert.vote_early.text",
+				"VBM_text": "widget.voter.vbm_text.no_need_to_wait.text",
+				"VBM_button": "widget.voter.option.more_info",
+				"VBM_url": "https://www.champaigncountyclerk.com/elections/early-voting"
+			},
+			{
+				"date_start": "2020/03/12",
+				"date_end": "2020/03/16",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.grace_period_open.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.early_voting.text",
+				"RV_text": "widget.voter.rv_text.vote_now.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.more_info",
+						"value": "rv_url"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/early-voting",
+				"RV_alert": "widget.voter.rv_alert.vote_early.text",
+				"hide_for_period": true
+			},
+			{
+				"date_start": "2020/05/18"
+			}
+		]
+	},
+
+	"wellness": {
+		"resources": {
+			"commands": [
+				{"id":"appointment", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=c1ef6e5e-532c-48bb-a4b4-83887e487020"},
+				{"id":"help", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=383364c2-ae50-4fd9-9138-4560e3903459"},
+				{"id":"where_to_start", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=bc578ea7-e7ab-4f28-9d0f-cae1099a45e0"},
+				{"id":"securing_food", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=431c157b-5aa0-441b-ac69-966be3a0fb00"},
+				{"id":"telehealth", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=8f7dd377-e09b-4de2-b2af-212dc4b7adda", "favorite": 0 },
+				{"id":"podcast", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=158589f4-9ed4-4728-b1ff-e1754cfe7939", "favorite": 0},
+	
+				{"id":"crisis_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=ddd2f4e7-b976-4bd0-9998-f2e16c0f7823", "favorite": 0},
+				{"id":"accessibility_and_accommodations", "type": "regular", "url": "https://wellness.illinois.edu/mental-health-resources/accessibility-and-accommodations"},
+				{"id":"after_hours", "type": "regular", "url": "https://odos.illinois.edu/community-of-care/emergency-dean"},
+				{"id":"campus_service_units", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units"},
+				{"id":"core_campus_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=3e126184-5a08-47d2-a1ec-ce39d887c84e"},
+				{"id":"counseling_center", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=65b51137-bf11-45e8-bdc7-93c160560dcd", "favorite": 0},
+				{"id":"covid19", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_list?guide=For%20students&category=Health%20%26%20Wellness&section=COVID-19", "favorite": 0},
+				{"id":"financial_assistance", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/financial"},
+				{"id":"fitness_and_recreation", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/fitness-recreation"},
+				{"id":"flu_clinics", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=d59ed997-9c7c-4fd4-a2b9-781ef312ab7a"},
+				{"id":"food_and_nutrition", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/food-nutrition"},
+				{"id":"immunization_requirement", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=immunizations"},
+				{"id":"lgbtq_healthcare", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=lgbtq.health"},
+				{"id":"health_center", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=mckinley.health", "favorite": 0},
+				{"id":"mental_health_and_counseling", "type": "regular", "url": "https://wellness.web.illinois.edu/mental-health-resources"},
+				{"id":"pharmacy", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=pharmacy"},
+				{"id":"portal", "type": "regular", "url": "https://mymckinley.illinois.edu", "favorite": 1},
+				{"id":"nature_and_culture", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/faculty-and-staff/nature-and-culture"},
+				{"id":"other", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/resources"},
+				{"id":"sexual_health", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=sexual.health"},
+				{"id":"sexual_misconduct", "type": "regular", "url": "https://wellness.web.illinois.edu/sexual-misconduct"},
+				{"id":"sleep_quality", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=sleep"},
+				{"id":"stress_management", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=manage.stress", "favorite": 0},
+				{"id":"health_insurance", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=health.insurance"},
+				{"id":"suicide_prevention", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito"},
+				{"id":"events_and_workshops", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/workshops-and-events"},
+				{"id":"womens_healthcare", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=womens.health"}
+			],
+			"strings": {
+				"en": {
+					"appointment": "I want to make an appointment",
+					"help": "I want to help a friend, student, or co-worker",
+					"where_to_start": "I’m not sure where to start",
+					"securing_food": "I need help securing food",
+					"telehealth": "I want to learn about HealthiestYou Telehealth",
+					"podcast": "Listen to the Healthy Illini Podcast",
+					"crisis_resources": "24-Hour Crisis Resources",
+					"accessibility_and_accommodations": "Accessibility and Accommodations",
+					"after_hours": "After Hours Support",
+					"campus_service_units": "Campus Service Units",
+					"core_campus_resources": "Core Campus Resources",
+					"counseling_center": "Counseling Center",
+					"covid19": "COVID-19",
+					"financial_assistance": "Financial Assistance",
+					"fitness_and_recreation": "Fitness and Recreation",
+					"flu_clinics": "Flu Clinics",
+					"food_and_nutrition": "Food and Nutrition",
+					"immunization_requirement": "Immunization Requirement",
+					"lgbtq_healthcare": "LGBTQ Healthcare",
+					"health_center": "McKinley Health Center",
+					"mental_health_and_counseling": "Mental Health & Counseling",
+					"pharmacy": "McKinley Pharmacy",
+					"portal": "MyMcKinley Patient Health Portal",
+					"nature_and_culture": "Nature & Culture",
+					"other": "Other Wellness Resources",
+					"sexual_health": "Sexual Health Information",
+					"sexual_misconduct": "Sexual Misconduct",
+					"sleep_quality": "Sleep Quality",
+					"stress_management": "Stress Management",
+					"health_insurance": "Student Health Insurance",
+					"suicide_prevention": "Suicide Prevention",
+					"events_and_workshops": "Wellness Events & Workshops",
+					"womens_healthcare": "Women’s Healthcare"
+				}
+			}
+		},
+		"tips": {
+			"entries": [
+				{"id": "mental.1", "category":"mental"},
+				{"id": "mental.2", "category":"mental"},
+				{"id": "mental.3", "category":"mental"},
+				{"id": "mental.4", "category":"mental"},
+				{"id": "mental.5", "category":"mental"},
+				{"id": "mental.6", "category":"mental"},
+				{"id": "mental.7", "category":"mental"},
+				{"id": "mental.8", "category":"mental"},
+				{"id": "mental.9", "category":"mental"},
+				{"id": "mental.10", "category":"mental"},
+				{"id": "mental.11", "category":"mental"},
+				{"id": "mental.12", "category":"mental"},
+				{"id": "mental.13", "category":"mental"},
+				{"id": "mental.14", "category":"mental"},
+				{"id": "mental.15", "category":"mental"},
+				{"id": "mental.16", "category":"mental"},
+				{"id": "mental.17", "category":"mental"},
+				{"id": "mental.18", "category":"mental"},
+				{"id": "mental.19", "category":"mental"},
+				{"id": "mental.20", "category":"mental"},
+				{"id": "mental.21", "category":"mental"},
+				{"id": "mental.22", "category":"mental"},
+				{"id": "mental.23", "category":"mental"},
+				{"id": "mental.23", "category":"mental"},
+	
+				{"id": "emotional.1", "category":"emotional"},
+				{"id": "emotional.2", "category":"emotional"},
+				{"id": "emotional.3", "category":"emotional"},
+				{"id": "emotional.4", "category":"emotional"},
+				{"id": "emotional.5", "category":"emotional"},
+				{"id": "emotional.6", "category":"emotional"},
+				{"id": "emotional.7", "category":"emotional"},
+				{"id": "emotional.8", "category":"emotional"},
+				{"id": "emotional.9", "category":"emotional"},
+				{"id": "emotional.10", "category":"emotional"},
+				{"id": "emotional.11", "category":"emotional"},
+				{"id": "emotional.12", "category":"emotional"},
+				{"id": "emotional.13", "category":"emotional"},
+				{"id": "emotional.14", "category":"emotional"},
+				{"id": "emotional.15", "category":"emotional"},
+				{"id": "emotional.16", "category":"emotional"},
+				{"id": "emotional.17", "category":"emotional"},
+	
+				{"id": "social.1", "category":"social"},
+				{"id": "social.2", "category":"social"},
+				{"id": "social.3", "category":"social"},
+				{"id": "social.4", "category":"social"},
+				{"id": "social.5", "category":"social"},
+				{"id": "social.6", "category":"social"},
+				{"id": "social.7", "category":"social"},
+				{"id": "social.8", "category":"social"},
+				{"id": "social.9", "category":"social"},
+				{"id": "social.10", "category":"social"},
+				{"id": "social.11", "category":"social"},
+				{"id": "social.12", "category":"social"},
+	
+				{"id": "spiritual.1", "category":"spiritual"},
+				{"id": "spiritual.2", "category":"spiritual"},
+				{"id": "spiritual.3", "category":"spiritual"},
+				{"id": "spiritual.4", "category":"spiritual"},
+				{"id": "spiritual.5", "category":"spiritual"},
+				{"id": "spiritual.6", "category":"spiritual"},
+				{"id": "spiritual.7", "category":"spiritual"},
+				{"id": "spiritual.8", "category":"spiritual"},
+				{"id": "spiritual.9", "category":"spiritual"},
+				{"id": "spiritual.10", "category":"spiritual"},
+				{"id": "spiritual.11", "category":"spiritual"},
+				{"id": "spiritual.12", "category":"spiritual"},
+	
+				{"id": "physical.1", "category":"physical"},
+				{"id": "physical.2", "category":"physical"},
+				{"id": "physical.3", "category":"physical"},
+				{"id": "physical.4", "category":"physical"},
+				{"id": "physical.5", "category":"physical"},
+				{"id": "physical.6", "category":"physical"},
+				{"id": "physical.7", "category":"physical"},
+				{"id": "physical.8", "category":"physical"},
+				{"id": "physical.9", "category":"physical"},
+				{"id": "physical.10", "category":"physical"},
+				{"id": "physical.11", "category":"physical"},
+				{"id": "physical.12", "category":"physical"},
+				{"id": "physical.13", "category":"physical"},
+				{"id": "physical.14", "category":"physical"},
+	
+				{"id": "environmental.1", "category":"environmental"},
+				{"id": "environmental.2", "category":"environmental"},
+				{"id": "environmental.3", "category":"environmental"},
+				{"id": "environmental.4", "category":"environmental"},
+				{"id": "environmental.5", "category":"environmental"},
+				{"id": "environmental.6", "category":"environmental"},
+				{"id": "environmental.7", "category":"environmental"},
+				{"id": "environmental.8", "category":"environmental"},
+				{"id": "environmental.9", "category":"environmental"},
+				{"id": "environmental.10", "category":"environmental"}
+			],
+			"strings": {
+				"en": {
+					"mental.1": "Find outlets that are intellectually stimulating like puzzles, social and news media, books, etc.",
+					"mental.2": "Set realistic and reasonable goals academically, personally, and professionally. Start small and build from there as you successfully accomplish various tasks.",
+					"mental.3": "Focus on things within your control. Avoid wasting time and energy on worries that – at the end of the day – you can’t do anything about.",
+					"mental.4": "Learn to prioritize. Take care of what you can do today, right now. This mindset will help you manage your time better and reduce the risk of procrastination.",
+					"mental.5": "Take breaks throughout the day to refresh and rejuvenate your mind and body.",
+					"mental.6": "Keep learning! Don’t get into a rut or slip into a comfort zone that keeps you from trying new experiences. Explore the activities, events, and programs offered around campus and in the community.",
+					"mental.7": "Realize you don’t have to please everyone. Concentrate on nurturing your own needs and wants.",
+					"mental.8": "When you feel confident and strong, you are able to meet day to day demands.",
+					"mental.9": "Don’t be afraid to ask for help. There are many units across campus such as McKinley Health",
+					"mental.10": "Center and the Counseling Center to support and guide you through challenging times. Major depression is one of the most common mental health illnesses in the US, and when treated it can be managed well.",
+					"mental.11": "Change can be exciting. College offers opportunities for growth. Take advantage of these experiences and use the resources to broaden your perspective and vision for the future.",
+					"mental.12": "Be patient with yourself and others. As you navigate your way through classes and other commitments, your social connections will fall into place.",
+					"mental.13": "Recognize your positive qualities! These strengths helped get you where you are now. Build upon those strengths and discover new ones as you indulge in your college experiences.",
+					"mental.14": "Take care of YOU! High levels of stress, particularly around exam times, are bound to happen. Consistent self-care will enable you to manage these moments calmly and productively.",
+					"mental.15": "Take a personal “time out” when things feel overwhelming. Change your surroundings if you can, and clear your head before you say or do something you might regret. Taking a few moments to settle down can help you reflect on your thoughts and feelings.",
+					"mental.16": "Clear the clutter! Keeping yourself organized and focused will also help you feel relaxed, which leads to increased productivity and your best work.",
+					"mental.17": "Get six to eight hours of sleep when possible. Quality rest can help you manage multiple demands, remain focused and productive, and meet your daily goals.",
+					"mental.18": "Create a bedtime routine to help you wind down from the day.",
+					"mental.19": "Figure out what helps you stay organized – whether it is a schedule, sticky notes, or a digital calendar. Give the Wellness Rings or the To-Do List Tool a try.",
+					"mental.20": "Good task management will also strengthen your skills in prioritization and stress management. These strengths will all help you excel.",
+					"mental.21": "Know your limits and set boundaries. Know when to say NO respectfully so you can stay on top of taking care of yourself and your well-being.",
+					"mental.22": "Be open-minded. Explore and experience new things and meet new people.",
+					"mental.23": "Learn from your mistakes. Ask yourself: What is the take-away? Turn it into something positive. Part of growing up is acknowledging when things didn’t go the way you expected. Learn from those experiences.",
+					"mental.24": "Slow down! Identify a technique or activity that helps calm your mind and unpack your thoughts. Whether it is through meditation, music, yoga, a walk in the park – whatever. Be sure to make it a part of your daily or weekly routine. Consistency is key!",
+					
+					"emotional.1": "Express needs, feelings, and opinions openly, honestly, and appropriately. Avoid keeping thoughts bottled up.",
+					"emotional.2": "Use laughter to reduce tension and promote a positive attitude.",
+					"emotional.3": "Take breaks throughout the day to refresh and rejuvenate your mind and body.",
+					"emotional.4": "Wind down your day with calming activities such as listening to music, reading a book, journaling, or sitting outside.",
+					"emotional.5": "Encourage respectful and meaningful relationships. Eliminate relationships that carry negativity and pull you down.",
+					"emotional.6": "Stay connected with those you love and care about. Talk with friends and family regularly, even when everything is fine. Having a strong social support system can help you stay positive and empowered to do your best.",
+					"emotional.7": "Get involved with interesting activities that feel like a good fit. This will build your confidence and ability to manage stressful situations when and if they arise.",
+					"emotional.8": "If it doesn’t feel right, it probably isn’t. Make the right choice for you. Make choices that fit your values and beliefs, not someone else’s.",
+					"emotional.9": "Embrace all the good you have in your life. Avoid dwelling on what you don’t have.",
+					"emotional.10": "A positive attitude changes everything.",
+					"emotional.11": "Be optimistic. Believe in yourself and your abilities.",
+					"emotional.12": "Use journaling as a way to purge your thoughts and feelings. It is a great portable technique to help you stay calm and relaxed throughout the day or week.",
+					"emotional.13": "Self-care is more important now than ever. Identify a variety of ways to take care of your overall well-being. Do them consistently.. Make yourself a priority. This attention will help you be and do your best in all other things that are important to you.",
+					"emotional.14": "Let go of worries you can’t control. Focus on the positive aspects of your life, or change only what you have the power to affect.",
+					"emotional.15": "Remember: Don’t sweat the small stuff.",
+					"emotional.16": "Ask for help! If you are feeling down and out, take advantage of the many campus resources available to help support you. McKinley Health Center or the Counseling Center is a great place to start.",
+					"emotional.17": "Deep breathing exercises can help you slow your pace and keep your thoughts and feelings in check. It is a great portable technique and it’s easy to do sitting, standing, walking, or lying down.",
+					
+					"social.1": "Meeting new people is a part of your college experience. Embrace opportunities to learn from someone who is different from you. Introduce yourself and start a conversation. You never know where it will lead. Check out the cultural houses and their calendar of events.",
+					"social.2": "Join an organization or club. These interactions are a great way to meet people, gain new skills, and build your resume.",
+					"social.3": "Volunteering is a great way to get connected with others on campus and in the community. You can enhance your own skills and abilities while developing new ones. It also can be rewarding and bring a sense of fulfillment. The Office of Volunteer Programs is a good place to start.",
+					"social.4": "When it comes to going out and having a good time there is nothing better than spending that time with friends. Look out for each other, be safe, and make good choices.",
+					"social.5": "Socializing doesn’t always mean you have to go out. Be creative and have fun doing activities with others in your residence hall or right around you.",
+					"social.6": "Talk with a trusted friend about problems or concerns. Building a strong support system can help you deal with difficult situations.",
+					"social.7": "Develop positive and meaningful relationships. Be genuine and true to your values and beliefs.",
+					"social.8": "Find a balance between socializing and taking care of your academics. Be sure to prioritize activities appropriately.",
+					"social.9": "New situations and people can feel uncomfortable, but give everything a chance before you move on. You may be missing out on an opportunity to grow and meet new people if you give up too quickly.",
+					"social.10": "Encourage good communication, trust, and honesty in your relationships. This will help set boundaries and reduce conflict.",
+					"social.11": "To learn more about programs and services that offer social engagement check out the different <a href='https://studentaffairs.illinois.edu/get-involved'>Student Affairs<a> Unit’s calendar of events and peer opportunities.",
+					"social.12": "Talk with your partner openly about your needs and wants. Individuals that are respectful to one another cultivate healthy, happy, nurturing relationships.",
+	
+					"spiritual.1": "Develop a philosophy of life you want to live by – and live it.",
+					"spiritual.2": "Find purpose in life and meaning in the little things you do every day.",
+					"spiritual.3": "Nurture your values, beliefs, and morals. These are the foundations that keep you feeling grounded and supported in good and bad times.",
+					"spiritual.4": "Explore mindful activities that help you feel connected to yourself and others. These may include meditation, deep breathing, guided imagery, or yoga – to name a few. Incorporate the activity into your everyday life when possible.",
+					"spiritual.5": "Take time to be alone and quiet with your thoughts and feelings. It can be a time of reflection and discovery.",
+					"spiritual.6": "Engage in acts of kindness and good will without expecting something in return.",
+					"spiritual.7": "Take action in helping others when you can. It’s a good thing to do and it builds character.",
+					"spiritual.8": "Stay connected with your thoughts and feelings. These can help guide you in making sound decisions that you feel good about.",
+					"spiritual.9": "Nurture your faith in something or someone. There are numerous campus-wide and community <a href='https://diversity.illinois.edu/diversity-campus-culture/religious-inclusion/'>resources</a> in place to support the religious, spiritual, and secular identities of members of the Illinois community.",
+					"spiritual.10": "Most smiles are started by another. They are simple but powerful.",
+					"spiritual.11": "Give a compliment to someone today. It may just make their day and be exactly what they needed at that moment.",
+					"spiritual.12": "Each day is a new day. Celebrate it!",
+	
+					"physical.1": "Sunscreen will protect your skin from the harmful rays of the sun, which can lead to skin cancer. While getting a tan may look great, you want to be sure you are taking steps to protect yourself.",
+					"physical.2": "Learn strategies to manage your stress. 70-80% of all physical illness is stress related, which means it can be eased with the right mental exercises. Meet individually with McKinley’s Stress Management Educator to help get you started.",
+					"physical.3": "Flip flops may be great for public showers or the beach, but not for everyday footwear. Your feet need proper support throughout the day, particularly when you are on them all day. Be sure to wear comfortable and appropriately fitted shoes to get around campus.",
+					"physical.4": "Physicals, dental and eye exams, and immunizations are all important in keeping your body well. College life often means tight quarters, so keep yourself and others healthy by staying up to date on medical exams.",
+					"physical.5": "Sexual health is an important part of overall health. It is normal to have questions about sexuality, intimacy, and/or reproductive healthcare. Meet with McKinley’s sexual health educator one-on-one for a confidential appointment. Call <a href='tel:+1-217-333-2700'>217-333-2700</a> to schedule a time to meet.",
+					"physical.6": "Avoid overloading your backpack. The weight can lead to poor posture, back problems, and fatigue. Only take with you what you absolutely need each day. If you are feeling back discomfort, you may want to evaluate what you need to carry. Consider a professional back massage to help you stay relaxed and loose.",
+					"physical.7": "Stay home if you are ill. If you have COVID-19 symptoms, you can utilize free on-campus COVID testing. Get rest and drink plenty of water. If symptoms persist, schedule an appointment with a provider at McKinley Health Center through <a href='https://mymckinley.illinois.edu/'>MyMcKinley</a>.",
+					"physical.8": "Protect yourself if you are sexually active! Reduce your risk of contracting a disease. <a href='https://www.mckinley.illinois.edu/health-education/health-resource-centers'>McKinley’s Health Resource Centers</a> provide over the counter self-care supplies such as condoms, latex barriers, etc. Visit one of their locations.",
+					"physical.9": "Wash your hands and dry them well! Regular hand washing can help prevent the spread of COVID and other illnesses. The average person’s hands can carry 3,000 different bacteria.",
+					"physical.10": "Think about everything you touch in a day that is also handled by someone else. Now – go wash your hands and sing happy birthday. That is about the recommended length of time to take to wash your hands.",
+					"physical.11": "Stay active in at least one or more ways. If you are able to, walk to class and take the stairs. Try some water aerobics. Participate in sports or a group fitness class. Ride a bike or roll around campus. These activities and many more can help keep you physically fit, relieve stress, and feel great.",
+					"physical.12": "Learn how to eat intuitively! Meals and snacks are essential throughout the day to keep your mind and body fueled, but listen to your body to avoid overeating or undereating.",
+					"physical.13": "Many sexually transmitted diseases (STDs) do not show signs or symptoms. Get yourself tested! Anyone who is sexually active and having unprotected sex should get tested. Sexually active women should receive an annual chlamydia screening. Men who have sex with men or who have multiple or anonymous partners should be screened for STDs more frequently than once a year. Call McKinley Health Center to schedule an appointment at <a href='tel:+1-217-333-2700'>217-333-2700</a>.",
+					"physical.14": "Napping can be a quick and refreshing way to get reenergized if the nap is about 20-30 minutes in length. Much beyond that, you are no longer napping. You should wake up from a nap feeling like you can get back to your day and tasks at hand. Napping should be avoided too close to bedtime and should not be used as a substitute for a good night’s sleep.",
+	
+					"environmental.1": "Appreciate and respect the environment. Experience the beauty around you.",
+					"environmental.2": "Do your part to preserve and improve environmental conditions. Recycle and/or pick up trash when you can.",
+					"environmental.3": "Pollen and weather conditions can be a trigger for many with allergies. It may cause itching, watery eyes, nasal congestion, runny nose, and throat irritation. Check the weather for pollen and allergy reports so you can be prepared. Allergies are treated in a variety of ways. Consult with your physician about what methods will work best for you.",
+					"environmental.4": "Take cover when you hear sirens and a tornado warning has been issued. Move to an interior room on the lowest floor of a sturdy building. Avoid windows. A tornado is a rotating, funnel-shaped cloud that extends from a thunderstorm to the ground with whirling winds that can reach 300 mph. Damage paths of tornadoes can be in excess of one mile wide and 50 miles long.",
+					"environmental.5": "Clear the clutter! Keep your space around you clean and tidy. It can have an effect on how you think and feel, so have a welcoming and comfortable space for yourself and others.",
+					"environmental.6": "Wear and/or use safety equipment to reduce the risk of injury to yourself or others. Investigate proper attire for different activities such as a face mask, helmets, goggles, and knee pads.",
+					"environmental.7": "Be aware of crosswalks on campus. These are for the safety of pedestrians as well as drivers. Stay off your phone and be aware of your surroundings. Wait for vehicles to stop before you step out into the path of a crosswalk. In the evening, wear reflective gear such as something on your backpack or bright clothing so you can be seen by others.",
+					"environmental.8": "Champaign-Urbana has many parks. Go explore them, and have fun!",
+					"environmental.9": "Stay alert when you are out on campus, particularly in the evening. Travel in groups when possible. Limit distractions such as talking on your phone. Stay in well-lit areas and public places.",
+					"environmental.10": "Put out the flame! U of I is a smoke-free campus. If you smoke, now is a good time to consider quitting. Contact <a href='https://mckinley.illinois.edu/health-education/nicotine-cessation'>McKinley Health Education</a> for resources and support."
+				}
+			}
+		}
+	},
+
+	"video_tutorials": {
+		"videos": [
+			{
+				"id": "video.tutorial.4.0",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.srt"
+			},
+			{
+				"id": "find.your.courses.4.1",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.srt"
+			},
+			{
+				"id": "groups.overview.4.1",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.srt"
+			},
+			{
+				"id": "wellness.rings.overview.4.1",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.srt"
+			},
+			{
+				"id": "favorites.tutorial.4.2",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.srt"
+			},
+			{
+				"id": "groups.create.new.4.2",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.srt"
+			}
+		],
+		"onboarding": { "dev": "video.tutorial.4.0", "test": "video.tutorial.4.0", "production": "video.tutorial.4.0" },
+		"welcome": { "dev": "favorites.tutorial.4.2", "test": "favorites.tutorial.4.2", "production": "favorites.tutorial.4.2" },
+		"strings": {
+			"en": {
+				"video.tutorial.4.0": "Application overview",
+				"find.your.courses.4.1": "Find Your Courses",
+				"groups.overview.4.1": "Groups Overview",
+				"wellness.rings.overview.4.1": "Daily Wellness Rings",
+				"favorites.tutorial.4.2": "Favorites Tutorial",
+				"groups.create.new.4.2": "Creating a New Group"
+			},
+			"es": {
+				"video.tutorial.4.0": "Descripción general de la aplicación",
+				"find.your.courses.4.1": "Encuentra tus cursos",
+				"groups.overview.4.1": "Resumen de grupos",
+				"wellness.rings.overview.4.1": "Anillos de bienestar diarios",
+				"favorites.tutorial.4.2": "Tutorial de Favoritos",
+				"groups.create.new.4.2": "Creación de un nuevo grupo"
+			},
+			"zh": {
+				"video.tutorial.4.0": "應用概述",
+				"find.your.courses.4.1": "查找您的課程",
+				"groups.overview.4.1": "組概述",
+				"wellness.rings.overview.4.1": "每日健康戒指",
+				"favorites.tutorial.4.2": "收藏教程",
+				"groups.create.new.4.2": "創建一個新組"
+			}
+		}
+	}
+}
+

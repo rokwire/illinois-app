@@ -169,6 +169,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
 //          height: 48,
             child: TextField(
               controller: _nameController,
+              textCapitalization: TextCapitalization.words,
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -825,14 +826,12 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   Widget _buildDeleteMyAccount() {
     return Padding(padding: EdgeInsets.only(top: 24, bottom: 12), child:
     RoundedButton(
-        backgroundColor: Styles().colors!.white,
-        borderColor: Styles().colors!.white,
-        textColor: UiColors.fromHex("#f54400"),
-        fontSize: 16,
-        fontFamily: Styles().fontFamilies!.regular,
+        backgroundColor: Styles().colors?.surface,
+        borderColor: Styles().colors?.alert,
+        borderWidth: 1,
+        textStyle: Styles().textStyles?.getTextStyle('widget.error.regular'),
         label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
         hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-        borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
         onTap: _onTapDeleteData
       )
     );

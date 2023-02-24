@@ -194,6 +194,10 @@ class Config extends rokwire.Config {
   String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
   String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
 
+  double? get mapDefaultLatitude     => JsonUtils.doubleValue(settings['map_default_latitude']);
+  double? get mapDefaultLongitude    => JsonUtils.doubleValue(settings['map_default_longitude']);
+  double? get mapDefaultZoom         => JsonUtils.doubleValue(settings['map_default_zoom']);
+
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
 
