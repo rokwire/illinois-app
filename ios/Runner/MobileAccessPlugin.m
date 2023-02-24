@@ -24,6 +24,10 @@
 
 #import <OrigoSDK/OrigoSDK.h>
 
+static NSString *const kMobileAccessMethodChannel = @"edu.illinois.rokwire/mobile_access";
+
+static NSString *const kMobileAccessErrorDomain = @"edu.illinois.rokwire.mobile_access";
+
 @interface MobileAccessPlugin()<OrigoKeysManagerDelegate>
 @property (nonatomic, strong) FlutterMethodChannel* channel;
 
@@ -39,6 +43,18 @@
 @interface OrigoKeysKey(UIUC)
 @property (nonatomic, readonly) NSDictionary* uiucJson;
 @end
+
+typedef NS_ENUM(NSInteger, MobileAccessError) {
+	MobileAccessError_InitializeFailed = 1,
+	MobileAccessError_NotInitialized,
+
+	MobileAccessError_EndpoingAlreadySetup,
+	MobileAccessError_EndpoingBeingSetup,
+
+	MobileAccessError_EndpoingNotSetup,
+	MobileAccessError_EndpoingBeingUnregister,
+};
+
 
 
 ///////////////////////////////////////////
@@ -58,7 +74,7 @@
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar{
 	MobileAccessPlugin *instance = self.sharedInstance;
-	instance.channel = [FlutterMethodChannel methodChannelWithName:@"edu.illinois.rokwire/mobile_access" binaryMessenger:registrar.messenger];
+	instance.channel = [FlutterMethodChannel methodChannelWithName:kMobileAccessMethodChannel binaryMessenger:registrar.messenger];
 	[registrar addMethodCallDelegate:instance channel:instance.channel];
 }
 
@@ -71,7 +87,6 @@
 #pragma mark MethodCall
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result{
-	NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
 	if ([call.method isEqualToString:@"availableKeys"]) {
 		result(self.mobileKeys);
 	}
@@ -120,7 +135,7 @@
 
 	if (_origoKeysManager == nil) {
 		if (completion != nil) {
-			completion([NSError errorWithDomain:@"edu.illinois.rokwire" code: 1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }]);
+			completion([NSError errorWithDomain:kMobileAccessErrorDomain code: MobileAccessError_InitializeFailed userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }]);
 		}
 	}
 	else if (_isStarted) {
@@ -173,13 +188,13 @@
 - (void)registerEndpointWithInvitationCode:(NSString*)invitationCode completion:(void (^)(NSError* error))completion {
 	NSError *errorResult = nil;
 	if ((_origoKeysManager == nil) || !_isStarted) {
-		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
+		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_NotInitialized userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
 	}
 	else if ([_origoKeysManager isEndpointSetup:NULL]) {
-		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:2 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint already setup", nil) }];
+		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingAlreadySetup userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint already setup", nil) }];
 	}
 	else if (_registerEndpointCompletion != nil) {
-		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:3 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently setup", nil) }];
+		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingBeingSetup userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently setup", nil) }];
 	}
 	else {
 		_registerEndpointCompletion = completion;
@@ -202,13 +217,13 @@
 - (void)unregisterEndpointWithCompletion:(void (^)(NSError* error))completion {
 	NSError *errorResult = nil;
 	if ((_origoKeysManager == nil) || !_isStarted) {
-		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
+		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_NotInitialized userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
 	}
 	else if (![_origoKeysManager isEndpointSetup:NULL]) {
-		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:4 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint not setup", nil) }];
+		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingNotSetup userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint not setup", nil) }];
 	}
 	else if (_unregisterEndpointCompletion != nil) {
-		errorResult = [NSError errorWithDomain:@"edu.illinois.rokwire" code:5 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently unregister", nil) }];
+		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingBeingUnregister userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently unregister", nil) }];
 	}
 	else {
 		_unregisterEndpointCompletion = completion;
