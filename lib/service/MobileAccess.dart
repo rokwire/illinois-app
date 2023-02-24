@@ -18,7 +18,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-class MobileAccess {
+class MobileAccess /* with Service */ {
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/mobile_access');
 
   // Singleton
