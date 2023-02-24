@@ -25,6 +25,7 @@
 #import "MapController.h"
 #import "MapDirectionsController.h"
 #import "MapLocationPickerController.h"
+#import "MobileAccessPlugin.h"
 #import "OrigoController.h"
 
 #import "NSArray+InaTypedValue.h"
@@ -100,6 +101,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSObject<FlutterPluginRegistrar>*registrar = [self registrarForPlugin:@"MapPlugin"];
 	MapViewFactory *factory = [[MapViewFactory alloc] initWithMessenger:registrar.messenger];
 	[registrar registerViewFactory:factory withId:@"mapview"];
+    
+    // Setup MobileAccessPlugin
+    [MobileAccessPlugin registerWithRegistrar:[self registrarForPlugin:@"MobileAccessPlugin"]];
 	
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;

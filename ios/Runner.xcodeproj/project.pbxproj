@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; settings = {COMPILER_FLAGS = "-w"; }; };
+		18796F9029A8C18000AFEDE0 /* MobileAccessPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 18796F8F29A8C18000AFEDE0 /* MobileAccessPlugin.m */; };
 		2617849D28C8ED6A009172BB /* UIColor+InaParse.m in Sources */ = {isa = PBXBuildFile; fileRef = 269F83EC22D73EB400CC11A4 /* UIColor+InaParse.m */; };
 		2617849E28C8ED6A009172BB /* NSUserDefaults+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 268F30FF22E5E7BF00547FE1 /* NSUserDefaults+InaUtils.m */; };
 		2617849F28C8ED6A009172BB /* NSDictionary+UIUCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C90CEE2361D13E0092E07F /* NSDictionary+UIUCConfig.m */; };
@@ -140,6 +141,8 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		1511A7CFA630CB08475EC4BC /* Pods-Illinois.profile-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-illinoistest.xcconfig"; sourceTree = "<group>"; };
+		18796F8F29A8C18000AFEDE0 /* MobileAccessPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MobileAccessPlugin.m; sourceTree = "<group>"; };
+		18796F9129A8C21100AFEDE0 /* MobileAccessPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobileAccessPlugin.h; sourceTree = "<group>"; };
 		1A9021E488EAAA073D3C9B69 /* Pods-Runner.profile-tst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-tst.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-tst.xcconfig"; sourceTree = "<group>"; };
 		1C1A28983F72426658CDB5B8 /* Pods-Runner.release-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		1F19BAAE07DC5781823C4D75 /* Pods-Runner.profile-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-illinoisprod.xcconfig"; sourceTree = "<group>"; };
@@ -500,6 +503,8 @@
 				2696997F22C3A14A00B3290E /* MapView.m */,
 				2626D94C22DCB80000F6BC2F /* MapMarkerView.h */,
 				2626D94D22DCB80000F6BC2F /* MapMarkerView.m */,
+				18796F9129A8C21100AFEDE0 /* MobileAccessPlugin.h */,
+				18796F8F29A8C18000AFEDE0 /* MobileAccessPlugin.m */,
 				2621A23E29A4CB3500587376 /* OrigoController.h */,
 				2621A23F29A4CB3500587376 /* OrigoController.m */,
 				26B34034233112320031CF70 /* FlutterCompletion.h */,
@@ -1018,6 +1023,7 @@
 				26B3403A2331195C0031CF70 /* UILabel+InaMeasure.m in Sources */,
 				26FAB1CC22EB35C7008E987C /* NSDate+InaUtils.m in Sources */,
 				2696998022C3A14A00B3290E /* MapView.m in Sources */,
+				18796F9029A8C18000AFEDE0 /* MobileAccessPlugin.m in Sources */,
 				26F7952F28AFA9F200AFC37E /* Navigation+Utils.m in Sources */,
 				26B340372331163A0031CF70 /* MapLocationPickerController.m in Sources */,
 				26ECB3232487938C00479487 /* CommonCrypto+UIUCUtils.m in Sources */,
