@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.19] - 2023-02-23
+### Added
+- Switch of the data source for Canvas Courses [#3006](https://github.com/rokwire/illinois-app/issues/3006).
+
 ## [4.3.18] - 2023-02-22
 ### Changed
 - Updated default initial selection in Maps [#1942](https://github.com/rokwire/illinois-app/issues/1942).

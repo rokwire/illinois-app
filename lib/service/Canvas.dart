@@ -20,6 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -66,6 +67,7 @@ class Canvas with Service implements NotificationsListener {
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
       Connectivity.notifyStatusChanged,
+      Storage.notifySettingChanged,
     ]);
   }
 
@@ -84,7 +86,7 @@ class Canvas with Service implements NotificationsListener {
     _cacheFile = await _getCacheFile();
     _courses = await _loadCoursesFromCache();
     if (_courses != null) {
-      updateCourses();
+      _updateCourses();
     } else {
       String? jsonString = await _loadCoursesStringFromNet();
       _courses = _loadCoursesFromString(jsonString);
@@ -99,11 +101,25 @@ class Canvas with Service implements NotificationsListener {
 
   List<CanvasCourse>? get courses => _courses;
 
-  bool get _available => StringUtils.isNotEmpty(Config().lmsUrl);
+  bool get _isAvailable => ((_useCanvasApi && _isCanvasAvailable) || _isLmsAvailable);
+  
+  bool get _isLmsAvailable => StringUtils.isNotEmpty(Config().lmsUrl);
+
+  bool get _isCanvasAvailable =>
+      StringUtils.isNotEmpty(Auth2().netId) &&
+      StringUtils.isNotEmpty(Config().canvasUrl) &&
+      StringUtils.isNotEmpty(Config().canvasToken) &&
+      StringUtils.isNotEmpty(Config().canvasTokenType);
+
+  bool get _useCanvasApi => (Storage().debugUseCanvasLms == true);
+
+  Map<String, String>? get _canvasAuthHeaders => _isCanvasAvailable
+      ? {HttpHeaders.authorizationHeader: "${Config().canvasTokenType} ${Config().canvasToken}"}
+      : null;
 
   // Courses
 
-  Future<void> updateCourses() async {
+  Future<void> _updateCourses() async {
     String? jsonString = await _loadCoursesStringFromNet();
     List<CanvasCourse>? canvasCourses = _loadCoursesFromString(jsonString);
     if ((canvasCourses != null) && !DeepCollectionEquality().equals(_courses, canvasCourses)) {
@@ -114,15 +130,22 @@ class Canvas with Service implements NotificationsListener {
   }
 
   Future<CanvasCourse?> loadCourse(int? courseId) async {
-    if (!_available) {
+    if (!_isAvailable) {
       return null;
     }
     if (courseId == null) {
       Log.d('Failed to load canvas course - missing course id.');
       return null;
     }
-    String? url = '${Config().lmsUrl}/courses/$courseId';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    String? url;
+    http.Response? response;
+    if (_useCanvasApi) {
+      url = '${Config().canvasUrl}/api/v1/courses/$courseId';
+      response = await Network().get(url, headers: _canvasAuthHeaders);
+    } else {
+      url = '${Config().lmsUrl}/courses/$courseId';
+      response = await Network().get(url, auth: Auth2());
+    }
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -137,11 +160,18 @@ class Canvas with Service implements NotificationsListener {
   // Assignments
 
   Future<List<CanvasAssignmentGroup>?> loadAssignmentGroups(int courseId) async {
-    if (!_available) {
+    if (!_isAvailable) {
       return null;
     }
-    String? url = '${Config().lmsUrl}/courses/$courseId/assignment-groups?include=assignments';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    String? url;
+    http.Response? response;
+    if (_useCanvasApi) {
+      url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/assignment_groups?include[]=assignments');
+      response = await Network().get(url, headers: _canvasAuthHeaders);
+    } else {
+      url = '${Config().lmsUrl}/courses/$courseId/assignment-groups?include=assignments';
+      response = await Network().get(url, auth: Auth2());
+    }
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -156,11 +186,18 @@ class Canvas with Service implements NotificationsListener {
   // Grades
 
   Future<double?> loadCourseGradeScore(int courseId) async {
-    if (!_available) {
+    if (!_isAvailable) {
       return null;
     }
-    String? url = '${Config().lmsUrl}/courses/$courseId/users?include=enrollments,scores';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    String? url;
+    http.Response? response;
+    if (_useCanvasApi) {
+      url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/users/self?include[]=enrollments&include[]=current_grading_period_scores');
+      response = await Network().get(url, headers: _canvasAuthHeaders);
+    } else {
+      url = '${Config().lmsUrl}/courses/$courseId/users?include=enrollments,scores';
+      response = await Network().get(url, auth: Auth2());
+    }
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -186,11 +223,18 @@ class Canvas with Service implements NotificationsListener {
   // Canvas Self User
 
   Future<Map<String, dynamic>?> loadSelfUser() async {
-    if (!_available) {
+    if (!_isAvailable) {
       return null;
     }
-    String? url = '${Config().lmsUrl}/users/self';
+    String? url;
     http.Response? response = await Network().get(url, auth: Auth2());
+    if (_useCanvasApi) {
+      url = _masquerade('${Config().canvasUrl}/api/v1/users/self');
+      response = await Network().get(url, headers: _canvasAuthHeaders);
+    } else {
+      url = '${Config().lmsUrl}/users/self';
+      response = await Network().get(url, auth: Auth2());
+    }
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -256,16 +300,39 @@ class Canvas with Service implements NotificationsListener {
       debugPrint('Canvas courses: the user is not signed in with oidc');
       return null;
     }
-    String? url = '${Config().lmsUrl}/courses';
-    http.Response? response = await Network().get(url, auth: Auth2());
+    String? url;
+    http.Response? response;
+    if (_useCanvasApi) {
+      url = _masquerade('${Config().canvasUrl}/api/v1/courses');
+      response = await Network().get(url, headers: _canvasAuthHeaders);
+    } else {
+      url = '${Config().lmsUrl}/courses';
+      response = await Network().get(url, auth: Auth2());
+    }
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
       return responseString;
     } else {
-      debugPrint('Failed to load canvas courses from net. Reason: $responseCode $responseString');
+      debugPrint('Failed to load canvas courses from net. Reason: $url $responseCode $responseString');
       return null;
     }
+  }
+
+  ///
+  /// Do not return a value if the user is not able to masquerade with Net id
+  /// returns masqueraded url if succeeded, null - otherwise
+  ///
+  String? _masquerade(String url) {
+    if (StringUtils.isEmpty(url)) {
+      return null;
+    }
+    String? userNetId = Auth2().netId;
+    if (StringUtils.isEmpty(userNetId)) {
+      return null;
+    }
+    String querySymbol = url.contains('?') ? '&' : '?';
+    return '$url${querySymbol}as_user_id=sis_user_id:$userNetId';
   }
 
   // NotificationsListener
@@ -275,10 +342,14 @@ class Canvas with Service implements NotificationsListener {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
-      updateCourses();
+      _updateCourses();
     } else if (name == Connectivity.notifyStatusChanged) {
       if (Connectivity().isNotOffline) {
-        updateCourses();
+        _updateCourses();
+      }
+    } else if (name == Storage.notifySettingChanged) {
+      if (param == Storage.debugUseCanvasLmsKey) {
+        _updateCourses();
       }
     }
   }
@@ -291,7 +362,7 @@ class Canvas with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          updateCourses();
+          _updateCourses();
         }
       }
     }
