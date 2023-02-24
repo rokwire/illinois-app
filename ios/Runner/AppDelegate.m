@@ -102,8 +102,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	MapViewFactory *factory = [[MapViewFactory alloc] initWithMessenger:registrar.messenger];
 	[registrar registerViewFactory:factory withId:@"mapview"];
     
-    // Setup MobileAccessPlugin
-    [MobileAccessPlugin registerWithRegistrar:[self registrarForPlugin:@"MobileAccessPlugin"]];
+	// Setup MobileAccessPlugin
+	[MobileAccessPlugin registerWithRegistrar:[self registrarForPlugin:@"MobileAccessPlugin"]];
 	
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;

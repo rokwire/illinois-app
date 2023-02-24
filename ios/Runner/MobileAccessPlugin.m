@@ -28,58 +28,58 @@
 @implementation MobileAccessPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar{
-    FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:@"edu.illinois.rokwire/mobile_access" binaryMessenger:registrar.messenger];
-    MobileAccessPlugin *instance = [[MobileAccessPlugin alloc] initWithChannel:channel];
-    [registrar addMethodCallDelegate:instance channel:channel];
+	FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:@"edu.illinois.rokwire/mobile_access" binaryMessenger:registrar.messenger];
+	MobileAccessPlugin *instance = [[MobileAccessPlugin alloc] initWithChannel:channel];
+	[registrar addMethodCallDelegate:instance channel:channel];
 }
 
-- (instancetype)initWithChannel:(FlutterMethodChannel*)_channel{
-    if (self = [self init]) {
-        channel = _channel;
-    }
-    return self;
+- (instancetype)initWithChannel:(FlutterMethodChannel*)channel{
+	if (self = [self init]) {
+		_channel = channel;
+	}
+	return self;
 }
 
 #pragma mark MethodCall
 
 -(void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result{
-    NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
-    if ([call.method isEqualToString:@"availableKeys"]) {
-        [self handleMobileAccessKeysWithParameters:parameters result:result];
-    }
-    else if ([call.method isEqualToString:@"registerEndpoint"]) {
-        [self handleMobileAccessKeysRegisterEndpointWithArgument:call.arguments result:result];
-    }
-    else if ([call.method isEqualToString:@"unregisterEndpoint"]) {
-        [self handleMobileAccessKeysUnregisterEndpointWithParameters:parameters result:result];
-    }
-    else if ([call.method isEqualToString:@"isEndpointRegistered"]) {
-        [self handleMobileAccessKeysIsEndpointRegisteredWithParameters:parameters result:result];
-    }
+	NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
+	if ([call.method isEqualToString:@"availableKeys"]) {
+		[self handleMobileAccessKeysWithParameters:parameters result:result];
+	}
+	else if ([call.method isEqualToString:@"registerEndpoint"]) {
+		[self handleMobileAccessKeysRegisterEndpointWithArgument:call.arguments result:result];
+	}
+	else if ([call.method isEqualToString:@"unregisterEndpoint"]) {
+		[self handleMobileAccessKeysUnregisterEndpointWithParameters:parameters result:result];
+	}
+	else if ([call.method isEqualToString:@"isEndpointRegistered"]) {
+		[self handleMobileAccessKeysIsEndpointRegisteredWithParameters:parameters result:result];
+	}
 }
 
 - (void)handleMobileAccessKeysWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    //TBD: implement
-    NSLog(@"Mobile Keys: not implemented 1")
-    result(nil);
+	//TBD: implement
+	NSLog(@"Mobile Keys: not implemented 1");
+	result(nil);
 }
 
 - (void)handleMobileAccessKeysRegisterEndpointWithArgument:(id)argument result:(FlutterResult)result {
-    //TBD: implement
-    NSLog(@"Mobile Keys: not implemented 2")
-    result(nil);
+	//TBD: implement
+	NSLog(@"Mobile Keys: not implemented 2");
+	result(nil);
 }
 
 - (void)handleMobileAccessKeysUnregisterEndpointWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    //TBD: implement
-    NSLog(@"Mobile Keys: not implemented 3")
-    result(nil);
+	//TBD: implement
+	NSLog(@"Mobile Keys: not implemented 3");
+	result(nil);
 }
 
 - (void)handleMobileAccessKeysIsEndpointRegisteredWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    //TBD: implement
-    NSLog(@"Mobile Keys: not implemented 4")
-    result(nil);
+	//TBD: implement
+	NSLog(@"Mobile Keys: not implemented 4");
+	result(nil);
 }
 
 @end
