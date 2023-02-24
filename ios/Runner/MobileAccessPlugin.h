@@ -23,9 +23,8 @@
 @interface MobileAccessPlugin : NSObject<FlutterPlugin>
 + (instancetype)sharedInstance;
 
-- (void)initializeWithAppId:(NSString*)appId;
+- (void)startWithAppId:(NSString*)appId;
+- (void)startWithAppId:(NSString*)appId completion:(void (^)(NSError* error))completion;
 
-- (void)start;
-- (void)startWithCompletion:(void (^)(NSError* error))completion;
 @end
 

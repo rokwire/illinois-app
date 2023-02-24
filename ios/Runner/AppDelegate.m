@@ -269,8 +269,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	// Initialize Орiго SDK
 	NSString *origoAppId = [self.secretKeys uiucConfigStringForPathKey:@"origo.app_id"];
 	if (0 < origoAppId.length) {
-		[MobileAccessPlugin.sharedInstance initializeWithAppId:origoAppId];
-		[MobileAccessPlugin.sharedInstance startWithCompletion:nil];
+		[MobileAccessPlugin.sharedInstance startWithAppId:origoAppId];
 	}
 
 	result(@(YES));

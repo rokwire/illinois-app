@@ -68,7 +68,6 @@
 	return self;
 }
 
-
 #pragma mark MethodCall
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result{
@@ -94,7 +93,13 @@
 
 // Implementation
 
-- (void)initializeWithAppId:(NSString*)appId {
+
+- (void)startWithAppId:(NSString*)appId {
+	[self startWithAppId:appId completion:nil];
+}
+
+- (void)startWithAppId:(NSString*)appId completion:(void (^)(NSError* error))completion {
+
 	NSDictionary *bundleInfo = [[NSBundle mainBundle] infoDictionary];
 	NSString *version = [NSString stringWithFormat:@"%@-%@ (%@)", appId,
 		[bundleInfo inaStringForKey:@"CFBundleShortVersionString"],
@@ -112,13 +117,7 @@
 	@catch (NSException *exception) {
 		NSLog(@"Failed to initialize OrigoKeysManager: %@", exception);
 	}
-}
 
-- (void)start {
-	[self startWithCompletion:nil];
-}
-
-- (void)startWithCompletion:(void (^)(NSError* error))completion {
 	if (_origoKeysManager == nil) {
 		if (completion != nil) {
 			completion([NSError errorWithDomain:@"edu.illinois.rokwire" code: 1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }]);
