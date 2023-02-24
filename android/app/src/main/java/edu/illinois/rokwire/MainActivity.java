@@ -48,6 +48,7 @@ import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
 import edu.illinois.rokwire.maps.MapPickLocationActivity;
 import edu.illinois.rokwire.mobile_access.MobileAccessKeysApiFacade;
+import edu.illinois.rokwire.mobile_access.MobileAccessPlugin;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
@@ -72,6 +73,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private Toast statusToast;
 
     private MobileAccessKeysApiFacade mobileAccessKeysApiFacade;
+
+    private MobileAccessPlugin mobileAccessPlugin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +146,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 .getPlatformViewsController()
                 .getRegistry()
                 .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
+
+        mobileAccessPlugin = new MobileAccessPlugin();
+        flutterEngine.getPlugins().add(mobileAccessPlugin);
     }
 
     private void initScreenOrientation() {
@@ -528,19 +534,19 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     String deepLinkScheme = handleDeepLinkScheme(methodCall.arguments);
                     result.success(deepLinkScheme);
                     break;
-                case Constants.MOBILE_ACCESS_KEYS_KEY:
+                case Constants.MOBILE_ACCESS_AVAILABLE_KEYS_KEY:
                     List<HashMap<String, Object>> keys = handleMobileAccessKeys(methodCall.arguments);
                     result.success(keys);
                     break;
-                case Constants.MOBILE_ACCESS_KEYS_REGISTER_ENDPOINT:
+                case Constants.MOBILE_ACCESS_REGISTER_ENDPOINT_KEY:
                     handleMobileAccessRegisterEndpoint(methodCall.arguments);
                     result.success(true);
                     break;
-                case Constants.MOBILE_ACCESS_KEYS_UNREGISTER_ENDPOINT:
+                case Constants.MOBILE_ACCESS_UNREGISTER_ENDPOINT_KEY:
                     handleMobileAccessUnregisterEndpoint();
                     result.success(true);
                     break;
-                case Constants.MOBILE_ACCESS_KEYS_ENDPOINT_REGISTERED:
+                case Constants.MOBILE_ACCESS_IS_ENDPOINT_REGISTERED_KEY:
                     boolean isRegistered = handleMobileAccessIsEndpointRegistered();
                     result.success(isRegistered);
                     break;

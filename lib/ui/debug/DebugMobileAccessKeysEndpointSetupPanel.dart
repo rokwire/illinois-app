@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -39,7 +39,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
     super.initState();
     _invitationCodeController = TextEditingController();
     _increaseProgress();
-    NativeCommunicator().isMobileAccessKeysEndpointRegistered().then((registered) {
+    MobileAccess().isEndpointRegistered().then((registered) {
       _isRegistered = registered;
       _decreaseProgress();
     });
@@ -141,7 +141,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
     String? invitationCode = _invitationCodeController?.text;
     if (StringUtils.isNotEmpty(invitationCode) && (invitationCode!.length == 19) && RegExp(regExPattern).hasMatch(invitationCode)) {
       _increaseProgress();
-      NativeCommunicator().mobileAccessKeysRegisterEndpoint(invitationCode).then((success) {
+      MobileAccess().registerEndpoint(invitationCode).then((success) {
         _decreaseProgress();
       });
     } else {
@@ -154,7 +154,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
       return;
     }
     _increaseProgress();
-    NativeCommunicator().mobileAccessKeysUnregisterEndpoint().then((success) {
+    MobileAccess().unregisterEndpoint().then((success) {
       _decreaseProgress();
     });
   }

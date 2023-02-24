@@ -217,46 +217,6 @@ class NativeCommunicator with Service {
     return result;
   }
 
-  Future<List<dynamic>?> getMobileAccessKeys() async {
-    List<dynamic>? mobileAccessKeys;
-    try {
-      mobileAccessKeys = await _platformChannel.invokeMethod('mobileAccessKeys');
-    } catch (e) {
-      print(e.toString());
-    }
-    return mobileAccessKeys;
-  }
-
-  Future<bool> mobileAccessKeysRegisterEndpoint(String invitationCode) async {
-    bool result = false;
-    try {
-      result = await _platformChannel.invokeMethod('mobileAccessKeysRegisterEndpoint', invitationCode);
-    } catch (e) {
-      print(e.toString());
-    }
-    return result;
-  }
-
-  Future<bool> mobileAccessKeysUnregisterEndpoint() async {
-    bool result = false;
-    try {
-      result = await _platformChannel.invokeMethod('mobileAccessKeysUnregisterEndpoint', null);
-    } catch (e) {
-      print(e.toString());
-    }
-    return result;
-  }
-
-  Future<bool> isMobileAccessKeysEndpointRegistered() async {
-    bool result = false;
-    try {
-      result = await _platformChannel.invokeMethod('mobileAccessKeysIsEndpointRegistered', null);
-    } catch (e) {
-      print(e.toString());
-    }
-    return result;
-  }
-
   Future<String?> getDeepLinkScheme() async {
     String? result;
     try {

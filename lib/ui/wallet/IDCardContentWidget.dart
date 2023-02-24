@@ -24,7 +24,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -152,7 +152,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   Future<void> _loadMobileAccessKey() async {
     if (Auth2().isLoggedIn) {
       _setMobileAccessKeysLoading(true);
-      NativeCommunicator().getMobileAccessKeys().then((List<dynamic>? mobileAccessKeys) {
+      MobileAccess().getAvailableKeys().then((List<dynamic>? mobileAccessKeys) {
         _mobileAccessKeys = mobileAccessKeys;
         _setMobileAccessKeysLoading(false);
       });
