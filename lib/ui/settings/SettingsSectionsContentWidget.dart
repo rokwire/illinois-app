@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,7 +47,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
-import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsSectionsContentWidget extends StatefulWidget {
@@ -831,42 +831,31 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       HtmlWidget(
           StringUtils.ensureNotEmpty(descriptionHtml),
           onTapUrl : (url) {_onTapHtmlLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regularIt, fontSize: 16),
+          textStyle:  Styles().textStyles?.getTextStyle("panel.settings.section_content.htm.title.regula")
       )
       ),
     ]);
-  }
-
-  String _constructFeedbackParams(String? email, String? phone, String? name) {
-    Map params = Map();
-    params['email'] = Uri.encodeComponent(email != null ? email : "");
-    params['phone'] = Uri.encodeComponent(phone != null ? phone : "");
-    params['name'] = Uri.encodeComponent(name != null ? name : "");
-
-    String result = "";
-    if (params.length > 0) {
-      result += "?";
-      params.forEach((key, value) =>
-      result+= key + "=" + value + "&"
-      );
-      result = result.substring(0, result.length - 1); //remove the last symbol &
-    }
-    return result;
   }
 
   void _onFeedbackClicked() {
     Analytics().logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String? email = Auth2().email;
-      String? name =  Auth2().fullName;
-      String? phone = Auth2().phone;
-      String params = _constructFeedbackParams(email, phone, name);
-      String feedbackUrl = Config().feedbackUrl! + params;
+      String email = Uri.encodeComponent(Auth2().email ?? '');
+      String name =  Uri.encodeComponent(Auth2().fullName ?? '');
+      String phone = Uri.encodeComponent(Auth2().phone ?? '');
+      String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
-      String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
+      if (Platform.isIOS) {
+        Uri? feedbackUri = Uri.tryParse(feedbackUrl);
+        if (feedbackUri != null) {
+          launchUrl(feedbackUri, mode: LaunchMode.externalApplication);
+        }
+      }
+      else {
+        String? panelTitle = Localization().getStringEx('panel.settings.feedback.label.title', 'PROVIDE FEEDBACK');
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
+      }
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.feedback', 'Providing a Feedback is not available while offline.'));
@@ -915,7 +904,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                 style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 children:[
                   TextSpan(text: versionLabel,),
-                  TextSpan(text:  " $_versionName", style : TextStyle(fontFamily: "ProximaNovaBold")),
+                  TextSpan(text:  " $_versionName", style : Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
                 ]
             ))
       );
@@ -931,14 +920,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Copyright
   Widget _buildCopyright() {
-    final String currentYearFormatted = DateFormat('yyyy').format(DateTime.now());
-    String copyrightLabel = sprintf(
-        Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © %s University of Illinois Board of Trustees'),
-        [currentYearFormatted]);
-    return Container(
-        alignment: Alignment.center,
-        child: Text(copyrightLabel, textAlign: TextAlign.center,
-            style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
+    String copyrightLabel = Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © {{COPYRIGHT_YEAR}} University of Illinois Board of Trustees')
+      .replaceAll('{{COPYRIGHT_YEAR}}', DateFormat('yyyy').format(DateTime.now()));
+    return Container(alignment: Alignment.center, child:
+      Text(copyrightLabel, textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+    );
   }
 
   // Utilities

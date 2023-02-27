@@ -289,7 +289,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                       Styles().images?.getImage('settings', excludeFromSemantics: true) ?? Container(),
                       Padding(
                         padding: EdgeInsets.only(left: 10),
-                        child: Text(additionalSettingsText, style:  Styles().textStyles?.getTextStyle("widget.title.regular"),
+                        child: Text(additionalSettingsText, style:  Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
                         ),
                       )
                     ],
@@ -423,7 +423,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                     child: Text(
                       Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.message", "Are you sure you want to cancel this Stadium Poll"),
                       textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium"),
+                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular"),
                     ),
                   ),
                   Row(

@@ -125,7 +125,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
-      HomePanel.notifyCustomize,
+      HomePanel.notifySelect,
       ExplorePanel.notifySelectMap,
     ]);
 
@@ -247,7 +247,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyWellnessToDoItemNotification) {
       _onFirebaseWellnessToDoItemNotification(param);
     }
-    else if (name == HomePanel.notifyCustomize) {
+    else if (name == HomePanel.notifySelect) {
       _onSelectHome();
     }
     else if (name == ExplorePanel.notifySelectMap) {
@@ -380,7 +380,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       child: Center(
                         child: Text(
                           Localization().getStringEx("app.title", "Illinois"),
-                          style: TextStyle(fontSize: 20, color: Colors.white),
+                          style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular"),
                         ),
                       ),
                     ),
@@ -393,10 +393,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Localization().getStringEx(
                   "common.message.exit_app", "Are you sure you want to exit?"),
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 16,
-                  color: Colors.black),
+              style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular.fat")
             ),
             Container(height: 26,),
             Padding(
@@ -774,6 +771,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? appointmentId = JsonUtils.stringValue(param['appointment_id']);
       if (StringUtils.isNotEmpty(appointmentId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+      } else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.appointments)));
       }
     }
   }

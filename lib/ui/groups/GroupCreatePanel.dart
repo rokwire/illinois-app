@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
-import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -486,7 +486,16 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onTapAttributes() {
     Analytics().logSelect(target: "Attributes");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(selection: _group?.attributes,))).then((selection) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+      title: (_group?.researchProject == true) ?
+        Localization().getStringEx('panel.project.attributes.attributes.header.title', 'Project Attributes') :
+        Localization().getStringEx('panel.group.attributes.attributes.header.title', 'Group Attributes'),
+      description: (_group?.researchProject == true) ?
+        Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
+        Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
+      contentAttributes: Groups().contentAttributes,
+      selection: _group?.attributes,
+    ))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
           _group?.attributes = selection;
@@ -989,7 +998,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
-        (Groups().contentAttributes?.unsatisfiedCategoryFromSelection(_group?.attributes) == null) &&
+        (Groups().contentAttributes?.isCategoriesSelectionValid(_group?.attributes) ?? false) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount > 0));

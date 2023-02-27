@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideEntryCard extends StatefulWidget {
-  final String favoriteKey;
+  final String? favoriteKey;
   final Map<String, dynamic>? guideEntry;
   GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName });
 
@@ -26,7 +26,7 @@ class GuideEntryCard extends StatefulWidget {
 
 class _GuideEntryCardState extends State<GuideEntryCard> implements NotificationsListener {
 
-  late bool _isFavorite;
+  bool _isFavorite = false;
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
     ]);
-    _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
+    _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: guideEntryId));
   }
 
   @override
@@ -50,7 +50,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {
-        _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
+        _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: guideEntryId));
       });
     }
     else if (name == FlexUI.notifyChanged) {
@@ -104,7 +104,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
           ),)),
         Container(color: Styles().colors?.accentColor3, height: 4),
-        Visibility(visible: Auth2().canFavorite, child:
+        Visibility(visible: _canFavorite, child:
           Align(alignment: Alignment.topRight, child:
           Semantics(
             label: _isFavorite
@@ -123,6 +123,8 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
     );
   }
 
+  bool get _canFavorite => (widget.favoriteKey != null) && Auth2().canFavorite;
+
   void _onTapLink(String? url) {
     Analytics().logSelect(target: 'Link: $url');
     if (StringUtils.isNotEmpty(url)) {
@@ -134,9 +136,11 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   }
 
   void _onTapFavorite() {
-    String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
-    Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
+    if (widget.favoriteKey != null) {
+      String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
+      Analytics().logSelect(target: "Favorite: $title");
+      Auth2().prefs?.toggleFavorite(FavoriteItem(key: widget.favoriteKey!, id: guideEntryId));
+    }
   }
 
   void _onTapEntry() {

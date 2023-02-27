@@ -36,16 +36,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class CheckListContentWidget extends StatefulWidget{
-  static final TextStyle _regularText = TextStyle(
-    color: Styles().colors!.fillColorPrimary,
-    fontFamily: Styles().fontFamilies!.regular,
-    fontSize: 18,
-  );
-  static final TextStyle _boldText = TextStyle(
-    color: Styles().colors!.fillColorPrimary,
-    fontFamily: Styles().fontFamilies!.bold,
-    fontSize: 18,
-  );
+  static final TextStyle? _regularText = Styles().textStyles?.getTextStyle("widget.title.medium");
+  static final TextStyle? _boldText =  Styles().textStyles?.getTextStyle("widget.title.medium.fat");
 
   final String contentKey;
   final bool panelDisplay;
@@ -105,8 +97,9 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
                   Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Expanded(child:
                       Semantics(child:
-                        Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center, style:
-                          TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: widget.panelDisplay ? 20 : 18,),
+                        Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center, style: widget.panelDisplay ?
+                        Styles().textStyles?.getTextStyle("widget.checklist.content.step.title.display") :
+                        Styles().textStyles?.getTextStyle("widget.checklist.content.step.title")
                         ),
                       )
                     ),
@@ -115,8 +108,9 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
                 Container(height: 8,),
                 Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                   Expanded(child:
-                    Text(_currentPage["title"] ?? "", textAlign: TextAlign.center, style:
-                      TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: widget.panelDisplay ? 32 : 24,),
+                    Text(_currentPage["title"] ?? "", textAlign: TextAlign.center, style: widget.panelDisplay ?
+                      Styles().textStyles?.getTextStyle("widget.checklist.content.page.title.display") :
+                      Styles().textStyles?.getTextStyle("widget.checklist.content.page.title")
                     ),
                   ),
                 ],),
@@ -144,24 +138,19 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
 
       for (int progressStep in CheckList(widget.contentKey).progressSteps!) {
 
-        Color textColor;
-        String? textFamily;
+        TextStyle? textStyle;
         bool showCheckIcon = false;
         bool progressStepCompleted = CheckList(widget.contentKey).isProgressStepCompleted(progressStep);
         bool currentStep = (currentPageProgress != null) && (progressStep == currentPageProgress);
 
         if (progressStepCompleted) {
-          textColor = Colors.greenAccent;
-          textFamily = Styles().fontFamilies!.medium;
+          textStyle = Styles().textStyles?.getTextStyle("widget.checklist.content.progress.title.completed");
           showCheckIcon = true;
         } else {
-          textColor = Colors.white;
-          textFamily = Styles().fontFamilies!.regular;
+          textStyle = Styles().textStyles?.getTextStyle("widget.checklist.content.progress.title.not_completed");
         }
         if (currentStep) {
-          textColor = Styles().colors!.fillColorPrimary!;
-          textFamily = Styles().fontFamilies!.extraBold;
-          // showCheckIcon = false;
+          textStyle = Styles().textStyles?.getTextStyle("widget.checklist.content.progress.title.current_step");
         }
 
         progressWidgets.add(
@@ -180,9 +169,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
                     ),
                     Align(alignment: Alignment.center, child:
                       Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children:[
-                        Text(progressStep.toString(), semanticsLabel: '', style:
-                          TextStyle(color: textColor, fontFamily: textFamily, fontSize: 15, decoration: TextDecoration.underline),
-                        ),
+                        Text(progressStep.toString(), semanticsLabel: '', style: textStyle,),
                         !showCheckIcon ? Container() : Styles().images?.getImage('check-green', semanticLabel: Localization().getStringEx("panel.checklist.text.completed", "Completed")) ?? Container()
                       ]),
                     )
@@ -351,7 +338,7 @@ class _CheckListPageWidget extends StatelessWidget{
                   child: HtmlWidget(
                       titleHtml ?? "",
                       onTapUrl : (url) {onTapLink!(url); return true;},
-                      textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 24),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.detail.extra_large.fat"),
                       customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
                   )
               )
@@ -367,7 +354,7 @@ class _CheckListPageWidget extends StatelessWidget{
               child: HtmlWidget(
                   textHtml ?? "",
                   onTapUrl : (url) {onTapLink!(url); return true;},
-                  textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.item.large"),
                   customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
               )
           )
@@ -389,7 +376,7 @@ class _CheckListPageWidget extends StatelessWidget{
                     child: HtmlWidget(
                         headingHtml ?? "",
                         onTapUrl : (url) {onTapLink!(url); return true;},
-                        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.item.large"),
                         customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
                     )
                 )
@@ -400,7 +387,6 @@ class _CheckListPageWidget extends StatelessWidget{
           List<dynamic>? bullets = JsonUtils.listValue(contentEntry['bullets']);
           if (bullets != null) {
             String bulletText = '\u2022';
-            Color? bulletColor = Styles().colors!.textBackground;
             List<Widget> bulletWidgets = <Widget>[];
             for (dynamic bulletEntry in bullets) {
               if ((bulletEntry is String) && bulletEntry.isNotEmpty) {
@@ -408,13 +394,13 @@ class _CheckListPageWidget extends StatelessWidget{
                   Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
-                    Text(bulletText, style: TextStyle(color: bulletColor, fontSize: 20),),),
+                    Text(bulletText, style:Styles().textStyles?.getTextStyle("widget.item.large"),),),
                     Expanded(child:
                       Semantics(container: true,
                           child: HtmlWidget(
                             bulletEntry,
                             onTapUrl : (url) {onTapLink!(url); return true;},
-                            textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                            textStyle: Styles().textStyles?.getTextStyle("widget.item.large"),
                             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
                           )
                       )
@@ -431,7 +417,6 @@ class _CheckListPageWidget extends StatelessWidget{
 
           List<dynamic>? numbers = JsonUtils.listValue(contentEntry['numbers']);
           if (numbers != null) {
-            Color? numberColor = Styles().colors!.textBackground;
             List<Widget> numberWidgets = <Widget>[];
             for (int numberIndex = 0; numberIndex < numbers.length; numberIndex++) {
               dynamic numberEntry = numbers[numberIndex];
@@ -440,13 +425,13 @@ class _CheckListPageWidget extends StatelessWidget{
                   Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
-                    Text('${numberIndex + 1}.', style: TextStyle(color: numberColor, fontSize: 20),),),
+                    Text('${numberIndex + 1}.', style: Styles().textStyles?.getTextStyle("widget.item.large"),),),
                     Expanded(child:
                       Semantics(container: true,
                           child: HtmlWidget(
                               numberEntry,
                               onTapUrl : (url) {onTapLink!(url); return true;},
-                              textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                              textStyle:  Styles().textStyles?.getTextStyle("widget.item.large"),
                               customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
                           )
                       )
@@ -539,12 +524,7 @@ class _CheckListPageWidget extends StatelessWidget{
                       textWidget: Text(
                         title ?? "",
                         semanticsLabel: "",
-                        style: TextStyle(
-                          color: Styles().colors!.fillColorPrimary,
-                          fontFamily: Styles().fontFamilies!.bold,
-                          fontSize: 26,
-                        ),
-                      ),
+                        style: Styles().textStyles?.getTextStyle("widget.button.title.extra_large"),),
                       borderColor: Styles().colors!.white,
                       borderWidth: 2,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -647,7 +627,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
           noteWidgets.add(
               Padding(padding: EdgeInsets.only(bottom: 8), child:
               Column(key: (noteId == widget.focusNoteId) ? _focusKey : null, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+                Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                 Container(height: 4,),
                 TextField(
                   autocorrect: false,
@@ -655,7 +635,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
                   controller: controller,
                   maxLines: null,
                   decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.regular")
                 ),
               ])
               )
@@ -673,7 +653,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
         Row(children: [
           Expanded(child:
-          Text(Localization().getStringEx('widget.gies.notes.title', 'Things to Remember'), style: TextStyle(fontSize: 20, color: Colors.white),),
+          Text(Localization().getStringEx('widget.gies.notes.title', 'Things to Remember'), style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular")),
           ),
           Semantics(
               label: Localization().getStringEx("dialog.close.title","Close"), button: true,
@@ -683,7 +663,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
               }, child:
               Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2),), child:
               Center(child:
-              Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, ),semanticsLabel: "", ),
+              Text('\u00D7', style: Styles().textStyles?.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
               ),
               ),
               )),
@@ -702,7 +682,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
           Expanded(child: Container(),),
           Row(children: [
             Expanded(child:
-            Text( Localization().getStringEx("panel.checklist.text.no_saved_notes.label", 'No saved notes yet.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+            Text( Localization().getStringEx("panel.checklist.text.no_saved_notes.label", 'No saved notes yet.'), textAlign: TextAlign.center, style:Styles().textStyles?.getTextStyle("widget.message.regular.fat"),),
             ),
           ]),
           Expanded(child: Container(),),
@@ -809,9 +789,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
 
   Widget _buildHeader(){
     return Container(padding: EdgeInsets.only(right: 16, left: 16, top: 16,), color: Styles().colors!.fillColorPrimary, child:
-      Text(widget.title?? "", style:
-        TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 24),
-      ),
+      Text(widget.title?? "", style: Styles().textStyles?.getTextStyle("widget.heading.extra_large.fat")),
     );
   }
 
@@ -838,14 +816,15 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
     String? pageId = JsonUtils.stringValue(tabData["page_id"]);
     bool isCompleted = CheckList(widget.contentKey).isPageCompleted(pageId);
     bool isCurrentTab = _currentPage == index;
-    Color textColor = Colors.white;
-    String? textFamily = Styles().fontFamilies!.regular;
-    if(isCompleted){
-        textColor = Colors.greenAccent;
-    }
-
+    TextStyle? textStyle;
     if(isCurrentTab){
-      textFamily = Styles().fontFamilies!.extraBold;
+      textStyle = isCompleted ?
+        Styles().textStyles?.getTextStyle("widget.checklist.content.tab.title.current_tab.completed") :
+        Styles().textStyles?.getTextStyle("widget.checklist.content.tab.title.current_tab.not_completed");
+    } else {
+      textStyle = isCompleted ?
+      Styles().textStyles?.getTextStyle("widget.checklist.content.tab.title.completed") :
+      Styles().textStyles?.getTextStyle("widget.checklist.content.tab.title.not_completed");
     }
 
     String tabName = "${widget.pageProgress}${tabKey??""}";
@@ -859,7 +838,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
           child: Container(
             padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
             child: Row(children: [
-              Text(tabName, style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline), semanticsLabel: "",),
+              Text(tabName, style: textStyle, semanticsLabel: "",),
               !isCompleted ? Container():
               Container(
                   height: 16,
@@ -1374,11 +1353,7 @@ class _CoursesListState extends State<CoursesListWidget> with NotificationsListe
     }
 
     content.add(Text(Localization().getStringEx("panel.checklist.text.registered_courses",  "Registered Courses",),
-      style: TextStyle(
-        color: Styles().colors!.fillColorPrimary,
-        fontFamily: Styles().fontFamilies!.bold,
-        fontSize: 18,
-      ),),);
+      style: Styles().textStyles?.getTextStyle("widget.message.medium") ));
     content.add(Container(height: 10,));
 
     for(dynamic courseData in _coursesList!){

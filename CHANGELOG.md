@@ -5,6 +5,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.19] - 2023-02-23
+### Added
+- Switch of the data source for Canvas Courses [#3006](https://github.com/rokwire/illinois-app/issues/3006).
+
+## [4.3.18] - 2023-02-22
+### Changed
+- Updated default initial selection in Maps [#1942](https://github.com/rokwire/illinois-app/issues/1942).
+- Removed To-Do List from Wellness Section [#2951](https://github.com/rokwire/illinois-app/issues/2951).
+- Embed guide content in Academics and Wellness home panels [#3004](https://github.com/rokwire/illinois-app/issues/3004).
+
+## [4.3.17] - 2023-02-20
+- N/A
+
+## [4.3.16] - 2023-02-14
+- N/A
+
+## [4.3.15] - 2023-02-13
+### Fixed
+- Fixed navigation target when requesting directions to building in embedded map plugin [#2955](https://github.com/rokwire/illinois-app/issues/2955).
+
+## [4.3.14] - 2023-02-10
+### Fixed
+- Fixed group-5 image references in styles.json.
+- Fixed the most obvious color issues with style images [#2979](https://github.com/rokwire/illinois-app/issues/2979).
+
+## [4.3.13] - 2023-02-09
+### Changed
+- Group/Project attribute/filters updates [#2974](https://github.com/rokwire/illinois-app/issues/2974).
+
+## [4.3.12] - 2023-02-08
+### Changed
+- Removed the popup panel for editing attributes dropdown content, use cupertino navigation route instead [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+- Updated group sub-panels to use cupertino navigation route instead of popup-like [#2967](https://github.com/rokwire/illinois-app/issues/2967).
+- Created standalone HomeCustomizeFavoritesPanel for Favorites panel content customization [#2972](https://github.com/rokwire/illinois-app/issues/2972).
+
+## [4.3.11] - 2023-02-07
+### Changed
+- Created popup panel for editing attributes dropdown content [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+
+## [4.3.10] - 2023-02-06
+### Changed
+- Updated group attributes logic [#2954](https://github.com/rokwire/illinois-app/issues/2954).
+
 ## [4.3.9] - 2023-02-02
 ### Changed
 - Group's category and tags replaced by attributes [#2926](https://github.com/rokwire/illinois-app/issues/2926).
@@ -33,8 +77,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.3.4] - 2023-01-24
 ### Changed
 - Store filter selection in groups as {filter_id : option_id} mapping [#2926](https://github.com/rokwire/illinois-app/issues/2926).
-### Fixed
-- Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
 
 ## [4.3.3] - 2023-01-23
 ### Changed
@@ -42,8 +84,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Preserve Group filters dropdown popup when selecting items that are multiple selected [#2926](https://github.com/rokwire/illinois-app/issues/2926).
 
 ## [4.3.2] - 2023-01-20
-### Fixed
-- Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
 ### Changed
 - Access MTD via content service [#2922](https://github.com/rokwire/illinois-app/issues/2922).
 - Removed access to shibboleth section from config secret keys (unused).
@@ -56,19 +96,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.3.1] - 2023-01-12
 ### Changed
 - Use Styles().images [#2476](https://github.com/rokwire/illinois-app/issues/2476).
-- Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
 - Revert upcoming release version number to 4.3 [#2915](https://github.com/rokwire/illinois-app/issues/2915).
 ### Added
-- Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
 - Display managed and membership date fields in GroupDetailPanel [#2907](https://github.com/rokwire/illinois-app/issues/2907).
 - Show current year in copyright statement [#2899](https://github.com/rokwire/illinois-app/issues/2899).
-### Fixed
-- Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
-- Handle tap action over poll and wellness todo items notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
 
 ## [4.3.0] - 2023-01-04
 ### Changed
 - Switch to xCode 14.2.
+
+## [4.2.53] - 2023-02-20
+### Changed
+- Update MTD text to include “Bus” [#2952](https://github.com/rokwire/illinois-app/issues/2952).
+- Move To-Do List to Academics Section [#2951](https://github.com/rokwire/illinois-app/issues/2951).
+
+## [4.2.52] - 2023-02-16
+### Changed
+- Launch privacy policy web content in an external web browser on iOS platforms [#2909](https://github.com/rokwire/illinois-app/issues/2909).
+- Launch feedback web content in an external web browser on iOS platforms [#2909](https://github.com/rokwire/illinois-app/issues/2909).
+
+## [4.2.51] - 2023-02-15
+### Fixed
+- Fixed scrolling issues in research questionnaire prompt and acknowledgement panels [#2985](https://github.com/rokwire/illinois-app/issues/2985).
+- Android: Crash for foldable devices  [#2920](https://github.com/rokwire/illinois-app/issues/2920).
+
+## [4.2.50] - 2023-02-13
+### Changed
+- Updated analytics log for research questionnaire answers [#2910](https://github.com/rokwire/illinois-app/issues/2910).
+- Updated English strings [#2956](https://github.com/rokwire/illinois-app/issues/2956).
+### Fixed
+- Displaying athletics event from notifications inbox [#2874](https://github.com/rokwire/illinois-app/issues/2874).
+- Handle tap action over poll and wellness todo items notification [#2645](https://github.com/rokwire/illinois-app/issues/2645).
+- Load appointments only if the user is signed in [#2923](https://github.com/rokwire/illinois-app/issues/2923).
+- Scrolling in wellness MyMcKinley Appointments [#2958](https://github.com/rokwire/illinois-app/issues/2958).
+- Open appointments list panel on tap over appointment inbox message if appointment id does not exist [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+- Open appointment detail panel on tap over appointment inbox message [#2969](https://github.com/rokwire/illinois-app/issues/2969).
+- Fixed navigation target when requesting directions to building [#2955](https://github.com/rokwire/illinois-app/issues/2955).
+- Retrieve sorted appointments from the backend [#2971](https://github.com/rokwire/illinois-app/issues/2971).
+### Added
+- Cache appointments account [#2905](https://github.com/rokwire/illinois-app/issues/2905).
 
 ## [4.2.49] - 2023-01-05
 ### Fixed

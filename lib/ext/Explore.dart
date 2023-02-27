@@ -7,6 +7,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
@@ -31,6 +32,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'dart:math' as math;
@@ -134,7 +136,7 @@ extension ExploreExt on Explore {
       return Localization().getStringEx('panel.explore.item.buildings.name', 'Buildings');
     }
     else if (exploresType == "mtdstop") {
-      return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'MTD Stops');
+      return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'Bus Stops');
     }
     else if (exploresType == "studentcourse") {
       return Localization().getStringEx('panel.explore.item.courses.name', 'Courses');
@@ -395,18 +397,34 @@ extension ExploreMap on Explore {
   }
 
   Future<bool> launchDirections() async {
-    if (exploreLocation?.isLocationCoordinateValid ?? false) {
-      return await GeoMapUtils.launchDirections(
-        destination: LatLng(
-          exploreLocation?.latitude?.toDouble() ?? 0,
-          exploreLocation?.longitude?.toDouble() ?? 0
-        ),
-        travelMode: _defaultTravelMode
-      );
+    LatLng? targetLocation = await _targetLocation;
+    return (targetLocation != null) ? await GeoMapUtils.launchDirections(
+      destination: targetLocation,
+      travelMode: _defaultTravelMode
+    ) : false;
+  }
+
+  Future<LatLng?> get _targetLocation async {
+    Building? building;
+    if (this is Building) {
+      building = this as Building;
     }
-    else {
-      return false;
+    else if (this is StudentCourse) {
+      building = (this as StudentCourse).section?.building;
     }
+
+    if (building != null) {
+      Position? userLocation = await LocationServices().location;
+      BuildingEntrance? buildingEntrance = (this as Building).nearstEntrance(userLocation, requireAda: StudentCourses().requireAda);
+      if ((buildingEntrance != null) && buildingEntrance.hasValidLocation) {
+        return LatLng(buildingEntrance.latitude!, buildingEntrance.longitude!);
+      }
+    }
+
+    return (exploreLocation?.isLocationCoordinateValid ?? false) ? LatLng(
+      exploreLocation?.latitude?.toDouble() ?? 0,
+      exploreLocation?.longitude?.toDouble() ?? 0
+    ) : null;
   }
 
   String get _defaultTravelMode => ((this is MTDStop) || (this is ExplorePOI)) ?

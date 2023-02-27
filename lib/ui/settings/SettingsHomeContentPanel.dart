@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
+import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/settings/SettingsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
@@ -227,7 +228,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   void _onTapContentItem(SettingsContent contentItem) {
     Analytics().logSelect(target: "Content Item: ${contentItem.toString()}");
     if (contentItem == SettingsContent.favorites) {
-      NotificationService().notify(HomePanel.notifyCustomize);
+      HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     }
     else {
     _selectedContent = _lastSelectedContent = contentItem;

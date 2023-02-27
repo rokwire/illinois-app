@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -28,6 +30,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'Onboarding2Widgets.dart';
 
@@ -454,7 +457,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
             Row(children: [
               Text(
                 Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Notice "),
-                style: Styles().textStyles?.getTextStyle("widget.colourful_button.title.title.regular")
+                style: Styles().textStyles?.getTextStyle("widget.colourful_button.title.regular")
 
               ),
               Container(padding: EdgeInsets.only(bottom: 3),
@@ -534,7 +537,15 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   void _openPrivacyPolicy(){
     Analytics().logSelect(target: "Privacy Statement");
     if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+      if (Platform.isIOS) {
+        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
+        if (privacyPolicyUri != null) {
+          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+        }
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+      }
     }
   }
 }

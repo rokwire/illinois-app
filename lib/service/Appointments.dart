@@ -33,9 +33,12 @@ import 'package:illinois/service/Config.dart';
 import 'package:http/http.dart' as http;
 import 'package:illinois/service/Auth2.dart';
 
+enum AppointmentsTimeSource { upcoming, past }
+
 class Appointments with Service implements ExploreJsonHandler, NotificationsListener {
   static const String notifyAppointmentDetail = "edu.illinois.rokwire.appointments.detail";
-  static const String notifyAppointmentsChanged = "edu.illinois.rokwire.appointments.changed";
+  static const String notifyPastAppointmentsChanged = "edu.illinois.rokwire.appointments.past.changed";
+  static const String notifyUpcomingAppointmentsChanged = "edu.illinois.rokwire.appointments.upcoming.changed";
   static const String notifyAppointmentsAccountChanged = "edu.illinois.rokwire.appointments.account.changed";
   
   static const String _appointmentRemindersNotificationsEnabledKey = 'edu.illinois.rokwire.settings.inbox.notification.appointments.reminders.notifications.enabled';
@@ -43,10 +46,12 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   DateTime? _pausedDateTime;
   late Directory _appDocDir;
 
-  static const String _appointmentsCacheDocName = "appointments.json";
+  static const String _upcomingAppointmentsCacheDocName = "upcoming_appointments.json";
+  static const String _pastAppointmentsCacheDocName = "past_appointments.json";
   static const String _accountCacheDocName = "appointments_account.json";
   
-  List<Appointment>? _appointments;
+  List<Appointment>? _upcomingAppointments;
+  List<Appointment>? _pastAppointments;
   AppointmentsAccount? _account;
   bool? _isLastAccountResponseSuccessful;
 
@@ -81,21 +86,12 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   Future<void> initService() async {
     _appDocDir = await getApplicationDocumentsDirectory();
 
-    // Init appointments
-    _appointments = await _loadAppointmentsFromCache();
-    if (_appointments != null) {
-      _updateAppointments();
-    } else {
-      String? appointmentsJsonString = await _loadAppointmentsStringFromNet();
-      _appointments = Appointment.listFromJson(JsonUtils.decodeList(appointmentsJsonString));
-      if (_appointments != null) {
-        _sortAppointments(_appointments);
-        _saveAppointmentsStringToCache(appointmentsJsonString);
-      }
-    }
-
-    // Init account
-    await _initAccount();
+    await Future.wait([
+      _initAppointments(timeSource: AppointmentsTimeSource.upcoming).then((appts) => _upcomingAppointments = appts),
+      _initAppointments(timeSource: AppointmentsTimeSource.past).then((appts) => _pastAppointments = appts),
+      _initAccount()
+    ]);
+    
     super.initService();
   }
 
@@ -139,78 +135,138 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     return null;
   }
 
-  List<Appointment>? getAppointments({bool? onlyUpcoming, AppointmentType? type}) {
-    List<Appointment>? result;
-    if (_appointments != null) {
-      result = <Appointment>[];
-      for (Appointment appt in _appointments!) {
-        if ((onlyUpcoming == true) && !appt.isUpcoming) {
-          continue;
+  List<Appointment>? getAppointments({required AppointmentsTimeSource timeSource, AppointmentType? type}) {
+    List<Appointment>? srcAppts;
+    switch (timeSource) {
+      case AppointmentsTimeSource.past:
+        srcAppts = _pastAppointments;
+        break;
+      case AppointmentsTimeSource.upcoming:
+        srcAppts = _upcomingAppointments;
+        break;
+    }
+    if (CollectionUtils.isNotEmpty(srcAppts)) {
+      if (type != null) {
+        List<Appointment>? result = <Appointment>[];
+        for (Appointment appt in srcAppts!) {
+          if (type == appt.type) {
+            result.add(appt);
+          }
         }
-        if ((type != null) && (type != appt.type)) {
-          continue;
-        }
-        result.add(appt);
+        return result;
       }
     }
-    return result;
+    return srcAppts;
   }
 
-  Future<void> refreshAppointments() => _updateAppointments();
+  Future<void> refreshAppointments() => _updateAllAppointments();
 
-  File _getAppointmentsCacheFile() => File(join(_appDocDir.path, _appointmentsCacheDocName));
+  File _getAppointmentsCacheFile({required AppointmentsTimeSource timeSource}) {
+    late String docName;
+    switch (timeSource) {
+      case AppointmentsTimeSource.past:
+        docName = _pastAppointmentsCacheDocName;
+        break;
+      case AppointmentsTimeSource.upcoming:
+        docName = _upcomingAppointmentsCacheDocName;
+        break;
+    }
+    return File(join(_appDocDir.path, docName));
+  }
 
-  Future<String?> _loadAppointmentsStringFromCache() async {
-    File appointmentsFile = _getAppointmentsCacheFile();
+  Future<String?> _loadAppointmentsStringFromCache({required AppointmentsTimeSource timeSource}) async {
+    File appointmentsFile = _getAppointmentsCacheFile(timeSource: timeSource);
     return await appointmentsFile.exists() ? await appointmentsFile.readAsString() : null;
   }
 
-  Future<void> _saveAppointmentsStringToCache(String? value) async {
-    await _getAppointmentsCacheFile().writeAsString(value ?? '', flush: true);
+  Future<void> _saveAppointmentsStringToCache(String? value, AppointmentsTimeSource timeSource) async {
+    await _getAppointmentsCacheFile(timeSource: timeSource).writeAsString(value ?? '', flush: true);
   }
 
-  Future<List<Appointment>?> _loadAppointmentsFromCache() async {
-    return Appointment.listFromJson(JsonUtils.decodeList(await _loadAppointmentsStringFromCache()));
+  Future<List<Appointment>?> _loadAppointmentsFromCache({required AppointmentsTimeSource timeSource}) async {
+    return Appointment.listFromJson(JsonUtils.decodeList(await _loadAppointmentsStringFromCache(timeSource: timeSource)));
   }
 
-  Future<String?> _loadAppointmentsStringFromNet() async {
+  Future<String?> _loadAppointmentsStringFromNet({required AppointmentsTimeSource timeSource}) async {
     //TMP: assets shortcut
-    //return await AppBundle.loadString('assets/appointments.json')
+    //return await AppBundle.loadString('assets/appointments.json');
     if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
-      String? url = "${Config().appointmentsUrl}/services/appointments";
+      String url = "${Config().appointmentsUrl}/services/appointments";
+      switch (timeSource) {
+        case AppointmentsTimeSource.upcoming:
+          url += '?start-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=asc';
+          break;
+        case AppointmentsTimeSource.past:
+          url += '?end-date=${DateTime.now().toUtc().millisecondsSinceEpoch}&order=desc';
+          break;
+      }
       http.Response? response = await Network().get(url, auth: Auth2());
       int? responseCode = response?.statusCode;
       String? responseString = response?.body;
       if (responseCode == 200) {
         return responseString;
       } else {
-        debugPrint('Failed to load appointments from net. Reason: $responseCode, $responseString');
+        debugPrint('Failed to load appointments ($url) from net. Reason: $responseCode, $responseString');
         return null;
       }
     }
     return null;
   }
 
-  Future<void> _updateAppointments() async {
-    String? appointmentsJsonString = await _loadAppointmentsStringFromNet();
+  Future<List<Appointment>?> _initAppointments({required AppointmentsTimeSource timeSource}) async {
+    List<Appointment>? appointments;
+    appointments = await _loadAppointmentsFromCache(timeSource: timeSource);
+    if (appointments != null) {
+      _updateAppointments(timeSource: timeSource);
+    } else {
+      String? appointmentsJsonString = await _loadAppointmentsStringFromNet(timeSource: timeSource);
+      appointments = Appointment.listFromJson(JsonUtils.decodeList(appointmentsJsonString));
+      if (appointments != null) {
+        _saveAppointmentsStringToCache(appointmentsJsonString, timeSource);
+      }
+    }
+    return appointments;
+  }
+
+  Future<void> _updateAllAppointments() async {
+    await Future.wait([
+      _updateAppointments(timeSource: AppointmentsTimeSource.upcoming),
+      _updateAppointments(timeSource: AppointmentsTimeSource.past),
+    ]);
+  }
+
+  Future<void> _updateAppointments({required AppointmentsTimeSource timeSource}) async {
+    String? appointmentsJsonString = await _loadAppointmentsStringFromNet(timeSource: timeSource);
     List<Appointment>? appointments = Appointment.listFromJson(JsonUtils.decodeList(appointmentsJsonString));
-    if (!DeepCollectionEquality().equals(_appointments, appointments)) {
-      _appointments = appointments;
-      _sortAppointments(_appointments);
-      _saveAppointmentsStringToCache(appointmentsJsonString);
-      NotificationService().notify(notifyAppointmentsChanged);
+    bool apptsChanged = false;
+    switch (timeSource) {
+      case AppointmentsTimeSource.past:
+        if (!DeepCollectionEquality().equals(_pastAppointments, appointments)) {
+          _pastAppointments = appointments;
+          apptsChanged = true;
+        }
+        break;
+      case AppointmentsTimeSource.upcoming:
+        if (!DeepCollectionEquality().equals(_upcomingAppointments, appointments)) {
+          _upcomingAppointments = appointments;
+          apptsChanged = true;
+        }
+        break;
+    }
+    if (apptsChanged) {
+      _saveAppointmentsStringToCache(appointmentsJsonString, timeSource);
+      _notifyAppointmentsChanged(timeSource: timeSource);
     }
   }
 
-  void _sortAppointments(List<Appointment>? appointments) {
-    if (CollectionUtils.isNotEmpty(appointments)) {
-      appointments!.sort((first, second) {
-        if (first.dateTimeUtc == null || second.dateTimeUtc == null) {
-          return 0;
-        } else {
-          return (first.dateTimeUtc!.isBefore(second.dateTimeUtc!)) ? -1 : 1;
-        }
-      });
+  void _notifyAppointmentsChanged({required AppointmentsTimeSource timeSource}) {
+    switch (timeSource) {
+      case AppointmentsTimeSource.past:
+        NotificationService().notify(notifyPastAppointmentsChanged);
+        break;
+      case AppointmentsTimeSource.upcoming:
+        NotificationService().notify(notifyUpcomingAppointmentsChanged);
+        break;
     }
   }
 
@@ -403,7 +459,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       _onAppLivecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
       _initAccount();
-      _updateAppointments();
+      _updateAllAppointments();
     }
   }
 
@@ -416,7 +472,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _updateAccount();
-          _updateAppointments();
+          _updateAllAppointments();
         }
       }
     }

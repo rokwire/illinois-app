@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/PrivacyData.dart';
@@ -33,6 +35,7 @@ import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPrivacyCenterContentWidget extends StatefulWidget{
   @override
@@ -185,7 +188,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                       child: Semantics(
                           label: Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
                           child: Text(level.toString(),
-                              style: Styles().textStyles?.getTextStyle("widget.title.extra_large"))))),
+                              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat"))))),
               Container(width: 20),
               Expanded(
                   child: Text(Localization().getString(description.key, defaults: description.text) ?? '',
@@ -227,7 +230,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
                             child: Text(
                               Localization().getStringEx("panel.settings.privacy_center.button.manage_privacy.title", "Manage and Understand Your Privacy"),
                               textAlign: TextAlign.left,
-                              style: Styles().textStyles?.getTextStyle("widget.title.regular")
+                              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                             )),
                           )
                         ],
@@ -286,7 +289,15 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   void _onTapPrivacyPolicy(){
     Analytics().logSelect(target: "Privacy Statement");
     if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Statement"),)));
+      if (Platform.isIOS) {
+        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
+        if (privacyPolicyUri != null) {
+          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+        }
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+      }
     }
   }
 
@@ -304,7 +315,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Delete your account?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
-          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles?.getTextStyle("widget.message.regular.fat")),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
           TextSpan(text: contributeInGroups?
           Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.") :

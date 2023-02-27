@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
-import 'package:illinois/ui/groups/GroupAttributesPanel.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -105,18 +105,22 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: HeaderBar(title: (_group?.researchProject == true) ?
+        Localization().getStringEx("panel.project_settings.label.heading", "Project Settings") :
+        Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),
+      ),
       backgroundColor: Styles().colors!.background,
       body: Column(children: <Widget>[
         Expanded(child:
           Container(color: Styles().colors!.background, child:
             CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-              SliverHeaderBar(title: (_group?.researchProject == true) ? "Project Settings" : Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),),
+              //SliverHeaderBar(title: (_group?.researchProject == true) ? Localization().getStringEx("panel.project_settings.label.heading", "Project Settings") : Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),),
               SliverList(delegate: SliverChildListDelegate([
                 Container(color: Styles().colors!.background, child:
                   Column(children: <Widget>[
                     _buildImageSection(),
                     Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                      _buildSectionTitle((_group?.researchProject == true) ? "General project information" : Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "info"),
+                      _buildSectionTitle((_group?.researchProject == true) ? Localization().getStringEx("panel.project_settings.label.heading.general_info", "General project information") : Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "info"),
                     ),
                     _buildNameField(),
                     _buildDescriptionField(),
@@ -259,7 +263,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Name
   Widget _buildNameField() {
-    String title = (_group?.researchProject == true) ? "PROJECT NAME" : Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME");
+    String title = (_group?.researchProject == true) ? Localization().getStringEx("panel.project_settings.name.title", "PROJECT NAME") : Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME");
     String? fieldTitle = Localization().getStringEx("panel.groups_settings.name.field", "NAME FIELD");
     String? fieldHint = Localization().getStringEx("panel.groups_settings.name.field.hint", "");
 
@@ -328,11 +332,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Description
   Widget _buildDescriptionField() {
-    String title = (_group?.researchProject == true) ? "PROJECT DESCRIPTION" : Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
+    String title = (_group?.researchProject == true) ?
+      Localization().getStringEx("panel.project_settings.description.title", "PROJECT DESCRIPTION") :
+      Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
     String? fieldTitle = (_group?.researchProject == true) ?
-      "What’s the purpose of your project? Who should join? What will you do at your events?" :
+      Localization().getStringEx("panel.project_settings.description.field", "What’s the purpose of your project? Who should join? What will you do at your events?") :
       Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
-    String? fieldHint = Localization().getStringEx("panel.groups_settings.description.field.hint", "");
+    String? fieldHint = (_group?.researchProject == true) ?
+      Localization().getStringEx("panel.project_settings.description.field.hint", "") :
+      Localization().getStringEx("panel.groups_settings.description.field.hint", "");
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -417,12 +425,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 ]
             )
         ),
-        Semantics(label:Localization().getStringEx("panel.groups_settings.link.button.confirm.link",'Confirm website URL'),
-            hint: Localization().getStringEx("panel.groups_settings.link.button.confirm.link.hint",""), button: true, excludeSemantics: true, child:
-            GestureDetector(
+        Semantics(
+            label: Localization().getStringEx("panel.groups_settings.link.button.confirm.link", 'Confirm website URL'),
+            hint: Localization().getStringEx("panel.groups_settings.link.button.confirm.link.hint", ""),
+            button: true, excludeSemantics: true,
+            child: GestureDetector(
               onTap: _onTapConfirmLinkUrl,
               child: Text(
-                Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title",'Confirm URL'),
+                Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title", 'Confirm URL'),
                 style: TextStyle(
                     color: Styles().colors!.fillColorPrimary,
                     fontSize: 16,
@@ -461,7 +471,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Container(width: 8),
           Expanded(flex: 2, child:
             RoundedButton(
-              label: 'Edit', // Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
+              label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
               hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
               backgroundColor: Styles().colors!.white,
               textColor: Styles().colors!.fillColorPrimary,
@@ -503,7 +513,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onTapAttributes() {
     Analytics().logSelect(target: "Attributes");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAttributesPanel(selection: _group?.attributes,))).then((selection) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+      title: (_group?.researchProject == true) ?
+        Localization().getStringEx('panel.project.attributes.attributes.header.title', 'Project Attributes') :
+        Localization().getStringEx('panel.group.attributes.attributes.header.title', 'Group Attributes'),
+      description: (_group?.researchProject == true) ?
+        Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this project.') :
+        Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
+      contentAttributes: Groups().contentAttributes,
+      selection: _group?.attributes,
+    ))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
           _group?.attributes = selection;
@@ -590,8 +609,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   child: Container(
                       padding: EdgeInsets.only(left: 8, right: 8, top: 12),
                       child: Text(
-                          Localization()
-                              .getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
+                          Localization().getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
                           style: TextStyle(
                               color: Styles().colors!.textBackground,
                               fontSize: 14,
@@ -613,12 +631,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Membership
   Widget _buildMembershipLayout(){
-    String sectionTitle = _isResearchProject ? "Participation" : Localization().getStringEx("panel.groups_settings.membership.title", "Membership");
-    String buttonTitle = _isResearchProject ? "Recruitment Questions" : Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions");
+    String sectionTitle = _isResearchProject ?
+      Localization().getStringEx("panel.project_settings.membership.title", "Participation") :
+      Localization().getStringEx("panel.groups_settings.membership.title", "Membership");
+    String buttonTitle = _isResearchProject ?
+      Localization().getStringEx("panel.project_settings.membership.button.question.title", "Recruitment Questions") :
+      Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions");
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
-      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
+      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format", "%s Question(s)"), [questionsCount.toString()]) :
+      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default", "No question");
 
     return
       Container(
@@ -949,8 +971,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Expanded(
               child: RoundedButton(
                 label: _isResearchProject ?
-                  Localization().getStringEx("panel.groups_settings.button.delete.group.title", "Delete this Project") : //TBD localize
-                  Localization().getStringEx("panel.groups_settings.button.delete.project.title", "Delete this Group"),  //TBD localize
+                  Localization().getStringEx("panel.project_settings.button.delete.title", "Delete this Project") : //TBD localize
+                  Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this Group"),  //TBD localize
                 backgroundColor: Colors.white,
                 borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                 textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
@@ -1070,7 +1092,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Navigator.of(context).pop(); // Pop group detail
       }
       else {
-        AppAlert.showDialogResult(context, _isResearchProject ? 'Failed to delete project.' : Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.'));
+        AppAlert.showDialogResult(context, _isResearchProject ?
+          Localization().getStringEx('panel.project_detail.group.delete.failed.msg', 'Failed to delete project.') :
+          Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.')
+        );
       }
     });
   }

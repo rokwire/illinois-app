@@ -175,7 +175,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
               Text(StringUtils.ensureNotEmpty(_formattedCalendarMonthLabel),
-                  style: Styles().textStyles?.getTextStyle("widget.title.regular")),
+                  style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
               GestureDetector(
                   onTap: _onTapCalendarInfo,
                   child: Padding(padding: EdgeInsets.only(left: 5), child: Styles().images?.getImage('info', excludeFromSemantics: true)))
@@ -247,7 +247,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     while (currentDate.isBefore(_calendarEndDate)) {
       String dateFormatted = AppDateTime().formatDateTime(currentDate, format: 'dd', ignoreTimeZone: true)!;
       Text dateWidget = Text(dateFormatted,
-          style: Styles().textStyles?.getTextStyle("widget.title.regular"));
+          style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"));
       dateWidgetList.add(dateWidget);
       currentDate = currentDate.add(Duration(days: 1));
     }
@@ -809,7 +809,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 4,
                         textAlign: TextAlign.center,
-                        style:Styles().textStyles?.getTextStyle("widget.title.regular")))
+                        style:Styles().textStyles?.getTextStyle("widget.title.regular.fat")))
               ]),
               GestureDetector(
                   onTap: _onTapPickReminderDate,

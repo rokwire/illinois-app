@@ -27,7 +27,7 @@ import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final String favoriteKey;
+  final String? favoriteKey;
   final String? guideEntryId;
   GuideDetailPanel({ this.guideEntryId, this.favoriteKey = GuideFavorite.favoriteKeyName });
 
@@ -50,26 +50,83 @@ class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
 class _GuideDetailPanelState extends State<GuideDetailPanel> implements NotificationsListener {
 
   Map<String, dynamic>? _guideEntry;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Guide.notifyChanged,
+    ]);
+    _guideEntry = Guide().entryById(widget.guideEntryId);
+    RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Guide.notifyChanged) {
+      setStateIfMounted(() {
+        _guideEntry = Guide().entryById(widget.guideEntryId);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HeaderBar(title: JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'header_title'))),
+      body: Column(children: <Widget>[
+          Expanded(child:
+            SingleChildScrollView(child:
+              SafeArea(child:
+                GuideDetailWidget(guideEntryId: widget.guideEntryId, favoriteKey: widget.favoriteKey,)
+              ),
+            ),
+          ),
+          uiuc.TabBar(),
+        ],),
+      backgroundColor: Styles().colors!.background,
+    );
+  }
+}
+
+class GuideDetailWidget extends StatefulWidget {
+  final String? favoriteKey;
+  final String? guideEntryId;
+  final Color? headingColor;
+  GuideDetailWidget({Key? key, this.guideEntryId, this.favoriteKey, this.headingColor }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _GuideDetailWidgetState();
+}
+
+class _GuideDetailWidgetState extends State<GuideDetailWidget> implements NotificationsListener {
+  Map<String, dynamic>? _guideEntry;
   bool _isFavorite = false;
 
   @override
   void initState() {
-    super.initState();
     NotificationService().subscribe(this, [
       Guide.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
     ]);
     _guideEntry = Guide().entryById(widget.guideEntryId);
-    _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: widget.guideEntryId));
-    
-    RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
+    _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: widget.guideEntryId));
+    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   // NotificationsListener
@@ -83,7 +140,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {
-        _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: widget.guideEntryId));
+        _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: widget.guideEntryId));
       });
     }
     else if (name == FlexUI.notifyChanged) {
@@ -93,63 +150,28 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    String? headerTitle;
-    Widget contentWidget;
     if (_guideEntry != null) {
-      headerTitle = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'header_title'));
-      contentWidget = SingleChildScrollView(child:
-        SafeArea(child:
-          Stack(children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-              _buildContent()
-            ),
-            Visibility(visible: Auth2().canFavorite, child:
-              Align(alignment: Alignment.topRight, child:
-              Semantics(
-                label: _isFavorite
-                    ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                    : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                hint: _isFavorite
-                    ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                    : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                button: true,
-                child: GestureDetector(onTap: _onTapFavorite, child:
-                  Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
-                  Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
-                  )
-            ),),),),
-          ],)
+      return _canFavorite ? Stack(children: [
+        _buildContent(),
+        _buildFavoriteStar(),
+      ],) : _buildContent();
+    }
+    else {
+      return Padding(padding: EdgeInsets.all(32), child:
+        Center(child:
+          Text(Localization().getStringEx('panel.guide_detail.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
         ),
       );
     }
-    else {
-      contentWidget = Padding(padding: EdgeInsets.all(32), child:
-        Center(child:
-          Text(Localization().getStringEx('panel.guide_detail.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
-        ,)
-      );
-    }
-
-    return Scaffold(
-      appBar: HeaderBar(title: headerTitle),
-      body: Column(children: <Widget>[
-          Expanded(child:
-            contentWidget
-          ),
-          uiuc.TabBar(),
-        ],),
-      backgroundColor: Styles().colors!.background,
-    );
   }
 
-  List<Widget> _buildContent() {
-    List<Widget> contentList = <Widget>[
+  Widget _buildContent() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
       _buildHeading(),
       _buildImage(),
       _buildDetails(),
       _buildRelated(),
-    ];
-    return contentList;
+    ]);
   }
 
   Widget _buildHeading() {
@@ -240,7 +262,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     }
 
     return (0 < contentList.length) ? 
-      Container(color: Styles().colors!.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
+      Container(color: widget.headingColor ?? Styles().colors?.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
         Row(children: [
           Expanded(child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
@@ -255,7 +277,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     Uri? imageUri = (imageUrl != null) ? Uri.tryParse(imageUrl) : null;
     if (StringUtils.isNotEmpty(imageUri?.scheme)) {
       return Stack(alignment: Alignment.bottomCenter, children: [
-        Container(color: Styles().colors!.white, padding: EdgeInsets.all(16), child:
+        Container(color: widget.headingColor ?? Styles().colors?.white, padding: EdgeInsets.all(16), child:
           Row(children: [
             Expanded(child:
               Column(children: [
@@ -497,13 +519,34 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           children: contentList,
       )) :
       Container();
-
   }
 
+  Widget _buildFavoriteStar() {
+    return Align(alignment: Alignment.topRight, child:
+      Semantics(
+        label: _isFavorite
+            ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+            : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+        hint: _isFavorite
+            ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+            : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+        button: true,
+        child: GestureDetector(onTap: _onTapFavorite, child:
+          Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
+            Image.asset(_isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
+          )
+      ),
+    ),);
+  }
+
+  bool get _canFavorite => (widget.favoriteKey != null) && Auth2().canFavorite;
+
   void _onTapFavorite() {
-    String? title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
-    Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(FavoriteItem(key:widget.favoriteKey, id: Guide().entryId(_guideEntry)));
+    if (widget.favoriteKey != null) {
+      String? title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
+      Analytics().logSelect(target: "Favorite: $title");
+      Auth2().prefs?.toggleFavorite(FavoriteItem(key: widget.favoriteKey!, id: Guide().entryId(_guideEntry)));
+    }
   }
 
   void _onTapLink(String? url, {bool? useInternalBrowser}) {
@@ -531,5 +574,4 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
 
   void _nop() {
   }
-
 }

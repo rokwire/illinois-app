@@ -66,7 +66,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   implements NotificationsListener {
 
   static const double _filterLayoutSortKey = 1.0;
-  static const ExploreItem _defaultExploreItem = ExploreItem.Events;
+  static const ExploreItem _defaultExploreItem = ExploreItem.Buildings;
 
   List<ExploreItem> _exploreItems = [];
   ExploreItem _selectedExploreItem = _defaultExploreItem;
@@ -140,7 +140,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
       MTD.notifyStopsChanged,
-      Appointments.notifyAppointmentsChanged,
+      Appointments.notifyUpcomingAppointmentsChanged,
       ExplorePanel.notifySelectMap,
       RootPanel.notifyTabChanged,
       Storage.notifySettingChanged,
@@ -179,6 +179,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
     else if (name == Connectivity.notifyStatusChanged) {
       if ((Connectivity().isNotOffline) && mounted) {
+        _initLocationServicesStatus();
         _initEventCategories();
         _initExplores();
       }
@@ -222,7 +223,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         _refreshExplores();
       }
     }
-    else if (name == Appointments.notifyAppointmentsChanged) {
+    else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
       if ((_selectedExploreItem == ExploreItem.Appointments) && mounted) {
         _refreshExplores();
       }
@@ -262,6 +263,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           if (mounted) {
+            _initLocationServicesStatus();
             _refreshExplores();
           }
         }
@@ -1684,7 +1686,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   Future<List<Explore>?> _loadAppointments() async {
-    return Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+    return Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming, type: AppointmentType.in_person);
   }
 
   void _updateSelectedMapStopRoutes() {

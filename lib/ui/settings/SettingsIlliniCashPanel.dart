@@ -486,7 +486,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   Widget _buildBalanceTableHeaderItem(String text){
       return _buildBalanceTableItem(text: text, backColor: Styles().colors!.fillColorPrimaryVariant,
           showBorder: false,
-          textStyle: Styles().textStyles?.getTextStyle("widget.heading.medium"));
+          textStyle: Styles().textStyles?.getTextStyle("widget.heading.medium_small"));
   }
 
   Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle}) {
@@ -730,7 +730,7 @@ class _DateValue extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(title!, style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
+          Text(title!, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),),
           Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
         ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
     ],),),);
