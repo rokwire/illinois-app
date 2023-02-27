@@ -22,6 +22,7 @@ import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
+import 'package:illinois/ui/debug/DebugZoomMeetingPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -433,6 +434,19 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: 'Zoom Meeting',
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapZoomMeeting
+                    )
+                  ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+
                 Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
@@ -802,6 +816,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapReviewApp() {
     InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
+  }
+
+  void _onTapZoomMeeting() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugZoomMeetingPanel()));
   }
 
   void _onTapHttpProxy() {
