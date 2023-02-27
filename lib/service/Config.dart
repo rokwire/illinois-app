@@ -47,7 +47,8 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
   Map<String, dynamic> get secretCanvas => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
-  
+  Map<String, dynamic> get secretOnet => JsonUtils.mapValue(secretKeys['onet']) ?? {};
+
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
 
@@ -74,6 +75,9 @@ class Config extends rokwire.Config {
 
   String? get canvasToken            => JsonUtils.stringValue(secretCanvas['token']);
   String? get canvasTokenType        => JsonUtils.stringValue(secretCanvas['token_type']);
+
+  String? get onetUsername           => JsonUtils.stringValue(secretOnet['username']);
+  String? get onetPassword           => JsonUtils.stringValue(secretOnet['password']);
 
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);
