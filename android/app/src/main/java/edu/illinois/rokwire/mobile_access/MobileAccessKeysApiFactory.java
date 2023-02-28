@@ -37,17 +37,17 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
     private OrigoMobileKeysApi mobileKeysApi;
 
-    public MobileAccessKeysApiFactory(Context context) {
-        initFactory(context);
+    public MobileAccessKeysApiFactory(Context appContext) {
+        initFactory(appContext);
     }
 
-    private void initFactory(Context context) {
+    private void initFactory(Context appContext) {
         String appId = BuildConfig.ORIGO_APP_ID;
         String appDescription = "UIUC app test description"; //TBD: DD - check what should be the description.
 
         OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
-                new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(context),
-                        new OrigoTwistAndGoOpeningTrigger(context),
+                new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext),
+                        new OrigoTwistAndGoOpeningTrigger(appContext),
                         new OrigoSeamlessOpeningTrigger()}, BuildConfig.ORIGO_LOCK_SERVICE_CODE)
                 .setAllowBackgroundScanning(true)
                 .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
@@ -59,7 +59,7 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
                 .build();
 
         mobileKeysApi = OrigoMobileKeysApi.getInstance();
-        mobileKeysApi.initialize(context, origoApiConfiguration, origoScanConfiguration, appId);
+        mobileKeysApi.initialize(appContext, origoApiConfiguration, origoScanConfiguration, appId);
         if (!mobileKeysApi.isInitialized()) {
             throw new IllegalStateException();
         }

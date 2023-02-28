@@ -37,7 +37,7 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     private final MobileAccessKeysApiFacade apiFacade;
 
     public MobileAccessPlugin(Activity activity) {
-        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(activity);
+        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(activity.getApplicationContext());
         this.apiFacade = new MobileAccessKeysApiFacade(activity, keysApiFactory);
     }
 
