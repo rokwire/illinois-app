@@ -406,7 +406,7 @@
 	"panel.browse.entry.wallet.add_illini_cash.title": "添加伊利尼現金",
 	"panel.browse.entry.wallet.meal_plan_card.title": "進食計劃",
 	"panel.browse.entry.wallet.bus_pass_card.title": "巴士通票",
-	"panel.browse.entry.wallet.illini_id_card.title": "移動i卡",
+	"panel.browse.entry.wallet.illini_id_card.title": "i-card+",
 	"panel.browse.entry.wallet.library_card.title": "借書卡",
 
 	"panel.browse.entry.wellness.wellness_rings.title": "戒指",
@@ -2687,7 +2687,7 @@
 	"panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"panel.icard.home.title.label": "i卡",
-    "panel.icard.home.content.icard.label": "移動i卡",
+    "panel.icard.home.content.icard.label": "i-card+",
     "panel.icard.home.content.faqs.label": "常見問題",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
@@ -2854,7 +2854,7 @@
 	"widget.home.wallet.bus_pass.title": "MTD 巴士通票",
 	"widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",
 
-	"widget.home.wallet.illini_id.title": "移動i卡",
+	"widget.home.wallet.illini_id.title": "i-card+",
 
 	"widget.home.wallet.library_card.title": "借書卡",
 
@@ -3100,12 +3100,12 @@
     "widget.id_card.label.mobile_access.expires": "過期：%s",
     "widget.id_card.button.mobile_access.request": "要求",
     "widget.id_card.button.mobile_access.renew": "更新",
-    "widget.id_card.label.mobile_access.i_card.not_available": "使用您的移動 i-card 訪問校園內的各種服務和建築物。",
+    "widget.id_card.label.mobile_access.i_card.not_available": "使用您的 i-card+ 訪問校園內的各種服務和建築物。",
     "widget.id_card.label.mobile_access.permissions": "設置移動訪問權限",
-    "widget.id_card.dialog.text.renew_access": "更新您的移動 i-card 訪問權限最多可能需要 30 分鐘才能完成。 續訂時，您的<b>建築物訪問權限將被暫時禁用</b>。 <p>您現在還想續訂嗎？</p>",
+    "widget.id_card.dialog.text.renew_access": "更新您的 i-card+ 訪問權限最多可能需要 30 分鐘才能完成。 續訂時，您的<b>建築物訪問權限將被暫時禁用</b>。 <p>您現在還想續訂嗎？</p>",
     "widget.id_card.dialog.button.mobile_access.renew.cancel": "取消",
     "widget.id_card.dialog.button.mobile_access.renew_access": "更新訪問權限",
-    "widget.id_card.dialog.text.renew_access.done": "如果您的移動 i-card 在 30 分鐘內無法使用，請致電 <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>，發送電子郵件至 <a href='mailto:{{mobile_access_email} }'>{{mobile_access_email}}</a>，或<a href='{{mobile_access_website_url}}'>訪問 i-card 網站</a> <img src='asset:{{external_link_icon}}' alt =''/>",
+    "widget.id_card.dialog.text.renew_access.done": "如果您的 i-card+ 在 30 分鐘內無法使用，請致電 <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>，發送電子郵件至 <a href='mailto:{{mobile_access_email}} '>{{mobile_access_email}}</a>，或<a href='{{mobile_access_website_url}}'>訪問 i-card 網站</a> <img src='asset:{{external_link_icon}}' alt= ''/>",
 
 	"widget.bus_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",

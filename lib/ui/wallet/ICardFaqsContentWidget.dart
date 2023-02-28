@@ -33,7 +33,7 @@ class _ICardFaqsContentWidgetState extends State<ICardFaqsContentWidget> {
         child: Column(children: [
           _buildFaqEntry(
               question: Localization()
-                  .getStringEx('panel.icard.content.faqs.mobile_card.usage.question', 'Where can I use mobile i-card on campus?'),
+                  .getStringEx('panel.icard.content.faqs.mobile_card.usage.question', 'Where can I use i-card+ on campus?'),
               answer: null),
           _buildFaqEntry(
               question: Localization().getStringEx(

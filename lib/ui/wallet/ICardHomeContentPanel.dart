@@ -229,7 +229,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   String _getContentLabel(ICardContent content) {
     switch (content) {
       case ICardContent.i_card:
-        return Localization().getStringEx('panel.icard.home.content.icard.label', 'i-card');
+        return Localization().getStringEx('panel.icard.home.content.icard.label', 'i-card+');
       case ICardContent.faqs:
         return Localization().getStringEx('panel.icard.home.content.faqs.label', 'FAQs');
     }

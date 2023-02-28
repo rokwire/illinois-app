@@ -463,7 +463,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
           padding: EdgeInsets.symmetric(horizontal: 50),
           child: Text(
               Localization().getStringEx('widget.id_card.label.mobile_access.i_card.not_available',
-                  'Access various services and buildings on campus with your mobile i-card.'),
+                  'Access various services and buildings on campus with your i-card+.'),
               textAlign: TextAlign.center,
               style: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.italic')))
     ]);
@@ -496,7 +496,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
                     Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
                         child: HtmlWidget(
-                            "<div style=text-align:center>${Localization().getStringEx('widget.id_card.dialog.text.renew_access', 'Renewing your mobile i-card access could take up to 30 minutes to complete. Your <b>building access will be temporarily disabled</b> while being renewed. <p>Would you still like to renew right now?</p>')}</div>",
+                            "<div style=text-align:center>${Localization().getStringEx('widget.id_card.dialog.text.renew_access', 'Renewing your i-card+ access could take up to 30 minutes to complete. Your <b>building access will be temporarily disabled</b> while being renewed. <p>Would you still like to renew right now?</p>')}</div>",
                             textStyle: Styles().textStyles?.getTextStyle("widget.detail.small"))),
                     Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       RoundedButton(
@@ -537,7 +537,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     final String urlMacro = '{{mobile_access_website_url}}';
     final String externalLinkIconMacro = '{{external_link_icon}}';
     String rescheduleContentHtml = Localization().getStringEx("widget.id_card.dialog.text.renew_access.done",
-        "If your mobile i-card does not work in 30 minutes, call <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, email <a href='mailto:{{mobile_access_email}}'>{{mobile_access_email}}</a>, or <a href='{{mobile_access_website_url}}'>visit the i-card website</a> <img src='asset:{{external_link_icon}}' alt=''/>");
+        "If your i-card+ does not work in 30 minutes, call <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, email <a href='mailto:{{mobile_access_email}}'>{{mobile_access_email}}</a>, or <a href='{{mobile_access_website_url}}'>visit the i-card website</a> <img src='asset:{{external_link_icon}}' alt=''/>");
     //TBD: DD - read phone, email and website from config when we have them
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(phoneMacro, '555-555-555');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(emailMacro, 'test@email.com');

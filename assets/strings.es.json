@@ -406,7 +406,7 @@
     "panel.browse.entry.wallet.add_illini_cash.title": "Agregar efectivo Illini",
     "panel.browse.entry.wallet.meal_plan_card.title": "Régimen de comidas",
     "panel.browse.entry.wallet.bus_pass_card.title": "Pase de autobus",
-    "panel.browse.entry.wallet.illini_id_card.title": "i-card móvil",
+    "panel.browse.entry.wallet.illini_id_card.title": "i-card+",
     "panel.browse.entry.wallet.library_card.title": "Tarjeta de biblioteca",
 
     "panel.browse.entry.wellness.wellness_rings.title": "Anillos",
@@ -2686,7 +2686,7 @@
     "panel.appointment.detail.error.msg": "No se pudieron cargar los datos de la cita.",
 
     "panel.icard.home.title.label": "i-tarjeta",
-    "panel.icard.home.content.icard.label": "i-card móvil",
+    "panel.icard.home.content.icard.label": "i-card+",
     "panel.icard.home.content.faqs.label": "preguntas frecuentes",
 
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
@@ -2853,7 +2853,7 @@
     "widget.home.wallet.bus_pass.title": "Pase de autobús MTD",
     "widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",
 
-    "widget.home.wallet.illini_id.title": "i-card móvil",
+    "widget.home.wallet.illini_id.title": "i-card+",
 
     "widget.home.wallet.library_card.title": "Tarjeta de biblioteca",
 
@@ -3099,12 +3099,12 @@
     "widget.id_card.label.mobile_access.expires": "Caduca: %s",
     "widget.id_card.button.mobile_access.request": "Solicitud",
     "widget.id_card.button.mobile_access.renew": "Renovar",
-    "widget.id_card.label.mobile_access.i_card.not_available": "Acceda a varios servicios y edificios en el campus con su i-card móvil.",
+    "widget.id_card.label.mobile_access.i_card.not_available": "Accede a varios servicios y edificios del campus con tu i-card+.",
     "widget.id_card.label.mobile_access.permissions": "Establecer permisos de acceso móvil",
-    "widget.id_card.dialog.text.renew_access": "La renovación de su acceso a la i-card móvil puede tardar hasta 30 minutos en completarse. Su <b>acceso al edificio se desactivará temporalmente</b> mientras se renueva. <p>¿Aún te gustaría renovar ahora mismo?</p>",
+    "widget.id_card.dialog.text.renew_access": "La renovación de su acceso i-card+ puede tardar hasta 30 minutos en completarse. Su <b>acceso al edificio se desactivará temporalmente</b> mientras se renueva. <p>¿Aún te gustaría renovar ahora mismo?</p>",
     "widget.id_card.dialog.button.mobile_access.renew.cancel": "Cancelar",
     "widget.id_card.dialog.button.mobile_access.renew_access": "Renovar acceso",
-    "widget.id_card.dialog.text.renew_access.done": "Si su i-card móvil no funciona en 30 minutos, llame al <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, envíe un correo electrónico a <a href='mailto:{{mobile_access_email} }'>{{mobile_access_email}}</a>, o <a href='{{mobile_access_website_url}}'>visite el sitio web de i-card</a> <img src='asset:{{external_link_icon}}' alt =''/>",
+    "widget.id_card.dialog.text.renew_access.done": "Si su i-card+ no funciona en 30 minutos, llame al <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, envíe un correo electrónico a <a href='mailto:{{mobile_access_email}} '>{{mobile_access_email}}</a>, o <a href='{{mobile_access_website_url}}'>visite el sitio web de i-card</a> <img src='asset:{{external_link_icon}}' alt= ''/>",
 
     "widget.bus_pass.header.title": "MTD pase de autobús",
     "widget.card.label.uin.title": "UIN",

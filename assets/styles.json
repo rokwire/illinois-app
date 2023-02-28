@@ -411,7 +411,7 @@
     "panel.icard.content.faqs.mobile_card.usage.question": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
 
     "panel.id_card.close_button": {"font_family": "light", "size": 48.0, "color": "fillColorPrimary"},
-    "panel.id_card.heading.title": {"extends": "widget.heading.large.extra_fat"},
+    "panel.id_card.heading.title": {"extends": "widget.heading.large.extra_fat", "color":"fillColorSecondary"},
     "panel.id_card.detail.title.extra_large": {"font_family": "extra_bold", "size": 28.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.title.large": {"extends": "widget.title.extra_large.extra_fat"},
     "panel.id_card.detail.title.regular": {"extends": "widget.title.large"},
