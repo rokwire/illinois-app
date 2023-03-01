@@ -4,7 +4,7 @@ import 'package:illinois/service/skills/IOccupationsData.dart';
 class MockOccupationsData implements IOccupationsData {
   List<Occupation> _listOfOccupations = [
     Occupation(
-      name: 'Software Developer',
+      title: 'Software Developer',
       description: 'Die from segmentation fault',
       matchPercentage: 75.0,
       onetLink: '',
@@ -12,7 +12,7 @@ class MockOccupationsData implements IOccupationsData {
       technicalSkills: [],
     ),
     Occupation(
-      name: 'Architect',
+      title: 'Architect',
       description: 'Build Minecraft Structures IRL',
       matchPercentage: 20.0,
       onetLink: '',
@@ -22,7 +22,7 @@ class MockOccupationsData implements IOccupationsData {
   ];
 
   Occupation _occupation = Occupation(
-    name: 'Software Developer',
+    title: 'Software Developer',
     description: 'Die from segmentation fault',
     matchPercentage: 75.0,
     onetLink: '',

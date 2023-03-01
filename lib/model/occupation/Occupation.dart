@@ -1,29 +1,42 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 
-import 'skill.dart';
+import 'Skill.dart';
 
 class Occupation {
-  String? name;
+  String? code;
+  String? title;
   String? description;
   double? matchPercentage;
   String? onetLink;
   List<Skill>? skills;
   List<Skill>? technicalSkills;
-
   Occupation({
-    required this.name,
-    required this.description,
-    required this.matchPercentage,
-    required this.onetLink,
-    required this.skills,
-    required this.technicalSkills,
+    this.code,
+    this.title,
+    this.description,
+    this.matchPercentage,
+    this.onetLink,
+    this.skills,
+    this.technicalSkills,
   });
 
+  Occupation.fromJson(Map<String, dynamic> json) {
+    code = json['code'] as String;
+    title = json['occupation']['title'] as String;
+    description = json['occupation']['description'] as String;
+    onetLink = 'https://www.onetonline.org/link/summary/$code';
+
+    skills = (json['skills']['element'] as List).cast<Map<String, dynamic>>().map((e) => Skill.fromJson(e)).toList();
+    technicalSkills = [];
+
+    // TODO: Change this to use the backend service
+    matchPercentage = 50.0;
+  }
+
   Occupation copyWith({
-    String? name,
+    String? code,
+    String? title,
     String? description,
     double? matchPercentage,
     String? onetLink,
@@ -31,7 +44,8 @@ class Occupation {
     List<Skill>? technicalSkills,
   }) {
     return Occupation(
-      name: name ?? this.name,
+      code: code ?? this.code,
+      title: title ?? this.title,
       description: description ?? this.description,
       matchPercentage: matchPercentage ?? this.matchPercentage,
       onetLink: onetLink ?? this.onetLink,
@@ -40,57 +54,32 @@ class Occupation {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'name': name,
-      'description': description,
-      'matchPercentage': matchPercentage,
-      'onetLink': onetLink,
-      'skills': skills?.map((x) => x.toJson()).toList() ?? [],
-      'technicalSkills': technicalSkills?.map((x) => x.toJson()).toList() ?? [],
-    };
-  }
-
-  factory Occupation.fromMap(Map<String, dynamic> map) {
-    return Occupation(
-      name: map['name'] != null ? map['name'] as String : null,
-      description: map['description'] != null ? map['description'] as String : null,
-      matchPercentage: map['matchPercentage'] != null ? map['matchPercentage'] as double : null,
-      onetLink: map['onetLink'] != null ? map['onetLink'] as String : null,
-      skills: map['skills'] != null ? List<Skill>.from((map['skills'] as List<int>).map<Skill?>((x) => Skill.fromMap(x as Map<String,dynamic>),),) : null,
-      technicalSkills: map['technicalSkills'] != null ? List<Skill>.from((map['technicalSkills'] as List<int>).map<Skill?>((x) => Skill.fromMap(x as Map<String,dynamic>),),) : null,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Occupation.fromJson(String source) => Occupation.fromMap(json.decode(source) as Map<String, dynamic>);
-
   @override
   String toString() {
-    return 'Occupation(name: $name, description: $description, matchPercentage: $matchPercentage, onetLink: $onetLink, skills: $skills, technicalSkills: $technicalSkills)';
+    return 'Occupation(code: $code, title: $title, description: $description, matchPercentage: $matchPercentage, onetLink: $onetLink, skills: $skills, technicalSkills: $technicalSkills)';
   }
 
   @override
   bool operator ==(covariant Occupation other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.name == name &&
-      other.description == description &&
-      other.matchPercentage == matchPercentage &&
-      other.onetLink == onetLink &&
-      listEquals(other.skills, skills) &&
-      listEquals(other.technicalSkills, technicalSkills);
+
+    return other.code == code &&
+        other.title == title &&
+        other.description == description &&
+        other.matchPercentage == matchPercentage &&
+        other.onetLink == onetLink &&
+        listEquals(other.skills, skills) &&
+        listEquals(other.technicalSkills, technicalSkills);
   }
 
   @override
   int get hashCode {
-    return name.hashCode ^
-      description.hashCode ^
-      matchPercentage.hashCode ^
-      onetLink.hashCode ^
-      skills.hashCode ^
-      technicalSkills.hashCode;
+    return code.hashCode ^
+        title.hashCode ^
+        description.hashCode ^
+        matchPercentage.hashCode ^
+        onetLink.hashCode ^
+        skills.hashCode ^
+        technicalSkills.hashCode;
   }
 }
