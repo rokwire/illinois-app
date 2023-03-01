@@ -7,26 +7,26 @@ ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 project 'Runner', {
   'Debug' => :debug,
   'Debug-Dev' => :debug,
-  'Debug-IllinoisDev' => :debug,
   'Debug-Prod' => :debug,
-  'Debug-IllinoisProd' => :debug,
   'Debug-Tst' => :debug,
+  'Debug-IllinoisDev' => :debug,
+  'Debug-IllinoisProd' => :debug,
   'Debug-IllinoisTst' => :debug,
 
   'Profile' => :release,
   'Profile-Dev' => :release,
-  'Profile-IllinoisDev' => :release,
   'Profile-Prod' => :release,
-  'Profile-IllinoisProd' => :release,
   'Profile-Tst' => :release,
+  'Profile-IllinoisDev' => :release,
+  'Profile-IllinoisProd' => :release,
   'Profile-IllinoisTst' => :release,
 
   'Release' => :release,
   'Release-Dev' => :release,
-  'Release-IllinoisDev' => :release,
   'Release-Prod' => :release,
-  'Release-IllinoisProd' => :release,
   'Release-Tst' => :release,
+  'Release-IllinoisDev' => :release,
+  'Release-IllinoisProd' => :release,
   'Release-IllinoisTst' => :release,
 }
 
