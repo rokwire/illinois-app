@@ -42,26 +42,30 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
     }
 
     private void initFactory(Context appContext) {
-        String appId = BuildConfig.ORIGO_APP_ID;
-        String appDescription = "UIUC app test description"; //TBD: DD - check what should be the description.
-
-        OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
-                new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext),
-                        new OrigoTwistAndGoOpeningTrigger(appContext),
-                        new OrigoSeamlessOpeningTrigger()}, BuildConfig.ORIGO_LOCK_SERVICE_CODE)
-                .setAllowBackgroundScanning(true)
-                .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
-                .build();
-
-        OrigoApiConfiguration origoApiConfiguration = new OrigoApiConfiguration.Builder().setApplicationId(appId)
-                .setApplicationDescription(appDescription)
-                .setNfcParameters(new OrigoNfcConfiguration.Builder().build())
-                .build();
-
-        mobileKeysApi = OrigoMobileKeysApi.getInstance();
-        mobileKeysApi.initialize(appContext, origoApiConfiguration, origoScanConfiguration, appId);
+        if (mobileKeysApi == null) {
+            mobileKeysApi = OrigoMobileKeysApi.getInstance();
+        }
         if (!mobileKeysApi.isInitialized()) {
-            throw new IllegalStateException();
+            String appId = BuildConfig.ORIGO_APP_ID;
+            String appDescription = "UIUC app test description"; //TBD: DD - check what should be the description.
+
+            OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
+                    new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext),
+                            new OrigoTwistAndGoOpeningTrigger(appContext),
+                            new OrigoSeamlessOpeningTrigger()}, BuildConfig.ORIGO_LOCK_SERVICE_CODE)
+                    .setAllowBackgroundScanning(true)
+                    .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
+                    .build();
+
+            OrigoApiConfiguration origoApiConfiguration = new OrigoApiConfiguration.Builder().setApplicationId(appId)
+                    .setApplicationDescription(appDescription)
+                    .setNfcParameters(new OrigoNfcConfiguration.Builder().build())
+                    .build();
+
+            mobileKeysApi.initialize(appContext, origoApiConfiguration, origoScanConfiguration, appId);
+            if (!mobileKeysApi.isInitialized()) {
+                throw new IllegalStateException();
+            }
         }
     }
 
