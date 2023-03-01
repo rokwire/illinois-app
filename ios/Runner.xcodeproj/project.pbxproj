@@ -54,6 +54,8 @@
 		2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94922DC99C700F6BC2F /* NSString+InaJson.m */; };
 		2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
 		264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
+		266C3B1829AF402900BEB7BD /* ZoomUsPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 266C3B1729AF402900BEB7BD /* ZoomUsPlugin.m */; };
+		266C3B1929AF402900BEB7BD /* ZoomUsPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 266C3B1729AF402900BEB7BD /* ZoomUsPlugin.m */; };
 		266DC99628ACD972007F51EA /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 266DC99528ACD972007F51EA /* MapController.m */; };
 		26729A0F2936008F006DD4D2 /* maps-icon-marker-bus@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */; };
 		26729A102936008F006DD4D2 /* maps-icon-marker-bus@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */; };
@@ -102,7 +104,7 @@
 		B681B2B923DEFD9E00093A67 /* NSData+InaHex.m in Sources */ = {isa = PBXBuildFile; fileRef = B681B2B823DEFD9E00093A67 /* NSData+InaHex.m */; };
 		B6BDCD37242CCF5F002F7364 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		B6EA372423A7EF76001D78A5 /* Bluetooth+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */; };
-		BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		BB7BF12F5D3356D25889D23A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -159,6 +161,8 @@
 		264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-origin@2x.png"; sourceTree = "<group>"; };
 		2668953022E1E074003CAB94 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		26695108D663C5F02B96B5EB /* Pods-Runner.debug-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoisdev.xcconfig"; sourceTree = "<group>"; };
+		266C3B1629AF402900BEB7BD /* ZoomUsPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomUsPlugin.h; sourceTree = "<group>"; };
+		266C3B1729AF402900BEB7BD /* ZoomUsPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomUsPlugin.m; sourceTree = "<group>"; };
 		266DC99428ACD972007F51EA /* MapController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapController.h; sourceTree = "<group>"; };
 		266DC99528ACD972007F51EA /* MapController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapController.m; sourceTree = "<group>"; };
 		26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-bus@3x.png"; sourceTree = "<group>"; };
@@ -304,7 +308,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */,
+				BB7BF12F5D3356D25889D23A /* (null) in Frameworks */,
 				D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -496,6 +500,8 @@
 				2696997F22C3A14A00B3290E /* MapView.m */,
 				2626D94C22DCB80000F6BC2F /* MapMarkerView.h */,
 				2626D94D22DCB80000F6BC2F /* MapMarkerView.m */,
+				266C3B1629AF402900BEB7BD /* ZoomUsPlugin.h */,
+				266C3B1729AF402900BEB7BD /* ZoomUsPlugin.m */,
 				26B34034233112320031CF70 /* FlutterCompletion.h */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 				1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */,
@@ -957,6 +963,7 @@
 				261784A128C8ED6A009172BB /* Bluetooth+InaUtils.m in Sources */,
 				261784A228C8ED6A009172BB /* MapDirectionsController.m in Sources */,
 				261784A328C8ED6A009172BB /* GeneratedPluginRegistrant.m in Sources */,
+				266C3B1929AF402900BEB7BD /* ZoomUsPlugin.m in Sources */,
 				261784A428C8ED6A009172BB /* MapController.m in Sources */,
 				261784A528C8ED6A009172BB /* NSArray+InaTypedValue.m in Sources */,
 				261784A628C8ED6A009172BB /* AppKeys.m in Sources */,
@@ -992,6 +999,7 @@
 				B6EA372423A7EF76001D78A5 /* Bluetooth+InaUtils.m in Sources */,
 				269F83FC22D77E5500CC11A4 /* MapDirectionsController.m in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				266C3B1829AF402900BEB7BD /* ZoomUsPlugin.m in Sources */,
 				266DC99628ACD972007F51EA /* MapController.m in Sources */,
 				268F647D22DF09D900A85AFD /* NSArray+InaTypedValue.m in Sources */,
 				2696995D22C38B4000B3290E /* AppKeys.m in Sources */,

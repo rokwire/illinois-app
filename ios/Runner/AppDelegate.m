@@ -25,6 +25,7 @@
 #import "MapController.h"
 #import "MapDirectionsController.h"
 #import "MapLocationPickerController.h"
+#import "ZoomUsPlugin.h"
 
 #import "NSArray+InaTypedValue.h"
 #import "NSDictionary+InaTypedValue.h"
@@ -100,6 +101,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	MapViewFactory *factory = [[MapViewFactory alloc] initWithMessenger:registrar.messenger];
 	[registrar registerViewFactory:factory withId:@"mapview"];
 	
+	// Setup ZoomUsPlugin
+	[ZoomUsPlugin registerWithRegistrar:[self registrarForPlugin:@"ZoomUsPlugin"]];
+
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
 	_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];

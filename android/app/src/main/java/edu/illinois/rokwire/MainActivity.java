@@ -47,6 +47,7 @@ import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
 import edu.illinois.rokwire.maps.MapPickLocationActivity;
+import edu.illinois.rokwire.zoom.ZoomUsPlugin;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
@@ -69,6 +70,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private OrientationEventListener orientationListener;
 
     private Toast statusToast;
+
+    private ZoomUsPlugin zoomUsPlugin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +123,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 .getPlatformViewsController()
                 .getRegistry()
                 .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
-    }
+    
+        zoomUsPlugin = new ZoomUsPlugin(this);
+        flutterEngine.getPlugins().add(zoomUsPlugin);
+}
 
     private void initScreenOrientation() {
         preferredScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
