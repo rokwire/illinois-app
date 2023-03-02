@@ -21,10 +21,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/canvas/CanvasAccountNotificationsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAnnouncementsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAssignmentsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseCalendarPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseCollaborationsPanel.dart';
+import 'package:illinois/ui/canvas/CanvasCourseModulesPanel.dart';
+import 'package:illinois/ui/canvas/CanvasFeedbackPanel.dart';
 import 'package:illinois/ui/canvas/CanvasFileSystemEntitiesListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
@@ -143,6 +146,24 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
                 leftIconKey: 'settings-working',
                 onTap: _onTapCalendar),
             _buildDelimiter(),
+            RibbonButton(
+                label: Localization().getStringEx('panel.home_canvas_course.button.notifications.title', 'Notifications'),
+                hint: Localization().getStringEx('panel.home_canvas_course.button.notifications.hint', ''),
+                leftIconKey: 'settings-working',
+                onTap: _onTapNotifications),
+            _buildDelimiter(),
+            RibbonButton(
+                label: Localization().getStringEx('panel.home_canvas_course.button.modules.title', 'Modules'),
+                hint: Localization().getStringEx('panel.home_canvas_course.button.modules.hint', ''),
+                leftIconKey: 'settings-working',
+                onTap: _onTapModules),
+            _buildDelimiter(),
+            RibbonButton(
+                label: Localization().getStringEx('panel.home_canvas_course.button.feedback.title', 'Feedback'),
+                hint: Localization().getStringEx('panel.home_canvas_course.button.feedback.hint', ''),
+                leftIconKey: 'settings-working',
+                onTap: _onTapFeedback),
+            _buildDelimiter()
           ]))
     ]);
   }
@@ -188,6 +209,21 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   void _onTapCalendar() {
     Analytics().logSelect(target: 'Canvas Course -> Calendar');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseCalendarPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapNotifications() {
+    Analytics().logSelect(target: 'Canvas Course -> Notifications');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasAccountNotificationsPanel()));
+  }
+
+  void _onTapModules() {
+    Analytics().logSelect(target: 'Canvas Course -> Modules');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseModulesPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapFeedback() {
+    Analytics().logSelect(target: 'Canvas Course -> Feedback');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFeedbackPanel()));
   }
 
   void _loadCourse() {

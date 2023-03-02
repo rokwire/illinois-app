@@ -115,7 +115,7 @@ class _CanvasAnnouncementDetailPanelState extends State<CanvasAnnouncementDetail
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {
-        launchUrl(uri);
+        launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     }
   }

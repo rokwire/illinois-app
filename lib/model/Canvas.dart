@@ -625,3 +625,181 @@ class CanvasCalendarEvent implements Favorite {
 // CanvasCalendarEventType
 
 enum CanvasCalendarEventType { event, assignment }
+
+////////////////////////////////
+// CanvasAccountNotification
+
+class CanvasAccountNotification {
+  final int? id;
+  final String? subject;
+  final String? message;
+  final DateTime? startAt;
+  final DateTime? endAt;
+  final String? icon;
+  final List<String>? roles;
+  final List<int>? roleIds;
+
+  CanvasAccountNotification({this.id, this.subject, this.message, this.startAt, this.endAt, this.icon, this.roles, this.roleIds});
+
+  static CanvasAccountNotification? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasAccountNotification(
+            id: JsonUtils.intValue(json['id']),
+            subject: JsonUtils.stringValue(json['subject']),
+            message: JsonUtils.stringValue(json['message']),
+            startAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_at']), isUtc: true),
+            endAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_at']), isUtc: true),
+            icon: JsonUtils.stringValue(json['icon']),
+            roles: JsonUtils.listValue(json['roles'])?.cast<String>(),
+            roleIds: JsonUtils.listValue(json['role_ids'])?.cast<int>())
+        : null;
+  }
+
+  DateTime? get startAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(startAt);
+  }
+
+  DateTime? get endAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(endAt);
+  }
+
+  String? get startAtDisplayDate {
+    return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
+  }
+
+  static List<CanvasAccountNotification>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasAccountNotification>? result;
+    if (jsonList != null) {
+      result = <CanvasAccountNotification>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasAccountNotification.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasModule
+
+class CanvasModule {
+  final int? id;
+  final int? position;
+  final String? name;
+
+  CanvasModule({this.id, this.position, this.name});
+
+  static CanvasModule? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasModule(
+            id: JsonUtils.intValue(json['id']), position: JsonUtils.intValue(json['position']), name: JsonUtils.stringValue(json['name']))
+        : null;
+  }
+
+  static List<CanvasModule>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasModule>? result;
+    if (jsonList != null) {
+      result = <CanvasModule>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasModule.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
+
+////////////////////////////////
+// CanvasModuleItem
+
+class CanvasModuleItem {
+  final int? id;
+  final int? moduleId;
+  final int? position;
+  final String? title;
+  final int? indent;
+  final CanvasModuleItemType? type;
+  final String? htmlUrl;
+  final String? url;
+
+  CanvasModuleItem({this.id, this.moduleId, this.position, this.title, this.indent, this.type, this.htmlUrl, this.url});
+
+  static CanvasModuleItem? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasModuleItem(
+            id: JsonUtils.intValue(json['id']),
+            moduleId: JsonUtils.intValue(json['module_id']),
+            position: JsonUtils.intValue(json['position']),
+            title: JsonUtils.stringValue(json['title']),
+            indent: JsonUtils.intValue(json['indent']),
+            type: itemTypeFromString(JsonUtils.stringValue(json['type'])),
+            htmlUrl: JsonUtils.stringValue(json['html_url']),
+            url: JsonUtils.stringValue(json['url']))
+        : null;
+  }
+
+  static List<CanvasModuleItem>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasModuleItem>? result;
+    if (jsonList != null) {
+      result = <CanvasModuleItem>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasModuleItem.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static CanvasModuleItemType? itemTypeFromString(String? value) {
+    switch (value) {
+      case 'SubHeader':
+        return CanvasModuleItemType.sub_header;
+      case 'Page':
+        return CanvasModuleItemType.page;
+      case 'Quiz':
+        return CanvasModuleItemType.quiz;
+      case 'ExternalUrl':
+        return CanvasModuleItemType.external_url;
+      case 'Assignment':
+        return CanvasModuleItemType.assignment;
+      default:
+        return null;
+    }
+  }
+}
+
+enum CanvasModuleItemType { sub_header, page, quiz, external_url, assignment }
+
+////////////////////////////////
+// CanvasErrorReport
+
+class CanvasErrorReport {
+  final String? subject;
+  final String? url;
+  String? email;
+  String? comments;
+
+  CanvasErrorReport({this.subject, this.url, this.email, this.comments});
+
+  static CanvasErrorReport? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasErrorReport(
+            subject: JsonUtils.stringValue(json['subject']),
+            url: JsonUtils.stringValue(json['url']),
+            email: JsonUtils.stringValue(json['email']),
+            comments: JsonUtils.stringValue(json['comments']))
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {'subject': subject};
+    if (StringUtils.isNotEmpty(comments)) {
+      json['comments'] = comments;
+    }
+    if (StringUtils.isNotEmpty(email)) {
+      json['email'] = email;
+    }
+    if (StringUtils.isNotEmpty(url)) {
+      json['url'] = url;
+    }
+    return json;
+  }
+}
