@@ -1,0 +1,2 @@
+ios/Libs/Zoom/MobileRTC.xcframework/ios-arm64/MobileRTC.framework/MobileRTC filter=lfs diff=lfs merge=lfs -text
+ios/Libs/Zoom/MobileRTC.xcframework/ios-arm64_x86_64-simulator/MobileRTC.framework/MobileRTC filter=lfs diff=lfs merge=lfs -text

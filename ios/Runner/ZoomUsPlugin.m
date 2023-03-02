@@ -18,14 +18,17 @@
 //
 
 #import "ZoomUsPlugin.h"
+#import <MobileRTC/MobileRTC.h>
 
 #import "NSDictionary+InaTypedValue.h"
 #import "NSDate+InaUtils.h"
 
 static NSString *const kZoomUsMethodChannel = @"edu.illinois.rokwire/zoom_us";
 
-@interface ZoomUsPlugin()
+@interface ZoomUsPlugin()<MobileRTCAuthDelegate>
 @property (nonatomic, strong) FlutterMethodChannel* channel;
+@property (nonatomic, strong) MobileRTC* mobileRTC;
+
 @end
 
 ///////////////////////////////////////////
@@ -51,8 +54,37 @@ static NSString *const kZoomUsMethodChannel = @"edu.illinois.rokwire/zoom_us";
 
 - (instancetype)init {
 	if (self = [super init]) {
+		_mobileRTC = [MobileRTC sharedRTC];
 	}
 	return self;
+}
+
+#pragma mark SDK Initialization
+
+- (void)initializeWithKeys:(NSDictionary*)keys {
+	NSString *clientId = [keys inaStringForKey:@"client_id"];
+	NSString *clientSecret = [keys inaStringForKey:@"client_secret"];
+	NSString *domain = [keys inaStringForKey:@"domain"];
+	
+	MobileRTCSDKInitContext *context = [[MobileRTCSDKInitContext alloc] init];
+	context.domain = domain;
+	context.enableLog = YES;
+	context.locale = MobileRTC_ZoomLocale_Default;
+	BOOL initializeResult = [_mobileRTC initialize:context];
+	NSLog(@"MobileRTC initialize => %@", initializeResult ? @"success" : @"fail");
+
+	UINavigationController *navController = UIApplication.sharedApplication.keyWindow.rootViewController;
+	if ([navController isKindOfClass:[UINavigationController class]]) {
+		[_mobileRTC setMobileRTCRootController:navController];
+	}
+
+	MobileRTCAuthService *authService = [_mobileRTC getAuthService];
+	if (authService != nil) {
+		authService.delegate = self;
+		authService.clientKey = clientId;
+		authService.clientSecret = clientSecret;
+		[authService sdkAuth];
+	}
 }
 
 #pragma mark MethodCall
@@ -64,6 +96,10 @@ static NSString *const kZoomUsMethodChannel = @"edu.illinois.rokwire/zoom_us";
 }
 
 // Implementation
+
+// MobileRTCAuthDelegate
+
+
 
 
 @end

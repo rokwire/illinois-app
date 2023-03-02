@@ -22,5 +22,7 @@
 
 @interface ZoomUsPlugin : NSObject<FlutterPlugin>
 + (instancetype)sharedInstance;
+
+- (void)initializeWithKeys:(NSDictionary*)keys;
 @end
 

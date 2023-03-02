@@ -266,6 +266,12 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		[GMSServices provideAPIKey:googleMapsAPIKey];
 	}
 
+	// Initialize Zoom SDK
+	NSDictionary *zoomKeys = [self.secretKeys inaDictForKey:@"zoom"];
+	if (zoomKeys != nil) {
+		[ZoomUsPlugin.sharedInstance initializeWithKeys:zoomKeys];
+	}
+
 	result(@(YES));
 }
 

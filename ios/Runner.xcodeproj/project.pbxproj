@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -56,6 +56,8 @@
 		264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
 		266C3B1829AF402900BEB7BD /* ZoomUsPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 266C3B1729AF402900BEB7BD /* ZoomUsPlugin.m */; };
 		266C3B1929AF402900BEB7BD /* ZoomUsPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 266C3B1729AF402900BEB7BD /* ZoomUsPlugin.m */; };
+		266C3B1F29AF84B300BEB7BD /* MobileRTCResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 266C3B1B29AF84B300BEB7BD /* MobileRTCResources.bundle */; };
+		266C3B2029AF84B300BEB7BD /* MobileRTCResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 266C3B1B29AF84B300BEB7BD /* MobileRTCResources.bundle */; };
 		266DC99628ACD972007F51EA /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 266DC99528ACD972007F51EA /* MapController.m */; };
 		26729A0F2936008F006DD4D2 /* maps-icon-marker-bus@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */; };
 		26729A102936008F006DD4D2 /* maps-icon-marker-bus@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */; };
@@ -85,6 +87,10 @@
 		26A170EC22DDFB6500299773 /* button-icon-nav-prev.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E922DDFB6500299773 /* button-icon-nav-prev.png */; };
 		26A170ED22DDFB6500299773 /* button-icon-nav-clear.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170EA22DDFB6500299773 /* button-icon-nav-clear.png */; };
 		26AAA20728CA34C200BE694B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26AAA20628CA34BA00BE694B /* Assets.xcassets */; };
+		26B13C4E29B08DEB0024FA12 /* MobileRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 266C3B1C29AF84B300BEB7BD /* MobileRTC.xcframework */; };
+		26B13C4F29B08DEB0024FA12 /* MobileRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 266C3B1C29AF84B300BEB7BD /* MobileRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		26B13C5029B08DF50024FA12 /* MobileRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 266C3B1C29AF84B300BEB7BD /* MobileRTC.xcframework */; };
+		26B13C5129B08DF50024FA12 /* MobileRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 266C3B1C29AF84B300BEB7BD /* MobileRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		26B340372331163A0031CF70 /* MapLocationPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26B340362331163A0031CF70 /* MapLocationPickerController.m */; };
 		26B3403A2331195C0031CF70 /* UILabel+InaMeasure.m in Sources */ = {isa = PBXBuildFile; fileRef = 26B340392331195C0031CF70 /* UILabel+InaMeasure.m */; };
 		26C90CED2361CF480092E07F /* NSDictionary+InaPathKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C90CEC2361CF480092E07F /* NSDictionary+InaPathKey.m */; };
@@ -104,7 +110,6 @@
 		B681B2B923DEFD9E00093A67 /* NSData+InaHex.m in Sources */ = {isa = PBXBuildFile; fileRef = B681B2B823DEFD9E00093A67 /* NSData+InaHex.m */; };
 		B6BDCD37242CCF5F002F7364 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		B6EA372423A7EF76001D78A5 /* Bluetooth+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */; };
-		BB7BF12F5D3356D25889D23A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -115,6 +120,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				26B13C5129B08DF50024FA12 /* MobileRTC.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -125,6 +131,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				26B13C4F29B08DEB0024FA12 /* MobileRTC.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -163,6 +170,9 @@
 		26695108D663C5F02B96B5EB /* Pods-Runner.debug-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoisdev.xcconfig"; sourceTree = "<group>"; };
 		266C3B1629AF402900BEB7BD /* ZoomUsPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomUsPlugin.h; sourceTree = "<group>"; };
 		266C3B1729AF402900BEB7BD /* ZoomUsPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomUsPlugin.m; sourceTree = "<group>"; };
+		266C3B1A29AF84B300BEB7BD /* MobileRTCScreenShare.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileRTCScreenShare.xcframework; path = Libs/Zoom/MobileRTCScreenShare.xcframework; sourceTree = "<group>"; };
+		266C3B1B29AF84B300BEB7BD /* MobileRTCResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = MobileRTCResources.bundle; path = Libs/Zoom/MobileRTCResources.bundle; sourceTree = "<group>"; };
+		266C3B1C29AF84B300BEB7BD /* MobileRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileRTC.xcframework; path = Libs/Zoom/MobileRTC.xcframework; sourceTree = "<group>"; };
 		266DC99428ACD972007F51EA /* MapController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapController.h; sourceTree = "<group>"; };
 		266DC99528ACD972007F51EA /* MapController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapController.m; sourceTree = "<group>"; };
 		26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-bus@3x.png"; sourceTree = "<group>"; };
@@ -301,6 +311,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B539DF93D3D8A0101D934857 /* Pods_Illinois.framework in Frameworks */,
+				26B13C5029B08DF50024FA12 /* MobileRTC.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,8 +319,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB7BF12F5D3356D25889D23A /* (null) in Frameworks */,
 				D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */,
+				26B13C4E29B08DEB0024FA12 /* MobileRTC.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -589,6 +600,9 @@
 			children = (
 				EF09DFB518BCB702E99855B7 /* Pods_Illinois.framework */,
 				ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */,
+				266C3B1C29AF84B300BEB7BD /* MobileRTC.xcframework */,
+				266C3B1B29AF84B300BEB7BD /* MobileRTCResources.bundle */,
+				266C3B1A29AF84B300BEB7BD /* MobileRTCScreenShare.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -699,6 +713,7 @@
 				261784BD28C8ED6A009172BB /* LaunchScreen.storyboard in Resources */,
 				261784BF28C8ED6A009172BB /* travel-mode-bicycle@2x.png in Resources */,
 				261784C228C8ED6A009172BB /* travel-mode-walk@2x.png in Resources */,
+				266C3B2029AF84B300BEB7BD /* MobileRTCResources.bundle in Resources */,
 				261784C428C8ED6A009172BB /* button-icon-nav-refresh.png in Resources */,
 				261784C528C8ED6A009172BB /* button-icon-nav-location.png in Resources */,
 				261784C728C8ED6A009172BB /* maps-icon-marker-origin@2x.png in Resources */,
@@ -725,6 +740,7 @@
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				268F30F322E5DD7900547FE1 /* travel-mode-bicycle@2x.png in Resources */,
 				268F30F122E5DD7900547FE1 /* travel-mode-walk@2x.png in Resources */,
+				266C3B1F29AF84B300BEB7BD /* MobileRTCResources.bundle in Resources */,
 				268F647F22DF15F700A85AFD /* button-icon-nav-refresh.png in Resources */,
 				268F648122DF200300A85AFD /* button-icon-nav-location.png in Resources */,
 				264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */,
