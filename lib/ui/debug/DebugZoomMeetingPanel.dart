@@ -1,7 +1,9 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/ZoomUs.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
@@ -15,6 +17,7 @@ class _DebugZoomMeetingPanelState extends State<DebugZoomMeetingPanel> {
 
   TextEditingController _meetingIdController = TextEditingController();
   TextEditingController _meetingPasswordController = TextEditingController();
+  String? _joinStatus;
 
   @override
   void initState() {
@@ -63,7 +66,9 @@ class _DebugZoomMeetingPanelState extends State<DebugZoomMeetingPanel> {
         keyboardType: TextInputType.visiblePassword,
         decoration: InputDecoration(border: OutlineInputBorder(), hintText: "Enter Zoom Meeting Passcode", labelText: 'Zoom Meeting Passcode')
       ),
-      Container(height: 24,),
+      Container(height: 8,),
+      Text(_joinStatus ?? '', style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
+      Container(height: 8,),
 
       RoundedButton(
         label: 'Join Meeting',
@@ -78,6 +83,17 @@ class _DebugZoomMeetingPanelState extends State<DebugZoomMeetingPanel> {
   }
 
   void _onTapJoinMeeting() {
-
+    setState(() {
+      _joinStatus = 'Joining...';
+    });
+    ZoomUs().joinMeeting(meetingId: _meetingIdController.text, password: _meetingPasswordController.text).then((bool? result) {
+      setStateIfMounted(() {
+        switch(result) {
+          case true: _joinStatus = 'Joined'; break;
+          case false: _joinStatus = 'Failed'; break;
+          default: _joinStatus = 'Internal Error'; break;
+        }
+      });
+    });
   }
 }

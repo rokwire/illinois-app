@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Auth2.dart';
 
 class ZoomUs /* with Service */ {
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/zoom_us');
@@ -36,6 +37,19 @@ class ZoomUs /* with Service */ {
   Future<String?> test() async {
     try {
       return await _methodChannel.invokeMethod('test') as String;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  Future<bool?> joinMeeting({required String meetingId, required String password, String? userName}) async {
+    try {
+      return await _methodChannel.invokeMethod('join', {
+        'user_name': userName ??  Auth2().fullName,
+        'meeting_id': meetingId,
+        'password': password,
+      }) as bool;
     } catch (e) {
       debugPrint(e.toString());
     }
