@@ -13,6 +13,8 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/model/event.dart' as ExploreEvent;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:device_calendar/device_calendar.dart';
 
@@ -99,6 +101,9 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     else if (data is Appointment) {
       return _DeviceCalendarEvent.fromAppointment(data);
     }
+    else if (data is CanvasCalendarEvent) {
+      return _DeviceCalendarEvent.fromCanvasCalendarEvent(data);
+    }
 
     return null;
   }
@@ -147,5 +152,16 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
       endDate: calendarEventEndDateTime,
       deepLinkUrl: "${Appointments().appointmentDetailUrl}?appointment_id=${appointment.id}"
     );
+  }
+
+  static _DeviceCalendarEvent? fromCanvasCalendarEvent(CanvasCalendarEvent? event) {
+    return (event != null)
+        ? _DeviceCalendarEvent(
+            title: event.title,
+            internalEventId: event.id?.toString(),
+            startDate: event.startAtLocal,
+            endDate: event.endAtLocal,
+            deepLinkUrl: "${Canvas().canvasEventDetailUrl}?event_id=${event.id}")
+        : null;
   }
 }
