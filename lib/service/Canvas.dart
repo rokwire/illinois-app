@@ -364,7 +364,7 @@ class Canvas with Service implements NotificationsListener {
   }
 
   Future<List<CanvasFile>?> _loadFiles(int folderId) async {
-    if (!_useCanvasApi) {
+    if (!_useCanvasApi) { // Load this entities only when we use canvas API directly from app
       return null;
     }
     String? url = _masquerade('${Config().canvasUrl}/api/v1/folders/$folderId/files');
@@ -380,6 +380,29 @@ class Canvas with Service implements NotificationsListener {
       return files;
     } else {
       Log.w('Failed to load canvas files for folder {$folderId} ($url). Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Collaborations
+
+  Future<List<CanvasCollaboration>?> loadCollaborations(int courseId) async {
+    if (!_useCanvasApi) { // Load this entities only when we use canvas API directly from app
+      return null;
+    }
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/collaborations');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasCollaboration>? collaborations = CanvasCollaboration.listFromJson(JsonUtils.decodeList(responseString));
+      return collaborations;
+    } else {
+      Log.w('Failed to load canvas collaborations ($url). Response:\n$responseCode: $responseString');
       return null;
     }
   }

@@ -445,3 +445,45 @@ abstract class CanvasFileSystemEntity {
   DateTime? get createdDateTime;
   bool get isFile;
 }
+
+////////////////////////////////
+// CanvasCollaboration
+
+class CanvasCollaboration {
+  final int? id;
+  final DateTime? createdAt;
+  final String? title;
+  final String? userName;
+
+  CanvasCollaboration({this.id, this.createdAt, this.title, this.userName});
+
+  static CanvasCollaboration? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasCollaboration(
+            id: JsonUtils.intValue(json['id']),
+            createdAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['created_at']), isUtc: true),
+            title: JsonUtils.stringValue(json['title']),
+            userName: JsonUtils.stringValue(json['user_name']),
+          )
+        : null;
+  }
+
+  DateTime? get createdAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(createdAt);
+  }
+
+  String? get createdAtDisplayDate {
+    return AppDateTime().formatDateTime(createdAtLocal, format: _canvasDisplayDateTimeFormat);
+  }
+
+  static List<CanvasCollaboration>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasCollaboration>? result;
+    if (jsonList != null) {
+      result = <CanvasCollaboration>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasCollaboration.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+}
