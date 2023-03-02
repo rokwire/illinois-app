@@ -129,7 +129,7 @@ class Canvas with Service implements NotificationsListener {
     }
   }
 
-  Future<CanvasCourse?> loadCourse(int? courseId) async {
+  Future<CanvasCourse?> loadCourse(int? courseId, {CanvasIncludeInfo? includeInfo}) async {
     if (!_isAvailable) {
       return null;
     }
@@ -141,6 +141,11 @@ class Canvas with Service implements NotificationsListener {
     http.Response? response;
     if (_useCanvasApi) {
       url = '${Config().canvasUrl}/api/v1/courses/$courseId';
+      String? includeValue = _includeInfoToString(includeInfo);
+      if (includeValue != null) {
+        url += '?include[]=$includeValue';
+      }
+      url = _masquerade(url);
       response = await Network().get(url, headers: _canvasAuthHeaders);
     } else {
       url = '${Config().lmsUrl}/courses/$courseId';
@@ -152,7 +157,7 @@ class Canvas with Service implements NotificationsListener {
       Map<String, dynamic>? courseJson = JsonUtils.decodeMap(responseString);
       return CanvasCourse.fromJson(courseJson);
     } else {
-      Log.w('Failed to load canvas course. Response:\n$responseCode: $responseString');
+      Log.w('Failed to load canvas course. Response from $url:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -241,6 +246,140 @@ class Canvas with Service implements NotificationsListener {
       return JsonUtils.decodeMap(responseString);
     } else {
       Log.w('Failed to load canvas self user. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // Announcements
+
+  Future<List<CanvasDiscussionTopic>?> loadAnnouncementsForCourse(int courseId) async {
+    if (!_useCanvasApi) { // Load this entities only when we use canvas API directly from app
+      return null;
+    }
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/discussion_topics?only_announcements=true');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasDiscussionTopic>? announcements = CanvasDiscussionTopic.listFromJson(JsonUtils.decodeList(responseString));
+      return announcements;
+    } else {
+      Log.w('Failed to load canvas course announcements ($url). Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+    // Files and Folders
+
+  Future<List<CanvasFileSystemEntity>?> loadFileSystemEntities({int? courseId, int? folderId}) async {
+    if (!_useCanvasApi) { // Load this entities only when we use canvas API directly from app
+      return null;
+    }
+    if ((courseId == null) && (folderId == null)) {
+      Log.w('Please, specify just one parameter of {courseId} or {folderId} in order to load FS entities.');
+      return null;
+    }
+    if (courseId != null) {
+      CanvasFolder? folder = await _loadRootFolder(courseId);
+      folderId = folder?.id;
+    }
+    if (folderId != null) {
+      List<CanvasFileSystemEntity> fsEntities = <CanvasFileSystemEntity>[];
+      List<CanvasFolder>? folders = await _loadSubFolders(folderId);
+      if (CollectionUtils.isNotEmpty(folders)) {
+        fsEntities.addAll(folders!);
+      }
+      List<CanvasFile>? files = await _loadFiles(folderId);
+      if (CollectionUtils.isNotEmpty(files)) {
+        fsEntities.addAll(files!);
+      }
+
+      // Sort by name
+      if (CollectionUtils.isNotEmpty(fsEntities)) {
+        fsEntities.sort((CanvasFileSystemEntity first, CanvasFileSystemEntity second) {
+          String? firstName = first.entityName;
+          String? secondName = second.entityName;
+          if (firstName != null && secondName != null) {
+            return firstName.toLowerCase().compareTo(secondName.toLowerCase());
+          } else if (firstName != null) {
+            return -1;
+          } else if (secondName != null) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+      }
+      return fsEntities;
+    } else {
+      Log.w('Missing canvas folderId.');
+      return null;
+    }
+  }
+
+  Future<CanvasFolder?> _loadRootFolder(int courseId) async {
+    if (!_useCanvasApi) { // Load this entities only when we use canvas API directly from app
+      return null;
+    }
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/folders/by_path');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasFolder>? folders = CanvasFolder.listFromJson(JsonUtils.decodeList(responseString));
+      return CollectionUtils.isNotEmpty(folders) ? folders!.first : null;
+    } else {
+      Log.w('Failed to load canvas root folder for course {$courseId} ($url). Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  Future<List<CanvasFolder>?> _loadSubFolders(int folderId) async {
+    if (!_useCanvasApi) { // Load this entities only when we use canvas API directly from app
+      return null;
+    }
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/folders/$folderId/folders');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasFolder>? folders = CanvasFolder.listFromJson(JsonUtils.decodeList(responseString));
+      return folders;
+    } else {
+      Log.w('Failed to load canvas folders for folder {$folderId} ($url). Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  Future<List<CanvasFile>?> _loadFiles(int folderId) async {
+    if (!_useCanvasApi) {
+      return null;
+    }
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/folders/$folderId/files');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasFile>? files = CanvasFile.listFromJson(JsonUtils.decodeList(responseString));
+      return files;
+    } else {
+      Log.w('Failed to load canvas files for folder {$folderId} ($url). Response:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -335,6 +474,15 @@ class Canvas with Service implements NotificationsListener {
     return '$url${querySymbol}as_user_id=sis_user_id:$userNetId';
   }
 
+  static String? _includeInfoToString(CanvasIncludeInfo? include) {
+    switch (include) {
+      case CanvasIncludeInfo.syllabus:
+        return 'syllabus_body';
+      default:
+        return null;
+    }
+  }
+
   // NotificationsListener
 
   @override
@@ -368,3 +516,5 @@ class Canvas with Service implements NotificationsListener {
     }
   }
 }
+
+enum CanvasIncludeInfo { syllabus }

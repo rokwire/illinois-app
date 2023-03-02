@@ -20,7 +20,11 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/canvas/CanvasCourseAnnouncementsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCourseAssignmentsPanel.dart';
+import 'package:illinois/ui/canvas/CanvasFileSystemEntitiesListPanel.dart';
+import 'package:illinois/ui/canvas/CanvasSyllabusHtmlPanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -102,7 +106,30 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
           hint: Localization().getStringEx('panel.home_canvas_course.button.launch.hint', ''),
           leftIconKey: 'settings-working',
           onTap: _onTapLaunch),
-      _buildDelimiter()
+      _buildDelimiter(),
+      // Show only when the flag is set to true
+      Visibility(
+          visible: (Storage().debugUseCanvasLms == true),
+          child: Column(children: [
+            RibbonButton(
+                label: Localization().getStringEx('panel.home_canvas_course.button.syllabus.title', 'Syllabus'),
+                hint: Localization().getStringEx('panel.home_canvas_course.button.syllabus.hint', ''),
+                leftIconKey: 'settings-working',
+                onTap: _onTapSyllabus),
+            _buildDelimiter(),
+            RibbonButton(
+                label: Localization().getStringEx('panel.home_canvas_course.button.announcements.title', 'Announcements'),
+                hint: Localization().getStringEx('panel.home_canvas_course.button.announcements.hint', ''),
+                leftIconKey: 'settings-working',
+                onTap: _onTapAnnouncements),
+            _buildDelimiter(),
+            RibbonButton(
+                label: Localization().getStringEx('panel.home_canvas_course.button.files.title', 'Files'),
+                hint: Localization().getStringEx('panel.home_canvas_course.button.files.hint', ''),
+                leftIconKey: 'settings-working',
+                onTap: _onTapFiles),
+            _buildDelimiter(),
+          ]))
     ]);
   }
 
@@ -122,6 +149,21 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
   void _onTapAssignments() {
     Analytics().logSelect(target: 'Canvas Course -> Assignments');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAssignmentsPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapSyllabus() {
+    Analytics().logSelect(target: 'Canvas Course -> Syllabus');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasSyllabusHtmlPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapAnnouncements() {
+    Analytics().logSelect(target: 'Canvas Course -> Announcements');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseAnnouncementsPanel(courseId: widget.courseId!)));
+  }
+
+  void _onTapFiles() {
+    Analytics().logSelect(target: 'Canvas Course -> Files');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasFileSystemEntitiesListPanel(courseId: widget.courseId)));
   }
 
   void _loadCourse() {
