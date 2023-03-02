@@ -26,6 +26,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -39,10 +40,12 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 class Canvas with Service implements NotificationsListener {
 
   static const String notifyCoursesUpdated  = "edu.illinois.rokwire.canvas.courses.updated";
+  static const String notifyCanvasEventDetail = "edu.illinois.rokwire.canvas.event.detail";
 
   static const String _canvasCoursesCacheFileName = "canvasCourses.json";
 
   List<CanvasCourse>? _courses;
+  List<Map<String, dynamic>>? _canvasEventDetailCache;
 
   File? _cacheFile;
   DateTime? _pausedDateTime;
@@ -63,22 +66,31 @@ class Canvas with Service implements NotificationsListener {
 
   @override
   void createService() {
+    super.createService();
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
       Connectivity.notifyStatusChanged,
       Storage.notifySettingChanged,
+      DeepLink.notifyUri,
     ]);
+    _canvasEventDetailCache = <Map<String, dynamic>>[];
   }
 
   @override
   void destroyService() {
     NotificationService().unsubscribe(this);
+    super.destroyService();
   }
 
   @override
   Set<Service> get serviceDependsOn {
     return Set.from([Config(), Auth2()]);
+  }
+
+  @override
+  void initServiceUI() {
+    _processCachedDeepLinkDetails();
   }
 
   @override
@@ -407,6 +419,70 @@ class Canvas with Service implements NotificationsListener {
     }
   }
 
+  // Calendar
+
+  Future<List<CanvasCalendarEvent>?> loadCalendarEvents(
+      {required int courseId, CanvasCalendarEventType? type, DateTime? startDate, DateTime? endDate}) async {
+    if (!_useCanvasApi) { // Load this entities only when we use canvas API directly from app
+      return null;
+    }
+    String? url = '${Config().canvasUrl}/api/v1/calendar_events?context_codes[]=course_$courseId&per_page=50';
+    if (startDate != null) {
+      DateTime startDateUtc = startDate.toUtc();
+      String? formattedDate = DateTimeUtils.utcDateTimeToString(startDateUtc);
+      if (StringUtils.isNotEmpty(formattedDate)) {
+        url += '&start_date=$formattedDate';
+      }
+    }
+    if (endDate != null) {
+      DateTime endDateUtc = endDate.toUtc();
+      String? formattedDate = DateTimeUtils.utcDateTimeToString(endDateUtc);
+      if (StringUtils.isNotEmpty(formattedDate)) {
+        url += '&end_date=$formattedDate';
+      }
+    }
+    String? typeKeyString = CanvasCalendarEvent.typeToKeyString(type);
+    if (StringUtils.isNotEmpty(typeKeyString)) {
+      url += '&type=$typeKeyString';
+    }
+    url = _masquerade(url);
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<CanvasCalendarEvent>? calendarEvents = CanvasCalendarEvent.listFromJson(JsonUtils.decodeList(responseString));
+      return calendarEvents?.where((element) => ((element.hidden == false) || (element.hidden == null))).toList();
+    } else {
+      Log.w('Failed to load canvas calendar events for course {$courseId} ($url). Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  Future<CanvasCalendarEvent?> loadCalendarEvent(int eventId) async {
+    if (!_useCanvasApi) { // Load this entities only when we use canvas API directly from app
+      return null;
+    }
+    String? url = _masquerade('${Config().canvasUrl}/api/v1/calendar_events/$eventId');
+    if (StringUtils.isEmpty(url)) {
+      Log.w('Failed to masquerade a canvas user - missing net id.');
+      return null;
+    }
+    http.Response? response = await Network().get(url, headers: _canvasAuthHeaders);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      CanvasCalendarEvent? event = CanvasCalendarEvent.fromJson(JsonUtils.decode(responseString));
+      return event;
+    } else {
+      Log.w('Failed to load canvas calendar event with id {$eventId} ($url). Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
   // Handle Canvas app deep link
 
   Future<void> openCanvasAppDeepLink(String deepLink) async {
@@ -416,6 +492,52 @@ class Canvas with Service implements NotificationsListener {
       Uri? storeUri = StringUtils.isNotEmpty(canvasStoreUrl) ? Uri.tryParse(canvasStoreUrl!) : null;
       if ((storeUri != null) && await url_launcher.canLaunchUrl(storeUri)) {
         await url_launcher.launchUrl(storeUri);
+      }
+    }
+  }
+
+    // Event Detail Deep Links
+
+  String get canvasEventDetailUrl => '${DeepLink().appUrl}/canvas_event_detail';
+
+  void _onDeepLinkUri(Uri? uri) {
+    if (uri != null) {
+      Uri? eventUri = Uri.tryParse(canvasEventDetailUrl);
+      if ((eventUri != null) && (eventUri.scheme == uri.scheme) && (eventUri.authority == uri.authority) && (eventUri.path == uri.path)) {
+        try {
+          _handleDetail(uri.queryParameters.cast<String, dynamic>());
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    }
+  }
+
+  void _handleDetail(Map<String, dynamic>? params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_canvasEventDetailCache != null) {
+        _cacheCanvasEventDetail(params);
+      } else {
+        _processDetail(params);
+      }
+    }
+  }
+
+  void _processDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyCanvasEventDetail, params);
+  }
+
+  void _cacheCanvasEventDetail(Map<String, dynamic> params) {
+    _canvasEventDetailCache?.add(params);
+  }
+
+  void _processCachedDeepLinkDetails() {
+    if (_canvasEventDetailCache != null) {
+      List<Map<String, dynamic>> gameDetailsCache = _canvasEventDetailCache!;
+      _canvasEventDetailCache = null;
+
+      for (Map<String, dynamic> gameDetail in gameDetailsCache) {
+        _processDetail(gameDetail);
       }
     }
   }
@@ -522,6 +644,8 @@ class Canvas with Service implements NotificationsListener {
       if (param == Storage.debugUseCanvasLmsKey) {
         _updateCourses();
       }
+    } else if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
     }
   }
 

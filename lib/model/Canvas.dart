@@ -15,6 +15,8 @@
  */
 
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final String _canvasDisplayDateTimeFormat = 'MM-dd-yyyy h:mm a';
@@ -487,3 +489,139 @@ class CanvasCollaboration {
     return result;
   }
 }
+
+////////////////////////////////
+// CanvasCalendarEvent
+
+class CanvasCalendarEvent implements Favorite {
+  final int? id;
+  final String? title;
+  final DateTime? startAt;
+  final DateTime? endAt;
+  final String? description;
+  final String? contextName;
+  final bool? hidden;
+  final String? url;
+  final String? htmlUrl;
+  final CanvasCalendarEventType? type;
+  final CanvasAssignment? assignment;
+
+  CanvasCalendarEvent(
+      {this.id,
+      this.title,
+      this.startAt,
+      this.endAt,
+      this.description,
+      this.contextName,
+      this.hidden,
+      this.url,
+      this.htmlUrl,
+      this.type,
+      this.assignment});
+
+  static CanvasCalendarEvent? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasCalendarEvent(
+            id: JsonUtils.intValue(json['id']),
+            title: JsonUtils.stringValue(json['title']),
+            startAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_at']), isUtc: true),
+            endAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_at']), isUtc: true),
+            description: JsonUtils.stringValue(json['description']),
+            contextName: JsonUtils.stringValue(json['context_name']),
+            hidden: JsonUtils.boolValue(json['hidden']),
+            url: JsonUtils.stringValue(json['url']),
+            htmlUrl: JsonUtils.stringValue(json['html_url']),
+            type: CanvasCalendarEvent.typeFromString(json['type']),
+            assignment: CanvasAssignment.fromJson(json['assignment']))
+        : null;
+  }
+
+  DateTime? get startAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(startAt);
+  }
+
+  DateTime? get endAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(endAt);
+  }
+
+  String? get startAtDisplayDate {
+    return AppDateTime().formatDateTime(startAtLocal, format: _canvasDisplayDateTimeFormat);
+  }
+
+  String? get endAtDisplayDate {
+    return AppDateTime().formatDateTime(endAtLocal, format: _canvasDisplayDateTimeFormat);
+  }
+
+  String? get displayDateTime {
+    const String emptyTime = 'N/A';
+    const dayFormat = 'MMM d';
+    const timeFormat = 'h:mma';
+    String? startTime = AppDateTime().formatDateTime(startAtLocal, format: '$dayFormat $timeFormat');
+    String endTimeFormat = timeFormat;
+    if (startAtLocal?.day != endAtLocal?.day) {
+      endTimeFormat = '$dayFormat ' + endTimeFormat;
+    }
+    String? endTime = AppDateTime().formatDateTime(endAtLocal, format: endTimeFormat);
+    return StringUtils.ensureNotEmpty(startTime, defaultValue: emptyTime) +
+        ' - ' +
+        StringUtils.ensureNotEmpty(endTime, defaultValue: emptyTime);
+  }
+
+  static List<CanvasCalendarEvent>? listFromJson(List<dynamic>? jsonList) {
+    List<CanvasCalendarEvent>? result;
+    if (jsonList != null) {
+      result = <CanvasCalendarEvent>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, CanvasCalendarEvent.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static CanvasCalendarEventType? typeFromString(String? value) {
+    switch (value) {
+      case 'event':
+        return CanvasCalendarEventType.event;
+      case 'assignment':
+        return CanvasCalendarEventType.assignment;
+      default:
+        return null;
+    }
+  }
+
+  static String? typeToKeyString(CanvasCalendarEventType? type) {
+    switch (type) {
+      case CanvasCalendarEventType.event:
+        return 'event';
+      case CanvasCalendarEventType.assignment:
+        return 'assignment';
+      default:
+        return null;
+    }
+  }
+
+  static String? typeToDisplayString(CanvasCalendarEventType? type) {
+    switch (type) {
+      case CanvasCalendarEventType.event:
+        return Localization().getStringEx('model.canvas.calendar.event.type.event.label', 'Event');
+      case CanvasCalendarEventType.assignment:
+        return Localization().getStringEx('model.canvas.calendar.event.type.assignment.label', 'Assignment');
+      default:
+        return null;
+    }
+  }
+
+  ////////////////////////////
+  // Favorite implementation
+
+  static String _favoriteKeyName = "canvasCalendarEventIds";
+  @override
+  String get favoriteKey => _favoriteKeyName;
+  @override
+  String? get favoriteId => id?.toString();
+}
+
+////////////////////////////////
+// CanvasCalendarEventType
+
+enum CanvasCalendarEventType { event, assignment }
