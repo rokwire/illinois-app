@@ -186,7 +186,7 @@ class OccupationListTile extends StatelessWidget {
             context,
             CupertinoPageRoute(
                 builder: (context) => OccupationDetails(
-                      occupation: occupation,
+                      occupationCode: occupation.code!,
                       // survey: Config().bessiSurveyID,
                       // onComplete: _gotoResults,
                       // offlineWidget: _buildOfflineWidget(),
