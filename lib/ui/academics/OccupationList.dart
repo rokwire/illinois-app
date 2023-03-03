@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/occupation/Occupation.dart';
-import 'package:illinois/model/occupation/skill.dart';
+import 'package:illinois/model/occupation/Skill.dart';
 import 'package:illinois/service/skills/OccupationsService.dart';
 import 'package:illinois/ui/academics/OccupationDetails.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -17,7 +17,7 @@ class OccupationList extends StatelessWidget {
 
   final List<Occupation> occupations = [
     Occupation(
-      name: 'Software Developer',
+      title: 'Software Developer',
       description: 'Die from segmentation fault',
       matchPercentage: 75.0,
       onetLink: '',
@@ -59,7 +59,7 @@ class OccupationList extends StatelessWidget {
       ],
     ),
     Occupation(
-      name: 'Architect',
+      title: 'Architect',
       description: 'Build Minecraft Structures IRL',
       matchPercentage: 20.0,
       onetLink: '',
@@ -178,7 +178,7 @@ class OccupationListTile extends StatelessWidget {
       leading: OccupationMatchCircle(
         matchPercentage: occupation.matchPercentage ?? 100.0,
       ),
-      title: Text(occupation.name.toString()),
+      title: Text(occupation.title.toString()),
       subtitle: Text(occupation.description.toString()),
       trailing: Styles().images?.getImage('chevron-right'),
       onTap: () {
