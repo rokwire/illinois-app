@@ -23,6 +23,7 @@ import 'package:flutter/services.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
@@ -114,6 +115,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Appointments.notifyAppointmentDetail,
+      Canvas.notifyCanvasEventDetail,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
       Localization.notifyStringsUpdated,
@@ -200,6 +202,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Guide.notifyGuideList) {
       _onGuideList(param);
+    }
+    else if (name == Canvas.notifyCanvasEventDetail) {
+      _onCanvasEventDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -558,6 +563,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  Future<void> _onCanvasEventDetail(Map<String, dynamic>? content) async {
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
+    if (StringUtils.isNotEmpty(eventId)) {
+      int? eventIdValue = int.tryParse(eventId!);
+      if (eventIdValue != null) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: eventIdValue)));
+      }
+    }
+  }
+
   void _showAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {
     if (athleticsGameDetails == null) {
       return;
@@ -782,6 +797,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? todoItemId = JsonUtils.stringValue(param['entity_id']);
       if (StringUtils.isNotEmpty(todoItemId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
+      } else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list)));
       }
     }
   }
