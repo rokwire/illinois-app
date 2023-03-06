@@ -175,6 +175,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
   }
 
   Widget _buildAssignmentItem(CanvasAssignment assignment) {
+    String displayDueDate = StringUtils.ensureNotEmpty(assignment.dueDisplayDateTime);
     BorderSide borderSide = BorderSide(color: Styles().colors!.blackTransparent06!, width: 1);
     return GestureDetector(
         onTap: () => _onTapAssignment(assignment),
@@ -191,17 +192,17 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
                         style: TextStyle(
                             fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant, fontFamily: Styles().fontFamilies!.bold)))
               ]),
-              Padding(
+              Visibility(visible: StringUtils.isNotEmpty(displayDueDate), child: Padding(
                   padding: EdgeInsets.only(top: 5),
                   child: Row(children: [
                     Text(Localization().getStringEx('panel.canvas_assignments.due.label', 'Due'),
                         style: TextStyle(fontSize: 14, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
                     Padding(
                         padding: EdgeInsets.only(left: 5),
-                        child: Text(StringUtils.ensureNotEmpty(assignment.dueDisplayDateTime),
+                        child: Text(displayDueDate,
                             style: TextStyle(
                                 fontSize: 14, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular)))
-                  ]))
+                  ])))
             ])));
   }
 
