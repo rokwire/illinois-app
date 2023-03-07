@@ -213,7 +213,13 @@ class CanvasAssignment {
   }
 
   String? get dueDisplayDateTime {
-    String? dueDisplayDate = AppDateTime().formatDateTime(dueAtLocal, format: 'MMM d, h:mma');
+    if (dueAtLocal == null) {
+      return null;
+    }
+    int nowYear = DateTime.now().year;
+    int dueYear = dueAtLocal!.year;
+    String dateTimeFormat = (nowYear != dueYear) ? 'yyyy-MM-dd' : 'MMM d, h:mma';
+    String? dueDisplayDate = AppDateTime().formatDateTime(dueAtLocal, format: dateTimeFormat);
     return dueDisplayDate;
   }
 
