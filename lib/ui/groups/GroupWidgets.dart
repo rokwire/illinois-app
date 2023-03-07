@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import 'dart:typed_data';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -643,14 +642,28 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 // GroupAddImageWidget
 
 class GroupAddImageWidget extends StatefulWidget {
+  static String _groupImageStoragePath = 'group/tout';
+  static int _groupImageWidth = 1080;
+
   @override
   _GroupAddImageWidgetState createState() => _GroupAddImageWidgetState();
+
+  static Future<String?> show({required BuildContext context, String? updateUrl}) async {
+    ImagesResult? imageResult;
+
+    if(updateUrl == null){
+      Future<dynamic> result =  showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+      return result.then((url) => url);
+    } else {
+      imageResult = await Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+          ImageEditPanel(storagePath: _groupImageStoragePath, width: _groupImageWidth, preloadImageUrl: updateUrl,)));
+    }
+
+    return imageResult?.resultType == ImagesResultType.succeeded? imageResult?.data?.toString() : null;
+  }
 }
 
 class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
-  final String _groupImageStoragePath = 'group/tout';
-  final int _groupImageWidth = 1080;
-
   var _imageUrlController = TextEditingController();
   bool _showProgress = false;
 
@@ -761,7 +774,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
       });
 
       Future<ImagesResult> result =
-      Content().useUrl(storageDir: _groupImageStoragePath, width: _groupImageWidth, url: url);
+      Content().useUrl(storageDir: GroupAddImageWidget._groupImageStoragePath, width: GroupAddImageWidget._groupImageWidth, url: url);
       result.then((logicResult) {
         setState(() {
           _showProgress = false;
@@ -798,7 +811,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     // Future<ImagesResult?> result =
     // Content().selectImageFromDevice(storagePath: _groupImageStoragePath, width: _groupImageWidth);
     // result.then((logicResult) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(storagePath: _groupImageStoragePath, width: _groupImageWidth))).then((logicResult){
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(storagePath: GroupAddImageWidget._groupImageStoragePath, width: GroupAddImageWidget._groupImageWidth))).then((logicResult){
       setState(() {
         _showProgress = false;
       });
@@ -2208,9 +2221,9 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    String? imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _imageUrl);
     if (StringUtils.isNotEmpty(imageUrl) && (widget.onImageChanged != null)) {
-      widget.onImageChanged!(imageUrl);
+      widget.onImageChanged!(imageUrl!);
       if (mounted) {
         setState(() {
           _imageUrl = imageUrl;
