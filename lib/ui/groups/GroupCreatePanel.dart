@@ -263,7 +263,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    String? _imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    // String? _imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    String? _imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _group!.imageURL);
     if (_imageUrl != null) {
       if (mounted) {
         setState(() {
