@@ -37,13 +37,11 @@ import com.hid.origo.api.OrigoReaderConnectionController;
 import com.hid.origo.api.OrigoReaderConnectionInfoType;
 import com.hid.origo.api.ble.OrigoOpeningResult;
 import com.hid.origo.api.ble.OrigoOpeningStatus;
-import com.hid.origo.api.ble.OrigoOpeningTrigger;
 import com.hid.origo.api.ble.OrigoOpeningType;
 import com.hid.origo.api.ble.OrigoReader;
 import com.hid.origo.api.ble.OrigoReaderConnectionCallback;
 import com.hid.origo.api.ble.OrigoReaderConnectionListener;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
-import com.hid.origo.api.ble.OrigoTapOpeningTrigger;
 import com.hid.origo.api.hce.OrigoHceConnectionCallback;
 import com.hid.origo.api.hce.OrigoHceConnectionListener;
 
@@ -54,9 +52,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import edu.illinois.rokwire.App;
 import io.flutter.plugin.common.PluginRegistry;
 
 public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegistry.RequestPermissionsResultListener {
@@ -67,15 +65,12 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
     private final OrigoMobileKeys mobileKeys;
     private final OrigoKeysApiFactory mobileKeysApiFactory;
-    private final OrigoOpeningTrigger openingTrigger;
     private final Activity activity;
 
     public MobileAccessKeysApiFacade(Activity activity, OrigoKeysApiFactory apiFactory) {
         this.activity = activity;
         this.mobileKeysApiFactory = apiFactory;
         this.mobileKeys = mobileKeysApiFactory.getMobileKeys();
-        //TBD: DD - check how to init the correct trigger from flutter based on the user selection
-        this.openingTrigger = new OrigoTapOpeningTrigger(activity);
     }
 
     //region Public APIs
@@ -96,13 +91,11 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         //TBD: DD - check when to start / stop scanning based on the user selection
         if (canScan()) {
             startScanning();
-            getOrigoScanConfiguration().getRootOpeningTrigger().add(openingTrigger);
         }
     }
 
     public void onActivityPause() {
         if (canScan()) {
-            getOrigoScanConfiguration().getRootOpeningTrigger().remove(openingTrigger);
             stopScanning();
         }
     }
@@ -404,7 +397,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     }
 
     @Override
-    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION_PERMISSION_CODE) {
             startScanning();
             return true;
