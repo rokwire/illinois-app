@@ -1631,7 +1631,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    // String? updateUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
     String? updateUrl = await  GroupAddImageWidget.show(context: context, updateUrl: _imageUrl);
     if (StringUtils.isNotEmpty(updateUrl) && (_imageUrl != updateUrl)) {
       if(mounted){

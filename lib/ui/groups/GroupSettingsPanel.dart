@@ -247,13 +247,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     }
     Analytics().logSelect(target: "Add Image");
     String? _imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _group!.imageURL);
-    // await showDialog(
-    //     context: context,
-    //     builder: (_) => Material(
-    //       type: MaterialType.transparency,
-    //       child: GroupAddImageWidget(),
-    //     )
-    // );
     if(_imageUrl!=null){
       setState(() {
         _group!.imageURL = _imageUrl;

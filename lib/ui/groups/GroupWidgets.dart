@@ -2221,7 +2221,6 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    // String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
     String? imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _imageUrl);
     if (StringUtils.isNotEmpty(imageUrl) && (widget.onImageChanged != null)) {
       widget.onImageChanged!(imageUrl!);
