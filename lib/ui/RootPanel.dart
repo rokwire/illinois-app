@@ -797,6 +797,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? todoItemId = JsonUtils.stringValue(param['entity_id']);
       if (StringUtils.isNotEmpty(todoItemId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
+      } else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list)));
       }
     }
   }

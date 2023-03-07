@@ -5,8 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Show year in the canvas assignment due date if the year is not current [#3017](https://github.com/rokwire/illinois-app/issues/3017).
+
+## [4.3.21] - 2023-03-06
 ### Changed
 - Do not show "Due" date label in canvas assignments if there is no value [#3013](https://github.com/rokwire/illinois-app/issues/3013).
+### Added
+- Open to-do list panel on reminder notification if to-do entry id is missing [#3015](https://github.com/rokwire/illinois-app/issues/3015).
+### Fixed
+- Do not set to-do item as completed if the backend returns an error [#3015](https://github.com/rokwire/illinois-app/issues/3015).
 
 ## [4.3.20] - 2023-03-02
 ### Added

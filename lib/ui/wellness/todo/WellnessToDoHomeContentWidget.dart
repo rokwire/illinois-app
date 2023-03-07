@@ -689,6 +689,8 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
     _setLoading(true);
     Wellness().updateToDoItem(widget.item).then((success) {
       if (!success) {
+        // revert value if update fails
+        widget.item.isCompleted = !widget.item.isCompleted;
         String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
         AppAlert.showDialogResult(context, msg);
       }
