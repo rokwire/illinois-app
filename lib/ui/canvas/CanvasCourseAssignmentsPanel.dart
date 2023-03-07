@@ -123,9 +123,9 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         Map<String, List<CanvasAssignment>?>? dueAssignmentsMap = _courseDueAssignmentsMap![courseId];
         if ((dueAssignmentsMap != null) && CollectionUtils.isNotEmpty(dueAssignmentsMap.keys)) {
           for (String assignmentDueLabel in dueAssignmentsMap.keys) {
-            assignmentWidgetList.add(_buildDueAssignmentLabelWidget(assignmentDueLabel));
             List<CanvasAssignment>? assignments = dueAssignmentsMap[assignmentDueLabel];
             if (CollectionUtils.isNotEmpty(assignments)) {
+              assignmentWidgetList.add(_buildDueAssignmentLabelWidget(assignmentDueLabel));
               for (CanvasAssignment assignment in assignments!) {
                 assignmentWidgetList.add(_buildAssignmentItem(assignment));
               }
