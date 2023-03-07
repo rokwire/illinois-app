@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.22] - 2023-03-07
 ### Added
 - Show year in the canvas assignment due date if the year is not current [#3017](https://github.com/rokwire/illinois-app/issues/3017).
 - Preload image selection if already selected [#3019](https://github.com/rokwire/illinois-app/issues/3019).
