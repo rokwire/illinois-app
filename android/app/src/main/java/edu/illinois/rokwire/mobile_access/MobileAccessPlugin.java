@@ -43,6 +43,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     //region Activity APIs
 
+    public void onActivityCreate() {
+        apiFacade.onActivityCreate();
+    }
+
     public void onActivityStart() {
         apiFacade.onApplicationStartup();
     }

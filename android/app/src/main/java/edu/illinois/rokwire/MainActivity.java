@@ -79,6 +79,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
         instance = this;
         initScreenOrientation();
+        if (mobileAccessPlugin != null) {
+            mobileAccessPlugin.onActivityCreate();
+        }
     }
 
     @Override

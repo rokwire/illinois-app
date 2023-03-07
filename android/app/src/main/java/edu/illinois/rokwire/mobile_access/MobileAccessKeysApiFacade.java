@@ -34,9 +34,18 @@ import com.hid.origo.api.OrigoMobileKeysException;
 import com.hid.origo.api.OrigoMobileKeysProgressCallback;
 import com.hid.origo.api.OrigoProgressEvent;
 import com.hid.origo.api.OrigoReaderConnectionController;
+import com.hid.origo.api.OrigoReaderConnectionInfoType;
+import com.hid.origo.api.ble.OrigoOpeningResult;
+import com.hid.origo.api.ble.OrigoOpeningStatus;
 import com.hid.origo.api.ble.OrigoOpeningTrigger;
+import com.hid.origo.api.ble.OrigoOpeningType;
+import com.hid.origo.api.ble.OrigoReader;
+import com.hid.origo.api.ble.OrigoReaderConnectionCallback;
+import com.hid.origo.api.ble.OrigoReaderConnectionListener;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
 import com.hid.origo.api.ble.OrigoTapOpeningTrigger;
+import com.hid.origo.api.hce.OrigoHceConnectionCallback;
+import com.hid.origo.api.hce.OrigoHceConnectionListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,6 +82,14 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
     public void onApplicationStartup() {
         getMobileKeys().applicationStartup(mobileKeysStartupCallBack);
+    }
+
+    public void onActivityCreate() {
+        OrigoReaderConnectionCallback readerConnectionCallback = new OrigoReaderConnectionCallback(activity.getApplicationContext());
+        readerConnectionCallback.registerReceiver(readerConnectionListener);
+
+        OrigoHceConnectionCallback hceConnectionCallback = new OrigoHceConnectionCallback(activity.getApplicationContext());
+        hceConnectionCallback.registerReceiver(hceConnectionListener);
     }
 
     public void onActivityResume() {
@@ -258,6 +275,48 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysUnregisterEndpointCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
             Toast.makeText(activity, "Mobile Access: Unregister Endpoint - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    //endregion
+
+    //region OrigoReaderConnectionListener implementation
+
+    private final OrigoReaderConnectionListener readerConnectionListener = new OrigoReaderConnectionListener() {
+        @Override
+        public void onReaderConnectionOpened(OrigoReader origoReader, OrigoOpeningType origoOpeningType) {
+            Log.d(TAG, "readerConnectionListener: onReaderConnectionOpened: reader: " + origoReader.getName() + ", opening type: " + origoOpeningType.name());
+        }
+
+        @Override
+        public void onReaderConnectionClosed(OrigoReader origoReader, OrigoOpeningResult origoOpeningResult) {
+            Log.d(TAG, "readerConnectionListener: onReaderConnectionClosed");
+        }
+
+        @Override
+        public void onReaderConnectionFailed(OrigoReader origoReader, OrigoOpeningType origoOpeningType, OrigoOpeningStatus origoOpeningStatus) {
+            Log.d(TAG, "readerConnectionListener: onReaderConnectionFailed");
+        }
+    };
+
+    //endregion
+
+    //region OrigoHceConnectionListener implementation
+
+    private final OrigoHceConnectionListener hceConnectionListener = new OrigoHceConnectionListener() {
+        @Override
+        public void onHceSessionOpened() {
+            Log.d(TAG, "hceConnectionListener: onHceSessionOpened");
+        }
+
+        @Override
+        public void onHceSessionClosed(int i) {
+            Log.d(TAG, "hceConnectionListener: onHceSessionClosed");
+        }
+
+        @Override
+        public void onHceSessionInfo(OrigoReaderConnectionInfoType origoReaderConnectionInfoType) {
+            Log.d(TAG, "hceConnectionListener: onHceSessionInfo");
         }
     };
 
