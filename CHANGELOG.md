@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Populate title field in favorite analytics event [#3021](https://github.com/rokwire/illinois-app/issues/3021).
+### Added
+- Added source field in WebPanel page analytics details [#3021](https://github.com/rokwire/illinois-app/issues/3021).
 
 ## [4.3.22] - 2023-03-07
 ### Added
