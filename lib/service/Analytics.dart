@@ -41,6 +41,7 @@ import 'package:rokwire_plugin/service/analytics.dart' as rokwire;
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/service/Auth2.dart';
 
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -842,15 +843,12 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   }
 
   void logFavorite(Favorite? favorite, {bool? on, String? title}) {
-    if (on == null) {
-      on = Auth2().isFavorite(favorite);
-    }
     logEvent({
       LogEventName          : LogFavoriteEventName,
-      LogFavoriteActionName : on ? LogFavoriteOnActionName : LogFavoriteOffActionName,
+      LogFavoriteActionName : (on ?? Auth2().isFavorite(favorite)) ? LogFavoriteOnActionName : LogFavoriteOffActionName,
       LogFavoriteTypeName   : favorite?.favoriteKey,
       LogFavoriteIdName     : favorite?.favoriteId,
-      LogFavoriteTitleName  : title,
+      LogFavoriteTitleName  : title ?? favorite?.favoriteTitle,
     });
   }
 
