@@ -489,12 +489,12 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     return Container(padding: EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 24), color: Styles().colors!.background, child:
     HtmlWidget(
       StringUtils.ensureNotEmpty(longDescription),
-        onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+        onTapUrl : (url) {_launchUrl(url, 'Description'); return true;},
         textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
     )
       // Html(
       //   data: longDescription,
-      //   onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+      //   onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, 'Description'),
       //   style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
       // ),
     );
@@ -596,6 +596,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
               builder: (context) =>
                   WebPanel(
                       analyticsName: "WebPanel($analyticsName)",
+                      analyticsSource: widget.parentEvent?.analyticsAttributes,
                       url: url)));
     }
   }
@@ -642,10 +643,14 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     });
   }
 
-  void _launchUrl(String? url, {BuildContext? context}) {
+  void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+          url: url,
+          analyticsName: "WebPanel($analyticsName)",
+          analyticsSource: widget.parentEvent?.analyticsAttributes,
+        )));
       } else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {

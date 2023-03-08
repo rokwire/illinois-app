@@ -344,7 +344,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   /*void _showTicketsPanel() {
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(context, CupertinoPageRoute(
-        builder: (context) => WebPanel(url: Config().ticketsUrl)));
+        builder: (context) => WebPanel(
+          url: Config().ticketsUrl
+          analyticsName: "WebPanel(Tickets)",
+          analyticsSource: game?.analyticsAttributes,
+        )));
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.tickets', 'Tickets are not available while offline.'));
