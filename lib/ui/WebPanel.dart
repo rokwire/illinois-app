@@ -24,8 +24,9 @@ import 'package:rokwire_plugin/ui/panels/web_panel.dart' as rokwire;
 
 class WebPanel extends rokwire.WebPanel implements AnalyticsPageName, AnalyticsPageAttributes {
   final String? analyticsName;
+  final Map<String, dynamic>? analyticsSource;
 
-  WebPanel({Key? key, String? url, String? title, this.analyticsName, bool showTabBar = true}) :
+  WebPanel({Key? key, String? url, String? title, this.analyticsName, this.analyticsSource, bool showTabBar = true}) :
     super(key: key, url: url, title: title, headerBar: HeaderBar(title: title), tabBar: showTabBar ? uiuc.TabBar() : null);
 
   @override
@@ -35,7 +36,10 @@ class WebPanel extends rokwire.WebPanel implements AnalyticsPageName, AnalyticsP
 
   @override
   Map<String, dynamic> get analyticsPageAttributes {
-    return { Analytics.LogAttributeUrl : url };
+    return {
+      Analytics.LogAttributeUrl : url,
+      Analytics.LogAttributeSource: analyticsSource,
+    };
   }
 
   @protected

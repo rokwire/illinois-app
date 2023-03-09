@@ -678,7 +678,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
             updatedDesc,
-            onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+            onTapUrl : (url) { _launchUrl(url, 'Description'); return true; },
             textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
         )
     );
@@ -862,9 +862,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           context,
           CupertinoPageRoute(
               builder: (context) =>
-                  WebPanel(
+                  WebPanel(url: url,
                       analyticsName: "WebPanel($analyticsName)",
-                      url: url)));
+                      analyticsSource: widget.event?.analyticsAttributes,
+                  )));
     }
   }
 
@@ -910,10 +911,14 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     });
   }
   
-  void _launchUrl(String? url, {BuildContext? context}) {
+  void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+          url: url,
+          analyticsName: "WebPanel($analyticsName)",
+          analyticsSource: widget.event?.analyticsAttributes,
+        )));
       } else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {

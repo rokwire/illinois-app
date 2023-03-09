@@ -35,16 +35,7 @@ class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
   _GuideDetailPanelState createState() => _GuideDetailPanelState();
 
   @override
-  Map<String, dynamic> get analyticsPageAttributes {
-    Map<String, dynamic>? guideEntry = Guide().entryById(guideEntryId);
-    return {
-      Analytics.LogAttributeGuideId : guideEntryId,
-      Analytics.LogAttributeGuideTitle : JsonUtils.stringValue(Guide().entryTitle(guideEntry, stripHtmlTags: true)),
-      Analytics.LogAttributeGuide : JsonUtils.stringValue(Guide().entryValue(guideEntry, 'guide')),
-      Analytics.LogAttributeGuideCategory :  JsonUtils.stringValue(Guide().entryValue(guideEntry, 'category')),
-      Analytics.LogAttributeGuideSection :  JsonUtils.stringValue(Guide().entryValue(guideEntry, 'section')),
-    };
-  }
+  Map<String, dynamic> get analyticsPageAttributes => Guide().entryAnalyticsAttributes(Guide().entryById(guideEntryId)) ?? {};
 }
 
 class _GuideDetailPanelState extends State<GuideDetailPanel> implements NotificationsListener {
@@ -549,7 +540,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     }
   }
 
-  void _onTapLink(String? url, {bool? useInternalBrowser}) {
+  void _onTapLink(String? url, { bool? useInternalBrowser }) {
     Analytics().logSelect(target: 'Link: $url');
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
@@ -557,7 +548,10 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
       }
       else {
         if (useInternalBrowser == true) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+            url: url,
+            analyticsSource: Guide().entryAnalyticsAttributes(_guideEntry),
+          )));
         } else {
           Uri? uri = Uri.tryParse(url!);
           if (uri != null) {
