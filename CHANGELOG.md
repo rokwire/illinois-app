@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.23] - 2023-03-08
+### Changed
+- Populate title field in favorite analytics event [#3021](https://github.com/rokwire/illinois-app/issues/3021).
+### Added
+- Added source field in WebPanel page analytics details [#3021](https://github.com/rokwire/illinois-app/issues/3021).
+
 ## [4.3.22] - 2023-03-07
 ### Added
 - Show year in the canvas assignment due date if the year is not current [#3017](https://github.com/rokwire/illinois-app/issues/3017).

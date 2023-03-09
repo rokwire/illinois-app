@@ -554,7 +554,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
         child:
         HtmlWidget(
             StringUtils.ensureNotEmpty(dining!.exploreLongDescription),
-            onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+            onTapUrl : (url) {_launchUrl(url, 'Description'); return true;},
             textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
         )
     );
@@ -608,10 +608,14 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     }
   }
 
-  void _launchUrl(String? url, {BuildContext? context}) {
+  void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+          url: url,
+          analyticsName: "WebPanel($analyticsName)",
+          analyticsSource: widget.dining?.analyticsAttributes,
+        )));
       } else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
