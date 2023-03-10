@@ -437,7 +437,8 @@ class Guide with Service implements NotificationsListener {
   void _initDefaultFavorites() {
 
     if (_contentList != null) {
-      Map<String, List<String>> defaultFavorites = <String, List<String>>{};
+      Set<String> modifiedFavoriteKeys = <String>{};
+      Map<String, LinkedHashSet<String>> favorites = <String, LinkedHashSet<String>>{};
       for (dynamic contentEntry in _contentList!) {
         Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
         bool? isFavorite = JsonUtils.boolValue(entryValue(guideEntry, 'content_type_favorite'));
@@ -445,21 +446,23 @@ class Guide with Service implements NotificationsListener {
           String? guideEntryId = entryId(guideEntry);
           String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
           if ((guideEntryId != null) && (guideEntryContentType != null)) {
-            String favoriteKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType);
-            List<String>? favoriteIds = defaultFavorites[favoriteKeyName];
-            if (favoriteIds != null) {
-              favoriteIds.add(guideEntryId);
-            }
-            else if (Auth2().prefs?.getFavorites(favoriteKeyName) == null) {
-              defaultFavorites[favoriteKeyName] = <String>[guideEntryId];
+            String processedKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType, processed: true);
+            LinkedHashSet<String> processedGuideEntryIds = (favorites[processedKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(processedKeyName)?? LinkedHashSet<String>()));
+            if (!processedGuideEntryIds.contains(guideEntryId)) {
+              String favoriteKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType);
+              LinkedHashSet<String> favoriteGuideEntryIds = (favorites[favoriteKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(favoriteKeyName) ?? LinkedHashSet<String>()));
+              favoriteGuideEntryIds.add(guideEntryId); // Mark guideEntryId as favorite
+              processedGuideEntryIds.add(guideEntryId); // Mark guideEntryId as processed
+              modifiedFavoriteKeys.add(favoriteKeyName);
+              modifiedFavoriteKeys.add(processedKeyName);
             }
           }
         }
       }
-      
-      defaultFavorites.forEach((String key, List<String> ids) {
-        Auth2().prefs?.setFavorites(key, LinkedHashSet<String>.from(ids.reversed));
-      });
+
+      for (String modifiedFavoriteKey in modifiedFavoriteKeys) {
+        Auth2().prefs?.setFavorites(modifiedFavoriteKey, favorites[modifiedFavoriteKey]);
+      }
     }
   }
 
@@ -854,11 +857,11 @@ class GuideFavorite implements Favorite {
   int get hashCode => (id?.hashCode ?? 0);
 
   static const String favoriteKeyName = "studentGuideIds";
-  static String constructFavoriteKeyName({String? contentType}) => (contentType != null) ? "${_favoriteContentTypeKey(contentType)}GuideIds" : favoriteKeyName;
+  static String constructFavoriteKeyName({String? contentType, bool processed = false}) => (contentType != null) ? "${_favoriteContentTypeKey(contentType, processed)}GuideIds" : favoriteKeyName;
   @override String get favoriteKey => constructFavoriteKeyName(contentType: contentType);
   @override String? get favoriteId => id;
 
-  static String _favoriteContentTypeKey(String contentType) {
+  static String _favoriteContentTypeKey(String contentType, bool processed) {
     String favoriteKey = '';
     List<String> items = contentType.split('-');
     for (String item in items) {
@@ -868,6 +871,9 @@ class GuideFavorite implements Favorite {
       else {
         favoriteKey += StringUtils.capitalize(item);
       }
+    }
+    if (processed) {
+      favoriteKey += 'Processed';
     }
     return favoriteKey;
   }
