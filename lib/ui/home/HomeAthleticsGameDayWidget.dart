@@ -18,9 +18,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -46,11 +48,15 @@ class HomeAthleticsGameDayWidget extends StatefulWidget {
 class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget> implements NotificationsListener {
 
   List<Game>? _todayGames;
+  DateTime? _pausedDateTime;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, Connectivity.notifyStatusChanged);
+    NotificationService().subscribe(this, [
+      Connectivity.notifyStatusChanged,
+      AppLivecycle.notifyStateChanged,
+    ]);
 
     widget.updateController?.stream.listen((String command) {
       if (command == HomePanel.notifyRefresh) {
@@ -68,17 +74,47 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
     super.dispose();
   }
 
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Connectivity.notifyStatusChanged) {
+      _loadTodayGames();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadTodayGames();
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if ((_todayGames != null) && (0 < _todayGames!.length)) {
       List<Widget> gameDayWidgets = [];
       for (Game todayGame in _todayGames!) {
-        gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame));
+        gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame, favoriteId: widget.favoriteId,));
       }
       return Column(children: gameDayWidgets);
     }
     else {
-      return Container();
+      return HomeSlantWidget(favoriteId: widget.favoriteId,
+        title: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
+        titleIconKey: 'athletics',
+        child: HomeMessageCard(message: Localization().getStringEx('widget.game_day.label.no_games', 'No today games.')),
+      );
     }
   }
 
@@ -94,13 +130,5 @@ class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget>
     }
   }
 
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Connectivity.notifyStatusChanged) {
-      _loadTodayGames();
-    }
-  }
 
 }
