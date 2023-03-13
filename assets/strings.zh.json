@@ -2666,6 +2666,7 @@
 	"panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
+	"widget.game_day.label.no_games":"今天沒有比賽。",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",
 	"widget.game_detail_heading.button.live_stats.hint":"点击以获取实时统计信息",

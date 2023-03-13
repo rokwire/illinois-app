@@ -2668,6 +2668,7 @@
     "panel.appointment.detail.error.msg": "Failed to load appointment data.",
 
     "widget.game_day.label.its_game_day":"It's Game Day!",
+    "widget.game_day.label.no_games":"No today games.",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",
     "widget.game_detail_heading.button.live_stats.hint":"Tap for live stats",

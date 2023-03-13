@@ -707,6 +707,7 @@ class Sports with Service implements NotificationsListener, ExploreJsonHandler {
   }
 
   List<Game>? getTodayGames(List<Game>? games) {
+    //TMP: return (games != null) ? List.from(games) : null;
     if (CollectionUtils.isEmpty(games)) {
       return null;
     }
