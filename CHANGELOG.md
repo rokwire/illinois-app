@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.25] - 2023-03-13
 ### Fixed
 - Fixed checkbox image asset in Group Notifications panel.
 - Fixed updating groups in Groups favorite widget [#2939](https://github.com/rokwire/illinois-app/issues/2939).
