@@ -215,7 +215,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
       ),
       _DisabledToggleButton(
           toggled: groupEventsNotificationsEnabled,
-          label: Localization().getStringEx("panel.settings.notifications.group_updates.events.label", "Event"),
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.events.label", "Events"),
           textStyle: groupEventsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(
