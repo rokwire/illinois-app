@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed checkbox image asset in Group Notifications panel.
+- Fixed updating groups in Groups favorite widget [#2939](https://github.com/rokwire/illinois-app/issues/2939).
 
 ## [4.3.24] - 2023-03-10
 ### Changed
