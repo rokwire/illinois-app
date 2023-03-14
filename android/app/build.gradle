@@ -139,6 +139,9 @@ android {
             manifestPlaceholders = [mapsApiKey: "${illinoisKeysProperties.getProperty('googleMapsApiKey')}"]
 
             //Origo Mobile keys build configurations - see keys.properties
+            resValue "string", "hceAidFilter1", "${illinoisKeysProperties.getProperty('origoAidFilter1')}"
+            resValue "string", "hceAidFilter2", "${illinoisKeysProperties.getProperty('origoAidFilter2')}"
+
             buildConfigField "String", "ORIGO_APP_ID", "\"${illinoisKeysProperties.getProperty('origoAppId')}\""
             buildConfigField "int", "ORIGO_LOCK_SERVICE_CODE", illinoisKeysProperties.getProperty('origoLockServiceCode')
         }

@@ -60,9 +60,4 @@
 
     <!-- Navigation -->
     <string name="invalid_server_response">服務器響應無效</string>
-
-    <!-- Mobile Access -->
-    <string name="mobile_access_notif_content_title">移動訪問正在運行</string>
-    <string name="mobile_access_notif_big_content_title">移動訪問正在運行</string>
-    <string name="mobile_access_notif_foreground_service_title">運行前台掃描服務</string>
 </resources>
