@@ -251,7 +251,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
           InkWell(onTap: _onTapCreate, child: 
             Padding(padding: EdgeInsets.only(left: 0, right: 4, top: 12, bottom: 12), child:
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(createTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+                Text(createTitle, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")),
                 Padding(padding: EdgeInsets.only(left: 5), child:
                   Styles().images?.getImage('plus-circle')
                 )

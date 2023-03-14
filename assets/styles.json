@@ -255,6 +255,8 @@
     "widget.input_field.text.medium": { "font_family": "regular", "size": 18.0, "color": "textBackground"},
     "widget.input_field.text.regular": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
 
+    "widget.sheet.title.regular" : {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
+
     "widget.dialog.button.close" : {"font_family": "medium", "size": 50.0, "color": "white"},
     "widget.dialog.message.medium" : {"font_family": "medium", "size": 16.0, "color": "white"},
     "widget.dialog.message.medium.thin" : {"font_family": "regular", "size": 16.0, "color": "white"},
@@ -516,8 +518,10 @@
     "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
 
     "panel.appointment_detail.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "accentColor1"},
+    "panel.settings.section_content.htm.title.regular":  {"extends": "widget.item.regular", "font_family": "regular_italic"},
 
-    "panel.settings.section_content.htm.title.regular":  {"extends": "widget.item.regular", "font_family": "regular_italic"}
+    "panel.research_project.profile.detail.regular":  {"font_family": "regular", "size": 14.0, "color": "textSurfaceAccent"},
+    "panel.research_project.profile.detail.small":  {"font_family": "regular", "size": 12.0, "color": "textSurfaceAccent"}
   },
   "image": {
     "campus-tools": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
