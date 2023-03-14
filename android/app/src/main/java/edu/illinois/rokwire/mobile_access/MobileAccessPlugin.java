@@ -59,6 +59,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         apiFacade.onActivityPause();
     }
 
+    public void onActivityDestroy() {
+        apiFacade.onActivityDestroy();
+    }
+
     //endregion
 
     //region Method Handler

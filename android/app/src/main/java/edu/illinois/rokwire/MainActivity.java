@@ -115,6 +115,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         if (orientationListener != null) {
             orientationListener.disable();
         }
+        if (mobileAccessPlugin != null) {
+            mobileAccessPlugin.onActivityDestroy();
+        }
     }
 
     public static MainActivity getInstance() {

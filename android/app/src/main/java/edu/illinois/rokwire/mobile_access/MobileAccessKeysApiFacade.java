@@ -65,6 +65,8 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
     private final OrigoMobileKeys mobileKeys;
     private final OrigoKeysApiFactory mobileKeysApiFactory;
+    private OrigoReaderConnectionCallback bleReaderConnectionCallback;
+    private OrigoHceConnectionCallback hceReaderConnectionCallback;
     private final Activity activity;
 
     public MobileAccessKeysApiFacade(Activity activity, OrigoKeysApiFactory apiFactory) {
@@ -80,11 +82,11 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     }
 
     public void onActivityCreate() {
-        OrigoReaderConnectionCallback readerConnectionCallback = new OrigoReaderConnectionCallback(activity.getApplicationContext());
-        readerConnectionCallback.registerReceiver(readerConnectionListener);
+        bleReaderConnectionCallback = new OrigoReaderConnectionCallback(activity.getApplicationContext());
+        bleReaderConnectionCallback.registerReceiver(bleReaderConnectionListener);
 
-        OrigoHceConnectionCallback hceConnectionCallback = new OrigoHceConnectionCallback(activity.getApplicationContext());
-        hceConnectionCallback.registerReceiver(hceConnectionListener);
+        hceReaderConnectionCallback = new OrigoHceConnectionCallback(activity.getApplicationContext());
+        hceReaderConnectionCallback.registerReceiver(hceReaderConnectionListener);
     }
 
     public void onActivityResume() {
@@ -97,6 +99,17 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     public void onActivityPause() {
         if (canScan()) {
             stopScanning();
+        }
+    }
+
+    public void onActivityDestroy() {
+        if (bleReaderConnectionCallback != null) {
+            bleReaderConnectionCallback.unregisterReceiver();
+            bleReaderConnectionCallback = null;
+        }
+        if (hceReaderConnectionCallback != null) {
+            hceReaderConnectionCallback.unregisterReceiver();
+            hceReaderConnectionCallback = null;
         }
     }
 
@@ -275,20 +288,20 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
     //region OrigoReaderConnectionListener implementation
 
-    private final OrigoReaderConnectionListener readerConnectionListener = new OrigoReaderConnectionListener() {
+    private final OrigoReaderConnectionListener bleReaderConnectionListener = new OrigoReaderConnectionListener() {
         @Override
         public void onReaderConnectionOpened(OrigoReader origoReader, OrigoOpeningType origoOpeningType) {
-            Log.d(TAG, "readerConnectionListener: onReaderConnectionOpened: reader: " + origoReader.getName() + ", opening type: " + origoOpeningType.name());
+            Log.d(TAG, "bleReaderConnectionListener: onReaderConnectionOpened: reader: " + origoReader.getName() + ", opening type: " + origoOpeningType.name());
         }
 
         @Override
         public void onReaderConnectionClosed(OrigoReader origoReader, OrigoOpeningResult origoOpeningResult) {
-            Log.d(TAG, "readerConnectionListener: onReaderConnectionClosed");
+            Log.d(TAG, "bleReaderConnectionListener: onReaderConnectionClosed");
         }
 
         @Override
         public void onReaderConnectionFailed(OrigoReader origoReader, OrigoOpeningType origoOpeningType, OrigoOpeningStatus origoOpeningStatus) {
-            Log.d(TAG, "readerConnectionListener: onReaderConnectionFailed");
+            Log.d(TAG, "bleReaderConnectionListener: onReaderConnectionFailed");
         }
     };
 
@@ -296,20 +309,20 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
     //region OrigoHceConnectionListener implementation
 
-    private final OrigoHceConnectionListener hceConnectionListener = new OrigoHceConnectionListener() {
+    private final OrigoHceConnectionListener hceReaderConnectionListener = new OrigoHceConnectionListener() {
         @Override
         public void onHceSessionOpened() {
-            Log.d(TAG, "hceConnectionListener: onHceSessionOpened");
+            Log.d(TAG, "hceReaderConnectionListener: onHceSessionOpened");
         }
 
         @Override
         public void onHceSessionClosed(int i) {
-            Log.d(TAG, "hceConnectionListener: onHceSessionClosed");
+            Log.d(TAG, "hceReaderConnectionListener: onHceSessionClosed");
         }
 
         @Override
         public void onHceSessionInfo(OrigoReaderConnectionInfoType origoReaderConnectionInfoType) {
-            Log.d(TAG, "hceConnectionListener: onHceSessionInfo");
+            Log.d(TAG, "hceReaderConnectionListener: onHceSessionInfo");
         }
     };
 
