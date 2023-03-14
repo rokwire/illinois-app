@@ -215,7 +215,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
       ),
       _DisabledToggleButton(
           toggled: groupEventsNotificationsEnabled,
-          label: Localization().getStringEx("panel.settings.notifications.group_updates.events.label", "Event"),
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.events.label", "Events"),
           textStyle: groupEventsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(
@@ -472,5 +472,5 @@ class _EnabledToggleButton extends ToggleRibbonButton {
   // bool get toggled => (enabled == true) ? super.toggled == true : this.defaultValue == true;
 
   @override
-  Widget? get rightIconImage => Styles().images?.getImage((toggled) ? 'switch-on' : 'switch-off');  //Workaround for blurry images
+  Widget? get rightIconImage => Styles().images?.getImage((toggled) ? 'toggle-on' : 'toggle-off');  //Workaround for blurry images
 }

@@ -2690,6 +2690,7 @@
     "panel.icard.home.content.faqs.label": "preguntas frecuentes",
 
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
+    "widget.game_day.label.no_games":"No hay juegos hoy.",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",
     "widget.game_detail_heading.button.live_stats.hint":"Toca para ver estadísticas en vivo",
