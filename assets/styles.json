@@ -6,6 +6,7 @@
     "fillColorPrimaryTransparent09"         :"#E6002855",
     "fillColorPrimaryTransparent015"        :"#26002855",
     "textColorPrimary"                      :"#FFFFFF",
+    "textColorDisabled"                      :"#5c5c5c",
     "fillColorPrimaryVariant"               :"#0F2040",
     "fillColorSecondary"                    :"#E84A27",
     "fillColorSecondaryTransparent05"       :"#80E84A27",
@@ -25,6 +26,7 @@
     "textVariant"                           :"#ff494949",
     "textBackground"                        :"#404040",
     "textbackgroundVariant"                 :"#404040",
+    "textbackgroundVariant2"                 :"#e7e7e7",
 
     "accentColor1"                          :"#E84A27",
     "accentColor2"                          :"#5FA7A3",
@@ -153,11 +155,12 @@
     "widget.title.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.tiny": {"font_family": "bold", "size": 12.0, "color": "fillColorPrimary"},
     "widget.title.tiny.extra_fat": {"font_family": "extra_bold", "size": 12.0, "color": "fillColorPrimary"},
-    "widget.title.light.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "white"},
-    "widget.title.light.medium.fat": {"font_family": "bold", "size": 18.0, "color": "white"},
-    "widget.title.light.regular": {"font_family": "regular", "size": 16.0, "color": "white"},
-    "widget.title.light.small.fat": {"font_family": "bold", "size": 14.0, "color": "white"},
-    "widget.title.light.tiny": {"font_family": "medium", "size": 10.0, "color": "white"},
+    "widget.title.light.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "textColorPrimary"},
+    "widget.title.light.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "textColorPrimary"},
+    "widget.title.light.medium.fat": {"font_family": "bold", "size": 18.0, "color": "textColorPrimary"},
+    "widget.title.light.regular": {"font_family": "regular", "size": 16.0, "color": "textColorPrimary"},
+    "widget.title.light.small.fat": {"font_family": "bold", "size": 14.0, "color": "textColorPrimary"},
+    "widget.title.light.tiny": {"font_family": "medium", "size": 10.0, "color": "textColorPrimary"},
 
     "widget.detail.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.detail.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
@@ -380,6 +383,9 @@
     "panel.wellness.ring.select_predefined.message.regular": {"extends": "widget.info.small"},
     "panel.wellness.ring.select_predefined.button.label.regular": {"font_family": "bold", "size": 18.0, "color": "black"},
     "panel.wellness.ring.select_predefined.button.description.regular": {"font_family": "regular", "size": 14.0, "color": "black"},
+
+    "panel.wellness.ring.home_widget.button.title.enabled": {"font_family": "bold", "size": 14.0, "color": "black"},
+    "panel.wellness.ring.home_widget.button.title.disabled": {"font_family": "bold", "size": 14.0, "color": "textColorDisabled"},
 
     "panel.wellness.ring.home.detail.message": {"extends": "widget.info.regular.thin"},
     "panel.wellness.ring.home.detail.message.fat": {"extends": "widget.info.regular.fat"},
