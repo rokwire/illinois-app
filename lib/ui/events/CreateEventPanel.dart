@@ -1997,10 +1997,7 @@ class _EventDateDisplayView extends StatelessWidget {
           children: <Widget>[
             Text(
               StringUtils.ensureNotEmpty(label, defaultValue: '-'),
-              style: TextStyle(
-                  color: Styles().colors!.fillColorPrimary,
-                  fontSize: 16,
-                  fontFamily: Styles().fontFamilies!.regular),
+              style: Styles().textStyles?.getTextStyle("widget.title.regular"),
             ),
             Styles().images?.getImage('chevron-down') ?? Container()
           ],
