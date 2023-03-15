@@ -76,10 +76,10 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(_title1 ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),),
+                Text(_title1 ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.medium.fat")),
                 Visibility(visible: StringUtils.isNotEmpty(title2), child:
                   Row(children: [
-                    Text(title2 ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),),
+                    Text(title2 ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")),
                     Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
                       InkWell(onTap: _onInfo, child:
                         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
@@ -95,8 +95,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
           GestureDetector(onTap: _onCustomize, child:
             Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
               Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18, 
-                decoration: TextDecoration.underline, decorationColor: Styles().colors?.textColorPrimary, decorationThickness: 1)))
+                style: Styles().textStyles?.getTextStyle("widget.home_tout.button.underline.title")))
           ),
         ],)
       )
@@ -245,7 +244,7 @@ class _InfoDialog extends StatelessWidget {
                   HtmlWidget(
                       StringUtils.ensureNotEmpty(contentHtml),
                       onTapUrl : (url) {_onTapLink(context ,url); return true;},
-                      textStyle:  TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),
+                      textStyle:  Styles().textStyles?.getTextStyle("widget.dialog.message.medium.fat"),
                       customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.white ?? Colors.white)} : null
                   )
                     //Text('Illinois app uses your first name from Student Self-Service. You can change your preferred name under Personal Information and Preferred First Name',

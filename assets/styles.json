@@ -221,6 +221,7 @@
     "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
 
     "widget.button.title.extra_large": { "font_family": "bold", "size": 26.0, "color": "fillColorPrimary"},
+    "widget.button.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.button.title.regular": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.regular.thin": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.regular.thin.underline": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
@@ -267,6 +268,7 @@
     "widget.sheet.title.regular" : {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
 
     "widget.dialog.button.close" : {"font_family": "medium", "size": 50.0, "color": "white"},
+    "widget.dialog.message.medium.fat" : {"font_family": "bold", "size": 16.0, "color": "white"},
     "widget.dialog.message.medium" : {"font_family": "medium", "size": 16.0, "color": "white"},
     "widget.dialog.message.medium.thin" : {"font_family": "regular", "size": 16.0, "color": "white"},
     "widget.dialog.message.small" : {"font_family": "regular", "size": 14.0, "color": "white"},
@@ -357,6 +359,8 @@
     "widget.checklist.content.tab.title.not_completed": {"font_family": "regular", "size": 16.0, "color": "white", "decoration": "underline"},
     "widget.checklist.content.tab.title.current_tab.completed": {"font_family": "extra_bold", "size": 16.0, "color": "greenAccent", "decoration": "underline"},
     "widget.checklist.content.tab.title.current_tab.not_completed": {"font_family": "extra_bold", "size": 16.0, "color": "white", "decoration": "underline"},
+
+    "widget.home_tout.button.underline.title": {"font_family": "bold", "size": 18.0, "color": "textColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "textColorPrimary"},
 
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
