@@ -19,6 +19,8 @@ package edu.illinois.rokwire.mobile_access;
 import android.app.Activity;
 import android.util.Log;
 
+import com.hid.origo.api.ble.OrigoRssiSensitivity;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -88,6 +90,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                     boolean isRegistered = handleMobileAccessIsEndpointRegistered();
                     result.success(isRegistered);
                     break;
+                case Constants.MOBILE_ACCESS_SET_RSSI_SENSITIVITY_KEY:
+                    boolean success = handleMobileAccessSetRssiSensitivity(call.arguments);
+                    result.success(success);
+                    break;
                 default:
                     result.notImplemented();
                     break;
@@ -122,6 +128,29 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     private boolean handleMobileAccessIsEndpointRegistered() {
         return apiFacade.isEndpointSetUpComplete();
+    }
+
+    private boolean handleMobileAccessSetRssiSensitivity(Object arguments) {
+        OrigoRssiSensitivity origoRssiSensitivity = null;
+        if (arguments instanceof String) {
+            String sensitivityValue = (String) arguments;
+            switch (sensitivityValue) {
+                case "high":
+                    origoRssiSensitivity = OrigoRssiSensitivity.HIGH;
+                    break;
+                case "normal":
+                    origoRssiSensitivity = OrigoRssiSensitivity.NORMAL;
+                    break;
+                case "low":
+                    origoRssiSensitivity = OrigoRssiSensitivity.LOW;
+                    break;
+            }
+        }
+        if (origoRssiSensitivity != null) {
+            return apiFacade.changeRssiSensitivity(origoRssiSensitivity);
+        } else {
+            return false;
+        }
     }
 
     //endregion

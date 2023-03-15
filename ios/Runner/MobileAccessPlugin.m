@@ -104,6 +104,10 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	else if ([call.method isEqualToString:@"isEndpointRegistered"]) {
 		result([NSNumber numberWithBool:self.isEndpointRegistered]);
 	}
+    else if ([call.method isEqualToString:@"setRssiSensitivity"]) {
+        //TBD: implement
+        result([NSNumber numberWithBool:false]);
+    }
 }
 
 // Implementation

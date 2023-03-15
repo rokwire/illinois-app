@@ -71,4 +71,16 @@ class MobileAccess /* with Service */ {
     }
     return result;
   }
+
+  Future<bool> setBleRssiSensitivity(BleRssiSensitivity rssi) async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('setRssiSensitivity', null);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
 }
+
+enum BleRssiSensitivity { high, normal, low }

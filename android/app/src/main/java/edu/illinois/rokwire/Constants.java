@@ -37,6 +37,7 @@ public class Constants {
     public static final String MOBILE_ACCESS_REGISTER_ENDPOINT_KEY = "registerEndpoint";
     public static final String MOBILE_ACCESS_UNREGISTER_ENDPOINT_KEY = "unregisterEndpoint";
     public static final String MOBILE_ACCESS_IS_ENDPOINT_REGISTERED_KEY = "isEndpointRegistered";
+    public static final String MOBILE_ACCESS_SET_RSSI_SENSITIVITY_KEY = "setRssiSensitivity";
 
     //Maps
     public static final LatLng DEFAULT_INITIAL_CAMERA_POSITION = new LatLng(40.102116, -88.227129); //Illinois University: Center of Campus //(40.096230, -88.235899); // State Farm Center

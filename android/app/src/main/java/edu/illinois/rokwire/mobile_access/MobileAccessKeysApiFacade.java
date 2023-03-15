@@ -41,6 +41,7 @@ import com.hid.origo.api.ble.OrigoOpeningType;
 import com.hid.origo.api.ble.OrigoReader;
 import com.hid.origo.api.ble.OrigoReaderConnectionCallback;
 import com.hid.origo.api.ble.OrigoReaderConnectionListener;
+import com.hid.origo.api.ble.OrigoRssiSensitivity;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
 import com.hid.origo.api.hce.OrigoHceConnectionCallback;
 import com.hid.origo.api.hce.OrigoHceConnectionListener;
@@ -157,6 +158,15 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
             }
         }
         return null;
+    }
+
+    public boolean changeRssiSensitivity(OrigoRssiSensitivity rssiSensitivity) {
+        if (getOrigoScanConfiguration() != null) {
+            getOrigoScanConfiguration().setRssiSensitivity(rssiSensitivity);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     //endregion
