@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -839,8 +841,8 @@ class DiningFeedback {
 
   static DiningFeedback? fromJson(Map<String, dynamic>?json) {
     return (json != null) ? DiningFeedback(
-      feedbackUrl: JsonUtils.stringValue(json['feedback_url']),
-      dieticianUrl: JsonUtils.stringValue(json['dietician_url']),
+      feedbackUrl: JsonUtils.stringValue(json['feedback_url~${Platform.operatingSystem}']) ?? JsonUtils.stringValue(json['feedback_url']),
+      dieticianUrl: JsonUtils.stringValue(json['dietician_url~${Platform.operatingSystem}']) ?? JsonUtils.stringValue(json['dietician_url']),
     ) : null;
   }
 
