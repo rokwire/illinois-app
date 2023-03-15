@@ -827,3 +827,41 @@ class DiningSpecial {
     };
   }
 }
+
+//////////////////////////////
+/// DiningFeedback
+
+class DiningFeedback {
+  final String? feedbackUrl;
+  final String? dieticianUrl;
+  
+  DiningFeedback({this.feedbackUrl, this.dieticianUrl});
+
+  static DiningFeedback? fromJson(Map<String, dynamic>?json) {
+    return (json != null) ? DiningFeedback(
+      feedbackUrl: JsonUtils.stringValue(json['feedback_url']),
+      dieticianUrl: JsonUtils.stringValue(json['dietician_url']),
+    ) : null;
+  }
+
+  bool get isEmpty =>
+    StringUtils.isEmpty(feedbackUrl) &&
+    StringUtils.isEmpty(dieticianUrl);
+
+  bool get isNotEmpty => !isEmpty;
+
+  static Map<String, DiningFeedback>? mapFromJson(Map<String, dynamic>? jsonMap) {
+    Map<String, DiningFeedback>? result;
+    if (jsonMap != null) {
+      result = <String, DiningFeedback>{};
+      jsonMap.forEach((String key, dynamic value) {
+        DiningFeedback? feedback = DiningFeedback.fromJson(JsonUtils.mapValue(value));
+        if (feedback != null) {
+          result![key] = feedback;
+        }
+      });
+    }
+    return result;
+  }
+
+}

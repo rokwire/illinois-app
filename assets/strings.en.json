@@ -1062,6 +1062,9 @@
     "panel.explore_detail.button.order_online":"Order Online",
     "panel.explore_detail.event_type.online": "Online Event",
     "panel.explore_detail.event_type.in_person": "In-person event",
+    "panel.explore_detail.label.text_and_tell": "Text and tell us about your dining experience!",
+    "panel.explore_detail.button.text_feedback": "Text Feedback",
+    "panel.explore_detail.button.ask_dietician": "Ask a Dietician",
 
     "panel.events_schedule.header.title": "Event Schedule",
     "panel.events_schedule.tab.title.saved": "Saved",

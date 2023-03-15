@@ -65,11 +65,13 @@ class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAt
 class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements NotificationsListener {
 
   Dining? _dining;
+  bool _isDiningLoading = false;
+
+  DiningFeedback? _diningFeedback;
+  bool _isDiningFeedbackLoading = false;
 
   _DiningDetailPanelState(Dining? dining) :
     _dining = dining;
-
-  bool _isDiningLoading = false;
 
   //Maps
   Core.Position? _locationData;
@@ -90,6 +92,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     ]);
 
     _reloadDiningIfNeed();
+    _loadDiningFeedback();
 
     _addRecentItem();
     _locationData = widget.initialLocationData;
@@ -146,6 +149,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                       _exploreDetails(),
                       _exploreSubTitle(),
                       _exploreDescription(),
+                      _buildDiningFeedback(),
                     ])
                   ),
                   _buildDiningDetail(),
@@ -445,7 +449,57 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
           )
         )
       )
-    ],) : _DiningDetail(dining: _dining,);
+    ],) : _DiningDetail(dining: _dining);
+  }
+
+  Widget _buildDiningFeedback() {
+    if (_diningFeedback?.isNotEmpty ?? false) {
+      return Padding(padding: EdgeInsets.only(top: 10, bottom: 20), child:
+        Column(children: [
+          Text(Localization().getStringEx('panel.explore_detail.label.text_and_tell', 'Text and tell us about your dining experience!'), style:
+            TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 16)
+          ),
+          Container(height: 10,),
+          Row(children: [
+            Expanded(child:
+              StringUtils.isNotEmpty(_diningFeedback?.feedbackUrl) ? RoundedButton(
+                label: Localization().getStringEx('panel.explore_detail.button.text_feedback', 'Text Feedback'),
+                backgroundColor: Styles().colors?.white,
+                borderColor: Styles().colors!.fillColorSecondary,
+                textStyle: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                onTap: () => _onTapTextFeedback(),
+              ) : Container()
+            ),
+            Container(width: 10,),
+            Expanded(child:
+              StringUtils.isNotEmpty(_diningFeedback?.dieticianUrl) ? RoundedButton(
+                label: Localization().getStringEx('panel.explore_detail.button.ask_dietician', 'Ask a Dietician'),
+                backgroundColor: Styles().colors?.white,
+                borderColor: Styles().colors!.fillColorSecondary,
+                textStyle: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                onTap: () => _onTapAskDietician(),
+              ) : Container()
+            ),
+          ],)
+        ],)
+      );
+    }
+    else if (_isDiningFeedbackLoading) {
+      return Row(children: <Widget>[
+        Expanded(child:
+          Center(child:
+            Padding(padding: const EdgeInsets.symmetric(vertical: 24.0), child:
+              CircularProgressIndicator(),
+            )
+          )
+        )
+      ],);
+    }
+    else {
+      return Container();
+    }
   }
 
   void _reloadDiningIfNeed() {
@@ -464,8 +518,22 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
         }
       });
     }
-
   }
+
+  void _loadDiningFeedback() {
+    if (_dining?.id != null) {
+      _isDiningFeedbackLoading = true;
+      Dinings().loadDiningFeedback(diningId: widget.dining?.id).then((DiningFeedback? diningFeedback) {
+        if (mounted) {
+          setState(() {
+            _diningFeedback = diningFeedback;
+            _isDiningFeedbackLoading = false;
+          });
+        }
+      });
+    }
+  }
+
 
   Future<void> _loadCurrentLocation() async {
     _locationData = FlexUI().isLocationServicesAvailable ? await LocationServices().location : null;
@@ -520,6 +588,25 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     }
   }
 
+  void _onTapTextFeedback() {
+    Analytics().logSelect(target: 'Text Feedback');
+    String? url = _diningFeedback?.feedbackUrl;
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if (uri != null) {
+      url_launcher.launchUrl(uri);
+    }
+  }
+
+  void _onTapAskDietician() {
+    Analytics().logSelect(target: 'Ask a Dietician');
+    String? url = _diningFeedback?.dieticianUrl;
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if (uri != null) {
+      url_launcher.launchUrl(uri);
+    }
+  }
+
+
   void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
@@ -543,7 +630,7 @@ class _DiningDetail extends StatefulWidget {
 
   final Dining? dining;
 
-  _DiningDetail({required this.dining});
+  _DiningDetail({required this.dining });
 
   _DiningDetailState createState() => _DiningDetailState();
 }
@@ -601,12 +688,15 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   @override
   Widget build(BuildContext context) {
     bool hasFoodFilterApplied = Auth2().prefs?.hasFoodFilters ?? false;
+    
     String filtersLabel = hasFoodFilterApplied
       ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
       : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters");
+    
     String filtersHint = hasFoodFilterApplied
       ? Localization().getStringEx("widget.food_detail.button.filters_applied.hint", "")
       : Localization().getStringEx("widget.food_detail.button.filters_empty.hint", "");
+    
     return hasMenuData ? Container(color: Styles().colors!.background, child:
       Column(children: <Widget>[
         Container(color: Styles().colors!.background, height: 1,),
