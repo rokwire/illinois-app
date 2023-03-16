@@ -16,7 +16,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -84,10 +83,10 @@ class MobileAccess with Service {
     return result;
   }
 
-  Future<bool> setBleRssiSensitivity(BleRssiSensitivity rssi) async {
+  Future<bool> setBleRssiSensitivity(MobileAccessBleRssiSensitivity rssi) async {
     bool result = false;
     try {
-      result = await _methodChannel.invokeMethod('setRssiSensitivity', null);
+      result = await _methodChannel.invokeMethod('setRssiSensitivity', MobileAccess.bleRssiSensitivityToString(rssi));
     } catch (e) {
       print(e.toString());
     }
@@ -108,6 +107,34 @@ class MobileAccess with Service {
   void _notifyEndpointRegistrationFinished(dynamic arguments) {
     NotificationService().notify(notifyDeviceRegistrationFinished, arguments);
   }
+
+  // BLE Rssi Sensitivity
+  
+  static String? bleRssiSensitivityToString(MobileAccessBleRssiSensitivity? sensitivity) {
+    switch (sensitivity) {
+      case MobileAccessBleRssiSensitivity.high:
+        return 'high';
+      case MobileAccessBleRssiSensitivity.normal:
+        return 'normal';
+      case MobileAccessBleRssiSensitivity.low:
+        return 'low';
+      default:
+        return null;
+    }
+  }
+
+  static MobileAccessBleRssiSensitivity? bleRssiSensitivityFromString(String? value) {
+    switch (value) {
+      case 'high':
+        return MobileAccessBleRssiSensitivity.high;
+      case 'normal':
+        return MobileAccessBleRssiSensitivity.normal;
+      case 'low':
+        return MobileAccessBleRssiSensitivity.low;
+      default:
+        return null;
+    }
+  }
 }
 
-enum BleRssiSensitivity { high, normal, low }
+enum MobileAccessBleRssiSensitivity { high, normal, low }

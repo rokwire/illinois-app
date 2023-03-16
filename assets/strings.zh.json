@@ -1620,6 +1620,7 @@
     "panel.settings.icard.ios_settings.description.label": "點擊頁面頂部的返回箭頭返回 {{app_title}} 應用程序。",
     "panel.settings.icard.notification_drawer.title.label": "通知 ？？？",
     "panel.settings.icard.notification_drawer.description.label": "從通知抽屜解鎖門。",
+    "panel.settings.icard.rssi.change.failed.msg": "無法更改藍牙靈敏度。",
 
 	"panel.create_event.header.title":"创建活动",
 	"panel.create_event.title":"创建活动",

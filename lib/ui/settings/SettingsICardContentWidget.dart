@@ -19,7 +19,10 @@ import 'dart:io';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/MobileAccess.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -30,6 +33,15 @@ class SettingsICardContentWidget extends StatefulWidget {
 }
 
 class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget> {
+  MobileAccessBleRssiSensitivity? _rssiSensitivity;
+  bool _rssiLoading = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    _rssiSensitivity = MobileAccess.bleRssiSensitivityFromString(Storage().mobileAccessBleRssiSensitivity);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -61,20 +73,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
               child: Padding(
                   padding: EdgeInsets.only(top: 16),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.label', 'Bluetooth sensitivity'),
-                        style: Styles().textStyles?.getTextStyle('widget.message.regular.fat')),
-                    _buildRadioButtonEntry(
-                        title: Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.high.label', 'High'),
-                        onTap: () => _onTapBluetoothSensitivity(_BluetoothSensitivity.high)),
-                    _buildDividerWidget(),
-                    _buildRadioButtonEntry(
-                        title: Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.normal.label', 'Normal'),
-                        onTap: () => _onTapBluetoothSensitivity(_BluetoothSensitivity.normal),
-                        selected: true),
-                    _buildDividerWidget(),
-                    _buildRadioButtonEntry(
-                        title: Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.low.label', 'Low'),
-                        onTap: () => _onTapBluetoothSensitivity(_BluetoothSensitivity.low)),
+                    _buildRssiContentWidget(),
                     Padding(
                         padding: EdgeInsets.only(top: 16),
                         child: ToggleRibbonButton(
@@ -96,6 +95,30 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
           Visibility(visible: _isAndroid, child: Padding(padding: EdgeInsets.only(top: 16), child: _buildNotificationDrawerWidget())),
           Visibility(visible: _isIOS, child: Padding(padding: EdgeInsets.only(top: 16), child: _buildOpenIOSSystemSettingsWidget()))
         ]));
+  }
+
+  Widget _buildRssiContentWidget() {
+    return Stack(alignment: Alignment.center, children: [
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.label', 'Bluetooth sensitivity'),
+            style: Styles().textStyles?.getTextStyle('widget.message.regular.fat')),
+        _buildRadioButtonEntry(
+            title: Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.high.label', 'High'),
+            onTap: () => _onTapBluetoothSensitivity(MobileAccessBleRssiSensitivity.high),
+            selected: (_rssiSensitivity == MobileAccessBleRssiSensitivity.high)),
+        _buildDividerWidget(),
+        _buildRadioButtonEntry(
+            title: Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.normal.label', 'Normal'),
+            onTap: () => _onTapBluetoothSensitivity(MobileAccessBleRssiSensitivity.normal),
+            selected: (_rssiSensitivity == null) || (_rssiSensitivity == MobileAccessBleRssiSensitivity.normal)),
+        _buildDividerWidget(),
+        _buildRadioButtonEntry(
+            title: Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.low.label', 'Low'),
+            onTap: () => _onTapBluetoothSensitivity(MobileAccessBleRssiSensitivity.low),
+            selected: (_rssiSensitivity == MobileAccessBleRssiSensitivity.low)),
+      ]),
+      Visibility(visible: _rssiLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary))
+    ]);
   }
 
   Widget _buildRadioButtonEntry({required String title, String? description, bool? selected, void Function()? onTap}) {
@@ -248,8 +271,28 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
     //TBD: DD - implement
   }
 
-  void _onTapBluetoothSensitivity(_BluetoothSensitivity sensitivity) {
-    //TBD: DD - implement
+  void _onTapBluetoothSensitivity(MobileAccessBleRssiSensitivity rssiSensitivity) {
+    if ((_rssiLoading) || (_rssiSensitivity == rssiSensitivity)) {
+      return;
+    }
+    setStateIfMounted(() {
+      _rssiLoading = true;
+    });
+    MobileAccess().setBleRssiSensitivity(rssiSensitivity).then((success) {
+      if (success) {
+        _rssiSensitivity = rssiSensitivity;
+        Storage().mobileAccessBleRssiSensitivity = MobileAccess.bleRssiSensitivityToString(_rssiSensitivity);
+      }
+      if (!success) {
+        AppAlert.showDialogResult(
+            context,
+            Localization().getStringEx(
+                'panel.settings.icard.rssi.change.failed.msg', 'Failed to change Bluetooth sensitivity.'));
+      }
+      setStateIfMounted(() {
+        _rssiLoading = false;
+      });
+    });
   }
 
   void _onTapPlaySound() {
@@ -281,5 +324,3 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
     return Platform.isIOS;
   }
 }
-
-enum _BluetoothSensitivity { high, normal, low }

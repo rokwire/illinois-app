@@ -398,4 +398,9 @@ class Storage extends rokwire.Storage {
   bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
   set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
 
+  // Mobile Access
+  static const String mobileAccessBleRssiSensitivityKey = 'mobile_access_ble_rssi_sensitivity';
+  String? get mobileAccessBleRssiSensitivity => getStringWithName(mobileAccessBleRssiSensitivityKey);
+  set mobileAccessBleRssiSensitivity(String? value) => setStringWithName(mobileAccessBleRssiSensitivityKey, value);
+
 }

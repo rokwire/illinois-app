@@ -1617,6 +1617,7 @@
     "panel.settings.icard.ios_settings.description.label": "Vuelva a la aplicación {{app_title}} tocando la flecha de retorno en la parte superior de la página.",
     "panel.settings.icard.notification_drawer.title.label": "Notificación ???",
     "panel.settings.icard.notification_drawer.description.label": "Desbloquee las puertas del cajón de notificaciones.",
+    "panel.settings.icard.rssi.change.failed.msg": "No se pudo cambiar la sensibilidad de Bluetooth.",
 
     "panel.create_event.header.title":"Crea Un Evento",
     "panel.create_event.title":"Crear un evento",

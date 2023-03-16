@@ -1619,6 +1619,7 @@
     "panel.settings.icard.ios_settings.description.label": "Return to the {{app_title}} app by tapping the return arrow at top of the page.",
     "panel.settings.icard.notification_drawer.title.label": "Notification ???",
     "panel.settings.icard.notification_drawer.description.label": "Unlock doors from notification drawer.",
+    "panel.settings.icard.rssi.change.failed.msg": "Failed to change Bluetooth sensitivity.",
 
     "panel.create_event.header.title":"Create An Event",
     "panel.create_event.title":"Create an Event",
