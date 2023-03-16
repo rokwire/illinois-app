@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -28,7 +29,7 @@ class DebugMobileAccessKeysEndpointSetupPanel extends StatefulWidget {
   _DebugMobileAccessKeysEndpointSetupPanelState createState() => _DebugMobileAccessKeysEndpointSetupPanelState();
 }
 
-class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAccessKeysEndpointSetupPanel> {
+class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAccessKeysEndpointSetupPanel> implements NotificationsListener {
   TextEditingController? _invitationCodeController;
 
   int _loadingProgress = 0;
@@ -37,6 +38,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [MobileAccess.notifyDeviceRegistrationFinished]);
     _invitationCodeController = TextEditingController();
     _increaseProgress();
     MobileAccess().isEndpointRegistered().then((registered) {
@@ -47,8 +49,9 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
 
   @override
   void dispose() {
-    super.dispose();
+    NotificationService().unsubscribe(this);
     _invitationCodeController!.dispose();
+    super.dispose();
   }
 
   @override
@@ -142,6 +145,13 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
     if (StringUtils.isNotEmpty(invitationCode) && (invitationCode!.length == 19) && RegExp(regExPattern).hasMatch(invitationCode)) {
       _increaseProgress();
       MobileAccess().registerEndpoint(invitationCode).then((success) {
+        late String msg;
+        if (success == true) {
+          msg = 'Device registering was successfully initiated. Please wait until confirmation message is received.';
+        } else {
+          msg = 'Failed to initiate device registration.';
+        }
+        AppAlert.showMessage(context, msg);
         _decreaseProgress();
       });
     } else {
@@ -159,6 +169,16 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
     });
   }
 
+  void _onDeviceRegistrationFinished(bool? succeeded) {
+    late String msg;
+    if (succeeded == true) {
+      msg = "Device registration finished successfully. ";
+    } else {
+      msg = "Failed to register device.";
+    }
+    AppAlert.showDialogResult(context, msg);
+  }
+
   bool get _isLoading {
     return (_loadingProgress > 0);
   }
@@ -173,5 +193,13 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
     setStateIfMounted(() {
       _loadingProgress--;
     });
+  }
+  
+  @override
+  void onNotification(String name, param) {
+    if (name == MobileAccess.notifyDeviceRegistrationFinished) {
+      bool? succeeded = (param is bool) ? param : null;
+      _onDeviceRegistrationFinished(succeeded);
+    }
   }
 }

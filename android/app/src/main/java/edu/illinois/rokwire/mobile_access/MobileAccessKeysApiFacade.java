@@ -114,9 +114,12 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         }
     }
 
-    public void setupEndpoint(String invitationCode) {
+    public boolean setupEndpoint(String invitationCode) {
         if (!isEndpointSetUpComplete()) {
             getMobileKeys().endpointSetup(mobileKeysEndpointSetupCallBack, invitationCode);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -239,14 +242,14 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionCompleted");
-            Toast.makeText(activity, "Mobile Access: Register Endpoint - succeeded", Toast.LENGTH_SHORT).show();
+            MobileAccessPlugin.invokeEndpointSetupFinishedMethod(true);
             onEndpointSetUpComplete();
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
-            Toast.makeText(activity, "Mobile Access: Register Endpoint - failed: " + e.getErrorCode(), Toast.LENGTH_SHORT).show();
+            MobileAccessPlugin.invokeEndpointSetupFinishedMethod(false);
         }
     };
 

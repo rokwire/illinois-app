@@ -16,9 +16,14 @@
 
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/service.dart';
 
-class MobileAccess /* with Service */ {
+class MobileAccess with Service {
+  static const String notifyDeviceRegistrationFinished  = "edu.illinois.rokwire.mobile_access.device.registration.finished";
+
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/mobile_access');
 
   // Singleton
@@ -28,6 +33,13 @@ class MobileAccess /* with Service */ {
 
   factory MobileAccess() {
     return _instance;
+  }
+
+  // Initialization
+
+  @override
+  void createService() {
+    _methodChannel.setMethodCallHandler(_handleMethodCall);
   }
 
   // APIs
@@ -80,6 +92,21 @@ class MobileAccess /* with Service */ {
       print(e.toString());
     }
     return result;
+  }
+
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case "endpoint.register.finished":
+        _notifyEndpointRegistrationFinished(call.arguments);
+        break;
+      default:
+        break;
+    }
+    return null;
+  }
+
+  void _notifyEndpointRegistrationFinished(dynamic arguments) {
+    NotificationService().notify(notifyDeviceRegistrationFinished, arguments);
   }
 }
 

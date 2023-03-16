@@ -34,7 +34,7 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     private static final String TAG = "MobileAccessPlugin";
 
-    private MethodChannel methodChannel;
+    private static MethodChannel methodChannel;
 
     private final MobileAccessKeysApiFacade apiFacade;
 
@@ -79,8 +79,8 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                     result.success(keys);
                     break;
                 case Constants.MOBILE_ACCESS_REGISTER_ENDPOINT_KEY:
-                    handleMobileAccessRegisterEndpoint(call.arguments);
-                    result.success(true);
+                    boolean endpointSetupInitiated = handleMobileAccessRegisterEndpoint(call.arguments);
+                    result.success(endpointSetupInitiated);
                     break;
                 case Constants.MOBILE_ACCESS_UNREGISTER_ENDPOINT_KEY:
                     handleMobileAccessUnregisterEndpoint();
@@ -114,12 +114,12 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         return apiFacade.getKeysDetails();
     }
 
-    private void handleMobileAccessRegisterEndpoint(Object params) {
+    private boolean handleMobileAccessRegisterEndpoint(Object params) {
         String invitationCode = null;
         if (params instanceof String) {
             invitationCode = (String) params;
         }
-        apiFacade.setupEndpoint(invitationCode);
+        return apiFacade.setupEndpoint(invitationCode);
     }
 
     private void handleMobileAccessUnregisterEndpoint() {
@@ -167,6 +167,16 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         methodChannel.setMethodCallHandler(null);
         methodChannel = null;
+    }
+
+    public static void invokeEndpointSetupFinishedMethod(boolean result) {
+        invokeFlutterMethod("endpoint.register.finished", result);
+    }
+
+    private static void invokeFlutterMethod(String methodName, Object arguments) {
+        if ((methodChannel != null) && (methodName != null)) {
+            methodChannel.invokeMethod(methodName, arguments);
+        }
     }
 
     //endregion
