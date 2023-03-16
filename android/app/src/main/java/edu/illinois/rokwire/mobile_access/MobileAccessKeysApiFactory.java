@@ -51,7 +51,7 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
             OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
                     new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext),
-                            new OrigoTwistAndGoOpeningTrigger(appContext),
+                            new OrigoTwistAndGoOpeningTrigger(appContext), // Twist & Go is enabled by default
                             new OrigoSeamlessOpeningTrigger()}, BuildConfig.ORIGO_LOCK_SERVICE_CODE)
                     .setAllowBackgroundScanning(true)
                     .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)

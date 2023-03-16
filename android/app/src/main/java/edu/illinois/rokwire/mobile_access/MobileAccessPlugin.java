@@ -91,8 +91,12 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                     result.success(isRegistered);
                     break;
                 case Constants.MOBILE_ACCESS_SET_RSSI_SENSITIVITY_KEY:
-                    boolean success = handleMobileAccessSetRssiSensitivity(call.arguments);
-                    result.success(success);
+                    boolean rssiChanged = handleMobileAccessSetRssiSensitivity(call.arguments);
+                    result.success(rssiChanged);
+                    break;
+                case Constants.MOBILE_ACCESS_ENABLE_TWIST_AND_GO_KEY:
+                    boolean twistAndGoChanged = handleEnableTwistAndGo(call.arguments);
+                    result.success(twistAndGoChanged);
                     break;
                 default:
                     result.notImplemented();
@@ -151,6 +155,14 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         } else {
             return false;
         }
+    }
+
+    private boolean handleEnableTwistAndGo(Object arguments) {
+        boolean enable = false;
+        if (arguments instanceof Boolean) {
+            enable = (Boolean) arguments;
+        }
+        return apiFacade.enableTwistAndGoOpening(enable);
     }
 
     //endregion

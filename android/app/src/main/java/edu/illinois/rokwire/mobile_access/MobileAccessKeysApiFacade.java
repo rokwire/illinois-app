@@ -37,12 +37,15 @@ import com.hid.origo.api.OrigoReaderConnectionController;
 import com.hid.origo.api.OrigoReaderConnectionInfoType;
 import com.hid.origo.api.ble.OrigoOpeningResult;
 import com.hid.origo.api.ble.OrigoOpeningStatus;
+import com.hid.origo.api.ble.OrigoOpeningTrigger;
+import com.hid.origo.api.ble.OrigoOpeningTriggerMediator;
 import com.hid.origo.api.ble.OrigoOpeningType;
 import com.hid.origo.api.ble.OrigoReader;
 import com.hid.origo.api.ble.OrigoReaderConnectionCallback;
 import com.hid.origo.api.ble.OrigoReaderConnectionListener;
 import com.hid.origo.api.ble.OrigoRssiSensitivity;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
+import com.hid.origo.api.ble.OrigoTwistAndGoOpeningTrigger;
 import com.hid.origo.api.hce.OrigoHceConnectionCallback;
 import com.hid.origo.api.hce.OrigoHceConnectionListener;
 
@@ -170,6 +173,42 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         } else {
             return false;
         }
+    }
+
+    public boolean enableTwistAndGoOpening(boolean enable) {
+        if (getOrigoScanConfiguration() == null) {
+            Log.d(TAG, "enableTwistAndGoOpening: OrigoScanConfiguration is null");
+            return false;
+        }
+        OrigoOpeningTriggerMediator rootOpeningTrigger = getOrigoScanConfiguration().getRootOpeningTrigger();
+        if (rootOpeningTrigger == null) {
+            Log.d(TAG, "enableTwistAndGoOpening: rootOpeningTrigger is null");
+            return false;
+        }
+        if (enable) {
+            rootOpeningTrigger.add(new OrigoTwistAndGoOpeningTrigger(activity.getApplicationContext()));
+            return true;
+        } else {
+            List<OrigoOpeningTrigger> openingTriggers = rootOpeningTrigger.getOpeningTriggers();
+            if ((openingTriggers != null)) {
+                OrigoOpeningTrigger triggerToRemove = null;
+                for (OrigoOpeningTrigger trigger : openingTriggers) {
+                    if (trigger instanceof OrigoTwistAndGoOpeningTrigger) {
+                        triggerToRemove = trigger;
+                        break;
+                    }
+                }
+                if (triggerToRemove != null) {
+                    getOrigoScanConfiguration().getRootOpeningTrigger().remove(triggerToRemove);
+                    return true;
+                } else {
+                    Log.d(TAG, "enableTwistAndGoOpening: There is no TwistAndGo trigger");
+                }
+            } else {
+                Log.d(TAG, "enableTwistAndGoOpening: There are no opening triggers");
+            }
+        }
+        return false;
     }
 
     //endregion
