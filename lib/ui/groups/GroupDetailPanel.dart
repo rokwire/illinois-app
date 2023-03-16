@@ -48,6 +48,7 @@ import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
+import 'package:rokwire_plugin/ui/panels/survey_creation_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -601,6 +602,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         content.add(_buildPrivacyDescription());
         content.add(_buildAdmins());
       }
+      content.add(_buildSurveyCreation());
     }
     else {
       content.add(_buildAbout());
@@ -1194,6 +1196,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     ]);
   }
 
+  Widget _buildSurveyCreation() {
+    return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
+      Padding(padding: EdgeInsets.all(16), child:
+        RoundedButton(label: Localization().getStringEx("panel.group_detail.button.create_survey.title",  'Create Survey'),
+            backgroundColor: Styles().colors!.white,
+            textColor: Styles().colors!.fillColorPrimary,
+            fontFamily: Styles().fontFamilies!.bold,
+            fontSize: 16,
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            borderColor: Styles().colors!.fillColorSecondary,
+            borderWidth: 2,
+            onTap: _onTapCreateSurvey,
+        ),
+      ),
+    );
+  }
+
   Widget _buildMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
       return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
@@ -1701,6 +1720,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       setState(() {});
     }
   }*/
+
+  void _onTapCreateSurvey() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyCreationPanel(tabBar: uiuc.TabBar())));
+  }
 
   void _onMembershipRequest() {
     String target;

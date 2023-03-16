@@ -121,7 +121,7 @@ class WellnessRings with Service implements NotificationsListener{
     _loadFromNet().then((success) {
       //Log.d("Wellness Rings _loadFromNet().then((success) = $success");
       status = success ? WellnessRingsStatus.initialized : WellnessRingsStatus.failed;
-      NotificationService().notify(notifyUserRingsUpdated);
+      // NotificationService().notify(notifyUserRingsUpdated);
       //Log.d("Wellness Rings _initRecords finished! status = $status");
     }).onError((error, stackTrace){
       Log.d("loadFromNet().onError((error, = $error");
