@@ -25,6 +25,8 @@
     "dialog.clear.hint":"",
     "dialog.apply.title":"Apply",
     "dialog.apply.hint":"",
+    "dialog.send.title":"Send",
+    "dialog.send.hint":"",
 
     "tabbar.home.title":"Home",
     "tabbar.home.hint":"Home Page",
@@ -1065,6 +1067,10 @@
     "panel.explore_detail.label.text_and_tell": "Text and tell us about your dining experience!",
     "panel.explore_detail.button.text_feedback": "Text Feedback",
     "panel.explore_detail.button.ask_dietician": "Ask a Dietician",
+    "panel.explore_detail.label.text_feedback": "Text Feedback",
+    "panel.explore_detail.label.text_feedback_descr": "Share your thoughts about your dining experience:",
+    "panel.explore_detail.label.ask_dietician": "Ask a Dietician",
+    "panel.explore_detail.label.ask_dietician_descr": "Type your question to our dieticians:",
 
     "panel.events_schedule.header.title": "Event Schedule",
     "panel.events_schedule.tab.title.saved": "Saved",
