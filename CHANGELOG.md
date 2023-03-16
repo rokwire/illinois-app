@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.26] - 2023-03-15
+### Added
+- Added text and tell feature to Dining location detail panel [#3034](https://github.com/rokwire/illinois-app/issues/3034).
+
 ## [4.3.25] - 2023-03-13
 ### Fixed
 - Fixed checkbox image asset in Group Notifications panel.
