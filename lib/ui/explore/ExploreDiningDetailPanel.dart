@@ -591,21 +591,46 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   void _onTapTextFeedback() {
     Analytics().logSelect(target: 'Text Feedback');
     String? url = _diningFeedback?.feedbackUrl;
-    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
-    if (uri != null) {
-      url_launcher.launchUrl(uri);
+    if (url != null) {
+      showDialog<String?>(context: context, builder: (BuildContext context) {
+        return _FeedbackBodyWidget(
+          analyticsTitle: 'Text Feedback',
+          title: Localization().getStringEx('panel.explore_detail.label.text_feedback', 'Text Feedback'),
+          message: Localization().getStringEx('panel.explore_detail.label.text_feedback_descr', 'Share your thoughts about your dining experience:'),
+        );
+      }).then((String? body) {
+        if (body != null) {
+          _sendFeedback(url, body);
+        }
+      });
     }
   }
 
   void _onTapAskDietician() {
     Analytics().logSelect(target: 'Ask a Dietician');
     String? url = _diningFeedback?.dieticianUrl;
-    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if (url != null) {
+      showDialog<String?>(context: context, builder: (BuildContext context) {
+        return _FeedbackBodyWidget(
+          analyticsTitle: 'Ask a Dietician',
+          title: Localization().getStringEx('panel.explore_detail.label.ask_dietician', 'Ask a Dietician'),
+          message: Localization().getStringEx('panel.explore_detail.label.ask_dietician_descr', 'Type your question to our dieticians:'),
+        );
+      }).then((String? body) {
+        if (body != null) {
+          _sendFeedback(url, body);
+        }
+      });
+    }
+  }
+
+  void _sendFeedback(String url, String body) {
+    url = url.replaceAll('{{body}}', Uri.encodeComponent(body));
+    Uri? uri = Uri.tryParse(url);
     if (uri != null) {
       url_launcher.launchUrl(uri);
     }
   }
-
 
   void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
@@ -1126,5 +1151,113 @@ class _CircularButton extends StatelessWidget{
         child: image,
       ),
     );
+  }
+}
+
+class _FeedbackBodyWidget extends StatefulWidget {
+  final String? title;
+  final String? analyticsTitle;
+  final String? message;
+  
+  _FeedbackBodyWidget({Key? key, this.title, this.analyticsTitle, this.message}) : super(key: key);
+  
+  @override
+  State<StatefulWidget> createState() => _FeedbackBodyWidgetState();
+}
+
+class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
+  
+  FocusNode _focusNode = FocusNode();
+  TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(children: <Widget>[
+            Expanded(child:
+              Container(decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)),), child:
+                  Row(children: [
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+                        Text(widget.title ?? '', style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular.fat")),
+                      )
+                    ),
+                    Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
+                      InkWell(onTap: _onClose, child:
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2),), child:
+                            Center(child:
+                              Text('\u00D7', style: Styles().textStyles?.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
+                            ),
+                          ),
+                        )
+                      )
+                    ),
+                  ],),
+              ),
+            ),
+          ],),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Row(children: [
+                Expanded(child:
+                  Text(widget.message ?? '', style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),),
+                ),
+              ]),
+              Container(height: 4,),
+              TextField(
+                focusNode: _focusNode,
+                controller: _textController,
+                maxLines: 8,
+                decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+              ),
+              Container(height: 16,),
+              Row(children: [
+                Expanded(flex: 1, child: Container()),
+                Expanded(flex: 2, child:
+                  RoundedButton(
+                    label: Localization().getStringEx("dialog.send.title", "Send"),
+                    backgroundColor: Colors.transparent,
+                    textStyle: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 16),
+                    borderColor: Styles().colors!.fillColorSecondary,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    onTap: () => _onSend(),
+                  ),
+                ),
+                Expanded(flex: 1, child: Container()),
+              ]),
+            ],),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  void _onClose() {
+    Analytics().logAlert(text: widget.title, selection: "Close");
+    Navigator.of(context).pop(null);
+  }
+
+  void _onSend() {
+    Analytics().logAlert(text: "Text Message", selection: "Send");
+    Navigator.of(context).pop(_textController.text);
   }
 }
