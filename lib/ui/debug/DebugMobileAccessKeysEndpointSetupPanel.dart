@@ -147,7 +147,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
       MobileAccess().registerEndpoint(invitationCode).then((success) {
         late String msg;
         if (success == true) {
-          msg = 'Device registering was successfully initiated. Please wait until confirmation message is received.';
+          msg = 'Device registering was successfully initiated. Please wait until a confirmation message is received.';
         } else {
           msg = 'Failed to initiate device registration.';
         }
@@ -172,7 +172,7 @@ class _DebugMobileAccessKeysEndpointSetupPanelState extends State<DebugMobileAcc
   void _onDeviceRegistrationFinished(bool? succeeded) {
     late String msg;
     if (succeeded == true) {
-      msg = "Device registration finished successfully. ";
+      msg = "Device registration finished successfully.";
     } else {
       msg = "Failed to register device.";
     }
