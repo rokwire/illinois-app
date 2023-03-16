@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.27] - 2023-03-16
 ### Changed
 - Prompt for text message body in text and tell feature [#3036](https://github.com/rokwire/illinois-app/issues/3036)
 
