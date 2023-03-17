@@ -370,6 +370,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       myLocationButtonEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
       markers: _targetMarkers ?? const <Marker>{},
+      indoorViewEnabled: true,
+      trafficEnabled: true,
     );
   }
 

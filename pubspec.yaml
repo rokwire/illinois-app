@@ -58,7 +58,7 @@ dependencies:
   confetti: ^0.7.0
   flutter_colorpicker: ^1.0.3
   in_app_review: ^2.0.4
-  google_maps_flutter: ^2.2.3
+  google_maps_flutter: ^2.2.5
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:
