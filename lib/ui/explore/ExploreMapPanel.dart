@@ -371,7 +371,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
       markers: _targetMarkers ?? const <Marker>{},
       indoorViewEnabled: true,
-      trafficEnabled: true,
+    //trafficEnabled: true,
     );
   }
 
