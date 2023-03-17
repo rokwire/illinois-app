@@ -20,7 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/ui/debug/DebugMobileAccessKeysEndpointSetupPanel.dart';
+import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -819,7 +819,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onTapMobileAccessKeys() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugMobileAccessKeysEndpointSetupPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugMobileAccessHomePanel()));
   }
 
   void _onTapHttpProxy() {
