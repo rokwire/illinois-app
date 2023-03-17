@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed POI display in Maps2 [#3038](https://github.com/rokwire/illinois-app/issues/3038).
+### Changed
+- More careful updates in Maps2 when connectivity status changes [#3041](https://github.com/rokwire/illinois-app/issues/3041).
 
 ## [4.3.27] - 2023-03-16
 ### Changed

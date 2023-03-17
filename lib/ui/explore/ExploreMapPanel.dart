@@ -178,10 +178,16 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _onAppLivecycleStateChanged(param);
     }
     else if (name == Connectivity.notifyStatusChanged) {
-      if ((Connectivity().isNotOffline) && mounted) {
-        _initLocationServicesStatus();
-        _initEventCategories();
-        _initExplores();
+      if (Connectivity().isNotOffline && mounted) {
+        if (_locationServicesStatus == null) {
+          _initLocationServicesStatus();
+        }
+        if (_eventCategories == null) {
+          _initEventCategories();
+        }
+        if ((_explores == null) && (_exploreTask == null)) {
+          _initExplores();
+        }
       }
     }
     else if (name == LocationServices.notifyStatusChanged) {
