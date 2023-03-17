@@ -24,6 +24,7 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.assaabloy.mobilekeys.api.ble.util.UuidPair;
 import com.hid.origo.OrigoKeysApiFacade;
 import com.hid.origo.OrigoKeysApiFactory;
 import com.hid.origo.api.OrigoMobileKey;
@@ -55,6 +56,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -172,6 +174,39 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
             return true;
         } else {
             return false;
+        }
+    }
+
+    public boolean changeLockServiceCodes(int[] lockServiceCodes) {
+        if ((lockServiceCodes == null) || (lockServiceCodes.length == 0)) {
+            Log.d(TAG, "changeLockServiceCodes: missing lock service codes");
+            return false;
+        }
+        if (getOrigoScanConfiguration() == null) {
+            Log.d(TAG, "changeLockServiceCodes: scan configuration is null");
+            return false;
+        }
+        getOrigoScanConfiguration().setLockServiceCodes(lockServiceCodes);
+        return true;
+    }
+
+    public int[] getLockServiceCodes() {
+        if (getOrigoScanConfiguration() == null) {
+            Log.d(TAG, "changeLockServiceCodes: scan configuration is null");
+            return null;
+        }
+        Map<Integer, UuidPair> lockServiceCodesUuid = getOrigoScanConfiguration().lockServiceCodeUuids();
+        if (lockServiceCodesUuid != null) {
+            Integer[] lockServiceCodes = new Integer[lockServiceCodesUuid.size()];
+            lockServiceCodes = lockServiceCodesUuid.keySet().toArray(lockServiceCodes);
+            int[] primitiveCodes = new int[lockServiceCodes.length];
+            for (int i = 0; i < lockServiceCodes.length; i++) {
+                primitiveCodes[i] = lockServiceCodes[i];
+            }
+            return primitiveCodes;
+        } else {
+            Log.d(TAG, "changeLockServiceCodes: missing lockServiceCodeUuids");
+            return null;
         }
     }
 

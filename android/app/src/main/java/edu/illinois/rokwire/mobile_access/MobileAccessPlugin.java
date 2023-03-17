@@ -17,31 +17,46 @@
 package edu.illinois.rokwire.mobile_access;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.hid.origo.api.ble.OrigoRssiSensitivity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import edu.illinois.rokwire.BuildConfig;
 import edu.illinois.rokwire.Constants;
+import edu.illinois.rokwire.rokwire_plugin.Utils;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
 public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, FlutterPlugin {
 
+    //region Member fields
+
     private static final String TAG = "MobileAccessPlugin";
 
     private static MethodChannel methodChannel;
 
     private final MobileAccessKeysApiFacade apiFacade;
+    private final Context appContext;
+
+    //endregion
+
+    //region Initialization
 
     public MobileAccessPlugin(Activity activity) {
-        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(activity.getApplicationContext());
+        this.appContext = activity.getApplicationContext();
+        Integer[] lockServiceCodes = getStoredLockServiceCodes();
+        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(appContext, lockServiceCodes);
         this.apiFacade = new MobileAccessKeysApiFacade(activity, keysApiFactory);
     }
+
+    //endregion
 
     //region Activity APIs
 
@@ -93,6 +108,14 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                 case Constants.MOBILE_ACCESS_SET_RSSI_SENSITIVITY_KEY:
                     boolean rssiChanged = handleMobileAccessSetRssiSensitivity(call.arguments);
                     result.success(rssiChanged);
+                    break;
+                case Constants.MOBILE_ACCESS_SET_LOCK_SERVICE_CODES_KEY:
+                    boolean lockCodesChanged = handleSetLockServiceCodes(call.arguments);
+                    result.success(lockCodesChanged);
+                    break;
+                case Constants.MOBILE_ACCESS_GET_LOCK_SERVICE_CODES_KEY:
+                    int[] lockServiceCodes = handleGetLockServiceCodes();
+                    result.success(lockServiceCodes);
                     break;
                 case Constants.MOBILE_ACCESS_ENABLE_TWIST_AND_GO_KEY:
                     boolean twistAndGoChanged = handleEnableTwistAndGo(call.arguments);
@@ -157,12 +180,76 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         }
     }
 
+    private boolean handleSetLockServiceCodes(Object arguments) {
+        int[] lockServiceCodes = null;
+        if (arguments instanceof ArrayList<?>) {
+            ArrayList<?> lockCodesValue = (ArrayList<?>) arguments;
+            for (int i = 0; i < lockCodesValue.size(); i++) {
+                Object codeObject = lockCodesValue.get(i);
+                if (i == 0) {
+                    if (codeObject instanceof Integer) {
+                        lockServiceCodes = new int[lockCodesValue.size()];
+                        lockServiceCodes[i] = (Integer) codeObject;
+                    } else {
+                        break;
+                    }
+                } else {
+                    // We checked that this list is from integers so the cast is safe
+                    lockServiceCodes[i] = (Integer) codeObject;
+                }
+            }
+        }
+        if (lockServiceCodes != null) {
+            boolean codesChanged = apiFacade.changeLockServiceCodes(lockServiceCodes);
+            if (codesChanged) {
+                storeLockServiceCodes(lockServiceCodes);
+            }
+            return codesChanged;
+        } else {
+            Log.d(TAG, "handleSetLockServiceCodes: lock service codes arguments are missing or they are not integers");
+            return false;
+        }
+    }
+
+    private int[] handleGetLockServiceCodes() {
+        return apiFacade.getLockServiceCodes();
+    }
+
     private boolean handleEnableTwistAndGo(Object arguments) {
         boolean enable = false;
         if (arguments instanceof Boolean) {
             enable = (Boolean) arguments;
         }
         return apiFacade.enableTwistAndGoOpening(enable);
+    }
+
+    //endregion
+
+    //region SharedPrefs helpers
+
+    private Integer[] getStoredLockServiceCodes() {
+        String storedLockServiceCodesValue = Utils.AppSecureSharedPrefs.getString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_KEY, null);
+        if (!Utils.Str.isEmpty(storedLockServiceCodesValue)) {
+            String[] lockCodesStringArr = storedLockServiceCodesValue.split(Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER);
+            Integer[] lockCodes = new Integer[lockCodesStringArr.length];
+            for (int i = 0; i < lockCodesStringArr.length; i++) {
+                lockCodes[i] = Integer.parseInt(lockCodesStringArr[i]);
+            }
+            return lockCodes;
+        }
+        return new Integer[]{BuildConfig.ORIGO_LOCK_SERVICE_CODE}; // Default Lock Service Code
+    }
+
+    private void storeLockServiceCodes(int[] lockServiceCodes) {
+        String formattedLockServiceCodes = null;
+        if ((lockServiceCodes != null) && (lockServiceCodes.length > 0)) {
+            StringBuilder sb = new StringBuilder();
+            for (Integer code : lockServiceCodes) {
+                sb.append(code).append(Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER);
+            }
+            formattedLockServiceCodes = sb.deleteCharAt(sb.length() - Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER.length()).toString(); // remove the last delimiter
+        }
+        Utils.AppSecureSharedPrefs.saveString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_KEY, formattedLockServiceCodes);
     }
 
     //endregion

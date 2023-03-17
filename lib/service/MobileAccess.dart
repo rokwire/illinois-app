@@ -93,6 +93,26 @@ class MobileAccess with Service {
     return result;
   }
 
+  Future<List<int>?> getLockServiceCodes() async {
+    List<int>? result;
+    try {
+      result = await _methodChannel.invokeMethod('getLockServiceCodes', null);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
+  Future<bool> setLockServiceCodes(List<int> lockServiceCodes) async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('setLockServiceCodes', lockServiceCodes);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case "endpoint.register.finished":

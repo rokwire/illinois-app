@@ -37,11 +37,11 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
     private OrigoMobileKeysApi mobileKeysApi;
 
-    public MobileAccessKeysApiFactory(Context appContext) {
-        initFactory(appContext);
+    public MobileAccessKeysApiFactory(Context appContext, Integer[] lockServiceCodes) {
+        initFactory(appContext, lockServiceCodes);
     }
 
-    private void initFactory(Context appContext) {
+    private void initFactory(Context appContext, Integer[] lockServiceCodes) {
         if (mobileKeysApi == null) {
             mobileKeysApi = OrigoMobileKeysApi.getInstance();
         }
@@ -52,7 +52,7 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
             OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
                     new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext),
                             new OrigoTwistAndGoOpeningTrigger(appContext), // Twist & Go is enabled by default
-                            new OrigoSeamlessOpeningTrigger()}, BuildConfig.ORIGO_LOCK_SERVICE_CODE)
+                            new OrigoSeamlessOpeningTrigger()}, lockServiceCodes)
                     .setAllowBackgroundScanning(true)
                     .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
                     .build();
