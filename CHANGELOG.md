@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.28] - 2023-03-17
+### Fixed
+- Fixed POI display in Maps2 [#3038](https://github.com/rokwire/illinois-app/issues/3038).
+### Changed
+- More careful updates in Maps2 when connectivity status changes [#3041](https://github.com/rokwire/illinois-app/issues/3041).
+
+## [4.3.27] - 2023-03-16
+### Changed
+- Prompt for text message body in text and tell feature [#3036](https://github.com/rokwire/illinois-app/issues/3036)
+
+## [4.3.26] - 2023-03-15
+### Added
+- Added text and tell feature to Dining location detail panel [#3034](https://github.com/rokwire/illinois-app/issues/3034).
+
 ## [4.3.25] - 2023-03-13
 ### Fixed
 - Fixed checkbox image asset in Group Notifications panel.

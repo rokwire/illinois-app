@@ -25,6 +25,8 @@
 	"dialog.clear.hint":"",
 	"dialog.apply.title":"申請",
 	"dialog.apply.hint":"",
+	"dialog.send.title":"發送",
+	"dialog.send.hint":"",
 
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",
@@ -943,7 +945,7 @@
 	"panel.explore.button.bus_schedule.hint":"查看巴士時刻表",
 	"panel.explore.button.clear.title":"清除",
 	"panel.explore.button.clear.hint":"清除所選位置",
-	"panel.explore.label.spcial_offers.title":"特价销售",
+	"panel.explore.label.dining_news.title":"餐飲資訊",
 
 	"panel.explore.button.events.display_type.all.label": "所有活動",
 	"panel.explore.button.events.display_type.multiple.label": "Multi-day events",
@@ -1062,6 +1064,13 @@
 	"panel.explore_detail.button.order_online":"網上訂購",
 	"panel.explore_detail.event_type.online": "Online Event",
 	"panel.explore_detail.event_type.in_person": "In-person event",
+	"panel.explore_detail.label.text_and_tell": "Text and tell us about your dining experience!",
+	"panel.explore_detail.button.text_feedback": "Text Feedback",
+	"panel.explore_detail.button.ask_dietician": "Ask a Dietician",
+	"panel.explore_detail.label.text_feedback": "Text Feedback",
+	"panel.explore_detail.label.text_feedback_descr": "Share your thoughts about your dining experience:",
+	"panel.explore_detail.label.ask_dietician": "Ask a Dietician",
+	"panel.explore_detail.label.ask_dietician_descr": "Type your question to our dieticians:",
 
 	"panel.events_schedule.header.title": "活動時間表",
 	"panel.events_schedule.tab.title.saved": "已保存",
