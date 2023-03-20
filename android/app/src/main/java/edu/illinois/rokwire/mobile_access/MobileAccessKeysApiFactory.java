@@ -37,11 +37,11 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
 
     private OrigoMobileKeysApi mobileKeysApi;
 
-    public MobileAccessKeysApiFactory(Context appContext, Integer[] lockServiceCodes) {
-        initFactory(appContext, lockServiceCodes);
+    public MobileAccessKeysApiFactory(Context appContext, Integer[] lockServiceCodes, boolean enableTwistAndGo) {
+        initFactory(appContext, lockServiceCodes, enableTwistAndGo);
     }
 
-    private void initFactory(Context appContext, Integer[] lockServiceCodes) {
+    private void initFactory(Context appContext, Integer[] lockServiceCodes, boolean enableTwistAndGo) {
         if (mobileKeysApi == null) {
             mobileKeysApi = OrigoMobileKeysApi.getInstance();
         }
@@ -49,10 +49,12 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
             String appId = BuildConfig.ORIGO_APP_ID;
             String appDescription = "UIUC app test description"; //TBD: DD - check what should be the description.
 
+            OrigoOpeningTrigger[] openingTriggers = enableTwistAndGo ?
+                    new OrigoOpeningTrigger[]{new OrigoTwistAndGoOpeningTrigger(appContext), new OrigoTapOpeningTrigger(appContext), new OrigoSeamlessOpeningTrigger()} :
+                    new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext), new OrigoSeamlessOpeningTrigger()};
+
             OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
-                    new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(appContext),
-                            new OrigoTwistAndGoOpeningTrigger(appContext), // Twist & Go is enabled by default
-                            new OrigoSeamlessOpeningTrigger()}, lockServiceCodes)
+                    openingTriggers, lockServiceCodes)
                     .setAllowBackgroundScanning(true)
                     .setBluetoothModeIfSupported(OrigoBluetoothMode.DUAL)
                     .build();

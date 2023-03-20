@@ -52,7 +52,8 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     public MobileAccessPlugin(Activity activity) {
         this.appContext = activity.getApplicationContext();
         Integer[] lockServiceCodes = getStoredLockServiceCodes();
-        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(appContext, lockServiceCodes);
+        boolean twistAndGoEnabled = isTwistAndGoEnabled();
+        MobileAccessKeysApiFactory keysApiFactory = new MobileAccessKeysApiFactory(appContext, lockServiceCodes, twistAndGoEnabled);
         this.apiFacade = new MobileAccessKeysApiFacade(activity, keysApiFactory);
     }
 
@@ -206,7 +207,7 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         if (lockServiceCodes != null) {
             boolean codesChanged = apiFacade.changeLockServiceCodes(lockServiceCodes);
             if (codesChanged) {
-                storeLockServiceCodes(lockServiceCodes);
+                saveLockServiceCodes(lockServiceCodes);
             }
             return codesChanged;
         } else {
@@ -224,7 +225,11 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         if (arguments instanceof Boolean) {
             enable = (Boolean) arguments;
         }
-        return apiFacade.enableTwistAndGoOpening(enable);
+        boolean successfullyChanged = apiFacade.enableTwistAndGoOpening(enable);
+        if (successfullyChanged) {
+            saveTwistAndGoEnabled(enable);
+        }
+        return successfullyChanged;
     }
 
     private boolean handleIsTwistAndGoEnabled() {
@@ -236,7 +241,7 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     //region SharedPrefs helpers
 
     private Integer[] getStoredLockServiceCodes() {
-        String storedLockServiceCodesValue = Utils.AppSecureSharedPrefs.getString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_KEY, null);
+        String storedLockServiceCodesValue = Utils.AppSecureSharedPrefs.getString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY, null);
         if (!Utils.Str.isEmpty(storedLockServiceCodesValue)) {
             String[] lockCodesStringArr = storedLockServiceCodesValue.split(Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER);
             Integer[] lockCodes = new Integer[lockCodesStringArr.length];
@@ -248,7 +253,7 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         return new Integer[]{BuildConfig.ORIGO_LOCK_SERVICE_CODE}; // Default Lock Service Code
     }
 
-    private void storeLockServiceCodes(int[] lockServiceCodes) {
+    private void saveLockServiceCodes(int[] lockServiceCodes) {
         String formattedLockServiceCodes = null;
         if ((lockServiceCodes != null) && (lockServiceCodes.length > 0)) {
             StringBuilder sb = new StringBuilder();
@@ -257,7 +262,15 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
             }
             formattedLockServiceCodes = sb.deleteCharAt(sb.length() - Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER.length()).toString(); // remove the last delimiter
         }
-        Utils.AppSecureSharedPrefs.saveString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_KEY, formattedLockServiceCodes);
+        Utils.AppSecureSharedPrefs.saveString(appContext, Constants.MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY, formattedLockServiceCodes);
+    }
+
+    private boolean isTwistAndGoEnabled() {
+        return Utils.AppSharedPrefs.getBool(appContext, Constants.MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY, false);
+    }
+
+    private void saveTwistAndGoEnabled(boolean enabled) {
+        Utils.AppSharedPrefs.saveBool(appContext, Constants.MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY, enabled);
     }
 
     //endregion
