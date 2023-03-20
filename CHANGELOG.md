@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.29] - 2023-03-20
 ### Changed
 - Link to custom fork of google_maps_flutter where POI tap notification is handled [#3043](https://github.com/rokwire/illinois-app/issues/3043).
 
