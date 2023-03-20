@@ -47,7 +47,7 @@ public class MobileAccessKeysApiFactory implements OrigoKeysApiFactory {
         }
         if (!mobileKeysApi.isInitialized()) {
             String appId = BuildConfig.ORIGO_APP_ID;
-            String appDescription = "UIUC app test description"; //TBD: DD - check what should be the description.
+            String appDescription = String.format("%s-%s", BuildConfig.ORIGO_APP_ID, BuildConfig.VERSION_NAME);
 
             OrigoOpeningTrigger[] openingTriggers = enableTwistAndGo ?
                     new OrigoOpeningTrigger[]{new OrigoTwistAndGoOpeningTrigger(appContext), new OrigoTapOpeningTrigger(appContext), new OrigoSeamlessOpeningTrigger()} :
