@@ -246,6 +246,29 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         return false;
     }
 
+    public boolean isTwistAndGoOpeningEnabled() {
+        if (getOrigoScanConfiguration() == null) {
+            Log.d(TAG, "isTwistAndGoOpeningEnabled: OrigoScanConfiguration is null");
+            return false;
+        }
+        OrigoOpeningTriggerMediator rootOpeningTrigger = getOrigoScanConfiguration().getRootOpeningTrigger();
+        if (rootOpeningTrigger == null) {
+            Log.d(TAG, "isTwistAndGoOpeningEnabled: rootOpeningTrigger is null");
+            return false;
+        }
+        List<OrigoOpeningTrigger> openingTriggers = rootOpeningTrigger.getOpeningTriggers();
+        if ((openingTriggers != null)) {
+            for (OrigoOpeningTrigger trigger : openingTriggers) {
+                if (trigger instanceof OrigoTwistAndGoOpeningTrigger) {
+                    return true;
+                }
+            }
+        } else {
+            Log.d(TAG, "isTwistAndGoOpeningEnabled: There are no opening triggers");
+        }
+        return false;
+    }
+
     //endregion
 
     //region OrigoKeysApiFacade implementation

@@ -121,6 +121,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                     boolean twistAndGoChanged = handleEnableTwistAndGo(call.arguments);
                     result.success(twistAndGoChanged);
                     break;
+                case Constants.MOBILE_ACCESS_IS_TWIST_AND_GO_ENABLED_KEY:
+                    boolean twistAndGoEnabled = handleIsTwistAndGoEnabled();
+                    result.success(twistAndGoEnabled);
+                    break;
                 default:
                     result.notImplemented();
                     break;
@@ -221,6 +225,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
             enable = (Boolean) arguments;
         }
         return apiFacade.enableTwistAndGoOpening(enable);
+    }
+
+    private boolean handleIsTwistAndGoEnabled() {
+        return apiFacade.isTwistAndGoOpeningEnabled();
     }
 
     //endregion

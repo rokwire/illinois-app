@@ -1621,6 +1621,9 @@
     "panel.settings.icard.notification_drawer.title.label": "通知 ？？？",
     "panel.settings.icard.notification_drawer.description.label": "從通知抽屜解鎖門。",
     "panel.settings.icard.rssi.change.failed.msg": "無法更改藍牙靈敏度。",
+    "panel.settings.icard.twist_n_go.change.failed.msg": "%s Twist And Go 失敗。 請稍後再試。",
+    "panel.settings.icard.twist_n_go.enable.label": "使能夠",
+    "panel.settings.icard.twist_n_go.disable.label": "禁用",
 
 	"panel.create_event.header.title":"创建活动",
 	"panel.create_event.title":"创建活动",

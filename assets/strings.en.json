@@ -1620,6 +1620,9 @@
     "panel.settings.icard.notification_drawer.title.label": "Notification ???",
     "panel.settings.icard.notification_drawer.description.label": "Unlock doors from notification drawer.",
     "panel.settings.icard.rssi.change.failed.msg": "Failed to change Bluetooth sensitivity.",
+    "panel.settings.icard.twist_n_go.change.failed.msg": "Failed to %s Twist And Go. Please, try again later.",
+    "panel.settings.icard.twist_n_go.enable.label": "enable",
+    "panel.settings.icard.twist_n_go.disable.label": "disable",
 
     "panel.create_event.header.title":"Create An Event",
     "panel.create_event.title":"Create an Event",

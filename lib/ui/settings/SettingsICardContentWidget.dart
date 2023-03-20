@@ -26,6 +26,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class SettingsICardContentWidget extends StatefulWidget {
   @override
@@ -33,12 +34,16 @@ class SettingsICardContentWidget extends StatefulWidget {
 }
 
 class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget> {
+  bool _twistAndGoEnabled = false;
+  bool _twistAndGoLoading = false;
+
   MobileAccessBleRssiSensitivity? _rssiSensitivity;
   bool _rssiLoading = false;
   
   @override
   void initState() {
     super.initState();
+    _loadTwistAndGoEnabled();
     _rssiSensitivity = MobileAccess.bleRssiSensitivityFromString(Storage().mobileAccessBleRssiSensitivity);
   }
 
@@ -149,46 +154,47 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   }
 
   Widget _buildTwistAndGoWidget() {
-    bool twistAndGoToggled = false; //TBD: DD - implement
-    return InkWell(
-        onTap: _onTapTwistAndGo,
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Expanded(
-              child: Container(
-                  decoration: BoxDecoration(
-                      color: Styles().colors?.white,
-                      border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(4))),
-                  child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                        Expanded(
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(Localization().getStringEx('panel.settings.icard.twist_n_go.title.label', 'Twist And Go'),
-                              style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.enabled')),
+    return Stack(alignment: Alignment.center, children: [
+      Visibility(visible: _twistAndGoLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary)),
+      InkWell(
+          onTap: _onTapTwistAndGo,
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Expanded(
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Styles().colors?.white,
+                        border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+                        borderRadius: BorderRadius.all(Radius.circular(4))),
+                    child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                          Expanded(
+                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(Localization().getStringEx('panel.settings.icard.twist_n_go.title.label', 'Twist And Go'),
+                                style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.enabled')),
+                            Padding(
+                              padding: EdgeInsets.only(top: 5),
+                              child: Text(
+                                  Localization().getStringEx('panel.settings.icard.twist_n_go.description.label',
+                                      'Rotate your mobile device 90\u00B0 to the right and left, as if turning a door knob.'),
+                                  maxLines: 4,
+                                  style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.variant.enabled')),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Text(
+                                  Localization().getStringEx('panel.settings.icard.twist_n_go.description2.label',
+                                      'Doors must be enabled for Twist and Go to work.'),
+                                  maxLines: 4,
+                                  style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.variant.disabled')),
+                            )
+                          ])),
                           Padding(
-                            padding: EdgeInsets.only(top: 5),
-                            child: Text(
-                                Localization().getStringEx('panel.settings.icard.twist_n_go.description.label',
-                                    'Rotate your mobile device 90\u00B0 to the right and left, as if turning a door knob.'),
-                                maxLines: 4,
-                                style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.variant.enabled')),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child: Text(
-                                Localization().getStringEx('panel.settings.icard.twist_n_go.description2.label',
-                                    'Doors must be enabled for Twist and Go to work.'),
-                                maxLines: 4,
-                                style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.variant.disabled')),
-                          )
-                        ])),
-                        Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            // ignore: dead_code
-                            child: Styles().images?.getImage(twistAndGoToggled ? 'toggle-on' : 'toggle-off'))
-                      ]))))
-        ]));
+                              padding: EdgeInsets.only(left: 16),
+                              child: Styles().images?.getImage(_twistAndGoEnabled ? 'toggle-on' : 'toggle-off'))
+                        ]))))
+          ]))
+    ]);
   }
 
   Widget _buildOpenIOSSystemSettingsWidget() {
@@ -259,6 +265,43 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
         ]));
   }
 
+  void _loadTwistAndGoEnabled() {
+    setStateIfMounted(() {
+      _twistAndGoLoading = true;
+    });
+    MobileAccess().isTwistAndGoEnabled().then((enabled) {
+      setStateIfMounted(() {
+        _twistAndGoEnabled = enabled;
+        _twistAndGoLoading = false;
+      });
+    });
+  }
+
+  void _enableTwistAndGo(bool enable) {
+    if (_twistAndGoEnabled == enable) {
+      return;
+    }
+    setStateIfMounted(() {
+      _twistAndGoLoading = true;
+    });
+    MobileAccess().enableTwistAndGo(enable).then((success) {
+      setStateIfMounted(() {
+        _twistAndGoLoading = false;
+      });
+      if (!success) {
+        String msg = sprintf(
+            Localization()
+                .getStringEx('panel.settings.icard.twist_n_go.change.failed.msg', 'Failed to %s Twist And Go. Please, try again later.'),
+            enable
+                ? [Localization().getStringEx('panel.settings.icard.twist_n_go.enable.label', 'enable')]
+                : [Localization().getStringEx('panel.settings.icard.twist_n_go.disable.label', 'disable')]);
+        AppAlert.showDialogResult(context, msg);
+      } else {
+        _loadTwistAndGoEnabled();
+      }
+    });
+  }
+
   void _onTapOpenedApp() {
     //TBD: DD - implement
   }
@@ -304,7 +347,10 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   }
 
   void _onTapTwistAndGo() {
-    //TBD: DD - implement
+    if (_twistAndGoLoading) {
+      return;
+    }
+    _enableTwistAndGo(!_twistAndGoEnabled);
   }
 
   void _onTapNotificationDrawer() {

@@ -1618,6 +1618,9 @@
     "panel.settings.icard.notification_drawer.title.label": "Notificación ???",
     "panel.settings.icard.notification_drawer.description.label": "Desbloquee las puertas del cajón de notificaciones.",
     "panel.settings.icard.rssi.change.failed.msg": "No se pudo cambiar la sensibilidad de Bluetooth.",
+    "panel.settings.icard.twist_n_go.change.failed.msg": "Error al %s Twist And Go. Por favor, inténtelo de nuevo más tarde.",
+    "panel.settings.icard.twist_n_go.enable.label": "permitir",
+    "panel.settings.icard.twist_n_go.disable.label": "desactivar",
 
     "panel.create_event.header.title":"Crea Un Evento",
     "panel.create_event.title":"Crear un evento",

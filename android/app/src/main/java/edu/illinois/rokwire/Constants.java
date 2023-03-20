@@ -41,6 +41,7 @@ public class Constants {
     public static final String MOBILE_ACCESS_SET_LOCK_SERVICE_CODES_KEY = "setLockServiceCodes";
     public static final String MOBILE_ACCESS_GET_LOCK_SERVICE_CODES_KEY = "getLockServiceCodes";
     public static final String MOBILE_ACCESS_ENABLE_TWIST_AND_GO_KEY = "enableTwistAndGo";
+    public static final String MOBILE_ACCESS_IS_TWIST_AND_GO_ENABLED_KEY = "isTwistAndGoEnabled";
     public static final String MOBILE_ACCESS_LOCK_SERVICE_CODES_KEY = "mobile_access_lock_service_codes";
     public static final String MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER = ",";
 

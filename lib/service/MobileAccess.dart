@@ -113,6 +113,26 @@ class MobileAccess with Service {
     return result;
   }
 
+  Future<bool> isTwistAndGoEnabled() async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('isTwistAndGoEnabled', null);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
+  Future<bool> enableTwistAndGo(bool enable) async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('enableTwistAndGo', enable);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case "endpoint.register.finished":
