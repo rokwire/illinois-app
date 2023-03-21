@@ -612,31 +612,39 @@ packages:
   google_maps_flutter:
     dependency: "direct main"
     description:
-      name: google_maps_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: main
+      resolved-ref: "1aed71f46b5f8c5d9380ff765e559feebef3fd8a"
+      url: "https://github.com/riccardo-runci/google_maps_flutter.git"
+    source: git
     version: "2.2.3"
   google_maps_flutter_android:
     dependency: transitive
     description:
-      name: google_maps_flutter_android
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.4.0"
+      path: "."
+      ref: main
+      resolved-ref: b4f8c56eb7f897784648d12781ccd7b739d93091
+      url: "https://github.com/riccardo-runci/google_maps_flutter_android.git"
+    source: git
+    version: "2.4.2"
   google_maps_flutter_ios:
     dependency: transitive
     description:
-      name: google_maps_flutter_ios
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.12"
+      path: "."
+      ref: main
+      resolved-ref: d5cad84e60347d84b98974daa22fe9cf7b05f815
+      url: "https://github.com/riccardo-runci/google_maps_flutter_ios.git"
+    source: git
+    version: "2.1.13"
   google_maps_flutter_platform_interface:
-    dependency: transitive
+    dependency: "direct main"
     description:
-      name: google_maps_flutter_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.2.4"
+      path: "."
+      ref: main
+      resolved-ref: "95fdcc25d56bbfaaf98fed9b4a0446617f6473d0"
+      url: "https://github.com/riccardo-runci/google_maps_flutter_platform_interface.git"
+    source: git
+    version: "2.2.5"
   html:
     dependency: transitive
     description:

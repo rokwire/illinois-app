@@ -31,7 +31,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 
-class Dinings  with Service implements ExploreJsonHandler {
+class Dinings with Service implements ExploreJsonHandler {
 
   static final String _olddiningsFileName = 'dinings_schedules.json';
 
@@ -40,6 +40,8 @@ class Dinings  with Service implements ExploreJsonHandler {
 
   String? _diningSpecialsResponse;
   DateTime? _lastDiningSpecialsRequestTime;
+
+  Map<String, DiningFeedback>? _feedbacks;
 
   static final Dinings _instance = Dinings._internal();
 
@@ -238,6 +240,10 @@ class Dinings  with Service implements ExploreJsonHandler {
 
   String? getLocalizedString(String? text) {
     return _enabled ? Localization().getStringFromMapping(text, Assets()['dining.strings']) : null;
+  }
+
+  Future<DiningFeedback?> loadDiningFeedback({String? diningId}) async {
+    return (_feedbacks ??= DiningFeedback.mapFromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/dining.feedbacks.json'))) ?? <String, DiningFeedback>{})[diningId];
   }
 
   // Helpers
