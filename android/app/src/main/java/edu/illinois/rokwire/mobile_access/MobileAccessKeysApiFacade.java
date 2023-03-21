@@ -19,8 +19,11 @@ package edu.illinois.rokwire.mobile_access;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Notification;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -61,6 +64,8 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import edu.illinois.rokwire.Constants;
+import edu.illinois.rokwire.rokwire_plugin.Utils;
 import io.flutter.plugin.common.PluginRegistry;
 
 public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegistry.RequestPermissionsResultListener {
@@ -269,6 +274,18 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         return false;
     }
 
+    public boolean isUnlockVibrationEnabled() {
+        return Utils.AppSharedPrefs.getBool(activity.getApplicationContext(), Constants.MOBILE_ACCESS_UNLOCK_VIBRATION_ENABLED_PREFS_KEY, false);
+    }
+
+    public boolean enableUnlockVibration(boolean enabled) {
+        Utils.AppSharedPrefs.saveBool(activity.getApplicationContext(), Constants.MOBILE_ACCESS_UNLOCK_VIBRATION_ENABLED_PREFS_KEY, enabled);
+        if (enabled) {
+            vibrateDevice();
+        }
+        return true;
+    }
+
     //endregion
 
     //region OrigoKeysApiFacade implementation
@@ -402,6 +419,9 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         @Override
         public void onReaderConnectionOpened(OrigoReader origoReader, OrigoOpeningType origoOpeningType) {
             Log.d(TAG, "bleReaderConnectionListener: onReaderConnectionOpened: reader: " + origoReader.getName() + ", opening type: " + origoOpeningType.name());
+            if (isUnlockVibrationEnabled()) {
+                vibrateDevice();
+            }
         }
 
         @Override
@@ -526,6 +546,20 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
             return true;
         }
         return false;
+    }
+
+    //endregion
+
+    //region Device Specific
+
+    private void vibrateDevice() {
+        final long durationInMilliSeconds = 500;
+        Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(durationInMilliSeconds, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            vibrator.vibrate(durationInMilliSeconds);
+        }
     }
 
     //endregion

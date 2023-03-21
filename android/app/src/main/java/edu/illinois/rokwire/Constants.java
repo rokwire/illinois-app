@@ -42,9 +42,12 @@ public class Constants {
     public static final String MOBILE_ACCESS_GET_LOCK_SERVICE_CODES_KEY = "getLockServiceCodes";
     public static final String MOBILE_ACCESS_ENABLE_TWIST_AND_GO_KEY = "enableTwistAndGo";
     public static final String MOBILE_ACCESS_IS_TWIST_AND_GO_ENABLED_KEY = "isTwistAndGoEnabled";
-    public static final String MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY = "mobile_access_lock_service_codes";
+    public static final String MOBILE_ACCESS_ENABLE_UNLOCK_VIBRATION_KEY = "enableUnlockVibration";
+    public static final String MOBILE_ACCESS_IS_UNLOCK_VIBRATION_ENABLED_KEY = "isUnlockVibrationEnabled";
     public static final String MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER = ",";
+    public static final String MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY = "mobile_access_lock_service_codes";
     public static final String MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY = "mobile_access_twist_n_go_enabled";
+    public static final String MOBILE_ACCESS_UNLOCK_VIBRATION_ENABLED_PREFS_KEY = "mobile_access_unlock_vibration_enabled";
 
     //Maps
     public static final LatLng DEFAULT_INITIAL_CAMERA_POSITION = new LatLng(40.102116, -88.227129); //Illinois University: Center of Campus //(40.096230, -88.235899); // State Farm Center

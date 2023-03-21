@@ -126,6 +126,14 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                     boolean twistAndGoEnabled = handleIsTwistAndGoEnabled();
                     result.success(twistAndGoEnabled);
                     break;
+                case Constants.MOBILE_ACCESS_ENABLE_UNLOCK_VIBRATION_KEY:
+                    boolean unlockVibrationChanged = handleEnableUnlockVibration(call.arguments);
+                    result.success(unlockVibrationChanged);
+                    break;
+                case Constants.MOBILE_ACCESS_IS_UNLOCK_VIBRATION_ENABLED_KEY:
+                    boolean isUnlockVibrationEnabled = handleIsUnlockVibrationEnabled();
+                    result.success(isUnlockVibrationEnabled);
+                    break;
                 default:
                     result.notImplemented();
                     break;
@@ -234,6 +242,18 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     private boolean handleIsTwistAndGoEnabled() {
         return apiFacade.isTwistAndGoOpeningEnabled();
+    }
+
+    private boolean handleEnableUnlockVibration(Object arguments) {
+        boolean enable = false;
+        if (arguments instanceof Boolean) {
+            enable = (Boolean) arguments;
+        }
+        return apiFacade.enableUnlockVibration(enable);
+    }
+
+    private boolean handleIsUnlockVibrationEnabled() {
+        return apiFacade.isUnlockVibrationEnabled();
     }
 
     //endregion

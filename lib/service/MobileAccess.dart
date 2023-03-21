@@ -133,6 +133,26 @@ class MobileAccess with Service {
     return result;
   }
 
+  Future<bool> isUnlockVibrationEnabled() async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('isUnlockVibrationEnabled', null);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
+  Future<bool> enableUnlockVibration(bool enable) async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('enableUnlockVibration', enable);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case "endpoint.register.finished":

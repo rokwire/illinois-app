@@ -37,6 +37,8 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   bool _twistAndGoEnabled = false;
   bool _twistAndGoLoading = false;
 
+  bool _vibrationEnabled = false;
+
   MobileAccessBleRssiSensitivity? _rssiSensitivity;
   bool _rssiLoading = false;
   
@@ -44,6 +46,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   void initState() {
     super.initState();
     _loadTwistAndGoEnabled();
+    _loadUnlockVibrationEnabled();
     _rssiSensitivity = MobileAccess.bleRssiSensitivityFromString(Storage().mobileAccessBleRssiSensitivity);
   }
 
@@ -91,10 +94,10 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                         padding: EdgeInsets.only(top: 10),
                         child: ToggleRibbonButton(
                             label: Localization().getStringEx('panel.settings.icard.vibrate.button', 'Vibrate when unlocking'),
-                            toggled: true, //TBD: DD - implement
+                            toggled: _vibrationEnabled,
                             border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
                             borderRadius: BorderRadius.all(Radius.circular(4)),
-                            onTap: _onTapVibrate))
+                            onTap: _onTapVibrate)),
                   ]))),
           Padding(padding: EdgeInsets.only(top: 16), child: _buildTwistAndGoWidget()),
           Visibility(visible: _isAndroid, child: Padding(padding: EdgeInsets.only(top: 16), child: _buildNotificationDrawerWidget())),
@@ -155,7 +158,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
 
   Widget _buildTwistAndGoWidget() {
     return Stack(alignment: Alignment.center, children: [
-      Visibility(visible: _twistAndGoLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary)),
       InkWell(
           onTap: _onTapTwistAndGo,
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -193,7 +195,8 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                               padding: EdgeInsets.only(left: 16),
                               child: Styles().images?.getImage(_twistAndGoEnabled ? 'toggle-on' : 'toggle-off'))
                         ]))))
-          ]))
+          ])),
+      Visibility(visible: _twistAndGoLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary))
     ]);
   }
 
@@ -293,12 +296,20 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
             Localization()
                 .getStringEx('panel.settings.icard.twist_n_go.change.failed.msg', 'Failed to %s Twist And Go. Please, try again later.'),
             enable
-                ? [Localization().getStringEx('panel.settings.icard.twist_n_go.enable.label', 'enable')]
-                : [Localization().getStringEx('panel.settings.icard.twist_n_go.disable.label', 'disable')]);
+                ? [Localization().getStringEx('panel.settings.icard.enable.label', 'enable')]
+                : [Localization().getStringEx('panel.settings.icard.disable.label', 'disable')]);
         AppAlert.showDialogResult(context, msg);
       } else {
         _loadTwistAndGoEnabled();
       }
+    });
+  }
+
+  void _loadUnlockVibrationEnabled() {
+    MobileAccess().isUnlockVibrationEnabled().then((enabled) {
+      setStateIfMounted(() {
+        _vibrationEnabled = enabled;
+      });
     });
   }
 
@@ -343,7 +354,20 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   }
 
   void _onTapVibrate() {
-    //TBD: DD - implement
+    bool enable = !_vibrationEnabled;
+    MobileAccess().enableUnlockVibration(enable).then((success) {
+      if (!success) {
+        String msg = sprintf(
+            Localization().getStringEx('panel.settings.icard.unlock_vibration.change.failed.msg',
+                'Failed to %s vibration when unlocking. Please, try again later.'),
+            enable
+                ? [Localization().getStringEx('panel.settings.icard.enable.label', 'enable')]
+                : [Localization().getStringEx('panel.settings.icard.disable.label', 'disable')]);
+        AppAlert.showDialogResult(context, msg);
+      } else {
+        _loadUnlockVibrationEnabled();
+      }
+    });
   }
 
   void _onTapTwistAndGo() {
