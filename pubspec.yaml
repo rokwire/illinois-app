@@ -70,12 +70,24 @@ dependencies:
 
   google_maps_flutter:
     git:
-      url: https://github.com/riccardo-runci/google_maps_flutter.git
-      ref: main
-  google_maps_flutter_platform_interface:
-      git:
-       url: https://github.com/riccardo-runci/google_maps_flutter_platform_interface.git
-       ref: main
+      url: https://github.com/rokwire/packages.git
+      path: packages/google_maps_flutter/google_maps_flutter
+      ref: google_maps_flutter/add-poi-click-callback-60695
+
+# google_maps_flutter:
+#   git:
+#     url: https://github.com/flutter/packages.git
+#     path: packages/google_maps_flutter/google_maps_flutter
+#     ref: google_maps_flutter-v2.2.5
+
+# google_maps_flutter:
+#   git:
+#     url: https://github.com/riccardo-runci/google_maps_flutter.git
+#     ref: main
+# google_maps_flutter_platform_interface:
+#     git:
+#      url: https://github.com/riccardo-runci/google_maps_flutter_platform_interface.git
+#      ref: main
        
 dev_dependencies:
   flutter_test:
