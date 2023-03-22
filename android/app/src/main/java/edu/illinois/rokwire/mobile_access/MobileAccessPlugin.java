@@ -134,6 +134,14 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                     boolean isUnlockVibrationEnabled = handleIsUnlockVibrationEnabled();
                     result.success(isUnlockVibrationEnabled);
                     break;
+                case Constants.MOBILE_ACCESS_ENABLE_UNLOCK_SOUND_KEY:
+                    boolean unlockSoundChanged = handleEnableUnlockSound(call.arguments);
+                    result.success(unlockSoundChanged);
+                    break;
+                case Constants.MOBILE_ACCESS_IS_UNLOCK_SOUND_ENABLED_KEY:
+                    boolean isUnlockSoundEnabled = handleIsUnlockSoundEnabled();
+                    result.success(isUnlockSoundEnabled);
+                    break;
                 default:
                     result.notImplemented();
                     break;
@@ -254,6 +262,18 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     private boolean handleIsUnlockVibrationEnabled() {
         return apiFacade.isUnlockVibrationEnabled();
+    }
+
+    private boolean handleEnableUnlockSound(Object arguments) {
+        boolean enable = false;
+        if (arguments instanceof Boolean) {
+            enable = (Boolean) arguments;
+        }
+        return apiFacade.enableUnlockSound(enable);
+    }
+
+    private boolean handleIsUnlockSoundEnabled() {
+        return apiFacade.isUnlockSoundEnabled();
     }
 
     //endregion

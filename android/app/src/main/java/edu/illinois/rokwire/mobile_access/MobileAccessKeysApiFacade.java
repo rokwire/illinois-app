@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -79,6 +80,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     private OrigoReaderConnectionCallback bleReaderConnectionCallback;
     private OrigoHceConnectionCallback hceReaderConnectionCallback;
     private final Activity activity;
+    private AudioManager audioManager;
 
     public MobileAccessKeysApiFacade(Activity activity, OrigoKeysApiFactory apiFactory) {
         this.activity = activity;
@@ -98,6 +100,8 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
         hceReaderConnectionCallback = new OrigoHceConnectionCallback(activity.getApplicationContext());
         hceReaderConnectionCallback.registerReceiver(hceReaderConnectionListener);
+
+        audioManager = (AudioManager)activity.getSystemService(Context.AUDIO_SERVICE);
     }
 
     public void onActivityResume() {
@@ -286,6 +290,18 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         return true;
     }
 
+    public boolean isUnlockSoundEnabled() {
+        return Utils.AppSharedPrefs.getBool(activity.getApplicationContext(), Constants.MOBILE_ACCESS_UNLOCK_SOUND_ENABLED_PREFS_KEY, false);
+    }
+
+    public boolean enableUnlockSound(boolean enabled) {
+        Utils.AppSharedPrefs.saveBool(activity.getApplicationContext(), Constants.MOBILE_ACCESS_UNLOCK_SOUND_ENABLED_PREFS_KEY, enabled);
+        if (enabled) {
+            playSound();
+        }
+        return true;
+    }
+
     //endregion
 
     //region OrigoKeysApiFacade implementation
@@ -422,6 +438,9 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
             if (isUnlockVibrationEnabled()) {
                 vibrateDevice();
             }
+            if (isUnlockSoundEnabled()) {
+                playSound();
+            }
         }
 
         @Override
@@ -443,6 +462,12 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         @Override
         public void onHceSessionOpened() {
             Log.d(TAG, "hceReaderConnectionListener: onHceSessionOpened");
+            if (isUnlockVibrationEnabled()) {
+                vibrateDevice();
+            }
+            if (isUnlockSoundEnabled()) {
+                playSound();
+            }
         }
 
         @Override
@@ -560,6 +585,10 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         } else {
             vibrator.vibrate(durationInMilliSeconds);
         }
+    }
+
+    private void playSound() {
+        audioManager.playSoundEffect(AudioManager.FX_KEY_CLICK);
     }
 
     //endregion
