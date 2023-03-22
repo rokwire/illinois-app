@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:zoom-dev.rokwire.illinois.edu</string>
+		<string>applinks:zoom-dev.rokwire.illinois.edu?mode=developer</string>
 	</array>
 </dict>
 </plist>
