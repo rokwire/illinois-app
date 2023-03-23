@@ -25,6 +25,7 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AcademicsEventsContentWidget extends StatefulWidget {
@@ -87,7 +88,7 @@ class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWid
     String message =
         Localization().getStringEx('panel.academics.section.events.offline.msg', 'No academic events available while offline.');
     return _buildCenterWidget(Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: TextStyle(fontSize: 16)),
+      Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style:  Styles().textStyles?.getTextStyle("widget.message.regular")),
       Container(height: 8),
       Text(message)
     ]));

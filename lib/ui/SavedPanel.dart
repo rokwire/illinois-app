@@ -251,7 +251,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           Row(children: <Widget>[
             Expanded(child:
               Padding(padding: EdgeInsets.all(16), child:
-                Text(Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."), style: Styles().textStyles?.getTextStyle("widget.title.light.regular"),)
+                Text(Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."), style: Styles().textStyles?.getTextStyle("widget.title.light.regular.thin"),)
               ),
             ),
             InkWell(onTap: _onAuthorizeSkip, child: 

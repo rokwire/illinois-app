@@ -243,22 +243,14 @@ class _RosterListHeading extends StatelessWidget{
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(sport!.name!,
-                      style: TextStyle(
-                          color: Styles().colors!.surfaceAccent,
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 16
-                      ),
+                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 10.0,),
               Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", '2019-2020 Roster') ,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: Styles().fontFamilies!.extraBold,
-                    fontSize: 20,
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")
               ),
             ],
           ),
@@ -281,11 +273,7 @@ class _HeadingItem extends StatelessWidget {
       padding: EdgeInsets.all(16),
       color: Styles().colors!.backgroundVariant,
       child: Text(heading!,
-        style: TextStyle(
-            color: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.extraBold,
-            fontSize: 20
-        ),
+        style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
       ),
     );
   }
@@ -337,19 +325,11 @@ class _RosterItem extends StatelessWidget{
                           children: <Widget>[
                             Expanded(
                               child: Text(roster.name!,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: Styles().fontFamilies!.bold,
-                                    fontSize: 20
-                                ),
+                                style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")
                               ),
                             ),
                             Text(StringUtils.ensureNotEmpty(roster.numberString),
-                              style: TextStyle(
-                                  color: Styles().colors!.whiteTransparent06,
-                                  fontFamily: Styles().fontFamilies!.medium,
-                                  fontSize: 20
-                              ),
+                              style: Styles().textStyles?.getTextStyle("widget.athletics.title.large.variant")
                             ),
                           ],
                         ),
@@ -457,20 +437,12 @@ class _RosterInfoLine extends StatelessWidget{
           Container(
             width: 80,
             child: Text(name!,
-              style: TextStyle(
-                  color: Styles().colors!.textBackground,
-                  fontFamily: Styles().fontFamilies!.medium,
-                  fontSize: 14
-              ),
+              style: Styles().textStyles?.getTextStyle("widget.item.small")
             ),
           ),
           Expanded(child:
             Text(value!,
-                style: TextStyle(
-                    color: Styles().colors!.textBackground,
-                    fontFamily: Styles().fontFamilies!.bold,
-                    fontSize: 14
-                )
+                style: Styles().textStyles?.getTextStyle("widget.item.small.fat")
             ),
           )
         ],

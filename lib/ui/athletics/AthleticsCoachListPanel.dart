@@ -107,22 +107,14 @@ class _CoachListHeading extends StatelessWidget{
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(sport!.name!,
-                      style: TextStyle(
-                          color: Styles().colors!.surfaceAccent,
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 16
-                      ),
+                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 10.0,),
               Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "2019-2020 Coach"),
-                style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: Styles().fontFamilies!.extraBold,
-                    fontSize: 20,
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat")
               ),
             ],
           ),
@@ -170,11 +162,7 @@ class _CoachItem extends StatelessWidget{
                           children: <Widget>[
                             Expanded(
                               child: Text(coach.name!,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: Styles().fontFamilies!.bold,
-                                    fontSize: 20
-                                ),
+                                style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")
                               ),
                             ),
                           ],
@@ -212,21 +200,13 @@ class _CoachItem extends StatelessWidget{
                             Container(
                               width: 80,
                               child: Text(Localization().getStringEx("panel.athletics_coach_list.label.position.title", "Position"),
-                                  style: TextStyle(
-                                      color: Styles().colors!.textBackground,
-                                      fontFamily: Styles().fontFamilies!.medium,
-                                      fontSize: 14
-                                  )
+                                  style: Styles().textStyles?.getTextStyle("widget.item.small")
                               ),
                             ),
                             Expanded(
                               child: Text(coach.title!,
                                   softWrap: true,
-                                  style: TextStyle(
-                                      color: Styles().colors!.textBackground,
-                                      fontFamily: Styles().fontFamilies!.bold,
-                                      fontSize: 14
-                                  )
+                                  style: Styles().textStyles?.getTextStyle("widget.item.small.fat")
                               ),
                             ),
                           ],

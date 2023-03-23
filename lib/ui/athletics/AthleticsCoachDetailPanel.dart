@@ -71,9 +71,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                 Padding(
                   padding: EdgeInsets.all(16),
                   child: Text(widget.coach.title!,
-                    style: TextStyle(
-                        fontSize: 24
-                    ),
+                    style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.extra_large")
                   ),
                 ),
 
@@ -84,7 +82,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                       child: HtmlWidget(
                           StringUtils.ensureNotEmpty(widget.coach.htmlBio),
                           onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-                          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                          textStyle:  Styles().textStyles?.getTextStyle("widget.detail.regular")
                       )
                     ))
                 )
@@ -154,11 +152,7 @@ class _CoachDetailHeading extends StatelessWidget{
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(sport!.name!,
-                                      style: TextStyle(
-                                          color: Styles().colors!.surfaceAccent,
-                                          fontFamily: Styles().fontFamilies!.medium,
-                                          fontSize: 16
-                                      ),
+                                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                                     ),
                                   ),
                                 )
@@ -171,11 +165,7 @@ class _CoachDetailHeading extends StatelessWidget{
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(coach!.name!,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: Styles().fontFamilies!.bold,
-                                          fontSize: 20
-                                      ),
+                                      style: Styles().textStyles?.getTextStyle("widget.heading.large.fat")
                                     ),
                                   ),
                                 ],

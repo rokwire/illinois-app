@@ -106,9 +106,11 @@
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
 
+    "widget.heading.huge": { "font_family": "regular", "size": 32.0, "color": "white"},
     "widget.heading.extra_large": { "font_family": "regular", "size": 24.0, "color": "white"},
     "widget.heading.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "white"},
     "widget.heading.large": { "font_family": "regular", "size": 20.0, "color": "white"},
+    "widget.heading.large.fat": { "font_family": "bold", "size": 20.0, "color": "white"},
     "widget.heading.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "white"},
     "widget.heading.medium": { "font_family": "medium", "size": 18.0, "color": "white"},
     "widget.heading.regular": { "font_family": "regular", "size": 16.0, "color": "white"},
@@ -128,6 +130,7 @@
     "widget.message.medium.semi_thin": {"font_family": "medium", "size": 18.0, "color": "fillColorPrimary"},
     "widget.message.medium.thin": {"font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.message.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.message.regular.semi_fat": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.extra_fat": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.fat.accent": {"font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
@@ -138,6 +141,7 @@
     "widget.title.extra_huge": {"font_family": "regular", "size": 36.0, "color": "fillColorPrimary"},
     "widget.title.extra_huge.fat": {"font_family": "bold", "size": 36.0, "color": "fillColorPrimary"},
     "widget.title.huge.extra_fat": {"font_family": "extra_bold", "size": 32.0, "color": "fillColorPrimary"},
+    "widget.title.huge": {"font_family": "regular", "size": 32.0, "color": "fillColorPrimary"},
     "widget.title.extra_large": { "font_family": "regular", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.extra_large.extra_fat": { "font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.extra_large.semi_fat": { "font_family": "semi_bold", "size": 24.0, "color": "fillColorPrimary"},
@@ -157,9 +161,14 @@
     "widget.title.tiny.extra_fat": {"font_family": "extra_bold", "size": 12.0, "color": "fillColorPrimary"},
     "widget.title.light.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "textColorPrimary"},
     "widget.title.light.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "textColorPrimary"},
+    "widget.title.light.large.fat": { "font_family": "bold", "size": 20.0, "color": "textColorPrimary"},
+    "widget.title.light.large": { "font_family": "regular", "size": 20.0, "color": "textColorPrimary"},
     "widget.title.light.medium.fat": {"font_family": "bold", "size": 18.0, "color": "textColorPrimary"},
-    "widget.title.light.regular": {"font_family": "regular", "size": 16.0, "color": "textColorPrimary"},
+    "widget.title.light.regular.thin": {"font_family": "regular", "size": 16.0, "color": "textColorPrimary"},
+    "widget.title.light.regular": {"font_family": "medium", "size": 16.0, "color": "textColorPrimary"},
+    "widget.title.light.small": {"font_family": "medium", "size": 14.0, "color": "textColorPrimary"},
     "widget.title.light.small.fat": {"font_family": "bold", "size": 14.0, "color": "textColorPrimary"},
+    "widget.title.light.small.fat.spaced": {"font_family": "bold", "size": 14.0, "color": "textColorPrimary", "letter_spacing": 1.0},
     "widget.title.light.tiny": {"font_family": "medium", "size": 10.0, "color": "textColorPrimary"},
 
     "widget.detail.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "fillColorPrimary"},
@@ -240,7 +249,7 @@
     "widget.button.light.title.medium": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
-    "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textBackground",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
@@ -317,6 +326,9 @@
 
     "widget.athletics.card.title.large.fat":  {"extends": "widget.title.extra_large",  "weight" : "w900"},
     "widget.athletics.card.title.large":  {"extends": "widget.title.extra_large"},
+    "widget.athletics.title.large.variant":  {"font_family": "medium", "size": 20.0, "color": "whiteTransparent06"},
+    "widget.athletics.heading.regular.variant":  {"font_family": "medium", "size": 16.0, "color": "whiteTransparent06"},
+    "widget.athletics.heading.regular.fat.variant":  {"font_family": "bold", "size": 16.0, "color": "whiteTransparent06"},
 
     "widget.group.card.poll.title": { "font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary", "height":  1.2},
     "widget.group.card.poll.option": {"extends": "widget.card.detail.regular", "height":  1.25,  "weight" :  "w500"},
@@ -361,6 +373,8 @@
     "widget.checklist.content.tab.title.current_tab.not_completed": {"font_family": "extra_bold", "size": 16.0, "color": "white", "decoration": "underline"},
 
     "widget.home_tout.button.underline.title": {"font_family": "bold", "size": 18.0, "color": "textColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "textColorPrimary"},
+
+    "widget.student_courses.title.extra_large": {"extends": "widget.title.extra_large", "letter_spacing": 1.0},
 
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
@@ -419,6 +433,9 @@
     "panel.athletics.home.title.large": {"font_family": "regular", "size": 20.0, "color": "fillColorPrimary",  "weight" :  "w900"},
     "panel.athletics.home.detail.medium": {"extends": "widget.item.regular"},
     "panel.athletics.home.button.underline": {"font_family": "semi_bold", "size": 16.0, "color": "white", "letter_spacing" :  1.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+
+    "panel.athletics.coach_detail.title.extra_large": {"size": 24.0},
+    "panel.athletics.coach_detail.title.regular.accent": {"font_family": "medium", "size": 16.0, "color": "surfaceAccent"},
 
     "panel.mtd_bus.heading.title": {"font_family": "extra_bold", "size": 20.0, "color": "transparentWalletColor"},
     "panel.mtd_bus.buss_number.label": {"font_family": "bold", "size": 36.0, "color": "white"},
