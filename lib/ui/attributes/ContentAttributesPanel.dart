@@ -82,8 +82,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     List<ContentAttributesCategory>? categories = ListUtils.from<ContentAttributesCategory>(widget.contentAttributes?.categories);
     if ((categories != null) && categories.isNotEmpty) {
       categories.sort((ContentAttributesCategory category1, ContentAttributesCategory category2) {
-        String categoryTitle1 = widget.contentAttributes?.stringValue(category1.title) ?? '';
-        String categoryTitle2 = widget.contentAttributes?.stringValue(category2.title) ?? '';
+        String categoryTitle1 = category1.displayTitle ?? '';
+        String categoryTitle2 = category2.displayTitle ?? '';
         return categoryTitle1.compareTo(categoryTitle2);
       });
       for (ContentAttributesCategory category in categories) {
@@ -113,15 +113,15 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     bool enabled = (attributes?.isNotEmpty ?? false) && (hasSelection || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
     String? title = _constructAttributeDropdownTitle(category, displayCategoryLabels);
-    String? hint = widget.contentAttributes?.stringValue(widget.filtersMode ? (category.semanticsFilterHint ?? category.semanticsHint) : category.semanticsHint);
+    String? hint = widget.filtersMode ? (category.displaySemanticsFilterHint ?? category.displaySemanticsHint) : category.displaySemanticsHint;
     TextStyle? textStyle = Styles().textStyles?.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
     void Function()? onTap = enabled ? () => _onCategoryDropdownTap(category: category, attributes: attributes) : null;
     
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: widget.contentAttributes?.stringValue(category.longTitle ?? category.title)?.toUpperCase(),
-          description: widget.contentAttributes?.stringValue(category.description),
+          title: (category.displayLongTitle ?? category.displayTitle)?.toUpperCase(),
+          description: category.displayDescription,
           requiredMark: !widget.filtersMode && category.isRequired,
         ),
         _CategoryRibbonButton(
@@ -133,15 +133,15 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   String? _constructAttributeDropdownTitle(ContentAttributesCategory category, LinkedHashSet<String>? categoryLabels) {
     if ((categoryLabels == null) || categoryLabels.isEmpty) {
-      return widget.contentAttributes?.stringValue(widget.filtersMode ? (category.emptyFilterHint ?? category.emptyHint) : category.emptyHint);
+      return widget.filtersMode ? (category.displayEmptyFilterHint ?? category.displayEmptyHint) : category.displayEmptyHint;
     }
     else if (categoryLabels.length == 1) {
-      return widget.contentAttributes?.stringValue(categoryLabels.first);
+      return category.displayString(categoryLabels.first);
     }
     else {
       String title = '';
       for (String attributeLabel in categoryLabels) {
-        String attributeName = widget.contentAttributes?.stringValue(attributeLabel) ?? attributeLabel;
+        String attributeName = category.displayString(attributeLabel) ?? attributeLabel;
         if (attributeName.isNotEmpty) {
           if (title.isNotEmpty) {
             title += ', ';
@@ -162,7 +162,6 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       LinkedHashSet<String>.from([category?.nullValue]) : categoryLabels;
 
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
-      contentAttributes: widget.contentAttributes,
       category: category,
       attributes: attributes,
       selection: displayCategoryLabels,
@@ -214,8 +213,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: widget.contentAttributes?.stringValue(category.longTitle ?? category.title)?.toUpperCase(),
-          description: widget.contentAttributes?.stringValue(category.description),
+          title: (category.displayLongTitle ?? category.displayTitle)?.toUpperCase(),
+          description: category.displayDescription,
           requiredMark: !widget.filtersMode && category.isRequired,
         ),
         Container (

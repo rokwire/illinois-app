@@ -1034,9 +1034,9 @@ class _GroupCardState extends State<GroupCard> {
     if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
       for (ContentAttributesCategory category in categories) {
         if (category.usage == ContentAttributesCategoryUsage.property) {
-          List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes);
+          List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes);
           if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
-            propertiesList.add(_buildProperty("${contentAttributes.stringValue(category.title)}: ", displayAttributes.join(', ')));
+            propertiesList.add(_buildProperty("${category.displayTitle}: ", displayAttributes.join(', ')));
           }
         }
       }

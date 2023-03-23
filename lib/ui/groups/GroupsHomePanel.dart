@@ -337,14 +337,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
     if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (categories != null)) {
       for (ContentAttributesCategory category in categories) {
-        List<String>? displayAttributes = category.displayAttributesListFromSelection(_contentAttributesSelection, contentAttributes: contentAttributes, complete: true);
+        List<String>? displayAttributes = category.displayAttributesListFromSelection(_contentAttributesSelection, complete: true);
         if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
           displayAttributes = List.from(displayAttributes.map((String attribute) => "'$attribute'"));
           if (attributesList.isNotEmpty) {
             attributesList.add(TextSpan(text: " and " , style : regularStyle,));
           }
           attributesList.addAll(<InlineSpan>[
-            TextSpan(text: "${contentAttributes.stringValue(category.title)}" , style : boldStyle,),
+            TextSpan(text: "${category.displayTitle}" , style : boldStyle,),
             TextSpan(text: " is ${displayAttributes.join(' or ')}" , style : regularStyle,),
           ]);
         }

@@ -13,14 +13,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class ContentAttributesCategoryPanel extends StatefulWidget {
 
-  final ContentAttributes? contentAttributes;
   final ContentAttributesCategory? category;
   final List<ContentAttribute>? attributes;
   final LinkedHashSet<String>? selection;
   final bool multipleSelection;
   final bool filtersMode;
 
-  ContentAttributesCategoryPanel({this.contentAttributes, this.category, this.attributes, this.selection, this.multipleSelection = false, this.filtersMode = false});
+  ContentAttributesCategoryPanel({this.category, this.attributes, this.selection, this.multipleSelection = false, this.filtersMode = false});
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
@@ -57,7 +56,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         if (section.isEmpty) {
           section = widget.category?.title ?? '';
         }
-        section = widget.contentAttributes?.stringValue(section) ?? section;
+        section = widget.category?.displayString(section) ?? section;
         _contentList.add(section); 
 
         // section entries
@@ -82,7 +81,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   @override
   Widget build(BuildContext context) {
-    String? title = widget.contentAttributes?.stringValue(widget.category?.title);
+    String? title = widget.category?.displayTitle;
 
     List<Widget> actions = <Widget>[];
 
@@ -189,7 +188,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         (isSelected ? "check-circle-filled" : "circle-outline-gray")
       ) : null;
     String? title = StringUtils.isNotEmpty(attribute.label) ?
-      widget.contentAttributes?.stringValue(attribute.label) :
+      widget.category?.displayString(attribute.label) :
       Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear');
     TextStyle? textStyle = StringUtils.isNotEmpty(attribute.label) ?
       Styles().textStyles?.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :

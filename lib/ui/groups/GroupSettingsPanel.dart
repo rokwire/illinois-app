@@ -487,10 +487,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     List<ContentAttributesCategory>? categories = contentAttributes?.categories;
     if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
       for (ContentAttributesCategory category in categories) {
-        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes, complete: true);
+        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, complete: true);
         if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
           attributesList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("${contentAttributes.stringValue(category.title)}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+            Text("${category.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
               Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
             ),
             Expanded(child:

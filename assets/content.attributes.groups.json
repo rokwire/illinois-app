@@ -19,7 +19,17 @@
 			"Entertainment",
 			"Other",
 			"Recreation"
-		]
+		],
+		"translations": {
+			"es": {
+				"Category": "Categoría",
+				"Academic": "Académico"
+			},
+			"zh": {
+				"Category": "類別",
+				"Academic": "學術的"
+			}
+		}
 	},{
 		"id": "sport",
 		"title": "Sport",
@@ -928,16 +938,5 @@
 	}],
 	"requirements": {
 		"min-selected-count": 1
-	},
-  "strings": {
-  	"en": {
-  		"Shares": "Shares"
-		},
-  	"es": {
-  		"Shares": "Comparte"
-		},
-  	"zh": {
-  		"Shares": "分享"
-		}
 	}
 }
