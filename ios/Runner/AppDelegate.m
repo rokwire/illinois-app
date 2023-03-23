@@ -542,6 +542,26 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 }
 
+#pragma mark User Activity
+
+- (BOOL)application:(UIApplication *)application willContinueUserActivityWithType:(NSString *)userActivityType {
+	NSLog(@"UIApplication willContinueUserActivityWithType: %@", userActivityType);
+	return YES;
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler {
+	NSLog(@"UIApplication continueUserActivity: %@\n%@", userActivity.activityType, userActivity.webpageURL);
+	return YES;
+}
+
+- (void)application:(UIApplication *)application didUpdateUserActivity:(NSUserActivity *)userActivity {
+	NSLog(@"UIApplication didUpdateUserActivity: %@\n%@", userActivity.activityType, userActivity.webpageURL);
+}
+
+- (void)application:(UIApplication *)application didFailToContinueUserActivityWithType:(NSString *)userActivityType error:(NSError *)error {
+	NSLog(@"UIApplication didFailToContinueUserActivityWithType: %@\n%@", userActivityType, error.localizedDescription);
+}
+
 #pragma mark UINavigationControllerDelegate
 
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
