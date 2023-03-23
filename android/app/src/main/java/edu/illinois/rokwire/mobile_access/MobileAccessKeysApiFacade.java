@@ -588,7 +588,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     }
 
     private void playSound() {
-        audioManager.playSoundEffect(AudioManager.FX_KEY_CLICK);
+        audioManager.playSoundEffect(AudioManager.FX_KEY_CLICK, 2.0f);
     }
 
     //endregion

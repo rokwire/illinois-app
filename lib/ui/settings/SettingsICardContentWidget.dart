@@ -38,6 +38,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   bool _twistAndGoLoading = false;
 
   bool _vibrationEnabled = false;
+  bool _soundEnabled = false;
 
   MobileAccessBleRssiSensitivity? _rssiSensitivity;
   bool _rssiLoading = false;
@@ -47,6 +48,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
     super.initState();
     _loadTwistAndGoEnabled();
     _loadUnlockVibrationEnabled();
+    _loadUnlockSoundEnabled();
     _rssiSensitivity = MobileAccess.bleRssiSensitivityFromString(Storage().mobileAccessBleRssiSensitivity);
   }
 
@@ -86,7 +88,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                         padding: EdgeInsets.only(top: 16),
                         child: ToggleRibbonButton(
                             label: Localization().getStringEx('panel.settings.icard.play_sound.button', 'Play sound when unlocking'),
-                            toggled: false, //TBD: DD - implement
+                            toggled: _soundEnabled,
                             border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
                             borderRadius: BorderRadius.all(Radius.circular(4)),
                             onTap: _onTapPlaySound)),
@@ -313,6 +315,14 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
     });
   }
 
+  void _loadUnlockSoundEnabled() {
+    MobileAccess().isUnlockSoundEnabled().then((enabled) {
+      setStateIfMounted(() {
+        _soundEnabled = enabled;
+      });
+    });
+  }
+
   void _onTapOpenedApp() {
     //TBD: DD - implement
   }
@@ -350,7 +360,20 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   }
 
   void _onTapPlaySound() {
-    //TBD: DD - implement
+    bool enable = !_soundEnabled;
+    MobileAccess().enableUnlockSound(enable).then((success) {
+      if (!success) {
+        String msg = sprintf(
+            Localization().getStringEx('panel.settings.icard.unlock.sound.change.failed.msg',
+                'Failed to %s sound when unlocking. Please, try again later.'),
+            enable
+                ? [Localization().getStringEx('panel.settings.icard.enable.label', 'enable')]
+                : [Localization().getStringEx('panel.settings.icard.disable.label', 'disable')]);
+        AppAlert.showDialogResult(context, msg);
+      } else {
+        _loadUnlockSoundEnabled();
+      }
+    });
   }
 
   void _onTapVibrate() {
@@ -358,7 +381,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
     MobileAccess().enableUnlockVibration(enable).then((success) {
       if (!success) {
         String msg = sprintf(
-            Localization().getStringEx('panel.settings.icard.unlock_vibration.change.failed.msg',
+            Localization().getStringEx('panel.settings.icard.unlock.vibration.change.failed.msg',
                 'Failed to %s vibration when unlocking. Please, try again later.'),
             enable
                 ? [Localization().getStringEx('panel.settings.icard.enable.label', 'enable')]

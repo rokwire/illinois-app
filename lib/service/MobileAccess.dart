@@ -153,6 +153,26 @@ class MobileAccess with Service {
     return result;
   }
 
+  Future<bool> isUnlockSoundEnabled() async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('isUnlockSoundEnabled', null);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
+  Future<bool> enableUnlockSound(bool enable) async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('enableUnlockSound', enable);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case "endpoint.register.finished":
