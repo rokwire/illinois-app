@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
@@ -200,10 +201,11 @@ abstract class CheckList with Service implements NotificationsListener{
       Log.e('Missing gateway url.');
       return null;
     }
-    String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
+    String? url = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
+    String? analyticsUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Analytics.LogAnonymousUin}";
     // contactInfoUrl+="123456789"; //Workaround to return dummy data
 
-    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
+    Response? response = await Network().get(url, auth: Auth2(), headers: Gateway().externalAuthorizationHeader, analyticsUrl: analyticsUrl);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     Log.d("Contact Info Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
@@ -227,8 +229,9 @@ abstract class CheckList with Service implements NotificationsListener{
       return null;
     }
 
-    String? contactInfoUrl = "${Config().gatewayUrl}/courses/giescourses?id=${Auth2().uin}";
-    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
+    String? url = "${Config().gatewayUrl}/courses/giescourses?id=${Auth2().uin}";
+    String? analyticsUrl = "${Config().gatewayUrl}/courses/giescourses?id=${Analytics.LogAnonymousUin}";
+    Response? response = await Network().get(url, auth: Auth2(), headers: Gateway().externalAuthorizationHeader, analyticsUrl: analyticsUrl);
 
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
