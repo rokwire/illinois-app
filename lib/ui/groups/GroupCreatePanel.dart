@@ -463,13 +463,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = _group?.attributes;
     ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
-    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
-      for (ContentAttributesCategory category in categories) {
-        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes, complete: true);
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributes = attribute.displayAttributeValuesListFromSelection(groupAttributes, complete: true);
         if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
           attributesList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("${contentAttributes.stringValue(category.title)}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+            Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
               Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
             ),
             Expanded(child:
@@ -998,7 +998,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
-        (Groups().contentAttributes?.isCategoriesSelectionValid(_group?.attributes) ?? false) &&
+        (Groups().contentAttributes?.isAttributesSelectionValid(_group?.attributes) ?? false) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount > 0));

@@ -935,8 +935,8 @@ class _GroupCardState extends State<GroupCard> {
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().contentAttributes?.displayAttributesListFromSelection(widget.group?.attributes,
-      usage: ContentAttributesCategoryUsage.label);
+    List<String>? attributesList = Groups().contentAttributes?.displayAttributeValuesListFromSelection(widget.group?.attributes,
+      usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
         wrapContent.add(_buildHeadingWrapLabel(attribute));
@@ -1013,8 +1013,8 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().contentAttributes?.displayAttributesListFromSelection(widget.group?.attributes,
-      usage: ContentAttributesCategoryUsage.category);
+    List<String>? displayList = Groups().contentAttributes?.displayAttributeValuesListFromSelection(widget.group?.attributes,
+      usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
@@ -1030,13 +1030,13 @@ class _GroupCardState extends State<GroupCard> {
     List<Widget> propertiesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
     ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
-    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
-      for (ContentAttributesCategory category in categories) {
-        if (category.usage == ContentAttributesCategoryUsage.property) {
-          List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes);
-          if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
-            propertiesList.add(_buildProperty("${contentAttributes.stringValue(category.title)}: ", displayAttributes.join(', ')));
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        if (attribute.usage == ContentAttributeUsage.property) {
+          List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(groupAttributes);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            propertiesList.add(_buildProperty("${attribute.displayTitle}: ", displayAttributeValues.join(', ')));
           }
         }
       }
