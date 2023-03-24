@@ -1,5 +1,5 @@
 {
-  "content": [{
+  "attributes": [{
 		"id": "category",
 		"title": "Category",
 		"description": "Choose the category your group can be filtered by.",

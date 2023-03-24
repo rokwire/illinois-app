@@ -484,17 +484,17 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = _group?.attributes;
     ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
-    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
-      for (ContentAttributesCategory category in categories) {
-        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, complete: true);
-        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(groupAttributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           attributesList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("${category.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+            Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
               Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
             ),
             Expanded(child:
-              Text(displayAttributes.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
+              Text(displayAttributeValues.join(', '), /*overflow: TextOverflow.ellipsis, maxLines: 1,*/ style:
                 Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
               ),
             ),

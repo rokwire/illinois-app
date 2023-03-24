@@ -332,20 +332,20 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
     List<InlineSpan> attributesList = <InlineSpan>[];
     ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
     TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.fat");
     TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
-    if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (categories != null)) {
-      for (ContentAttributesCategory category in categories) {
-        List<String>? displayAttributes = category.displayAttributesListFromSelection(_contentAttributesSelection, complete: true);
-        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
-          displayAttributes = List.from(displayAttributes.map((String attribute) => "'$attribute'"));
+    if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_contentAttributesSelection, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+          displayAttributeValues = List.from(displayAttributeValues.map((String attribute) => "'$attribute'"));
           if (attributesList.isNotEmpty) {
             attributesList.add(TextSpan(text: " and " , style : regularStyle,));
           }
           attributesList.addAll(<InlineSpan>[
-            TextSpan(text: "${category.displayTitle}" , style : boldStyle,),
-            TextSpan(text: " is ${displayAttributes.join(' or ')}" , style : regularStyle,),
+            TextSpan(text: "${attribute.displayTitle}" , style : boldStyle,),
+            TextSpan(text: " is ${displayAttributeValues.join(' or ')}" , style : regularStyle,),
           ]);
         }
       }
