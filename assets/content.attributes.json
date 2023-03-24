@@ -7,6 +7,7 @@
 		"semantics-hint": "Double tap to show category options.",
 		"usage": "category",
 		"widget": "dropdown",
+		"scope": ["groups"],
 		"requirements" : {
 			"min-selected-count": 0,
 			"max-selected-count": 1
@@ -38,6 +39,7 @@
 		"semantics-hint": "Double tap to show sport options.",
 		"usage": "category",
 		"widget": "dropdown",
+		"scope": ["groups"],
 		"requirements" : {
 			"mode": "exclusive",
 			"min-selected-count": 0,
@@ -72,6 +74,7 @@
 		"semantics-hint": "Double tap to show student classification options.",
 		"usage": "category",
 		"widget": "dropdown",
+		"scope": ["groups"],
 		"requirements" : {
 			"min-selected-count": 0,
 			"max-selected-count": null
@@ -91,6 +94,7 @@
 		"usage": "property",
 		"widget": "dropdown",
 		"semantics-hint": "Double tap to show college options.",
+		"scope": ["groups"],
 		"requirements" : {
 			"min-selected-count": 0,
 			"max-selected-count": 1
@@ -144,6 +148,7 @@
 		"semantics-hint": "Double tap to show department options.",
 		"usage": "property",
 		"widget": "dropdown",
+		"scope": ["groups"],
 		"requirements" : {
 			"mode": "inclusive",
 			"min-selected-count": 0,
@@ -575,6 +580,7 @@
 		"usage": "tag",
 		"widget": "dropdown",
 		"semantics-hint": "Double tap to show tags.",
+		"scope": ["groups"],
 		"requirements" : null,
 		"values": [
 			"20th century",
@@ -927,6 +933,7 @@
 		"null-value": false,
 		"usage": "label",
 		"widget": "checkbox",
+		"scope": ["groups"],
 		"requirements" : {
 			"min-selected-count": 0,
 			"max-selected-count": 1
