@@ -178,10 +178,16 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _onAppLivecycleStateChanged(param);
     }
     else if (name == Connectivity.notifyStatusChanged) {
-      if ((Connectivity().isNotOffline) && mounted) {
-        _initLocationServicesStatus();
-        _initEventCategories();
-        _initExplores();
+      if (Connectivity().isNotOffline && mounted) {
+        if (_locationServicesStatus == null) {
+          _initLocationServicesStatus();
+        }
+        if (_eventCategories == null) {
+          _initEventCategories();
+        }
+        if ((_explores == null) && (_exploreTask == null)) {
+          _initExplores();
+        }
       }
     }
     else if (name == LocationServices.notifyStatusChanged) {
@@ -366,10 +372,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       onCameraIdle: _onMapCameraIdle,
       onCameraMove: _onMapCameraMove,
       onTap: _onMapTap,
+      onPoiTap: _onMapPoiTap,
       myLocationEnabled: _userLocationEnabled,
       myLocationButtonEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
       markers: _targetMarkers ?? const <Marker>{},
+      indoorViewEnabled: true,
+    //trafficEnabled: true,
     );
   }
 
@@ -425,8 +434,22 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     else if (_selectedMapExplore != null) {
       _selectMapExplore(null);
     }
-    else if ((_selectedExploreItem == ExploreItem.MTDDestinations)) {
+    else if (_selectedExploreItem == ExploreItem.MTDDestinations) {
       _selectMapExplore(ExplorePOI(location: ExploreLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)));
+    }
+  }
+
+  void _onMapPoiTap(PointOfInterest poi) {
+    debugPrint('ExploreMap POI tap' );
+    MTDStop? mtdStop = MTD().stops?.findStop(location: Native.LatLng(latitude: poi.position.latitude, longitude: poi.position.longitude), locationThresholdDistance: 25 /*in meters*/);
+    if (mtdStop != null) {
+      _selectMapExplore(mtdStop);
+    }
+    else if (_selectedExploreItem == ExploreItem.MTDDestinations) {
+      _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
+    }
+    else if (_selectedMapExplore != null) {
+      _selectMapExplore(null);
     }
   }
 

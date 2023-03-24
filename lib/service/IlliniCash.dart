@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
@@ -45,10 +46,6 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   static const String notifyStudentClassificationUpdated  = "edu.illinois.rokwire.illinicash.student.classification.updated";
 
   static const String uiucAccessToken      = 'access_token';
-
-  static const String analyticsUin         = 'UINxxxxxx';
-  static const String analyticsFirstName   = 'FirstNameXXXXXX';
-  static const String analyticsLastName    = 'LastNameXXXXXX';
 
   IlliniCashEligibility?       _eligibility;
   IlliniCashBallance?          _ballance;
@@ -170,7 +167,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
         bool? eligible = studentSummary.eligibility?.eligible;
         if (eligible == true) {
           String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}";
-          String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/$analyticsUin";
+          String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/${Analytics.LogAnonymousUin}";
           Response? response = await Network().get(url, auth: this, analyticsUrl: analyticsUrl);
           if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
             String responseBody = response.body;
@@ -201,7 +198,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
 
     if ((Config().illiniCashBaseUrl != null) && StringUtils.isNotEmpty(_networkAuthHeaderToken) && StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(firstName) && StringUtils.isNotEmpty(lastName)) {
       String url =  "${Config().illiniCashBaseUrl}/StudentSummary/$uin/$firstName/$lastName";
-      String analyticsUrl = "${Config().illiniCashBaseUrl}/StudentSummary/$analyticsUin/$analyticsFirstName/$analyticsLastName";
+      String analyticsUrl = "${Config().illiniCashBaseUrl}/StudentSummary/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl, auth: this); } on Exception catch(e) { print(e.toString()); }
       int responseCode = response?.statusCode ?? -1;
@@ -258,7 +255,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$analyticsUin/$startDateFormatted/$endDateFormatted";
+    String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
 
     final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl );
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
@@ -288,7 +285,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$analyticsUin/$startDateFormatted/$endDateFormatted";
+    String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
     final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
 
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
@@ -321,7 +318,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: IlliniCashTransaction.dateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$analyticsUin/$startDateFormatted/$endDateFormatted";
+    String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Analytics.LogAnonymousUin}/$startDateFormatted/$endDateFormatted";
 
     final response = await Network().get(transactionHistoryUrl, auth: this, analyticsUrl: analyticsUrl);
 
@@ -432,7 +429,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   Future<bool?> _isEligible({String? uin, String? firstName, String? lastName}) async {
     if ((Config().illiniCashBaseUrl != null) && !StringUtils.isEmpty(uin) && !StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)) {
       String url = "${Config().illiniCashBaseUrl}/ICEligible/$uin/$firstName/$lastName";
-      String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/$analyticsUin/$analyticsFirstName/$analyticsLastName";
+      String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/${Analytics.LogAnonymousUin}/${Analytics.LogAnonymousFirstName}/${Analytics.LogAnonymousLastName}";
       Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
       int responseCode = response?.statusCode ?? -1;

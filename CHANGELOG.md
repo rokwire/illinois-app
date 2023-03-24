@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Refer to google_maps_flutter plugin located in rokwire's upstream fork [#3043](https://github.com/rokwire/illinois-app/issues/3043). 
+- Content attributes prepared for multiple scopes support [#3047](https://github.com/rokwire/app-flutter-plugin/issues/3047).
+### Fixed
+- Fixed hiding user details in analytics logs [#3049](https://github.com/rokwire/illinois-app/issues/3049).
+
+## [4.3.29] - 2023-03-20
+### Changed
+- Link to custom fork of google_maps_flutter where POI tap notification is handled [#3043](https://github.com/rokwire/illinois-app/issues/3043).
+
+## [4.3.28] - 2023-03-17
+### Fixed
+- Fixed POI display in Maps2 [#3038](https://github.com/rokwire/illinois-app/issues/3038).
+### Changed
+- More careful updates in Maps2 when connectivity status changes [#3041](https://github.com/rokwire/illinois-app/issues/3041).
 
 ## [4.3.27] - 2023-03-16
 ### Changed

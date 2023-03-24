@@ -54,12 +54,12 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   Widget _buildContent() {
-    List<ContentAttributesCategory>? categories = widget.contentAttributes?.categories;
-    return ((categories != null) && categories.isNotEmpty) ? Column(children: <Widget>[
+    List<ContentAttribute>? attributes = widget.contentAttributes?.attributes;
+    return ((attributes != null) && attributes.isNotEmpty) ? Column(children: <Widget>[
       Expanded(child:
         Container(padding: EdgeInsets.only(left: 16, right: 24, top: 8), child:
           SingleChildScrollView(child:
-            _buildCategoriesContent(),
+            _buildAttributesContent(),
           ),
         ),
       ),
@@ -68,7 +68,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     ]) : Container();
   }
 
-  Widget _buildCategoriesContent() {
+  Widget _buildAttributesContent() {
     List<Widget> conentList = <Widget>[];
 
     if (StringUtils.isNotEmpty(widget.description)) {
@@ -79,22 +79,22 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       ));
     }
 
-    List<ContentAttributesCategory>? categories = ListUtils.from<ContentAttributesCategory>(widget.contentAttributes?.categories);
-    if ((categories != null) && categories.isNotEmpty) {
-      categories.sort((ContentAttributesCategory category1, ContentAttributesCategory category2) {
-        String categoryTitle1 = widget.contentAttributes?.stringValue(category1.title) ?? '';
-        String categoryTitle2 = widget.contentAttributes?.stringValue(category2.title) ?? '';
-        return categoryTitle1.compareTo(categoryTitle2);
+    List<ContentAttribute>? attributes = ListUtils.from<ContentAttribute>(widget.contentAttributes?.attributes);
+    if ((attributes != null) && attributes.isNotEmpty) {
+      attributes.sort((ContentAttribute attribute1, ContentAttribute attribute2) {
+        String attributeTitle1 = attribute1.displayTitle ?? '';
+        String attributeTitle2 = attribute2.displayTitle ?? '';
+        return attributeTitle1.compareTo(attributeTitle2);
       });
-      for (ContentAttributesCategory category in categories) {
-        Widget? categoryWidget;
-        switch (category.widget) {
-          case ContentAttributesCategoryWidget.dropdown: categoryWidget = _buildCategoryDropDown(category); break;
-          case ContentAttributesCategoryWidget.checkbox: categoryWidget = _buildCategoryCheckbox(category); break;
+      for (ContentAttribute attribute in attributes) {
+        Widget? attributeWidget;
+        switch (attribute.widget) {
+          case ContentAttributeWidget.dropdown: attributeWidget = _buildAttributeDropDown(attribute); break;
+          case ContentAttributeWidget.checkbox: attributeWidget = _buildAttributeCheckbox(attribute); break;
           default: break;
         }
-        if (categoryWidget != null) {
-          conentList.add(categoryWidget);
+        if (attributeWidget != null) {
+          conentList.add(attributeWidget);
         }
       }
     }
@@ -102,46 +102,46 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: conentList,); 
   }
 
-  Widget _buildCategoryDropDown(ContentAttributesCategory category) {
-    LinkedHashSet<String>? categoryLabels = _selection[category.id];
-    bool hasSelection = ((categoryLabels != null) && categoryLabels.isNotEmpty);
-    LinkedHashSet<String>? displayCategoryLabels = (CollectionUtils.isEmpty(categoryLabels) && (category.nullValue is String)) ?
-      LinkedHashSet<String>.from([category.nullValue]) : categoryLabels;
+  Widget _buildAttributeDropDown(ContentAttribute attribute) {
+    LinkedHashSet<String>? attributeLabels = _selection[attribute.id];
+    bool hasSelection = ((attributeLabels != null) && attributeLabels.isNotEmpty);
+    LinkedHashSet<String>? displayAttributeLabels = (CollectionUtils.isEmpty(attributeLabels) && (attribute.nullValue is String)) ?
+      LinkedHashSet<String>.from([attribute.nullValue]) : attributeLabels;
 
-    List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
-    bool visible = (attributes?.isNotEmpty ?? false);
-    bool enabled = (attributes?.isNotEmpty ?? false) && (hasSelection || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
+    List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
+    bool visible = (attributeValues?.isNotEmpty ?? false);
+    bool enabled = (attributeValues?.isNotEmpty ?? false) && (hasSelection || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
-    String? title = _constructAttributeDropdownTitle(category, displayCategoryLabels);
-    String? hint = widget.contentAttributes?.stringValue(widget.filtersMode ? (category.semanticsFilterHint ?? category.semanticsHint) : category.semanticsHint);
+    String? title = _constructAttributeDropdownTitle(attribute, displayAttributeLabels);
+    String? hint = widget.filtersMode ? (attribute.displaySemanticsFilterHint ?? attribute.displaySemanticsHint) : attribute.displaySemanticsHint;
     TextStyle? textStyle = Styles().textStyles?.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
-    void Function()? onTap = enabled ? () => _onCategoryDropdownTap(category: category, attributes: attributes) : null;
+    void Function()? onTap = enabled ? () => _onAttributeDropdownTap(attribute: attribute, attributeValues: attributeValues) : null;
     
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: widget.contentAttributes?.stringValue(category.longTitle ?? category.title)?.toUpperCase(),
-          description: widget.contentAttributes?.stringValue(category.description),
-          requiredMark: !widget.filtersMode && category.isRequired,
+          title: (attribute.displayLongTitle ?? attribute.displayTitle)?.toUpperCase(),
+          description: attribute.displayDescription,
+          requiredMark: !widget.filtersMode && attribute.isRequired,
         ),
-        _CategoryRibbonButton(
+        _AttributeRibbonButton(
           title: title, hint: hint, textStyle: textStyle, onTap: onTap,
         ),
       ]),
     );
   }
 
-  String? _constructAttributeDropdownTitle(ContentAttributesCategory category, LinkedHashSet<String>? categoryLabels) {
-    if ((categoryLabels == null) || categoryLabels.isEmpty) {
-      return widget.contentAttributes?.stringValue(widget.filtersMode ? (category.emptyFilterHint ?? category.emptyHint) : category.emptyHint);
+  String? _constructAttributeDropdownTitle(ContentAttribute attribute, LinkedHashSet<String>? attributeLabels) {
+    if ((attributeLabels == null) || attributeLabels.isEmpty) {
+      return widget.filtersMode ? (attribute.displayEmptyFilterHint ?? attribute.displayEmptyHint) : attribute.displayEmptyHint;
     }
-    else if (categoryLabels.length == 1) {
-      return widget.contentAttributes?.stringValue(categoryLabels.first);
+    else if (attributeLabels.length == 1) {
+      return attribute.displayString(attributeLabels.first);
     }
     else {
       String title = '';
-      for (String attributeLabel in categoryLabels) {
-        String attributeName = widget.contentAttributes?.stringValue(attributeLabel) ?? attributeLabel;
+      for (String attributeLabel in attributeLabels) {
+        String attributeName = attribute.displayString(attributeLabel) ?? attributeLabel;
         if (attributeName.isNotEmpty) {
           if (title.isNotEmpty) {
             title += ', ';
@@ -153,48 +153,47 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     }
   }
 
-  void _onCategoryDropdownTap({ContentAttributesCategory? category, List<ContentAttribute>? attributes}) {
-    Analytics().logSelect(target: category?.title);
-    String? categoryId = category?.id;
+  void _onAttributeDropdownTap({ContentAttribute? attribute, List<ContentAttributeValue>? attributeValues}) {
+    Analytics().logSelect(target: attribute?.title);
+    String? attributeId = attribute?.id;
 
-    LinkedHashSet<String>? categoryLabels = _selection[category?.id];
-    LinkedHashSet<String>? displayCategoryLabels = (CollectionUtils.isEmpty(categoryLabels) && (category?.nullValue is String)) ?
-      LinkedHashSet<String>.from([category?.nullValue]) : categoryLabels;
+    LinkedHashSet<String>? attributeLabels = _selection[attribute?.id];
+    LinkedHashSet<String>? displayAttributeLabels = (CollectionUtils.isEmpty(attributeLabels) && (attribute?.nullValue is String)) ?
+      LinkedHashSet<String>.from([attribute?.nullValue]) : attributeLabels;
 
     Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
-      contentAttributes: widget.contentAttributes,
-      category: category,
-      attributes: attributes,
-      selection: displayCategoryLabels,
-      multipleSelection: widget.filtersMode || (category?.isMultipleSelection ?? false),
+      attribute: attribute,
+      attributeValues: attributeValues,
+      selection: displayAttributeLabels,
+      multipleSelection: widget.filtersMode || (attribute?.isMultipleSelection ?? false),
       filtersMode: widget.filtersMode,
     ),)).then(((LinkedHashSet<String>? selection) {
-      if ((selection != null) && (categoryId != null)) {
-        if ((category?.nullValue is String) && selection.contains(category?.nullValue)) {
-          selection.remove(category?.nullValue);
+      if ((selection != null) && (attributeId != null)) {
+        if ((attribute?.nullValue is String) && selection.contains(attribute?.nullValue)) {
+          selection.remove(attribute?.nullValue);
         }
         setStateIfMounted(() {
-          _selection[categoryId] = selection;
+          _selection[attributeId] = selection;
           widget.contentAttributes?.validateSelection(_selection);
           if (!widget.filtersMode) {
-            widget.contentAttributes?.extendSelection(_selection, categoryId);
+            widget.contentAttributes?.extendSelection(_selection, attributeId);
           }
         });
       }
     }));
   }
 
-  Widget _buildCategoryCheckbox(ContentAttributesCategory category) {
+  Widget _buildAttributeCheckbox(ContentAttribute attribute) {
 
-    List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
+    List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
 
-    LinkedHashSet<String>? categoryLabels = _selection[category.id];
-    ContentAttribute? selectedAttribute = ((categoryLabels != null) && categoryLabels.isNotEmpty) ?
-      category.findAttribute(label: categoryLabels.first) : null;
-    dynamic displayValue = selectedAttribute?.value ?? category.nullValue;
+    LinkedHashSet<String>? attributeLabels = _selection[attribute.id];
+    ContentAttributeValue? selectedAttributeValue = ((attributeLabels != null) && attributeLabels.isNotEmpty) ?
+      attribute.findValue(label: attributeLabels.first) : null;
+    dynamic displayValue = selectedAttributeValue?.value ?? attribute.nullValue;
 
-    bool visible = (attributes?.isNotEmpty ?? false);
-    bool enabled = (attributes?.isNotEmpty ?? false) && ((selectedAttribute != null) || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
+    bool visible = (attributeValues?.isNotEmpty ?? false);
+    bool enabled = (attributeValues?.isNotEmpty ?? false) && ((selectedAttributeValue != null) || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
     String imageAsset;
     if (enabled) {
@@ -208,15 +207,15 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       imageAsset = "box-inside-gray";
     }
     
-    String? text = (displayValue != null) ? category.text : (widget.filtersMode ? (category.emptyFilterHint ?? category.emptyHint) : category.emptyHint);
-    TextStyle? textStyle = Styles().textStyles?.getTextStyle((selectedAttribute != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
+    String? text = (displayValue != null) ? attribute.text : (widget.filtersMode ? (attribute.emptyFilterHint ?? attribute.emptyHint) : attribute.emptyHint);
+    TextStyle? textStyle = Styles().textStyles?.getTextStyle((selectedAttributeValue != null) ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
 
     return Visibility(visible: visible, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
-          title: widget.contentAttributes?.stringValue(category.longTitle ?? category.title)?.toUpperCase(),
-          description: widget.contentAttributes?.stringValue(category.description),
-          requiredMark: !widget.filtersMode && category.isRequired,
+          title: (attribute.displayLongTitle ?? attribute.displayTitle)?.toUpperCase(),
+          description: attribute.displayDescription,
+          requiredMark: !widget.filtersMode && attribute.isRequired,
         ),
         Container (
           decoration: BoxDecoration(
@@ -225,7 +224,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
             borderRadius: BorderRadius.all(Radius.circular(4))
           ),
           //padding: const EdgeInsets.only(left: 12, right: 8),
-          child: InkWell(onTap: () => enabled ? _onCategoryCheckbox(category) : null,
+          child: InkWell(onTap: () => enabled ? _onAttributeCheckbox(attribute) : null,
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
@@ -242,33 +241,33 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     );
   }
 
-  void _onCategoryCheckbox(ContentAttributesCategory category) {
-    String? categoryId = category.id;
-    if (categoryId != null) {
-      List<ContentAttribute>? attributes = category.attributesFromSelection(_selection);
-      LinkedHashSet<String> categoryLabels = _selection[categoryId] ??= LinkedHashSet<String>();
-      ContentAttribute? selectedAttribute = categoryLabels.isNotEmpty ?
-        ContentAttribute.findInList(attributes, label: categoryLabels.first) : null;
+  void _onAttributeCheckbox(ContentAttribute attribute) {
+    String? attributeId = attribute.id;
+    if (attributeId != null) {
+      List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
+      LinkedHashSet<String> attributeLabels = _selection[attributeId] ??= LinkedHashSet<String>();
+      ContentAttributeValue? selectedAttributeValue = attributeLabels.isNotEmpty ?
+        ContentAttributeValue.findInList(attributeValues, label: attributeLabels.first) : null;
       
-      dynamic selectedValue = selectedAttribute?.value;
-      if (category.nullValue != null) {
-        selectedValue ??= category.nullValue;
+      dynamic selectedValue = selectedAttributeValue?.value;
+      if (attribute.nullValue != null) {
+        selectedValue ??= attribute.nullValue;
         selectedValue = (selectedValue ?? false) == false;
-        selectedValue = (selectedValue != category.nullValue) ? selectedValue : null;
+        selectedValue = (selectedValue != attribute.nullValue) ? selectedValue : null;
       }
       else switch(selectedValue) {
         case true:  selectedValue = false; break;
         case false: selectedValue = null; break;
         default:    selectedValue = true; break;
       }
-      selectedAttribute = (selectedValue != null) ? ContentAttribute.findInList(attributes, value: selectedValue) : null;
+      selectedAttributeValue = (selectedValue != null) ? ContentAttributeValue.findInList(attributeValues, value: selectedValue) : null;
 
-      String? selectedLabel = selectedAttribute?.label;
-      Analytics().logSelect(target: selectedAttribute?.label, source: category.title);
+      String? selectedLabel = selectedAttributeValue?.label;
+      Analytics().logSelect(target: selectedAttributeValue?.label, source: attribute.title);
       setStateIfMounted(() {
-        categoryLabels.clear();
+        attributeLabels.clear();
         if (selectedLabel != null) {
-          categoryLabels.add(selectedLabel);
+          attributeLabels.add(selectedLabel);
         }
       });
     }
@@ -350,13 +349,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 }
 
-class _CategoryRibbonButton extends StatelessWidget {
+class _AttributeRibbonButton extends StatelessWidget {
   final String? title;
   final String? hint;
   final TextStyle? textStyle;
   final Function()? onTap;
 
-  _CategoryRibbonButton({Key? key, this.title, this.hint, this.textStyle, this.onTap}) : super(key: key);
+  _AttributeRibbonButton({Key? key, this.title, this.hint, this.textStyle, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
