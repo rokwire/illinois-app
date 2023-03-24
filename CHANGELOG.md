@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Refer to google_maps_flutter plugin located in rokwire's upstream fork [#3043](https://github.com/rokwire/illinois-app/issues/3043). 
+### Fixed
+- Fixed hiding user details in analytics logs [#3049](https://github.com/rokwire/illinois-app/issues/3049).
 
 ## [4.3.29] - 2023-03-20
 ### Changed

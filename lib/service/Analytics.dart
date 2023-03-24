@@ -300,6 +300,10 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
 
+  static const String   LogAnonymousUin                    = 'UINxxxxxx';
+  static const String   LogAnonymousFirstName              = 'FirstNameXXXXXX';
+  static const String   LogAnonymousLastName               = 'LastNameXXXXXX';
+
   // Data
 
   String?               _currentPageName;
