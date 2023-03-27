@@ -199,10 +199,11 @@
 			"enable" : {
 				"library_card"                  : false,
 				"emergency"                     : false,
-				"wayfinding"                    : false,
-				"state_farm_wayfinding"         : false,
-				"create_stadium_poll"           : false,
 				"safer"                         : false,
+				"parking"                       : false,
+				"wayfinding"                    : false,
+				"create_stadium_poll"           : false,
+				"state_farm_wayfinding"         : false,
 				"student_courses"               : "${config.settings.studentCoursesEnabled}"
 			}
 		}
