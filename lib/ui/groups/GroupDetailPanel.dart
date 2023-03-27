@@ -1092,17 +1092,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     List<Widget> attributesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
     ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
-    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
-      for (ContentAttributesCategory category in categories) {
-        List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes, complete: true);
-        if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(groupAttributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           attributesList.add(Row(children: [
-            Text("${contentAttributes.stringValue(category.title)}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
+            Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
               Styles().textStyles?.getTextStyle("widget.card.detail.small.fat")
             ),
             Expanded(child:
-              Text(displayAttributes.join(', '), maxLines: 1, style:
+              Text(displayAttributeValues.join(', '), maxLines: 1, style:
                 Styles().textStyles?.getTextStyle("widget.card.detail.small.regular")
               ),
             ),
@@ -1128,8 +1128,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       ],);
     }
     else {
-      List<String>? displayList = Groups().contentAttributes?.displayAttributesListFromSelection(widget.group?.attributes,
-        usage: ContentAttributesCategoryUsage.category);
+      List<String>? displayList = Groups().contentAttributes?.displayAttributeValuesListFromSelection(widget.group?.attributes,
+        usage: ContentAttributeUsage.category);
       contentList.add(
         Expanded(child: (displayList?.isNotEmpty ?? false) ?
           Text(displayList?.join(', ') ?? '', overflow: TextOverflow.ellipsis, style:
