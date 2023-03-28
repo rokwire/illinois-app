@@ -1084,8 +1084,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildBadgeOrCategoryWidget() {
+    List<Widget> contentList = <Widget>[];
     if (_showMembershipBadge) {
-      return Row(children: <Widget>[
+      contentList.addAll(<Widget>[
         Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
           Center(child:
             Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
@@ -1094,17 +1095,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ),
         ),
         Expanded(child: Container(),),
-        _buildPolicyButton(),
-      ],);
+      ]);
     }
     else {
-      return Row(children: <Widget>[
-        Expanded(child:
-          Text(_isResearchProject ? '' : (_group?.category?.toUpperCase() ?? ''), style:  Styles().textStyles?.getTextStyle('widget.title.tiny'),),
-        ),
-        _buildPolicyButton(),
-      ],);
+      contentList.add(Expanded(child: !_isResearchProject ?
+        Text(_group?.category?.toUpperCase() ?? '', style:  Styles().textStyles?.getTextStyle('widget.title.tiny'),) : Container() ));
     }
+    contentList.add(_buildPolicyButton());
+    return Row(children: contentList,);
   }
 
   Widget _buildPolicyButton() {
