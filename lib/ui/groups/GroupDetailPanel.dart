@@ -621,9 +621,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildImageHeader(){
-    return Container(height: 200, color: Styles().colors?.background, child:
+    return StringUtils.isNotEmpty(_group?.imageURL) ? Container(height: 200, color: Styles().colors?.background, child:
       Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))) : Container(),
+          Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 53,),
           ),
@@ -632,7 +632,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ),
         ],
       ),
-    );
+    ) : Container();
   }
 
   Widget _buildGroupInfo() {
