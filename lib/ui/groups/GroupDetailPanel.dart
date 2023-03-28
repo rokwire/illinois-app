@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -473,28 +474,24 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content = _buildErrorContent();
     }
 
-    bool optionsMenuVisible = _canLeaveGroup || _canDeleteGroup || _canCreatePost;
+    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
+    List<Widget>? barActions = (_canLeaveGroup || _canDeleteGroup || _canCreatePost) ? <Widget>[
+      Semantics(label: Localization().getStringEx("panel.group_detail.label.options", 'Options'), button: true, excludeSemantics: true, child:
+        IconButton(icon: Image.asset('images/groups-more-inactive.png',), onPressed: _onGroupOptionsTap,)
+      )
+    ] : null;
+    
     return Scaffold(
-        appBar: AppBar(leading: HeaderBackButton(), actions: [
-          Visibility(
-              visible: optionsMenuVisible,
-              child: Semantics(
-                  label: Localization().getStringEx("panel.group_detail.label.options", 'Options'),
-                  button: true,
-                  excludeSemantics: true,
-                  child: IconButton(
-                    icon: Image.asset(
-                      'images/groups-more-inactive.png',
-                    ),
-                    onPressed: _onGroupOptionsTap,
-                  )))
-        ]),
-        backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: uiuc.TabBar(),
-        body: RefreshIndicator(
-          onRefresh: _onPullToRefresh,
-          child: content,
-        ),);
+      appBar: HeaderBar(
+        title: barTitle,
+        actions: barActions
+      ),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar(),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        content,
+      ),
+    );
   }
 
   // NotificationsListener
