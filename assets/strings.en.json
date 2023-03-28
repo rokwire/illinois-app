@@ -2186,7 +2186,8 @@
     "panel.membership_questions.button.update_question.title": "Update Questions",
     "panel.membership_questions.label.question.alert": "Please input question #",
 
-    "panel.membership_request.label.request.title": "Membership Questions",
+    "panel.membership_request.label.request.membership.title": "Membership Questions",
+    "panel.membership_request.label.request.participate.title": "Invitation Questions",
     "panel.membership_request.label.answer_questions": "Answer questions",
     "panel.membership_request.label.steps.description": "Only admins of the group will see your answers.",
     "panel.membership_request.button.submit.title": "Submit request",

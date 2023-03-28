@@ -84,7 +84,9 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions'),
+        title: (widget.group?.researchProject != true) ?
+          Localization().getStringEx("panel.membership_request.label.request.membership.title", 'Membership Questions') :
+          Localization().getStringEx("panel.membership_request.label.request.participate.title", 'Invitation Questions'),
         leadingAsset: 'images/icon-circle-close.png',
       ),
       body: Column(children: <Widget>[
