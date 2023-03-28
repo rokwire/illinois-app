@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -473,28 +474,24 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content = _buildErrorContent();
     }
 
-    bool optionsMenuVisible = _canLeaveGroup || _canDeleteGroup || _canCreatePost;
+    String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
+    List<Widget>? barActions = (_canLeaveGroup || _canDeleteGroup || _canCreatePost) ? <Widget>[
+      Semantics(label: Localization().getStringEx("panel.group_detail.label.options", 'Options'), button: true, excludeSemantics: true, child:
+        IconButton(icon: Image.asset('images/groups-more-inactive.png',), onPressed: _onGroupOptionsTap,)
+      )
+    ] : null;
+    
     return Scaffold(
-        appBar: AppBar(leading: HeaderBackButton(), actions: [
-          Visibility(
-              visible: optionsMenuVisible,
-              child: Semantics(
-                  label: Localization().getStringEx("panel.group_detail.label.options", 'Options'),
-                  button: true,
-                  excludeSemantics: true,
-                  child: IconButton(
-                    icon: Image.asset(
-                      'images/groups-more-inactive.png',
-                    ),
-                    onPressed: _onGroupOptionsTap,
-                  )))
-        ]),
-        backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: uiuc.TabBar(),
-        body: RefreshIndicator(
-          onRefresh: _onPullToRefresh,
-          child: content,
-        ),);
+      appBar: HeaderBar(
+        title: barTitle,
+        actions: barActions
+      ),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar(),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        content,
+      ),
+    );
   }
 
   // NotificationsListener
@@ -624,9 +621,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildImageHeader(){
-    return Container(height: 200, color: Styles().colors?.background, child:
+    return StringUtils.isNotEmpty(_group?.imageURL) ? Container(height: 200, color: Styles().colors?.background, child:
       Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))) : Container(),
+          Positioned.fill(child: ModalImageHolder(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders))),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 53,),
           ),
@@ -635,12 +632,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ),
         ],
       ),
-    );
+    ) : Container();
   }
 
   Widget _buildGroupInfo() {
-    List<Widget> commands = [];
-
     String members;
     int membersCount = _groupStats?.activeMembersCount ?? 0;
     if (!_isResearchProject) {
@@ -696,6 +691,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
+    List<Widget> commands = [];
     if (_isMemberOrAdmin) {
       if(_isAdmin) {
         commands.add(RibbonButton(
@@ -749,19 +745,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         padding: EdgeInsets.symmetric(vertical: 14),
         onTap: _onTapNotifications,
       ));
-      if (StringUtils.isNotEmpty(_group?.webURL)) {
+      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
-        commands.add(_buildWebsiteLink());
+        commands.add(_buildWebsiteLinkCommand());
       }
     }
     else {
-      if (StringUtils.isNotEmpty(_group?.webURL)) {
-        commands.add(_buildWebsiteLink());
+      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
+        commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+        commands.add(_buildWebsiteLinkCommand());
       }
 
       String? tags = _group?.displayTags;
       if (StringUtils.isNotEmpty(tags)) {
         if (commands.isNotEmpty) {
+          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
           commands.add(Container(height: 12,));
         }
         commands.add(_buildTags(tags));
@@ -1019,25 +1017,36 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildAbout() {
-    String description = _group?.description ?? '';
-    String researchConsentDetails = _group?.researchConsentDetails ?? '';
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Visibility(visible: !_isResearchProject, child:
-          Padding(padding: EdgeInsets.only(bottom: 4), child:
-            Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),),
-        ExpandableText(description,
+    List<Widget> contentList = <Widget>[];
+
+    if (!_isResearchProject) {
+      contentList.add(Padding(padding: EdgeInsets.only(bottom: 4), child:
+        Text(Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),
+      );
+    }
+
+    if (StringUtils.isNotEmpty(_group?.description)) {
+      contentList.add(ExpandableText(_group?.description ?? '',
+        textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
+        trimLinesCount: 4,
+        readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
+      );
+    }
+
+    if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
+      contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+        ExpandableText(_group?.researchConsentDetails ?? '',
           textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
-          trimLinesCount: 4,
-          readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
-        researchConsentDetails.isNotEmpty ?
-          Padding(padding: EdgeInsets.only(top: 8), child:
-            ExpandableText(researchConsentDetails,
-              textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
-              trimLinesCount: 12,
-              readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
-          ) : Container()
-      ],),);
+          trimLinesCount: 12,
+          readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),
+          footerWidget: (_isResearchProject && StringUtils.isNotEmpty(_group?.webURL)) ? Padding(padding: EdgeInsets.only(top: _group?.researchConsentDetails?.endsWith('\n') ?? false ? 0 : 8), child: _buildWebsiteLinkButton())  : null,
+        ),
+      ),);
+    }
+
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+    );
   }
 
   Widget _buildPrivacyDescription() {
@@ -1061,7 +1070,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Container(width: 0, height: 0);
   }
 
-  Widget _buildWebsiteLink() {
+  Widget _buildWebsiteLinkCommand() {
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
       rightIconAsset: 'images/external-link.png',
@@ -1069,6 +1078,29 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
       onTap: _onWebsite
     );
+  }
+
+  Widget _buildWebsiteLinkButton() {
+    return RibbonButton(
+      label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
+      textColor: Styles().colors!.fillColorSecondary,
+      rightIconAsset: 'images/external-link.png',
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      onTap: _onWebsite
+    );
+    /*return RoundedButton(
+      label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+      hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+      backgroundColor: Colors.white,
+      borderColor: Styles().colors!.fillColorSecondary,
+      rightIcon: Image.asset('images/external-link.png'),
+      textColor: Styles().colors!.fillColorPrimary,
+      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+      fontFamily: Styles().fontFamilies!.bold,
+      fontSize: 16,
+      onTap: _onWebsite
+    );*/
   }
 
   Widget _buildTags(String? tags) {
@@ -1087,8 +1119,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildBadgeOrCategoryWidget() {
+    List<Widget> contentList = <Widget>[];
     if (_showMembershipBadge) {
-      return Row(children: <Widget>[
+      contentList.addAll(<Widget>[
         Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
           Center(child:
             Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
@@ -1097,17 +1130,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ),
         ),
         Expanded(child: Container(),),
-        _buildPolicyButton(),
-      ],);
+      ]);
     }
     else {
-      return Row(children: <Widget>[
-        Expanded(child:
-          Text(_isResearchProject ? '' : (_group?.category?.toUpperCase() ?? ''), style:  Styles().textStyles?.getTextStyle('widget.title.tiny'),),
-        ),
-        _buildPolicyButton(),
-      ],);
+      contentList.add(Expanded(child: !_isResearchProject ?
+        Text(_group?.category?.toUpperCase() ?? '', style:  Styles().textStyles?.getTextStyle('widget.title.tiny'),) : Container() ));
     }
+    contentList.add(_buildPolicyButton());
+    return Row(children: contentList,);
   }
 
   Widget _buildPolicyButton() {

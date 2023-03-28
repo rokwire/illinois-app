@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated default initial selection in Maps [#1942](https://github.com/rokwire/illinois-app/issues/1942).
 - Removed To-Do List from Wellness Section [#2951](https://github.com/rokwire/illinois-app/issues/2951).
 - Embed guide content in Academics and Wellness home panels [#3004](https://github.com/rokwire/illinois-app/issues/3004).
+- Research project updates [#3055](https://github.com/rokwire/illinois-app/issues/3055).
+
 ## [4.2.53] - 2023-02-20
 ### Changed
 - Update MTD text to include “Bus” [#2952](https://github.com/rokwire/illinois-app/issues/2952).
