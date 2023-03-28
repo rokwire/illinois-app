@@ -193,8 +193,9 @@ class CanvasAssignment {
   final int? courseId;
   final String? htmlUrl;
   final int? position;
+  final CanvasSubmission? submission;
 
-  CanvasAssignment({this.id, this.name, this.dueAt, this.courseId, this.htmlUrl, this.position});
+  CanvasAssignment({this.id, this.name, this.dueAt, this.courseId, this.htmlUrl, this.position, this.submission});
 
   static CanvasAssignment? fromJson(Map<String, dynamic>? json) {
     return (json != null)
@@ -204,7 +205,8 @@ class CanvasAssignment {
             dueAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['due_at']), isUtc: true),
             courseId: JsonUtils.intValue(json['course_id']),
             htmlUrl: JsonUtils.stringValue(json['html_url']),
-            position: JsonUtils.intValue(json['position']))
+            position: JsonUtils.intValue(json['position']),
+            submission: CanvasSubmission.fromJson(JsonUtils.mapValue(json['submission'])))
         : null;
   }
 
@@ -221,6 +223,10 @@ class CanvasAssignment {
     String dateTimeFormat = (nowYear != dueYear) ? 'yyyy-MM-dd' : 'MMM d, h:mma';
     String? dueDisplayDate = AppDateTime().formatDateTime(dueAtLocal, format: dateTimeFormat);
     return dueDisplayDate;
+  }
+
+  String? get submittedDisplayDateTime {
+    return submission?.submittedDisplayDateTime;
   }
 
   static List<CanvasAssignment>? listFromJson(List<dynamic>? jsonList) {
@@ -259,6 +265,37 @@ class CanvasAssignmentGroup {
       }
     }
     return result;
+  }
+}
+
+////////////////////////////////
+// CanvasSubmission
+
+class CanvasSubmission {
+  final int? id;
+  final DateTime? submittedAt;
+
+  CanvasSubmission({this.id, this.submittedAt});
+
+  DateTime? get submittedAtLocal {
+    return AppDateTime().getDeviceTimeFromUtcTime(submittedAt);
+  }
+
+  String? get submittedDisplayDateTime {
+    if (submittedAtLocal == null) {
+      return null;
+    }
+    int nowYear = DateTime.now().year;
+    int dueYear = submittedAtLocal!.year;
+    String dateTimeFormat = (nowYear != dueYear) ? 'yyyy-MM-dd' : 'MMM d, h:mma';
+    String? dueDisplayDate = AppDateTime().formatDateTime(submittedAtLocal, format: dateTimeFormat);
+    return dueDisplayDate;
+  }
+
+  static CanvasSubmission? fromJson(Map<String, dynamic>? json) {
+    return (json != null)
+        ? CanvasSubmission(id: JsonUtils.intValue(json['id']), submittedAt: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['submitted_at']), isUtc: true))
+        : null;
   }
 }
 
