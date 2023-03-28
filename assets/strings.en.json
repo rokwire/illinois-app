@@ -1953,6 +1953,7 @@
     "panel.groups_create.privacy.hint.default": "Select privacy setting..",
     "panel.groups_create.privacy.hint": "Double tap to show privacy options",
     "panel.groups_create.button.create.title": "Create Group",
+    "panel.groups_create.button.create.project.title": "Create Project",
     "panel.groups_create.tags.label.tag": " tag, ",
     "panel.groups_create.tags.label.tag.hint": "double tab to remove tag",
     "panel.groups_create.button.tags.title": "Tags",
@@ -2240,6 +2241,7 @@
     "panel.groups_home.label.all_groups.filtered.empty": "No groups match the selected filter",
 
     "panel.groups_settings.label.heading": "Group Settings",
+    "panel.groups_settings.label.project.heading": "Project Settings",
     "panel.groups_settings.label.heading.general_info": "General group information",
     "panel.groups_settings.label.heading.discoverability": "Discoverability",
     "panel.groups_settings.add_image": "Add Cover Image",
@@ -2283,6 +2285,7 @@
     "panel.groups_settings.attendance_group.label": "Enable attendance checking",
     "panel.groups_settings.only_admins_create_polls.enabled.label": "Only admins can create Polls",
     "panel.groups_settings.auto_join.enabled.label": "Group can be joined automatically?",
+    "panel.groups_settings.auto_join.project.enabled.label": "Does not require my screening of potential participants",
     "panel.groups_settings.tags.label.question.format": "%s Question(s)",
     "panel.groups_settings.tags.label.tag.format": "%s tag, ",
     "panel.groups_settings.tags.label.tag.hint": "Double tap to remove tag",

@@ -238,6 +238,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Container(height: 20),
         _buildTitle(Localization().getStringEx("panel.groups_create.participation.section.title", 'Participation'), "images/icon-member.png"),
         _buildMembershipLayout(),
+        _buildProjectSettingsLayout(),
       ]);
     }
 
@@ -982,8 +983,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child:  RibbonButton(
-          label: Localization().getStringEx('panel.groups_settings..button.advanced_settings.title', 'Advanced Settings'), //Localize
-          hint: Localization().getStringEx('panel.groups_settings..button.advanced_settings..hint', ''),
+          label: Localization().getStringEx('panel.groups_settings.button.advanced_settings.title', 'Advanced Settings'), //Localize
+          hint: Localization().getStringEx('panel.groups_settings.button.advanced_settings.hint', ''),
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
           borderRadius: BorderRadius.circular(4),
           onTap: (){
@@ -998,13 +999,36 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
 
+  //ProjectSettings
+  Widget _buildProjectSettingsLayout() {
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      EnabledToggleButton(
+        label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        enabled: true,
+        toggled: _group?.canJoinAutomatically == true,
+        onTap: _onTapJoinAutomatically
+      )
+    );
+  }
+
+  void _onTapJoinAutomatically() {
+    Analytics().logSelect(target: "Does not require my screening of potential participants");
+    setState(() {
+      _group?.canJoinAutomatically = (_group?.canJoinAutomatically != true);
+    });
+  }
+  
   //Buttons
   Widget _buildButtonsLayout() {
     return Semantics(container: true, child: Container( color: Styles().colors!.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: RoundedButton(
-              label: (_group?.researchProject == true) ? "Create Project" : Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
+              label: (_group?.researchProject == true) ?
+                Localization().getStringEx("panel.groups_create.button.create.project.title", "Create Project") :
+                Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
               backgroundColor: Styles().colors!.white,
               borderColor: _canSave ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
               textColor: _canSave ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
