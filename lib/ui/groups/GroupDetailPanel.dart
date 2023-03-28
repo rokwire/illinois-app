@@ -636,8 +636,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildGroupInfo() {
-    List<Widget> commands = [];
-
     String members;
     int membersCount = _groupStats?.activeMembersCount ?? 0;
     if (!_isResearchProject) {
@@ -693,6 +691,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
+    List<Widget> commands = [];
     if (_isMemberOrAdmin) {
       if(_isAdmin) {
         commands.add(RibbonButton(
@@ -746,19 +745,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         padding: EdgeInsets.symmetric(vertical: 14),
         onTap: _onTapNotifications,
       ));
-      if (StringUtils.isNotEmpty(_group?.webURL)) {
+      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
-        commands.add(_buildWebsiteLink());
+        commands.add(_buildWebsiteLinkCommand());
       }
     }
     else {
-      if (StringUtils.isNotEmpty(_group?.webURL)) {
-        commands.add(_buildWebsiteLink());
+      if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
+        commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+        commands.add(_buildWebsiteLinkCommand());
       }
 
       String? tags = _group?.displayTags;
       if (StringUtils.isNotEmpty(tags)) {
         if (commands.isNotEmpty) {
+          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
           commands.add(Container(height: 12,));
         }
         commands.add(_buildTags(tags));
@@ -1016,25 +1017,36 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildAbout() {
-    String description = _group?.description ?? '';
-    String researchConsentDetails = _group?.researchConsentDetails ?? '';
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Visibility(visible: !_isResearchProject, child:
-          Padding(padding: EdgeInsets.only(bottom: 4), child:
-            Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),),
-        ExpandableText(description,
+    List<Widget> contentList = <Widget>[];
+
+    if (!_isResearchProject) {
+      contentList.add(Padding(padding: EdgeInsets.only(bottom: 4), child:
+        Text(Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),
+      );
+    }
+
+    if (StringUtils.isNotEmpty(_group?.description)) {
+      contentList.add(ExpandableText(_group?.description ?? '',
+        textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
+        trimLinesCount: 4,
+        readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
+      );
+    }
+
+    if (StringUtils.isNotEmpty(_group?.researchConsentDetails)) {
+      contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+        ExpandableText(_group?.researchConsentDetails ?? '',
           textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
-          trimLinesCount: 4,
-          readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
-        researchConsentDetails.isNotEmpty ?
-          Padding(padding: EdgeInsets.only(top: 8), child:
-            ExpandableText(researchConsentDetails,
-              textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
-              trimLinesCount: 12,
-              readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
-          ) : Container()
-      ],),);
+          trimLinesCount: 12,
+          readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),
+          footerWidget: (_isResearchProject && StringUtils.isNotEmpty(_group?.webURL)) ? Padding(padding: EdgeInsets.only(top: _group?.researchConsentDetails?.endsWith('\n') ?? false ? 0 : 8), child: _buildWebsiteLinkButton())  : null,
+        ),
+      ),);
+    }
+
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
+    );
   }
 
   Widget _buildPrivacyDescription() {
@@ -1058,7 +1070,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Container(width: 0, height: 0);
   }
 
-  Widget _buildWebsiteLink() {
+  Widget _buildWebsiteLinkCommand() {
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
       rightIconAsset: 'images/external-link.png',
@@ -1066,6 +1078,29 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
       onTap: _onWebsite
     );
+  }
+
+  Widget _buildWebsiteLinkButton() {
+    return RibbonButton(
+      label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
+      textColor: Styles().colors!.fillColorSecondary,
+      rightIconAsset: 'images/external-link.png',
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      onTap: _onWebsite
+    );
+    /*return RoundedButton(
+      label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+      hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+      backgroundColor: Colors.white,
+      borderColor: Styles().colors!.fillColorSecondary,
+      rightIcon: Image.asset('images/external-link.png'),
+      textColor: Styles().colors!.fillColorPrimary,
+      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+      fontFamily: Styles().fontFamilies!.bold,
+      fontSize: 16,
+      onTap: _onWebsite
+    );*/
   }
 
   Widget _buildTags(String? tags) {
