@@ -176,6 +176,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
 
   Widget _buildAssignmentItem(CanvasAssignment assignment) {
     String displayDueDate = StringUtils.ensureNotEmpty(assignment.dueDisplayDateTime);
+    String displaySubmittedDate = StringUtils.ensureNotEmpty(assignment.submittedDisplayDateTime);
     BorderSide borderSide = BorderSide(color: Styles().colors!.blackTransparent06!, width: 1);
     return GestureDetector(
         onTap: () => _onTapAssignment(assignment),
@@ -192,17 +193,34 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
                         style: TextStyle(
                             fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant, fontFamily: Styles().fontFamilies!.bold)))
               ]),
-              Visibility(visible: StringUtils.isNotEmpty(displayDueDate), child: Padding(
-                  padding: EdgeInsets.only(top: 5),
-                  child: Row(children: [
-                    Text(Localization().getStringEx('panel.canvas_assignments.due.label', 'Due'),
-                        style: TextStyle(fontSize: 14, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
-                    Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(displayDueDate,
-                            style: TextStyle(
-                                fontSize: 14, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular)))
-                  ])))
+              Visibility(
+                  visible: StringUtils.isNotEmpty(displayDueDate),
+                  child: Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Row(children: [
+                        Text(Localization().getStringEx('panel.canvas_assignments.due.label', 'Due:'),
+                            style:
+                                TextStyle(fontSize: 14, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+                        Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text(displayDueDate,
+                                style: TextStyle(
+                                    fontSize: 14, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular)))
+                      ]))),
+              Visibility(
+                  visible: StringUtils.isNotEmpty(displaySubmittedDate),
+                  child: Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Row(children: [
+                        Text(Localization().getStringEx('panel.canvas_assignments.submitted.label', 'Submitted:'),
+                            style:
+                                TextStyle(fontSize: 14, color: Styles().colors!.accentColor1, fontFamily: Styles().fontFamilies!.bold)),
+                        Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text(displaySubmittedDate,
+                                style: TextStyle(
+                                    fontSize: 14, color: Styles().colors!.accentColor1, fontFamily: Styles().fontFamilies!.regular)))
+                      ])))
             ])));
   }
 
