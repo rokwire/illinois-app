@@ -731,8 +731,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     String buttonTitle = _isResearchProject ? "Recruitment Questions" : Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions");
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
-      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
+      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format", "%s Question(s)"), [questionsCount.toString()]) :
+      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default", "No question");
 
     return
       Container(
@@ -925,7 +925,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     int questionsCount = _researchProfileQuestionsCount;
     String questionsDescription = (0 < questionsCount) ?
       sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
-      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
+      Localization().getStringEx("panel.groups_settings.audience.button.question.description.default","All Potential Participants");
 
     return Container(
       color: Styles().colors!.background,

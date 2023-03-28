@@ -873,8 +873,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildResearchAudienceLayout() {
     int questionsCount = _researchProfileQuestionsCount;
     String questionsDescription = (0 < questionsCount) ?
-      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
-      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
+      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format", "%s Question(s)"), [questionsCount.toString()]) :
+      Localization().getStringEx("panel.groups_settings.audience.button.question.description.default", "All Potential Participants");
 
     return Container(
       color: Styles().colors!.background,
@@ -1252,7 +1252,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         StringUtils.isNotEmpty(_group?.category) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
-        ((_group?.researchProject != true) || (_researchProfileQuestionsCount > 0));
+        ((_group?.researchProject != true) || (_researchProfileQuestionsCount >= 0));
   }
 
   bool get _loading => _groupCategoeriesLoading;
