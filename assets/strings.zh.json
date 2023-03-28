@@ -2642,7 +2642,8 @@
 	"panel.canvas_assignments.header.title": "作業",
 	"panel.canvas_assignments.load.failed.error.msg": "未能加載分配. 請稍後再試.",
 	"panel.canvas_assignments.empty.msg": "沒有任務.",
-	"panel.canvas_assignments.due.label": "到期的",
+	"panel.canvas_assignments.due.label": "到期的:",
+    "panel.canvas_assignments.submitted.label": "已提交:",
 	"panel.canvas_assignments.upcoming.label": "即將到來的作業",
 	"panel.canvas_assignments.past.label": "過去的作業",
 
