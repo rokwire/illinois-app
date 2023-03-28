@@ -217,6 +217,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           initialContent = AcademicsContent.canvas_courses;
         } else if (_contentValues!.contains(AcademicsContent.student_courses)) {
           initialContent = AcademicsContent.student_courses;
+        } else if (_contentValues!.contains(AcademicsContent.skills_self_evaluation)) {
+          initialContent = AcademicsContent.skills_self_evaluation;
         }
       }
     }
