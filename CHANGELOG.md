@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.2.54] - 2023-03-28
 ### Changed
 - Updated default initial selection in Maps [#1942](https://github.com/rokwire/illinois-app/issues/1942).
 - Removed To-Do List from Wellness Section [#2951](https://github.com/rokwire/illinois-app/issues/2951).
