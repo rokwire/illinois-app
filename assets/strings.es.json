@@ -1922,7 +1922,8 @@
     "panel.web.tracking_disabled.title": "Contenido web bloqueado",
     "panel.web.tracking_disabled.message": "Ha optado por denegar el uso de cookies para el contenido web en esta aplicación, por lo tanto, hemos bloqueado el acceso a los sitios web. Si cambia de opinión, cambie su preferencia <a href='%s'>aquí</a>. Es posible que la configuración de su teléfono también deba tener habilitado Privacidad > Seguimiento.",
 
-    "panel.groups_create.label.heading": "Create a Group",
+    "panel.groups_create.label.group.heading": "Create a Group",
+    "panel.groups_create.label.project.heading": "Create Research Project",
     "panel.groups_create.label.discoverability": "Discoverability",
     "panel.groups_create.label.privacy": "Privacy",
     "panel.groups_create.name.title": "NAME YOUR GROUP",
@@ -1959,6 +1960,7 @@
     "panel.groups_create.unknown.error.message": "Unknown error occurred",
     "panel.groups_update.failed.msg": "Failed to update group: %s.",
     "panel.groups_create.membership.section.title": "Membership",
+    "panel.groups_create.participation.section.title": "Participation",
     "panel.groups_create.questions.existing.label": "Question(s)",
     "panel.groups_create..questions.missing.label": "No question",
     "panel.groups_create.membership.questions.title": "Membership Questions",

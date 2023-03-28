@@ -402,7 +402,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(bottom: 8, top:24),
+                    padding: EdgeInsets.only(bottom: 8, top:16),
                     child: Text(
                       Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
                       style: TextStyle(
@@ -463,10 +463,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onTapConfirmLinkUrl() {
     Analytics().logSelect(target: "Confirm Website url");
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => WebPanel(url: _linkController.text)));
+    if (_linkController.text.isNotEmpty) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _linkController.text)));
+    }
   }
   //
   //Category
