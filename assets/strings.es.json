@@ -2194,7 +2194,8 @@
     "panel.membership_request.label.fail": "Failed to submit request",
 
     "panel.membership_request.label.title": "Membership Steps",
-    "panel.membership_request.label.description": "This group asks you to answer the following question(s) for membership consideration.",
+    "panel.membership_request.label.group.description": "This group asks you to answer the following question(s) for membership consideration.",
+    "panel.membership_request.label.project.description": "This Research Project wants you to answer the following question(s) for participation consideration.",
     "panel.membership_request.button.add_steps.step": "STEP ",
     "panel.membership_request.label.contact_event": "Connect event",
     "panel.membership_request.button.add_steps.title": "Add step",
