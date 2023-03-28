@@ -2644,7 +2644,8 @@
     "panel.canvas_assignments.header.title": "Assignments",
     "panel.canvas_assignments.load.failed.error.msg": "Failed to load assignments. Please, try again later.",
     "panel.canvas_assignments.empty.msg": "There are no assignments.",
-    "panel.canvas_assignments.due.label": "Due",
+    "panel.canvas_assignments.due.label": "Due:",
+    "panel.canvas_assignments.submitted.label": "Submitted:",
     "panel.canvas_assignments.upcoming.label": "Upcoming Assignments",
     "panel.canvas_assignments.past.label": "Past Assignments",
 

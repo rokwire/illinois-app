@@ -2641,7 +2641,8 @@
     "panel.canvas_assignments.header.title": "Tareas",
     "panel.canvas_assignments.load.failed.error.msg": "Error al cargar las tareas. Por favor, inténtelo de nuevo más tarde.",
     "panel.canvas_assignments.empty.msg": "No hay asignaciones.",
-    "panel.canvas_assignments.due.label": "Vencer",
+    "panel.canvas_assignments.due.label": "Vencer:",
+    "panel.canvas_assignments.submitted.label": "Enviado:",
     "panel.canvas_assignments.upcoming.label": "Tareas Próximas",
     "panel.canvas_assignments.past.label": "Tareas Pasadas",
 
