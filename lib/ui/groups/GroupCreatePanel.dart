@@ -326,12 +326,18 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //Description
   //Name
   Widget _buildDescriptionField() {
-    String? title = Localization().getStringEx("panel.groups_create.description.title", "DESCRIPTION");
+    String? title = (_group?.researchProject == true) ?
+      Localization().getStringEx("panel.groups_create.description.project.title", "SHORT DESCRIPTION") :
+      Localization().getStringEx("panel.groups_create.description.group.title", "DESCRIPTION");
     String? description = (_group?.researchProject == true) ?
-      "What’s the purpose of your project? Who should join? What will you do at your events?" :
-      Localization().getStringEx("panel.groups_create.description.description", "What’s the purpose of your group? Who should join? What will you do at your events?");
-    String? fieldTitle = Localization().getStringEx("panel.groups_create.description.field", "DESCRIPTION FIELD");
-    String? fieldHint = Localization().getStringEx("panel.groups_create.description.field.hint", "");
+      Localization().getStringEx("panel.groups_create.description.project.description", "What’s the purpose of your project? Who should join? What will you do at your events?") :
+      Localization().getStringEx("panel.groups_create.description.group.description", "What’s the purpose of your group? Who should join? What will you do at your events?");
+    String? fieldTitle = (_group?.researchProject == true) ?
+      Localization().getStringEx("panel.groups_create.description.project.field", "SHORT DESCRIPTION FIELD") :
+      Localization().getStringEx("panel.groups_create.description.group.field", "DESCRIPTION FIELD");
+    String? fieldHint = (_group?.researchProject == true) ?
+      Localization().getStringEx("panel.groups_create.description.project.field.hint", "") :
+      Localization().getStringEx("panel.groups_create.description.group.field.hint", "");
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),

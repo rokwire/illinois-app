@@ -347,11 +347,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Description
   Widget _buildDescriptionField() {
-    String title = (_group?.researchProject == true) ? "PROJECT DESCRIPTION" : Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
+    String title = (_group?.researchProject == true) ?
+      Localization().getStringEx("panel.groups_settings.description.project.title", "SHORT PROJECT DESCRIPTION") :
+      Localization().getStringEx("panel.groups_settings.description.group.title", "GROUP DESCRIPTION");
     String? fieldTitle = (_group?.researchProject == true) ?
-      "What’s the purpose of your project? Who should join? What will you do at your events?" :
-      Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
-    String? fieldHint = Localization().getStringEx("panel.groups_settings.description.field.hint", "");
+      Localization().getStringEx("panel.groups_settings.description.project.field", "What’s the purpose of your project? Who should join? What will you do at your events?") :
+      Localization().getStringEx("panel.groups_settings.description.group.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
+    String? fieldHint = (_group?.researchProject == true) ?
+      Localization().getStringEx("panel.groups_settings.description.project.field.hint", "") :
+      Localization().getStringEx("panel.groups_settings.description.group.field.hint", "");
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
