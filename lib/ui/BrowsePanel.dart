@@ -591,6 +591,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
       case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
+      case "my.wellness_mental_health":      _onTapWellnessMentalHealth(context); break;
       case "my.my_appointments":             _onTapMyAppointments(context); break;
 
       case "inbox.all_notifications":        _onTapNotifications(context); break;
@@ -613,6 +614,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wallet.library_card":            _onTapLibraryCard(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
+      case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
       case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
       case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
       case "wellness.my_appointments":          _onTapMyAppointments(context); break;
@@ -1036,6 +1038,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapWellnessResources(BuildContext context) {
     Analytics().logSelect(target: "Wellness Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.resources,); } ));
+  }
+
+  void _onTapWellnessMentalHealth(BuildContext context) {
+    Analytics().logSelect(target: "Wellness Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.mentalHealth,); } ));
   }
 
   void _onTapMyAppointments(BuildContext context) {
