@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Research project updates [#3055](https://github.com/rokwire/illinois-app/issues/3055).
+### Added
+- Create Mental Health content type in Wellness home panel and all related support [#3062](https://github.com/rokwire/illinois-app/issues/3062).
 
 ## [4.3.31] - 2023-03-28
 ### Added
