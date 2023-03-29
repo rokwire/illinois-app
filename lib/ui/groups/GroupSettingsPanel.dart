@@ -156,7 +156,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     }
     else {
       contentList.addAll(<Widget>[
-        Container(height: 1, color: Styles().colors!.surfaceAccent,),
+        // Container(height: 1, color: Styles().colors!.surfaceAccent,),
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
           _buildSectionTitle("Research", "settings"),
         ),
@@ -827,12 +827,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     return Container(
       color: Styles().colors!.background,
-      padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(children: <Widget>[
+        _buildSectionTitle(Localization().getStringEx("panel.groups_create.audience.section.title", 'Audience'), "person"),
+        Container(height: 12,),
         Semantics(
             explicitChildNodes: true,
             child: _buildMembershipButton(
-                title: "Target Audience",
+                title: Localization().getStringEx("panel.groups_create.target.audience.title", "Target Audience"),
                 description: questionsDescription,
                 onTap: _onTapResearchProfile)),
       ]),

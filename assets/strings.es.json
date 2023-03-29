@@ -390,6 +390,7 @@
     "panel.browse.entry.my.my_inbox.title": "Mis Notificaciones",
     "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
     "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
+    "panel.browse.entry.my.wellness_mental_health.title": "Mi Bienestar Salud Mental",
     "panel.browse.entry.my.my_appointments.title": "Mis citas de McKinley",
 
     "panel.browse.entry.inbox.all_notifications.title": "Todas las notificaciones",
@@ -417,6 +418,7 @@
     "panel.browse.entry.wellness.wellness_tips.title": "Consejo diario",
     "panel.browse.entry.wellness.wellness_health_screener.title": "Evaluador de salud de Illinois",
     "panel.browse.entry.wellness.wellness_resources.title": "Resources",
+    "panel.browse.entry.wellness.wellness_mental_health.title": "Salud Mental",
 
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar",
@@ -1839,6 +1841,7 @@
     "panel.wellness.section.appointments.label": "Citas MyMcKinley",
     "panel.wellness.section.screener.label": "Illinois Health Screener",
     "panel.wellness.section.resources.label": "Recursos de bienestar",
+    "panel.wellness.section.mental_health.label": "Salud Mental",
     "panel.wellness.section.podcast.label": "Podcast saludable de Illini",
     "panel.wellness.section.struggling.label": "Estoy luchando",
 
@@ -1990,9 +1993,12 @@
     "panel.groups_update.failed.msg": "Failed to update group: %s.",
     "panel.groups_create.membership.section.title": "Membership",
     "panel.groups_create.participation.section.title": "Participation",
+    "panel.groups_create.audience.section.title": "Audience",
     "panel.groups_create.questions.existing.label": "Question(s)",
     "panel.groups_create..questions.missing.label": "No question",
     "panel.groups_create.membership.questions.title": "Membership Questions",
+    "panel.groups_create.recruitment.questions.title": "Recruitment Questions",
+    "panel.groups_create.target.audience.title": "Target Audience",
     "panel.groups_create.button.hide.title": "Hide this group",
     "panel.groups_create.button.hide.hint": "",
     "panel.groups_create.authman.section.title": "University managed membership",
@@ -2975,6 +2981,11 @@
     "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
     "widget.home.wellness_resources.button.all.title": "Ver todo",
     "widget.home.wellness_resources.button.all.hint": "Toque para ver todos los recursos de bienestar",
+
+	"widget.home.wellness_mental_health.header.label": "My Wellness Mental Health",
+    "widget.home.wellness_mental_health.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Mental Health</b></a> so you can quickly find them here.",
+    "widget.home.wellness_mental_health.button.all.title": "View All",
+    "widget.home.wellness_mental_health.button.all.hint": "Tap to view all wellness metnal heatlh",
 
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
     "widget.athletics_card.button.get_tickets.hint":"",

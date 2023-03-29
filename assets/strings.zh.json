@@ -390,6 +390,7 @@
 	"panel.browse.entry.my.my_inbox.title": "我的通知",
 	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
+	"panel.browse.entry.my.wellness_mental_health.title": "我的健康心理健康",
 	"panel.browse.entry.my.my_appointments.title": "我的麥金利約會",
 
 	"panel.browse.entry.inbox.all_notifications.title": "所有通知",
@@ -417,6 +418,7 @@
 	"panel.browse.entry.wellness.wellness_tips.title": "每日提示",
 	"panel.browse.entry.wellness.wellness_health_screener.title": "伊利諾伊州健康篩查員",
 	"panel.browse.entry.wellness.wellness_resources.title": "資源",
+	"panel.browse.entry.wellness.wellness_mental_health.title": "精神健康",
 
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",
@@ -1842,6 +1844,7 @@
 	"panel.wellness.section.appointments.label": "MyMcKinley 約會",
 	"panel.wellness.section.screener.label": "Illinois Health Screener",
 	"panel.wellness.section.resources.label": "健康資源",
+	"panel.wellness.section.mental_health.label": "精神健康",
 	"panel.wellness.section.podcast.label": "健康伊利尼播客",
 	"panel.wellness.section.struggling.label": "我正在掙扎",
 
@@ -1991,9 +1994,12 @@
 	"panel.groups_update.failed.msg": "Failed to update group: %s.",
 	"panel.groups_create.membership.section.title": "Membership",
 	"panel.groups_create.participation.section.title": "Participation",
+	"panel.groups_create.audience.section.title": "Audience",
 	"panel.groups_create.questions.existing.label": "Question(s)",
 	"panel.groups_create..questions.missing.label": "No question",
 	"panel.groups_create.membership.questions.title": "Membership Questions",
+	"panel.groups_create.recruitment.questions.title": "Recruitment Questions",
+	"panel.groups_create.target.audience.title": "Target Audience",
 	"panel.groups_create.button.hide.title": "Hide this group",
 	"panel.groups_create.button.hide.hint": "",
 	"panel.groups_create.authman.section.title": "University managed membership",
@@ -2976,6 +2982,11 @@
 	"widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
 	"widget.home.wellness_resources.button.all.title": "查看全部",
 	"widget.home.wellness_resources.button.all.hint": "點擊查看所有健康資源",
+
+	"widget.home.wellness_mental_health.header.label": "My Wellness Mental Health",
+	"widget.home.wellness_mental_health.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Mental Health</b></a> so you can quickly find them here.",
+	"widget.home.wellness_mental_health.button.all.title": "View All",
+	"widget.home.wellness_mental_health.button.all.hint": "Tap to view all wellness metnal heatlh",
 
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",
