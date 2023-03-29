@@ -182,7 +182,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       if (!_isAuthManGroup) {
         contentLayout.addAll(<Widget>[
           Container(height: 20),
-          _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "person"),
+          _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "person-circle"),
           _buildMembershipLayout(),
         ]);
       }
@@ -224,7 +224,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Container(height: 8),
 
         Container(height: 20),
-        _buildTitle(Localization().getStringEx("panel.groups_create.participation.section.title", 'Participation'), "person"),
+        _buildTitle(Localization().getStringEx("panel.groups_create.participation.section.title", 'Participation'), "person-circle"),
         _buildMembershipLayout(),
         _buildProjectSettingsLayout(),
       ]);
