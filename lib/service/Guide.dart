@@ -32,6 +32,7 @@ class Guide with Service implements NotificationsListener {
   static const String campusReminderContentType = "campus-reminder";
   static const String campusHighlightContentType = "campus-highlight";
   static const String campusSafetyResourceContentType = "campus-safety-resource";
+  static const String wellnessMentalHealthContentType = "mental-health";
 
   static const String _cacheFileName = "guide.json";
 
@@ -279,6 +280,10 @@ class Guide with Service implements NotificationsListener {
     return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusSafetyResourceContentType;
   }
 
+  bool isEntryMentalHeatlh(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == wellnessMentalHealthContentType;
+  }
+
   // Returns the date in:
   // A) if universityLocation exits => in Univerity timezone;
   // B) otherwise => in local timezone.
@@ -360,6 +365,26 @@ class Guide with Service implements NotificationsListener {
       });
 
       return safetyResourcesList;
+    }
+    return null;
+  }
+
+  List<Map<String, dynamic>>? get mentalHealthList {
+    if (_contentList != null) {
+
+      List<Map<String, dynamic>> mentalHealthList = <Map<String, dynamic>>[];
+      for (dynamic entry in _contentList!) {
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(entry);
+        if (isEntryMentalHeatlh(guideEntry)) {
+          mentalHealthList.add(guideEntry!);
+        }
+      }
+
+      mentalHealthList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+        return SortUtils.compare(Guide().entryListTitle(entry1, stripHtmlTags: true), Guide().entryListTitle(entry2, stripHtmlTags: true));
+      });
+
+      return mentalHealthList;
     }
     return null;
   }
