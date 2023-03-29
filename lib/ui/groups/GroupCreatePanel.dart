@@ -167,6 +167,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Container(height: 16),
         _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
         Container(height: 8),
+        
         _buildPrivacyDropDown(),
         _buildHiddenForSearch(),
       ]);
@@ -181,7 +182,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       if (!_isAuthManGroup) {
         contentLayout.addAll(<Widget>[
           Container(height: 20),
-          _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "person"),
+          _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "person-circle"),
           _buildMembershipLayout(),
         ]);
       }
@@ -217,10 +218,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _buildAttributesLayout(),
         Container(height: 8),
 
+        Container(height: 16),
+        _buildTitle(Localization().getStringEx("panel.groups_create.audience.section.title", 'Audience'), "person"),
         _buildResearchAudienceLayout(),
+        Container(height: 8),
 
         Container(height: 20),
-        _buildTitle(Localization().getStringEx("panel.groups_create.participation.section.title", 'Participation'), "person"),
+        _buildTitle(Localization().getStringEx("panel.groups_create.participation.section.title", 'Participation'), "person-circle"),
         _buildMembershipLayout(),
         _buildProjectSettingsLayout(),
       ]);
@@ -694,7 +698,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   // Membership Questions
   Widget _buildMembershipLayout() {
-    String buttonTitle = _isResearchProject ? "Recruitment Questions" : Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions");
+    String buttonTitle = _isResearchProject ? Localization().getStringEx("panel.groups_settings.recruitment.button.question.title", "Recruitment Questions") : Localization().getStringEx("panel.groups_settings.membership.button.question.title", "Membership Questions");
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount)
         ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)"))
@@ -805,7 +809,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Semantics(
             explicitChildNodes: true,
             child: _buildMembershipButton(
-                title: "Target Audience",
+                title: Localization().getStringEx("panel.groups_create.target.audience.title", "Target Audience"),
                 description: questionsDescription,
                 onTap: _onTapResearchProfile)),
       ]),

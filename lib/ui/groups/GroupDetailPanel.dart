@@ -759,7 +759,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         label: Localization().getStringEx("panel.group_detail.button.notifications.title", "Notifications Preferences"),
         hint: Localization().getStringEx("panel.group_detail.button.notifications.hint", ""),
         leftIconKey: 'reminder',
-        leftIconPadding: EdgeInsets.only(right: 8, left: 2),
+        //leftIconPadding: EdgeInsets.only(right: 8, left: 2),
         padding: EdgeInsets.symmetric(vertical: 14),
         onTap: _onTapNotifications,
       ));
@@ -785,45 +785,56 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
-    return Container(color: Colors.white, child:
-      Stack(children: <Widget>[
-        Padding(padding: EdgeInsets.only(top: 12), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(padding: EdgeInsets.only(left: 16) /* the Policy button takes vertical and right space */, child:
-                _buildBadgeOrCategoryWidget(),
-              ),
+    List<Widget> contentList = <Widget>[];
+    if (_showMembershipBadge) {
+      contentList.addAll(<Widget>[
+        Padding(padding: EdgeInsets.only(left: 16, right: _showPolicyButton ? 0 : 16), child:
+          _buildBadgeWidget(),
+        ),
 
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                Text(_group?.title ?? '',  style:  Styles().textStyles?.getTextStyle('panel.group.title.lage'),),
-              ),
-              
-              Visibility(visible: StringUtils.isNotEmpty(members), child:
-                GestureDetector(onTap: () => { if (_isMember  && _canViewMembers) {_onTapMembers()} }, child:
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                    Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
-                      Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-                    ),
-                  ),
-                ),
-              ),
-              
-              Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Text(pendingMembers,  style: Styles().textStyles?.getTextStyle('panel.group.detail.fat') ,)
-                ),
-              ),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+          Text(_group?.title ?? '',  style:  Styles().textStyles?.getTextStyle('panel.group.title.lage'),),
+        ),
+      ]);
+    }
+    else {
+      contentList.addAll(<Widget>[
+        Padding(padding: EdgeInsets.only(left: 16, right: _showPolicyButton ? 0 : 16), child:
+          _buildTitleWidget(),
+        ),
+      ]);
+    }
 
-              Visibility(visible: StringUtils.isNotEmpty(attendedMembers), child:
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'),)
-                ),
-              ),
-              
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                Column(children: commands,),),
-            ],),
+    if (StringUtils.isNotEmpty(members)) {
+      contentList.add(GestureDetector(onTap: () => { if (_isMember  && _canViewMembers) {_onTapMembers()} }, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+          Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
+            Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
           ),
-        ],),
+        ),
+      ));
+    }
+
+    if (StringUtils.isNotEmpty(pendingMembers)) {
+      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+        Text(pendingMembers,  style: Styles().textStyles?.getTextStyle('panel.group.detail.fat') ,)
+      ));
+    }
+
+    if (StringUtils.isNotEmpty(attendedMembers)) {
+      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+        Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'),)
+      ));
+    }
+
+    contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+      Column(children: commands,),
+    ));
+
+    return Container(color: Colors.white, child:
+        Padding(padding: EdgeInsets.only(top: 12), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
+        ),
       );
   }
 
@@ -1147,45 +1158,38 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     );*/
   }
 
-  Widget _buildBadgeOrCategoryWidget() {
-    List<Widget> contentList = <Widget>[];
-    if (_showMembershipBadge) {
-      contentList.addAll(<Widget>[
-        Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
-          Center(child:
-            Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-              Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
-            ),
-          ),
-        ),
-        Expanded(child: Container(),),
-      ],);
-    }
-    else {
-      List<String>? displayList = Groups().contentAttributes?.displayAttributeValuesListFromSelection(widget.group?.attributes,
-        usage: ContentAttributeUsage.category);
-      contentList.add(
-        Expanded(child: (displayList?.isNotEmpty ?? false) ?
-          Text(displayList?.join(', ') ?? '', overflow: TextOverflow.ellipsis, style:
-            Styles().textStyles?.getTextStyle("widget.title.tiny'")
-          ) :
-          Container(),
-        ),
-      );
-    }
-    contentList.add(_buildPolicyButton());
-    return Row(children: contentList);
+  Widget _buildBadgeWidget() {
+    Widget badgeWidget = Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
+        Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+      ),
+    );
+    return _showPolicyButton ? Row(children: <Widget>[
+      badgeWidget,
+      Expanded(child: Container(),),
+      _buildPolicyButton()
+    ]) : badgeWidget;
+  }
+
+  Widget _buildTitleWidget() {
+    Widget titleWidget = Text(_group?.title ?? '',  style:  Styles().textStyles?.getTextStyle('panel.group.title.lage'),);
+    return _showPolicyButton ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(top: 8), child:
+          titleWidget
+        )
+      ),
+      _buildPolicyButton()
+    ]) : titleWidget;
   }
 
   Widget _buildPolicyButton() {
-    return Visibility(visible: (_isResearchProject != true), child:
-      Semantics(button: true, excludeSemantics: true,
-        label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
-        hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
-        child: InkWell(onTap: _onPolicy, child:
-          Padding(padding: EdgeInsets.all(16), child:
-            Styles().images?.getImage('info', excludeFromSemantics: true)
-          ),
+    return Semantics(button: true, excludeSemantics: true,
+      label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
+      hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
+      child: InkWell(onTap: _onPolicy, child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Styles().images?.getImage('info', excludeFromSemantics: true)
         ),
       ),
     );
@@ -1900,6 +1904,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   bool get _showMembershipBadge {
     return _isMemberOrAdmin || _isPending;
+  }
+
+  bool get _showPolicyButton {
+    return _isResearchProject != true;
   }
 
   //Util
