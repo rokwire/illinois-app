@@ -25,6 +25,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -32,7 +33,6 @@ import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -78,7 +78,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
-      Assets.notifyChanged,
+      Wellness.notifyContentChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -102,7 +102,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == Assets.notifyChanged) ||
+    if ((name == Wellness.notifyContentChanged) ||
         (name == Auth2UserPrefs.notifyFavoritesChanged)) {
         _updateContent();
     }
@@ -216,7 +216,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   }
 
   void _initContent() {
-    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${WellnessResourcesContentWidget.wellnessCategoryKey}']) ;
+    Map<String, dynamic>? content = Wellness().resources;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     WellnessResourcesContentWidget.ensureDefaultFavorites(commands);
@@ -230,7 +230,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   }
 
   void _updateContent() {
-    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${WellnessResourcesContentWidget.wellnessCategoryKey}']) ;
+    Map<String, dynamic>? content = Wellness().resources;
     Map<String, dynamic>? strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     WellnessResourcesContentWidget.ensureDefaultFavorites(commands);

@@ -20,6 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
@@ -31,7 +32,6 @@ import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -180,10 +180,10 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     Analytics().logSelect(target: _getContentLabel(contentItem));
     String? launchUrl;
     if (contentItem == WellnessContent.podcast) {
-      launchUrl = _loadWellcomeResourceUrl('podcast');
+      launchUrl = Wellness().getResourceUrl(resourceId: 'podcast');
     }
     else if (contentItem == WellnessContent.struggling) {
-      launchUrl = _loadWellcomeResourceUrl('where_to_start');
+      launchUrl = Wellness().getResourceUrl(resourceId: 'where_to_start');
     }
     if ((launchUrl != null) && (Guide().detailIdFromUrl(launchUrl) == null)) {
       _launchUrl(launchUrl);
@@ -268,25 +268,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     }
   }
 
-  String? _loadWellcomeResourceUrl(String resourceId) {
-    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.resources']) ;
-    List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
-    if (commands != null) {
-      for (dynamic entry in commands) {
-        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
-        if (command != null) {
-          String? id = JsonUtils.stringValue(command['id']);
-          if (id == resourceId) {
-            return JsonUtils.stringValue(command['url']);
-          }
-        }
-      }
-    }
-    return null;
-  }
-
   String? _loadWellcomeResourceGuideId(String resourceId) =>
-    Guide().detailIdFromUrl(_loadWellcomeResourceUrl(resourceId));
+    Guide().detailIdFromUrl(Wellness().getResourceUrl(resourceId: resourceId));
 
   void _launchUrl(String? url) {
     if (StringUtils.isNotEmpty(url)) {
