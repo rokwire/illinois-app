@@ -51,6 +51,7 @@ import 'package:illinois/ui/home/HomeVideoTutorialsWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
+import 'package:illinois/ui/home/HomeWellnessMentalHealthWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessToDoWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessRingsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessTipsWidget.dart';
@@ -466,6 +467,15 @@ class HomePanel extends StatefulWidget {
         return HomeWellnessResourcesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeWellnessResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'wellness_mental_health') {
+      if (title) {
+        return HomeWellnessMentalHealthWidget.title;
+      } else if (handle) {
+        return HomeWellnessMentalHealthWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeWellnessMentalHealthWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'wellness_todo') {

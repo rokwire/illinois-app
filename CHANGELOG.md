@@ -5,8 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.32] - 2023-03-29
+### Changed
+- Research project updates [#3055](https://github.com/rokwire/illinois-app/issues/3055).
+### Added
+- Create Mental Health content type in Wellness home panel and all related support [#3062](https://github.com/rokwire/illinois-app/issues/3062).
+
+## [4.3.31] - 2023-03-28
+### Added
+- Canvas Courses: Show submitted date in assignments if available [#3056](https://github.com/rokwire/illinois-app/issues/3056). 
+
+## [4.3.30] - 2023-03-27
 ### Changed
 - Refer to google_maps_flutter plugin located in rokwire's upstream fork [#3043](https://github.com/rokwire/illinois-app/issues/3043). 
+- Content attributes prepared for multiple scopes support [#3047](https://github.com/rokwire/app-flutter-plugin/issues/3047).
+- Hide StateFarm parking everywhere in the app [#3053](https://github.com/rokwire/app-flutter-plugin/issues/3053).
+### Fixed
+- Fixed hiding user details in analytics logs [#3049](https://github.com/rokwire/illinois-app/issues/3049).
 
 ## [4.3.29] - 2023-03-20
 ### Changed

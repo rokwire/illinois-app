@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -229,6 +230,7 @@ class StudentCourses with Service implements NotificationsListener {
           _loadCoursesCompleters = <Completer<List<StudentCourse>?>>{};
           
           String url = "${Config().gatewayUrl}/courses/studentcourses?id=${Auth2().uin}&termid=$termId";
+          String analyticsUrl = "${Config().gatewayUrl}/courses/studentcourses?id=${Analytics.LogAnonymousUin}&termid=$termId";
           Position? position = await _userLocation;
           if (position != null) {
             url += "&lat=${position.latitude}&long=${position.longitude}";
@@ -236,7 +238,7 @@ class StudentCourses with Service implements NotificationsListener {
               url += "&adaOnly=true";
             }
           }
-          Response? response = await Network().get(url, auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
+          Response? response = await Network().get(url, auth: Auth2(), headers: Gateway().externalAuthorizationHeader, analyticsUrl: analyticsUrl);
           String? responseString = (response?.statusCode == 200) ? response?.body : null;
           /* TMP String? responseString = '''[
             {"coursetitle":"Thesis Research","courseshortname":"TAM 599","coursenumber":"25667","instructionmethod":"IND","coursesection":{"days":"","meeting_dates_or_range":"08/22/2022 - 12/07/2022","room":"","buildingname":"","buildingid":"","instructiontype":"IND","instructor":"Johnson, Harley","start_time":"","endtime":"","building":{"ID":"","Name":"","Number":"","FullAddress":"","Address1":"","Address2":"","City":"","State":"","ZipCode":"","ImageURL":"","MailCode":"","Entrances":null,"Latitude":0,"Longitude":0}}},

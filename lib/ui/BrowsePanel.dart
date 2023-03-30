@@ -163,15 +163,21 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     List<Widget> sectionsList = <Widget>[];
     if (_contentCodes != null) {
       for (String code in _contentCodes!) {
-        sectionsList.add((code == _BrowseCampusResourcesSection.contentCode) ?
-          _BrowseCampusResourcesSection(
-            expanded: _isExpanded(code),
-            onExpand: () => _toggleExpanded(code),) :
-          _BrowseSection(
-            sectionId: code,
-            expanded: _isExpanded(code),
-            onExpand: () => _toggleExpanded(code),)
-        );
+        List<String>? entryCodes = _BrowseSection.buildBrowseEntryCodes(sectionId: code);
+        if ((entryCodes != null) && entryCodes.isNotEmpty) {
+          sectionsList.add((code == 'campus_resources') ?
+            _BrowseCampusResourcesSection(
+              sectionId: code,
+              entryCodes: entryCodes,
+              expanded: _isExpanded(code),
+              onExpand: () => _toggleExpanded(code),) :
+            _BrowseSection(
+              sectionId: code,
+              entryCodes: entryCodes,
+              expanded: _isExpanded(code),
+              onExpand: () => _toggleExpanded(code),)
+          );
+        }
       }
     }
 
@@ -250,13 +256,13 @@ class _BrowseSection extends StatelessWidget {
   final Set<String>? _homeSectionEntriesCodes;
   final Set<String>? _homeRootEntriesCodes;
 
-  _BrowseSection({Key? key, required this.sectionId, this.expanded = false, this.onExpand}) :
-    _browseEntriesCodes = _buildBrowseEntryCodes(sectionId: sectionId),
+  _BrowseSection({Key? key, required this.sectionId, List<String>? entryCodes, this.expanded = false, this.onExpand}) :
+    _browseEntriesCodes = entryCodes ?? buildBrowseEntryCodes(sectionId: sectionId),
     _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home.$sectionId']),
     _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home']),
     super(key: key);
 
-  static List<String>? _buildBrowseEntryCodes({required String sectionId}) {
+  static List<String>? buildBrowseEntryCodes({required String sectionId}) {
     List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']);
     codes?.sort((String code1, String code2) {
       String title1 = _BrowseEntry.title(sectionId: sectionId, entryId: code1);
@@ -585,6 +591,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
       case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
+      case "my.wellness_mental_health":      _onTapWellnessMentalHealth(context); break;
       case "my.my_appointments":             _onTapMyAppointments(context); break;
 
       case "inbox.all_notifications":        _onTapNotifications(context); break;
@@ -607,6 +614,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wallet.library_card":            _onTapLibraryCard(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
+      case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
       case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
       case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
       case "wellness.my_appointments":          _onTapMyAppointments(context); break;
@@ -1032,6 +1040,11 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.resources,); } ));
   }
 
+  void _onTapWellnessMentalHealth(BuildContext context) {
+    Analytics().logSelect(target: "Wellness Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.mentalHealth,); } ));
+  }
+
   void _onTapMyAppointments(BuildContext context) {
     Analytics().logSelect(target: "My Appointments");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.appointments); } ));
@@ -1124,16 +1137,14 @@ class _BrowseEntry extends StatelessWidget {
 
 class _BrowseCampusResourcesSection extends _BrowseSection {
 
-  static const String contentCode = 'campus_resources';
-
-  _BrowseCampusResourcesSection({Key? key, bool expanded = false, void Function()? onExpand}) :
-    super(key: key, sectionId: contentCode, expanded: expanded, onExpand: onExpand);
+  _BrowseCampusResourcesSection({Key? key, required String sectionId, List<String>? entryCodes, bool expanded = false, void Function()? onExpand}) :
+    super(key: key, sectionId: sectionId, entryCodes: entryCodes, expanded: expanded, onExpand: onExpand);
 
   @override
   Widget _buildEntries(BuildContext context) {
     return (expanded && (_browseEntriesCodes?.isNotEmpty ?? false)) ?
       Padding(padding: EdgeInsets.only(left: 16, bottom: 4), child:
-        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _browseEntriesCodes!, promptFavorite: kReleaseMode,)
+        HomeCampusResourcesGridWidget(favoriteCategory: sectionId, contentCodes: _browseEntriesCodes!, promptFavorite: kReleaseMode,)
       ) :
       Container();
   }
