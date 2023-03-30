@@ -287,7 +287,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   Widget _buildEmptyContentWidget() {
     return Center(child:
       Padding(padding: EdgeInsets.all(32), child:
-        Text(Localization().getStringEx('panel.laundry_home.content.empty', 'No rooms available'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,),),
+        Text(Localization().getStringEx('panel.laundry_home.content.empty', 'No rooms available'), style: Styles().textStyles?.getTextStyle("widget.description.regular.fat")),
       )
     );
   }
@@ -332,8 +332,8 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         Container(height: _MapBarHeight, decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black26, width: 1.0), borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Text(title ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,),),
-              Text(description, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Colors.black38,),),
+              Text(title ?? '', overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
+              Text(description, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.description.dark.small")),
               Container(height: 8,),
               Row(children: <Widget>[
                 _userLocationEnabled() ? Row(children: <Widget>[

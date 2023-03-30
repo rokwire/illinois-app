@@ -105,9 +105,7 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
           InkWell(onTap: () => _onNotRightNow(context), child:
             Semantics(button: true, label: notRightNow, hint: Localization().getStringEx('panel.onboarding.base.not_now.hint', ''), excludeSemantics: true, child:
               Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-                Text(notRightNow, style:
-                  TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid),
-                ),
+                Text(notRightNow, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")),
               ),
             ),
           ),
