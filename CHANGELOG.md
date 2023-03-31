@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.3.33] - 2023-03-31
 ### Changed
 - Static Wellness content moved from assets.json to content service [#3064](https://github.com/rokwire/illinois-app/issues/3064).
 ### Added
