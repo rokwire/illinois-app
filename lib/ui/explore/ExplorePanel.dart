@@ -25,10 +25,12 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -71,8 +73,9 @@ import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, StateFarmWayfinding }
+enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
 
 enum EventsDisplayType {single, multiple, all}
 
@@ -322,6 +325,9 @@ class ExplorePanelState extends State<ExplorePanel>
         else if (code == 'mtd_destinations') {
           exploreItems.add(ExploreItem.MTDDestinations);
         }
+        else if (code == 'mental_health') {
+          exploreItems.add(ExploreItem.MentalHealth);
+        }
         else if (code == 'state_farm_wayfinding') {
           exploreItems.add(ExploreItem.StateFarmWayfinding);
         }
@@ -506,6 +512,7 @@ class ExplorePanelState extends State<ExplorePanel>
         case ExploreItem.Appointments: task = _loadAppointments(); break;
         case ExploreItem.MTDStops: task = _loadMTDStops(); break;
         case ExploreItem.MTDDestinations: task = _loadMTDDestinations(); break;
+        case ExploreItem.MentalHealth: task = _loadMentalHealthBuildings(); break;
         case ExploreItem.StateFarmWayfinding: break;
         default: break;
       }
@@ -634,6 +641,10 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>?> _loadMTDDestinations() async {
     return ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
+  }
+
+  Future<List<Explore>?> _loadMentalHealthBuildings() async {
+    return await Wellness().loadMentalHealthBuildings();
   }
 
   void _collectBusStops(List<Explore> result, { List<MTDStop>? stops }) {
@@ -1447,8 +1458,22 @@ class ExplorePanelState extends State<ExplorePanel>
   
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
-    if (this is Explore) {
-      (this as Explore).exploreLaunchDetail(context, initialLocationData: _locationData);
+    if (_selectedMapExplore is Explore) {
+      String? url = ((_selectedItem == ExploreItem.MentalHealth) && (_selectedMapExplore is Building)) ?
+        Wellness().mentalHealthBuildingUrl(buildingId: (_selectedMapExplore as Building).id) : null;
+      
+      if (url == null) {
+        (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+      }
+      else if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        Uri? uri = Uri.tryParse(url);
+        if (uri != null) {
+          launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      }
     }
     else if (_selectedMapExplore is List<Explore>) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore),));
@@ -1512,6 +1537,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Appointments: message = Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.'); break;
       case ExploreItem.MTDStops: message = Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No bus stop locations available.'); break;
       case ExploreItem.MTDDestinations: message = Localization().getStringEx('panel.explore.state.online.empty.mtd_destinations', 'No destinaion locations available.'); break;
+      case ExploreItem.MentalHealth: message = Localization().getStringEx('panel.explore.state.online.empty.mental_health', 'No Mental Heatlh resource locations available.'); break;
       default:  message =  ''; break;
     }
     return SingleChildScrollView(child:
@@ -1536,6 +1562,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Appointments:        message = Localization().getStringEx('panel.explore.state.offline.empty.appointments', 'No appointments available while offline.'); break;
       case ExploreItem.MTDStops:            message = Localization().getStringEx('panel.explore.state.offline.empty.mtd_stops', 'No bus stop locations available while offline.'); break;
       case ExploreItem.MTDDestinations:     message = Localization().getStringEx('panel.explore.state.offline.empty.mtd_destinations', 'No destinaion locations available while offline.'); break;
+      case ExploreItem.MentalHealth:        message = Localization().getStringEx('panel.explore.state.offline.empty.mental_health', 'No Mental Heatlh resource locations available while offline.'); break;
       case ExploreItem.StateFarmWayfinding: message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
       default:                              message =  ''; break;
     }
@@ -1765,6 +1792,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
       case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'Bus Stops');
       case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.title', 'My Destinations');
+      case ExploreItem.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.title', 'Mental Health Resources');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
@@ -1780,6 +1808,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.hint', '');
       case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.hint', '');
       case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.hint', '');
+      case ExploreItem.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.hint', '');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
@@ -1795,6 +1824,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.header.appointments.title', 'MyMcKinley In-Person Appointments');
       case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.mtd_stops.title', 'Bus Stops');
       case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.header.mtd_destinations.title', 'My Destinations');
+      case ExploreItem.MentalHealth:        return Localization().getStringEx('panel.explore.header.mental_health.title', 'Mental Heatlh Resources');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
@@ -1840,7 +1870,7 @@ class ExplorePanelState extends State<ExplorePanel>
   void _placeExploresOnMap({ bool updateOnly = false }) {
     if (_nativeMapController != null)   {
       _nativeMapController!.placePOIs(_displayExplores, options: <String, dynamic>{
-        MapController.HideBuildingLabelsParams : (_selectedItem == ExploreItem.Buildings) ? true : null,
+        MapController.HideBuildingLabelsParams : ((_selectedItem == ExploreItem.Buildings) || (_selectedItem == ExploreItem.MentalHealth))  ? true : null,
         MapController.HideBusStopPOIsParams : (_selectedItem == ExploreItem.MTDStops) ? true : null,
         MapController.ShowMarkerPopupsParams: (_selectedItem != ExploreItem.MTDStops) ? true : false,
         MapController.UpdateOnlyParams: updateOnly
@@ -2261,6 +2291,9 @@ ExploreItem? exploreItemFromString(String? value) {
   else if (value == 'mtdDestinations') {
     return ExploreItem.MTDDestinations;
   }
+  else if (value == 'mentalHealth') {
+    return ExploreItem.MentalHealth;
+  }
   else if (value == 'stateFarmWayfinding') {
     return ExploreItem.StateFarmWayfinding;
   }
@@ -2279,6 +2312,7 @@ String? exploreItemToString(ExploreItem? value) {
     case ExploreItem.Appointments:        return 'appointments';
     case ExploreItem.MTDStops:            return 'mtdStops';
     case ExploreItem.MTDDestinations:     return 'mtdDestinations';
+    case ExploreItem.MentalHealth:        return 'mentalHealth';
     case ExploreItem.StateFarmWayfinding: return 'stateFarmWayfinding';
     default: return null;
   }

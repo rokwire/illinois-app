@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Static Wellness content moved from assets.json to content service [#3064](https://github.com/rokwire/illinois-app/issues/3064).
+### Added
+- Added Mental Health resource content type in Maps and Maps2 [#3067](https://github.com/rokwire/illinois-app/issues/3067).
 
 ## [4.3.32] - 2023-03-29
 ### Changed

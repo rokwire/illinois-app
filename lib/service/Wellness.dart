@@ -20,8 +20,10 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -52,10 +54,12 @@ class Wellness with Service implements NotificationsListener {
   static const String _contentCacheFileName = "wellness.content.json";
   static const String _tipsContentCategory = "wellness_tips";
   static const String _resourcesContentCategory = "wellness_resources";
-  static const List<String> _contentCategories = [_tipsContentCategory, _resourcesContentCategory];
+//static const String _mentalHealthCategory = "wellness_mental_health";
+  static const List<String> _contentCategories = [_tipsContentCategory, _resourcesContentCategory /*, _mentalHealthCategory */];
 
   File? _contentCacheFile;
   Map<String, dynamic>? _contentMap;
+  Map<String, dynamic>? _assetsMentalHealth;
 
   String? _dailyTipId;
   DateTime? _dailyTipTime;
@@ -94,6 +98,8 @@ class Wellness with Service implements NotificationsListener {
     _dailyTipId = Storage().wellnessDailyTipId;
     _dailyTipTime = DateTime.fromMillisecondsSinceEpoch(Storage().wellnessDailyTipTime ?? 0);
     _updateDailyTip(notify: false);
+
+    _assetsMentalHealth = JsonUtils.decodeMap(await AppBundle.loadString('assets/wellness.mental-health.json'));
 
     if (_contentMap != null) {
       await super.initService();
@@ -405,6 +411,36 @@ class Wellness with Service implements NotificationsListener {
     return (resource != null) ? JsonUtils.stringValue(resource['url']) : null;
   }
 
+  // Mental Health
+
+  Map<String, dynamic>? get mentalHealth => _assetsMentalHealth;
+    //(_contentMap != null) ? JsonUtils.mapValue(_contentMap![_mentalHealthCategory]) : null;
+
+  Future<List<Building>?> loadMentalHealthBuildings() async {
+    List<Building>? result;
+    Map<String, dynamic>? mentalHealthMap = mentalHealth;
+    List<Building>? buildings = await Gateway().loadBuildings();
+    if ((buildings != null) && (mentalHealthMap != null)) {
+      result = <Building>[];
+      for (Building building in buildings) {
+        if (mentalHealthMap.containsKey(building.id)) {
+          result.add(building);
+        }
+      }
+    }
+    return result;
+  }
+
+  Map<String, dynamic>? mentalHealthBuilding({String? buildingId}) {
+    Map<String, dynamic>? mentalHealthMap = mentalHealth;
+    return (mentalHealthMap != null) ? JsonUtils.mapValue(mentalHealthMap[buildingId]) : null;
+  }
+
+  String? mentalHealthBuildingUrl({String? buildingId}) {
+    Map<String, dynamic>? mentalHealthBuildingMap = mentalHealthBuilding(buildingId: buildingId);
+    return (mentalHealthBuildingMap != null) ? JsonUtils.stringValue(mentalHealthBuildingMap['url']) : null;
+  }
+
   // Common User Settings
 
   bool? get isToDoListAccessed {
@@ -471,6 +507,7 @@ class Wellness with Service implements NotificationsListener {
     //return {
     //  '$_tipsContentCategory': JsonUtils.mapValue(Assets()['wellness.tips']),
     //  '$_resourcesContentCategory': JsonUtils.mapValue(Assets()['wellness.resources'])
+    //  '$_mentalHealthCategory': JsonUtils.mapValue(Assets()['wellness.metnal-health'])
     //};
     Map<String, dynamic>? result;
     if (Config().contentUrl != null) {
