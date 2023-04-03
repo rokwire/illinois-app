@@ -30,7 +30,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -876,8 +875,8 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         _onTapWebButton(url, "Event Link ");
       }
     } else if(widget.event?.location?.latitude != null && widget.event?.location?.longitude != null) {
-      Analytics().logSelect(target: "Location Detail");
-      NativeCommunicator().launchExploreMapDirections(target: widget.event);
+      Analytics().logSelect(target: "Location Directions");
+      widget.event?.launchDirections();
     }
   }
 

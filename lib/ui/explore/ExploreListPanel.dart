@@ -25,7 +25,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
@@ -44,10 +44,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final List<Explore>? explores;
-  final ExploreItem? exploreType;
+  final ExploreMapType? exploreMapType;
   final Position? initialLocationData;
 
-  ExploreListPanel({this.explores, this.exploreType, this.initialLocationData});
+  ExploreListPanel({this.explores, this.exploreMapType, this.initialLocationData});
 
   @override
   _ExploreListPanelState createState() =>
@@ -157,7 +157,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
     Analytics().logSelect(target: explore.exploreTitle);
 
     //show the detail panel
-    String? url = ((widget.exploreType == ExploreItem.MentalHealth) && (explore is Building)) ?
+    String? url = ((widget.exploreMapType == ExploreMapType.MentalHealth) && (explore is Building)) ?
       Wellness().mentalHealthBuildingUrl(buildingId: (this as Building).id) : null;
     
     if (url == null) {

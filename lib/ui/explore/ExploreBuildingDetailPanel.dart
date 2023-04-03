@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -90,8 +90,8 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   }
 
   void _onLocation() {
-    Analytics().logSelect(target: "Location Detail");
-    NativeCommunicator().launchMapDirections(jsonData: building.toJson());
+    Analytics().logSelect(target: "Location Directions");
+    building.launchDirections();
   }
 
   void _onBack(BuildContext context) {

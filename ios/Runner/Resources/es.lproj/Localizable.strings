@@ -20,18 +20,3 @@
 
 // Spanish
 
-"Directions" = "Directions";
-"Detecting current location..." = "Detecting current location...";
-"Resolving target address ..." = "Resolving target address ...";
-"Failed to resolve destination address:\n%@" = "Failed to resolve destination address:\n%@";
-"Failed to detect current location:\n%@" = "Failed to detect current location:\n%@";
-"Failed to find a route:\n%@" = "Failed to find a route:\n%@";
-"Looking for route..." = "Looking for route...";
-"START" = "START";
-"FINISH" = "FINISH";
-"Pick Location" = "Pick Location";
-"Location" = "Location";
-"Please select a location." = "Please select a location.";
-"CUSTOM" = "CUSTOM";
-"Today" = "Today";
-"Tomorrow" = "Tomorrow";

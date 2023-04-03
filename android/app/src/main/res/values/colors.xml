@@ -15,17 +15,8 @@
   ~ limitations under the License.
   -->
 <resources>
-    <color name="illinoisBlue">#ff13294b</color>
-    <color name="mtdBlue">#ff2376e5</color>
-    <color name="darkBlueGrey">#ff0e203b</color>
-    <color name="illinois_orange">#ffe84a27</color>
-    <color name="mongo">#fff29835</color>
-    <color name="teal">#ff5fa7a3</color>
     <color name="transparent">#00000000</color>
-    <color name="colorAccent">@color/darkBlueGrey</color>
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="white60">#99ffffff</color>
-    <color name="grey40">#66606060</color>
 </resources>

@@ -322,12 +322,12 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
   void _onTapEvents(BuildContext context) {
     Analytics().logSelect(target: "Events", source: runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
   }
     
   void _onTapDining(BuildContext context) {
     Analytics().logSelect(target: "Dining", source: runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
   }
 
   void _onTapAthletics(BuildContext context) {

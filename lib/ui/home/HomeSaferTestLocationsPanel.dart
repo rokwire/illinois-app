@@ -10,7 +10,6 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -455,7 +454,7 @@ class _TestLocation extends StatelessWidget {
     double? lat = testLocation?.latitude;
     double? lng = testLocation?.longitude;
     if ((lat != null) && (lng != null)) {
-      NativeCommunicator().launchMap(
+      /* TBD Map2 NativeCommunicator().launchMap(
           target: {
             'latitude': testLocation?.latitude,
             'longitude': testLocation?.longitude,
@@ -466,7 +465,7 @@ class _TestLocation extends StatelessWidget {
             'description': testLocation?.fullAddress,
             'latitude': testLocation?.latitude,
             'longitude': testLocation?.longitude,
-          }]);
+          }]); */
     }
   }
 

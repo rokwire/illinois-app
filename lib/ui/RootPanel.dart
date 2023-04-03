@@ -24,7 +24,6 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
@@ -55,7 +54,6 @@ import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
@@ -68,7 +66,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum RootTab { Home, Favorites, Athletics, Explore, Browse, Maps, Maps2, Academics, Wellness }
+enum RootTab { Favorites, Browse, Maps, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -128,7 +126,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
-      ExplorePanel.notifySelectMap,
+      ExploreMapPanel.notifySelect,
     ]);
 
     _tabs = _getTabs();
@@ -255,7 +253,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == HomePanel.notifySelect) {
       _onSelectHome();
     }
-    else if (name == ExplorePanel.notifySelectMap) {
+    else if (name == ExploreMapPanel.notifySelect) {
       _onSelectMaps();
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
@@ -271,7 +269,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onSelectHome() {
-    int? homeIndex = _getIndexByRootTab(RootTab.Home) ?? _getIndexByRootTab(RootTab.Favorites);
+    int? homeIndex = _getIndexByRootTab(RootTab.Favorites);
     if (mounted && (homeIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       _selectTab(homeIndex);
@@ -690,25 +688,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   static Widget? _createPanelForTab(RootTab? rootTab) {
-    if (rootTab == RootTab.Home) {
+    if (rootTab == RootTab.Favorites) {
       return HomePanel();
-    }
-    else if (rootTab == RootTab.Favorites) {
-      return HomePanel();
-    }
-    else if (rootTab == RootTab.Athletics) {
-      return AthleticsHomePanel(rootTabDisplay: true,);
-    }
-    else if (rootTab == RootTab.Explore) {
-      return ExplorePanel(rootTabDisplay: true);
     }
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
     }
     else if (rootTab == RootTab.Maps) {
-      return ExplorePanel(rootTabDisplay: true, mapDisplayType: ListMapDisplayType.Map);
-    }
-    else if (rootTab == RootTab.Maps2) {
       return ExploreMapPanel();
     }
     else if (rootTab == RootTab.Academics) {
@@ -806,26 +792,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
 RootTab? rootTabFromString(String? value) {
   if (value != null) {
-    if (value == 'home') {
-      return RootTab.Home;
-    }
-    else if (value == 'favorites') {
+    if (value == 'favorites') {
       return RootTab.Favorites;
-    }
-    else if (value == 'athletics') {
-      return RootTab.Athletics;
-    }
-    else if (value == 'explore') {
-      return RootTab.Explore;
     }
     else if (value == 'browse') {
       return RootTab.Browse;
     }
     else if (value == 'maps') {
       return RootTab.Maps;
-    }
-    else if (value == 'maps2') {
-      return RootTab.Maps2;
     }
     else if (value == 'academics') {
       return RootTab.Academics;
