@@ -10,7 +10,6 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
@@ -198,9 +197,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id,)));
     }
     else if (this is ExplorePOI) {
-      NativeCommunicator().launchExploreMapDirections(target: (this as ExplorePOI), options: {
-        'travelMode': 'transit'
-      });
+      (this as ExplorePOI).launchDirections();
     }
     else if (this is InboxMessage) {
       SettingsNotificationsContentPanel.launchMessageDetail(this as InboxMessage);

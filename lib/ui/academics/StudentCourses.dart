@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/StudentCourse.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/StudentCourses.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -301,7 +301,7 @@ class StudentCourseCard extends StatelessWidget {
 
   void _onLocaltion() {
     Analytics().logSelect(target: "Location Detail");
-    NativeCommunicator().launchMapDirections(jsonData: course.toJson());
+    course.launchDirections();
   }
 
   void _onCard(BuildContext context) {
@@ -481,9 +481,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
   }
 
   void _onLocation() {
-    Analytics().logSelect(target: "Location Detail");
-    if(course?.toJson()!=null) {
-      NativeCommunicator().launchMapDirections(jsonData: course!.toJson());
-    }
+    Analytics().logSelect(target: "Location Directions");
+    course?.launchDirections();
   }
 }

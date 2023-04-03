@@ -36,7 +36,6 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -569,8 +568,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   void _onLoacationDetailTapped() {
-    Analytics().logSelect(target: "Location Detail");
-    NativeCommunicator().launchExploreMapDirections(target: _dining);
+    Analytics().logSelect(target: "Location Directions");
+    _dining?.launchDirections();
   }
 
   void _onTapOrderOnline(Map<String, dynamic>? orderOnlineDetails) async {

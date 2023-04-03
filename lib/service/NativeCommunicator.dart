@@ -19,7 +19,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/StudentCourses.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -74,57 +73,6 @@ class NativeCommunicator with Service {
   Future<void> _nativeInit() async {
     try {
       await _platformChannel.invokeMethod('init', { "config": Config().content });
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-  }
-
-  Future<void> launchExploreMapDirections({dynamic target, Map<String, dynamic>? options}) async {
-    dynamic jsonData;
-    try {
-      if (target != null) {
-        if (target is List) {
-          jsonData = [];
-          for (dynamic entry in target) {
-            jsonData.add(entry.toJson());
-          }
-        }
-        else {
-          jsonData = target.toJson();
-        }
-      }
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    
-    if (jsonData != null) {
-      await launchMapDirections(jsonData: jsonData, options: options);
-    }
-  }
-
-  Future<void> launchMapDirections({dynamic jsonData, Map<String, dynamic>? options}) async {
-    try {
-      String? lastPageName = Analytics().currentPageName;
-      Map<String, dynamic>? lastPageAttributes = Analytics().currentPageAttributes;
-      Analytics().logPage(name: 'MapDirections');
-      Analytics().logMapShow();
-
-      Map<String, dynamic> optionsParam = {
-        'showDebugLocation': Storage().debugMapLocationProvider,
-        'enableLevels': Storage().debugMapShowLevels,
-        'requireAda': StudentCourses().requireAda,
-      };
-      if (options != null) {
-        optionsParam.addAll(options);
-      }
-      
-      await _platformChannel.invokeMethod('directions', {
-        'explore': jsonData,
-        'options': optionsParam
-      });
-
-      Analytics().logMapHide();
-      Analytics().logPage(name: lastPageName, attributes: lastPageAttributes);
     } on PlatformException catch (e) {
       print(e.message);
     }
