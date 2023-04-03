@@ -114,7 +114,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 32), child:
       Column(children: [
         Expanded(flex: 1, child: Container()),
-        Text(text, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary,)),
+        Text(text, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.large.thin")),
         Expanded(flex: 3, child: Container()),
       ],),);
   }
@@ -185,8 +185,8 @@ class _TestLocation extends StatelessWidget {
   Widget build(BuildContext context) {
     
     bool canLocation = (testLocation?.latitude != null) && (testLocation?.longitude != null);
-    TextStyle textStyle = TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface,);
-    TextStyle linkStyle = TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.accentColor3, decoration: TextDecoration.underline);
+    TextStyle? textStyle = Styles().textStyles?.getTextStyle("widget.info.regular.thin");
+    TextStyle? linkStyle = Styles().textStyles?.getTextStyle("widget.home.link_button.regular.accent.underline");
 
     List<Widget> locationContent = <Widget>[
       Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
@@ -230,8 +230,7 @@ class _TestLocation extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(testLocation?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, ),
-            ),
+            Text(testLocation?.name ?? "", style: Styles().textStyles?.getTextStyle("widget.detail.large.extra_fat")),
             Semantics(button: true,
             child: GestureDetector(
               onTap: _onTapAddress,
@@ -373,11 +372,7 @@ class _TestLocation extends StatelessWidget {
                 _getPeriodText(entry, workingPeriods),
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 16,
-                  color: Styles().colors!.fillColorPrimary,
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
               ),)
             ],
           );
@@ -389,11 +384,7 @@ class _TestLocation extends StatelessWidget {
           child: Text(
 //            _getPeriodText(entry, activePeriod),
             entry.displayString,
-            style: TextStyle(
-              fontFamily: Styles().fontFamilies!.bold,
-              fontSize: 16,
-              color: Styles().colors!.fillColorPrimary,
-            ),
+            style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
           ),
         );
       }).toList(),

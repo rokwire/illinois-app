@@ -99,9 +99,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
         Row(children: [
           Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(Localization().getStringEx('panel.home.header.editing.title', 'Customize'), style:
-                  TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),
-                )
+                Text(Localization().getStringEx('panel.home.header.editing.title', 'Customize'), style: Styles().textStyles?.getTextStyle("widget.label.medium.fat"))
               )
           ),
           Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
@@ -208,14 +206,12 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
           Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : Colors.transparent,),
           Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-              Text(title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies?.extraBold),),
+              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.medium_large.extra_fat")),
             ),
             Expanded(child: Container()),
             Visibility(visible: (onTapLinkButton != null), child: InkWell(onTap: onTapLinkButton, child: 
-              Padding(padding: EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 16), child: Text(StringUtils.ensureNotEmpty(linkButtonTitle), style: 
-                TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.accentColor3, 
-                  decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1, decorationColor: Styles().colors!.accentColor3),
-              ))
+              Padding(padding: EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 16), child:
+                Text(StringUtils.ensureNotEmpty(linkButtonTitle), style: Styles().textStyles?.getTextStyle("widget.home.link_button.regular.accent.underline")))
             ))
           ],)),
           Row(children: [
@@ -224,7 +220,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
               HtmlWidget(
                   StringUtils.ensureNotEmpty(description),
                   onTapUrl : (url) {_onTapHtmlLink(url); return true;},
-                  textStyle:  TextStyle(color: Styles().colors!.textColorPrimaryVariant, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.description.regular"),
                   customStylesBuilder: (element) => (element.localName == "b") ? {"font-weight": "bold"} : null
               )
                 // Html(data: StringUtils.ensureNotEmpty(description),

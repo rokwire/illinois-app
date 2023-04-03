@@ -126,10 +126,14 @@
     "widget.message.dark.extra_large": {"font_family": "regular", "size": 24.0, "color": "black"},
     "widget.message.dark.medium": {"font_family": "medium", "size": 16.0, "color": "black"},
 
+    "widget.message.huge": { "font_family": "regular", "size": 32.0, "color": "fillColorPrimary"},
+    "widget.message.huge.extra_fat": { "font_family": "extra_bold", "size": 32.0, "color": "fillColorPrimary"},
     "widget.message.extra_large.fat": {"font_family": "bold", "size": 24.0, "color": "fillColorPrimary"},
+    "widget.message.extra_large.extra_fat": {"font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.message.medium_large.fat": {"font_family": "bold", "size": 22.0, "color": "fillColorPrimary"},
     "widget.message.large.fat": {"font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.message.large": {"font_family": "medium", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.message.large.thin": {"font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.message.medium": {"font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.message.medium.semi_thin": {"font_family": "medium", "size": 18.0, "color": "fillColorPrimary"},
     "widget.message.medium.thin": {"font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
@@ -139,6 +143,7 @@
     "widget.message.regular.extra_fat": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.fat.accent": {"font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
     "widget.message.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.message.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.message.light.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
     "widget.message.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
     "widget.message.light.variant.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray2"},
@@ -183,14 +188,17 @@
     "widget.detail.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.large.thin": { "font_family": "medium", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.detail.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.medium": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.small": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.detail.small.semi_fat": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.detail.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.detail.light.small.thin": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
     "widget.detail.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
+    "widget.detail.variant.regular": { "font_family": "medium", "size": 16.0, "color": "textVariant"},
 
     "widget.description.extra_large": { "font_family": "medium", "size": 26.0, "color": "fillColorPrimary"},
     "widget.description.medium_large": { "font_family": "medium", "size": 22.0, "color": "fillColorPrimary"},
@@ -205,6 +213,7 @@
     "widget.description.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small.fat.semi_expanded": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary", "letter_spacing": 0.86},
     "widget.description.dark.small": { "font_family": "medium", "size": 14.0, "color": "black"},
+    "widget.description.variant.regular": { "font_family": "medium", "size": 16.0, "color": "textVariant"},
 
     "widget.error.regular": { "font_family": "regular", "size": 16.0, "color": "alert"},
     "widget.error.regular.fat": { "font_family": "bold", "size": 16.0, "color": "alert"},
@@ -228,6 +237,7 @@
     "widget.label.medium.fat": { "font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
     "widget.label.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
     "widget.label.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorSecondary"},
+    "widget.label.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
 
     "widget.info.medium": { "font_family": "regular", "size": 18.0, "color": "textSurface"},
     "widget.info.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textSurface"},
@@ -236,6 +246,7 @@
     "widget.info.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textSurface"},
     "widget.info.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textSurface"},
     "widget.info.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
+    "widget.info.small.medium_fat": { "font_family": "medium", "size": 14.0, "color": "textSurface"},
     "widget.info.small.fat": { "font_family": "bold", "size": 14.0, "color": "textSurface"},
     "widget.info.tiny": { "font_family": "regular", "size": 12.0, "color": "textSurface"},
 
@@ -267,6 +278,7 @@
 
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
+    "widget.colourful_button.title": { "font_family": "medium", "size": 16.0, "color": "white"},
     "widget.colourful_button.title.regular": { "font_family": "regular", "size": 14.0, "color": "white"},
     "widget.colourful_button.title.regular.accent": { "font_family": "bold", "size": 14.0, "color": "white"},
 
@@ -331,9 +343,9 @@
     "widget.card.detail.small": { "font_family": "regular", "size": 14.0, "color": "textBackground"},
     "widget.card.detail.tiny": { "font_family": "regular", "size": 12.0, "color": "textBackground"},
     "widget.card.detail.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "textBackground"},
-    "widget.card.detail.tiny_variant2": { "font_family": "medium", "size": 12.0, "color": "textBackground"},
+    "widget.card.detail.tiny.medium_fat": { "font_family": "medium", "size": 12.0, "color": "textBackground"},
 
-    "widget.explore.card.detail.small": {"extends": "widget.card.detail.tiny_variant2"},
+    "widget.explore.card.detail.small": {"extends": "widget.card.detail.tiny.medium_fat"},
     "widget.explore.card.detail.regular": {"extends": "widget.item.small"},
     "widget.explore.card.detail.regular.underline": {"extends": "widget.card.detail.small_variant2", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.explore.card.detail.large": {"extends": "widget.card.detail.medium"},
@@ -390,6 +402,7 @@
     "widget.checklist.content.tab.title.current_tab.not_completed": {"font_family": "extra_bold", "size": 16.0, "color": "white", "decoration": "underline"},
 
     "widget.home_tout.button.underline.title": {"font_family": "bold", "size": 18.0, "color": "textColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "textColorPrimary"},
+    "widget.home.link_button.regular.accent.underline": {"font_family": "regular", "size": 16.0, "color": "accentColor3", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "accentColor3"},
 
     "widget.student_courses.title.extra_large": {"extends": "widget.title.extra_large", "letter_spacing": 1.0},
 
