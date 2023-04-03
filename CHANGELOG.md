@@ -86,10 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switch of the data source for Canvas Courses [#3006](https://github.com/rokwire/illinois-app/issues/3006).
 
 ## [4.3.18] - 2023-02-22
-### Changed
-- Updated default initial selection in Maps [#1942](https://github.com/rokwire/illinois-app/issues/1942).
-- Removed To-Do List from Wellness Section [#2951](https://github.com/rokwire/illinois-app/issues/2951).
-- Embed guide content in Academics and Wellness home panels [#3004](https://github.com/rokwire/illinois-app/issues/3004).
+- N/A
 
 ## [4.3.17] - 2023-02-20
 - N/A
@@ -183,6 +180,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.2.55] - 2023-04-03
 ### Added
 - New "Illinois Health Screener" video [#3069](https://github.com/rokwire/illinois-app/issues/3069).
+
+## [4.2.54] - 2023-03-28
+### Changed
+- Updated default initial selection in Maps [#1942](https://github.com/rokwire/illinois-app/issues/1942).
+- Removed To-Do List from Wellness Section [#2951](https://github.com/rokwire/illinois-app/issues/2951).
+- Embed guide content in Academics and Wellness home panels [#3004](https://github.com/rokwire/illinois-app/issues/3004).
+- Research project updates [#3055](https://github.com/rokwire/illinois-app/issues/3055).
 
 ## [4.2.53] - 2023-02-20
 ### Changed
