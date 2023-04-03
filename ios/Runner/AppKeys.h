@@ -22,13 +22,3 @@
 #import <CoreLocation/CoreLocation.h>
 
 extern NSString * const kFlutterMetodChannelName;
-
-extern CLLocationCoordinate2D const kInitialCameraLocation;
-extern float const kInitialCameraZoom;
-extern float const kMarkerThresold1Zoom;
-extern float const kMarkerThresold2Zoom;
-extern float const kMarker2Thresold1Zoom;
-extern float const kMarker2Thresold2Zoom;
-extern float const kNoPoiThresoldZoom;
-
-extern float const kThresoldZoomUpdateStep;
