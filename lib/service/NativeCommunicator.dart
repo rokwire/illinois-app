@@ -18,20 +18,10 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class NativeCommunicator with Service {
   
-  static const String notifyMapSelectExplore  = "edu.illinois.rokwire.nativecommunicator.map.explore.select";
-  static const String notifyMapSelectLocation   = "edu.illinois.rokwire.nativecommunicator.map.location.select";
-  
-  static const String notifyMapRouteStart  = "edu.illinois.rokwire.nativecommunicator.map.route.start";
-  static const String notifyMapRouteFinish = "edu.illinois.rokwire.nativecommunicator.map.route.finish";
-  
-  static const String notifyMapSelectPOI  = "edu.illinois.rokwire.nativecommunicator.map.poi.select";
-
   final MethodChannel _platformChannel = const MethodChannel('edu.illinois.rokwire/native_call');
 
   // Singletone
@@ -139,24 +129,6 @@ class NativeCommunicator with Service {
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
-      case "map.explore.select":
-        _notifyMapSelectExplore(call.arguments);
-        break;
-      case "map.poi.select":
-        _notifyMapSelectPOI(call.arguments);
-        break;
-      case "map.location.select":
-        _notifyMapLocationSelect(call.arguments);
-        break;
-      
-      case "map.route.start":
-        _notifyMapRouteStart(call.arguments);
-        break;
-      case "map.route.finish":
-        _notifyMapRouteFinish(call.arguments);
-        break;
-      
-
       case "firebase_message":
         //PS use firebase messaging plugin!
         //FirebaseMessaging().onMessage(call.arguments);
@@ -166,26 +138,6 @@ class NativeCommunicator with Service {
         break;
     }
     return null;
-  }
-
-  void _notifyMapSelectExplore(dynamic arguments) {
-    NotificationService().notify(notifyMapSelectExplore, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
-  }
-  
-  void _notifyMapLocationSelect(dynamic arguments) {
-    NotificationService().notify(notifyMapSelectLocation, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
-  }
-
-  void _notifyMapSelectPOI(dynamic arguments) {
-    NotificationService().notify(notifyMapSelectPOI, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
-  }
-
-  void _notifyMapRouteStart(dynamic arguments) {
-    NotificationService().notify(notifyMapRouteStart, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
-  }
-
-  void _notifyMapRouteFinish(dynamic arguments) {
-    NotificationService().notify(notifyMapRouteFinish, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
 }
 
