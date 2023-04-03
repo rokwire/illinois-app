@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -1684,7 +1682,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   void _performSelectLocation() async {
     _setLoading(true);
 
-    String? location = await NativeCommunicator().launchSelectLocation(explore: _constructEventFromData());
+    /* TBD Map2 String? location = await NativeCommunicator().launchSelectLocation(explore: _constructEventFromData());
     _setLoading(false);
     if (location != null) {
       Map<String, dynamic>? locationSelectionResult = jsonDecode(location);
@@ -1698,10 +1696,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           setState(() {});
         }
       }
-    }
+    }*/
   }
 
-  void _populateLocationField() {
+  /* void _populateLocationField() {
     if (_location != null) {
       String? locationName;
       if ((_location!.name != null) && _location!.name!.isNotEmpty) {
@@ -1731,7 +1729,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         _eventLongitudeController.text = _location?.longitude?.toString() ?? '';
       }
     }
-  }
+  } */
 
   void _onTapConfirmPurchaseUrl() {
     Analytics().logSelect(target: "Confirm Purchase url");

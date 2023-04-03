@@ -271,7 +271,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
 
   void _onTapViewMap() {
     Analytics().logSelect(target: "View Map");
-    //TBD: Map Panel
+    //TBD Map2: Map Panel
   }
 
   void _onTapReportIssue() {

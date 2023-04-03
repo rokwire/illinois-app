@@ -17,11 +17,9 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class NativeCommunicator with Service {
@@ -73,51 +71,6 @@ class NativeCommunicator with Service {
   Future<void> _nativeInit() async {
     try {
       await _platformChannel.invokeMethod('init', { "config": Config().content });
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-  }
-
-  Future<String?> launchSelectLocation({dynamic explore}) async {
-    try {
-
-      String? lastPageName = Analytics().currentPageName;
-      Map<String, dynamic>? lastPageAttributes = Analytics().currentPageAttributes;
-      Analytics().logPage(name: 'MapSelectLocation');
-      Analytics().logMapShow();
-
-      dynamic jsonData = (explore != null) ? explore.toJson() : null;
-      String? result = await _platformChannel.invokeMethod('pickLocation', {"explore": jsonData});
-
-      Analytics().logMapHide();
-      Analytics().logPage(name: lastPageName, attributes: lastPageAttributes);
-      return result;
-
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-
-    return null;
-  }
-
-  Future<void> launchMap({dynamic target, dynamic markers}) async {
-    try {
-      String? lastPageName = Analytics().currentPageName;
-      Map<String, dynamic>? lastPageAttributes = Analytics().currentPageAttributes;
-      Analytics().logPage(name: 'Map');
-      Analytics().logMapShow();
-
-      await _platformChannel.invokeMethod('map', {
-        'target': target,
-        'options': {
-          'showDebugLocation': Storage().debugMapLocationProvider,
-        },
-        'markers': markers,
-      });
-
-      Analytics().logMapHide();
-      Analytics().logPage(name: lastPageName, attributes: lastPageAttributes);
-
     } on PlatformException catch (e) {
       print(e.message);
     }

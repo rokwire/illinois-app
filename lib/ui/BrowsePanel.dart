@@ -18,7 +18,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -1072,11 +1071,11 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapStateFarmWayfinding(BuildContext context) {
     Analytics().logSelect(target: "State Farm Wayfinding");
-    NativeCommunicator().launchMap(target: {
+    /* TBD Map2 NativeCommunicator().launchMap(target: {
       'latitude': Config().stateFarmWayfinding['latitude'],
       'longitude': Config().stateFarmWayfinding['longitude'],
       'zoom': Config().stateFarmWayfinding['zoom'],
-    });
+    }); */
   }
 
   void _onTapCreateStadiumPoll(BuildContext context) {
