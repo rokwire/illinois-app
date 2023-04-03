@@ -197,12 +197,6 @@ dependencies {
     implementation "androidx.window:window:1.0.0"
     //end Common
 
-    //Google Maps
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
-    implementation 'com.google.code.gson:gson:2.8.9'
-    implementation 'com.google.maps.android:android-maps-utils:0.5'
-    //end Google Maps Utils
-
     //Zxing
     implementation 'com.google.zxing:core:3.3.0' //Use zxing 3.3.0 because we have minSdk < 24
 
