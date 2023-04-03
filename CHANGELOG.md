@@ -180,6 +180,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Switch to xCode 14.2.
 
+## [4.2.55] - 2023-04-03
+### Added
+- New "Illinois Health Screener" video [#3069](https://github.com/rokwire/illinois-app/issues/3069).
+
 ## [4.2.53] - 2023-02-20
 ### Changed
 - Update MTD text to include “Bus” [#2952](https://github.com/rokwire/illinois-app/issues/2952).
