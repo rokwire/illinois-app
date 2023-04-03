@@ -792,7 +792,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSportEvents(BuildContext context) {
     Analytics().logSelect(target: "Athletics Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
   }
 
   void _onTapSportNews(BuildContext context) {
@@ -868,22 +868,22 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDiningsAll(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining) ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining) ));
   }
 
   void _onTapDiningsOpen(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
   }
 
   void _onTapEvents(BuildContext context) {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
   }
     
   void _onTapDining(BuildContext context) {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
   }
 
   void _onTapAthletics(BuildContext context) {
@@ -952,7 +952,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSuggestedEvents(BuildContext context) {
     Analytics().logSelect(target: "Suggested Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
   }
 
   void _onTapTwitter(BuildContext context) {

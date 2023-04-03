@@ -15,25 +15,9 @@
  */
 
 import 'package:flutter/semantics.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/model/Location.dart';
-import 'package:illinois/model/MTD.dart';
-import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/Gateway.dart';
-import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
-import 'package:illinois/service/StudentCourses.dart';
-import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -44,12 +28,10 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -57,27 +39,20 @@ import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sprintf/sprintf.dart';
 import 'package:rokwire_plugin/service/events.dart';
-import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
+enum ExploreType { Events, Dining }
 
-enum EventsDisplayType {single, multiple, all}
+enum EventsDisplayType { single, multiple, all }
 
 enum ExploreFilterType { categories, event_time, event_tags, payment_type, work_time, student_course_terms }
 
@@ -90,16 +65,11 @@ class _ExploreSortKey extends OrdinalSortKey {
 
 class ExplorePanel extends StatefulWidget {
 
-  static const String notifySelectMap    = "edu.illinois.rokwire.explore.map.select";
-
-  final ExploreItem? initialItem;
-  final EventsDisplayType? eventsDisplayType;
+  final ExploreType exploreType;
   final ExploreFilter? initialFilter;
-  final ListMapDisplayType mapDisplayType;
-  final bool rootTabDisplay;
   final String? browseGroupId;
 
-  ExplorePanel({this.initialItem, this.eventsDisplayType, this.initialFilter, this.mapDisplayType = ListMapDisplayType.List, this.rootTabDisplay = false, this.browseGroupId });
+  ExplorePanel({required this.exploreType, this.initialFilter, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
@@ -129,21 +99,15 @@ class ExplorePanelState extends State<ExplorePanel>
   with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExplorePanel>
   implements NotificationsListener {
   
-  List<ExploreItem> _exploreItems = [];
-  ExploreItem?    _selectedItem;
   late EventsDisplayType _selectedEventsDisplayType;
 
   List<dynamic>? _eventCategories;
-  List<StudentCourseTerm>? _studentCourseTerms;
   List<Explore>? _displayExplores;
   List<String>?  _filterWorkTimeValues;
   List<String>?  _filterPaymentTypeValues;
   List<String>?  _filterEventTimeValues;
   
-  Position? _locationData;
-  LocationServicesStatus? _locationServicesStatus;
-
-  Map<ExploreItem, List<ExploreFilter>>? _itemToFilterMap;
+  Map<ExploreType, List<ExploreFilter>>? _itemToFilterMap;
   bool _filterOptionsVisible = false;
 
   List<DiningSpecial>? _diningSpecials;
@@ -152,20 +116,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>?>? _loadingTask;
   bool? _loadingProgress;
-  bool _itemsDropDownValuesVisible = false;
   bool _eventsDisplayDropDownValuesVisible = false;
-  DateTime? _pausedDateTime;
-
-  //Maps
-  static const double MapBarHeight = 116;
-
-  bool? _mapAllowed;
-  MapController? _nativeMapController;
-  ListMapDisplayType? _displayType;
-  dynamic _selectedMapExplore;
-  late AnimationController _mapExploreBarAnimationController;
-  String? _loadingMapStopIdRoutes;
-  List<MTDRoute>? _selectedMapStopRoutes;
 
   @override
   void initState() {
@@ -173,43 +124,29 @@ class ExplorePanelState extends State<ExplorePanel>
       Storage.offsetDateKey,
       Storage.useDeviceLocalTimeZoneKey,
       Connectivity.notifyStatusChanged,
-      LocationServices.notifyStatusChanged,
       Localization.notifyStringsUpdated,
-      NativeCommunicator.notifyMapSelectExplore,
-      NativeCommunicator.notifyMapSelectPOI,
-      NativeCommunicator.notifyMapSelectLocation,
-      Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
-      FlexUI.notifyChanged,
-      Styles.notifyChanged,
-      StudentCourses.notifyTermsChanged,
-      StudentCourses.notifySelectedTermChanged,
-      StudentCourses.notifyCachedCoursesChanged,
       MTD.notifyStopsChanged,
       Appointments.notifyUpcomingAppointmentsChanged,
-      ExplorePanel.notifySelectMap,
-      RootPanel.notifyTabChanged,
       AppLivecycle.notifyStateChanged,
     ]);
 
 
-    _displayType = widget.mapDisplayType;
-    _mapAllowed = (_displayType == ListMapDisplayType.Map);
-    _selectedItem = widget.initialItem ?? _defaultExploreItem ?? ExploreItem.Buildings;
-    _selectedEventsDisplayType = widget.eventsDisplayType ?? EventsDisplayType.single;
-    _studentCourseTerms = StudentCourses().terms;
+    _selectedEventsDisplayType = EventsDisplayType.single;
     _initFilters();
 
-    _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: -MapBarHeight, upperBound: 0, vsync: this)
-      ..addListener(() {
-        this._refresh(() {});
-      });
-
     _loadingProgress = true;
-    _loadEventCategories().then((List<dynamic>? result) {
-      _eventCategories = result;
-      _initExploreItems();
-    });
+    
+    if (widget.exploreType == ExploreType.Events) {
+      _loadEventCategories().then((List<dynamic>? result) {
+        if (mounted) {
+          setState(() {
+            _eventCategories = result;
+          });
+        }
+      });
+    }
+    _loadExplores();
 
     super.initState();
   }
@@ -217,13 +154,6 @@ class ExplorePanelState extends State<ExplorePanel>
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-
-    if (_displayType == ListMapDisplayType.Map) {
-      Analytics().logMapHide();
-    }
-
-    _mapExploreBarAnimationController.dispose();
-
     super.dispose();
   }
 
@@ -241,7 +171,7 @@ class ExplorePanelState extends State<ExplorePanel>
           child: _buildContent(),
         ),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar());
+        bottomNavigationBar: uiuc.TabBar());
   }
 
 
@@ -258,118 +188,20 @@ class ExplorePanelState extends State<ExplorePanel>
     return exploresCount;
   }
 
-  ExploreItem? get _defaultExploreItem {
-    switch(_displayType) {
-      case ListMapDisplayType.List: return exploreItemFromString(Storage().selectedListExploreItem);
-      case ListMapDisplayType.Map: return exploreItemFromString(Storage().selectedMapExploreItem);
-      default: return null;
-    }
-  }
-
-  set _defaultExploreItem(ExploreItem? value) {
-    switch(_displayType) {
-      case ListMapDisplayType.List: Storage().selectedListExploreItem = exploreItemToString(value); break;
-      case ListMapDisplayType.Map: Storage().selectedMapExploreItem = exploreItemToString(value); break;
-      default: break;
-    }
-  }
-
-  void _initExploreItems() {
-    if (FlexUI().isLocationServicesAvailable) {
-      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
-        _locationServicesStatus = locationServicesStatus;
-
-        if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
-          LocationServices().requestPermission().then((LocationServicesStatus? locationServicesStatus) {
-            _locationServicesStatus = locationServicesStatus;
-            _updateExploreItems();
-          });
-        }
-        else {
-          _updateExploreItems();
-        }
-      });
-    }
-    else {
-        _updateExploreItems();
-    }
-  }
-
-  void _updateExploreItems() {
-
-    List<ExploreItem> exploreItems = [];
-    List<dynamic>? codes = FlexUI()[(_displayType == ListMapDisplayType.Map) ? 'explore.map' : 'explore.list'];
-    if (codes != null) {
-      for (dynamic code in codes) {
-        if (code == 'events') {
-          exploreItems.add(ExploreItem.Events);
-        }
-        else if (code == 'dining') {
-          exploreItems.add(ExploreItem.Dining);
-        }
-        else if (code == 'laundry') {
-          exploreItems.add(ExploreItem.Laundry);
-        }
-        else if (code == 'buildings') {
-          exploreItems.add(ExploreItem.Buildings);
-        }
-        else if (code == 'student_courses') {
-          exploreItems.add(ExploreItem.StudentCourse);
-        }
-        else if (code == 'appointments') {
-          exploreItems.add(ExploreItem.Appointments);
-        }
-        else if (code == 'mtd_stops') {
-          exploreItems.add(ExploreItem.MTDStops);
-        }
-        else if (code == 'mtd_destinations') {
-          exploreItems.add(ExploreItem.MTDDestinations);
-        }
-        else if (code == 'mental_health') {
-          exploreItems.add(ExploreItem.MentalHealth);
-        }
-        else if (code == 'state_farm_wayfinding') {
-          exploreItems.add(ExploreItem.StateFarmWayfinding);
-        }
-      }
-    }
-    
-    if (!ListEquality().equals(_exploreItems, exploreItems)) {
-      bool updateOnly = _exploreItems.isNotEmpty;
-      _exploreItems = exploreItems;
-
-      if (!_exploreItems.contains(_selectedItem)) {
-        selectItem(_exploreItems[0]);
-      }
-      else {
-        _loadExplores(updateOnly: updateOnly);
-      }
-    }
-
-    _enableMyLocationOnMap();
-  }
-
-  bool _userLocationEnabled() {
-    return FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
-  }
-
   void _initFilters() {
     _itemToFilterMap = {
-      ExploreItem.Events: <ExploreFilter>[
+      ExploreType.Events: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.categories),
         ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {2})
       ],
-      ExploreItem.Dining: <ExploreFilter>[
+      ExploreType.Dining: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.work_time),
         ExploreFilter(type: ExploreFilterType.payment_type)
-      ],
-      ExploreItem.StudentCourse: <ExploreFilter>[
-        ExploreFilter(type: ExploreFilterType.student_course_terms, selectedIndexes: { _selectedTermIndex }),
       ],
     };
 
     if (widget.initialFilter != null) {
-      _itemToFilterMap?.forEach((ExploreItem item, List<ExploreFilter> filters) {
+      _itemToFilterMap?.forEach((ExploreType item, List<ExploreFilter> filters) {
         for (int index = 0; index < filters.length; index++) {
           ExploreFilter filter = filters[index];
           if (filter.type == widget.initialFilter?.type) {
@@ -477,43 +309,13 @@ class ExplorePanelState extends State<ExplorePanel>
     return tagsValues;
   }
 
-  List<String> _getFilterTermsValues() {
-    List<String> categoriesValues = [];
-    if (_studentCourseTerms != null) {
-      for (StudentCourseTerm term in _studentCourseTerms!) {
-        categoriesValues.add(term.name ?? '');
-      }
-    }
-    return categoriesValues;
-  }
-
-  int get _selectedTermIndex {
-    String? displayTermId = StudentCourses().displayTermId;
-    if ((_studentCourseTerms != null) && (displayTermId != null)) {
-      for (int index = 0; index < _studentCourseTerms!.length; index++) {
-        if (_studentCourseTerms![index].id == displayTermId) {
-          return index;
-        }
-      }
-    }
-    return -1;
-  }
-
   Future<void> _loadExplores({bool? progress, bool updateOnly = false}) async {
     Future<List<Explore>?>? task;
     if (Connectivity().isNotOffline) {
-      List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
-      switch (_selectedItem) {
-        case ExploreItem.Events: task = _loadEvents(selectedFilterList); break;
-        case ExploreItem.Dining: task = _loadDining(selectedFilterList); break;
-        case ExploreItem.Laundry: task = _loadLaundry(); break;
-        case ExploreItem.Buildings: task = _loadBuildings(); break;
-        case ExploreItem.StudentCourse: task = _loadStudentCourse(selectedFilterList); break;
-        case ExploreItem.Appointments: task = _loadAppointments(); break;
-        case ExploreItem.MTDStops: task = _loadMTDStops(); break;
-        case ExploreItem.MTDDestinations: task = _loadMTDDestinations(); break;
-        case ExploreItem.MentalHealth: task = _loadMentalHealthBuildings(); break;
-        case ExploreItem.StateFarmWayfinding: break;
+      List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![widget.exploreType] : null;
+      switch (widget.exploreType) {
+        case ExploreType.Events: task = _loadEvents(selectedFilterList); break;
+        case ExploreType.Dining: task = _loadDining(selectedFilterList); break;
         default: break;
       }
     }
@@ -553,38 +355,6 @@ class ExplorePanelState extends State<ExplorePanel>
       _loadingTask = null;
       _loadingProgress = null;
       _displayExplores = explores;
-
-      _placeExploresOnMap(updateOnly: updateOnly);
-
-      if (updateOnly == false) {
-        _selectMapExplore(null);
-
-        if (_selectedItem == ExploreItem.Appointments) {
-          if (Storage().appointmentsCanDisplay != true) {
-            _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
-          } else if (CollectionUtils.isEmpty(_displayExplores)) {
-            _showMessagePopup(Localization().getStringEx('panel.explore.missing.appointments.msg','You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
-          }
-        }
-        else if (_selectedItem == ExploreItem.MTDStops) {
-          if (Storage().showMtdStopsMapInstructions != false) {
-            _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."), showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
-            );
-          }
-        }
-        else if (_selectedItem == ExploreItem.MTDDestinations) {
-          if (Storage().showMtdDestinationsMapInstructions != false) {
-            _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",), showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey
-            );
-          }
-          else if (CollectionUtils.isEmpty(_displayExplores)) {
-            _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
-          }
-        }
-        else if (_selectedItem == ExploreItem.StateFarmWayfinding) {
-          _viewStateFarmPoi();
-        }
-      }
     });
   }
 
@@ -620,88 +390,7 @@ class ExplorePanelState extends State<ExplorePanel>
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
     _diningSpecials = await Dinings().loadDiningSpecials();
-    _locationData = _userLocationEnabled() ? await LocationServices().location : null;
-    return Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData);
-  }
-
-  Future<List<Explore>?> _loadLaundry() async {
-    LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
-    return laundrySchool?.rooms;
-  }
-
-  Future<List<Explore>?> _loadBuildings() async {
-    return await Gateway().loadBuildings();
-  }
-
-  Future<List<Explore>?> _loadMTDStops() async {
-    List<Explore> result = <Explore>[];
-    _collectBusStops(result, stops: MTD().stops?.stops);
-    return result;
-  }
-
-  Future<List<Explore>?> _loadMTDDestinations() async {
-    return ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
-  }
-
-  Future<List<Explore>?> _loadMentalHealthBuildings() async {
-    return await Wellness().loadMentalHealthBuildings();
-  }
-
-  void _collectBusStops(List<Explore> result, { List<MTDStop>? stops }) {
-    if (stops != null) {
-      for(MTDStop stop in stops) {
-        if (stop.hasLocation) {
-          result.add(stop);
-        }
-        if (stop.points != null) {
-          _collectBusStops(result, stops: stop.points);
-        }
-      }
-    }
-  }
-
-  Future<List<Explore>?> _loadStudentCourse(List<ExploreFilter>? selectedFilterList) async {
-    String? termId = _getSelectedTermId(selectedFilterList) ?? StudentCourses().displayTermId;
-    return (termId != null) ? StudentCourses().loadCourses(termId: termId) : null;
-  }
-
-  Future<List<Explore>?> _loadAppointments() async {
-    return Appointments().getAppointments(timeSource: AppointmentsTimeSource.upcoming, type: AppointmentType.in_person);
-  }
-
-  void _showMessagePopup(String message) {
-    AppAlert.showCustomDialog(
-        context: context,
-        contentPadding: EdgeInsets.all(0),
-        contentWidget: Container(
-            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
-            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-              Padding(
-                  padding: EdgeInsets.all(30),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                    Styles().images?.getImage('university-logo') ?? Container(),
-                    Padding(
-                        padding: EdgeInsets.only(top: 20),
-                        child: Text(message,
-                            textAlign: TextAlign.center,
-                            style: Styles().textStyles?.getTextStyle("widget.detail.small")))
-                  ])),
-              Positioned.fill(child: Align(
-                  alignment: Alignment.topRight,
-                  child: InkWell(
-                      onTap: () {
-                        Analytics().logSelect(target: 'Close missing appointments popup');
-                        Navigator.of(context).pop();
-                      },
-                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage("close")))))
-            ]))).then((_) => _fixMap());
-  }
-
-  void _showOptionalMessagePopup(String message, { String? showPopupStorageKey }) {
-    showDialog(context: context, builder: (context) => ExploreOptionalMessagePopup(
-      message: message,
-      showPopupStorageKey: showPopupStorageKey,
-    )).then((_) => _fixMap());
+    return Dinings().loadBackendDinings(onlyOpened, paymentType, null);
   }
 
   List<Event>? _buildDisplayEvents(List<Event> allEvents) {
@@ -940,31 +629,6 @@ class ExplorePanelState extends State<ExplorePanel>
     return null;
   }
 
-  ExploreFilter? _getSelectedFilter(List<ExploreFilter>? selectedFilterList, ExploreFilterType type) {
-    if (selectedFilterList != null) {
-      for (ExploreFilter selectedFilter in selectedFilterList) {
-        if (selectedFilter.type == type) {
-          return selectedFilter;
-        }
-      }
-    }
-    return null;
-  }
-
-  String? _getSelectedTermId(List<ExploreFilter>? selectedFilterList) {
-    ExploreFilter? selectedFilter = _getSelectedFilter(selectedFilterList, ExploreFilterType.student_course_terms);
-    int index = selectedFilter?.firstSelectedIndex ?? -1;
-    return ((0 <= index) && (index < (_studentCourseTerms?.length ?? 0))) ? _studentCourseTerms![index].id : null;
-  }
-
-  void _updateSelectedTermId() {
-    List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![ExploreItem.StudentCourse] : null; 
-    ExploreFilter? selectedFilter = _getSelectedFilter(selectedFilterList, ExploreFilterType.student_course_terms);
-    if (selectedFilter != null) {
-      selectedFilter.selectedIndexes = { _selectedTermIndex };
-    }
-  }
-
   List<String>? _getFilterValuesByType(ExploreFilterType filterType) {
     switch (filterType) {
       case ExploreFilterType.categories:
@@ -977,8 +641,6 @@ class ExplorePanelState extends State<ExplorePanel>
         return _filterEventTimeValues;
       case ExploreFilterType.event_tags:
         return _getFilterTagsValues();
-      case ExploreFilterType.student_course_terms:
-        return _getFilterTermsValues();
       default:
         return null;
     }
@@ -1006,27 +668,11 @@ class ExplorePanelState extends State<ExplorePanel>
   // Build UI
 
   PreferredSizeWidget get headerBarWidget {
-    String? headerLabel;
-    List<Widget>? actions;
-    switch (_displayType) {
-      case ListMapDisplayType.List:
-        headerLabel = _headerBarListTitle(_selectedItem);
-        if (_selectedItem == ExploreItem.Events) {
-          actions ??= <Widget>[];
-          actions.add(_buildSearchHeaderButton());
-        }
-        break;
-      case ListMapDisplayType.Map:
-        headerLabel = Localization().getStringEx("panel.maps.header.title", "Map");
-        break;
-      default:
-        break;
-    }
-    if (widget.rootTabDisplay) {
-      return RootHeaderBar(title: headerLabel);
-    } else {
-      return HeaderBar(title: headerLabel, sortKey: _ExploreSortKey.headerBar, actions: actions,);
-    }
+    return HeaderBar(
+      title: _headerBarListTitle(widget.exploreType),
+      sortKey: _ExploreSortKey.headerBar,
+      actions: (widget.exploreType == ExploreType.Events) ? <Widget>[_buildSearchHeaderButton()] : null,
+    );
   }
 
   Widget _buildSearchHeaderButton() {
@@ -1046,111 +692,32 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Widget _buildContent() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Visibility(visible: (_displayType == ListMapDisplayType.Map), child:
-        Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-          _buildExploreItemsDropDownButton(),
-        ),
-      ),
       Expanded(child:
-        Stack(children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Visibility(visible: (_selectedItem == ExploreItem.Events), child:
-              Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-                _buildEventsDisplayTypesDropDownButton(),
-              ),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Visibility(visible: (widget.exploreType == ExploreType.Events), child:
+            Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+              _buildEventsDisplayTypesDropDownButton(),
             ),
-            Expanded(child:
-              Stack(children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                    Wrap(children: _buildFilterWidgets()),
+          ),
+          Expanded(child:
+            Stack(children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
+                  Wrap(children: _buildFilterWidgets()),
+                ),
+                Expanded(child:
+                  Container(color: Styles().colors!.background, child:
+                    _buildListView(),
                   ),
-                  Expanded(child:
-                    Container(color: Styles().colors!.background, child:
-                      Stack(children: <Widget>[
-                        _buildMapView(),
-                        _buildListView(),
-                      ]),
-                    ),
-                  ),
-                ]),
-                _buildEventsDisplayTypesDropDownContainer(),
-                _buildFilterValuesContainer()
+                ),
               ]),
-            ),
-          ]),
-          _buildExploreItemsDropDownContainer()
+              _buildEventsDisplayTypesDropDownContainer(),
+              _buildFilterValuesContainer()
+            ]),
+          ),
         ]),
       ),
     ]);
-  }
-
-  Widget _buildExploreItemsDropDownButton() {
-    return RibbonButton(
-      textColor: Styles().colors!.fillColorSecondary,
-      backgroundColor: Styles().colors!.white,
-      borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-      rightIconKey: (_itemsDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
-      label: _exploreItemName(_selectedItem!),
-      hint: _exploreItemHint(_selectedItem!),
-      onTap: _changeExploreItemsDropDownValuesVisibility
-    );
-  }
-
-  Widget _buildExploreItemsDropDownContainer() {
-    return Visibility(
-        visible: _itemsDropDownValuesVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildExploreDropDownDismissLayer(), _buildExploreItemsDropDownWidget()])));
-  }
-
-  Widget _buildExploreDropDownDismissLayer() {
-    return Positioned.fill(
-        child: BlockSemantics(
-            child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _itemsDropDownValuesVisible = false;
-                  });
-                },
-                child: Container(color: Styles().colors!.blackTransparent06))));
-  }
-
-  Widget _buildExploreItemsDropDownWidget() {
-    List<Widget> itemList = <Widget>[];
-    itemList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    for (ExploreItem exploreItem in _exploreItems) {
-      if ((_selectedItem != exploreItem)) {
-        itemList.add(_buildExploreDropDownItem(exploreItem));
-      }
-    }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: itemList)));
-  }
-
-  Widget _buildExploreDropDownItem(ExploreItem exploreItem) {
-    return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconKey: null,
-        label: _exploreItemName(exploreItem),
-        onTap: () => _onTapExploreItem(exploreItem));
-  }
-
-  void _onTapExploreItem(ExploreItem item) {
-    Analytics().logSelect(target: _exploreItemName(item));
-    selectItem(item);
-    _defaultExploreItem = item; //Store last user selection
-    _changeExploreItemsDropDownValuesVisibility();
-  }
-
-  void _changeExploreItemsDropDownValuesVisibility() {
-    if (_filterOptionsVisible) {
-      _deactivateSelectedFilters();
-    }
-    _itemsDropDownValuesVisible = !_itemsDropDownValuesVisible;
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   Widget _buildEventsDisplayTypesDropDownButton() {
@@ -1248,12 +815,10 @@ class ExplorePanelState extends State<ExplorePanel>
       exploresContent = _buildEmpty();
     }
 
-    return Visibility(visible: (_displayType == ListMapDisplayType.List), child:
-      Stack(children: [
-        Container(color: Styles().colors!.background, child: exploresContent),
-        _buildDimmedContainer(),
-      ]),
-    );
+    return  Stack(children: [
+      Container(color: Styles().colors!.background, child: exploresContent),
+      _buildDimmedContainer(),
+    ]);
   }
 
   Widget _buildExploreEntry(BuildContext context, int index){
@@ -1266,250 +831,18 @@ class ExplorePanelState extends State<ExplorePanel>
     int realIndex = _hasDiningSpecials ? index -1 : index;
     Explore? explore = _displayExplores![realIndex];
 
-    List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
+    List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![widget.exploreType] : null;
     Set<String>? tags  = _getSelectedEventTags(selectedFilterList);
 
     ExploreCard exploreView = ExploreCard(
         explore: explore,
         onTap: () => _onExploreTap(explore),
-        locationData: _locationData,
         hideInterests: tags == null,
         showTopBorder: true,
-        source: _selectedItem?.toString());
+        source: widget.exploreType.toString());
     return Padding(
         padding: EdgeInsets.only(top: 16),
         child: exploreView);
-  }
-
-  Widget _buildMapView() {
-    String? title, description;
-    String detailsLabel = Localization().getStringEx('panel.explore.button.details.title', 'Details');
-    String detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
-    Color? exploreColor;
-    Widget? descriptionWidget;
-    bool canDirections = _userLocationEnabled(), canDetail = true;
-    void Function() onTapDetail = _onTapMapExploreDetail;
-
-    if (_selectedMapExplore is Explore) {
-      title = _selectedMapExplore?.exploreTitle;
-      description = _selectedMapExplore.exploreLocationDescription;
-      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors?.white;
-      if (_selectedMapExplore is MTDStop) {
-        detailsLabel = Localization().getStringEx('panel.explore.button.bus_schedule.title', 'Bus Schedule');
-        detailsHint = Localization().getStringEx('panel.explore.button.bus_schedule.hint', '');
-        descriptionWidget = _buildStopDescription();
-      }
-      else if (_selectedMapExplore is ExplorePOI) {
-        title = title?.replaceAll('\n', ' ');
-        detailsLabel = Localization().getStringEx('panel.explore.button.clear.title', 'Clear');
-        detailsHint = Localization().getStringEx('panel.explore.button.clear.hint', '');
-        onTapDetail = _onTapMapClear;
-      }
-    }
-    else if  (_selectedMapExplore is List<Explore>) {
-      String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
-      title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
-      Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
-      description = explore?.exploreLocation?.description ?? "";
-      exploreColor = explore?.uiColor ?? Styles().colors?.fillColorSecondary;
-    }
-    else {
-      exploreColor = Styles().colors?.white;
-      canDirections = canDetail = false;
-    }
-
-    double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
-
-    return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
-      (_mapAllowed == true) ? MapWidget(
-        onMapCreated: _onNativeMapCreated,
-        creationParams: { "myLocationEnabled" : _userLocationEnabled(), "levelsEnabled": Storage().debugMapShowLevels},
-      ) : Container(),
-      Positioned(bottom: _mapExploreBarAnimationController.value, left: 0, right: 0, child:
-        Container(height: MapBarHeight, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
-          Stack(children: [
-            Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(right: 10), child:
-                  Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, )),
-                ),
-                (descriptionWidget != null) ?
-                  Row(children: <Widget>[
-                    Text(description ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
-                    descriptionWidget
-                  ]) :
-                  Text(description ?? "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
-                Container(height: 8,),
-                Row(children: <Widget>[
-                  SizedBox(width: buttonWidth, child:
-                    RoundedButton(
-                      label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
-                      hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
-                      backgroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      fontSize: 16.0,
-                      textColor: canDirections ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                      borderColor: canDirections ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                      onTap: _onTapMapExploreDirections
-                    ),
-                  ),
-                  Container(width: 12,),
-                  SizedBox(width: buttonWidth, child:
-                    RoundedButton(
-                      label: detailsLabel,
-                      hint: detailsHint,
-                      backgroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      fontSize: 16.0,
-                      textColor: canDetail ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                      borderColor: canDetail ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                      onTap: onTapDetail,
-                    ),
-                  ),
-                ],),
-              ]),
-            ),
-            (_selectedMapExplore is Favorite) ?
-              Align(alignment: Alignment.topRight, child:
-                FavoriteButton(favorite: (_selectedMapExplore as Favorite), style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),),
-              ) :
-              Container(),
-          ],),
-        ),
-      )
-    ]);
-  }
-
-  Widget? _buildStopDescription() {
-    if (_loadingMapStopIdRoutes != null) {
-      return Padding(padding: EdgeInsets.only(left: 8), child:
-        SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 2,),
-        ),
-      );
-    }
-    else {
-      List<Widget> routeWidgets = <Widget>[];
-      if (_selectedMapStopRoutes != null) {
-        for (MTDRoute route in _selectedMapStopRoutes!) {
-          routeWidgets.add(
-            Padding(padding: EdgeInsets.only(left: routeWidgets.isNotEmpty ? 6 : 0), child:
-              Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
-                Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
-                  Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, color: route.textColor,)),
-                )
-              )
-            )
-          );
-        }
-      }
-      if (routeWidgets.isNotEmpty) {
-        return Padding(padding: EdgeInsets.only(left: 8), child:
-          SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-            Row(children: routeWidgets,)
-          ),
-        );
-      }
-      else {
-        return null;
-      }
-    }
-  }
-
-  void _selectMapExplore(dynamic explore) {
-    if (explore != null) {
-      _nativeMapController?.markPOI(((explore is ExplorePOI) && StringUtils.isEmpty(explore.placeId)) ? explore : null);
-      _refresh(() { _selectedMapExplore = explore; });
-      _updateSelectedMapStopRoutes();
-      _mapExploreBarAnimationController.forward();
-    }
-    else if (_selectedMapExplore != null) {
-      _nativeMapController?.markPOI(null);
-      _mapExploreBarAnimationController.reverse().then((_){
-        _refresh(() { _selectedMapExplore = null; });
-        _updateSelectedMapStopRoutes();
-      });
-    }
-  }
-
-  void _onTapMapExploreDirections() {
-    Analytics().logSelect(target: 'Directions');
-    if (_userLocationEnabled()) {
-      dynamic explore = _selectedMapExplore;
-      _selectMapExplore(null);
-      if (explore != null) {
-        String? travelMode;
-        if (explore is List) {
-          dynamic exploreEntry = (0 < explore.length) ? explore.first : null;
-          travelMode = ((exploreEntry is MTDStop) || (exploreEntry is ExplorePOI)) ? 'transit' : null;
-        }
-        else {
-          travelMode = ((explore is MTDStop) || (explore is ExplorePOI)) ? 'transit' : null;
-        }
-        NativeCommunicator().launchExploreMapDirections(target: explore, options: (travelMode != null) ? {
-          'travelMode': travelMode
-        } : null);
-      }
-    }
-    else {
-      AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.na.msg", "You need to enable location services in order to get navigation directions."));
-    }
-  }
-  
-  void _onTapMapExploreDetail() {
-    Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
-    if (_selectedMapExplore is Explore) {
-      String? url = ((_selectedItem == ExploreItem.MentalHealth) && (_selectedMapExplore is Building)) ?
-        Wellness().mentalHealthBuildingUrl(buildingId: (_selectedMapExplore as Building).id) : null;
-      
-      if (url == null) {
-        (_selectedMapExplore as Explore).exploreLaunchDetail(context);
-      }
-      else if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else {
-        Uri? uri = Uri.tryParse(url);
-        if (uri != null) {
-          launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      }
-    }
-    else if (_selectedMapExplore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore),));
-    }
-    
-    _selectMapExplore(null);
-  }
-
-  void _onTapMapClear() {
-    Analytics().logSelect(target: 'Clear');
-    if (_selectedMapExplore is Favorite) {
-      Auth2().account?.prefs?.setFavorite(_selectedMapExplore as Favorite, false);
-    }
-    _selectMapExplore(null);
-  }
-
-  void _updateSelectedMapStopRoutes() {
-    String? stopId = (_selectedMapExplore is MTDStop) ? (_selectedMapExplore as MTDStop).id : null;
-    if ((stopId != null) && (stopId != _loadingMapStopIdRoutes)) {
-      _refresh(() { _loadingMapStopIdRoutes = stopId; });
-      MTD().getRoutes(stopId: stopId).then((List<MTDRoute>? routes) {
-        String? currentStopId = (_selectedMapExplore is MTDStop) ? (_selectedMapExplore as MTDStop).id : null;
-        if (currentStopId == stopId) {
-          _refresh(() {
-            _loadingMapStopIdRoutes = null;
-            _selectedMapStopRoutes = MTDRoute.mergeUiRoutes(routes);
-          });
-        }
-      });
-    }
-    else if ((stopId == null) && ((_loadingMapStopIdRoutes != null) || (_selectedMapStopRoutes != null))) {
-      _refresh(() {
-        _loadingMapStopIdRoutes = null;
-        _selectedMapStopRoutes = null;
-      });
-    }
   }
 
   Widget _buildLoading() {
@@ -1528,16 +861,9 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Widget _buildEmpty() {
     String message;
-    switch (_selectedItem) {
-      case ExploreItem.Events: message = Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.'); break;
-      case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
-      case ExploreItem.Laundry: message = Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.'); break;
-      case ExploreItem.Buildings: message = Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.'); break;
-      case ExploreItem.StudentCourse: message = Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses available.'); break;
-      case ExploreItem.Appointments: message = Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.'); break;
-      case ExploreItem.MTDStops: message = Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No bus stop locations available.'); break;
-      case ExploreItem.MTDDestinations: message = Localization().getStringEx('panel.explore.state.online.empty.mtd_destinations', 'No destinaion locations available.'); break;
-      case ExploreItem.MentalHealth: message = Localization().getStringEx('panel.explore.state.online.empty.mental_health', 'No Mental Heatlh resource locations available.'); break;
+    switch (widget.exploreType) {
+      case ExploreType.Events: message = Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.'); break;
+      case ExploreType.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
       default:  message =  ''; break;
     }
     return SingleChildScrollView(child:
@@ -1553,17 +879,9 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Widget _buildOffline() {
     String message;
-    switch (_selectedItem) {
-      case ExploreItem.Events:              message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
-      case ExploreItem.Dining:              message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
-      case ExploreItem.Laundry:             message = Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.'); break;
-      case ExploreItem.Buildings:           message = Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.'); break;
-      case ExploreItem.StudentCourse:       message = Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.'); break;
-      case ExploreItem.Appointments:        message = Localization().getStringEx('panel.explore.state.offline.empty.appointments', 'No appointments available while offline.'); break;
-      case ExploreItem.MTDStops:            message = Localization().getStringEx('panel.explore.state.offline.empty.mtd_stops', 'No bus stop locations available while offline.'); break;
-      case ExploreItem.MTDDestinations:     message = Localization().getStringEx('panel.explore.state.offline.empty.mtd_destinations', 'No destinaion locations available while offline.'); break;
-      case ExploreItem.MentalHealth:        message = Localization().getStringEx('panel.explore.state.offline.empty.mental_health', 'No Mental Heatlh resource locations available while offline.'); break;
-      case ExploreItem.StateFarmWayfinding: message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
+    switch (widget.exploreType) {
+      case ExploreType.Events:              message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
+      case ExploreType.Dining:              message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
       default:                              message =  ''; break;
     }
     return SingleChildScrollView(child:
@@ -1599,7 +917,7 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildFilterValuesContainer() {
 
 
-    List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
+    List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![widget.exploreType] : null;
     ExploreFilter? selectedFilter;
     if (itemFilters != null && itemFilters.isNotEmpty) {
       for (ExploreFilter filter in itemFilters) {
@@ -1658,7 +976,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   List<Widget> _buildFilterWidgets() {
     List<Widget> filterTypeWidgets = [];
-    List<ExploreFilter>? visibleFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
+    List<ExploreFilter>? visibleFilters = (_itemToFilterMap != null) ? _itemToFilterMap![widget.exploreType] : null;
     if (visibleFilters == null ||
         visibleFilters.isEmpty ||
         _eventCategories == null) {
@@ -1692,7 +1010,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     if (event?.isComposite ?? false) {
       Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event, initialLocationData: _locationData,browseGroupId: widget.browseGroupId,)));
+          context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event, browseGroupId: widget.browseGroupId,)));
     }
     else if (event?.isGameEvent ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
@@ -1703,7 +1021,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ExploreDetailPanel(explore: explore,initialLocationData: _locationData,browseGroupId: widget.browseGroupId,)
+          ExploreDetailPanel(explore: explore, browseGroupId: widget.browseGroupId,)
       )).then(
           (value){
             if(value!=null && value == true){
@@ -1716,7 +1034,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _onFilterTypeClicked(ExploreFilter selectedFilter) {
     // Analytics().logSelect(target:...);
-    List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
+    List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![widget.exploreType] : null;
     _refresh(() {
       if (itemFilters != null) {
         for (ExploreFilter filter in itemFilters) {
@@ -1756,76 +1074,13 @@ class ExplorePanelState extends State<ExplorePanel>
     selectedFilter.selectedIndexes = selectedIndexes;
     selectedFilter.active = _filterOptionsVisible = false;
 
-    if (selectedFilter.type == ExploreFilterType.student_course_terms) {
-      StudentCourseTerm? term = ListUtils.entry(_studentCourseTerms, newValueIndex);
-      if (term != null) {
-        StudentCourses().selectedTermId = term.id;
-      }
-    }
-    
     _loadExplores();
   }
 
-  ///Public interface
-  void selectItem(ExploreItem exploreItem, {ExploreFilter? initialFilter}) {
-    bool reloadExplores = false;
-    if (exploreItem != _selectedItem) {
-      reloadExplores = true;
-      _selectedItem = exploreItem; //Fix initial panel opening selection
-      _deactivateSelectedFilters();
-      _refresh(() {
-        _selectedItem = exploreItem;
-      });
-    }
-    if (reloadExplores) {
-      _loadExplores();
-    }
-  }
-
-  static String? _exploreItemName(ExploreItem exploreItem) {
+  static String? _headerBarListTitle(ExploreType? exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.title', 'Events');
-      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
-      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
-      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
-      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
-      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'Bus Stops');
-      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.title', 'My Destinations');
-      case ExploreItem.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.title', 'Mental Health Resources');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
-      default:                              return null;
-    }
-  }
-
-  static String? _exploreItemHint(ExploreItem exploreItem) {
-    switch (exploreItem) {
-      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.hint', '');
-      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
-      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.hint', '');
-      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.hint', '');
-      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.hint', '');
-      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.hint', '');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.hint', '');
-      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.hint', '');
-      case ExploreItem.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.hint', '');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
-      default:                              return null;
-    }
-  }
-
-  static String? _headerBarListTitle(ExploreItem? exploreItem) {
-    switch (exploreItem) {
-      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.header.events.title', 'Events');
-      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.header.dining.title', 'Residence Hall Dining');
-      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.header.laundry.title', 'Laundry');
-      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.header.buildings.title', 'Campus Buildings');
-      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.header.student_course.title', 'My Courses');
-      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.header.appointments.title', 'MyMcKinley In-Person Appointments');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.mtd_stops.title', 'Bus Stops');
-      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.header.mtd_destinations.title', 'My Destinations');
-      case ExploreItem.MentalHealth:        return Localization().getStringEx('panel.explore.header.mental_health.title', 'Mental Heatlh Resources');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
+      case ExploreType.Events:              return Localization().getStringEx('panel.explore.header.events.title', 'Events');
+      case ExploreType.Dining:              return Localization().getStringEx('panel.explore.header.dining.title', 'Residence Hall Dining');
       default:                              return null;
     }
   }
@@ -1841,7 +1096,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _deactivateSelectedFilters() {
     List<ExploreFilter>? itemFilters = (_itemToFilterMap != null)
-        ? _itemToFilterMap![_selectedItem] : null;
+        ? _itemToFilterMap![widget.exploreType] : null;
     if (itemFilters != null && itemFilters.isNotEmpty) {
       for (ExploreFilter filter in itemFilters) {
         filter.active = false;
@@ -1856,109 +1111,17 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  ///Maps
-  ///
-  void _onNativeMapCreated(mapController) {
-    _nativeMapController = mapController;
-    if (_displayExplores != null) {
-      _placeExploresOnMap();
-    }
-    _enableMap(_displayType == ListMapDisplayType.Map);
-    _enableMyLocationOnMap();
-  }
-
-  void _placeExploresOnMap({ bool updateOnly = false }) {
-    if (_nativeMapController != null)   {
-      _nativeMapController!.placePOIs(_displayExplores, options: <String, dynamic>{
-        MapController.HideBuildingLabelsParams : ((_selectedItem == ExploreItem.Buildings) || (_selectedItem == ExploreItem.MentalHealth))  ? true : null,
-        MapController.HideBusStopPOIsParams : (_selectedItem == ExploreItem.MTDStops) ? true : null,
-        MapController.ShowMarkerPopupsParams: (_selectedItem != ExploreItem.MTDStops) ? true : false,
-        MapController.UpdateOnlyParams: updateOnly
-      });
-    }
-  }
-
-  /*void _clearExploresFromMap() {
-    if (_nativeMapController != null) {
-      _nativeMapController!.placePOIs(null);
-    }
-  }*/
-
-  void _enableMap(bool enable) {
-    if (_nativeMapController != null) {
-      _nativeMapController!.enable(enable);
-    }
-  }
-
-  void _fixMap() {
-    if (_nativeMapController != null) {
-      _nativeMapController!.fixZOrder();
-    }
-  }
-
-  void _enableMyLocationOnMap() {
-    if (_nativeMapController != null) {
-      _nativeMapController!.enableMyLocation(_userLocationEnabled());
-    }
-  }
-
-  void _viewStateFarmPoi() {
-    Analytics().logSelect(target: "State Farm Wayfinding");
-    if (_nativeMapController != null) {
-      _nativeMapController!.viewPOI({
-        'latitude': Config().stateFarmWayfinding['latitude'],
-        'longitude': Config().stateFarmWayfinding['longitude'],
-        'zoom': Config().stateFarmWayfinding['zoom'],
-      });
-    }
-  }
-
-  Explore? _exploreFromMapExplore(Explore? mapExplore) {
-    String? mapExploreId = mapExplore?.exploreId;
-    if ((_displayExplores != null) && (mapExploreId != null)) {
-      for (Explore? displayExplore in _displayExplores!) {
-        if ((displayExplore.runtimeType.toString() == mapExplore.runtimeType.toString()) && (displayExplore!.exploreId != null) && (displayExplore.exploreId == mapExploreId)) {
-          return displayExplore;
-        }
-      }
-    }
-    return mapExplore; // null;
-  }
-
-  List<Explore>? _exploresFromMapExplores(List<Explore>? mapExplores) {
-    List<Explore>? explores;
-    if (mapExplores != null) {
-      explores = <Explore>[];
-      for (Explore mapExplore in mapExplores) {
-        explores.add(_exploreFromMapExplore(mapExplore) ?? mapExplore);
-      }
-    }
-    return explores;
-  }
-
   // NotificationsListener
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == LocationServices.notifyStatusChanged) {
-      _onLocationServicesStatusChanged(param);
-    }
-    else if (name == Connectivity.notifyStatusChanged) {
+    if (name == Connectivity.notifyStatusChanged) {
       if ((Connectivity().isNotOffline) && mounted) {
         _updateEventCategories();
       }
     }
     else if (name == Localization.notifyStringsUpdated) {
       _refresh(() { });
-    }
-    else if (name == NativeCommunicator.notifyMapSelectExplore) {
-      _onNativeMapSelectExplore(param);
-    }
-    else if (name == NativeCommunicator.notifyMapSelectPOI) {
-      _onNativeMapSelectPOI(param);
-    }
-    else if (name == NativeCommunicator.notifyMapSelectLocation) {
-      _onNativeMapSelectLocation(param);
     }
     else if (name == Storage.offsetDateKey) {
       if (mounted) {
@@ -1970,184 +1133,13 @@ class ExplorePanelState extends State<ExplorePanel>
         _loadExplores(updateOnly: true);
       }
     }
-    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _updateLocationServicesStatus();
-    }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _onFavoritesChanged();
-    }
-    else if (name == FlexUI.notifyChanged) {
-      _updateLocationServicesStatus();
-      _updateExploreItems();
-    }
-    else if (name == Styles.notifyChanged){
-      _refresh(() { });
-    }
-    else if (name == StudentCourses.notifyTermsChanged) {
-      if ((_selectedItem == ExploreItem.StudentCourse) && mounted && widget.rootTabDisplay) {
-        _refresh(() {
-          _studentCourseTerms = StudentCourses().terms;
-        });
-        _loadExplores(updateOnly: true);
-      }
-    }
-    else if (name == StudentCourses.notifySelectedTermChanged) {
-      if ((_selectedItem == ExploreItem.StudentCourse) && mounted && widget.rootTabDisplay) {
-        _refresh(() {
-          _updateSelectedTermId();
-        });
-        _loadExplores(updateOnly: true);
-      }
-    }
-    else if (name == StudentCourses.notifyCachedCoursesChanged) {
-      if ((_selectedItem == ExploreItem.StudentCourse) && ((param == null) || (StudentCourses().displayTermId == param)) && mounted && widget.rootTabDisplay) {
-        _loadExplores(updateOnly: true);
-      }
-    }
-    else if (name == MTD.notifyStopsChanged) {
-      if ((_selectedItem == ExploreItem.MTDStops) && mounted && widget.rootTabDisplay) {
-        _loadExplores(updateOnly: true);
-      }
-    }
-    else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
-      if ((_selectedItem == ExploreItem.Appointments) && mounted && widget.rootTabDisplay) {
-        _loadExplores(updateOnly: true);
-      }
-    }
-    else if (name == ExplorePanel.notifySelectMap) {
-      if (mounted && ((_displayType != ListMapDisplayType.Map) || (_selectedItem != param))) {
-        setState(() {
-          _displayType = ListMapDisplayType.Map;
-          _mapAllowed = true;
-          _selectedItem = param;
-        });
-        _loadExplores();
-      }
-    }
-    else if (name == RootPanel.notifyTabChanged) {
-      if (((param == RootTab.Explore) || (param == RootTab.Maps)) &&
-          (CollectionUtils.isEmpty(_exploreItems) || (_selectedItem == ExploreItem.Events) || (_selectedItem == ExploreItem.Appointments)) && // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
-          widget.rootTabDisplay && mounted
-      ) {
-        _loadExplores(updateOnly: true);
-      }
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
-    }
-  }
-
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          if (mounted) {
-            _loadExplores(updateOnly: true);
-          }
-        }
-      }
-    }
-  }
-
-  void _updateLocationServicesStatus() {
-    if (FlexUI().isLocationServicesAvailable) {
-      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
-        _locationServicesStatus = locationServicesStatus;
-        _updateExploreItems();
-      });
-    }
-    else {
-        _updateExploreItems();
-    }
-  }
-
-  void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
-    if (FlexUI().isLocationServicesAvailable) {
-      _locationServicesStatus = status;
-      _updateExploreItems();
     }
   }
 
   void _onFavoritesChanged() {
-    if (_selectedItem == ExploreItem.MTDDestinations) {
-      List<Explore>? explores = ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
-      if (!DeepCollectionEquality().equals(_displayExplores, explores)) {
-        _refresh(() {
-          _displayExplores = explores;
-          _placeExploresOnMap(updateOnly: true);
-        });
-      }
-      else {
-        _refresh(() {});
-      }
-    }
-    else {
-      _refresh(() {});
-    }
-  }
-
-  void _onNativeMapSelectExplore(Map<String, dynamic>? params) {
-    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
-    if (_nativeMapController?.mapId == mapId) {
-      dynamic explore;
-      dynamic exploreJson = (params != null) ? params['explore'] : null;
-      if (exploreJson is Map) {
-        explore = _exploreFromMapExplore(Explore.fromJson(JsonUtils.mapValue(exploreJson)));
-      }
-      else if (exploreJson is List) {
-        explore = _exploresFromMapExplores(Explore.listFromJson(exploreJson));
-      }
-
-      if (explore != null) {
-        _selectMapExplore(explore);
-      }
-    }
-  }
-  
-  void _onNativeMapSelectPOI(Map<String, dynamic>? params) {
-    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
-    if (_nativeMapController?.mapId == mapId) {
-      Map<String, dynamic>? poi = (params != null) ? JsonUtils.mapValue(params['poi']) : null;
-      String? poiName = (poi != null) ? JsonUtils.stringValue(poi['name']) : null;
-      LatLng? poiLocation = (poi != null) ? LatLng.fromJson(JsonUtils.mapValue(poi['location'])) : null;
-      if ((poiName != null) || (poiLocation != null)) {
-        MTDStop? mtdStop = MTD().stops?.findStop(name: poiName, location: poiLocation, locationThresholdDistance: 10 /*in meters*/);
-        if ((mtdStop == null) && (poiName != null) && (poiLocation != null)) {
-          mtdStop = MTD().stops?.findStop(name: poiName) ??
-            MTD().stops?.findStop(location: poiLocation, locationThresholdDistance: 10 /*in meters*/);
-        }
-        if (mtdStop != null) {
-          _selectMapExplore(mtdStop);
-        }
-        else if (_selectedItem == ExploreItem.MTDDestinations) {
-          _selectMapExplore(ExplorePOI.fromJson(poi));
-        }
-        else if (_selectedMapExplore != null) {
-          _selectMapExplore(null);
-        }
-      }
-    }
-  }
-
-  void _onNativeMapSelectLocation(Map<String, dynamic>? params) {
-    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
-    if (_nativeMapController?.mapId == mapId) {
-      LatLng? location = (params != null) ? LatLng.fromJson(JsonUtils.mapValue(params['location'])) : null;
-      MTDStop? mtdStop = (location != null) ? MTD().stops?.findStop(location: location, locationThresholdDistance: 25 /*in meters*/) : null;
-      if (mtdStop != null) {
-        _selectMapExplore(mtdStop);
-      }
-      else if (_selectedMapExplore != null) {
-        _selectMapExplore(null);
-      }
-      else if ((_selectedItem == ExploreItem.MTDDestinations) && (location?.isValid ?? false)) {
-        _selectMapExplore(ExplorePOI(location: ExploreLocation(latitude: location?.latitude, longitude: location?.longitude)));
-      }
-    }
+    _refresh(() {});
   }
 }
 
@@ -2263,57 +1255,25 @@ class ExploreFilter {
 }
 
 ////////////////////
-// ExploreItem
+// ExploreType
 
 
-ExploreItem? exploreItemFromString(String? value) {
+ExploreType? exploreItemFromString(String? value) {
   if (value == 'events') {
-    return ExploreItem.Events;
+    return ExploreType.Events;
   }
   else if (value == 'dining') {
-    return ExploreItem.Dining;
-  }
-  else if (value == 'laundry') {
-    return ExploreItem.Laundry;
-  }
-  else if (value == 'buildings') {
-    return ExploreItem.Buildings;
-  }
-  else if (value == 'studentCourse') {
-    return ExploreItem.StudentCourse;
-  }
-  else if (value == 'appointments') {
-    return ExploreItem.Appointments;
-  }
-  else if (value == 'mtdStops') {
-    return ExploreItem.MTDStops;
-  }
-  else if (value == 'mtdDestinations') {
-    return ExploreItem.MTDDestinations;
-  }
-  else if (value == 'mentalHealth') {
-    return ExploreItem.MentalHealth;
-  }
-  else if (value == 'stateFarmWayfinding') {
-    return ExploreItem.StateFarmWayfinding;
+    return ExploreType.Dining;
   }
   else {
     return null;
   }
 }
 
-String? exploreItemToString(ExploreItem? value) {
+String? exploreItemToString(ExploreType? value) {
   switch(value) {
-    case ExploreItem.Events:              return 'events';
-    case ExploreItem.Dining:              return 'dining';
-    case ExploreItem.Laundry:             return 'laundry';
-    case ExploreItem.Buildings:           return 'buildings';
-    case ExploreItem.StudentCourse:       return 'studentCourse';
-    case ExploreItem.Appointments:        return 'appointments';
-    case ExploreItem.MTDStops:            return 'mtdStops';
-    case ExploreItem.MTDDestinations:     return 'mtdDestinations';
-    case ExploreItem.MentalHealth:        return 'mentalHealth';
-    case ExploreItem.StateFarmWayfinding: return 'stateFarmWayfinding';
+    case ExploreType.Events:              return 'events';
+    case ExploreType.Dining:              return 'dining';
     default: return null;
   }
 }
