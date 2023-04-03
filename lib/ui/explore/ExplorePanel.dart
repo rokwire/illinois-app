@@ -902,21 +902,7 @@ class ExplorePanelState extends State<ExplorePanel>
         child: BlockSemantics(child:Container(color: Color(0x99000000))));
   }
 
-  /*void _selectDisplayType(ListMapDisplayType displayType) {
-    Analytics().logSelect(target: displayType.toString());
-    if (_displayType != displayType) {
-      _refresh((){
-        _displayType = displayType;
-        _mapAllowed = (_displayType == ListMapDisplayType.Map) || (_mapAllowed == true);
-        _enableMap(_displayType == ListMapDisplayType.Map);
-        Analytics().logMapDisplay(action: (_displayType == ListMapDisplayType.Map) ? Analytics.LogMapDisplayShowActionName : Analytics.LogMapDisplayHideActionName);
-      });
-    }
-  }*/
-
   Widget _buildFilterValuesContainer() {
-
-
     List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![widget.exploreType] : null;
     ExploreFilter? selectedFilter;
     if (itemFilters != null && itemFilters.isNotEmpty) {
