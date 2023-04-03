@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Guide.dart';
@@ -224,8 +225,11 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
           bool hasUri = StringUtils.isNotEmpty(uri?.scheme);
 
           Map<String, dynamic>? location = JsonUtils.mapValue(link['location']);
-          Map<String, dynamic>? locationGps = (location != null) ? JsonUtils.mapValue(location['location']) : null;
-          bool hasLocation = (locationGps != null) && (locationGps['latitude'] != null) && (locationGps['longitude'] != null);
+          Map<String, dynamic>? locationCoord = (location != null) ? JsonUtils.mapValue(location['location']) : null;
+          double? locationLatitude = (locationCoord != null) ? JsonUtils.doubleValue(locationCoord['latitude']) : null;
+          double? locationLongitude = (locationCoord != null) ? JsonUtils.doubleValue(locationCoord['longitude']) : null;
+          LatLng? locationGps = ((locationLatitude != null) && (locationLongitude != null)) ? LatLng(locationLatitude, locationLongitude) : null;
+          bool hasLocation = (locationGps != null);
 
           if (text != null) {
             TextDecoration? linkTextDecoration;
@@ -236,7 +240,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
             }
             
             contentList.add(Semantics(button: true, child:
-              GestureDetector(onTap: () => hasLocation ? _onTapLocation(location) : (hasUri ? _onTapLink(url, useInternalBrowser: useInternalBrowser) : _nop()), child:
+              GestureDetector(onTap: () => (locationGps != null) ? _onTapLocation(locationGps) : (hasUri ? _onTapLink(url, useInternalBrowser: useInternalBrowser) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
@@ -562,8 +566,8 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     }
   }
 
-  void _onTapLocation(Map<String, dynamic>? location) {
-    NativeCommunicator().launchMapDirections(jsonData: location);
+  void _onTapLocation(LatLng location) {
+    GeoMapUtils.launchDirections(destination: location, travelMode: GeoMapUtils.traveModeWalking);
   }
 
   void _nop() {

@@ -21,6 +21,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gateway.dart';
@@ -28,6 +29,7 @@ import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -51,11 +53,14 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+enum ExploreMapType { Events, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
 
 class ExploreMapPanel extends StatefulWidget {
-  final ExploreItem? initialContent;
+  static const String notifySelect    = "edu.illinois.rokwire.explore.map.select";
 
-  ExploreMapPanel({this.initialContent});
+  ExploreMapPanel();
   
   @override
   State<StatefulWidget> createState() => _ExploreMapPanelState();
@@ -66,10 +71,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   implements NotificationsListener {
 
   static const double _filterLayoutSortKey = 1.0;
-  static const ExploreItem _defaultExploreItem = ExploreItem.Buildings;
+  static const ExploreMapType _defaultMapType = ExploreMapType.Buildings;
 
-  List<ExploreItem> _exploreItems = [];
-  ExploreItem _selectedExploreItem = _defaultExploreItem;
+  List<ExploreMapType> _exploreTypes = [];
+  ExploreMapType _selectedMapType = _defaultMapType;
   EventsDisplayType? _selectedEventsDisplayType;
 
   List<String>? _eventCategories;
@@ -79,7 +84,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   List<String>? _filterPaymentTypeValues;
   List<String>? _filterEventTimeValues;
   
-  Map<ExploreItem, List<ExploreFilter>>? _itemToFilterMap;
+  Map<ExploreMapType, List<ExploreFilter>>? _itemToFilterMap;
   
   bool _itemsDropDownValuesVisible = false;
   bool _eventsDisplayDropDownValuesVisible = false;
@@ -141,13 +146,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       StudentCourses.notifyCachedCoursesChanged,
       MTD.notifyStopsChanged,
       Appointments.notifyUpcomingAppointmentsChanged,
-      ExplorePanel.notifySelectMap,
+      ExploreMapPanel.notifySelect,
       RootPanel.notifyTabChanged,
       Storage.notifySettingChanged,
     ]);
     
-    _exploreItems = _buildExploreItems();
-    _selectedExploreItem = _ensureExploreItem(widget.initialContent) ?? _ensureExploreItem(_lastExploreItem) ?? _defaultExploreItem;
+    _exploreTypes = _buildExploreTypes();
+    _selectedMapType = _ensureExploreType(_lastExploreType) ?? _defaultMapType;
     _selectedEventsDisplayType = EventsDisplayType.single;
     
     _initFilters();
@@ -200,13 +205,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       _onFavoritesChanged();
     }
     else if (name == FlexUI.notifyChanged) {
-      _updateExploreItems();
+      _updateExploreTypes();
     }
     else if (name == StudentCourses.notifyTermsChanged) {
       applyStateIfMounted(() {
         _studentCourseTerms = StudentCourses().terms;
       });
-      if ((_selectedExploreItem == ExploreItem.StudentCourse) && mounted) {
+      if ((_selectedMapType == ExploreMapType.StudentCourse) && mounted) {
         _refreshExplores();
       }
     }
@@ -214,38 +219,38 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       applyStateIfMounted(() {
         _updateSelectedTermId();
       });
-      if ((_selectedExploreItem == ExploreItem.StudentCourse) && mounted) {
+      if ((_selectedMapType == ExploreMapType.StudentCourse) && mounted) {
         _refreshExplores();
       }
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
       String? termId = param;
-      if ((_selectedExploreItem == ExploreItem.StudentCourse) && mounted && ((termId == null) || (StudentCourses().displayTermId == termId))) {
+      if ((_selectedMapType == ExploreMapType.StudentCourse) && mounted && ((termId == null) || (StudentCourses().displayTermId == termId))) {
         _refreshExplores();
       }
     }
     else if (name == MTD.notifyStopsChanged) {
-      if ((_selectedExploreItem == ExploreItem.MTDStops) && mounted) {
+      if ((_selectedMapType == ExploreMapType.MTDStops) && mounted) {
         _refreshExplores();
       }
     }
     else if (name == Appointments.notifyUpcomingAppointmentsChanged) {
-      if ((_selectedExploreItem == ExploreItem.Appointments) && mounted) {
+      if ((_selectedMapType == ExploreMapType.Appointments) && mounted) {
         _refreshExplores();
       }
     }
-    else if (name == ExplorePanel.notifySelectMap) {
-      ExploreItem? exploreItem = param;
-      if (mounted && (exploreItem != null) && (_selectedExploreItem != exploreItem)) {
+    else if (name == ExploreMapPanel.notifySelect) {
+      ExploreMapType? exploreItem = param;
+      if (mounted && (exploreItem != null) && (_selectedMapType != exploreItem)) {
         setState(() {
-          _selectedExploreItem = exploreItem;
+          _selectedMapType = exploreItem;
         });
         _initExplores();
       }
     }
     else if (name == RootPanel.notifyTabChanged) {
-      if (((param == RootTab.Explore) || (param == RootTab.Maps)) && mounted &&
-          (CollectionUtils.isEmpty(_exploreItems) || (_selectedExploreItem == ExploreItem.Events) || (_selectedExploreItem == ExploreItem.Appointments)) // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
+      if ((param == RootTab.Maps) && mounted &&
+          (CollectionUtils.isEmpty(_exploreTypes) || (_selectedMapType == ExploreMapType.Events) || (_selectedMapType == ExploreMapType.Appointments)) // Do not refresh for other ExploreMapType types as they are rarely changed or fire notification for that
       ) {
         _refreshExplores();
       }
@@ -295,12 +300,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   Widget _buildScaffoldBody() {
     return Column(children: <Widget>[
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0), child:
-        _buildExploreItemsDropDownButton(),
+        _buildExploreTypesDropDownButton(),
       ),
       Expanded(child:
         Stack(children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Visibility(visible: (_selectedExploreItem == ExploreItem.Events), child:
+            Visibility(visible: (_selectedMapType == ExploreMapType.Events), child:
               Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0), child:
                 _buildEventsDisplayTypesDropDownButton(),
               ),
@@ -322,7 +327,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
               ]),
             ),
           ]),
-          _buildExploreItemsDropDownContainer()
+          _buildExploreTypesDropDownContainer()
         ]),
       )
     ]);
@@ -434,7 +439,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     else if (_selectedMapExplore != null) {
       _selectMapExplore(null);
     }
-    else if (_selectedExploreItem == ExploreItem.MTDDestinations) {
+    else if (_selectedMapType == ExploreMapType.MTDDestinations) {
       _selectMapExplore(ExplorePOI(location: ExploreLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)));
     }
   }
@@ -445,7 +450,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     if (mtdStop != null) {
       _selectMapExplore(mtdStop);
     }
-    else if (_selectedExploreItem == ExploreItem.MTDDestinations) {
+    else if (_selectedMapType == ExploreMapType.MTDDestinations) {
       _selectMapExplore(ExplorePOI(placeId: poi.placeId, name: poi.name, location: ExploreLocation(latitude: poi.position.latitude, longitude: poi.position.longitude)));
     }
     else if (_selectedMapExplore != null) {
@@ -582,10 +587,24 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
     if (_selectedMapExplore is Explore) {
-      (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+      String? url = ((_selectedMapType == ExploreMapType.MentalHealth) && (_selectedMapExplore is Building)) ?
+        Wellness().mentalHealthBuildingUrl(buildingId: (_selectedMapExplore as Building).id) : null;
+      
+      if (url == null) {
+        (_selectedMapExplore as Explore).exploreLaunchDetail(context);
+      }
+      else if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        Uri? uri = Uri.tryParse(url);
+        if (uri != null) {
+          launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      }
     }
     else if (_selectedMapExplore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore),));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _selectedMapType,),));
     }
     _selectMapExplore(null);
   }
@@ -753,20 +772,20 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   // Dropdown Widgets
 
-  Widget _buildExploreItemsDropDownButton() {
+  Widget _buildExploreTypesDropDownButton() {
     return RibbonButton(
       textColor: Styles().colors!.fillColorSecondary,
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
       rightIconKey: (_itemsDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
-      label: _exploreItemName(_selectedExploreItem),
-      hint: _exploreItemHint(_selectedExploreItem),
-      onTap: _onExploreItemsDropdown
+      label: _exploreItemName(_selectedMapType),
+      hint: _exploreItemHint(_selectedMapType),
+      onTap: _onExploreTypesDropdown
     );
   }
 
-  void _onExploreItemsDropdown() {
+  void _onExploreTypesDropdown() {
     Analytics().logSelect(target: 'Explore Dropdown');
     setStateIfMounted(() {
       _clearActiveFilter();
@@ -861,12 +880,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  Widget _buildExploreItemsDropDownContainer() {
+  Widget _buildExploreTypesDropDownContainer() {
     return Visibility(visible: _itemsDropDownValuesVisible, child:
       Positioned.fill(child:
         Stack(children: <Widget>[
           _buildExploreDropDownDismissLayer(),
-          _buildExploreItemsDropDownWidget()
+          _buildExploreTypesDropDownWidget()
         ])
       )
     );
@@ -889,12 +908,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     });
   }
 
-  Widget _buildExploreItemsDropDownWidget() {
+  Widget _buildExploreTypesDropDownWidget() {
     List<Widget> itemList = <Widget>[
       Container(color: Styles().colors!.fillColorSecondary, height: 2),
     ];
-    for (ExploreItem exploreItem in _exploreItems) {
-      if ((_selectedExploreItem != exploreItem)) {
+    for (ExploreMapType exploreItem in _exploreTypes) {
+      if ((_selectedMapType != exploreItem)) {
         itemList.add(_buildExploreDropDownItem(exploreItem));
       }
     }
@@ -905,26 +924,26 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     );
   }
 
-  Widget _buildExploreDropDownItem(ExploreItem exploreItem) {
+  Widget _buildExploreDropDownItem(ExploreMapType exploreItem) {
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
         rightIconKey: null,
         label: _exploreItemName(exploreItem),
-        onTap: () => _onTapExploreItem(exploreItem)
+        onTap: () => _onTapExploreType(exploreItem)
       );
   }
 
-  void _onTapExploreItem(ExploreItem item) {
+  void _onTapExploreType(ExploreMapType item) {
     Analytics().logSelect(target: _exploreItemName(item));
-    ExploreItem? lastExploreItem = _selectedExploreItem;
-    Storage().selectedMapExploreItem = exploreItemToString(item);
+    ExploreMapType? lastExploreType = _selectedMapType;
+    Storage().selectedMapExploreType = exploreMapTypeToString(item);
     setStateIfMounted(() {
       _clearActiveFilter();
-      _selectedExploreItem = _lastExploreItem = item;
+      _selectedMapType = _lastExploreType = item;
       _itemsDropDownValuesVisible = false;
     });
-    if (lastExploreItem != item) {
+    if (lastExploreType != item) {
       _targetMapStyle = _currentMapStyle;
       _initExplores();
     }
@@ -934,7 +953,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   List<Widget> _buildFilters() {
     List<Widget> filterTypeWidgets = [];
-    List<ExploreFilter>? visibleFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedExploreItem] : null;
+    List<ExploreFilter>? visibleFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedMapType] : null;
     if ((visibleFilters == null ) || visibleFilters.isEmpty || (_eventCategories == null)) {
       filterTypeWidgets.add(Container());
     }
@@ -1082,98 +1101,103 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   // Explore Items
 
-  List<ExploreItem> _buildExploreItems() {
-    List<ExploreItem> exploreItems = [];
+  List<ExploreMapType> _buildExploreTypes() {
+    List<ExploreMapType> exploreTypes = [];
     List<dynamic>? codes = FlexUI()['explore.map'];
     if (codes != null) {
       for (dynamic code in codes) {
         if (code == 'events') {
-          exploreItems.add(ExploreItem.Events);
+          exploreTypes.add(ExploreMapType.Events);
         }
         else if (code == 'dining') {
-          exploreItems.add(ExploreItem.Dining);
+          exploreTypes.add(ExploreMapType.Dining);
         }
         else if (code == 'laundry') {
-          exploreItems.add(ExploreItem.Laundry);
+          exploreTypes.add(ExploreMapType.Laundry);
         }
         else if (code == 'buildings') {
-          exploreItems.add(ExploreItem.Buildings);
+          exploreTypes.add(ExploreMapType.Buildings);
         }
         else if (code == 'student_courses') {
-          exploreItems.add(ExploreItem.StudentCourse);
+          exploreTypes.add(ExploreMapType.StudentCourse);
         }
         else if (code == 'appointments') {
-          exploreItems.add(ExploreItem.Appointments);
+          exploreTypes.add(ExploreMapType.Appointments);
         }
         else if (code == 'mtd_stops') {
-          exploreItems.add(ExploreItem.MTDStops);
+          exploreTypes.add(ExploreMapType.MTDStops);
         }
         else if (code == 'mtd_destinations') {
-          exploreItems.add(ExploreItem.MTDDestinations);
+          exploreTypes.add(ExploreMapType.MTDDestinations);
+        }
+        else if (code == 'mental_health') {
+          exploreTypes.add(ExploreMapType.MentalHealth);
         }
         else if (code == 'state_farm_wayfinding') {
-          exploreItems.add(ExploreItem.StateFarmWayfinding);
+          exploreTypes.add(ExploreMapType.StateFarmWayfinding);
         }
       }
     }
-    return exploreItems;
+    return exploreTypes;
   }
 
-  void _updateExploreItems() {
-    List<ExploreItem> exploreItems = _buildExploreItems();
-    if (!DeepCollectionEquality().equals(_exploreItems, exploreItems)) {
-      if (exploreItems.contains(_selectedExploreItem)) {
+  void _updateExploreTypes() {
+    List<ExploreMapType> exploreTypes = _buildExploreTypes();
+    if (!DeepCollectionEquality().equals(_exploreTypes, exploreTypes)) {
+      if (exploreTypes.contains(_selectedMapType)) {
         setStateIfMounted(() {
-          _exploreItems = exploreItems;
+          _exploreTypes = exploreTypes;
         });
       }
       else {
-        ExploreItem selectedExploreItem = _ensureExploreItem(widget.initialContent) ?? _defaultExploreItem;
+        ExploreMapType selectedMapType = _defaultMapType;
         setStateIfMounted(() {
-          _exploreItems = exploreItems;
-          _selectedExploreItem = selectedExploreItem;
+          _exploreTypes = exploreTypes;
+          _selectedMapType = selectedMapType;
         });
         _initExplores();
       }
     }
   }
-  ExploreItem? _ensureExploreItem(ExploreItem? exploreItem, { List<ExploreItem>? exploreItems}) {
-    exploreItems ??= _exploreItems;
-    return ((exploreItem != null) && exploreItems.contains(exploreItem)) ? exploreItem : null;
+  ExploreMapType? _ensureExploreType(ExploreMapType? exploreItem, { List<ExploreMapType>? exploreTypes}) {
+    exploreTypes ??= _exploreTypes;
+    return ((exploreItem != null) && exploreTypes.contains(exploreItem)) ? exploreItem : null;
 
   }
 
 
-  ExploreItem? get _lastExploreItem => exploreItemFromString(Storage().selectedMapExploreItem);
+  ExploreMapType? get _lastExploreType => exploreMapItemFromString(Storage().selectedMapExploreType);
   
-  set _lastExploreItem(ExploreItem? value) => Storage().selectedMapExploreItem = exploreItemToString(value);
+  set _lastExploreType(ExploreMapType? value) => Storage().selectedMapExploreType = exploreMapTypeToString(value);
 
-  static String? _exploreItemName(ExploreItem? exploreItem) {
+  static String? _exploreItemName(ExploreMapType? exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.title', 'Events');
-      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
-      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
-      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
-      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
-      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops');
-      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.title', 'MTD Destinations');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
+      case ExploreMapType.Events:              return Localization().getStringEx('panel.explore.button.events.title', 'Events');
+      case ExploreMapType.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
+      case ExploreMapType.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
+      case ExploreMapType.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
+      case ExploreMapType.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
+      case ExploreMapType.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
+      case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops');
+      case ExploreMapType.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.title', 'MTD Destinations');
+      case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.title', 'Mental Health Resources');
+      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
   }
 
-  static String? _exploreItemHint(ExploreItem? exploreItem) {
+  static String? _exploreItemHint(ExploreMapType? exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.hint', '');
-      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
-      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.hint', '');
-      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.hint', '');
-      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.hint', '');
-      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.hint', '');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.hint', '');
-      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.hint', '');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
+      case ExploreMapType.Events:              return Localization().getStringEx('panel.explore.button.events.hint', '');
+      case ExploreMapType.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
+      case ExploreMapType.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.hint', '');
+      case ExploreMapType.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.hint', '');
+      case ExploreMapType.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.hint', '');
+      case ExploreMapType.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.hint', '');
+      case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.hint', '');
+      case ExploreMapType.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.hint', '');
+      case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.button.mental_health.hint', '');
+      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
   }
@@ -1205,15 +1229,15 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     _studentCourseTerms = StudentCourses().terms;
 
     _itemToFilterMap = {
-      ExploreItem.Events: <ExploreFilter>[
+      ExploreMapType.Events: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.categories),
         ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {2})
       ],
-      ExploreItem.Dining: <ExploreFilter>[
+      ExploreMapType.Dining: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.work_time),
         ExploreFilter(type: ExploreFilterType.payment_type)
       ],
-      ExploreItem.StudentCourse: <ExploreFilter>[
+      ExploreMapType.StudentCourse: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.student_course_terms, selectedIndexes: { _selectedTermIndex }),
       ],
     };
@@ -1232,7 +1256,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _clearActiveFilter() {
-    List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedExploreItem] : null;
+    List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedMapType] : null;
     if (itemFilters != null && itemFilters.isNotEmpty) {
       for (ExploreFilter filter in itemFilters) {
         filter.active = false;
@@ -1247,7 +1271,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   ExploreFilter? get _selectedFilter {
-    List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedExploreItem] : null;
+    List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedMapType] : null;
     if (itemFilters != null && itemFilters.isNotEmpty) {
       for (ExploreFilter filter in itemFilters) {
         if (filter.active) {
@@ -1319,7 +1343,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _updateSelectedTermId() {
-    List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![ExploreItem.StudentCourse] : null; 
+    List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![ExploreMapType.StudentCourse] : null; 
     ExploreFilter? selectedFilter = _getSelectedFilter(selectedFilterList, ExploreFilterType.student_course_terms);
     if (selectedFilter != null) {
       selectedFilter.selectedIndexes = { _selectedTermIndex };
@@ -1508,46 +1532,49 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   // Content Data
 
   /*String? get _offlineContentMessage {
-    switch (_selectedExploreItem) {
-      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..');
-      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.');
-      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.');
-      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.');
-      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.');
-      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.state.offline.empty.appointments', 'No appointments available while offline.');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.state.offline.empty.mtd_stops', 'No MTD stop locations available while offline.');
-      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.state.offline.empty.mtd_destinations', 'No MTD destinaion locations available while offline.');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.');
+    switch (_selectedMapType) {
+      case ExploreMapType.Events:              return Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..');
+      case ExploreMapType.Dining:              return Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.');
+      case ExploreMapType.Laundry:             return Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.');
+      case ExploreMapType.Buildings:           return Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.');
+      case ExploreMapType.StudentCourse:       return Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.');
+      case ExploreMapType.Appointments:        return Localization().getStringEx('panel.explore.state.offline.empty.appointments', 'No appointments available while offline.');
+      case ExploreMapType.MTDStops:            return Localization().getStringEx('panel.explore.state.offline.empty.mtd_stops', 'No MTD stop locations available while offline.');
+      case ExploreMapType.MTDDestinations:     return Localization().getStringEx('panel.explore.state.offline.empty.mtd_destinations', 'No MTD destinaion locations available while offline.');
+      case ExploreMapType.MentalHealth:        return Localization().getStringEx('panel.explore.state.offline.empty.mental_health', 'Nomental health resource locations available while offline.');
+      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.');
       default:                              return null;
     }
   }*/
 
   String? get _emptyContentMessage {
-    switch (_selectedExploreItem) {
-      case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.');
-      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
-      case ExploreItem.Laundry: return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
-      case ExploreItem.Buildings: return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
-      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses available.');
-      case ExploreItem.Appointments: return Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.');
-      case ExploreItem.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
-      case ExploreItem.MTDDestinations: return Localization().getStringEx('panel.explore.state.online.empty.mtd_destinations', 'No MTD destinaion locations available.');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
+    switch (_selectedMapType) {
+      case ExploreMapType.Events: return Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.');
+      case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
+      case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
+      case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
+      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses available.');
+      case ExploreMapType.Appointments: return Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.');
+      case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
+      case ExploreMapType.MTDDestinations: return Localization().getStringEx('panel.explore.state.online.empty.mtd_destinations', 'No MTD destinaion locations available.');
+      case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.online.empty.mental_health', 'No mental health resource locations are available.');
+      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
       default:  return null;
     }
   }
 
   String? get _failedContentMessage {
-    switch (_selectedExploreItem) {
-      case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.failed.events', 'Failed to load upcoming events.');
-      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
-      case ExploreItem.Laundry: return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
-      case ExploreItem.Buildings: return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
-      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
-      case ExploreItem.Appointments: return Localization().getStringEx('panel.explore.state.failed.appointments', 'Failed to load appointments.');
-      case ExploreItem.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
-      case ExploreItem.MTDDestinations: return Localization().getStringEx('panel.explore.state.failed.mtd_destinations', 'Failed to load MTD destinaion locations.');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
+    switch (_selectedMapType) {
+      case ExploreMapType.Events: return Localization().getStringEx('panel.explore.state.failed.events', 'Failed to load upcoming events.');
+      case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
+      case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
+      case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
+      case ExploreMapType.StudentCourse: return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
+      case ExploreMapType.Appointments: return Localization().getStringEx('panel.explore.state.failed.appointments', 'Failed to load appointments.');
+      case ExploreMapType.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
+      case ExploreMapType.MTDDestinations: return Localization().getStringEx('panel.explore.state.failed.mtd_destinations', 'Failed to load MTD destinaion locations.');
+      case ExploreMapType.MentalHealth: return Localization().getStringEx('panel.explore.state.failed.mental_health', 'Failed to load mental health resource locations.');
+      case ExploreMapType.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
       default:  return null;
     }
   }
@@ -1619,17 +1646,18 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
-      List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedExploreItem] : null;
-      switch (_selectedExploreItem) {
-        case ExploreItem.Events: return _loadEvents(selectedFilterList);
-        case ExploreItem.Dining: return _loadDining(selectedFilterList);
-        case ExploreItem.Laundry: return _loadLaundry();
-        case ExploreItem.Buildings: return _loadBuildings();
-        case ExploreItem.StudentCourse: return _loadStudentCourse(selectedFilterList);
-        case ExploreItem.Appointments: return _loadAppointments();
-        case ExploreItem.MTDStops: return _loadMTDStops();
-        case ExploreItem.MTDDestinations: return _loadMTDDestinations();
-        case ExploreItem.StateFarmWayfinding: break;
+      List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedMapType] : null;
+      switch (_selectedMapType) {
+        case ExploreMapType.Events: return _loadEvents(selectedFilterList);
+        case ExploreMapType.Dining: return _loadDining(selectedFilterList);
+        case ExploreMapType.Laundry: return _loadLaundry();
+        case ExploreMapType.Buildings: return _loadBuildings();
+        case ExploreMapType.StudentCourse: return _loadStudentCourse(selectedFilterList);
+        case ExploreMapType.Appointments: return _loadAppointments();
+        case ExploreMapType.MTDStops: return _loadMTDStops();
+        case ExploreMapType.MTDDestinations: return _loadMTDDestinations();
+        case ExploreMapType.MentalHealth: return _loadMentalHealthBuildings();
+        case ExploreMapType.StateFarmWayfinding: break;
         default: break;
       }
     }
@@ -1678,6 +1706,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Future<List<Explore>?> _loadBuildings() async {
     return await Gateway().loadBuildings();
+  }
+
+  Future<List<Explore>?> _loadMentalHealthBuildings() async {
+    return await Wellness().loadMentalHealthBuildings();
   }
 
   List<Explore>? _loadMTDStops() {
@@ -1737,20 +1769,20 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 
   void _displayContentPopups() {
-    if (_selectedExploreItem == ExploreItem.StateFarmWayfinding) {
+    if (_selectedMapType == ExploreMapType.StateFarmWayfinding) {
       _viewStateFarmPoi();
     }
     else if (_explores == null) {
       _showMessagePopup(_failedContentMessage);
     }
-    else if (_selectedExploreItem == ExploreItem.Appointments) {
+    else if (_selectedMapType == ExploreMapType.Appointments) {
       if (Storage().appointmentsCanDisplay != true) {
         _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
       } else if (CollectionUtils.isEmpty(_explores)) {
         _showMessagePopup(Localization().getStringEx('panel.explore.missing.appointments.msg','You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
       }
     }
-    else if (_selectedExploreItem == ExploreItem.MTDStops) {
+    else if (_selectedMapType == ExploreMapType.MTDStops) {
       if (Storage().showMtdStopsMapInstructions != false) {
         _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."), showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
         );
@@ -1759,7 +1791,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
       }
     }
-    else if (_selectedExploreItem == ExploreItem.MTDDestinations) {
+    else if (_selectedMapType == ExploreMapType.MTDDestinations) {
       if (Storage().showMtdDestinationsMapInstructions != false) {
         _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",), showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey
         );
@@ -1776,7 +1808,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   // Favorites
 
   void _onFavoritesChanged() {
-    if (_selectedExploreItem == ExploreItem.MTDDestinations) {
+    if (_selectedMapType == ExploreMapType.MTDDestinations) {
       _refreshMTDDestinations();
     }
     else {
@@ -1811,10 +1843,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   String? get _currentMapStyle {
     if (_mapStyles != null) {
-      if (_selectedExploreItem == ExploreItem.Buildings) {
+      if ((_selectedMapType == ExploreMapType.Buildings) || (_selectedMapType == ExploreMapType.MentalHealth)) {
         return JsonUtils.encode(_mapStyles![_mapStylesExplorePoiKey]);
       }
-      else if (_selectedExploreItem == ExploreItem.MTDStops) {
+      else if (_selectedMapType == ExploreMapType.MTDStops) {
         return JsonUtils.encode(_mapStyles![_mapStylesMtdStopKey]);
       }
     }
@@ -2107,3 +2139,58 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   }
 }
 
+////////////////////
+// ExploreMapType
+
+
+ExploreMapType? exploreMapItemFromString(String? value) {
+  if (value == 'events') {
+    return ExploreMapType.Events;
+  }
+  else if (value == 'dining') {
+    return ExploreMapType.Dining;
+  }
+  else if (value == 'laundry') {
+    return ExploreMapType.Laundry;
+  }
+  else if (value == 'buildings') {
+    return ExploreMapType.Buildings;
+  }
+  else if (value == 'studentCourse') {
+    return ExploreMapType.StudentCourse;
+  }
+  else if (value == 'appointments') {
+    return ExploreMapType.Appointments;
+  }
+  else if (value == 'mtdStops') {
+    return ExploreMapType.MTDStops;
+  }
+  else if (value == 'mtdDestinations') {
+    return ExploreMapType.MTDDestinations;
+  }
+  else if (value == 'mentalHealth') {
+    return ExploreMapType.MentalHealth;
+  }
+  else if (value == 'stateFarmWayfinding') {
+    return ExploreMapType.StateFarmWayfinding;
+  }
+  else {
+    return null;
+  }
+}
+
+String? exploreMapTypeToString(ExploreMapType? value) {
+  switch(value) {
+    case ExploreMapType.Events:              return 'events';
+    case ExploreMapType.Dining:              return 'dining';
+    case ExploreMapType.Laundry:             return 'laundry';
+    case ExploreMapType.Buildings:           return 'buildings';
+    case ExploreMapType.StudentCourse:       return 'studentCourse';
+    case ExploreMapType.Appointments:        return 'appointments';
+    case ExploreMapType.MTDStops:            return 'mtdStops';
+    case ExploreMapType.MTDDestinations:     return 'mtdDestinations';
+    case ExploreMapType.MentalHealth:        return 'mentalHealth';
+    case ExploreMapType.StateFarmWayfinding: return 'stateFarmWayfinding';
+    default: return null;
+  }
+}

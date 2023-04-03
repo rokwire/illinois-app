@@ -30,7 +30,6 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
@@ -52,11 +51,6 @@ class LaundryRoomDetailPanel extends StatefulWidget implements AnalyticsPageAttr
 class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> implements NotificationsListener {
   LaundryRoomDetails? _laundryRoomDetails;
   bool _isLoading = false;
-
-  //Maps
-  late MapController _nativeMapController;
-  bool _detailVisible = true;
-  bool _mapAllowed = false;
 
   @override
   void initState() {
@@ -88,23 +82,18 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   }
 
   Widget _buildRoomContentWidget() {
-    return Stack(children: <Widget>[
-      _mapAllowed ? MapWidget(onMapCreated: _onNativeMapCreated,) : Container(),
-      Visibility(visible: _detailVisible, child:
-        Column(children: <Widget>[
-          Expanded(child:
-            SingleChildScrollView(scrollDirection: Axis.vertical, child:
-              Container(color: Styles().colors?.background, child:
-                Column(children: <Widget>[
-                  _buildLaundryRoomCaptionSection(),
-                  _buildLaundryRoomInfoSection(),
-                  _buildLaundryRoomAvailabilitySection(),
-                  _buildLaundryRoomAppliancesListSection()
-                ],),
-              ),
-            ),
+    return Column(children: <Widget>[
+      Expanded(child:
+        SingleChildScrollView(scrollDirection: Axis.vertical, child:
+          Container(color: Styles().colors?.background, child:
+            Column(children: <Widget>[
+              _buildLaundryRoomCaptionSection(),
+              _buildLaundryRoomInfoSection(),
+              _buildLaundryRoomAvailabilitySection(),
+              _buildLaundryRoomAppliancesListSection()
+            ],),
           ),
-        ],),
+        ),
       ),
     ],);
   }
@@ -270,12 +259,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
 
   void _onTapViewMap() {
     Analytics().logSelect(target: "View Map");
-    if (_detailVisible) {
-      setState(() {
-        _detailVisible = false;
-        _mapAllowed = true;
-      });
-    }
+    //TBD Map2: Map Panel
   }
 
   void _onTapReportIssue() {
@@ -289,11 +273,6 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   void _onTapFavorite() {
     Analytics().logSelect(target: "Favorite: ${widget.room.name}");
     Auth2().prefs?.toggleFavorite(widget.room);
-  }
-
-  void _onNativeMapCreated(mapController) {
-    this._nativeMapController = mapController;
-    _nativeMapController.placePOIs([widget.room]);
   }
 
   void _setLoading(bool loading) {

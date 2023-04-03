@@ -1,7 +1,7 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["favorites", "browse", "maps", "maps2", "academics", "wellness"],
+			"tabbar": ["favorites", "browse", "maps", "academics", "wellness"],
 	
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
@@ -70,7 +70,7 @@
 			"polls.features": ["authentication", "netid_login"],
 
 			"explore.list": ["events", "dining"],
-			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "appointments", "mtd_stops", "mtd_destinations", "state_farm_wayfinding"],
+			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "mental_health", "appointments", "mtd_stops", "mtd_destinations", "state_farm_wayfinding"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
