@@ -94,7 +94,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                           HtmlWidget(
                               StringUtils.ensureNotEmpty(widget.roster.htmlBio),
                               onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-                              textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                              textStyle:  Styles().textStyles?.getTextStyle("widget.detail.regular"),
                           )
                         ]
                     )
@@ -199,11 +199,7 @@ class _RosterDetailHeading extends StatelessWidget{
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(StringUtils.ensureNotEmpty(sport?.name),
-                                      style: TextStyle(
-                                          color: Styles().colors!.surfaceAccent,
-                                          fontFamily: Styles().fontFamilies!.medium,
-                                          fontSize: 16
-                                      ),
+                                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                                     ),
                                   ),
                                 ),
@@ -216,19 +212,11 @@ class _RosterDetailHeading extends StatelessWidget{
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(StringUtils.ensureNotEmpty(roster?.name),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: Styles().fontFamilies!.bold,
-                                          fontSize: 20
-                                      ),
+                                      style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")
                                     ),
                                   ),
                                   Text(StringUtils.ensureNotEmpty(roster?.numberString),
-                                    style: TextStyle(
-                                        color: Styles().colors!.whiteTransparent06,
-                                        fontFamily: Styles().fontFamilies!.medium,
-                                        fontSize: 20
-                                    ),
+                                    style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")
                                   ),
                                 ],
                               ),
@@ -287,19 +275,13 @@ class _LineEntryWidget extends StatelessWidget{
                 width: 120.0,
                 child: Text(
                   StringUtils.ensureNotEmpty(title),
-                  style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    fontSize: 16,
-                  ),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.medium")
                 ),
               ),
               Expanded(child:
               Text(
                 StringUtils.ensureNotEmpty(value),
-                style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 16,
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.detail.medium")
               ))
             ],
           ),

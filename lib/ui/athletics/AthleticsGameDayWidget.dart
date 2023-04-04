@@ -67,8 +67,7 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
                   ? Styles().images?.getImage(widget.sportDefinition!.iconPath!, excludeFromSemantics: true) ?? Container()
                   : Container(),
                 Container(width: 10,),
-                Text(Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'), style:
-                  TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
+                Text(Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'), style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat"),
                 )
               ],),
             )

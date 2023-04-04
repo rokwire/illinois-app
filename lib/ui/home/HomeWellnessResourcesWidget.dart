@@ -132,7 +132,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
         child: HtmlWidget(
             message,
             onTapUrl : (url) {_handleLocalUrl(url); return true;},
-            textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+            textStyle:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
         )
       ),

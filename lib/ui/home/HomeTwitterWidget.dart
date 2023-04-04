@@ -150,7 +150,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
             Expanded(child:
               Padding(padding: EdgeInsets.only(top: 14), child:
                 Semantics(label: HomeTwitterWidget.title, header: true, excludeSemantics: true, child:
-                  Text(HomeTwitterWidget.title, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                  Text(HomeTwitterWidget.title, style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat"))
                 )
               )
             ),
@@ -172,8 +172,8 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         DropdownButton<String>(
           icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
           isExpanded: false,
-          style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16, ),
-          hint: (currentAccountName != null) ? Text(currentAccountName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)) : null,
+          style: Styles().textStyles?.getTextStyle("widget.colourful_button.title"),
+          hint: (currentAccountName != null) ? Text(currentAccountName, style: Styles().textStyles?.getTextStyle("widget.colourful_button.title")) : null,
           items: _buildDropDownItems(),
           onChanged: _onDropDownValueChanged
         ),
@@ -188,7 +188,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       dropDownItems.add(DropdownMenuItem<String>(value: accountKey, child:
         // BlockSemantics(blocking: true, child:
           Semantics(label: accountName, hint: "Double tap to select account", button:false, excludeSemantics: true,child:
-            Text(accountName ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)),
+            Text(accountName ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium")),
           )
         // )
       ));
@@ -457,8 +457,8 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
           DropdownButton<String>(
             icon: Padding(padding: EdgeInsets.only(left: 4, right: 16), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
             isExpanded: false,
-            style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16, ),
-            hint: (currentAccountName != null) ? Text(currentAccountName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)) : null,
+            style: Styles().textStyles?.getTextStyle("widget.colourful_button.title"),
+            hint: (currentAccountName != null) ? Text(currentAccountName, style: Styles().textStyles?.getTextStyle("widget.colourful_button.title")) : null,
             items: _buildDropDownItems(),
             onChanged: _onDropDownValueChanged
           ),
@@ -475,7 +475,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
       dropDownItems.add(DropdownMenuItem<String>(value: accountKey, child:
         // BlockSemantics(blocking: true, child:
           Semantics(label: accountName, hint: "Double tap to select account", button:false, excludeSemantics: true,child:
-            Text(accountName ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)),
+            Text(accountName ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium")),
           )
         // )
       ));
@@ -679,11 +679,7 @@ class _TweetWidget extends StatelessWidget {
                                     child: Text(
                                       "<",
                                       semanticsLabel: "",
-                                      style: TextStyle(
-                                        color : Styles().colors!.fillColorPrimary,
-                                        fontFamily: Styles().fontFamilies!.bold,
-                                        fontSize: 26,
-                                      ),),)
+                                      style: Styles().textStyles?.getTextStyle("widget.button.title.extra_large")),)
                               )
                           )
                       ),
@@ -699,11 +695,7 @@ class _TweetWidget extends StatelessWidget {
                                     child: Text(
                                       ">",
                                       semanticsLabel: "",
-                                      style: TextStyle(
-                                        color : Styles().colors!.fillColorPrimary,
-                                        fontFamily: Styles().fontFamilies!.bold,
-                                        fontSize: 26,
-                                      ),),)
+                                      style: Styles().textStyles?.getTextStyle("widget.button.title.extra_large")),)
                               )
                           )
                       )
@@ -714,7 +706,7 @@ class _TweetWidget extends StatelessWidget {
                         child: HtmlWidget(
                          tweet!.html??"",
                           onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-                          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+                          textStyle:  Styles().textStyles?.getTextStyle("widget.detail.medium"),
                           // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.blueAccent)} : null
                       )
                     )
@@ -728,12 +720,12 @@ class _TweetWidget extends StatelessWidget {
                       child: HtmlWidget(
                         tweet?.author?.html ?? "",
                         onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-                        textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14,),
+                        textStyle:  Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"),
                       )
                   ) :
                   Container(),
                 ),
-                Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14, ),),
+                Text(tweet?.displayTime ?? '', style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat")),
               ],)
             ),
           ])

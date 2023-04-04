@@ -154,20 +154,20 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
               Padding(padding: EdgeInsets.zero, child:
-                Text('Select Answers',
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary),),
+                Text('Select Answers', //TBD localize
+                  style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
               ),
               Padding(padding: EdgeInsets.zero, child:
                 Text('Create a target audience by selecting answers that potential participants have chosen.',
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.textSurfaceAccent)),
+                  style: Styles().textStyles?.getTextStyle("panel.research_project.profile.detail.regular")),
               ),
               Padding(padding: EdgeInsets.only(top: 4), child:
                 Text(headingInfo,
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, color: Styles().colors?.fillColorPrimary)),
+                  style: Styles().textStyles?.getTextStyle("widget.title.small.fat")),
               ),
               Padding(padding: EdgeInsets.only(right: 12), child:
                 Text(profileDescription, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 12, color: Styles().colors?.textSurfaceAccent)
+                  style: Styles().textStyles?.getTextStyle("panel.research_project.profile.detail.small")
                 ),
               ),
             ]),
@@ -426,9 +426,9 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           }
           if (answerHints.isNotEmpty) {
             contentList.add(RichText(text:
-              TextSpan(style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary), children: <TextSpan>[
-                TextSpan(text: "$questionHint: ", style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
-                TextSpan(text: answerHints.join(', '), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+              TextSpan(style: Styles().textStyles?.getTextStyle("widget.description.regular"), children: <TextSpan>[
+                TextSpan(text: "$questionHint: ", style: Styles().textStyles?.getTextStyle("widget.description.regular.fat")),
+                TextSpan(text: answerHints.join(', '), style: Styles().textStyles?.getTextStyle("widget.description.regular")),
               ]),
             ));
           }

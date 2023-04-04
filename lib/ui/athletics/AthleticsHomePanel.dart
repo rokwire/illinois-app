@@ -662,7 +662,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                           Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
-                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny_variant2'),)
+                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.medium_fat'),)
                         ],),
                       )
                     ],),
