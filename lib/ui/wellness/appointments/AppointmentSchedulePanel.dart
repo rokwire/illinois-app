@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -24,12 +25,12 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class AppointmentSchedulePanel extends StatefulWidget {
 
-  final DateTime scheduleDateTime;
-  AppointmentSchedulePanel({ Key? key, required this.scheduleDateTime }) : super(key: key);
+  final AppointmentTimeSlot timeSlot;
+  AppointmentSchedulePanel({ Key? key, required this.timeSlot }) : super(key: key);
 
   static void present(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(onContinue: (BuildContext context, DateTime result) {
-      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(scheduleDateTime: result)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(onContinue: (BuildContext context, AppointmentTimeSlot timeSlot) {
+      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(timeSlot: timeSlot)));
     })));
   }
 

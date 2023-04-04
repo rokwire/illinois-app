@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -25,7 +26,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class AppointmentScheduleTimePanel extends StatefulWidget {
-  final void Function(BuildContext context, DateTime result) onContinue;
+  final void Function(BuildContext context, AppointmentTimeSlot timeSlot) onContinue;
 
   AppointmentScheduleTimePanel({Key? key, required this.onContinue}) : super(key: key);
 
@@ -36,6 +37,7 @@ class AppointmentScheduleTimePanel extends StatefulWidget {
 class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePanel> {
 
   DateTime _selectedDate = DateUtils.dateOnly(DateTime.now());
+  AppointmentTimeSlot? _selectedSlot;
   
   List<AppointmentTimeSlot> _timeSlots = <AppointmentTimeSlot>[];
   bool _loadingTimeSlots = false;
@@ -132,18 +134,48 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   Widget _buildTimeSlot(AppointmentTimeSlot timeSlot) {
     String timeString = (timeSlot.startTime != null) ? DateFormat('hh:mm aaa').format(timeSlot.startTime!) : '';
+    Color? backColor;
+    String textStyle;
+    if (timeSlot.filled == true) {
+      backColor = Styles().colors?.background;
+      textStyle = 'widget.button.title.disabled';
+    }
+    else if (_selectedSlot == timeSlot) {
+      backColor = Styles().colors?.fillColorPrimary;
+      textStyle = 'widget.colourful_button.title.accent';
+    }
+    else {
+      backColor = Styles().colors?.white;
+      textStyle = 'widget.button.title.enabled';
+    }
+
     return Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
        child: Container(
         decoration: BoxDecoration(
-          color: (timeSlot.filled == true) ? Styles().colors?.background : Styles().colors?.white,
+          color: backColor,
           borderRadius: BorderRadius.all(Radius.circular(4)),
           boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
         ),
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Text(timeString, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.regular.fat'),)
+        child: InkWell(onTap: () => _onTimeSlot(timeSlot),
+          child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Text(timeString, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
+          )
         ),
       ),
     );
+  }
+
+  void _onTimeSlot(AppointmentTimeSlot timeSlot) {
+    if (mounted) {
+      if (timeSlot.filled != true) {
+        setState(() {
+          _selectedSlot = timeSlot;
+        });
+      }
+      else {
+        SystemSound.play(SystemSoundType.click);
+      }
+    }
   }
 
   Widget _buildDateBar() {
@@ -182,17 +214,24 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         RoundedButton(
           label: Localization().getStringEx("panel.appointment.schedule.time.button.continue.title", "Next"),
           hint: Localization().getStringEx("panel.appointment.schedule.time.button.continue.hint", ""),
-          borderColor: Styles().colors!.fillColorSecondary,
           backgroundColor: Styles().colors!.surface,
-          textColor: Styles().colors!.fillColorPrimary,
+          textColor: _canContinue ? Styles().colors!.fillColorPrimary : Styles().colors?.surfaceAccent,
+          borderColor: _canContinue ? Styles().colors!.fillColorSecondary : Styles().colors?.surfaceAccent,
           onTap: ()=> _onContinue(),
         ),
       ),
     );
   }
 
+  bool get _canContinue => (_selectedSlot != null);
+
   void _onContinue() {
-    widget.onContinue(context, _selectedDate);
+    if (_canContinue) {
+      widget.onContinue(context, _selectedSlot!);
+    }
+    else {
+      SystemSound.play(SystemSoundType.click);
+    }
   }
 
   void _loadTimeSlots() {
@@ -204,9 +243,29 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         setState(() {
           _loadingTimeSlots = false;
           _timeSlots = result ?? <AppointmentTimeSlot>[];
+          _selectedSlot = _findSelectedTimeSlot(result, _selectedSlot);
         });
       }
     });
-
   }
+
+  AppointmentTimeSlot? _findSelectedTimeSlot(List<AppointmentTimeSlot>? timeSlots, AppointmentTimeSlot? sourceSlot) {
+    int? selectedMinutes = sourceSlot?.startMinutesSinceMidnightUtc;
+    if ((timeSlots != null) && (selectedMinutes != null)) {
+      for (AppointmentTimeSlot timeSlot in timeSlots) {
+        if ((timeSlot.filled != true) && (timeSlot.startMinutesSinceMidnightUtc == selectedMinutes)) {
+          return timeSlot;
+        }
+      }
+    }
+    return null;
+  }
+}
+
+extension _AppointmentTimeSlot on AppointmentTimeSlot {
+
+  int? get startMinutesSinceMidnightUtc {
+    return (startTimeUtc != null) ? (startTimeUtc!.hour * 60 + startTimeUtc!.minute) : null;
+  }
+
 }
