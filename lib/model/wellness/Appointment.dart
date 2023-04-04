@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -355,4 +356,83 @@ class AppointmentsAccount {
         notificationsAppointmentReminderMorning: JsonUtils.boolValue(json['notifications_appointment_reminder_morning']),
         notificationsAppointmentReminderNight: JsonUtils.boolValue(json['notifications_appointment_reminder_night']));
   }
+}
+
+class AppointmentTimeSlot {
+  static final String dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
+
+  final String? providerId;
+  final String? unitId;
+  final DateTime? startTimeUtc;
+  final DateTime? endTimeUtc;
+  final String? capacity;
+  final bool? filled;
+  final Map<String, dynamic>? details;
+  final String? notes;
+  final bool? notesRequired;
+
+  AppointmentTimeSlot({this.providerId, this.unitId, this.startTimeUtc, this.endTimeUtc, this.capacity, this.filled, this.details, this.notes, this.notesRequired});
+
+  // Json serialization
+
+  static AppointmentTimeSlot? fromJson(Map<String, dynamic>? json) {
+    return (json !=null) ? AppointmentTimeSlot(
+      providerId: JsonUtils.stringValue(json['provider_id']),
+      unitId: JsonUtils.stringValue(json['unit_id']),
+      startTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_time']), format: dateTimeFormat, isUtc: true),
+      endTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_time']), format: dateTimeFormat, isUtc: true),
+      capacity: JsonUtils.stringValue(json['capacity']),
+      filled: JsonUtils.boolValue(json['filled']),
+      details: JsonUtils.mapValue(json['details']),
+      notes: JsonUtils.stringValue(json['notes']),
+      notesRequired: JsonUtils.boolValue(json['notes_required']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'provider_id': providerId,
+      'unit_id': unitId,
+      'start_time': DateTimeUtils.utcDateTimeToString(startTimeUtc, format: dateTimeFormat),
+      'end_time': DateTimeUtils.utcDateTimeToString(endTimeUtc, format: dateTimeFormat),
+      'capacity': capacity,
+      'filled': filled,
+      'details': details,
+      'notes': notes,
+      'notes_required': notesRequired,
+    };
+  }
+
+  // Euality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentTimeSlot) &&
+    (providerId == other.providerId) &&
+    (unitId == other.unitId) &&
+    (startTimeUtc == other.startTimeUtc) &&
+    (endTimeUtc == other.endTimeUtc) &&
+    (capacity == other.capacity) &&
+    (filled == other.filled) &&
+    (DeepCollectionEquality().equals(details, other.details)) &&
+    (notes == other.notes) &&
+    (notesRequired == other.notesRequired);
+
+  @override
+  int get hashCode =>
+    (providerId?.hashCode ?? 0) ^
+    (unitId?.hashCode ?? 0) ^
+    (startTimeUtc?.hashCode ?? 0) ^
+    (endTimeUtc?.hashCode ?? 0) ^
+    (capacity?.hashCode ?? 0) ^
+    (filled?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(details)) ^
+    (notes?.hashCode ?? 0) ^
+    (notesRequired?.hashCode ?? 0);
+
+  // Accessories
+
+  DateTime? get startTime => startTimeUtc?.toLocal();
+  DateTime? get endTime => endTimeUtc?.toLocal();
+
 }

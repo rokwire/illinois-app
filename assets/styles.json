@@ -279,6 +279,7 @@
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
     "widget.colourful_button.title": { "font_family": "medium", "size": 16.0, "color": "white"},
+    "widget.colourful_button.title.accent": { "font_family": "bold", "size": 16.0, "color": "white"},
     "widget.colourful_button.title.regular": { "font_family": "regular", "size": 14.0, "color": "white"},
     "widget.colourful_button.title.regular.accent": { "font_family": "bold", "size": 14.0, "color": "white"},
 
