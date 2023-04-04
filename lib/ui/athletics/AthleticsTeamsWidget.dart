@@ -136,14 +136,14 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
         Row(children: <Widget>[
           Expanded(child:
             Semantics(label:Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"), hint: Localization().getStringEx('widget.athletics_teams.label.men_sports.title.hint', ''), header: true, excludeSemantics: true, child:
-              Text(Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"), textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),),
+              Text(Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"), textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced")),
             ),
           ),
           Visibility(visible: FlexUI().isPersonalizationAvailable && widget.updateSportPrefs, child:
             Semantics(excludeSemantics: true, label: Localization().getStringEx('widget.athletics_teams.men_sports.title.checkmark', 'Tap to select or deselect all men sports'), value: (allMenSelected?Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) + ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"), child:
               GestureDetector(onTap: _onToggleManSports, child:
                 Row(children: <Widget>[
-                  Text(Localization().getStringEx(menSelectClearTextKey, ''), style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),), Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images?.getImage(menSelectClearImageKey),)
+                  Text(Localization().getStringEx(menSelectClearTextKey, ''), style: Styles().textStyles?.getTextStyle("widget.title.light.regular")), Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images?.getImage(menSelectClearImageKey),)
                 ],),
               ),
             ),
@@ -162,14 +162,14 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
         Row(children: <Widget>[
           Expanded(child:
             Semantics(label:Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"), hint: Localization().getStringEx('widget.athletics_teams.label.women_sports.title.hint', ''), header: true, excludeSemantics: true, child:
-              Text(Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"), textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),),
+              Text(Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"), textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced")),
             ),
           ),
           Visibility(visible: FlexUI().isPersonalizationAvailable && widget.updateSportPrefs, child:
             Semantics(excludeSemantics: true, label: Localization().getStringEx( 'widget.athletics_teams.women_sports.title.checkmark', 'Tap to select or deselect all women sports'), value: (allWomenSelected?Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"), child:
               GestureDetector(onTap: _onToggleWomenSports, child:
                 Row(children: <Widget>[
-                  Text(Localization().getStringEx(womenSelectClearTextKey, ''), style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),),
+                  Text(Localization().getStringEx(womenSelectClearTextKey, ''), style: Styles().textStyles?.getTextStyle("widget.title.light.regular")),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Styles().images?.getImage(womenSelectClearImageKey, excludeFromSemantics: true),
                   )

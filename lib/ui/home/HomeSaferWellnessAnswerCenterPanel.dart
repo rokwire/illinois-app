@@ -67,12 +67,11 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget {
                         Padding(
                             padding: EdgeInsets.only(right: 17),
                             child: Text(StringUtils.ensureNotEmpty(title),
-                                style: TextStyle(
-                                    color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20))),
+                                style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat"))),
                         Container(height: 8),
                         Text(StringUtils.ensureNotEmpty(description),
-                            style:
-                                TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16))
+                            style: Styles().textStyles?.getTextStyle("widget.card.detail.regular")
+                        )
                       ])))),
           Container(color: Styles().colors!.accentColor3, height: 4)
         ]));

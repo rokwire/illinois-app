@@ -74,15 +74,15 @@ class GroupSectionTitle extends StatelessWidget {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: title, hint: description, header: true, excludeSemantics: true, child:
           RichText(text:
-            TextSpan(text: title, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
+            TextSpan(text: title, style: Styles().textStyles?.getTextStyle("widget.title.tiny"),
               children: [
-                TextSpan(text: (requiredMark == true) ?  " *" : "", style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 12, fontFamily: Styles().fontFamilies!.extraBold),
+                TextSpan(text: (requiredMark == true) ?  " *" : "", style: Styles().textStyles?.getTextStyle("widget.title.tiny.extra_fat"),
               )
             ],),
           ),
         ),
         (description != null) ? Container(padding: EdgeInsets.only(top: 2), child:
-          Text(description ?? "", semanticsLabel: "", style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+          Text(description ?? "", semanticsLabel: "", style:  Styles().textStyles?.getTextStyle("widget.item.small.thin"),),
         ) : Container(),
       ],)
     );
@@ -1286,7 +1286,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             HtmlWidget(
                                 "<div style= text-overflow:ellipsis;max-lines:3> ${StringUtils.ensureNotEmpty(htmlBody)}</div>",
                                 onTapUrl : (url) {_onLinkTap(url); return true;},
-                                textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                                textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.small")
                             )
                             // Html(data: htmlBody, style: {
                             //   "body": Style(
@@ -1471,7 +1471,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                               HtmlWidget(
                                   StringUtils.ensureNotEmpty(bodyText),
                                   onTapUrl : (url) {_onLinkTap(url); return true;},
-                                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                                  textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.small"),
                                   customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors!.disabledTextColor ?? Colors.blue)}: null //Not able to use Transparent colour, it's not parsed correctly
                                   // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.blackTransparent018 ?? Colors.blue)} : null
                               )
@@ -1583,10 +1583,7 @@ class GroupPostReaction extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(accountIDs?.length.toString() ?? '',
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.regular,
-                                fontSize: 14,
-                                color: Styles().colors!.fillColorPrimary)),
+                            style: Styles().textStyles?.getTextStyle("widget.button.title.small")),
                       ))
                 ])));
   }
@@ -1620,10 +1617,7 @@ class GroupPostReaction extends StatelessWidget {
           children: [
             Styles().images?.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
             Container(width: 16),
-            Text(member.displayShortName, style: TextStyle(
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
-                color: Styles().colors!.fillColorPrimary)),
+            Text(member.displayShortName, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
           ],
         ),
       ));
@@ -2810,7 +2804,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
                 Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)
+                    style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.thin")
                 )
               )
             ),
@@ -2842,7 +2836,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                           color: Colors.white,
                           child: Text( 'Select All', //TBD localize
-                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61)),
+                            style:  Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline")),
                       )
                     )
                   ),
@@ -2858,7 +2852,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                           color: Colors.white,
                           child:Text('Deselect All', //TBD localize
                             textAlign: TextAlign.left,
-                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61))),
+                            style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline"))),
 
                       ))
                     ],
@@ -2916,7 +2910,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
             label: group.title,
             toggled: _selectedGroupIds.contains(group.id),
             onTap: () => _onTapGroup(group.id!),
-            textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)
+            textStyle:  Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
         ));
       }
 

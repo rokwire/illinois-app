@@ -165,7 +165,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> {
   Widget _buildEmptyContentWidget() {
     return Center(child:
       Padding(padding: EdgeInsets.all(32), child:
-        Text(Localization().getStringEx('panel.laundry_home.content.empty', 'No rooms available'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,),),
+        Text(Localization().getStringEx('panel.laundry_home.content.empty', 'No rooms available'), style: Styles().textStyles?.getTextStyle("widget.description.regular.fat")),
       )
     );
   }

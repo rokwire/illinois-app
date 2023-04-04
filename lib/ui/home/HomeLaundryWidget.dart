@@ -303,7 +303,7 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.title.medium")),
                       ),
                       Visibility(visible: Auth2().canFavorite, child:
                         GestureDetector(behavior: HitTestBehavior.opaque,

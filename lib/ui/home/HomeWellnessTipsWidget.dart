@@ -143,7 +143,6 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   }
 
   Widget _buildTip() {
-    Color? textColor = Styles().colors?.fillColorPrimary;
     Color? backColor = Styles().colors?.white; // _tipColor ?? Styles().colors?.accentColor3;
     return Container(color: backColor, child:
       Padding(padding: EdgeInsets.all(16), child:
@@ -152,7 +151,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
             HtmlWidget(
                 Wellness().dailyTip ?? '',
                 onTapUrl : (url) {_launchUrl(url); return true;},
-                textStyle:  TextStyle(color: textColor, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),
+                textStyle:  Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),
             )
           ),
         ]),

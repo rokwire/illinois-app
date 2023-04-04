@@ -62,10 +62,7 @@ class AthleticsSportItemWidget extends StatelessWidget {
                   Expanded(child:
                   Text(
                     label!,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        color: Styles().colors!.fillColorPrimary,
-                        fontSize: 16),
+                    style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                   ),),
                   showChevron
                       ? Padding(

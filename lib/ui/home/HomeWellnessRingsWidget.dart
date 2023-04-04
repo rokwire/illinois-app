@@ -13,7 +13,6 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeWellnessRingsWidget extends StatefulWidget {
   
@@ -139,8 +138,8 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
 
   Widget _buildCreateRingButton(){
     bool enabled = WellnessRings().canAddRing;
-    final Color disabledTextColor = ColorUtils.fromHex("5c5c5c") ?? Colors.white; //TODO move to colors
-    final Color disabledBackgroundColor = ColorUtils.fromHex("e7e7e7") ?? Colors.white; //TODO move to colors
+    final Color disabledTextColor = Styles().colors?.textColorDisabled ?? Colors.white;
+    final Color disabledBackgroundColor = Styles().colors?.textBackgroundVariant2 ?? Colors.white;
     String label = "Create New Ring";
     String description = "Maximum of 4 total";
     return Visibility(
@@ -163,15 +162,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
                       Expanded(
                           flex: 5,
                           child: Container(
-                            child: Text(label ,
-                              style: TextStyle(color: enabled? Colors.black : disabledTextColor,
-                                  fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),)),
-                      // Expanded(
-                          // flex: 5,
-                          // child: Container(
-                          //   child: Text(description ,
-                          //     style: TextStyle(color: enabled? Colors.black : disabledTextColor,
-                          //         fontFamily: Styles().fontFamilies!.regular, fontSize: 12), textAlign: TextAlign.end,),)),
+                            child: Text(label , style: enabled? Styles().textStyles?.getTextStyle("panel.wellness.ring.home_widget.button.title.enabled") : Styles().textStyles?.getTextStyle("panel.wellness.ring.home_widget.button.title.disabled"), textAlign: TextAlign.start,),)),
                     ],),
                   ),
                   )
