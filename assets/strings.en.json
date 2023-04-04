@@ -2707,6 +2707,11 @@
     "panel.appointment.detail.error.msg": "Failed to load appointment data.",
 
     "panel.appointment.schedule.header.title": "Schedule Appointment",
+    
+    "panel.appointment.schedule.time.header.title": "Schedule Appointment",
+	"panel.appointment.schedule.time.button.continue.title": "Next",
+    "panel.appointment.schedule.time.button.continue.hint": "",
+    "panel.appointment.schedule.time.label.empty": "No time slots available for this date",
 
     "widget.game_day.label.its_game_day":"It's Game Day!",
     "widget.game_day.label.no_games":"No today games.",

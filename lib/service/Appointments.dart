@@ -15,6 +15,7 @@
  */
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -448,6 +449,27 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
         _processAppointmentDetail(appointmentDetail);
       }
     }
+  }
+
+  // Time Slots
+
+  Future<List<AppointmentTimeSlot>?> loadTimeSlots({ required DateTime dateLocal }) async {
+    DateTime midnighDateUtc = DateUtils.dateOnly(dateLocal).toUtc();
+    DateTime startDateUtc = midnighDateUtc.add(Duration(hours: 8));
+    DateTime endDateUtc = startDateUtc.add(Duration(hours: 12));
+    Duration slotDuration = Duration(minutes: 30);
+    List<AppointmentTimeSlot> result = <AppointmentTimeSlot>[];
+    DateTime dateTimeUtc = startDateUtc;
+    while (dateTimeUtc.isBefore(endDateUtc)) {
+      DateTime endDateTime = dateTimeUtc.add(slotDuration);
+      result.add(AppointmentTimeSlot(
+        filled: Random().nextInt(4) == 0,
+        startTimeUtc: dateTimeUtc,
+        endTimeUtc: endDateTime
+      ));
+      dateTimeUtc = endDateTime;
+    }
+    return result;
   }
 
   // NotificationsListener
