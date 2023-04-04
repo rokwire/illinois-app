@@ -108,7 +108,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildScheduleDescription() {
-    String descriptionHtml = Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', '<a href={{schedule_url}}>Schedule an appointment.</a>&nbsp;<a href={{reschedule_url}}>Need to cancel or reschedule?</a>');
+    String descriptionHtml = Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', '<a href={{schedule_url}}>Schedule an appointment.</a><br><a href={{reschedule_url}}>Need to cancel or reschedule?</a>');
     return HtmlWidget(descriptionHtml,
       onTapUrl : _onDesciptionLink,
       textStyle:  Styles().textStyles?.getTextStyle("widget.message.medium"),
