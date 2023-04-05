@@ -6,6 +6,7 @@
     "fillColorPrimaryTransparent09"         :"#E6002855",
     "fillColorPrimaryTransparent015"        :"#26002855",
     "textColorPrimary"                      :"#FFFFFF",
+    "textColorDisabled"                      :"#5c5c5c",
     "fillColorPrimaryVariant"               :"#0F2040",
     "fillColorSecondary"                    :"#E84A27",
     "fillColorSecondaryTransparent05"       :"#80E84A27",
@@ -25,6 +26,7 @@
     "textVariant"                           :"#ff494949",
     "textBackground"                        :"#404040",
     "textbackgroundVariant"                 :"#404040",
+    "textbackgroundVariant2"                 :"#e7e7e7",
 
     "accentColor1"                          :"#E84A27",
     "accentColor2"                          :"#5FA7A3",
@@ -104,9 +106,15 @@
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
 
+    "widget.text.fat": { "font_family": "bold"},
+    "widget.text.semi_fat": { "font_family": "semi_bold"},
+    "widget.text.medium": { "font_family": "medium"},
+
+    "widget.heading.huge": { "font_family": "regular", "size": 32.0, "color": "white"},
     "widget.heading.extra_large": { "font_family": "regular", "size": 24.0, "color": "white"},
     "widget.heading.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "white"},
     "widget.heading.large": { "font_family": "regular", "size": 20.0, "color": "white"},
+    "widget.heading.large.fat": { "font_family": "bold", "size": 20.0, "color": "white"},
     "widget.heading.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "white"},
     "widget.heading.medium": { "font_family": "medium", "size": 18.0, "color": "white"},
     "widget.heading.regular": { "font_family": "regular", "size": 16.0, "color": "white"},
@@ -118,24 +126,33 @@
     "widget.message.dark.extra_large": {"font_family": "regular", "size": 24.0, "color": "black"},
     "widget.message.dark.medium": {"font_family": "medium", "size": 16.0, "color": "black"},
 
+    "widget.message.huge": { "font_family": "regular", "size": 32.0, "color": "fillColorPrimary"},
+    "widget.message.huge.extra_fat": { "font_family": "extra_bold", "size": 32.0, "color": "fillColorPrimary"},
     "widget.message.extra_large.fat": {"font_family": "bold", "size": 24.0, "color": "fillColorPrimary"},
+    "widget.message.extra_large.extra_fat": {"font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.message.medium_large.fat": {"font_family": "bold", "size": 22.0, "color": "fillColorPrimary"},
     "widget.message.large.fat": {"font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.message.large": {"font_family": "medium", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.message.large.thin": {"font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.message.medium": {"font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.message.medium.semi_thin": {"font_family": "medium", "size": 18.0, "color": "fillColorPrimary"},
     "widget.message.medium.thin": {"font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.message.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.message.regular.semi_fat": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.extra_fat": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.fat.accent": {"font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
     "widget.message.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.message.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.message.light.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
     "widget.message.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
+    "widget.message.light.variant.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray2"},
 
     "widget.title.extra_huge": {"font_family": "regular", "size": 36.0, "color": "fillColorPrimary"},
     "widget.title.extra_huge.fat": {"font_family": "bold", "size": 36.0, "color": "fillColorPrimary"},
     "widget.title.huge.extra_fat": {"font_family": "extra_bold", "size": 32.0, "color": "fillColorPrimary"},
+    "widget.title.huge": {"font_family": "regular", "size": 32.0, "color": "fillColorPrimary"},
+    "widget.title.semi_huge": {"font_family": "medium", "size": 30.0, "color": "fillColorPrimary"},
     "widget.title.extra_large": { "font_family": "regular", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.extra_large.extra_fat": { "font_family": "extra_bold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.title.extra_large.semi_fat": { "font_family": "semi_bold", "size": 24.0, "color": "fillColorPrimary"},
@@ -151,25 +168,40 @@
     "widget.title.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.title.small.fat.spaced": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary", "letter_spacing": 1.0},
     "widget.title.tiny": {"font_family": "bold", "size": 12.0, "color": "fillColorPrimary"},
-    "widget.title.light.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "white"},
-    "widget.title.light.medium.fat": {"font_family": "bold", "size": 18.0, "color": "white"},
-    "widget.title.light.regular": {"font_family": "regular", "size": 16.0, "color": "white"},
-    "widget.title.light.small.fat": {"font_family": "bold", "size": 14.0, "color": "white"},
-    "widget.title.light.tiny": {"font_family": "medium", "size": 10.0, "color": "white"},
+    "widget.title.tiny.extra_fat": {"font_family": "extra_bold", "size": 12.0, "color": "fillColorPrimary"},
+    "widget.title.light.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "textColorPrimary"},
+    "widget.title.light.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "textColorPrimary"},
+    "widget.title.light.large.fat": { "font_family": "bold", "size": 20.0, "color": "textColorPrimary"},
+    "widget.title.light.large": { "font_family": "regular", "size": 20.0, "color": "textColorPrimary"},
+    "widget.title.light.medium.fat": {"font_family": "bold", "size": 18.0, "color": "textColorPrimary"},
+    "widget.title.light.regular.thin": {"font_family": "regular", "size": 16.0, "color": "textColorPrimary"},
+    "widget.title.light.regular": {"font_family": "medium", "size": 16.0, "color": "textColorPrimary"},
+    "widget.title.light.small": {"font_family": "medium", "size": 14.0, "color": "textColorPrimary"},
+    "widget.title.light.small.fat": {"font_family": "bold", "size": 14.0, "color": "textColorPrimary"},
+    "widget.title.light.small.fat.spaced": {"font_family": "bold", "size": 14.0, "color": "textColorPrimary", "letter_spacing": 1.0},
+    "widget.title.light.tiny": {"font_family": "medium", "size": 10.0, "color": "textColorPrimary"},
 
     "widget.detail.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "fillColorPrimary"},
+    "widget.detail.extra_large": { "font_family": "medium", "size": 24.0, "color": "fillColorPrimary"},
     "widget.detail.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.large.thin": { "font_family": "medium", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.detail.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.medium": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.small": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.detail.light.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
+    "widget.detail.small.semi_fat": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.detail.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.detail.light.small.thin": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
     "widget.detail.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
+    "widget.detail.variant.regular": { "font_family": "medium", "size": 16.0, "color": "textVariant"},
 
+    "widget.description.extra_large": { "font_family": "medium", "size": 26.0, "color": "fillColorPrimary"},
+    "widget.description.medium_large": { "font_family": "medium", "size": 22.0, "color": "fillColorPrimary"},
     "widget.description.large": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.description.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.description.medium": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
@@ -180,6 +212,8 @@
     "widget.description.small_underline": { "font_family": "medium", "size": 14.0, "decoration": "underline"},
     "widget.description.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small.fat.semi_expanded": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary", "letter_spacing": 0.86},
+    "widget.description.dark.small": { "font_family": "medium", "size": 14.0, "color": "black"},
+    "widget.description.variant.regular": { "font_family": "medium", "size": 16.0, "color": "textVariant"},
 
     "widget.error.regular": { "font_family": "regular", "size": 16.0, "color": "alert"},
     "widget.error.regular.fat": { "font_family": "bold", "size": 16.0, "color": "alert"},
@@ -201,6 +235,9 @@
     "widget.item.tiny.thin": { "font_family": "regular", "size": 12.0, "color": "textBackground"},
 
     "widget.label.medium.fat": { "font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
+    "widget.label.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
+    "widget.label.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorSecondary"},
+    "widget.label.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
 
     "widget.info.medium": { "font_family": "regular", "size": 18.0, "color": "textSurface"},
     "widget.info.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textSurface"},
@@ -209,6 +246,7 @@
     "widget.info.regular.fat": { "font_family": "bold", "size": 16.0, "color": "textSurface"},
     "widget.info.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "textSurface"},
     "widget.info.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
+    "widget.info.small.medium_fat": { "font_family": "medium", "size": 14.0, "color": "textSurface"},
     "widget.info.small.fat": { "font_family": "bold", "size": 14.0, "color": "textSurface"},
     "widget.info.tiny": { "font_family": "regular", "size": 12.0, "color": "textSurface"},
 
@@ -216,6 +254,8 @@
     "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
 
     "widget.button.title.extra_large": { "font_family": "bold", "size": 26.0, "color": "fillColorPrimary"},
+    "widget.button.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.button.title.large.thin": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.button.title.regular": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.regular.thin": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.regular.thin.underline": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
@@ -223,8 +263,10 @@
     "widget.button.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.button.title.medium.fat.underline": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary", "height":  1.61},
     "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
+    "widget.button.title.small": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.description.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
     "widget.button.description.tiny": { "font_family": "regular", "size": 12.0, "color": "textSurface"},
@@ -232,10 +274,12 @@
     "widget.button.light.title.medium": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
-    "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textBackground",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
+    "widget.colourful_button.title": { "font_family": "medium", "size": 16.0, "color": "white"},
+    "widget.colourful_button.title.accent": { "font_family": "bold", "size": 16.0, "color": "white"},
     "widget.colourful_button.title.regular": { "font_family": "regular", "size": 14.0, "color": "white"},
     "widget.colourful_button.title.regular.accent": { "font_family": "bold", "size": 14.0, "color": "white"},
 
@@ -252,10 +296,17 @@
     "widget.toggle_button.title.tiny.thin.enabled": { "font_family": "regular", "size": 12.0, "color": "fillColorPrimary"},
     "widget.toggle_button.title.tiny.thin.disabled": { "font_family": "regular", "size": 12.0, "color": "fillColorPrimaryTransparent015"},
 
+    "widget.input_field.dark.text.large": { "font_family": "medium", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.input_field.dark.text.regular.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.input_field.disable.text.large": { "font_family": "medium", "size": 20.0, "color": "disabledTextColor"},
+    "widget.input_field.enable.text.extra_large": { "font_family": "medium", "size": 26.0, "color": "black"},
     "widget.input_field.text.medium": { "font_family": "regular", "size": 18.0, "color": "textBackground"},
     "widget.input_field.text.regular": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
 
+    "widget.sheet.title.regular" : {"font_family": "bold", "size": 18.0, "color": "fillColorSecondary"},
+
     "widget.dialog.button.close" : {"font_family": "medium", "size": 50.0, "color": "white"},
+    "widget.dialog.message.medium.fat" : {"font_family": "bold", "size": 16.0, "color": "white"},
     "widget.dialog.message.medium" : {"font_family": "medium", "size": 16.0, "color": "white"},
     "widget.dialog.message.medium.thin" : {"font_family": "regular", "size": 16.0, "color": "white"},
     "widget.dialog.message.small" : {"font_family": "regular", "size": 14.0, "color": "white"},
@@ -269,6 +320,7 @@
 
     "widget.dialog.message.dark.large.fat": { "font_family": "bold", "size": 24.0, "color": "black"},
     "widget.dialog.message.dark.large": { "font_family": "regular", "size": 24.0, "color": "black"},
+    "widget.dialog.message.dark.medium": { "font_family": "regular", "size": 18.0, "color": "black"},
     "widget.dialog.message.dark.regular": { "font_family": "medium", "size": 16.0, "color": "black"},
     "widget.dialog.message.dark.regular.fat": { "font_family": "bold", "size": 16.0, "color": "black"},
 
@@ -292,9 +344,9 @@
     "widget.card.detail.small": { "font_family": "regular", "size": 14.0, "color": "textBackground"},
     "widget.card.detail.tiny": { "font_family": "regular", "size": 12.0, "color": "textBackground"},
     "widget.card.detail.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "textBackground"},
-    "widget.card.detail.tiny_variant2": { "font_family": "medium", "size": 12.0, "color": "textBackground"},
+    "widget.card.detail.tiny.medium_fat": { "font_family": "medium", "size": 12.0, "color": "textBackground"},
 
-    "widget.explore.card.detail.small": {"extends": "widget.card.detail.tiny_variant2"},
+    "widget.explore.card.detail.small": {"extends": "widget.card.detail.tiny.medium_fat"},
     "widget.explore.card.detail.regular": {"extends": "widget.item.small"},
     "widget.explore.card.detail.regular.underline": {"extends": "widget.card.detail.small_variant2", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.explore.card.detail.large": {"extends": "widget.card.detail.medium"},
@@ -304,6 +356,9 @@
 
     "widget.athletics.card.title.large.fat":  {"extends": "widget.title.extra_large",  "weight" : "w900"},
     "widget.athletics.card.title.large":  {"extends": "widget.title.extra_large"},
+    "widget.athletics.title.large.variant":  {"font_family": "medium", "size": 20.0, "color": "whiteTransparent06"},
+    "widget.athletics.heading.regular.variant":  {"font_family": "medium", "size": 16.0, "color": "whiteTransparent06"},
+    "widget.athletics.heading.regular.fat.variant":  {"font_family": "bold", "size": 16.0, "color": "whiteTransparent06"},
 
     "widget.group.card.poll.title": { "font_family": "extra_bold", "size": 20.0, "color": "fillColorPrimary", "height":  1.2},
     "widget.group.card.poll.option": {"extends": "widget.card.detail.regular", "height":  1.25,  "weight" :  "w500"},
@@ -347,6 +402,11 @@
     "widget.checklist.content.tab.title.current_tab.completed": {"font_family": "extra_bold", "size": 16.0, "color": "greenAccent", "decoration": "underline"},
     "widget.checklist.content.tab.title.current_tab.not_completed": {"font_family": "extra_bold", "size": 16.0, "color": "white", "decoration": "underline"},
 
+    "widget.home_tout.button.underline.title": {"font_family": "bold", "size": 18.0, "color": "textColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "textColorPrimary"},
+    "widget.home.link_button.regular.accent.underline": {"font_family": "regular", "size": 16.0, "color": "accentColor3", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "accentColor3"},
+
+    "widget.student_courses.title.extra_large": {"extends": "widget.title.extra_large", "letter_spacing": 1.0},
+
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
     "panel.event_schedule.map.description": {"font_family": "medium", "size": 16.0, "color": "blackTransparent038"},
@@ -372,6 +432,9 @@
     "panel.wellness.ring.select_predefined.message.regular": {"extends": "widget.info.small"},
     "panel.wellness.ring.select_predefined.button.label.regular": {"font_family": "bold", "size": 18.0, "color": "black"},
     "panel.wellness.ring.select_predefined.button.description.regular": {"font_family": "regular", "size": 14.0, "color": "black"},
+
+    "panel.wellness.ring.home_widget.button.title.enabled": {"font_family": "bold", "size": 14.0, "color": "black"},
+    "panel.wellness.ring.home_widget.button.title.disabled": {"font_family": "bold", "size": 14.0, "color": "textColorDisabled"},
 
     "panel.wellness.ring.home.detail.message": {"extends": "widget.info.regular.thin"},
     "panel.wellness.ring.home.detail.message.fat": {"extends": "widget.info.regular.fat"},
@@ -401,6 +464,9 @@
     "panel.athletics.home.title.large": {"font_family": "regular", "size": 20.0, "color": "fillColorPrimary",  "weight" :  "w900"},
     "panel.athletics.home.detail.medium": {"extends": "widget.item.regular"},
     "panel.athletics.home.button.underline": {"font_family": "semi_bold", "size": 16.0, "color": "white", "letter_spacing" :  1.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+
+    "panel.athletics.coach_detail.title.extra_large": {"size": 24.0},
+    "panel.athletics.coach_detail.title.regular.accent": {"font_family": "medium", "size": 16.0, "color": "surfaceAccent"},
 
     "panel.mtd_bus.heading.title": {"font_family": "extra_bold", "size": 20.0, "color": "transparentWalletColor"},
     "panel.mtd_bus.buss_number.label": {"font_family": "bold", "size": 36.0, "color": "white"},
@@ -463,7 +529,7 @@
     "panel.settings.video_tutorial.button": {"extends": "widget.colourful_button.title.medium.accent"},
 
     "panel.poll.create.poll_option.title": {"extends": "widget.title.tiny", "letter_spacing" :  0.86},
-    "panel.poll.create.poll_option.counter": {"extends": "widget.detail.light.small"},
+    "panel.poll.create.poll_option.counter": {"extends": "widget.detail.light.small.thin"},
     "panel.poll.create.stadium.geofence.dropdown.title": {"extends": "widget.detail.light.regular"},
     "panel.poll.bubble.pin.button.info": {"font_family": "extra_bold", "size": 20.0, "color": "fillColorSecondary"},
     "panel.poll.bubble.pin.field.text": {"extends": "widget.title.extra_huge"},
@@ -516,8 +582,15 @@
     "panel.wellness_appointments.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "blackTransparent06"},
 
     "panel.appointment_detail.title.large":  {"extends": "widget.title.medium_large.extra_fat", "color": "accentColor1"},
+    "panel.settings.section_content.htm.title.regular":  {"extends": "widget.item.regular", "font_family": "regular_italic"},
 
-    "panel.settings.section_content.htm.title.regular":  {"extends": "widget.item.regular", "font_family": "regular_italic"}
+    "panel.research_project.profile.detail.regular":  {"font_family": "regular", "size": 14.0, "color": "textSurfaceAccent"},
+    "panel.research_project.profile.detail.small":  {"font_family": "regular", "size": 12.0, "color": "textSurfaceAccent"},
+
+    "panel.create_event.title.small":  {"extends": "widget.title.small.fat", "letter_spacing": 1.0},
+    "panel.create_event.dropdown_button.title.regular":  {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
+
+    "panel.laundry_room_detail.map_button.title.regular.underline":  {"extends": "widget.button.title.medium.underline", "decoration_thickness" : 1.17}
   },
   "image": {
     "campus-tools": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},

@@ -119,7 +119,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
     int iconMacroPosition = privacyMsg.indexOf(iconMacro);
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
-    return RichText(text: TextSpan(style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold), children: [
+    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle("widget.message.small.fat"), children: [
       TextSpan(text: privacyMsgStart),
       WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
       TextSpan(text: privacyMsgEnd)
@@ -130,7 +130,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
     return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
       Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration( border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)), ), child:
-        Text(privacyLevel.toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))));
+        Text(privacyLevel.toString(), style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat"))));
   }
 
   void _buildingAccessNotIncreasePrivacyLevel() {

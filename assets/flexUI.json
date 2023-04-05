@@ -1,7 +1,7 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["favorites", "browse", "maps", "maps2", "academics", "wellness"],
+			"tabbar": ["favorites", "browse", "maps", "academics", "wellness"],
 	
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
@@ -62,8 +62,9 @@
 			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "todo_list", "skills_self_evaluation", "due_date_catalog", "my_illini"],
 			"academics.skills_self_evaluation.features": ["authentication", "netid_login"],
 
-			"wellness": ["daily_tips", "rings", "appointments", "health_screener", "podcast", "resources", "mental_health", "struggling"],
+			"wellness": ["daily_tips", "rings", "appointments", "appointments2", "health_screener", "podcast", "resources", "mental_health", "struggling"],
 			"wellness.appointments.features": ["authentication", "netid_login"],
+			"wellness.appointments2.features": ["authentication", "netid_login"],
 			"wellness.health_screener": ["history"],
 			"wellness.health_screener.features": ["student", "authentication", "netid_login"],
 

@@ -28,7 +28,6 @@ import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -603,8 +602,8 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   void _onLocationDetailTapped(){
     if(widget.parentEvent?.location?.latitude != null && widget.parentEvent?.location?.longitude != null) {
-      Analytics().logSelect(target: "Location Detail");
-      NativeCommunicator().launchExploreMapDirections(target: widget.parentEvent);
+      Analytics().logSelect(target: "Location Directions");
+      widget.parentEvent?.launchDirections();
     }
   }
 

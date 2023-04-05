@@ -17,7 +17,6 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -649,8 +648,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         _onTapWebButton(url, analyticsName: "Event Link");
       }
     } else if(_event?.location?.latitude != null && _event?.location?.longitude != null) {
-      Analytics().logSelect(target: "Location Detail");
-      NativeCommunicator().launchExploreMapDirections(target: _event);
+      Analytics().logSelect(target: "Location Directions");
+      _event?.launchDirections();
     }
   }
 

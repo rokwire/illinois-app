@@ -146,7 +146,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
         Row(key: _sheetHeaderKey, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),)
+              Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style:  Styles().textStyles?.getTextStyle("widget.sheet.title.regular"),)
             )
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:

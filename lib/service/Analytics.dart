@@ -44,7 +44,6 @@ import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/service/Auth2.dart';
 
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -342,9 +341,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       
       Network.notifyHttpResponse,
       
-      NativeCommunicator.notifyMapRouteStart,
-      NativeCommunicator.notifyMapRouteFinish,
-      
       GeoFence.notifyRegionEnter,
       GeoFence.notifyRegionExit,
       
@@ -430,13 +426,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     
     else if (name == Network.notifyHttpResponse) {
       logHttpResponse(param);
-    }
-    
-    else if (name == NativeCommunicator.notifyMapRouteStart) {
-      logMapRoute(action: LogMapRouteStartActionName, params: param);
-    }
-    else if (name == NativeCommunicator.notifyMapRouteFinish) {
-      logMapRoute(action: LogMapRouteFinishActionName, params: param);
     }
     
     else if (name == GeoFence.notifyRegionEnter) {

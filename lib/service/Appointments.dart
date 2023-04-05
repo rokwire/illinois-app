@@ -15,6 +15,7 @@
  */
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -57,12 +58,14 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
 
   List<Map<String, dynamic>>? _appointmentDetailsCache;
 
-  // Singleton
+  // Singletone
+
   static final Appointments _service = Appointments._internal();
   factory Appointments() => _service;
   Appointments._internal();
 
   // Service
+
   @override
   void createService() {
     NotificationService().subscribe(this, [
@@ -98,6 +101,36 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   @override
   void initServiceUI() {
     _processCachedAppointmentDetails();
+  }
+
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    } else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    } else if (name == Auth2.notifyLoginChanged) {
+      _initAccount();
+      _updateAllAppointments();
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _updateAccount();
+          _updateAllAppointments();
+        }
+      }
+    }
   }
 
   // Getters & Setters
@@ -450,31 +483,44 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     }
   }
 
-  // NotificationsListener
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
-    } else if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
-    } else if (name == Auth2.notifyLoginChanged) {
-      _initAccount();
-      _updateAllAppointments();
-    }
-  }
+  // Providers
 
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
+  Future<List<AppointmentProvider>?> loadProviders() async =>
+    <AppointmentProvider>[
+      AppointmentProvider(id: '1', name: 'McKinley'),
+      AppointmentProvider(id: '2', name: 'Grainger'),
+      AppointmentProvider(id: '3', name: 'Lorem Ipsum'),
+      AppointmentProvider(id: '4', name: 'Sit Dolor Amet'),
+    ];
+
+  // Units
+
+  Future<List<AppointmentUnit>?> loadUnits({ required String providerId }) async =>
+    <AppointmentUnit>[
+      AppointmentUnit(id: '11', providerId: providerId, name: 'House of Horror', location: AppointmentLocation(title: '1109 S Lincoln Ave Urbana, IL 61801', phone: '+1 415 370 9574'), hoursOfOperation: '8:00am - 17:30pm'),
+      AppointmentUnit(id: '12', providerId: providerId, name: "Dante's Inferno", location: AppointmentLocation(title: '1103 S Sixth St Champaign, IL 61820', phone: '+1 650 207 7211'), hoursOfOperation: '8:30am - 12:30pm'),
+      AppointmentUnit(id: '13', providerId: providerId, name: 'Spem Omnem Hic', location: AppointmentLocation(title: '1402 Springfield Ave Urbana, IL 61801', phone: '+1 217 300 5249'), hoursOfOperation: '7:00am - 9:00pm'),
+      AppointmentUnit(id: '14', providerId: providerId, name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm'),
+    ];
+
+  // Time Slots
+
+  Future<List<AppointmentTimeSlot>?> loadTimeSlots({ required DateTime dateLocal }) async {
+    DateTime midnighDateUtc = DateUtils.dateOnly(dateLocal).toUtc();
+    DateTime startDateUtc = midnighDateUtc.add(Duration(hours: 8));
+    DateTime endDateUtc = startDateUtc.add(Duration(hours: 12));
+    Duration slotDuration = Duration(minutes: 30);
+    List<AppointmentTimeSlot> result = <AppointmentTimeSlot>[];
+    DateTime dateTimeUtc = startDateUtc;
+    while (dateTimeUtc.isBefore(endDateUtc)) {
+      DateTime endDateTime = dateTimeUtc.add(slotDuration);
+      result.add(AppointmentTimeSlot(
+        filled: Random().nextInt(4) == 0,
+        startTimeUtc: dateTimeUtc,
+        endTimeUtc: endDateTime
+      ));
+      dateTimeUtc = endDateTime;
     }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateAccount();
-          _updateAllAppointments();
-        }
-      }
-    }
+    return result;
   }
 }

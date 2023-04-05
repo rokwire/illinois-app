@@ -95,7 +95,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
                   children: <Widget>[
                     Text(
                       voterTitle,
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),
+                      style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 8, bottom: 16),
@@ -103,7 +103,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
                         voterText,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 10,
-                        style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16,),
+                        style: Styles().textStyles?.getTextStyle("widget.detail.variant.regular"),
                       ),),
                     )
                   ],
@@ -132,7 +132,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
                   vbmText,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 10,
-                  style: TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular),
+                  style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 ),
               )),
               Row(children: <Widget>[RoundedButton(
@@ -276,7 +276,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
             ), Expanded(child: Padding(padding: EdgeInsets.only(left: 8),
               child: Text(Localization().getStringFromKeyMapping('widget.voter.option.descr.vote_in_person', _stringsContent, defaults: 'I want to vote in person')!, overflow: TextOverflow.ellipsis,
                   maxLines: 2,
-                  style: TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular)),),)
+                  style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),),)
             ],));
           } else {
             optionWidgets.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[RoundedButton(
