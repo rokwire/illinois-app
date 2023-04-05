@@ -21,6 +21,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,7 +34,8 @@ class WellnessMentalHealthContentWidget extends StatefulWidget {
 
 class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealthContentWidget> implements NotificationsListener {
 
-  List<dynamic>? _guideItems;
+  Map<String, List<Map<String, dynamic>>> _sectionLists = <String, List<Map<String, dynamic>>>{};
+  List<String> _sections = <String>[];
 
   @override
   void initState() {
@@ -41,7 +43,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
       Auth2UserPrefs.notifyFavoritesChanged,
       Guide.notifyChanged,
     ]);
-    _initContent();
+    _buildContentData();
     super.initState();
   }
 
@@ -58,7 +60,7 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
     if (name == Guide.notifyChanged) {
       if (mounted) {
         setState(() {
-          _initContent();
+          _buildContentData();
         });
       }
     }
@@ -71,20 +73,30 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
 
   @override
   Widget build(BuildContext context) {
-    return _buildContent();
+    return _buildContentUi();
   }
 
-  Widget _buildContent() {
+  Widget _buildContentUi() {
     List<Widget> widgetList = <Widget>[];
-    if (_guideItems != null) {
-      for (dynamic entry in _guideItems!) {
-        Map<String, dynamic>? guideItem = JsonUtils.mapValue(entry);
-        if (guideItem != null) {
+
+    for (String section in _sections) {
+      List<Map<String, dynamic>>? sectionList = _sectionLists[section];
+      if ((sectionList != null) && sectionList.isNotEmpty) {
+        if (widgetList.isNotEmpty) {
+          widgetList.add(Container(height: 24));
+        }
+        if (section.isNotEmpty) {
+          widgetList.add(Padding(padding: EdgeInsets.only(bottom: 2), child:
+            Text(section, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
+          ));
+        }
+        int startLength = widgetList.length;
+        for (Map<String, dynamic> guideItem in sectionList) {
           String? id = Guide().entryId(guideItem);
           String? title = Guide().entryListTitle(guideItem);
           Favorite favorite = GuideFavorite(id: id, contentType: Guide.wellnessMentalHealthContentType);
-          if (widgetList.isNotEmpty) {
-            widgetList.add(Container(height: 8));
+          if (startLength < widgetList.length) {
+            widgetList.add(Container(height: 4));
           }
           widgetList.add(WellnessLargeResourceButton(
             label: title,
@@ -94,14 +106,57 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
         }
       }
     }
-
-    widgetList.add(Container(height: 16,));
     
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: widgetList));
+    widgetList.add(Container(height: 24,));
+    
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgetList)
+    );
   }
 
-  void _initContent() {
-    _guideItems = Guide().mentalHealthList;
+  void _buildContentData() {
+    _sections.clear();
+    _sectionLists.clear();
+
+    List<dynamic>? guideItems = Guide().mentalHealthList;
+    if (guideItems != null) {
+
+      for (dynamic entry in guideItems) {
+        Map<String, dynamic>? guideItem = JsonUtils.mapValue(entry);
+        if (guideItem != null) {
+          String section = JsonUtils.stringValue(Guide().entrySection(guideItem)) ?? '';
+          List<Map<String, dynamic>>? sectionList = _sectionLists[section];
+          if (sectionList == null) {
+            _sectionLists[section] = sectionList = <Map<String, dynamic>>[];
+            _sections.add(section);
+          }
+          sectionList.add(guideItem);
+
+        }
+      }
+
+      _sections.sort((String section1, String section2) {
+        return section1.compareTo(section2);
+      });
+
+      _sectionLists.forEach((String secton, List<Map<String, dynamic>> sectionList) {
+        sectionList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+          int? sortOrder1 = JsonUtils.intValue(entry1['sort_order']);
+          int? sortOrder2 = JsonUtils.intValue(entry2['sort_order']);
+          if ((sortOrder1 != null) && (sortOrder2 != null)) {
+            sortOrder1.compareTo(sortOrder2);
+          }
+
+          String? listTitle1 = Guide().entryListTitle(entry1);
+          String? listTitle2 = Guide().entryListTitle(entry2);
+          if ((listTitle1 != null) && (listTitle2 != null)) {
+            listTitle1.compareTo(listTitle2);
+          }
+
+          return 0;
+        });
+      });
+    }
   }
 
   void _onGuideItem(Map<String, dynamic> guideItem) {
