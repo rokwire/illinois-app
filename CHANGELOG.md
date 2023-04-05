@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Display mental health resources grouped by sections [#3084](https://github.com/rokwire/illinois-app/issues/3084).
+- Created new wellness content type for new appointments support. Load sample providers. [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 
 ## [4.3.35] - 2023-04-04
 ### Added
