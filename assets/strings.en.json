@@ -1847,6 +1847,7 @@
     "panel.wellness.section.rings.label": "Daily Wellness Rings",
     "panel.wellness.section.todo.label": "To-Do List",
     "panel.wellness.section.appointments.label": "MyMcKinley Appointments",
+    "panel.wellness.section.appointments2.label": "Appointments",
     "panel.wellness.section.screener.label": "Illinois Health Screener",
     "panel.wellness.section.resources.label": "Wellness Resources",
     "panel.wellness.section.mental_health.label": "Mental Health",
@@ -1936,7 +1937,7 @@
 
     "panel.wellness.appointments.home.reschedule_appointment.label": "Need to cancel or reschedule?",
     "panel.wellness.appointments.home.reschedule_appointment.alert.description": "<p>To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.</p><p>Cancellations and appointment changes may take up to 20 minutes to appear in the Illinois app. The two-hour cancellation fee will be based on the time you cancel via  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>.</p>",
-    "panel.wellness.appointments.home.schedule_appointment.label": "<a href={{schedule_url}}>Schedule an appointment.</a><br><a href={{reschedule_url}}>Need to cancel or reschedule?</a>",
+    "panel.wellness.appointments.home.schedule_appointment.label": "<a href={{schedule_url}}>Schedule an appointment.</a>",
     "panel.wellness.appointments.home.upcoming.list.empty.msg": "You currently have no upcoming appointments linked within the Illinois app. New appointments made via <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> may take up to 20 minutes to appear in the {{app_title}} app.",
     "panel.wellness.appointments.home.past.list.empty.msg": "You don't have recent past appointments linked within the Illinois app.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Recent Past Appointments",

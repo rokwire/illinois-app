@@ -380,6 +380,10 @@ class Storage extends rokwire.Storage {
   bool? get appointmentsCanDisplay => getBoolWithName(appointmentsDisplayEnabledKey, defaultValue: true);
   set appointmentsCanDisplay(bool? value) => setBoolWithName(appointmentsDisplayEnabledKey, value);
 
+  String get selectedAppointmentProviderIdKey => 'edu.illinois.rokwire.appointments.selected.provider_id';
+  String? get selectedAppointmentProviderId => getStringWithName(selectedAppointmentProviderIdKey);
+  set selectedAppointmentProviderId(String? value) => setStringWithName(selectedAppointmentProviderIdKey, value);
+
   // MTD Map instructions
   String get showMtdStopsMapInstructionsKey => 'edu.illinois.rokwire.explore.map.mtd_stops.show_instructions';
   bool? get showMtdStopsMapInstructions => getBoolWithName(showMtdStopsMapInstructionsKey);

@@ -27,6 +27,7 @@ import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessMentalHealthContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeContentWidget.dart';
+import 'package:illinois/ui/wellness/appointments/WellnessAppointments2HomeContentWidget.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
@@ -41,7 +42,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling, mentalHealth }
+enum WellnessContent { dailyTips, rings, todo, appointments, appointments2, healthScreener, podcast, resources, struggling, mentalHealth }
 
 class WellnessHomePanel extends StatefulWidget {
   final WellnessContent? content;
@@ -126,7 +127,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   }
 
   Widget _buildScrollableContentWidget({required Widget child}) {
-    if (_selectedContent == WellnessContent.appointments) {
+    if ((_selectedContent == WellnessContent.appointments) || (_selectedContent == WellnessContent.appointments2)) {
       return Container(child: child);
     } else {
       return SingleChildScrollView(controller: _contentScrollController, child: child);
@@ -210,6 +211,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       return WellnessContent.todo;
     } else if (code == 'appointments') {
       return WellnessContent.appointments;
+    } else if (code == 'appointments2') {
+      return WellnessContent.appointments2;
     } else if (code == 'health_screener') {
       return WellnessContent.healthScreener;
     } else if (code == 'podcast') {
@@ -251,6 +254,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return WellnessToDoHomeContentWidget();
       case WellnessContent.appointments:
         return WellnessAppointmentsHomeContentWidget();
+      case WellnessContent.appointments2:
+        return WellnessAppointments2HomeContentWidget();
       case WellnessContent.healthScreener:
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.podcast:
@@ -300,6 +305,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return _loadContentString('panel.wellness.section.todo.label', 'To-Do List');
       case WellnessContent.appointments:
         return _loadContentString('panel.wellness.section.appointments.label', 'MyMcKinley Appointments');
+      case WellnessContent.appointments2:
+        return _loadContentString('panel.wellness.section.appointments2.label', 'Appointments');
       case WellnessContent.healthScreener:
         return _loadContentString('panel.wellness.section.screener.label', 'Illinois Health Screener');
       case WellnessContent.resources:

@@ -22,6 +22,11 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+enum AppointmentType { in_person, online }
+
+///////////////////////////////
+/// Appointment
+
 class Appointment with Explore, Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
@@ -209,7 +214,8 @@ class Appointment with Explore, Favorite {
     (host?.hashCode ?? 0);
 }
 
-enum AppointmentType { in_person, online }
+///////////////////////////////
+/// AppointmentOnlineDetails
 
 class AppointmentOnlineDetails {
   final String? url;
@@ -249,6 +255,9 @@ class AppointmentOnlineDetails {
     (meetingId?.hashCode ?? 0) ^
     (meetingPasscode?.hashCode ?? 0);
 }
+
+///////////////////////////////
+/// AppointmentLocation
 
 class AppointmentLocation {
   final String? id;
@@ -299,6 +308,9 @@ class AppointmentLocation {
     (phone?.hashCode ?? 0);
 }
 
+///////////////////////////////
+/// AppointmentHost
+
 class AppointmentHost {
   final String? firstName;
   final String? lastName;
@@ -331,6 +343,9 @@ class AppointmentHost {
     (lastName?.hashCode ?? 0);
 }
 
+///////////////////////////////
+/// AppointmentsAccount
+
 class AppointmentsAccount {
   bool? notificationsAppointmentNew;
   bool? notificationsAppointmentReminderMorning;
@@ -358,6 +373,170 @@ class AppointmentsAccount {
   }
 }
 
+
+///////////////////////////////
+/// AppointmentProvider
+
+class AppointmentProvider {
+  final String? id;
+  final String? name;
+
+  AppointmentProvider({this.id, this.name});
+
+  // JSON Serialization
+
+  static AppointmentProvider? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentProvider(
+      id: JsonUtils.stringValue(json['id']),
+      name: JsonUtils.stringValue(json['name']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
+  }
+
+  static List<AppointmentProvider>? listFromJson(List<dynamic>? jsonList) {
+    List<AppointmentProvider>? result;
+    if (jsonList != null) {
+      result = <AppointmentProvider>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, AppointmentProvider.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<AppointmentProvider>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  // Euality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentProvider) &&
+    (id == other.id) &&
+    (name == other.name);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (name?.hashCode ?? 0);
+
+  // Accessories
+
+  static AppointmentProvider? findInList(List<AppointmentProvider>? providers, { String? id }) {
+    if (providers != null) {
+      for (AppointmentProvider provider in providers) {
+        if ((id == null) || (provider.id == id)) {
+          return provider;
+        }
+
+      }
+    }
+    return null;
+  }
+}
+
+///////////////////////////////
+/// AppointmentUnit
+
+class AppointmentUnit {
+  final String? id;
+  final String? providerId;
+  final String? name;
+  final AppointmentLocation? location;
+  final String? hoursOfOperation;
+  final String? details;
+
+  AppointmentUnit({this.id, this.providerId, this.name, this.location, this.hoursOfOperation, this.details});
+
+  // JSON Serialization
+
+  static AppointmentUnit? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentUnit(
+      id: JsonUtils.stringValue(json['id']),
+      providerId: JsonUtils.stringValue(json['provider_id']),
+      name: JsonUtils.stringValue(json['name']),
+      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
+      hoursOfOperation: JsonUtils.stringValue(json['hours_of_operation']),
+      details: JsonUtils.stringValue(json['details']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'provider_id': providerId,
+      'name': name,
+      'location': location?.toJson(),
+      'hours_of_operation': hoursOfOperation,
+      'details': details,
+    };
+  }
+
+  static List<AppointmentUnit>? listFromJson(List<dynamic>? jsonList) {
+    List<AppointmentUnit>? result;
+    if (jsonList != null) {
+      result = <AppointmentUnit>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, AppointmentUnit.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<AppointmentUnit>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  // Euality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentUnit) &&
+    (id == other.id) &&
+    (providerId == other.providerId) &&
+    (name == other.name) &&
+    (location == other.location) &&
+    (hoursOfOperation == other.hoursOfOperation) &&
+    (details == other.details);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (providerId?.hashCode ?? 0) ^
+    (name?.hashCode ?? 0) ^
+    (location?.hashCode ?? 0) ^
+    (hoursOfOperation?.hashCode ?? 0) ^
+    (details?.hashCode ?? 0);
+
+  // Accessories
+
+  //...
+}
+
+///////////////////////////////
+/// AppointmentTimeSlot
+
 class AppointmentTimeSlot {
   static final String dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
 
@@ -373,10 +552,10 @@ class AppointmentTimeSlot {
 
   AppointmentTimeSlot({this.providerId, this.unitId, this.startTimeUtc, this.endTimeUtc, this.capacity, this.filled, this.details, this.notes, this.notesRequired});
 
-  // Json serialization
+  // JSON Serialization
 
   static AppointmentTimeSlot? fromJson(Map<String, dynamic>? json) {
-    return (json !=null) ? AppointmentTimeSlot(
+    return (json != null) ? AppointmentTimeSlot(
       providerId: JsonUtils.stringValue(json['provider_id']),
       unitId: JsonUtils.stringValue(json['unit_id']),
       startTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_time']), format: dateTimeFormat, isUtc: true),
@@ -401,6 +580,28 @@ class AppointmentTimeSlot {
       'notes': notes,
       'notes_required': notesRequired,
     };
+  }
+
+  static List<AppointmentTimeSlot>? listFromJson(List<dynamic>? jsonList) {
+    List<AppointmentTimeSlot>? result;
+    if (jsonList != null) {
+      result = <AppointmentTimeSlot>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, AppointmentTimeSlot.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<AppointmentTimeSlot>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
   }
 
   // Euality
