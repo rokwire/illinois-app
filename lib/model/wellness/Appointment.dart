@@ -436,7 +436,17 @@ class AppointmentProvider {
 
   // Accessories
 
-  //...
+  static AppointmentProvider? findInList(List<AppointmentProvider>? providers, { String? id }) {
+    if (providers != null) {
+      for (AppointmentProvider provider in providers) {
+        if ((id == null) || (provider.id == id)) {
+          return provider;
+        }
+
+      }
+    }
+    return null;
+  }
 }
 
 ///////////////////////////////

@@ -23,7 +23,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -71,30 +70,25 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
       return accessWidget;
     }
     else if (!_appointmentsCanDisplay) {
-      return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildScheduleDescription(),
-            _buildNothingToDisplayMsg(),
-            _buildDisplayAppointmentsSettings()
-          ])
-        ),
-      );
-    }
-    else if (_isLoading) {
+      return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [_buildRescheduleDescription(), _buildNothingToDisplayMsg(), _buildDisplayAppointmentsSettings()]));
+    } else if (_isLoading) {
       return _buildLoadingContent();
-    }
-    else {
-      return RefreshIndicator(onRefresh: _onPullToRefresh, child:
-        SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildScheduleDescription(),
-            _buildUpcomingAppointments(),
-            _buildPastAppointments(),
-            _buildDisplayAppointmentsSettings()
-          ])
-        )
-      );
+    } else {
+      return RefreshIndicator(
+          onRefresh: _onPullToRefresh,
+          child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _buildRescheduleDescription(),
+                _buildUpcomingAppointments(),
+                _buildPastAppointments(),
+                _buildDisplayAppointmentsSettings()
+              ])));
     }
   }
 
@@ -107,23 +101,21 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     ]));
   }
 
-  Widget _buildScheduleDescription() {
-    String descriptionHtml = Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', '<a href={{schedule_url}}>Schedule an appointment.</a><br><a href={{reschedule_url}}>Need to cancel or reschedule?</a>');
-    return HtmlWidget(descriptionHtml,
-      onTapUrl : _onDesciptionLink,
-      textStyle:  Styles().textStyles?.getTextStyle("widget.message.medium"),
-      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary!) } : null
-    );
-  }
-
-  bool _onDesciptionLink(String url) {
-    if (url == '{{schedule_url}}') {
-      _onScheduleAppointment();
-    }
-    else if (url == '{{reschedule_url}}') {
-      _showRescheduleAppointmentPopup();
-    }
-    return true;
+  Widget _buildRescheduleDescription() {
+    String? label =
+        Localization().getStringEx('panel.wellness.appointments.home.reschedule_appointment.label', 'Need to cancel or reschedule?');
+    return Semantics(
+        label: label,
+        button: true,
+        child: InkWell(
+            child: Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Text(
+                  label,
+                  style: Styles().textStyles?.getTextStyle( "panel.wellness_appointments.button.title.underline"),
+                  semanticsLabel: "",
+                )),
+            onTap: _showRescheduleAppointmentPopup));
   }
 
   Widget _buildUpcomingAppointments() {
@@ -258,38 +250,34 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
-    
-    AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget:
-      Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)), child:
-        Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-          Padding(padding: EdgeInsets.all(30), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-              Styles().images?.getImage('university-logo') ?? Container(),
-              Padding(padding: EdgeInsets.only(top: 20), child:
-                HtmlWidget(rescheduleContentHtml,
-                  onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
-                  textStyle:  Styles().textStyles?.getTextStyle("widget.message.small"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
-                )
-              )
-            ])
-          ),
-          Positioned.fill(child:
-            Align(alignment: Alignment.topRight, child:
-              InkWell(onTap: _onTapCloseReschedulePopup, child:
-                Padding(padding: EdgeInsets.all(16), child:
-                  Styles().images?.getImage('close', excludeFromSemantics: true)
-                )
-              )
-            )
-          ),
-        ]),
-      ),
-    );
-  }
-
-  void _onScheduleAppointment() {
-    AppointmentSchedulePanel.present(context);
+    AppAlert.showCustomDialog(
+        context: context,
+        contentPadding: EdgeInsets.all(0),
+        contentWidget: Container(
+            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
+            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+              Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                    Styles().images?.getImage('university-logo') ?? Container(),
+                    Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child:
+                        HtmlWidget(
+                            rescheduleContentHtml,
+                            onTapUrl : (url) {_onTapMcKinleyUrl(url); return true;},
+                            textStyle:  Styles().textStyles?.getTextStyle("widget.message.small"),
+                            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorPrimary ?? Colors.blue)} : null
+                        )
+                    )
+                  ])
+              ),
+              Positioned.fill(child: Align(
+                  alignment: Alignment.topRight,
+                  child: InkWell(
+                      onTap: _onTapCloseReschedulePopup,
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true)))))
+            ])));
   }
 
   Future<void> _onPullToRefresh() async {
