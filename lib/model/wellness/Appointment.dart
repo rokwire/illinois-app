@@ -268,6 +268,8 @@ class AppointmentLocation {
 
   AppointmentLocation({this.id, this.latitude, this.longitude, this.title, this.phone});
 
+  String? get address => title; //TBD: ?
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

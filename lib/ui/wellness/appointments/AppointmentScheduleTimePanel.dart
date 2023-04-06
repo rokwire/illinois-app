@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+//import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class AppointmentScheduleTimePanel extends StatefulWidget {
-  final void Function(BuildContext context, AppointmentTimeSlot timeSlot) onContinue;
+  final AppointmentScheduleParam scheduleParam;
 
-  AppointmentScheduleTimePanel({Key? key, required this.onContinue}) : super(key: key);
+  AppointmentScheduleTimePanel({Key? key, required this.scheduleParam}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleTimePanelState();
@@ -59,7 +61,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.time.header.title', 'Schedule Appointment')),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar()
+      //bottomNavigationBar: uiuc.TabBar()
     );
   }
 
@@ -69,7 +71,9 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       Expanded(child:
         _buildTime()
       ),
-      _buildCommandBar(),
+      SafeArea(child:
+        _buildCommandBar(),
+      ),
     ],);
   }
 
@@ -227,7 +231,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   void _onContinue() {
     if (_canContinue) {
-      widget.onContinue(context, _selectedSlot!);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam, timeSlot: _selectedSlot),),));
     }
     else {
       SystemSound.play(SystemSoundType.click);
@@ -238,7 +242,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     setState(() {
       _loadingTimeSlots = true;
     });
-    Appointments().loadTimeSlots(dateLocal: _selectedDate).then((List<AppointmentTimeSlot>? result) {
+    Appointments().loadTimeSlots(unitId: widget.scheduleParam.unit?.id, dateLocal: _selectedDate).then((List<AppointmentTimeSlot>? result) {
       if (mounted) {
         setState(() {
           _loadingTimeSlots = false;

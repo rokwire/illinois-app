@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentScheduleUnitPanel.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -71,10 +73,10 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent('Failed to load providers');
+      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.failed', 'Failed to load providers'));
     }
     else if (_providers!.length == 0) {
-      return _buildMessageContent('No providers available');
+      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.empty', 'No providers available'));
     }
     else if (_providers!.length == 1) {
       return _buildAppointmentsContent();
@@ -233,7 +235,13 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   void _onScheduleAppointment() {
-    AppointmentSchedulePanel.present(context);
+    //AppointmentSchedulePanel.present(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleUnitPanel(
+      scheduleParam: AppointmentScheduleParam(
+        providers: _providers,
+        provider: _selectedProvider,
+      ),
+    )));
   }
 
   Future<void> _onPullToRefresh() async {

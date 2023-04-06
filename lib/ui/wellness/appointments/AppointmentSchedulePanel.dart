@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -25,14 +23,9 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class AppointmentSchedulePanel extends StatefulWidget {
 
-  final AppointmentTimeSlot timeSlot;
-  AppointmentSchedulePanel({ Key? key, required this.timeSlot }) : super(key: key);
+  final AppointmentScheduleParam scheduleParam;
 
-  static void present(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(onContinue: (BuildContext context, AppointmentTimeSlot timeSlot) {
-      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(timeSlot: timeSlot)));
-    })));
-  }
+  AppointmentSchedulePanel({ Key? key, required this.scheduleParam }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentSchedulePanelState();
@@ -59,4 +52,39 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
       bottomNavigationBar: uiuc.TabBar()
     );
   }
+}
+
+class AppointmentScheduleParam {
+  final List<AppointmentProvider>? providers;
+  final AppointmentProvider? provider;
+
+  final List<AppointmentUnit>? units;
+  final AppointmentUnit? unit;
+
+  final AppointmentTimeSlot? timeSlot;
+
+  AppointmentScheduleParam({
+    this.providers, this.provider,
+    this.units, this.unit,
+    this.timeSlot,
+  });
+
+  factory AppointmentScheduleParam.fromOther(AppointmentScheduleParam? other, {
+    List<AppointmentProvider>? providers,
+    AppointmentProvider? provider,
+
+    List<AppointmentUnit>? units,
+    AppointmentUnit? unit,
+
+    AppointmentTimeSlot? timeSlot,
+  }) => AppointmentScheduleParam(
+    providers: other?.providers ?? providers,
+    provider: other?.provider ?? provider,
+
+    units: other?.units ?? units,
+    unit: other?.unit ?? unit,
+
+    timeSlot: other?.timeSlot ?? timeSlot
+  );
+
 }
