@@ -83,10 +83,10 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
     else if (_providers == null) {
       return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.failed', 'Failed to load providers'));
     }
-    else if (_providers!.length == 0) {
+    else if (_providers?.length == 0) {
       return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.empty', 'No providers available'));
     }
-    else if (_providers!.length == 1) {
+    else if (_providers?.length == 1) {
       return _buildUnitsContent();
     }
     else {
@@ -196,7 +196,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
     else if (_units == null) {
       return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.units.failed', 'Failed to load units for provider'));
     }
-    else if (_units!.length == 0) {
+    else if (_units?.length == 0) {
       return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.units.empty', 'No units available for selected provider'));
     }
     else  {
@@ -272,7 +272,7 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   void _loadUnits() {
     String? providerId = _selectedProvider?.id;
     if (providerId != null) {
-      setStateIfMounted(() {
+      applyStateIfMounted(() {
         _isLoadingUnits = true;
       });
       Appointments().loadUnits(providerId: providerId).then((List<AppointmentUnit>? result) {

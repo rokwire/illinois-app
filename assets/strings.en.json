@@ -1951,6 +1951,9 @@
     "panel.wellness.appointments2.home.message.provider.empty": "No selected provider",
     "panel.wellness.appointments2.home.message.units.failed": "Failed to load units for provider",
     "panel.wellness.appointments2.home.message.units.empty": "No units available for selected provider",
+    "panel.wellness.appointments2.home.message.appointments.failed": "Failed to load appointments",
+    "panel.wellness.appointments2.home.message.appointments.upcoming.empty": "No upcoming appointments for selected provider(s)",
+    "panel.wellness.appointments2.home.message.appointments.past.empty": "No past appointments for selected provider(s)",
     "panel.wellness.appointments2.home.label.providers.all": "All Providers",
 
     "panel.wellness.home.header.title": "Wellness",
