@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
@@ -44,6 +45,8 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
   bool _isLoading = false;
   bool _isProvidersExpanded = false;
+
+//List<Appointment>? _appointments;
 
   @override
   void initState() {
@@ -106,7 +109,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
           borderRadius: BorderRadius.all(Radius.circular(5)),
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
           rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
-          label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : 'Select a provider',
+          label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
           onTap: _onProvidersDropdown
         )
       )
@@ -150,6 +153,14 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
       }
     }
 
+    items.add(RibbonButton(
+      backgroundColor: Styles().colors!.white,
+      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      rightIconKey: null,
+      label: Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
+      onTap: () => _onTapProvider(null)
+    ));
+
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
         Column(children: items)
@@ -169,11 +180,12 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     });
   }
 
-  void _onTapProvider(AppointmentProvider provider) {
+  void _onTapProvider(AppointmentProvider? provider) {
+    Analytics().logSelect(target: (provider != null) ? provider.name : 'All Providers');
     setStateIfMounted(() {
       _isProvidersExpanded = false;
       _selectedProvider = provider;
-      Storage().selectedAppointmentProviderId = provider.id;
+      Storage().selectedAppointmentProviderId = provider?.id;
     });
   }
 
@@ -226,8 +238,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
       if (mounted) {
         setState(() {
           _providers = result;
-          _selectedProvider = AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId) ??
-            (((result != null) && result.isNotEmpty) ? result.first : null);
+          _selectedProvider = AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId);
           _isLoading = false;
         });
       }

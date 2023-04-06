@@ -1951,6 +1951,7 @@
 	"panel.wellness.appointments2.home.message.provider.empty": "No selected provider",
 	"panel.wellness.appointments2.home.message.units.failed": "Failed to load units for provider",
 	"panel.wellness.appointments2.home.message.units.empty": "No units for selected provider",
+	"panel.wellness.appointments2.home.label.providers.all": "All Providers",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
