@@ -380,8 +380,14 @@ class AppointmentsAccount {
 class AppointmentProvider {
   final String? id;
   final String? name;
+  final bool? supportsSchedule;
+  final bool? supportsReschedule;
+  final bool? supportsCancel;
 
-  AppointmentProvider({this.id, this.name});
+  AppointmentProvider({
+    this.id, this.name,
+    this.supportsSchedule, this.supportsReschedule, this.supportsCancel
+  });
 
   // JSON Serialization
 
@@ -389,6 +395,9 @@ class AppointmentProvider {
     return (json != null) ? AppointmentProvider(
       id: JsonUtils.stringValue(json['id']),
       name: JsonUtils.stringValue(json['name']),
+      supportsSchedule: JsonUtils.boolValue(json['supports_schedule']),
+      supportsReschedule: JsonUtils.boolValue(json['supports_reschedule']),
+      supportsCancel: JsonUtils.boolValue(json['supports_cancel']),
     ) : null;
   }
 
@@ -396,6 +405,9 @@ class AppointmentProvider {
     return {
       'id': id,
       'name': name,
+      'supports_schedule': supportsSchedule,
+      'supports_reschedule': supportsReschedule,
+      'supports_cancel': supportsCancel,
     };
   }
 
@@ -427,12 +439,18 @@ class AppointmentProvider {
   bool operator==(dynamic other) =>
     (other is AppointmentProvider) &&
     (id == other.id) &&
-    (name == other.name);
+    (name == other.name) &&
+    (supportsSchedule == other.supportsSchedule) &&
+    (supportsReschedule == other.supportsReschedule) &&
+    (supportsCancel == other.supportsCancel);
 
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
-    (name?.hashCode ?? 0);
+    (name?.hashCode ?? 0) ^
+    (supportsSchedule?.hashCode ?? 0) ^
+    (supportsReschedule?.hashCode ?? 0) ^
+    (supportsCancel?.hashCode ?? 0);
 
   // Accessories
 
