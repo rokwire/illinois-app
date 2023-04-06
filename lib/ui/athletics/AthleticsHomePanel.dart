@@ -431,7 +431,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
       ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3});
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: initialFilter)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: initialFilter)));
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.see_more_events', 'See more events is not available while offline.'));
@@ -662,7 +662,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                           Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
-                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny_variant2'),)
+                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.medium_fat'),)
                         ],),
                       )
                     ],),

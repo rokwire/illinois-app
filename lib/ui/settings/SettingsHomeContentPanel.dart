@@ -113,7 +113,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
             Expanded(child:
               _DebugContainer(child:
                 Padding(padding: EdgeInsets.only(left: 16), child:
-                  Text(Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),)
+                  Text(Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), style: Styles().textStyles?.getTextStyle("widget.sheet.title.regular"))
                 )
               ),
             ),

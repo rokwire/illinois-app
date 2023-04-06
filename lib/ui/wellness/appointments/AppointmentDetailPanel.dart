@@ -27,7 +27,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -539,10 +538,8 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   void _onLocationDetailTapped() {
-    if ((_appointment!.location?.latitude != null) && (_appointment!.location?.longitude != null)) {
-      Analytics().logSelect(target: "Location Detail");
-      NativeCommunicator().launchExploreMapDirections(target: widget.appointment);
-    }
+    Analytics().logSelect(target: "Location Directions");
+    widget.appointment?.launchDirections();
   }
 
   void _launchUrl(String? url) async {

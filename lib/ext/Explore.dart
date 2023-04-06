@@ -7,7 +7,9 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
@@ -38,6 +40,7 @@ import 'package:geolocator/geolocator.dart' as Core;
 import 'dart:math' as math;
 
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 extension ExploreExt on Explore {
 
@@ -241,6 +244,7 @@ extension ExploreExt on Explore {
 
   void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData }) {
     Route? route;
+    String? url;
     if (this is Event) {
       if ((this as Event).isGameEvent) {
         route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: (this as Event).speaker, sportName: (this as Event).registrationLabel,),);
@@ -262,7 +266,10 @@ extension ExploreExt on Explore {
       route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game),);
     }
     else if (this is Building) {
-      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building),);
+      url = Wellness().mentalHealthBuildingUrl(buildingId: (this as Building).id);
+      if (url == null) {
+        route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building),);
+      }
     }
     else if (this is MTDStop) {
       route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop,),);
@@ -280,6 +287,17 @@ extension ExploreExt on Explore {
       route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: this, initialLocationData: initialLocationData,),);
     }
 
+    if (url != null) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else {
+        Uri? uri = Uri.tryParse(url);
+        if (uri != null) {
+          launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      }
+    }
     if (route != null) {
       Navigator.push(context, route);
     }

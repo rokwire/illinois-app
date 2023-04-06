@@ -65,7 +65,7 @@ public class MobileAccessUnlockNotification {
 
     public static NotificationCompat.Builder notificationBuilder(Context context, String channelId) {
         return new NotificationCompat.Builder(context, channelId)
-                .setColor(ContextCompat.getColor(context, R.color.illinois_orange))
+                .setColor(ContextCompat.getColor(context, R.color.white))
                 .setSmallIcon(R.drawable.app_icon);
     }
 }

@@ -16,8 +16,6 @@
 
 package edu.illinois.rokwire;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.hardware.SensorManager;
@@ -43,10 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.illinois.rokwire.maps.MapActivity;
-import edu.illinois.rokwire.maps.MapDirectionsActivity;
-import edu.illinois.rokwire.maps.MapViewFactory;
-import edu.illinois.rokwire.maps.MapPickLocationActivity;
 import edu.illinois.rokwire.mobile_access.MobileAccessPlugin;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -59,9 +53,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private static MethodChannel METHOD_CHANNEL;
     private static final String NATIVE_CHANNEL = "edu.illinois.rokwire/native_call";
-    private static MainActivity instance = null;
-
-    private static MethodChannel.Result pickLocationResult;
 
     private HashMap config;
 
@@ -77,7 +68,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        instance = this;
         initScreenOrientation();
         if (mobileAccessPlugin != null) {
             mobileAccessPlugin.onActivityCreate();
@@ -120,27 +110,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
-    public static MainActivity getInstance() {
-        return instance;
-    }
-
-    public static void invokeFlutterMethod(String methodName, Object arguments) {
-        if (METHOD_CHANNEL != null) {
-            getInstance().runOnUiThread(() -> METHOD_CHANNEL.invokeMethod(methodName, arguments));
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    public HashMap getSecretKeys() {
-        return Utils.Map.getMapValueForKey(config, "secretKeys");
-    }
-
-    public HashMap getThirdPartyServices() {
-        return Utils.Map.getMapValueForKey(config, "thirdPartyServices");
     }
 
     @Override
@@ -148,11 +120,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         super.configureFlutterEngine(flutterEngine);
         METHOD_CHANNEL = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), NATIVE_CHANNEL);
         METHOD_CHANNEL.setMethodCallHandler(this);
-
-        flutterEngine
-                .getPlatformViewsController()
-                .getRegistry()
-                .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
 
         mobileAccessPlugin = new MobileAccessPlugin(this);
         flutterEngine.getPlugins().add(mobileAccessPlugin);
@@ -200,45 +167,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private void initWithParams(Object configObj) {
         this.config = (configObj instanceof HashMap) ? ((HashMap)configObj) : null;
-    }
-
-    private void launchMapsDirections(Object explore, Object options) {
-        Intent intent = new Intent(this, MapDirectionsActivity.class);
-        if (explore instanceof HashMap) {
-            HashMap singleExplore = (HashMap) explore;
-            intent.putExtra("explore", singleExplore);
-        } else if (explore instanceof ArrayList) {
-            ArrayList exploreList = (ArrayList) explore;
-            intent.putExtra("explore", exploreList);
-        }
-        HashMap optionsMap = (options instanceof HashMap) ? (HashMap) options : null;
-        if (optionsMap != null) {
-            intent.putExtra("options", optionsMap);
-        }
-        startActivity(intent);
-    }
-
-    private void launchMap(Object target, Object options, Object markers) {
-        HashMap targetMap = (target instanceof HashMap) ? (HashMap) target : null;
-        HashMap optionsMap = (options instanceof HashMap) ? (HashMap) options : null;
-        ArrayList<HashMap> markersValues = (markers instanceof  ArrayList) ? ( ArrayList<HashMap>) markers : null;
-        Intent intent = new Intent(this, MapActivity.class);
-        Bundle serializableExtras = new Bundle();
-        serializableExtras.putSerializable("target", targetMap);
-        serializableExtras.putSerializable("options", optionsMap);
-        serializableExtras.putSerializable("markers", markersValues);
-        intent.putExtras(serializableExtras);
-        startActivity(intent);
-    }
-
-    private void launchMapsLocationPick(Object exploreParam) {
-        HashMap explore = null;
-        if (exploreParam instanceof HashMap) {
-            explore = (HashMap) exploreParam;
-        }
-        Intent locationPickerIntent =  new Intent(this, MapPickLocationActivity.class);
-        locationPickerIntent.putExtra("explore", explore);
-        startActivityForResult(locationPickerIntent, Constants.SELECT_LOCATION_ACTIVITY_RESULT_CODE);
     }
 
     private List<String> handleEnabledOrientations(Object orientations) {
@@ -453,19 +381,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.SELECT_LOCATION_ACTIVITY_RESULT_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                pickLocationResult.success(data != null ? data.getStringExtra("location") : null);
-            } else {
-                pickLocationResult.success(null);
-            }
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
     /**
      * Overrides {@link io.flutter.plugin.common.MethodChannel.MethodCallHandler} onMethodCall()
      */
@@ -477,24 +392,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.APP_INIT_KEY:
                     Object configObject = methodCall.argument("config");
                     initWithParams(configObject);
-                    result.success(true);
-                    break;
-                case Constants.MAP_DIRECTIONS_KEY:
-                    Object explore = methodCall.argument("explore");
-                    Object optionsObj = methodCall.argument("options");
-                    launchMapsDirections(explore, optionsObj);
-                    result.success(true);
-                    break;
-                case Constants.MAP_PICK_LOCATION_KEY:
-                    pickLocationResult = result;
-                    launchMapsLocationPick(methodCall.argument("explore"));
-                    // Result is called on latter step
-                    break;
-                case Constants.MAP_KEY:
-                    Object target = methodCall.argument("target");
-                    Object options = methodCall.argument("options");
-                    Object markers = methodCall.argument("markers");
-                    launchMap(target, options,markers);
                     result.success(true);
                     break;
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:

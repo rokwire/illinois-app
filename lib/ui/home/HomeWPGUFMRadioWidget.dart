@@ -57,7 +57,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
               Expanded(child:
                 Padding(padding: EdgeInsets.all(8), child:
                   Center(child:
-                    Text(HomeWPGUFMRadioWidget.title, style: TextStyle(fontSize: 20, color: Colors.white),),
+                    Text(HomeWPGUFMRadioWidget.title, style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular")),
                   ),
                 ),
               ),

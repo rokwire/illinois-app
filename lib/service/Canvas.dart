@@ -183,10 +183,10 @@ class Canvas with Service implements NotificationsListener {
     String? url;
     http.Response? response;
     if (_useCanvasApi) {
-      url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/assignment_groups?include[]=assignments');
+      url = _masquerade('${Config().canvasUrl}/api/v1/courses/$courseId/assignment_groups?include[]=assignments&include[]=submission');
       response = await Network().get(url, headers: _canvasAuthHeaders);
     } else {
-      url = '${Config().lmsUrl}/courses/$courseId/assignment-groups?include=assignments';
+      url = '${Config().lmsUrl}/courses/$courseId/assignment-groups?include=assignments,submission';
       response = await Network().get(url, auth: Auth2());
     }
     int? responseCode = response?.statusCode;

@@ -18,8 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -237,6 +237,6 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
 
   void _onTapDirections() {
     Analytics().logSelect(target: 'Parking Lot Directions');
-    NativeCommunicator().launchExploreMapDirections(target: widget.inventory);
+    GeoMapUtils.launchDirections(destination: widget.inventory?.lotAddress, travelMode: GeoMapUtils.traveModeWalking);
   }
 }

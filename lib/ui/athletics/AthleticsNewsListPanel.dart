@@ -225,11 +225,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
     return _wrapWithBottomBorder(Styles().colors!.surfaceAccent!,
         Padding(padding: EdgeInsets.only(top: 14),
         child:Text(Localization().getStringEx("panel.athletics_news_list.label.filter_by", "Filter by"),
-          style: TextStyle(
-          fontSize: 16,
-          color: Styles().colors!.textBackground,
-        fontFamily: Styles().fontFamilies!.regular
-    )),));
+          style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),));
   }
 
   Widget _wrapWithBottomBorder(Color color, Widget child){

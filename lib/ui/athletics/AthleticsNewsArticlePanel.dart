@@ -139,7 +139,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                         color: Styles().colors!.fillColorPrimary,
                         child: Padding(padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                           child: Text(_article?.category?.toUpperCase() ?? '',
-                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
+                            style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced"),
                           ),
                         ),
                       ),
@@ -158,16 +158,14 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                     ],),
                   ),
                   Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 12, bottom: 24), child:
-                    Text(_article?.title ?? '', style:
-                      TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary),
+                    Text(_article?.title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.extra_large"),
                     ),
                   ),
                   Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 24), child:
                     Row(children: <Widget>[
                       Styles().images?.getImage('news', excludeFromSemantics: true) ?? Container(),
                       Container(width: 5,),
-                      Text(_article?.displayTime ?? '', style:
-                        TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.medium),
+                      Text(_article?.displayTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"),
                       ),
                     ],),
                   ),
@@ -211,7 +209,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
         child:
         HtmlWidget(
             StringUtils.ensureNotEmpty(_article!.description),
-            textStyle:  TextStyle(color: Styles().colors!.textBackground),
+          textStyle:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
         )
       ));
     }

@@ -341,12 +341,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateDining() {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining)));
   }
 
   void _navigateEvents() {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events)));
   }
 
   void _navigateGroups() {

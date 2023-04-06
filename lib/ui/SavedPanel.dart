@@ -198,11 +198,11 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             HtmlWidget(
                 "<div style=text-align:center> ${HomeFavoritesWidget.emptyMessageHtml(favoriteCategory)} </div>",
                 onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'SavedPanel($favoriteCategory)'); return true;},
-                textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 18),
+                textStyle: Styles().textStyles?.getTextStyle("widget.message.medium.semi_thin"),
                 customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(favoriteCategory) ?? Colors.red)} : null,
                 // renderMode: RenderMode.sliverList,
             )
-            : Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+            : Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
         Expanded(child: Container(), flex: 3),
     ],),);
   }
@@ -251,7 +251,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           Row(children: <Widget>[
             Expanded(child:
               Padding(padding: EdgeInsets.all(16), child:
-                Text(Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."), style: Styles().textStyles?.getTextStyle("widget.title.light.regular"),)
+                Text(Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."), style: Styles().textStyles?.getTextStyle("widget.title.light.regular.thin"),)
               ),
             ),
             InkWell(onTap: _onAuthorizeSkip, child: 

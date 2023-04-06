@@ -308,7 +308,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.title.medium")),
                       ),
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _onTapFavoriteStar(item), child:
@@ -334,10 +334,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                           Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
+                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
                           )
                         ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
+                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
                   )),)
                 ]),
               ),
@@ -528,7 +528,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         child:  HtmlWidget(
             HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
             onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'HomeFavoritesWidget(${widget.favoriteKey})'); return true;},
-            textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+            textStyle:  Styles().textStyles?.getTextStyle("widget.card.detail.regular"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(widget.favoriteKey) ?? Colors.red)} : null
         )
       ),

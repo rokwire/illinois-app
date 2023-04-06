@@ -29,6 +29,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   Questionnaire? _questionnaire;
   Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
 
+  int? _allAudienceCount;
   int? _targetAudienceCount;
   bool _shouldUpdateTargetAudienceCount = false;
   bool _updatingTargetAudienceCount = false;
@@ -39,6 +40,16 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   void initState() {
 
     _loading = true;
+
+    Groups().loadResearchProjectTragetAudienceCount(<String, dynamic>{}).then((int? count) {
+      if (mounted) {
+        if ((count != null) && (_allAudienceCount != count)) {
+          setState(() {
+            _allAudienceCount = count;
+          });
+        }
+      }
+    });
 
     Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
       if (mounted) {
@@ -55,6 +66,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         _updateTargetAudienceCount();
       }
     });
+
     super.initState();
   }
 
@@ -97,21 +109,40 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       contentList.addAll(questions);
     }
 
-    String headingInfo, submitText;
+    String headingInfo;
     if (_targetAudienceCount == null) {
       headingInfo = _updatingTargetAudienceCount ? 'Evaluating potential participants...' : 'Potential participants evaluation failed.';
+    }
+    else if (_targetAudienceCount == 0) {
+      headingInfo = (_allAudienceCount != null) ?
+        sprintf('Currently targeting 0 of %s potential participants.', [ _allAudienceCount ]) :
+        'Currently targeting no potential participants.';
+    }
+    else if (_targetAudienceCount == 1) {
+      headingInfo = (_allAudienceCount != null) ?
+        sprintf('Currently targeting 1 of %s potential participants.', [ _allAudienceCount ]) :
+        'Currently targeting 1 potential participant.';
+    }
+    else {
+      headingInfo = (_allAudienceCount != null) ?
+        sprintf('Currently targeting %s of %s potential participants.', [ _targetAudienceCount, _allAudienceCount ]) :
+        sprintf('Currently targeting %s potential participants.', [_targetAudienceCount]);
+    }
+
+    String submitText;
+    if (_selectedCount == 0) {
+      submitText = 'Target all potential participants';
+    }
+    else if (_targetAudienceCount == null) {
       submitText = 'Save';
     }
     else if (_targetAudienceCount == 0) {
-      headingInfo = 'Currently targeting no potential participants.';
       submitText = 'Target no potential participants';
     }
     else if (_targetAudienceCount == 1) {
-      headingInfo = 'Currently targeting 1 potential participant.';
       submitText = 'Target 1 potential participant';
     }
     else {
-      headingInfo = sprintf('Currently targeting %s potential participants.', [_targetAudienceCount]);
       submitText = sprintf('Target %s potential participants', [_targetAudienceCount]);
     }
 
@@ -123,20 +154,20 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
               Padding(padding: EdgeInsets.zero, child:
-                Text('Select Answers',
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary),),
+                Text('Select Answers', //TBD localize
+                  style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
               ),
               Padding(padding: EdgeInsets.zero, child:
                 Text('Create a target audience by selecting answers that potential participants have chosen.',
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.textSurfaceAccent)),
+                  style: Styles().textStyles?.getTextStyle("panel.research_project.profile.detail.regular")),
               ),
               Padding(padding: EdgeInsets.only(top: 4), child:
                 Text(headingInfo,
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, color: Styles().colors?.fillColorPrimary)),
+                  style: Styles().textStyles?.getTextStyle("widget.title.small.fat")),
               ),
               Padding(padding: EdgeInsets.only(right: 12), child:
                 Text(profileDescription, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 12, color: Styles().colors?.textSurfaceAccent)
+                  style: Styles().textStyles?.getTextStyle("panel.research_project.profile.detail.small")
                 ),
               ),
             ]),
@@ -395,9 +426,9 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           }
           if (answerHints.isNotEmpty) {
             contentList.add(RichText(text:
-              TextSpan(style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary), children: <TextSpan>[
-                TextSpan(text: "$questionHint: ", style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
-                TextSpan(text: answerHints.join(', '), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+              TextSpan(style: Styles().textStyles?.getTextStyle("widget.description.regular"), children: <TextSpan>[
+                TextSpan(text: "$questionHint: ", style: Styles().textStyles?.getTextStyle("widget.description.regular.fat")),
+                TextSpan(text: answerHints.join(', '), style: Styles().textStyles?.getTextStyle("widget.description.regular")),
               ]),
             ));
           }
@@ -435,6 +466,14 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
       });
     }
+  }
+
+  int get _selectedCount {
+    int selectedCount = 0;
+    for(LinkedHashSet<String> value in _selection.values) {
+      selectedCount += value.length;
+    }
+    return selectedCount;
   }
 
   Widget _buildLoading() {

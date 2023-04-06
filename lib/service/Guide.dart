@@ -32,6 +32,7 @@ class Guide with Service implements NotificationsListener {
   static const String campusReminderContentType = "campus-reminder";
   static const String campusHighlightContentType = "campus-highlight";
   static const String campusSafetyResourceContentType = "campus-safety-resource";
+  static const String wellnessMentalHealthContentType = "mental-health";
 
   static const String _cacheFileName = "guide.json";
 
@@ -245,6 +246,18 @@ class Guide with Service implements NotificationsListener {
     return JsonUtils.stringValue(entryValue(entry, '_id'));
   }
 
+  String? entryGuide(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'guide'));
+  }
+
+  String? entryCategory(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'category'));
+  }
+
+  String? entrySection(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'section'));
+  }
+
   String? entryTitle(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
     String? result = JsonUtils.stringValue(entryValue(entry, 'title')) ?? JsonUtils.stringValue(entryValue(entry, 'list_title')) ?? JsonUtils.stringValue(entryValue(entry, 'detail_title'));
     return ((result != null) && (stripHtmlTags == true)) ? StringUtils.stripHtmlTags(result) : result;
@@ -265,10 +278,10 @@ class Guide with Service implements NotificationsListener {
 
   Map<String, dynamic>? entryAnalyticsAttributes(Map<String, dynamic>? entry) => (entry != null) ? {
     Analytics.LogAttributeGuideId : entryId(entry),
-    Analytics.LogAttributeGuideTitle : JsonUtils.stringValue(Guide().entryTitle(entry, stripHtmlTags: true)),
-    Analytics.LogAttributeGuide : JsonUtils.stringValue(Guide().entryValue(entry, 'guide')),
-    Analytics.LogAttributeGuideCategory :  JsonUtils.stringValue(Guide().entryValue(entry, 'category')),
-    Analytics.LogAttributeGuideSection :  JsonUtils.stringValue(Guide().entryValue(entry, 'section')),
+    Analytics.LogAttributeGuideTitle : Guide().entryTitle(entry, stripHtmlTags: true),
+    Analytics.LogAttributeGuide : Guide().entryGuide(entry),
+    Analytics.LogAttributeGuideCategory :  Guide().entryCategory(entry),
+    Analytics.LogAttributeGuideSection :  Guide().entrySection(entry),
   } : null;
 
   bool isEntryReminder(Map<String, dynamic>? entry) {
@@ -277,6 +290,10 @@ class Guide with Service implements NotificationsListener {
 
   bool isEntrySafetyResource(Map<String, dynamic>? entry) {
     return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusSafetyResourceContentType;
+  }
+
+  bool isEntryMentalHeatlh(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == wellnessMentalHealthContentType;
   }
 
   // Returns the date in:
@@ -302,8 +319,8 @@ class Guide with Service implements NotificationsListener {
       for (dynamic contentEntry in _contentList!) {
         Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
         if ((guideEntry != null) &&
-            ((guide == null) || (Guide().entryValue(guideEntry, 'guide') == guide)) &&
-            ((category == null) || (Guide().entryValue(guideEntry, 'category')) == category) &&
+            ((guide == null) || (Guide().entryGuide(guideEntry) == guide)) &&
+            ((category == null) || (Guide().entryCategory(guideEntry)) == category) &&
             ((section == null) || (GuideSection.fromGuideEntry(guideEntry) == section)))
         {
           guideList.add(guideEntry);
@@ -360,6 +377,26 @@ class Guide with Service implements NotificationsListener {
       });
 
       return safetyResourcesList;
+    }
+    return null;
+  }
+
+  List<Map<String, dynamic>>? get mentalHealthList {
+    if (_contentList != null) {
+
+      List<Map<String, dynamic>> mentalHealthList = <Map<String, dynamic>>[];
+      for (dynamic entry in _contentList!) {
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(entry);
+        if (isEntryMentalHeatlh(guideEntry)) {
+          mentalHealthList.add(guideEntry!);
+        }
+      }
+
+      mentalHealthList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+        return SortUtils.compare(Guide().entryListTitle(entry1, stripHtmlTags: true), Guide().entryListTitle(entry2, stripHtmlTags: true));
+      });
+
+      return mentalHealthList;
     }
     return null;
   }
@@ -802,7 +839,7 @@ class GuideSection {
 
   static GuideSection? fromGuideEntry(Map<String, dynamic>? guideEntry) {
     return (guideEntry != null) ? GuideSection(
-        name: JsonUtils.stringValue(Guide().entryValue(guideEntry, 'section')),
+        name: Guide().entrySection(guideEntry),
         date: Guide().isEntryReminder(guideEntry) ? Guide().reminderSectionDate(guideEntry) : null,
     ) : null;
   }
