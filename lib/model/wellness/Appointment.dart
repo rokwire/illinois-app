@@ -95,19 +95,14 @@ class Appointment with Explore, Favorite {
   }
 
   String? get imageKeyBasedOnCategory { //Keep consistent images
-      String? toutImageUrl;
-      switch (type) {
-        case AppointmentType.in_person:
-          toutImageUrl = 'photo-building';
-          break;
-        case AppointmentType.online:
-          toutImageUrl = 'photo-online';
-          break;
-        default:
-          toutImageUrl = imageUrl!;
-          break;
-      }
-      return toutImageUrl;
+    return (type != null) ? imageKeyForAppointmentType(type!) : imageUrl;
+  }
+
+  static String imageKeyForAppointmentType(AppointmentType appointmentType) {
+    switch (appointmentType) {
+      case AppointmentType.in_person: return 'photo-building';
+      case AppointmentType.online: return 'photo-online';
+    }
   }
 
   static List<Appointment>? listFromJson(List<dynamic>? jsonList) {

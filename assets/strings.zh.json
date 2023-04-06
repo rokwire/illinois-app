@@ -2715,6 +2715,7 @@
 	"panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"panel.appointment.schedule.header.title": "Schedule Appointment",
+	"panel.appointment.schedule.type.hint": "Select a type",
 
 	"panel.appointment.schedule.time.header.title": "Schedule Appointment",
 	"panel.appointment.schedule.time.button.continue.title": "Next",
@@ -3288,6 +3289,9 @@
 	"model.wellness.appointment.type.online.label": "遠程醫療",
 	"model.wellness.appointment.category.label": "MYMCKINLEY 任命",
 	"model.wellness.appointment.title.label": "MyMcKinley 預約",
+
+	"model.wellness.appointment2.type.in_person.label": "In Person",
+	"model.wellness.appointment2.type.online.label": "Online",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",

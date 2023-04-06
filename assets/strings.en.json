@@ -2718,6 +2718,7 @@
     "panel.appointment.detail.error.msg": "Failed to load appointment data.",
 
     "panel.appointment.schedule.header.title": "Schedule Appointment",
+    "panel.appointment.schedule.type.hint": "Select a type",
     
     "panel.appointment.schedule.time.header.title": "Schedule Appointment",
 	"panel.appointment.schedule.time.button.continue.title": "Next",
@@ -3291,6 +3292,9 @@
     "model.wellness.appointment.type.online.label": "Telehealth",
     "model.wellness.appointment.category.label": "MYMCKINLEY APPOINTMENTS",
     "model.wellness.appointment.title.label": "MyMcKinley Appointment",
+
+    "model.wellness.appointment2.type.in_person.label": "In Person",
+    "model.wellness.appointment2.type.online.label": "Online",
 
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",
