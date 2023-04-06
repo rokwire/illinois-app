@@ -1942,9 +1942,19 @@
 	"panel.wellness.appointments.home.past.list.empty.msg": "您沒有在伊利諾伊應用程序中鏈接最近的過去約會。",
 	"panel.wellness.appointments.home.past_appointments.header.label": "最近過去的約會",
 	"panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley url}}'>訪問 {{mckinley_url_label}} 以查看過去約會的完整歷史記錄。</a>&nbsp;<img src='asset:{{external_links icon}}' alt= ''/>",
-    "panel.wellness.appointments.home.display.nothing.msg": "沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
-    "panel.wellness.appointments.home.display.settings.on.label": "顯示我的約會",
-    "panel.wellness.appointments.home.display.settings.off.label": "不要顯示我的約會",
+  "panel.wellness.appointments.home.display.nothing.msg": "沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
+  "panel.wellness.appointments.home.display.settings.on.label": "顯示我的約會",
+  "panel.wellness.appointments.home.display.settings.off.label": "不要顯示我的約會",
+
+  "panel.wellness.appointments2.home.message.providers.failed": "Failed to load providers",
+  "panel.wellness.appointments2.home.message.providers.empty": "No providers available",
+	"panel.wellness.appointments2.home.message.provider.empty": "No selected provider",
+	"panel.wellness.appointments2.home.message.units.failed": "Failed to load units for provider",
+	"panel.wellness.appointments2.home.message.units.empty": "No units for selected provider",
+	"panel.wellness.appointments2.home.message.appointments.failed": "Failed to load appointments",
+	"panel.wellness.appointments2.home.message.appointments.upcoming.empty": "No upcoming appointments for selected provider(s)",
+	"panel.wellness.appointments2.home.message.appointments.past.empty": "No past appointments for selected provider(s)",
+"panel.wellness.appointments2.home.label.providers.all": "All Providers",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
@@ -2705,11 +2715,14 @@
 	"panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"panel.appointment.schedule.header.title": "Schedule Appointment",
+	"panel.appointment.schedule.type.hint": "Select a type",
 
 	"panel.appointment.schedule.time.header.title": "Schedule Appointment",
 	"panel.appointment.schedule.time.button.continue.title": "Next",
 	"panel.appointment.schedule.time.button.continue.hint": "",
 	"panel.appointment.schedule.time.label.empty": "No time slots available for this date",
+
+	"panel.appointment.schedule.unit.header.title": "Schedule Appointment",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 	"widget.game_day.label.no_games":"今天沒有比賽。",
@@ -3276,6 +3289,9 @@
 	"model.wellness.appointment.type.online.label": "遠程醫療",
 	"model.wellness.appointment.category.label": "MYMCKINLEY 任命",
 	"model.wellness.appointment.title.label": "MyMcKinley 預約",
+
+	"model.wellness.appointment2.type.in_person.label": "In Person",
+	"model.wellness.appointment2.type.online.label": "Online",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",

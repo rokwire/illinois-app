@@ -1946,6 +1946,16 @@
     "panel.wellness.appointments.home.display.settings.on.label": "Display My Appointments",
     "panel.wellness.appointments.home.display.settings.off.label": "Don't Display My Appointments",
 
+    "panel.wellness.appointments2.home.message.providers.failed": "Failed to load providers",
+    "panel.wellness.appointments2.home.message.providers.empty": "No providers available",
+    "panel.wellness.appointments2.home.message.provider.empty": "No selected provider",
+    "panel.wellness.appointments2.home.message.units.failed": "Failed to load units for provider",
+    "panel.wellness.appointments2.home.message.units.empty": "No units available for selected provider",
+    "panel.wellness.appointments2.home.message.appointments.failed": "Failed to load appointments",
+    "panel.wellness.appointments2.home.message.appointments.upcoming.empty": "No upcoming appointments for selected provider(s)",
+    "panel.wellness.appointments2.home.message.appointments.past.empty": "No past appointments for selected provider(s)",
+    "panel.wellness.appointments2.home.label.providers.all": "All Providers",
+
     "panel.wellness.home.header.title": "Wellness",
     "panel.wellness.home.eight_dimensions.header.title": "8 Dimensions of Wellness",
 
@@ -2708,11 +2718,14 @@
     "panel.appointment.detail.error.msg": "Failed to load appointment data.",
 
     "panel.appointment.schedule.header.title": "Schedule Appointment",
+    "panel.appointment.schedule.type.hint": "Select a type",
     
     "panel.appointment.schedule.time.header.title": "Schedule Appointment",
 	"panel.appointment.schedule.time.button.continue.title": "Next",
     "panel.appointment.schedule.time.button.continue.hint": "",
     "panel.appointment.schedule.time.label.empty": "No time slots available for this date",
+
+    "panel.appointment.schedule.unit.header.title": "Schedule Appointment",
 
     "widget.game_day.label.its_game_day":"It's Game Day!",
     "widget.game_day.label.no_games":"No today games.",
@@ -3279,6 +3292,9 @@
     "model.wellness.appointment.type.online.label": "Telehealth",
     "model.wellness.appointment.category.label": "MYMCKINLEY APPOINTMENTS",
     "model.wellness.appointment.title.label": "MyMcKinley Appointment",
+
+    "model.wellness.appointment2.type.in_person.label": "In Person",
+    "model.wellness.appointment2.type.online.label": "Online",
 
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",

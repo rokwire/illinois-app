@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentScheduleUnitPanel.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -38,10 +42,14 @@ class WellnessAppointments2HomeContentWidget extends StatefulWidget {
 class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppointments2HomeContentWidget> implements NotificationsListener {
 
   List<AppointmentProvider>? _providers;
-  AppointmentProvider? _selectedProvider;
+  bool _isLoadingProviders = false;
 
-  bool _isLoading = false;
+  AppointmentProvider? _selectedProvider;
   bool _isProvidersExpanded = false;
+
+  List<Appointment>? _upcomingAppointments;
+  List<Appointment>? _pastAppointments;
+  bool _isLoadingAppointments = false;
 
   @override
   void initState() {
@@ -67,17 +75,22 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     if (accessWidget != null) {
       return accessWidget;
     }
-    else if (_isLoading) {
+    else if (_isLoadingProviders) {
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent('Failed to load providers');
+      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.failed', 'Failed to load providers'));
     }
-    else if (_providers!.length == 0) {
-      return _buildMessageContent('No providers available');
+    else if (_providers?.length == 0) {
+      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.empty', 'No providers available'));
     }
-    else if (_providers!.length == 1) {
-      return _buildAppointmentsContent();
+    else if (_providers?.length == 1) {
+      return Column(children: [
+        Padding(padding: EdgeInsets.only(bottom: 2), child:
+          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
+        ),
+        _buildAppointmentsContent(),
+      ]);
     }
     else {
       return Column(children: [
@@ -104,7 +117,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
           borderRadius: BorderRadius.all(Radius.circular(5)),
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
           rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
-          label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : 'Select a provider',
+          label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
           onTap: _onProvidersDropdown
         )
       )
@@ -148,6 +161,14 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
       }
     }
 
+    items.add(RibbonButton(
+      backgroundColor: Styles().colors!.white,
+      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      rightIconKey: null,
+      label: Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
+      onTap: () => _onTapProvider(null)
+    ));
+
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
         Column(children: items)
@@ -167,23 +188,73 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     });
   }
 
-  void _onTapProvider(AppointmentProvider provider) {
+  void _onTapProvider(AppointmentProvider? provider) {
+    Analytics().logSelect(target: (provider != null) ? provider.name : 'All Providers');
     setStateIfMounted(() {
       _isProvidersExpanded = false;
       _selectedProvider = provider;
-      Storage().selectedAppointmentProviderId = provider.id;
+      Storage().selectedAppointmentProviderId = provider?.id;
     });
+    _loadAppointments();
   }
 
   Widget _buildAppointmentsContent() {
-    return RefreshIndicator(onRefresh: _onPullToRefresh, child:
-      SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _buildScheduleDescription(),
-          Container(height: 24) // Ensures width for providers dropdown container
-        ])
-      )
-    );
+    if (_selectedProvider == null) {
+      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
+    }
+    else if (_isLoadingAppointments) {
+      return _buildLoadingContent();
+    }
+    else {
+      return RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _buildScheduleDescription(),
+            ..._buildAppointmentsList(),
+            Container(height: 24) // Ensures width for providers dropdown container
+          ])
+        )
+      );
+    }
+  }
+
+  List<Widget> _buildAppointmentsList() {
+    if ((_upcomingAppointments == null) || (_pastAppointments == null)) {
+      return <Widget>[_buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.failed', 'Failed to load appointments'))];
+    }
+    else  {
+      List<Widget> contentList = <Widget>[];
+
+      if (_upcomingAppointments?.length == 0) {
+        contentList.add(_buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.upcoming.empty', 'No upcoming appointments for selected provider(s)')));
+      }
+      else {
+        for (Appointment appointment in _upcomingAppointments!) {
+          contentList.add(Padding(padding: EdgeInsets.only(top: 16), child:
+            AppointmentCard(appointment: appointment)
+          ));
+        }
+      }
+
+          
+
+      if (_upcomingAppointments?.length == 0) {
+        contentList.add(_buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.past.empty', 'No past appointments for selected provider(s)')));
+      }
+      if (_pastAppointments?.length != 0) {
+        contentList.add(Padding(padding: EdgeInsets.only(top: 16), child:
+          Text(Localization().getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'), textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle( "panel.wellness_appointments.title.large"),)
+        ),);
+
+        for (Appointment appointment in _pastAppointments!) {
+          contentList.add(Padding(padding: EdgeInsets.only(top: 16), child:
+            AppointmentCard(appointment: appointment)
+          ));
+        }
+      }
+
+      return contentList;
+    }
   }
 
   Widget _buildLoadingContent() {
@@ -219,21 +290,67 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   void _initProviders() {
-    _isLoading = true;
+    _isLoadingProviders = true;
     Appointments().loadProviders().then((List<AppointmentProvider>? result) {
-      if (mounted) {
-        setState(() {
-          _providers = result;
-          _selectedProvider = AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId) ??
-            (((result != null) && result.isNotEmpty) ? result.first : null);
-          _isLoading = false;
-        });
-      }
+      setStateIfMounted(() {
+        _providers = result;
+        if ((result == null) || result.isEmpty) {
+          _selectedProvider = null;  
+        }
+        else if (result.length == 1) {
+          _selectedProvider = result.first;  
+        }
+        else {
+          _selectedProvider = AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId);
+        }
+        _isLoadingProviders = false;
+      });
+      _loadAppointments();
     });
   }
 
+  void _loadAppointments() {
+    setStateIfMounted(() {
+      _isLoadingAppointments = true;
+    });
+    Appointments().loadAppointments(providerId: _selectedProvider?.id).then((List<Appointment>? result) {
+      setStateIfMounted(() {
+        _buildAppointments(result);
+        _isLoadingAppointments = false;
+      });
+    });
+  }
+
+  void _buildAppointments(List<Appointment>? appointments) {
+    _upcomingAppointments = _pastAppointments = null;
+    if (appointments != null) {
+      _upcomingAppointments = <Appointment>[];
+      _pastAppointments = <Appointment>[];
+
+      DateTime nowUtc = DateTime.now().toUtc();
+      for (Appointment appointment in appointments) {
+        List<Appointment>? targetList = ((appointment.dateTimeUtc == null) || nowUtc.isBefore(appointment.dateTimeUtc!)) ? _upcomingAppointments : _pastAppointments;
+        targetList?.add(appointment);
+      }
+
+      _upcomingAppointments?.sort((Appointment appointment1, Appointment appointment2) =>
+        SortUtils.compare(appointment1.dateTimeUtc, appointment2.dateTimeUtc, descending: false)
+      );
+
+      _pastAppointments?.sort((Appointment appointment1, Appointment appointment2) =>
+        SortUtils.compare(appointment1.dateTimeUtc, appointment2.dateTimeUtc, descending: true)
+      );
+    }
+  }
+
   void _onScheduleAppointment() {
-    AppointmentSchedulePanel.present(context);
+    //AppointmentSchedulePanel.present(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleUnitPanel(
+      scheduleParam: AppointmentScheduleParam(
+        providers: _providers,
+        provider: _selectedProvider,
+      ),
+    )));
   }
 
   Future<void> _onPullToRefresh() async {
