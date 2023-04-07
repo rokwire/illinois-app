@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.38] - 2023-04-07
 ### Deleted
 - Removed ExploreJsonHandler definition, not used any more [#3070](https://github.com/rokwire/illinois-app/issues/3070).
 ### Added
