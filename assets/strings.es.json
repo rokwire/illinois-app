@@ -2713,6 +2713,10 @@
     "panel.appointment.detail.instructions.label": "Preparación requerida",
     "panel.appointment.detail.cancel.description": "<b>Para cancelar una cita,</b> vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> o llame al <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> durante el horario laboral. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
     "panel.appointment.detail.error.msg": "No se pudieron cargar los datos de la cita.",
+    "panel.appointment.detail.reschedule.button.title": "Reschedule",
+    "panel.appointment.detail.cancel.button.title": "Cancell",
+    "panel.appointment.detail.cancel.failed.message": "Failed to cancel appointment:",
+    "panel.appointment.detail.cancel.prompt.message": "Cancel this appointment?",
 
     "panel.appointment.schedule.header.title": "Schedule Appointment",
     "panel.appointment.schedule.type.label": "APPOINTMENT TYPE",

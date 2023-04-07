@@ -31,6 +31,7 @@ import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -54,6 +55,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   Appointment? _appointment;
   Core.Position? _locationData;
   bool _loading = false;
+  bool _isCanceling = false;
 
   @override
   void initState() {
@@ -120,22 +122,26 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   Widget _buildLoadingContent() {
     return Column(children: <Widget>[
       HeaderBar(),
-      Expanded(
-          child: Center(
-              child: CircularProgressIndicator(
-                  strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary))))
+      Expanded(child:
+        Center(child:
+          CircularProgressIndicator(strokeWidth: 2, color: Styles().colors!.fillColorSecondary)
+        )
+      )
     ]);
   }
 
   Widget _buildErrorContent() {
     return Column(children: <Widget>[
       HeaderBar(),
-      Expanded(
-          child: Center(
-              child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 32),
-                  child: Text(Localization().getStringEx("panel.appointment.detail.error.msg", 'Failed to load appointment data.'),
-                      style: Styles().textStyles?.getTextStyle('widget.message.large.fat')))))
+      Expanded(child:
+        Center(child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+            Text(Localization().getStringEx("panel.appointment.detail.error.msg", 'Failed to load appointment data.'), style:
+              Styles().textStyles?.getTextStyle('widget.message.large.fat')
+            )
+          )
+        )
+      )
     ]);
   }
 
@@ -143,97 +149,60 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     String? toutImageKey = _appointment?.imageKeyBasedOnCategory;
 
     return Column(children: <Widget>[
-      Expanded(
-          child: Container(
-              child: CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
+      Expanded(child: Container(child:
+        CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
         SliverToutHeaderBar(flexImageKey: toutImageKey, flexRightToLeftTriangleColor: Colors.white),
-        SliverList(
-            delegate: SliverChildListDelegate([
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 0),
-              child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Container(
-                    padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-                    color: Colors.white,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[_buildTitle(), _buildDetails()])),
-                Container(
-                    padding: EdgeInsets.symmetric(horizontal: _horizontalPadding), child: Column(children: [_buildInstructionsDescription(), _buildCancelDescription()]))
-              ]))
+        SliverList(delegate: SliverChildListDelegate([
+          Padding(padding: EdgeInsets.symmetric(horizontal: 0), child:
+            Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Container(padding: EdgeInsets.symmetric(horizontal: _horizontalPadding), color: Colors.white, child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  _buildTitle(),
+                  _buildDetails(),
+                  _buildCommands(),
+                ])
+              ),
+              Container(padding: EdgeInsets.symmetric(horizontal: _horizontalPadding), child:
+                Column(children: [
+                  _buildInstructionsDescription(),
+                  _buildCancelDescription()
+                ])
+              )
+            ])
+          )
         ], addSemanticIndexes: false))
       ])))
     ]);
   }
 
-  /*Widget _buildHeading() {
-    // String? category = _appointment!.category;
-    bool isFavorite = Auth2().isFavorite(_appointment);
-    bool starVisible = Auth2().canFavorite && _appointment!.isUpcoming;
-    return Container(
-        color: Colors.white,
-        padding: EdgeInsets.only(left: _horizontalPadding),
-        child: Row(children: <Widget>[
-          // Expanded(
-          //     child: Text(StringUtils.ensureNotEmpty(category).toUpperCase(),
-          //         style: TextStyle(
-          //             fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary, letterSpacing: 1))),
-          Visibility(
-              visible: starVisible,
-              child: Container(
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-                      child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            Analytics().logSelect(target: "Favorite: ${_appointment!.title}");
-                            Auth2().prefs?.toggleFavorite(widget.appointment);
-                          },
-                          child: Container(
-                              padding: EdgeInsets.only(left: _horizontalPadding, top: 16, bottom: 12),
-                              child: Semantics(
-                                  label: isFavorite
-                                      ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                                      : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                                  hint: isFavorite
-                                      ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                                      : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                                  button: true,
-                                  child: Styles().images?.getImage(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png',
-                                      excludeFromSemantics: true)))))))
-        ]));
-  }*/
-
   Widget _buildTitle() {
     bool isFavorite = Auth2().isFavorite(_appointment);
     bool starVisible = Auth2().canFavorite && _appointment!.isUpcoming;
-    return Padding(
-        padding: EdgeInsets.only(bottom: 8),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Expanded(
-              child: Text(_appointment!.title!,
-                  maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.title.medium_large"))),
-          Visibility(
-              visible: starVisible,
-              child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    Analytics().logSelect(target: "Favorite: ${_appointment!.title}");
-                    Auth2().prefs?.toggleFavorite(widget.appointment);
-                  },
-                  child: Container(
-                      padding: EdgeInsets.only(left: 8, top: 16, bottom: 12),
-                      child: Semantics(
-                          label: isFavorite
-                              ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                              : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                          hint: isFavorite
-                              ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                              : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                          button: true,
-                          child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))))
-        ]));
+    String semanticsTitle = isFavorite
+      ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+      : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites');
+    String semanticsHint = isFavorite
+      ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+      : Localization().getStringEx('widget.card.button.favorite.on.hint', '');
+
+    return Padding(padding: EdgeInsets.only(bottom: 8), child:
+      Row(children: <Widget>[
+        Expanded(child:
+          Text(_appointment!.title!, maxLines: 1, overflow: TextOverflow.ellipsis, style:
+            Styles().textStyles?.getTextStyle("widget.title.medium_large")
+          )
+        ),
+        Visibility(visible: starVisible, child:
+          GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onFavorite, child:
+            Container(padding: EdgeInsets.only(left: 8, top: 16, bottom: 12), child:
+              Semantics(label: semanticsTitle, hint: semanticsHint, button: true, child:
+                Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+              )
+            )
+          )
+        )
+      ])
+    );
   }
 
   Widget _buildDetails() {
@@ -274,11 +243,65 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       details.add(url);
     }
 
-    return (0 < details.length)
-        ? Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: details))
-        : Container();
+    return (0 < details.length) ? Padding( padding: EdgeInsets.symmetric(vertical: 10), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: details)
+    ) : Container();
+  }
+
+  Widget _buildCommands() {
+    List<Widget> commands = <Widget>[];
+    
+    if (_canReschedule) {
+      if (commands.isNotEmpty) {
+        commands.add(Container(width: 12,));
+      }
+      commands.add(Expanded(child:
+        RoundedButton(
+          label: Localization().getStringEx('panel.appointment.detail.reschedule.button.title', 'Reschedule'),
+          onTap: _onReschedule,
+        ),
+      ));
+    }
+
+    if (_canCancel) {
+      if (commands.isNotEmpty) {
+        commands.add(Container(width: 12,));
+      }
+      commands.add(Expanded(child:
+        RoundedButton(
+          label: Localization().getStringEx('panel.appointment.detail.cancel.button.title', 'Cancel'),
+          progress: _isCanceling,
+          onTap: _onCancel,
+        ),
+      ));
+    }
+
+    return (0 < commands.length) ? Padding(padding: EdgeInsets.only(top: 12, bottom: 24), child:
+      Row(children: commands,)
+    ) : Container();
+
+    /*return Padding(padding: EdgeInsets.only(top: 12, bottom: 24), child:
+      Row(children: [
+        Expanded(child:
+          Opacity(opacity: _canReschedule ? 1 : 0, child:
+            RoundedButton(
+              label: Localization().getStringEx('panel.appointment.detail.reschedule.button.title', 'Reschedule'),
+              onTap: _onReschedule,
+            ),
+          )
+        ),
+        Container(width: 12,),
+        Expanded(child:
+          Opacity(opacity: _canCancel ? 1 : 0, child:
+            RoundedButton(
+              label: Localization().getStringEx('panel.appointment.detail.cancel.button.title', 'Cancel'),
+              progress: _isCanceling,
+              onTap: _onCancel,
+            ),
+          ),
+        ),
+      ],),
+    );*/
   }
 
   Widget? _buildTimeAndCancelledRowDetail() {
@@ -297,30 +320,26 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
 
   Widget? _buildTimeDetail() {
     String? displayTime = _appointment!.displayDate;
-    if (StringUtils.isEmpty(displayTime)) {
-      return null;
-    }
-    return Semantics(
-        label: displayTime,
-        excludeSemantics: true,
-        child: Padding(
-            padding: EdgeInsets.only(bottom: 8),
-            child: Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 7), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
-              Expanded(
-                  child: Text(displayTime!,
-                      style: Styles().textStyles?.getTextStyle("widget.item.regular")))
-            ])));
+    return StringUtils.isNotEmpty(displayTime) ? Semantics(label: displayTime, excludeSemantics: true, child:
+      Padding(padding: EdgeInsets.only(bottom: 8), child:
+        Row(children: <Widget>[
+          Padding(padding: EdgeInsets.only(right: 7), child:
+            Styles().images?.getImage('calendar', excludeFromSemantics: true)
+          ),
+          Expanded(child:
+            Text(displayTime!, style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+          )
+        ])
+      )
+    ) : null;
   }
 
   Widget? _buildCancelDetail() {
-    if (_appointment!.cancelled != true) {
-      return null;
-    }
-    return Padding(
-        padding: EdgeInsets.only(left: 7),
-        child: Text(Localization().getStringEx('panel.appointment.detail.cancelled.label', 'Cancelled'),
-            style: Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large")));
+    return (_appointment!.cancelled == true) ? Padding(padding: EdgeInsets.only(left: 7), child:
+      Text(Localization().getStringEx('panel.appointment.detail.cancelled.label', 'Cancelled'),style:
+        Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large")
+      )
+    ) : null;
   }
 
   Widget? _buildLocationDetail() {
@@ -538,9 +557,66 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     );
   }
 
+  void _onFavorite() {
+    Analytics().logSelect(target: "Favorite: ${_appointment!.title}");
+    Auth2().prefs?.toggleFavorite(_appointment);
+  }
+
+  bool get _canReschedule => true;
+
+  void _onReschedule() {
+    AppAlert.showDialogResult(context, 'Comming soon...');
+  }
+
+  bool get _canCancel => _appointment?.cancelled != true;
+
+  void _onCancel() {
+    _promptCancel().then((bool? result) {
+      if (result == true) {
+        setStateIfMounted(() {
+          _isCanceling = true;
+        });
+        Appointments().updateAppointment(Appointment.fromOther(_appointment,
+          cancelled: true
+        )).then((Appointment? appointment) {
+          setStateIfMounted(() {
+            _appointment = appointment;
+          });
+        }).catchError((e) {
+          AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.detail.cancel.failed.message', 'Failed to cancel appointment:') + '\n' + e.toString());
+        }).whenComplete(() {
+          setStateIfMounted(() {
+            _isCanceling = false;
+          });
+        });
+      }
+    });
+  }
+
+  Future<bool?> _promptCancel() async {
+    String message = Localization().getStringEx('panel.appointment.detail.cancel.prompt.message', 'Cancel this appointment?');
+    return await showDialog(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")),
+            onPressed:(){
+              Analytics().logAlert(text: message, selection: "Yes");
+              Navigator.pop(context, true);
+            }),
+          TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")),
+            onPressed:(){
+              Analytics().logAlert(text: message, selection: "No");
+              Navigator.pop(context, false);
+            }),
+        ]
+      );
+    });
+  }
+
   void _onLocationDetailTapped() {
     Analytics().logSelect(target: "Location Directions");
-    widget.appointment?.launchDirections();
+    _appointment?.launchDirections();
   }
 
   void _launchUrl(String? url) async {

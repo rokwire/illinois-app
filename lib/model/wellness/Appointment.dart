@@ -48,11 +48,27 @@ class Appointment with Explore, Favorite {
     this.cancelled, this.instructions, this.notes, this.host
   });
 
-  static Appointment? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
+  factory Appointment.fromOther(Appointment? other, {
+    String? id, AppointmentProvider? provider, AppointmentUnit? unit,
+    DateTime? dateTimeUtc, AppointmentType? type, AppointmentOnlineDetails? onlineDetails, AppointmentLocation? location,
+    bool? cancelled, String? instructions, String? notes, AppointmentHost? host,}) {
     return Appointment(
+      id: id ?? other?.id,
+      provider: provider ?? other?.provider,
+      unit: unit ?? other?.unit,
+      dateTimeUtc: dateTimeUtc ?? other?.dateTimeUtc,
+      type: type ?? other?.type,
+      onlineDetails: onlineDetails ?? other?.onlineDetails,
+      location: location ?? other?.location,
+      cancelled: cancelled ?? other?.cancelled,
+      instructions: instructions ?? other?.instructions,
+      notes: notes ?? other?.notes,
+      host: host ?? other?.host
+    );
+  }
+
+  static Appointment? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? Appointment(
       id: JsonUtils.stringValue(json['id']),
       provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])) ,
       unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])) ,
@@ -64,7 +80,7 @@ class Appointment with Explore, Favorite {
       instructions: JsonUtils.stringValue(json['instructions']),
       notes: JsonUtils.stringValue(json['user_notes']),
       host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host']))
-    );
+    ) : null;
   }
 
   Map<String, dynamic> toJson() => {

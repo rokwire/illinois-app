@@ -328,13 +328,13 @@ class AppointmentScheduleParam {
 
     AppointmentTimeSlot? timeSlot,
   }) => AppointmentScheduleParam(
-    providers: other?.providers ?? providers,
-    provider: other?.provider ?? provider,
+    providers: providers ?? other?.providers,
+    provider: provider ?? other?.provider,
 
-    units: other?.units ?? units,
-    unit: other?.unit ?? unit,
+    units: units ?? other?.units,
+    unit: unit ?? other?.unit,
 
-    timeSlot: other?.timeSlot ?? timeSlot
+    timeSlot: timeSlot ?? other?.timeSlot
   );
 
 }

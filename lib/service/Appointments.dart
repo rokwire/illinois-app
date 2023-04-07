@@ -559,13 +559,25 @@ class Appointments with Service implements NotificationsListener {
     Appointment.fromJson({"id":"08c122e3","provider":provider.toJson(),"date":"2023-02-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
   ];
 
-  Future<void> createAppointment(Appointment appointment) async {
+  Future<Appointment?> createAppointment(Appointment appointment) async {
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
+      return appointment;
     }
     else {
       throw AppointmentsException(description: 'Random Create Failure');
+    }
+  }
+
+  Future<Appointment?> updateAppointment(Appointment appointment) async {
+    await Future.delayed(Duration(milliseconds: 1500));
+    if (Random().nextInt(2) == 0) {
+      NotificationService().notify(notifyAppointmentsChanged);
+      return appointment;
+    }
+    else {
+      throw AppointmentsException(description: 'Random Update Failure');
     }
   }
 }
