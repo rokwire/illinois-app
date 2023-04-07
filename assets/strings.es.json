@@ -440,6 +440,7 @@
     "panel.academics.section.gies_checklist.label": "Lista de verificación para nuevos estudiantes de iDegrees",
     "panel.academics.section.uiuc_checklist.label": "Lista de verificación para nuevos estudiantes",
     "panel.academics.section.canvas_courses.label": "Mis cursos Gies Canvas",
+    "panel.academics.section.medicine_courses.label": "Mis cursos de la facultad de medicina",
     "panel.academics.section.student_courses.label": "Mis cursos",
     "panel.academics.section.skills_self_evaluation.label": "Autoevaluación de habilidades",
     "panel.academics.section.todo_list.label": "Lista de quehaceres",
@@ -2577,6 +2578,11 @@
     "panel.canvas_courses.load.failed.error.msg": "Unable to load courses.",
     "panel.canvas_courses.load.offline.error.msg": "My Gies Canvas Courses not available while offline.",
     "panel.canvas_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
+    
+    "panel.medicine_courses.load.offline.error.msg": "My College of Medicine Courses not available while offline.",
+    "panel.medicine_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My College of Medicine Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
+    "panel.medicine_courses.load.failed.error.msg": "Unable to load courses.",
+    "panel.medicine_courses.load.empty.error.msg": "You do not appear to be enrolled in any Medicine courses.",
 
     "panel.student_courses.header.title": "Mis cursos",
     "panel.student_courses.instructor.title": "Instructor: %s",
