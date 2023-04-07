@@ -28,34 +28,58 @@ class Appointment with Explore, Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
   final String? id;
+  final String? providerId;
+  final String? unitId;
   final DateTime? dateTimeUtc;
   final AppointmentType? type;
   final AppointmentOnlineDetails? onlineDetails;
   final AppointmentLocation? location;
   final bool? cancelled;
   final String? instructions;
+  final String? notes;
   final AppointmentHost? host;
 
   //Util fields
   String? imageUrl; // to return same random image for this instance
 
-  Appointment(
-      {this.id, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
+  Appointment({
+    this.id, this.providerId, this.unitId,
+    this.dateTimeUtc, this.type, this.onlineDetails, this.location,
+    this.cancelled, this.instructions, this.notes, this.host
+  });
 
   static Appointment? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
     return Appointment(
-        id: JsonUtils.stringValue(json['id']),
-        dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
-        type: typeFromString(JsonUtils.stringValue(json['type'])),
-        onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
-        location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
-        cancelled: JsonUtils.boolValue(json['cancelled']),
-        instructions: JsonUtils.stringValue(json['instructions']),
-        host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])));
+      id: JsonUtils.stringValue(json['id']),
+      providerId: JsonUtils.stringValue(json['provider_id']),
+      unitId: JsonUtils.stringValue(json['unit_id']),
+      dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
+      type: appointmentTypeFromString(JsonUtils.stringValue(json['type'])),
+      onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
+      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
+      cancelled: JsonUtils.boolValue(json['cancelled']),
+      instructions: JsonUtils.stringValue(json['instructions']),
+      notes: JsonUtils.stringValue(json['user_notes']),
+      host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host']))
+    );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'provider_id': providerId,
+    'unit_id': unitId,
+    'date': DateTimeUtils.utcDateTimeToString(dateTimeUtc, format: _serverDateTimeFormat),
+    'type': appointmentTypeToString(type),
+    'location': location?.toJson(),
+    'online_details': onlineDetails?.toJson(),
+    'cancelled': cancelled,
+    'instructions': instructions,
+    'user_notes': notes,
+    'host': host?.toJson()
+  };
 
   bool get isUpcoming {
     DateTime now = DateTime.now();
@@ -73,28 +97,6 @@ class Appointment with Explore, Favorite {
     return items;
   }
 
-  static String? typeToKeyString(AppointmentType? type) {
-    switch (type) {
-      case AppointmentType.in_person:
-        return 'InPerson';
-      case AppointmentType.online:
-        return 'Online';
-      default:
-        return null;
-    }
-  }
-
-  static AppointmentType? typeFromString(String? type) {
-    switch (type) {
-      case 'InPerson':
-        return AppointmentType.in_person;
-      case 'Online':
-        return AppointmentType.online;
-      default:
-        return null;
-    }
-  }
-
   // Favorite
   static const String favoriteKeyName = "appointmentIds";
   @override String get favoriteKey => favoriteKeyName;
@@ -110,23 +112,14 @@ class Appointment with Explore, Favorite {
   @override DateTime? get exploreStartDateUtc => dateTimeUtc;
   @override String? get exploreSubTitle => location?.title;
   @override String? get exploreTitle => 'MyMcKinley Appointment';
-  @override Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'date_time': DateTimeUtils.utcDateTimeToString(dateTimeUtc),
-      'type': typeToKeyString(type),
-      'location': location?.toJson(),
-      'online_details': onlineDetails?.toJson(),
-      'cancelled': cancelled,
-      'instructions': instructions,
-      'host': host?.toJson()
-    };
-  }
+//@override Map<String, dynamic> toJson();
 
   @override
   bool operator==(dynamic other) =>
     (other is Appointment) &&
     (id == other.id) &&
+    (providerId == other.providerId) &&
+    (unitId == other.unitId) &&
     (dateTimeUtc == other.dateTimeUtc) &&
     (type == other.type) &&
     (onlineDetails == other.onlineDetails) &&
@@ -138,6 +131,8 @@ class Appointment with Explore, Favorite {
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
+    (providerId?.hashCode ?? 0) ^
+    (unitId?.hashCode ?? 0) ^
     (dateTimeUtc?.hashCode ?? 0) ^
     (type?.hashCode ?? 0) ^
     (onlineDetails?.hashCode ?? 0) ^
@@ -145,6 +140,25 @@ class Appointment with Explore, Favorite {
     (cancelled?.hashCode ?? 0) ^
     (instructions?.hashCode ?? 0) ^
     (host?.hashCode ?? 0);
+}
+
+///////////////////////////////
+/// AppointmentType
+
+AppointmentType? appointmentTypeFromString(String? value) {
+  switch (value) {
+    case 'InPerson': return AppointmentType.in_person;
+    case 'Online': return AppointmentType.online;
+  }
+  return null;
+}
+
+String? appointmentTypeToString(AppointmentType? value) {
+  switch (value) {
+    case AppointmentType.in_person: return 'InPerson';
+    case AppointmentType.online: return 'Online';
+    default: return null;
+  }
 }
 
 ///////////////////////////////
