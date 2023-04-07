@@ -57,3 +57,10 @@ String? appointmentTypeToDisplayString(AppointmentType? type) {
       return null;
   }
 }
+
+String appointment2TypeDisplayString(AppointmentType _appointmentType) {
+  switch (_appointmentType) {
+    case AppointmentType.in_person: return Localization().getStringEx('model.wellness.appointment2.type.in_person.label', 'In Person');
+    case AppointmentType.online: return Localization().getStringEx('model.wellness.appointment2.type.online.label', 'Online');
+  }
+}

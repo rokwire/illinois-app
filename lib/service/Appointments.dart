@@ -41,6 +41,8 @@ class Appointments with Service implements NotificationsListener {
   static const String notifyUpcomingAppointmentsChanged = "edu.illinois.rokwire.appointments.upcoming.changed";
   static const String notifyAppointmentsAccountChanged = "edu.illinois.rokwire.appointments.account.changed";
   
+  static const String notifyAppointmentsChanged = "edu.illinois.rokwire.appointments.changed";
+
   static const String _appointmentRemindersNotificationsEnabledKey = 'edu.illinois.rokwire.settings.inbox.notification.appointments.reminders.notifications.enabled';
   
   DateTime? _pausedDateTime;
@@ -513,9 +515,10 @@ class Appointments with Service implements NotificationsListener {
     while (dateTimeUtc.isBefore(endDateUtc)) {
       DateTime endDateTime = dateTimeUtc.add(slotDuration);
       result.add(AppointmentTimeSlot(
-        filled: Random().nextInt(4) == 0,
         startTimeUtc: dateTimeUtc,
-        endTimeUtc: endDateTime
+        endTimeUtc: endDateTime,
+        filled: Random().nextInt(4) == 0,
+        notesRequired: Random().nextInt(4) != 0,
       ));
       dateTimeUtc = endDateTime;
     }
@@ -538,5 +541,34 @@ class Appointments with Service implements NotificationsListener {
       Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","account_id":"2222","date":"2023-02-11T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
       Appointment.fromJson({"id":"08c122e3","account_id":"2222","date":"2023-02-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
     ];
+  }
+
+  Future<void> createAppointment(Appointment appointment) async {
+    await Future.delayed(Duration(milliseconds: 1500));
+    if (Random().nextInt(2) == 0) {
+      NotificationService().notify(notifyAppointmentsChanged);
+    }
+    else {
+      throw AppointmentsException(description: 'Random Create Failure');
+    }
+  }
+}
+
+enum AppointmentsError { serverResponse, unknown }
+
+class AppointmentsException implements Exception {
+  final AppointmentsError error;
+  final String? description;
+
+  AppointmentsException({this.error = AppointmentsError.unknown, this.description});
+
+  @override
+  String toString() => description ?? errorDescription;
+
+  String get errorDescription {
+    switch (error) {
+      case AppointmentsError.serverResponse: return 'Server Response Error';
+      case AppointmentsError.unknown: return 'Unknown Error Occured';
+    }
   }
 }

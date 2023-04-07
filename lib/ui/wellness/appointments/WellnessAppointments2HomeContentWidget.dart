@@ -53,7 +53,9 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
   @override
   void initState() {
-    NotificationService().subscribe(this, []);
+    NotificationService().subscribe(this, [
+      Appointments.notifyAppointmentsChanged
+    ]);
     _initProviders();
     super.initState();
   }
@@ -67,6 +69,9 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   // NotificationsListener
   @override
   void onNotification(String name, param) {
+    if (param == Appointments.notifyAppointmentsChanged) {
+      _loadAppointments();
+    }
   }
 
   @override
@@ -290,23 +295,29 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   void _initProviders() {
-    _isLoadingProviders = true;
+    setStateIfMounted(() {
+      _isLoadingProviders = true;
+    });
     Appointments().loadProviders().then((List<AppointmentProvider>? result) {
       setStateIfMounted(() {
         _providers = result;
-        if ((result == null) || result.isEmpty) {
-          _selectedProvider = null;  
-        }
-        else if (result.length == 1) {
-          _selectedProvider = result.first;  
-        }
-        else {
-          _selectedProvider = AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId);
-        }
         _isLoadingProviders = false;
+        _updateSelectedProvder();
       });
       _loadAppointments();
     });
+  }
+
+  void _updateSelectedProvder() {
+    if ((_providers == null) || _providers!.isEmpty) {
+      _selectedProvider = null;  
+    }
+    else if (_providers!.length == 1) {
+      _selectedProvider = _providers!.first;  
+    }
+    else {
+      _selectedProvider = AppointmentProvider.findInList(_providers, id: Storage().selectedAppointmentProviderId);
+    }
   }
 
   void _loadAppointments() {
@@ -354,7 +365,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   Future<void> _onPullToRefresh() async {
-    //TBD;
+    _initProviders();
   }
 
 
