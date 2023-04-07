@@ -53,7 +53,9 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
   @override
   void initState() {
-    NotificationService().subscribe(this, []);
+    NotificationService().subscribe(this, [
+      Appointments.notifyAppointmentsChanged
+    ]);
     _initProviders();
     super.initState();
   }
@@ -67,6 +69,9 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   // NotificationsListener
   @override
   void onNotification(String name, param) {
+    if (param == Appointments.notifyAppointmentsChanged) {
+      _loadAppointments();
+    }
   }
 
   @override
@@ -150,6 +155,14 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     items.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
 
     if (_providers != null) {
+      items.add(RibbonButton(
+        backgroundColor: Styles().colors!.white,
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        rightIconKey: null,
+        label: Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
+        onTap: () => _onTapProvider(null)
+      ));
+
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
           backgroundColor: Styles().colors!.white,
@@ -160,14 +173,6 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
         ));
       }
     }
-
-    items.add(RibbonButton(
-      backgroundColor: Styles().colors!.white,
-      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-      rightIconKey: null,
-      label: Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
-      onTap: () => _onTapProvider(null)
-    ));
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
@@ -199,10 +204,10 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   Widget _buildAppointmentsContent() {
-    if (_selectedProvider == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
-    }
-    else if (_isLoadingAppointments) {
+    //if (_selectedProvider == null) {
+    //  return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
+    //}
+    if (_isLoadingAppointments) {
       return _buildLoadingContent();
     }
     else {
@@ -274,7 +279,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   Widget _buildScheduleDescription() {
-    String descriptionHtml = Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', '<a href={{schedule_url}}>Schedule an appointment.</a>');
+    String descriptionHtml = Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', '<a href={{schedule_url}}>Schedule an appointment</a>');
     return HtmlWidget(descriptionHtml,
       onTapUrl : _onDesciptionLink,
       textStyle:  Styles().textStyles?.getTextStyle("widget.message.medium"),
@@ -290,23 +295,29 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   void _initProviders() {
-    _isLoadingProviders = true;
+    setStateIfMounted(() {
+      _isLoadingProviders = true;
+    });
     Appointments().loadProviders().then((List<AppointmentProvider>? result) {
       setStateIfMounted(() {
         _providers = result;
-        if ((result == null) || result.isEmpty) {
-          _selectedProvider = null;  
-        }
-        else if (result.length == 1) {
-          _selectedProvider = result.first;  
-        }
-        else {
-          _selectedProvider = AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId);
-        }
         _isLoadingProviders = false;
+        _updateSelectedProvder();
       });
       _loadAppointments();
     });
+  }
+
+  void _updateSelectedProvder() {
+    if ((_providers == null) || _providers!.isEmpty) {
+      _selectedProvider = null;  
+    }
+    else if (_providers!.length == 1) {
+      _selectedProvider = _providers!.first;  
+    }
+    else {
+      _selectedProvider = AppointmentProvider.findInList(_providers, id: Storage().selectedAppointmentProviderId);
+    }
   }
 
   void _loadAppointments() {
@@ -354,7 +365,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   Future<void> _onPullToRefresh() async {
-    //TBD;
+    _initProviders();
   }
 
 

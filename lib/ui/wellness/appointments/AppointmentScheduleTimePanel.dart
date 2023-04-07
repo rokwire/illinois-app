@@ -137,7 +137,18 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   Widget _buildTimeSlot(AppointmentTimeSlot timeSlot) {
-    String timeString = (timeSlot.startTime != null) ? DateFormat('hh:mm aaa').format(timeSlot.startTime!) : '';
+    String? timeString;
+    if (timeSlot.startTime != null) {
+      if (timeSlot.endTime != null) {
+        String startTime = DateFormat('hh:mm').format(timeSlot.startTime!);
+        String endTime = DateFormat('hh:mm aaa').format(timeSlot.endTime!);
+        timeString = "$startTime - $endTime";
+      }
+      else {
+        timeString = DateFormat('hh:mm aaa').format(timeSlot.startTime!);
+      }
+    }
+
     Color? backColor;
     String textStyle;
     if (timeSlot.filled == true) {
@@ -162,7 +173,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         ),
         child: InkWell(onTap: () => _onTimeSlot(timeSlot),
           child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Text(timeString, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
+            child: Text(timeString ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
           )
         ),
       ),
@@ -191,7 +202,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
             Styles().images?.getImage('calendar')
           ),
           Expanded(child:
-              Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+              Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin.underline'),)
           ),
         
         ],),
