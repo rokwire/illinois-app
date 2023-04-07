@@ -482,25 +482,29 @@ class Appointments with Service implements NotificationsListener {
 
   Future<List<AppointmentProvider>?> loadProviders() async {
     await Future.delayed(Duration(milliseconds: 1500));
-    return <AppointmentProvider>[
-      AppointmentProvider(id: '1', name: 'McKinley'),
-      AppointmentProvider(id: '2', name: 'Grainger'),
-      AppointmentProvider(id: '3', name: 'Lorem Ipsum'),
-      AppointmentProvider(id: '4', name: 'Sit Dolor Amet'),
-    ];
+    return _sampleProviders;
   }
+
+  List<AppointmentProvider> get _sampleProviders =>  <AppointmentProvider>[
+    AppointmentProvider(id: '1', name: 'McKinley'),
+    AppointmentProvider(id: '2', name: 'Grainger'),
+    AppointmentProvider(id: '3', name: 'Lorem Ipsum'),
+    AppointmentProvider(id: '4', name: 'Sit Dolor Amet'),
+  ];
 
   // Units
 
   Future<List<AppointmentUnit>?> loadUnits({ required String providerId }) async {
     await Future.delayed(Duration(milliseconds: 1500));
-    return <AppointmentUnit>[
-      AppointmentUnit(id: '11', providerId: providerId, name: 'House of Horror', location: AppointmentLocation(title: '1109 S Lincoln Ave Urbana, IL 61801', phone: '+1 415 370 9574'), hoursOfOperation: '8:00am - 17:30pm', details: 'Lorem ipsum sit dolor amet.'),
-      AppointmentUnit(id: '12', providerId: providerId, name: "Dante's Inferno", location: AppointmentLocation(title: '1103 S Sixth St Champaign, IL 61820', phone: '+1 650 207 7211'), hoursOfOperation: '8:30am - 12:30pm', details: 'Proin sed lacinia ex.'),
-      AppointmentUnit(id: '13', providerId: providerId, name: 'Spem Omnem Hic', location: AppointmentLocation(title: '1402 Springfield Ave Urbana, IL 61801', phone: '+1 217 300 5249'), hoursOfOperation: '7:00am - 9:00pm', details: 'Class aptent taciti sociosqu ad litora.'),
-      AppointmentUnit(id: '14', providerId: providerId, name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm', details: 'Donec iaculis est eget leo egestas ullamcorper.'),
-    ];
+    return _sampleUnits;
   }
+
+  List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
+    AppointmentUnit(id: '11', name: 'House of Horror', location: AppointmentLocation(title: '1109 S Lincoln Ave Urbana, IL 61801', phone: '+1 415 370 9574'), hoursOfOperation: '8:00am - 17:30pm', details: 'Lorem ipsum sit dolor amet.'),
+    AppointmentUnit(id: '12', name: "Dante's Inferno", location: AppointmentLocation(title: '1103 S Sixth St Champaign, IL 61820', phone: '+1 650 207 7211'), hoursOfOperation: '8:30am - 12:30pm', details: 'Proin sed lacinia ex.'),
+    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', location: AppointmentLocation(title: '1402 Springfield Ave Urbana, IL 61801', phone: '+1 217 300 5249'), hoursOfOperation: '7:00am - 9:00pm', details: 'Class aptent taciti sociosqu ad litora.'),
+    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm', details: 'Donec iaculis est eget leo egestas ullamcorper.'),
+  ];
 
   // Time Slots
 
@@ -529,19 +533,31 @@ class Appointments with Service implements NotificationsListener {
 
   Future<List<Appointment>?> loadAppointments({String? providerId}) async {
     await Future.delayed(Duration(milliseconds: 1500));
-    return <Appointment>[
-      Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26bc","account_id":"2222","date":"2023-04-14T07:30:444Z","type":"InPerson","location":{"id":"555556","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
-      Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26ba","account_id":"2222","date":"2023-04-13T07:30:444Z","type":"InPerson","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
-      Appointment.fromJson({"id":"08c122e3-2174-438b-f231198c26ba","account_id":"2222","date":"2023-04-12T08:22:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}) ?? Appointment(),
-      Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","account_id":"2222","date":"2023-04-11T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
-      Appointment.fromJson({"id":"08c122e3","account_id":"2222","date":"2023-04-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
-      Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26bc","account_id":"2222","date":"2023-02-14T07:30:444Z","type":"InPerson","location":{"id":"555556","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
-      Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26ba","account_id":"2222","date":"2023-02-13T07:30:444Z","type":"InPerson","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
-      Appointment.fromJson({"id":"08c122e3-2174-438b-f231198c26ba","account_id":"2222","date":"2023-02-12T08:22:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}) ?? Appointment(),
-      Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","account_id":"2222","date":"2023-02-11T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
-      Appointment.fromJson({"id":"08c122e3","account_id":"2222","date":"2023-02-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
-    ];
+    AppointmentProvider? provider = (providerId != null) ? _sampleProviders.firstWhere((provider) => provider.id == providerId, orElse: () => _sampleProviders.first) : null;
+    if (provider != null) {
+      return _sampleAppointments(provider: provider);
+    }
+    else {
+      List<Appointment> result = <Appointment>[];
+      for (AppointmentProvider provider in _sampleProviders) {
+        result.addAll(_sampleAppointments(provider: provider));
+      }
+      return result;
+    }
   }
+
+  List<Appointment> _sampleAppointments({ required AppointmentProvider provider}) => <Appointment>[
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26bc","provider":provider.toJson(),"date":"2023-04-14T07:30:444Z","type":"InPerson","location":{"id":"555556","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-04-13T07:30:444Z","type":"InPerson","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-f231198c26ba","provider":provider.toJson(),"date":"2023-04-12T08:22:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-04-11T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3","provider":provider.toJson(),"date":"2023-04-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26bc","provider":provider.toJson(),"date":"2023-02-14T07:30:444Z","type":"InPerson","location":{"id":"555556","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-02-13T07:30:444Z","type":"InPerson","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-f231198c26ba","provider":provider.toJson(),"date":"2023-02-12T08:22:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-02-11T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3","provider":provider.toJson(),"date":"2023-02-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
+  ];
 
   Future<void> createAppointment(Appointment appointment) async {
     await Future.delayed(Duration(milliseconds: 1500));

@@ -204,10 +204,10 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   Widget _buildAppointmentsContent() {
-    if (_selectedProvider == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
-    }
-    else if (_isLoadingAppointments) {
+    //if (_selectedProvider == null) {
+    //  return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
+    //}
+    if (_isLoadingAppointments) {
       return _buildLoadingContent();
     }
     else {

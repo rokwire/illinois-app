@@ -437,8 +437,8 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildHostDetail() {
-    String? hostDisplayName = _appointment!.hostDisplayName;
-    if (StringUtils.isEmpty(hostDisplayName)) {
+    String? displayHostName = _appointment!.displayHostName;
+    if (StringUtils.isEmpty(displayHostName)) {
       return null;
     }
     return Padding(
@@ -446,7 +446,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         child: Row(children: <Widget>[
           Padding(padding: EdgeInsets.only(right: 12), child: Styles().images?.getImage('person', excludeFromSemantics: true)),
           Expanded(
-              child: Text(hostDisplayName!,
+              child: Text(displayHostName!,
                   style: Styles().textStyles?.getTextStyle("widget.item.regular")))
         ]));
   }

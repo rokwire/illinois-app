@@ -3296,8 +3296,9 @@
 
     "model.wellness.appointment.type.in_person.label": "En persona",
     "model.wellness.appointment.type.online.label": "Telesalud",
-    "model.wellness.appointment.category.label": "CITAS MYMCKINLEY",
-    "model.wellness.appointment.title.label": "Cita de MyMcKinley",
+    "model.wellness.appointment.category.label.format": "Citas %s",
+    "model.wellness.appointment.title.label.format": "Cita de %s",
+    "model.wellness.appointment.default.provider.label": "MyMcKinley",
 
     "model.wellness.appointment2.type.in_person.label": "In Person",
     "model.wellness.appointment2.type.online.label": "Online",

@@ -28,8 +28,8 @@ class Appointment with Explore, Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
   final String? id;
-  final String? providerId;
-  final String? unitId;
+  final AppointmentProvider? provider;
+  final AppointmentUnit? unit;
   final DateTime? dateTimeUtc;
   final AppointmentType? type;
   final AppointmentOnlineDetails? onlineDetails;
@@ -43,7 +43,7 @@ class Appointment with Explore, Favorite {
   String? imageUrl; // to return same random image for this instance
 
   Appointment({
-    this.id, this.providerId, this.unitId,
+    this.id, this.provider, this.unit,
     this.dateTimeUtc, this.type, this.onlineDetails, this.location,
     this.cancelled, this.instructions, this.notes, this.host
   });
@@ -54,8 +54,8 @@ class Appointment with Explore, Favorite {
     }
     return Appointment(
       id: JsonUtils.stringValue(json['id']),
-      providerId: JsonUtils.stringValue(json['provider_id']),
-      unitId: JsonUtils.stringValue(json['unit_id']),
+      provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])) ,
+      unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])) ,
       dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
       type: appointmentTypeFromString(JsonUtils.stringValue(json['type'])),
       onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
@@ -69,8 +69,8 @@ class Appointment with Explore, Favorite {
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'provider_id': providerId,
-    'unit_id': unitId,
+    'provider': provider?.toJson(),
+    'unit': unit?.toJson(),
     'date': DateTimeUtils.utcDateTimeToString(dateTimeUtc, format: _serverDateTimeFormat),
     'type': appointmentTypeToString(type),
     'location': location?.toJson(),
@@ -111,15 +111,15 @@ class Appointment with Explore, Favorite {
   @override String? get exploreShortDescription => null;
   @override DateTime? get exploreStartDateUtc => dateTimeUtc;
   @override String? get exploreSubTitle => location?.title;
-  @override String? get exploreTitle => 'MyMcKinley Appointment';
+  @override String? get exploreTitle => "${provider?.name ?? 'MyMcKinley'} Appointment";
 //@override Map<String, dynamic> toJson();
 
   @override
   bool operator==(dynamic other) =>
     (other is Appointment) &&
     (id == other.id) &&
-    (providerId == other.providerId) &&
-    (unitId == other.unitId) &&
+    (provider == other.provider) &&
+    (unit == other.unit) &&
     (dateTimeUtc == other.dateTimeUtc) &&
     (type == other.type) &&
     (onlineDetails == other.onlineDetails) &&
@@ -131,8 +131,8 @@ class Appointment with Explore, Favorite {
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
-    (providerId?.hashCode ?? 0) ^
-    (unitId?.hashCode ?? 0) ^
+    (provider?.hashCode ?? 0) ^
+    (unit?.hashCode ?? 0) ^
     (dateTimeUtc?.hashCode ?? 0) ^
     (type?.hashCode ?? 0) ^
     (onlineDetails?.hashCode ?? 0) ^

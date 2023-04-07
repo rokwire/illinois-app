@@ -285,8 +285,8 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     });
 
     Appointments().createAppointment(Appointment(
-      providerId: widget.scheduleParam.provider?.id,
-      unitId: widget.scheduleParam.unit?.id,
+      provider: widget.scheduleParam.provider,
+      unit: widget.scheduleParam.unit,
       dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
       type: _appointmentType,
       notes: _notesController.text

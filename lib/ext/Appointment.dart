@@ -4,37 +4,31 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 ///////////////////////////////
 /// Appointment
 
 extension AppointmentExt on Appointment {
 
-  String? get displayDate {
-    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, h:mm a');
-  }
+  String? get displayDate =>
+    AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, h:mm a');
 
-  String? get hostDisplayName {
-    String? displayName;
-    if (host != null) {
-      displayName = StringUtils.fullName([host!.firstName, host!.lastName]);
-    }
-    return displayName;
-  }
+  String? get displayHostName =>
+    (host != null) ? StringUtils.fullName([host?.firstName, host?.lastName]) : null;
 
-  String? get category {
-    return Localization().getStringEx('model.wellness.appointment.category.label', 'MYMCKINLEY APPOINTMENTS');
-  }
+  String? get category =>
+    sprintf(Localization().getStringEx('model.wellness.appointment.category.label.format', '%s Appointments'), [
+      this.provider?.name ?? Localization().getStringEx('model.wellness.appointment.default.provider.label', 'MyMcKinley')
+    ]).toUpperCase();
 
-  String? get title {
-    return Localization().getStringEx('model.wellness.appointment.title.label', 'MyMcKinley Appointment');
-  }
+  String? get title =>
+    sprintf(Localization().getStringEx('model.wellness.appointment.title.label.format', '%s Appointment'), [
+      this.provider?.name ?? Localization().getStringEx('model.wellness.appointment.default.provider.label', 'MyMcKinley')
+    ]);
 
-  String? get imageKeyBasedOnCategory { //Keep consistent images
-    return (type != null) ?
-      appointmentTypeImageKey(type!) :
-      (imageUrl ??= Assets().randomStringFromListWithKey('images.random.events.Other'));
-  }
+  String? get imageKeyBasedOnCategory => //Keep consistent images
+    (type != null) ? appointmentTypeImageKey(type!) : (imageUrl ??= Assets().randomStringFromListWithKey('images.random.events.Other'));
 }
 
 ///////////////////////////////
