@@ -191,7 +191,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
             Styles().images?.getImage('calendar')
           ),
           Expanded(child:
-              Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+              Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin.underline'),)
           ),
         
         ],),
