@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';

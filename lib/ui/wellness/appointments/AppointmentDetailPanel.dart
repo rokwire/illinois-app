@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
@@ -327,7 +328,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     if (type != AppointmentType.in_person) {
       return null;
     }
-    String typeLabel = Appointment.typeToDisplayString(type)!;
+    String typeLabel = appointmentTypeToDisplayString(type)!;
     String? longDisplayLocation = _appointment!.getLongDisplayLocation(_locationData) ?? "";
     String? locationTitle = _appointment!.location?.title;
     String? locationTextValue;
@@ -373,7 +374,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       return null;
     }
 
-    String typeLabel = Appointment.typeToDisplayString(type)!;
+    String typeLabel = appointmentTypeToDisplayString(type)!;
     String? meetingUrl = _appointment!.onlineDetails?.url;
     String? meetingId = _appointment!.onlineDetails?.meetingId;
     String? meetingPasscode = _appointment!.onlineDetails?.meetingPasscode;

@@ -15,11 +15,8 @@
  */
 
 import 'package:collection/collection.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/assets.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum AppointmentType { in_person, online }
@@ -40,7 +37,7 @@ class Appointment with Explore, Favorite {
   final AppointmentHost? host;
 
   //Util fields
-  String? randomImageURL; // to return same random image for this instance
+  String? imageUrl; // to return same random image for this instance
 
   Appointment(
       {this.id, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
@@ -60,49 +57,9 @@ class Appointment with Explore, Favorite {
         host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])));
   }
 
-  String? get displayDate {
-    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, h:mm a');
-  }
-
   bool get isUpcoming {
     DateTime now = DateTime.now();
     return (dateTimeUtc != null) && dateTimeUtc!.isAfter(now.toUtc());
-  }
-
-  String? get hostDisplayName {
-    String? displayName;
-    if (host != null) {
-      displayName = StringUtils.fullName([host!.firstName, host!.lastName]);
-    }
-    return displayName;
-  }
-
-  String? get category {
-    return Localization().getStringEx('model.wellness.appointment.category.label', 'MYMCKINLEY APPOINTMENTS');
-  }
-
-  String? get title {
-    return Localization().getStringEx('model.wellness.appointment.title.label', 'MyMcKinley Appointment');
-  }
-
-  String? get imageUrl {
-    return _randomImageUrl;
-  }
-
-  String? get _randomImageUrl {
-    randomImageURL ??= Assets().randomStringFromListWithKey('images.random.events.Other');
-    return randomImageURL;
-  }
-
-  String? get imageKeyBasedOnCategory { //Keep consistent images
-    return (type != null) ? imageKeyForAppointmentType(type!) : imageUrl;
-  }
-
-  static String imageKeyForAppointmentType(AppointmentType appointmentType) {
-    switch (appointmentType) {
-      case AppointmentType.in_person: return 'photo-building';
-      case AppointmentType.online: return 'photo-online';
-    }
   }
 
   static List<Appointment>? listFromJson(List<dynamic>? jsonList) {
@@ -114,17 +71,6 @@ class Appointment with Explore, Favorite {
       }
     }
     return items;
-  }
-
-  static String? typeToDisplayString(AppointmentType? type) {
-    switch (type) {
-      case AppointmentType.in_person:
-        return Localization().getStringEx('model.wellness.appointment.type.in_person.label', 'In Person');
-      case AppointmentType.online:
-        return Localization().getStringEx('model.wellness.appointment.type.online.label', 'Telehealth');
-      default:
-        return null;
-    }
   }
 
   static String? typeToKeyString(AppointmentType? type) {
@@ -163,11 +109,10 @@ class Appointment with Explore, Favorite {
   @override String? get exploreShortDescription => null;
   @override DateTime? get exploreStartDateUtc => dateTimeUtc;
   @override String? get exploreSubTitle => location?.title;
-  @override String? get exploreTitle => title;
+  @override String? get exploreTitle => 'MyMcKinley Appointment';
   @override Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
       'date_time': DateTimeUtils.utcDateTimeToString(dateTimeUtc),
       'type': typeToKeyString(type),
       'location': location?.toJson(),

@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
@@ -59,7 +60,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   }
 
   Widget _buildContentUi() {
-    String toutImageKey = Appointment.imageKeyForAppointmentType(_appointmentType);
+    String toutImageKey = appointmentTypeImageKey(_appointmentType);
 
     return Column(children: <Widget>[
       Expanded(child:
