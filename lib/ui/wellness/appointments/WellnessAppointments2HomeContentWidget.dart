@@ -155,6 +155,14 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     items.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
 
     if (_providers != null) {
+      items.add(RibbonButton(
+        backgroundColor: Styles().colors!.white,
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        rightIconKey: null,
+        label: Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
+        onTap: () => _onTapProvider(null)
+      ));
+
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
           backgroundColor: Styles().colors!.white,
@@ -165,14 +173,6 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
         ));
       }
     }
-
-    items.add(RibbonButton(
-      backgroundColor: Styles().colors!.white,
-      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-      rightIconKey: null,
-      label: Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
-      onTap: () => _onTapProvider(null)
-    ));
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
