@@ -102,10 +102,6 @@ class Game with Explore implements Favorite {
     ) : null;
   }
 
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) && (json['sport'] != null) && (json['id'] != null);
-  }
-
   @override
   bool operator ==(other) =>
       (other is Game) &&

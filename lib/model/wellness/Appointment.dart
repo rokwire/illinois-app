@@ -178,13 +178,6 @@ class Appointment with Explore, Favorite {
     };
   }
 
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      (json['id'] != null) &&
-      (json['date_time'] != null) &&
-      (json['type'] != null);
-  }
-
   @override
   bool operator==(dynamic other) =>
     (other is Appointment) &&

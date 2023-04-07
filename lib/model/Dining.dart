@@ -159,10 +159,6 @@ class Dining with Explore implements Favorite {
       (DeepCollectionEquality().hash(paymentTypes)) ^
       (DeepCollectionEquality().hash(diningSchedules));
 
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) && (json['DiningOptionID'] != null);
-  }
-
   // Explore
   @override String?   get exploreId               { return id; }
   @override String?   get exploreTitle            { return title; }
