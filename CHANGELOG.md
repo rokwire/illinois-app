@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed ExploreJsonHandler definition, not used any more [#3070](https://github.com/rokwire/illinois-app/issues/3070).
 ### Added
 - Allow deep linking to app tabs via notification [#3094](https://github.com/rokwire/illinois-app/issues/3094).
+- New "My College of Medicine Courses" item in Academics content [#3097](https://github.com/rokwire/illinois-app/issues/3097).
 ### Changed
 - Schedule appointment preview progress. [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 
