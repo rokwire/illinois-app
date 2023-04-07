@@ -22,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -36,7 +35,7 @@ import 'package:illinois/service/Auth2.dart';
 
 enum AppointmentsTimeSource { upcoming, past }
 
-class Appointments with Service implements ExploreJsonHandler, NotificationsListener {
+class Appointments with Service implements NotificationsListener {
   static const String notifyAppointmentDetail = "edu.illinois.rokwire.appointments.detail";
   static const String notifyPastAppointmentsChanged = "edu.illinois.rokwire.appointments.past.changed";
   static const String notifyUpcomingAppointmentsChanged = "edu.illinois.rokwire.appointments.upcoming.changed";
@@ -73,14 +72,12 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged
     ]);
-    Explore.addJsonHandler(this);
     _appointmentDetailsCache = <Map<String, dynamic>>[];
     super.createService();
   }
 
   @override
   void destroyService() {
-    Explore.removeJsonHandler(this);
     NotificationService().unsubscribe(this);
     super.destroyService();
   }
@@ -430,10 +427,6 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     }
     NotificationService().notify(notifyAppointmentsAccountChanged);
   }
-
-  // ExploreJsonHandler
-  @override bool exploreCanJson(Map<String, dynamic>? json) => Appointment.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Appointment.fromJson(json);
 
   // DeepLinks
   String get appointmentDetailUrl => '${DeepLink().appUrl}/appointment';
