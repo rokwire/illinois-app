@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/occupation/Occupation.dart';
+import 'package:illinois/model/occupation/OccupationMatch.dart';
 import 'package:illinois/model/occupation/Skill.dart';
 import 'package:illinois/service/skills/OccupationsService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class OccupationDetails extends StatelessWidget {
-  OccupationDetails({Key? key, required this.occupationCode}) : super(key: key);
+  OccupationDetails({Key? key, required this.occupationMatch}) : super(key: key);
 
-  final String occupationCode;
+  final OccupationMatch occupationMatch;
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +18,18 @@ class OccupationDetails extends StatelessWidget {
         title: 'Occupation Details',
       ),
       body: FutureBuilder(
-          future: OccupationsService().getOccupation(occupationCode: occupationCode),
+          future: OccupationsService().getOccupation(occupationCode: occupationMatch.occupation?.code ?? ""),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.data == null) {
+              return Center(
+                child: Text(
+                  'Failed to get occupation data. Please retry.',
+                  textAlign: TextAlign.center,
+                ),
+              );
             }
             final Occupation occupation = snapshot.data as Occupation;
             return SingleChildScrollView(
@@ -37,7 +46,7 @@ class OccupationDetails extends StatelessWidget {
                   SizedBox(
                     height: 12,
                   ),
-                  Text("Match Percentage: ${occupation.matchPercentage!.toInt()}%"),
+                  Text("Match Percentage: ${occupationMatch.matchPercent!.toInt()}%"),
                   SizedBox(
                     height: 12,
                   ),
@@ -47,13 +56,13 @@ class OccupationDetails extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       child: LinearProgressIndicator(
                         backgroundColor: LinearProgressColorUtils.linearProgressIndicatorBackgroundColor(
-                          occupation.matchPercentage! / 100.0,
+                          occupationMatch.matchPercent! / 100.0,
                         ),
                         color: LinearProgressColorUtils.linearProgressIndicatorColor(
-                          occupation.matchPercentage! / 100.0,
+                          occupationMatch.matchPercent! / 100.0,
                         ),
                         minHeight: 20,
-                        value: occupation.matchPercentage! / 100,
+                        value: occupationMatch.matchPercent! / 100,
                       ),
                     ),
                   ),

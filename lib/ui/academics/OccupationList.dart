@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/occupation/Occupation.dart';
+import 'package:illinois/model/occupation/OccupationMatch.dart';
 import 'package:illinois/service/skills/OccupationsService.dart';
 import 'package:illinois/ui/academics/OccupationDetails.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -53,36 +54,47 @@ class OccupationList extends StatelessWidget {
 
   Widget _buildOccupationListView() {
     return FutureBuilder(
-        future: OccupationsService().getAllOccupations(),
+        future: OccupationsService().getAllOccupationMatches(),
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return Center(child: CircularProgressIndicator());
           }
-          List<Occupation> occupations = (snapshot.data as List).cast<Occupation>();
+          if (snapshot.data == null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+          List<OccupationMatch> occupationMatches = (snapshot.data as List).cast<OccupationMatch>();
           return ListView.builder(
             itemBuilder: (context, index) => OccupationListTile(
-              occupation: occupations[index],
+              occupationMatch: occupationMatches[index],
             ),
-            itemCount: occupations.length,
+            itemCount: occupationMatches.length,
           );
         });
   }
 }
 
 class OccupationListTile extends StatelessWidget {
-  const OccupationListTile({Key? key, required this.occupation}) : super(key: key);
+  const OccupationListTile({Key? key, required this.occupationMatch}) : super(key: key);
 
-  final Occupation occupation;
+  final OccupationMatch occupationMatch;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: OccupationMatchCircle(
-        matchPercentage: occupation.matchPercentage ?? 100.0,
+        matchPercentage: occupationMatch.matchPercent ?? 100.0,
       ),
-      title: Text(occupation.title.toString()),
+      title: Text(occupationMatch.occupation?.title.toString() ?? ""),
       subtitle: Text(
-        occupation.description.toString(),
+        occupationMatch.occupation?.description.toString() ?? "",
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -92,7 +104,7 @@ class OccupationListTile extends StatelessWidget {
             context,
             CupertinoPageRoute(
                 builder: (context) => OccupationDetails(
-                      occupationCode: occupation.code!,
+                      occupationMatch: occupationMatch,
                       // survey: Config().bessiSurveyID,
                       // onComplete: _gotoResults,
                       // offlineWidget: _buildOfflineWidget(),
