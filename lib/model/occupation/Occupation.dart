@@ -7,15 +7,14 @@ class Occupation {
   String? code;
   String? title;
   String? description;
-  double? matchPercentage;
   String? onetLink;
   List<Skill>? skills;
   List<Skill>? technicalSkills;
+
   Occupation({
     this.code,
     this.title,
     this.description,
-    this.matchPercentage,
     this.onetLink,
     this.skills,
     this.technicalSkills,
@@ -23,13 +22,12 @@ class Occupation {
 
   factory Occupation.fromJson(Map<String, dynamic> json) {
     return Occupation(
-      code: JsonUtils.stringValue(json["occupation_code"]) ?? "",
+      code: JsonUtils.stringValue(json["code"]) ?? "",
       title: JsonUtils.stringValue(json["title"]) ?? "",
       description: JsonUtils.stringValue(json["description"]) ?? "",
       onetLink: JsonUtils.stringValue(json["onetLink"]) ?? "",
-      skills: Skill.listFromJson(json["skills"]),
-      technicalSkills: Skill.listFromJson(json["technicalSkills"]),
-      matchPercentage: JsonUtils.doubleValue(json["score"]) ?? 0.0,
+      skills: Skill.listFromJson(json["skills"]) ?? [],
+      technicalSkills: Skill.listFromJson(json["technicalSkills"]) ?? [],
     );
   }
 
@@ -53,6 +51,6 @@ class Occupation {
 
   @override
   String toString() {
-    return 'Occupation(code: $code, title: $title, description: $description, matchPercentage: $matchPercentage, onetLink: $onetLink, skills: $skills, technicalSkills: $technicalSkills)';
+    return 'Occupation(code: $code, title: $title, description: $description, onetLink: $onetLink, skills: $skills, technicalSkills: $technicalSkills)';
   }
 }
