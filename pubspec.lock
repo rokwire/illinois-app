@@ -289,14 +289,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
-  dio:
-    dependency: "direct main"
-    description:
-      name: dio
-      sha256: "9fdbf71baeb250fc9da847f6cb2052196f62c19906a3657adfc18631a667d316"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.0"
   dropdown_button2:
     dependency: "direct main"
     description:
