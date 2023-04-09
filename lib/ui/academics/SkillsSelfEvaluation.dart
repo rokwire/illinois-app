@@ -98,13 +98,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
           textColor: Styles().colors?.fillColorPrimaryVariant,
           backgroundColor: Styles().colors?.surface,
           onTap: () {
-                    Navigator.push(context, CupertinoPageRoute(
-                            builder: (context) => OccupationList(
-                                // survey: Config().bessiSurveyID,
-                                // onComplete: _gotoResults,
-                                // offlineWidget: _buildOfflineWidget(),
-                                // tabBar: uiuc.TabBar(),
-                                )));
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel()));
                   }
         )),
       ]),),
