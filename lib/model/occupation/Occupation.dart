@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/foundation.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Skill.dart';
 
@@ -21,65 +21,38 @@ class Occupation {
     this.technicalSkills,
   });
 
-  Occupation.fromJson(Map<String, dynamic> json) {
-    code = json['code'] as String;
-    title = json['occupation']['title'] as String;
-    description = json['occupation']['description'] as String;
-    onetLink = 'https://www.onetonline.org/link/summary/$code';
-
-    skills = (json['skills']['element'] as List).cast<Map<String, dynamic>>().map((e) => Skill.fromJson(e)).toList();
-    technicalSkills = [];
-
-    // TODO: Change this to use the backend service
-    matchPercentage = 50.0;
+  factory Occupation.fromJson(Map<String, dynamic> json) {
+    return Occupation(
+      code: JsonUtils.stringValue(json["occupation_code"]) ?? "",
+      title: JsonUtils.stringValue(json["title"]) ?? "",
+      description: JsonUtils.stringValue(json["description"]) ?? "",
+      onetLink: JsonUtils.stringValue(json["onetLink"]) ?? "",
+      skills: Skill.listFromJson(json["skills"]),
+      technicalSkills: Skill.listFromJson(json["technicalSkills"]),
+      matchPercentage: JsonUtils.doubleValue(json["score"]) ?? 0.0,
+    );
   }
 
-  Occupation copyWith({
-    String? code,
-    String? title,
-    String? description,
-    double? matchPercentage,
-    String? onetLink,
-    List<Skill>? skills,
-    List<Skill>? technicalSkills,
-  }) {
-    return Occupation(
-      code: code ?? this.code,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      matchPercentage: matchPercentage ?? this.matchPercentage,
-      onetLink: onetLink ?? this.onetLink,
-      skills: skills ?? this.skills,
-      technicalSkills: technicalSkills ?? this.technicalSkills,
-    );
+  static List<Occupation>? listFromJson(List<dynamic>? jsonList) {
+    List<Occupation>? result;
+    if (jsonList != null) {
+      result = <Occupation>[];
+      for (dynamic jsonEntry in jsonList) {
+        Map<String, dynamic>? mapVal = JsonUtils.mapValue(jsonEntry);
+        if (mapVal != null) {
+          try {
+            ListUtils.add(result, Occupation.fromJson(mapVal));
+          } catch (e) {
+            debugPrint(e.toString());
+          }
+        }
+      }
+    }
+    return result;
   }
 
   @override
   String toString() {
     return 'Occupation(code: $code, title: $title, description: $description, matchPercentage: $matchPercentage, onetLink: $onetLink, skills: $skills, technicalSkills: $technicalSkills)';
-  }
-
-  @override
-  bool operator ==(covariant Occupation other) {
-    if (identical(this, other)) return true;
-
-    return other.code == code &&
-        other.title == title &&
-        other.description == description &&
-        other.matchPercentage == matchPercentage &&
-        other.onetLink == onetLink &&
-        listEquals(other.skills, skills) &&
-        listEquals(other.technicalSkills, technicalSkills);
-  }
-
-  @override
-  int get hashCode {
-    return code.hashCode ^
-        title.hashCode ^
-        description.hashCode ^
-        matchPercentage.hashCode ^
-        onetLink.hashCode ^
-        skills.hashCode ^
-        technicalSkills.hashCode;
   }
 }
