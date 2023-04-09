@@ -14,7 +14,7 @@ class OccupationMatch {
   factory OccupationMatch.fromJson(Map<String, dynamic> json) {
     return OccupationMatch(
       occupation: Occupation.fromJson(json["occupation"]),
-      matchPercent: JsonUtils.doubleValue(json["score"]) ?? 0.0,
+      matchPercent: JsonUtils.doubleValue(json["match_percent"]) ?? 0.0,
     );
   }
 
