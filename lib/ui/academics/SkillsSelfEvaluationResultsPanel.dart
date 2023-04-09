@@ -15,6 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Polls.dart';
+import 'package:illinois/ui/academics/OccupationList.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -99,6 +100,15 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.section.title', 'Results'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.header'), textAlign: TextAlign.center,),
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
+        // TODO: Need to change the look and size of the button
+        Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
+          label: Localization().getStringEx("panel.skills_self_evaluation.go_to_results.button.label", 'See Occupation Matches'),
+          textColor: Styles().colors?.fillColorPrimaryVariant,
+          backgroundColor: Styles().colors?.surface,
+          onTap: () {
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => OccupationList()));
+                  }
+        )),
         _buildScoresHeader(),
       ]),
       decoration: BoxDecoration(
