@@ -3,9 +3,10 @@ import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class OccupationsService /* with Service */ {
+class OccupationsService with Service {
   static final OccupationsService _instance = OccupationsService._internal();
 
   factory OccupationsService() => _instance;

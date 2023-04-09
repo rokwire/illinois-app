@@ -54,6 +54,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/service/skills/OccupationsService.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
@@ -152,6 +153,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     Appointments(),
     MTD(),
     Explore(),
+    OccupationsService(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Content(),
