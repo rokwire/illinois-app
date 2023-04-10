@@ -69,7 +69,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   // NotificationsListener
   @override
   void onNotification(String name, param) {
-    if (param == Appointments.notifyAppointmentsChanged) {
+    if (name == Appointments.notifyAppointmentsChanged) {
       _loadAppointments();
     }
   }
