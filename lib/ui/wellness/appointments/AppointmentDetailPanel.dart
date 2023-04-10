@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
@@ -23,10 +24,13 @@ import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -106,7 +110,11 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _buildContent(), backgroundColor: Styles().colors!.background, bottomNavigationBar: uiuc.TabBar());
+    return Scaffold(
+      body: _buildContent(),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar()
+    );
   }
 
   Widget _buildContent() {
@@ -348,8 +356,8 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       return null;
     }
     String typeLabel = appointmentTypeToDisplayString(type)!;
-    String? longDisplayLocation = _appointment!.getLongDisplayLocation(_locationData) ?? "";
-    String? locationTitle = _appointment!.location?.title;
+    String? longDisplayLocation = _appointment?.getLongDisplayLocation(_locationData) ?? "";
+    String? locationTitle = _appointment?.locationTitle;
     String? locationTextValue;
     if (StringUtils.isNotEmpty(longDisplayLocation)) {
       locationTextValue = longDisplayLocation;
@@ -562,35 +570,52 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     Auth2().prefs?.toggleFavorite(_appointment);
   }
 
-  bool get _canReschedule => true;
+  bool get _canReschedule => /* (_appointment?.provider?.supportsReschedule == true) && */ (_appointment?.unit != null) && (_appointment?.cancelled != true);
 
   void _onReschedule() {
-    AppAlert.showDialogResult(context, 'Comming soon...');
-  }
-
-  bool get _canCancel => _appointment?.cancelled != true;
-
-  void _onCancel() {
-    _promptCancel().then((bool? result) {
-      if (result == true) {
-        setStateIfMounted(() {
-          _isCanceling = true;
-        });
-        Appointments().updateAppointment(Appointment.fromOther(_appointment,
-          cancelled: true
-        )).then((Appointment? appointment) {
+    Analytics().logSelect(target: "Reschedule");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
+      scheduleParam: AppointmentScheduleParam(
+        provider: _appointment?.provider,
+        unit: _appointment?.unit,
+      ),
+      sourceAppointment: _appointment,
+      onFinish: (BuildContext context, Appointment? appointment) {
+        if (appointment != null) {
           setStateIfMounted(() {
             _appointment = appointment;
           });
-        }).catchError((e) {
-          AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.detail.cancel.failed.message', 'Failed to cancel appointment:') + '\n' + e.toString());
-        }).whenComplete(() {
+        }
+        Navigator.of(context).popUntil((Route route) =>
+          AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType);
+      },
+    ),));
+  }
+
+  bool get _canCancel => /* (_appointment?.provider?.supportsCancel == true) && */ _appointment?.cancelled != true;
+
+  void _onCancel() {
+    Analytics().logSelect(target: "Cancel");
+    if (_appointment != null) {
+      _promptCancel().then((bool? result) {
+        if (result == true) {
           setStateIfMounted(() {
-            _isCanceling = false;
+            _isCanceling = true;
           });
-        });
-      }
-    });
+          Appointments().cancelAppointment(_appointment!).then((Appointment? appointment) {
+            setStateIfMounted(() {
+              _appointment = appointment;
+            });
+          }).catchError((e) {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.detail.cancel.failed.message', 'Failed to cancel appointment:') + '\n' + e.toString());
+          }).whenComplete(() {
+            setStateIfMounted(() {
+              _isCanceling = false;
+            });
+          });
+        }
+      });
+    }
   }
 
   Future<bool?> _promptCancel() async {

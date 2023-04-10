@@ -69,7 +69,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   // NotificationsListener
   @override
   void onNotification(String name, param) {
-    if (param == Appointments.notifyAppointmentsChanged) {
+    if (name == Appointments.notifyAppointmentsChanged) {
       _loadAppointments();
     }
   }
@@ -324,7 +324,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     setStateIfMounted(() {
       _isLoadingAppointments = true;
     });
-    Appointments().loadAppointments(providerId: _selectedProvider?.id).then((List<Appointment>? result) {
+    Appointments().loadAppointments(providerId: _selectedProvider?.id, tmpProviders: _providers).then((List<Appointment>? result) {
       setStateIfMounted(() {
         _buildAppointments(result);
         _isLoadingAppointments = false;
@@ -361,6 +361,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
         providers: _providers,
         provider: _selectedProvider,
       ),
+      onFinish: (BuildContext context, Appointment? appointment) => Navigator.of(context).popUntil((route) => route.isFirst),
     )));
   }
 

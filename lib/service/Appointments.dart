@@ -32,6 +32,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:http/http.dart' as http;
 import 'package:illinois/service/Auth2.dart';
+import 'package:uuid/uuid.dart';
 
 enum AppointmentsTimeSource { upcoming, past }
 
@@ -481,16 +482,10 @@ class Appointments with Service implements NotificationsListener {
   // Providers
 
   Future<List<AppointmentProvider>?> loadProviders() async {
-    await Future.delayed(Duration(milliseconds: 1500));
-    return _sampleProviders;
+    String? url = "${Config().appointmentsUrl}/services/providers";
+    http.Response? response = await Network().get(url, auth: Auth2());
+    return (response?.statusCode == 200) ? AppointmentProvider.listFromJson(JsonUtils.decodeList(response?.body)) : null;
   }
-
-  List<AppointmentProvider> get _sampleProviders =>  <AppointmentProvider>[
-    AppointmentProvider(id: '1', name: 'McKinley'),
-    AppointmentProvider(id: '2', name: 'Grainger'),
-    AppointmentProvider(id: '3', name: 'Lorem Ipsum'),
-    AppointmentProvider(id: '4', name: 'Sit Dolor Amet'),
-  ];
 
   // Units
 
@@ -531,33 +526,90 @@ class Appointments with Service implements NotificationsListener {
 
   // Appointments
 
-  Future<List<Appointment>?> loadAppointments({String? providerId}) async {
+  Future<List<Appointment>?> loadAppointments({String? providerId, List<AppointmentProvider>? tmpProviders}) async {
     await Future.delayed(Duration(milliseconds: 1500));
-    AppointmentProvider? provider = (providerId != null) ? _sampleProviders.firstWhere((provider) => provider.id == providerId, orElse: () => _sampleProviders.first) : null;
+    AppointmentProvider? provider = (providerId != null) ? tmpProviders?.firstWhere((provider) => provider.id == providerId, orElse: () => tmpProviders.first) : null;
     if (provider != null) {
       return _sampleAppointments(provider: provider);
     }
-    else {
+    else if (tmpProviders != null) {
       List<Appointment> result = <Appointment>[];
-      for (AppointmentProvider provider in _sampleProviders) {
+      for (AppointmentProvider provider in tmpProviders) {
         result.addAll(_sampleAppointments(provider: provider));
       }
       return result;
     }
+    else {
+      return <Appointment>[];
+    }
   }
 
-  List<Appointment> _sampleAppointments({ required AppointmentProvider provider}) => <Appointment>[
-    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26bc","provider":provider.toJson(),"date":"2023-04-14T07:30:444Z","type":"InPerson","location":{"id":"555556","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
-    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-04-13T07:30:444Z","type":"InPerson","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
-    Appointment.fromJson({"id":"08c122e3-2174-438b-f231198c26ba","provider":provider.toJson(),"date":"2023-04-12T08:22:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}) ?? Appointment(),
-    Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-04-11T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
-    Appointment.fromJson({"id":"08c122e3","provider":provider.toJson(),"date":"2023-04-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
+  List<Appointment> _sampleAppointments({ required AppointmentProvider provider }) {
+    DateTime now = DateTime.now();
+    List<Appointment> appointments = <Appointment>[];
+
+    for (int index = 0; index < 5; index++) {
+      appointments.add(_sampleAppointment(provider: provider, day: now.add(Duration(days: index + 5))));
+    }
+    
+    for (int index = 0; index < 5; index++) {
+      appointments.add(_sampleAppointment(provider: provider, day: now.subtract(Duration(days: index + 5))));
+    }
+
+    return appointments;
+  }
+
+  Appointment _sampleAppointment({required AppointmentProvider provider, required DateTime day}) {
+    String id = Uuid().v1();
+    AppointmentType type = ((Random().nextInt(3) % 3) == 0) ? AppointmentType.online : AppointmentType.in_person;
+
+    List<AppointmentUnit> units = _sampleUnits;
+    AppointmentUnit unit = units[Random().nextInt(units.length)];
+
+    AppointmentOnlineDetails? details = (type == AppointmentType.online) ? AppointmentOnlineDetails(
+      meetingId: id.substring(0, 8).toUpperCase(),
+      url: "https://mymckinley.illinois.edu",
+      meetingPasscode: id.substring(24, 30).toUpperCase(),
+    ) : null;
+    AppointmentHost host = AppointmentHost(firstName: 'Joseph', lastName: 'Applegate');
+    bool cancelled = ((Random().nextInt(3) % 5) == 0);
+
+    DateTime startTimeUtc = DateTime(day.year, day.month, day.day, Random().nextInt(8) + 8, 30).toUtc();
+    DateTime endTimeUtc = startTimeUtc.add(Duration(minutes: 30));
+
+    return Appointment(
+      id: id,
+      type: type,
+
+      provider: provider,
+      unit: unit,
+      timeSlot: AppointmentTimeSlot(startTimeUtc: startTimeUtc, endTimeUtc: endTimeUtc),
+      notes: 'Sample notes (${Random().nextInt(5) + 1})',
+
+      onlineDetails: details,
+      host: host,
+      instructions: 'Sample instructions (${5 - Random().nextInt(5) + 1})',
+      cancelled: cancelled,
+
+      dateTimeUtc: startTimeUtc,
+      location: unit.location,
+    );
+  }
+  
+  /*<Appointment>[
+
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26bc","type":"InPerson","provider":provider.toJson(),"date":"2023-04-14T07:30:444Z","location":{"id":"555556","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26ba","type":"InPerson","provider":provider.toJson(),"date":"2023-04-13T07:30:444Z","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-f231198c26ba","type":"Online","provider":provider.toJson(),"date":"2023-04-12T08:22:444Z","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","type":"InPerson","provider":provider.toJson(),"date":"2023-04-11T10:30:444Z","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3","type":"Online","provider":provider.toJson(),"date":"2023-04-10T11:34:444Z","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
+    
     Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26bc","provider":provider.toJson(),"date":"2023-02-14T07:30:444Z","type":"InPerson","location":{"id":"555556","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
     Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-02-13T07:30:444Z","type":"InPerson","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
     Appointment.fromJson({"id":"08c122e3-2174-438b-f231198c26ba","provider":provider.toJson(),"date":"2023-02-12T08:22:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}) ?? Appointment(),
     Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-02-11T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
     Appointment.fromJson({"id":"08c122e3","provider":provider.toJson(),"date":"2023-02-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
-  ];
+  ];*/
 
   Future<Appointment?> createAppointment(Appointment appointment) async {
     await Future.delayed(Duration(milliseconds: 1500));
@@ -575,6 +627,17 @@ class Appointments with Service implements NotificationsListener {
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
       return appointment;
+    }
+    else {
+      throw AppointmentsException(description: 'Random Update Failure');
+    }
+  }
+
+  Future<Appointment?> cancelAppointment(Appointment appointment) async {
+    await Future.delayed(Duration(milliseconds: 1500));
+    if (Random().nextInt(2) == 0) {
+      NotificationService().notify(notifyAppointmentsChanged);
+      return Appointment.fromOther(appointment, cancelled: true);
     }
     else {
       throw AppointmentsException(description: 'Random Update Failure');
