@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/model/occupation/OccupationMatch.dart';
 import 'package:illinois/service/skills/OccupationsService.dart';
 import 'package:illinois/ui/academics/OccupationDetails.dart';
