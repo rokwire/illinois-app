@@ -285,11 +285,14 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     });
 
     Appointments().createAppointment(Appointment(
+      type: _appointmentType,
+
       provider: widget.scheduleParam.provider,
       unit: widget.scheduleParam.unit,
+      timeSlot: widget.scheduleParam.timeSlot,
+      notes: _notesController.text,
+
       dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
-      type: _appointmentType,
-      notes: _notesController.text
     )).then((_) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.schedule.notes.submit.succeeded.message', 'Your appointment was scheduled successfully.')).then((_) {
         Navigator.of(context).popUntil((route) => route.isFirst);

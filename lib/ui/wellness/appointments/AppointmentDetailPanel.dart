@@ -348,8 +348,8 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       return null;
     }
     String typeLabel = appointmentTypeToDisplayString(type)!;
-    String? longDisplayLocation = _appointment!.getLongDisplayLocation(_locationData) ?? "";
-    String? locationTitle = _appointment!.location?.title;
+    String? longDisplayLocation = _appointment?.getLongDisplayLocation(_locationData) ?? "";
+    String? locationTitle = _appointment?.locationTitle;
     String? locationTextValue;
     if (StringUtils.isNotEmpty(longDisplayLocation)) {
       locationTextValue = longDisplayLocation;

@@ -12,23 +12,32 @@ import 'package:sprintf/sprintf.dart';
 extension AppointmentExt on Appointment {
 
   String? get displayDate =>
-    AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, h:mm a');
+    AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(startDateTimeUtc), format: 'MMM dd, h:mm a');
 
   String? get displayHostName =>
-    (host != null) ? StringUtils.fullName([host?.firstName, host?.lastName]) : null;
+    host?.displayName;
+
+  String get displayProviderName =>
+    this.provider?.name ?? Localization().getStringEx('model.wellness.appointment.default.provider.label', 'MyMcKinley');
 
   String? get category =>
-    sprintf(Localization().getStringEx('model.wellness.appointment.category.label.format', '%s Appointments'), [
-      this.provider?.name ?? Localization().getStringEx('model.wellness.appointment.default.provider.label', 'MyMcKinley')
-    ]).toUpperCase();
+    sprintf(Localization().getStringEx('model.wellness.appointment.category.label.format', '%s Appointments'), [displayProviderName]).toUpperCase();
 
   String? get title =>
-    sprintf(Localization().getStringEx('model.wellness.appointment.title.label.format', '%s Appointment'), [
-      this.provider?.name ?? Localization().getStringEx('model.wellness.appointment.default.provider.label', 'MyMcKinley')
-    ]);
+    sprintf(Localization().getStringEx('model.wellness.appointment.title.label.format', '%s Appointment'), [displayProviderName]);
 
   String? get imageKeyBasedOnCategory => //Keep consistent images
     (type != null) ? appointmentTypeImageKey(type!) : (imageUrl ??= Assets().randomStringFromListWithKey('images.random.events.Other'));
+}
+
+///////////////////////////////
+/// AppointmentHost
+
+extension AppointmentHostExt on AppointmentHost {
+
+  String? get displayName =>
+    StringUtils.fullName([firstName, lastName]);
+
 }
 
 ///////////////////////////////

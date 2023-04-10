@@ -28,79 +28,141 @@ class Appointment with Explore, Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
   final String? id;
+  final AppointmentType? type;
+
   final AppointmentProvider? provider;
   final AppointmentUnit? unit;
-  final DateTime? dateTimeUtc;
-  final AppointmentType? type;
-  final AppointmentOnlineDetails? onlineDetails;
-  final AppointmentLocation? location;
-  final bool? cancelled;
-  final String? instructions;
+  final AppointmentTimeSlot? timeSlot;
   final String? notes;
+
+  final AppointmentOnlineDetails? onlineDetails;
   final AppointmentHost? host;
+  final String? instructions;
+  final bool? cancelled;
+
+  final DateTime? dateTimeUtc; // Obsolete
+  final AppointmentLocation? location; // Obsolete?
 
   //Util fields
   String? imageUrl; // to return same random image for this instance
 
   Appointment({
-    this.id, this.provider, this.unit,
-    this.dateTimeUtc, this.type, this.onlineDetails, this.location,
-    this.cancelled, this.instructions, this.notes, this.host
+    this.id, this.type,
+    this.provider, this.unit, this.timeSlot, this.notes,
+    this.onlineDetails, this.host, this.instructions, this.cancelled, 
+    this.dateTimeUtc, this.location,
   });
 
   factory Appointment.fromOther(Appointment? other, {
-    String? id, AppointmentProvider? provider, AppointmentUnit? unit,
-    DateTime? dateTimeUtc, AppointmentType? type, AppointmentOnlineDetails? onlineDetails, AppointmentLocation? location,
-    bool? cancelled, String? instructions, String? notes, AppointmentHost? host,}) {
+    String? id, AppointmentType? type,
+    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentTimeSlot? timeSlot, String? notes, 
+    AppointmentOnlineDetails? onlineDetails, AppointmentHost? host, String? instructions, bool? cancelled,
+    DateTime? dateTimeUtc, AppointmentLocation? location, }) {
     return Appointment(
       id: id ?? other?.id,
+      type: type ?? other?.type,
+      
       provider: provider ?? other?.provider,
       unit: unit ?? other?.unit,
-      dateTimeUtc: dateTimeUtc ?? other?.dateTimeUtc,
-      type: type ?? other?.type,
-      onlineDetails: onlineDetails ?? other?.onlineDetails,
-      location: location ?? other?.location,
-      cancelled: cancelled ?? other?.cancelled,
-      instructions: instructions ?? other?.instructions,
+      timeSlot: timeSlot ?? other?.timeSlot,
       notes: notes ?? other?.notes,
-      host: host ?? other?.host
+      
+      onlineDetails: onlineDetails ?? other?.onlineDetails,
+      host: host ?? other?.host,
+      instructions: instructions ?? other?.instructions,
+      cancelled: cancelled ?? other?.cancelled,
+
+      dateTimeUtc: dateTimeUtc ?? other?.dateTimeUtc,
+      location: location ?? other?.location,
     );
   }
 
   static Appointment? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Appointment(
       id: JsonUtils.stringValue(json['id']),
+      type: appointmentTypeFromString(JsonUtils.stringValue(json['type'])),
+
       provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])) ,
       unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])) ,
-      dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
-      type: appointmentTypeFromString(JsonUtils.stringValue(json['type'])),
-      onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
-      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
-      cancelled: JsonUtils.boolValue(json['cancelled']),
-      instructions: JsonUtils.stringValue(json['instructions']),
+      timeSlot: AppointmentTimeSlot.fromJson(JsonUtils.mapValue(json['time_slot'])) ,
       notes: JsonUtils.stringValue(json['user_notes']),
-      host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host']))
+      
+      onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
+      host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])),
+      instructions: JsonUtils.stringValue(json['instructions']),
+      cancelled: JsonUtils.boolValue(json['cancelled']),
+
+      dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
+      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
     ) : null;
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
+    'type': appointmentTypeToString(type),
+
     'provider': provider?.toJson(),
     'unit': unit?.toJson(),
-    'date': DateTimeUtils.utcDateTimeToString(dateTimeUtc, format: _serverDateTimeFormat),
-    'type': appointmentTypeToString(type),
-    'location': location?.toJson(),
-    'online_details': onlineDetails?.toJson(),
-    'cancelled': cancelled,
-    'instructions': instructions,
+    'time_slot': timeSlot?.toJson(),
     'user_notes': notes,
-    'host': host?.toJson()
+
+    'online_details': onlineDetails?.toJson(),
+    'host': host?.toJson(),
+    'instructions': instructions,
+    'cancelled': cancelled,
+    
+    'date': DateTimeUtils.utcDateTimeToString(dateTimeUtc, format: _serverDateTimeFormat),
+    'location': location?.toJson(),
   };
 
-  bool get isUpcoming {
-    DateTime now = DateTime.now();
-    return (dateTimeUtc != null) && dateTimeUtc!.isAfter(now.toUtc());
-  }
+  @override
+  bool operator==(dynamic other) =>
+    (other is Appointment) &&
+
+    (id == other.id) &&
+    (type == other.type) &&
+
+    (provider == other.provider) &&
+    (unit == other.unit) &&
+    (timeSlot == other.timeSlot) &&
+    (notes == other.notes) &&
+
+    (onlineDetails == other.onlineDetails) &&
+    (host == other.host) &&
+    (instructions == other.instructions) &&
+    (cancelled == other.cancelled) &&
+
+    (dateTimeUtc == other.dateTimeUtc) &&
+    (location == other.location);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (type?.hashCode ?? 0) ^
+
+    (provider?.hashCode ?? 0) ^
+    (unit?.hashCode ?? 0) ^
+    (timeSlot?.hashCode ?? 0) ^
+    (notes?.hashCode ?? 0) ^
+
+    (onlineDetails?.hashCode ?? 0) ^
+    (host?.hashCode ?? 0) ^
+    (instructions?.hashCode ?? 0) ^
+    (cancelled?.hashCode ?? 0) ^
+    
+    (dateTimeUtc?.hashCode ?? 0) ^
+    (location?.hashCode ?? 0);
+
+  // Accessories
+
+  DateTime? get startDateTimeUtc =>
+    timeSlot?.startTimeUtc ?? dateTimeUtc;
+
+  bool get isUpcoming =>
+    startDateTimeUtc?.isAfter(DateTime.now().toUtc()) ?? false;
+
+  String? get locationTitle =>
+    unit?.name ?? location?.title;
 
   static List<Appointment>? listFromJson(List<dynamic>? jsonList) {
     List<Appointment>? items;
@@ -125,37 +187,10 @@ class Appointment with Explore, Favorite {
   @override String? get exploreLongDescription => null;
   @override String? get explorePlaceId => null;
   @override String? get exploreShortDescription => null;
-  @override DateTime? get exploreStartDateUtc => dateTimeUtc;
-  @override String? get exploreSubTitle => location?.title;
+  @override DateTime? get exploreStartDateUtc => startDateTimeUtc;
+  @override String? get exploreSubTitle => locationTitle;
   @override String? get exploreTitle => "${provider?.name ?? 'MyMcKinley'} Appointment";
 //@override Map<String, dynamic> toJson();
-
-  @override
-  bool operator==(dynamic other) =>
-    (other is Appointment) &&
-    (id == other.id) &&
-    (provider == other.provider) &&
-    (unit == other.unit) &&
-    (dateTimeUtc == other.dateTimeUtc) &&
-    (type == other.type) &&
-    (onlineDetails == other.onlineDetails) &&
-    (location == other.location) &&
-    (cancelled == other.cancelled) &&
-    (instructions == other.instructions) &&
-    (host == other.host);
-
-  @override
-  int get hashCode =>
-    (id?.hashCode ?? 0) ^
-    (provider?.hashCode ?? 0) ^
-    (unit?.hashCode ?? 0) ^
-    (dateTimeUtc?.hashCode ?? 0) ^
-    (type?.hashCode ?? 0) ^
-    (onlineDetails?.hashCode ?? 0) ^
-    (location?.hashCode ?? 0) ^
-    (cancelled?.hashCode ?? 0) ^
-    (instructions?.hashCode ?? 0) ^
-    (host?.hashCode ?? 0);
 }
 
 ///////////////////////////////
