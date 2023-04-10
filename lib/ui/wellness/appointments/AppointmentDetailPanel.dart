@@ -570,7 +570,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     Auth2().prefs?.toggleFavorite(_appointment);
   }
 
-  bool get _canReschedule => (_appointment?.unit != null);
+  bool get _canReschedule => /* (_appointment?.provider?.supportsReschedule == true) && */ (_appointment?.unit != null) && (_appointment?.cancelled != true);
 
   void _onReschedule() {
     Analytics().logSelect(target: "Reschedule");
@@ -592,30 +592,30 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     ),));
   }
 
-  bool get _canCancel => _appointment?.cancelled != true;
+  bool get _canCancel => /* (_appointment?.provider?.supportsCancel == true) && */ _appointment?.cancelled != true;
 
   void _onCancel() {
     Analytics().logSelect(target: "Cancel");
-    _promptCancel().then((bool? result) {
-      if (result == true) {
-        setStateIfMounted(() {
-          _isCanceling = true;
-        });
-        Appointments().updateAppointment(Appointment.fromOther(_appointment,
-          cancelled: true
-        )).then((Appointment? appointment) {
+    if (_appointment != null) {
+      _promptCancel().then((bool? result) {
+        if (result == true) {
           setStateIfMounted(() {
-            _appointment = appointment;
+            _isCanceling = true;
           });
-        }).catchError((e) {
-          AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.detail.cancel.failed.message', 'Failed to cancel appointment:') + '\n' + e.toString());
-        }).whenComplete(() {
-          setStateIfMounted(() {
-            _isCanceling = false;
+          Appointments().cancelAppointment(_appointment!).then((Appointment? appointment) {
+            setStateIfMounted(() {
+              _appointment = appointment;
+            });
+          }).catchError((e) {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.detail.cancel.failed.message', 'Failed to cancel appointment:') + '\n' + e.toString());
+          }).whenComplete(() {
+            setStateIfMounted(() {
+              _isCanceling = false;
+            });
           });
-        });
-      }
-    });
+        }
+      });
+    }
   }
 
   Future<bool?> _promptCancel() async {

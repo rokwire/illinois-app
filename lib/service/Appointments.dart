@@ -632,6 +632,17 @@ class Appointments with Service implements NotificationsListener {
       throw AppointmentsException(description: 'Random Update Failure');
     }
   }
+
+  Future<Appointment?> cancelAppointment(Appointment appointment) async {
+    await Future.delayed(Duration(milliseconds: 1500));
+    if (Random().nextInt(2) == 0) {
+      NotificationService().notify(notifyAppointmentsChanged);
+      return Appointment.fromOther(appointment, cancelled: true);
+    }
+    else {
+      throw AppointmentsException(description: 'Random Update Failure');
+    }
+  }
 }
 
 enum AppointmentsError { serverResponse, unknown }
