@@ -30,9 +30,8 @@ class CanvasCourse {
   final bool? accessRestrictedByDate;
 
   final String? syllabusBody;
-  final int? accountId;
 
-  CanvasCourse({this.id, this.name, this.accessRestrictedByDate, this.syllabusBody, this.accountId});
+  CanvasCourse({this.id, this.name, this.accessRestrictedByDate, this.syllabusBody});
 
   static CanvasCourse? fromJson(Map<String, dynamic>? json) {
     return (json != null)
@@ -40,8 +39,7 @@ class CanvasCourse {
             id: JsonUtils.intValue(json['id']),
             name: JsonUtils.stringValue(json['name']),
             accessRestrictedByDate: JsonUtils.boolValue(json['access_restricted_by_date']),
-            syllabusBody: JsonUtils.stringValue(json['syllabus_body']),
-            accountId: JsonUtils.intValue(json['account_id'])
+            syllabusBody: JsonUtils.stringValue(json['syllabus_body'])
           )
         : null;
   }
@@ -52,16 +50,14 @@ class CanvasCourse {
       (other.id == id) &&
       (other.name == name) &&
       (other.accessRestrictedByDate == accessRestrictedByDate) &&
-      (other.syllabusBody == syllabusBody) &&
-      (other.accountId == accountId);
+      (other.syllabusBody == syllabusBody);
 
   @override
   int get hashCode =>
       (id?.hashCode ?? 0) ^
       (name?.hashCode ?? 0) ^
       (accessRestrictedByDate?.hashCode ?? 0) ^
-      (syllabusBody?.hashCode ?? 0) ^
-      (accountId?.hashCode ?? 0);
+      (syllabusBody?.hashCode ?? 0);
 }
 
 ////////////////////////////////

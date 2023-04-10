@@ -39,9 +39,6 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class Canvas with Service implements NotificationsListener {
 
-  //TBD: DD - move these into the config when we know what is the real task!
-  static const List<int> medicineCoursesAccountIds = [255, 308, 357, 358, 360, 361, 362, 363, 374, 375, 376, 413, 432, 433, 446, 480];
-
   static const String notifyCoursesUpdated  = "edu.illinois.rokwire.canvas.courses.updated";
   static const String notifyCanvasEventDetail = "edu.illinois.rokwire.canvas.event.detail";
 
