@@ -61,7 +61,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
 
   @override
   void initState() {
-    _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
+    _availableCodes = _buildAvailableCodes();
 
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
@@ -161,7 +161,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
       List<Map<String, dynamic>> unusedList = <Map<String, dynamic>>[];
 
       for (String code in fullContent) {
-        if (!(homeFavorites?.contains(code) ?? false)) {
+        if ((_availableCodes?.contains(code) ?? false) && !(homeFavorites?.contains(code) ?? false)) {
           dynamic title = HomePanel.dataFromCode(code, title: true);
           if (title is String) {
             unusedList.add({'title' : title, 'code': code});
@@ -322,9 +322,27 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
     }
   }
 
+  Set<String> _buildAvailableCodes() {
+    Set<String> availableCodes = <String>{};
+    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
+    if (fullContent != null) {
+      for (String code in fullContent) {
+        if (_isCodeAvailable(code)) {
+          availableCodes.add(code);
+        }
+      }
+    }
+    return availableCodes;
+  }
+
+  bool _isCodeAvailable(String code) {
+    dynamic codeContent = FlexUI()['home.$code'];
+    return !(codeContent is Iterable) || (0 < codeContent.length);
+  }
+
   void _updateAvailableCodes() {
-    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
+    Set<String> availableCodes = _buildAvailableCodes();
+    if (!DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
       setState(() {
         _availableCodes = availableCodes;
       });
