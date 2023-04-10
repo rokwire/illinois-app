@@ -23,7 +23,6 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -32,8 +31,10 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 class AppointmentSchedulePanel extends StatefulWidget {
 
   final AppointmentScheduleParam scheduleParam;
+  final Appointment? sourceAppointment;
+  final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentSchedulePanel({ Key? key, required this.scheduleParam }) : super(key: key);
+  AppointmentSchedulePanel({ Key? key, required this.scheduleParam, this.sourceAppointment, this.onFinish }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentSchedulePanelState();
@@ -44,13 +45,15 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   final TextEditingController _notesController = TextEditingController();
   final FocusNode _notesFocus = FocusNode();
 
-  AppointmentType _appointmentType = AppointmentType.in_person;
-  String _notes = '';
+  late AppointmentType _appointmentType;
+  late String _notes;
+
   bool _isSubmitting = false;
 
   @override
   void initState() {
-    _notesController.text = _notes;
+    _appointmentType = widget.sourceAppointment?.type ?? AppointmentType.in_person;
+    _notesController.text = _notes = widget.sourceAppointment?.notes ?? '';
     super.initState();
   }
 
@@ -131,7 +134,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
           Styles().images?.getImage('location', excludeFromSemantics: true),
         ),
         Expanded(child:
-          Text(widget.scheduleParam.unit?.location?.address ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline"))
+          Text(widget.scheduleParam.unit?.location?.address ?? widget.sourceAppointment?.location?.address ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline"))
         ),
       ],),
     ),
@@ -150,7 +153,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
   Widget _buildLabel(String text, { bool required = false}) => Padding(padding: EdgeInsets.only(top: 12, bottom: 2), child: Row(children: [Expanded(child:
     RichText(text:
-      TextSpan(text: Localization().getStringEx('panel.appointment.schedule.type.label', 'APPOINTMENT TYPE'), style: Styles().textStyles?.getTextStyle('widget.title.tiny'), children: <InlineSpan>[
+      TextSpan(text: text, style: Styles().textStyles?.getTextStyle('widget.title.tiny'), children: <InlineSpan>[
         TextSpan(text: required ? ' *' : '', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'),),
       ])
     )
@@ -209,27 +212,17 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
   Widget _buildSubmit() => Padding(padding: EdgeInsets.only(top: 12, bottom: 24), child:
     RoundedButton(
-      label: Localization().getStringEx('panel.appointment.schedule.submit.button.title', 'Submit'),
+      label: (widget.sourceAppointment == null) ?
+        Localization().getStringEx('panel.appointment.schedule.submit.button.title', 'Submit') :
+        Localization().getStringEx('panel.appointment.reschedule.submit.button.title', 'Reschedule'),
       progress: _isSubmitting,
       onTap: _onSubmit,
     )
   );
 
-  String? get _displayAppointmentTime {
-    DateTime? startTime = widget.scheduleParam.timeSlot?.startTime;
-    if (startTime != null) {
-      DateTime? endTime = widget.scheduleParam.timeSlot?.endTime;
-      if (endTime != null) {
-        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy hh:mm').format(startTime);
-        String endTimeStr = DateFormat('hh:mm aaa').format(endTime);
-        return "$startTimeStr - $endTimeStr";
-      }
-      else {
-        return DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(startTime);
-      }
-    }
-    return null;
-  }
+  String? get _displayAppointmentTime =>
+    widget.scheduleParam.timeSlot?.displayScheduleTime;
+  
 
   List<DropdownMenuItem<AppointmentType>> get _appontmentTypesDropdownList =>
     AppointmentType.values.map<DropdownMenuItem<AppointmentType>>((AppointmentType appointmentType) =>
@@ -252,7 +245,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   void _onLocation() {
     Analytics().logSelect(target: 'Location');
     //TBD: Maps2 panel with marker
-    AppointmentLocation? unitLocation = widget.scheduleParam.unit?.location;
+    AppointmentLocation? unitLocation = widget.scheduleParam.unit?.location ?? widget.sourceAppointment?.location;
     dynamic destination = (unitLocation != null) ? (((unitLocation.latitude != null) && (unitLocation.longitude != null)) ? LatLng(unitLocation.latitude!, unitLocation.longitude!) : unitLocation.address) : null;
     if (destination != null) {
       GeoMapUtils.launchDirections(destination: destination, travelMode: GeoMapUtils.traveModeWalking);
@@ -284,21 +277,40 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
       _isSubmitting = true;
     });
 
-    Appointments().createAppointment(Appointment(
-      type: _appointmentType,
+    Future<Appointment?> processAppointment = (widget.sourceAppointment == null) ?
+      Appointments().createAppointment(Appointment(
+        type: _appointmentType,
 
-      provider: widget.scheduleParam.provider,
-      unit: widget.scheduleParam.unit,
-      timeSlot: widget.scheduleParam.timeSlot,
-      notes: _notesController.text,
+        provider: widget.scheduleParam.provider,
+        unit: widget.scheduleParam.unit,
+        timeSlot: widget.scheduleParam.timeSlot,
+        notes: _notesController.text,
 
-      dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
-    )).then((_) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.schedule.notes.submit.succeeded.message', 'Your appointment was scheduled successfully.')).then((_) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
+      )) :
+      Appointments().updateAppointment(Appointment.fromOther(widget.sourceAppointment,
+        type: _appointmentType,
+        timeSlot: widget.scheduleParam.timeSlot,
+        notes: _notesController.text,
+        dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
+
+        cancelled: false,
+      ));
+
+    processAppointment.then((Appointment? appointment) {
+      String message = (widget.sourceAppointment == null) ?
+        Localization().getStringEx('panel.appointment.schedule.notes.submit.succeeded.message', 'Your appointment was scheduled successfully.') :
+        Localization().getStringEx('panel.appointment.reschedule.notes.submit.succeeded.message', 'Your appointment was rescheduled successfully.');
+      AppAlert.showDialogResult(context, message).then((_) {
+        if (widget.onFinish != null) {
+          widget.onFinish!(context, appointment);
+        }
       });
     }).catchError((e) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.schedule.notes.submit.failed.message', 'Failed to schedule appointment:') + '\n' + e.toString());
+      String message = (widget.sourceAppointment == null) ?
+        Localization().getStringEx('panel.appointment.schedule.notes.submit.failed.message', 'Failed to schedule appointment:') :
+        Localization().getStringEx('panel.appointment.reschedule.notes.submit.failed.message', 'Failed to reschedule appointment:');
+      AppAlert.showDialogResult(context, message + '\n' + e.toString());
     }).whenComplete(() {
       setStateIfMounted(() {
         _isSubmitting = false;

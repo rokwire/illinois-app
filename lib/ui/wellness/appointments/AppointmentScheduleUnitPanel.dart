@@ -38,8 +38,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class AppointmentScheduleUnitPanel extends StatefulWidget {
 
   final AppointmentScheduleParam? scheduleParam;
+  final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleUnitPanel({Key? key, this.scheduleParam}) : super(key: key);
+  AppointmentScheduleUnitPanel({Key? key, this.scheduleParam, this.onFinish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleUnitPanelState();
@@ -222,12 +223,15 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   }
 
   void _onUnit(AppointmentUnit unit) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(scheduleParam: AppointmentScheduleParam(
-      providers: _providers,
-      provider: _selectedProvider,
-      units: _units,
-      unit: unit
-    ),)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
+      scheduleParam: AppointmentScheduleParam(
+        providers: _providers,
+        provider: _selectedProvider,
+        units: _units,
+        unit: unit
+      ),
+      onFinish: widget.onFinish,
+    )));
   }
 
   Widget _buildLoadingContent() {

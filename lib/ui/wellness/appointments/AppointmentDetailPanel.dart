@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
@@ -23,10 +24,13 @@ import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -106,7 +110,11 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _buildContent(), backgroundColor: Styles().colors!.background, bottomNavigationBar: uiuc.TabBar());
+    return Scaffold(
+      body: _buildContent(),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar()
+    );
   }
 
   Widget _buildContent() {
@@ -562,15 +570,32 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     Auth2().prefs?.toggleFavorite(_appointment);
   }
 
-  bool get _canReschedule => true;
+  bool get _canReschedule => (_appointment?.unit != null);
 
   void _onReschedule() {
-    AppAlert.showDialogResult(context, 'Comming soon...');
+    Analytics().logSelect(target: "Reschedule");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
+      scheduleParam: AppointmentScheduleParam(
+        provider: _appointment?.provider,
+        unit: _appointment?.unit,
+      ),
+      sourceAppointment: _appointment,
+      onFinish: (BuildContext context, Appointment? appointment) {
+        if (appointment != null) {
+          setStateIfMounted(() {
+            _appointment = appointment;
+          });
+        }
+        Navigator.of(context).popUntil((Route route) =>
+          AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType);
+      },
+    ),));
   }
 
   bool get _canCancel => _appointment?.cancelled != true;
 
   void _onCancel() {
+    Analytics().logSelect(target: "Cancel");
     _promptCancel().then((bool? result) {
       if (result == true) {
         setStateIfMounted(() {

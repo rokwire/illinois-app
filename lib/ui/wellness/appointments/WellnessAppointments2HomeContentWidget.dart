@@ -361,6 +361,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
         providers: _providers,
         provider: _selectedProvider,
       ),
+      onFinish: (BuildContext context, Appointment? appointment) => Navigator.of(context).popUntil((route) => route.isFirst),
     )));
   }
 

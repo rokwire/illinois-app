@@ -558,6 +558,7 @@ class AppointmentUnit {
 class AppointmentTimeSlot {
   static final String dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
 
+  final String? id;
   final String? providerId;
   final String? unitId;
   final DateTime? startTimeUtc;
@@ -568,12 +569,13 @@ class AppointmentTimeSlot {
   final String? notes;
   final bool? notesRequired;
 
-  AppointmentTimeSlot({this.providerId, this.unitId, this.startTimeUtc, this.endTimeUtc, this.capacity, this.filled, this.details, this.notes, this.notesRequired});
+  AppointmentTimeSlot({this.id, this.providerId, this.unitId, this.startTimeUtc, this.endTimeUtc, this.capacity, this.filled, this.details, this.notes, this.notesRequired});
 
   // JSON Serialization
 
   static AppointmentTimeSlot? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? AppointmentTimeSlot(
+      id: JsonUtils.stringValue(json['id']),
       providerId: JsonUtils.stringValue(json['provider_id']),
       unitId: JsonUtils.stringValue(json['unit_id']),
       startTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_time']), format: dateTimeFormat, isUtc: true),
@@ -588,6 +590,7 @@ class AppointmentTimeSlot {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'provider_id': providerId,
       'unit_id': unitId,
       'start_time': DateTimeUtils.utcDateTimeToString(startTimeUtc, format: dateTimeFormat),
@@ -627,6 +630,7 @@ class AppointmentTimeSlot {
   @override
   bool operator==(dynamic other) =>
     (other is AppointmentTimeSlot) &&
+    (id == other.id) &&
     (providerId == other.providerId) &&
     (unitId == other.unitId) &&
     (startTimeUtc == other.startTimeUtc) &&
@@ -639,6 +643,7 @@ class AppointmentTimeSlot {
 
   @override
   int get hashCode =>
+    (id?.hashCode ?? 0) ^
     (providerId?.hashCode ?? 0) ^
     (unitId?.hashCode ?? 0) ^
     (startTimeUtc?.hashCode ?? 0) ^
@@ -654,4 +659,14 @@ class AppointmentTimeSlot {
   DateTime? get startTime => startTimeUtc?.toLocal();
   DateTime? get endTime => endTimeUtc?.toLocal();
 
+  static AppointmentTimeSlot? findInList(List<AppointmentTimeSlot>? timeSlots, { String? id }) {
+    if (timeSlots != null) {
+      for (AppointmentTimeSlot timeSlot in timeSlots) {
+        if ((id == null) || (timeSlot.id == id)) {
+          return timeSlot;
+        }
+      }
+    }
+    return null;
+  }
 }
