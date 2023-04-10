@@ -324,7 +324,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     setStateIfMounted(() {
       _isLoadingAppointments = true;
     });
-    Appointments().loadAppointments(providerId: _selectedProvider?.id).then((List<Appointment>? result) {
+    Appointments().loadAppointments(providerId: _selectedProvider?.id, tmpProviders: _providers).then((List<Appointment>? result) {
       setStateIfMounted(() {
         _buildAppointments(result);
         _isLoadingAppointments = false;

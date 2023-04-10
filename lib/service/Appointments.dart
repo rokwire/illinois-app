@@ -482,16 +482,10 @@ class Appointments with Service implements NotificationsListener {
   // Providers
 
   Future<List<AppointmentProvider>?> loadProviders() async {
-    await Future.delayed(Duration(milliseconds: 1500));
-    return _sampleProviders;
+    String? url = "${Config().appointmentsUrl}/services/providers";
+    http.Response? response = await Network().get(url, auth: Auth2());
+    return (response?.statusCode == 200) ? AppointmentProvider.listFromJson(JsonUtils.decodeList(response?.body)) : null;
   }
-
-  List<AppointmentProvider> get _sampleProviders =>  <AppointmentProvider>[
-    AppointmentProvider(id: '1', name: 'McKinley'),
-    AppointmentProvider(id: '2', name: 'Grainger'),
-    AppointmentProvider(id: '3', name: 'Lorem Ipsum'),
-    AppointmentProvider(id: '4', name: 'Sit Dolor Amet'),
-  ];
 
   // Units
 
@@ -532,18 +526,21 @@ class Appointments with Service implements NotificationsListener {
 
   // Appointments
 
-  Future<List<Appointment>?> loadAppointments({String? providerId}) async {
+  Future<List<Appointment>?> loadAppointments({String? providerId, List<AppointmentProvider>? tmpProviders}) async {
     await Future.delayed(Duration(milliseconds: 1500));
-    AppointmentProvider? provider = (providerId != null) ? _sampleProviders.firstWhere((provider) => provider.id == providerId, orElse: () => _sampleProviders.first) : null;
+    AppointmentProvider? provider = (providerId != null) ? tmpProviders?.firstWhere((provider) => provider.id == providerId, orElse: () => tmpProviders.first) : null;
     if (provider != null) {
       return _sampleAppointments(provider: provider);
     }
-    else {
+    else if (tmpProviders != null) {
       List<Appointment> result = <Appointment>[];
-      for (AppointmentProvider provider in _sampleProviders) {
+      for (AppointmentProvider provider in tmpProviders) {
         result.addAll(_sampleAppointments(provider: provider));
       }
       return result;
+    }
+    else {
+      return <Appointment>[];
     }
   }
 

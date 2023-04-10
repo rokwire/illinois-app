@@ -395,9 +395,9 @@ class AppointmentProvider {
     return (json != null) ? AppointmentProvider(
       id: JsonUtils.stringValue(json['id']),
       name: JsonUtils.stringValue(json['name']),
-      supportsSchedule: JsonUtils.boolValue(json['supports_schedule']),
-      supportsReschedule: JsonUtils.boolValue(json['supports_reschedule']),
-      supportsCancel: JsonUtils.boolValue(json['supports_cancel']),
+      supportsSchedule: JsonUtils.boolValue(json['scheduling']),
+      supportsReschedule: JsonUtils.boolValue(json['rescheduling']),
+      supportsCancel: JsonUtils.boolValue(json['canceling']),
     ) : null;
   }
 
@@ -405,9 +405,9 @@ class AppointmentProvider {
     return {
       'id': id,
       'name': name,
-      'supports_schedule': supportsSchedule,
-      'supports_reschedule': supportsReschedule,
-      'supports_cancel': supportsCancel,
+      'scheduling': supportsSchedule,
+      'rescheduling': supportsReschedule,
+      'canceling': supportsCancel,
     };
   }
 
