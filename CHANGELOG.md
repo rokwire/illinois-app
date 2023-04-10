@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Deleted
 - "My College of Medicine Courses" in Academics panel and all related stuff [#3105](https://github.com/rokwire/illinois-app/issues/3105).
+### Addes
+- Added reschedule appointment preview [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 
 ## [4.3.38] - 2023-04-07
 ### Deleted
@@ -15,11 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow deep linking to app tabs via notification [#3094](https://github.com/rokwire/illinois-app/issues/3094).
 - New "My College of Medicine Courses" item in Academics content [#3097](https://github.com/rokwire/illinois-app/issues/3097).
 ### Changed
-- Schedule appointment preview progress. [#3074](https://github.com/rokwire/illinois-app/issues/3074).
+- Schedule appointment preview progress [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 
 ## [4.3.37] - 2023-04-06
 ### Changed
-- Schedule appointment preview progress. [#3074](https://github.com/rokwire/illinois-app/issues/3074).
+- Schedule appointment preview progress [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 
 ## [4.3.36] - 2023-04-05
 ### Changed
