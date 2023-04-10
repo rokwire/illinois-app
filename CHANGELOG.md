@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "My College of Medicine Courses" in Academics panel and all related stuff [#3105](https://github.com/rokwire/illinois-app/issues/3105).
 ### Addes
 - Added reschedule appointment preview [#3074](https://github.com/rokwire/illinois-app/issues/3074).
+### Changed
+- Hooked up appointments provicers API [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 
 ## [4.3.38] - 2023-04-07
 ### Deleted
