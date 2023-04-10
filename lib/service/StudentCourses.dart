@@ -16,7 +16,6 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -45,9 +44,6 @@ class StudentCourses with Service implements NotificationsListener {
   Set<Completer<List<StudentCourse>?>>? _loadCoursesCompleters;
   DateTime? _pausedDateTime;
 
-  ExploreJsonHandler _studentCourseExploreJsonHandler = StudentCourseExploreJsonHandler();
-  ExploreJsonHandler _buildingExploreJsonHandler = BuildingExploreJsonHandler();
-
   // Singleton Factory
 
   static final StudentCourses _instance = StudentCourses._internal();
@@ -57,8 +53,6 @@ class StudentCourses with Service implements NotificationsListener {
   // Service
 
   void createService() {
-    Explore.addJsonHandler(_studentCourseExploreJsonHandler);
-    Explore.addJsonHandler(_buildingExploreJsonHandler);
     NotificationService().subscribe(this,[
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
@@ -68,8 +62,6 @@ class StudentCourses with Service implements NotificationsListener {
 
   @override
   void destroyService() {
-    Explore.removeJsonHandler(_studentCourseExploreJsonHandler);
-    Explore.removeJsonHandler(_buildingExploreJsonHandler);
     NotificationService().unsubscribe(this);
     super.destroyService();
   }

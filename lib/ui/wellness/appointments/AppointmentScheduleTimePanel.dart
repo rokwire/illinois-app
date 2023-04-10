@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+//import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class AppointmentScheduleTimePanel extends StatefulWidget {
-  final void Function(BuildContext context, AppointmentTimeSlot timeSlot) onContinue;
+  final AppointmentScheduleParam scheduleParam;
+  final Appointment? sourceAppointment;
+  final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleTimePanel({Key? key, required this.onContinue}) : super(key: key);
+  AppointmentScheduleTimePanel({Key? key, required this.scheduleParam, this.sourceAppointment, this.onFinish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleTimePanelState();
@@ -36,7 +41,7 @@ class AppointmentScheduleTimePanel extends StatefulWidget {
 
 class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePanel> {
 
-  DateTime _selectedDate = DateUtils.dateOnly(DateTime.now());
+  late DateTime _selectedDate;
   AppointmentTimeSlot? _selectedSlot;
   
   List<AppointmentTimeSlot> _timeSlots = <AppointmentTimeSlot>[];
@@ -45,6 +50,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   @override
   void initState() {
     super.initState();
+    _selectedDate = DateUtils.dateOnly(widget.sourceAppointment?.startDateTimeUtc?.toLocal() ?? DateTime.now());
     _loadTimeSlots();
   }
 
@@ -56,20 +62,26 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.time.header.title', 'Schedule Appointment')),
+      appBar: HeaderBar(title: (widget.sourceAppointment == null) ?
+        Localization().getStringEx('panel.appointment.schedule.time.header.title', 'Schedule Appointment') :
+        Localization().getStringEx('panel.appointment.reschedule.time.header.title', 'Reschedule Appointment')
+      ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar()
+      //bottomNavigationBar: uiuc.TabBar()
     );
   }
 
   Widget _buildContent() {
     return Column(children: [
+      _buildRescheduleBar(),
       _buildDateBar(),
       Expanded(child:
         _buildTime()
       ),
-      _buildCommandBar(),
+      SafeArea(child:
+        _buildCommandBar(),
+      ),
     ],);
   }
 
@@ -133,7 +145,18 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   Widget _buildTimeSlot(AppointmentTimeSlot timeSlot) {
-    String timeString = (timeSlot.startTime != null) ? DateFormat('hh:mm aaa').format(timeSlot.startTime!) : '';
+    String? timeString;
+    if (timeSlot.startTime != null) {
+      if (timeSlot.endTime != null) {
+        String startTime = DateFormat('hh:mm').format(timeSlot.startTime!);
+        String endTime = DateFormat('hh:mm aaa').format(timeSlot.endTime!);
+        timeString = "$startTime - $endTime";
+      }
+      else {
+        timeString = DateFormat('hh:mm aaa').format(timeSlot.startTime!);
+      }
+    }
+
     Color? backColor;
     String textStyle;
     if (timeSlot.filled == true) {
@@ -158,7 +181,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         ),
         child: InkWell(onTap: () => _onTimeSlot(timeSlot),
           child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Text(timeString, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
+            child: Text(timeString ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
           )
         ),
       ),
@@ -178,21 +201,57 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     }
   }
 
+  Widget _buildRescheduleBar() {
+
+    if (widget.sourceAppointment == null) {
+      return Container();
+    }
+    else {
+      String? currentDateString = widget.sourceAppointment?.timeSlot?.displayScheduleTime ??
+        AppointmentTimeSlotExt.getDisplayScheduleTime(widget.sourceAppointment?.dateTimeUtc?.toLocal(), null) ??
+        Localization().getStringEx('panel.appointment.reschedule.time.label.unknown', 'Unknown');
+      
+      return Padding(padding:EdgeInsets.only(left: 16, right: 16, top: 16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(Localization().getStringEx('panel.appointment.reschedule.time.label.current.appointment', 'Current Appointment:'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
+          Row(children: [
+            Expanded(child:
+                Text(currentDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin'),)
+            ),
+          
+          ],),
+        ],),
+      );
+    }
+  }
+
   Widget _buildDateBar() {
     String selectedDateString = DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate);
-    return InkWell(onTap: _onEditDate, child:
-      Padding(padding: EdgeInsets.all(16), child:
-        Row(children: [
-          Padding(padding: EdgeInsets.only(right: 8), child:
-            Styles().images?.getImage('calendar')
+    Widget selectedDateWidget = Row(children: [
+      Padding(padding: EdgeInsets.only(right: 8), child:
+        Styles().images?.getImage('calendar')
+      ),
+      Expanded(child:
+        Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin.underline'),)
+      ),
+    ],);
+
+    return (widget.sourceAppointment == null) ?
+      InkWell(onTap: _onEditDate, child:
+        Padding(padding: EdgeInsets.all(16), child:
+          selectedDateWidget
+        )
+      ) :
+      Padding(padding: EdgeInsets.only(top: 16), child:
+        InkWell(onTap: _onEditDate, child:
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New Appointment:'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
+              selectedDateWidget
+            ],),
           ),
-          Expanded(child:
-              Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
-          ),
-        
-        ],),
-      )
-    );
+        )
+      );
   }
 
   void _onEditDate() {
@@ -227,7 +286,11 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   void _onContinue() {
     if (_canContinue) {
-      widget.onContinue(context, _selectedSlot!);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(
+        scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam, timeSlot: _selectedSlot),
+        sourceAppointment: widget.sourceAppointment,
+        onFinish: widget.onFinish,
+      ),));
     }
     else {
       SystemSound.play(SystemSoundType.click);
@@ -238,34 +301,34 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     setState(() {
       _loadingTimeSlots = true;
     });
-    Appointments().loadTimeSlots(dateLocal: _selectedDate).then((List<AppointmentTimeSlot>? result) {
+    Appointments().loadTimeSlots(unitId: widget.scheduleParam.unit?.id, dateLocal: _selectedDate).then((List<AppointmentTimeSlot>? result) {
       if (mounted) {
         setState(() {
           _loadingTimeSlots = false;
           _timeSlots = result ?? <AppointmentTimeSlot>[];
-          _selectedSlot = _findSelectedTimeSlot(result, _selectedSlot);
+          if (_selectedSlot != null) {
+            _selectedSlot = _findSelectedTimeSlot(result, _selectedSlot?.startMinutesSinceMidnightUtc, slotFilter: _isTimeSlotAvailable);
+          }
+          else {
+            String? timeSlotId = widget.sourceAppointment?.timeSlot?.id;
+            AppointmentTimeSlot? timeSlot = (timeSlotId != null) ? AppointmentTimeSlot.findInList(result, id: timeSlotId) : null;
+            _selectedSlot = timeSlot ?? _findSelectedTimeSlot(result, widget.sourceAppointment?.startMinutesSinceMidnightUtc);  
+          }
         });
       }
     });
   }
 
-  AppointmentTimeSlot? _findSelectedTimeSlot(List<AppointmentTimeSlot>? timeSlots, AppointmentTimeSlot? sourceSlot) {
-    int? selectedMinutes = sourceSlot?.startMinutesSinceMidnightUtc;
-    if ((timeSlots != null) && (selectedMinutes != null)) {
+  AppointmentTimeSlot? _findSelectedTimeSlot(List<AppointmentTimeSlot>? timeSlots, int? startMinutesSinceMidnightUtc, { bool Function(AppointmentTimeSlot timeSlot)? slotFilter }) {
+    if ((timeSlots != null) && (startMinutesSinceMidnightUtc != null)) {
       for (AppointmentTimeSlot timeSlot in timeSlots) {
-        if ((timeSlot.filled != true) && (timeSlot.startMinutesSinceMidnightUtc == selectedMinutes)) {
+        if (((slotFilter == null) || slotFilter(timeSlot)) && (timeSlot.startMinutesSinceMidnightUtc == startMinutesSinceMidnightUtc)) {
           return timeSlot;
         }
       }
     }
     return null;
   }
-}
 
-extension _AppointmentTimeSlot on AppointmentTimeSlot {
-
-  int? get startMinutesSinceMidnightUtc {
-    return (startTimeUtc != null) ? (startTimeUtc!.hour * 60 + startTimeUtc!.minute) : null;
-  }
-
+  static bool _isTimeSlotAvailable(AppointmentTimeSlot timeSlot) => timeSlot.filled != true;
 }
