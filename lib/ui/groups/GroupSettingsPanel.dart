@@ -472,7 +472,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Expanded(flex: 5, child:
             _buildInfoHeader(
               Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
-              Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
+              _isResearchProject?
+                Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
+                Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
             )
           ),
           Container(width: 8),

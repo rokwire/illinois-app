@@ -1992,6 +1992,7 @@
 	"panel.groups_create.attributes.title": "ATTRIBUTES",
 	"panel.groups_create.attributes.hint": "",
 	"panel.groups_create.attributes.description": "Attributes help people understand more about your group.",
+	"panel.groups_create.attributes.project_description": "Attributes help you provide more information.",
 	"panel.groups_create.tags.title": "TAGS",
 	"panel.groups_create.tags.hint": "",
 	"panel.groups_create.tags.description": "Tags help people understand more about your group.",

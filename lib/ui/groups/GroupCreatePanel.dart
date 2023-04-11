@@ -562,8 +562,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           Expanded(flex: 5, child:
             GroupSectionTitle(
               title: Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
-              description: Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              requiredMark: Groups().contentAttributes?.hasRequired ?? false,
+              description: _isResearchProject?
+                Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
+                Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
+              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
           Container(width: 8),
