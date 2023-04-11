@@ -130,10 +130,8 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     }
 
     String submitText;
-    if (_selectedCount == 0) {
-      submitText = 'Target all potential participants';
-    }
-    else if (_targetAudienceCount == null) {
+
+    if (_targetAudienceCount == null) {
       submitText = 'Save';
     }
     else if (_targetAudienceCount == 0) {
@@ -466,14 +464,6 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
       });
     }
-  }
-
-  int get _selectedCount {
-    int selectedCount = 0;
-    for(LinkedHashSet<String> value in _selection.values) {
-      selectedCount += value.length;
-    }
-    return selectedCount;
   }
 
   Widget _buildLoading() {
