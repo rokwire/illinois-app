@@ -270,7 +270,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onSelectHome();
     }
     else if (name == ExploreMapPanel.notifySelect) {
-      _onSelectMaps();
+      _onSelectMaps(param);
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
@@ -292,11 +292,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onSelectMaps() {
+  void _onSelectMaps(ExploreMapType? mapType) {
     int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
     if (mounted && (mapsIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      int lastTabIndex = _currentTabIndex;
       _selectTab(mapsIndex);
+      if ((lastTabIndex != mapsIndex) && (mapType != null) && !ExploreMapPanel.hasState) {
+        Widget? mapsWidget = _panels[RootTab.Maps];
+        ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
+        mapsPanel?.params[ExploreMapPanel.mapTypeKey] = mapType;
+      }
     }
   }
 

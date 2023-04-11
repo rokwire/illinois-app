@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hooked up appointments provicers API [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 ### Fixed
 - Do not display empty compund widgets in Home/Customize [#3078](https://github.com/rokwire/illinois-app/issues/3078).
+- Fixed map type selection in ExploeMapPanel.notifySelect notification [#3060](https://github.com/rokwire/illinois-app/issues/3060).
 
 ## [4.3.38] - 2023-04-07
 ### Deleted
