@@ -58,12 +58,27 @@ import 'package:url_launcher/url_launcher.dart';
 enum ExploreMapType { Events, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
 
 class ExploreMapPanel extends StatefulWidget {
-  static const String notifySelect    = "edu.illinois.rokwire.explore.map.select";
+  static const String notifySelect = "edu.illinois.rokwire.explore.map.select";
+  static const String mapTypeKey = "map-type";
+
+  final Map<String, dynamic> params = <String, dynamic>{};
 
   ExploreMapPanel();
   
   @override
   State<StatefulWidget> createState() => _ExploreMapPanelState();
+
+  static bool get hasState {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(ExploreMapPanel.notifySelect);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _ExploreMapPanelState) && subscriber.mounted) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 class _ExploreMapPanelState extends State<ExploreMapPanel>
@@ -152,7 +167,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     ]);
     
     _exploreTypes = _buildExploreTypes();
-    _selectedMapType = _ensureExploreType(_lastExploreType) ?? _defaultMapType;
+    _selectedMapType = _ensureExploreType(_initialExploreType) ?? _ensureExploreType(_lastExploreType) ?? _defaultMapType;
     _selectedEventsDisplayType = EventsDisplayType.single;
     
     _initFilters();
@@ -1164,6 +1179,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return ((exploreItem != null) && exploreTypes.contains(exploreItem)) ? exploreItem : null;
 
   }
+
+  ExploreMapType? get _initialExploreType =>
+    widget.params[ExploreMapPanel.mapTypeKey];
 
 
   ExploreMapType? get _lastExploreType => exploreMapItemFromString(Storage().selectedMapExploreType);

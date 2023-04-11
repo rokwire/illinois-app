@@ -15,11 +15,8 @@
  */
 
 import 'package:collection/collection.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/assets.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 enum AppointmentType { in_person, online }
@@ -31,84 +28,141 @@ class Appointment with Explore, Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
   final String? id;
-  final DateTime? dateTimeUtc;
   final AppointmentType? type;
+
+  final AppointmentProvider? provider;
+  final AppointmentUnit? unit;
+  final AppointmentTimeSlot? timeSlot;
+  final String? notes;
+
   final AppointmentOnlineDetails? onlineDetails;
-  final AppointmentLocation? location;
-  final bool? cancelled;
-  final String? instructions;
   final AppointmentHost? host;
+  final String? instructions;
+  final bool? cancelled;
+
+  final DateTime? dateTimeUtc; // Obsolete
+  final AppointmentLocation? location; // Obsolete?
 
   //Util fields
-  String? randomImageURL; // to return same random image for this instance
+  String? imageUrl; // to return same random image for this instance
 
-  Appointment(
-      {this.id, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
+  Appointment({
+    this.id, this.type,
+    this.provider, this.unit, this.timeSlot, this.notes,
+    this.onlineDetails, this.host, this.instructions, this.cancelled, 
+    this.dateTimeUtc, this.location,
+  });
+
+  factory Appointment.fromOther(Appointment? other, {
+    String? id, AppointmentType? type,
+    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentTimeSlot? timeSlot, String? notes, 
+    AppointmentOnlineDetails? onlineDetails, AppointmentHost? host, String? instructions, bool? cancelled,
+    DateTime? dateTimeUtc, AppointmentLocation? location, }) {
+    return Appointment(
+      id: id ?? other?.id,
+      type: type ?? other?.type,
+      
+      provider: provider ?? other?.provider,
+      unit: unit ?? other?.unit,
+      timeSlot: timeSlot ?? other?.timeSlot,
+      notes: notes ?? other?.notes,
+      
+      onlineDetails: onlineDetails ?? other?.onlineDetails,
+      host: host ?? other?.host,
+      instructions: instructions ?? other?.instructions,
+      cancelled: cancelled ?? other?.cancelled,
+
+      dateTimeUtc: dateTimeUtc ?? other?.dateTimeUtc,
+      location: location ?? other?.location,
+    );
+  }
 
   static Appointment? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    return Appointment(
-        id: JsonUtils.stringValue(json['id']),
-        dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
-        type: typeFromString(JsonUtils.stringValue(json['type'])),
-        onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
-        location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
-        cancelled: JsonUtils.boolValue(json['cancelled']),
-        instructions: JsonUtils.stringValue(json['instructions']),
-        host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])));
+    return (json != null) ? Appointment(
+      id: JsonUtils.stringValue(json['id']),
+      type: appointmentTypeFromString(JsonUtils.stringValue(json['type'])),
+
+      provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])) ,
+      unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])) ,
+      timeSlot: AppointmentTimeSlot.fromJson(JsonUtils.mapValue(json['time_slot'])) ,
+      notes: JsonUtils.stringValue(json['user_notes']),
+      
+      onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
+      host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])),
+      instructions: JsonUtils.stringValue(json['instructions']),
+      cancelled: JsonUtils.boolValue(json['cancelled']),
+
+      dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
+      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
+    ) : null;
   }
 
-  String? get displayDate {
-    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, h:mm a');
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'type': appointmentTypeToString(type),
 
-  bool get isUpcoming {
-    DateTime now = DateTime.now();
-    return (dateTimeUtc != null) && dateTimeUtc!.isAfter(now.toUtc());
-  }
+    'provider': provider?.toJson(),
+    'unit': unit?.toJson(),
+    'time_slot': timeSlot?.toJson(),
+    'user_notes': notes,
 
-  String? get hostDisplayName {
-    String? displayName;
-    if (host != null) {
-      displayName = StringUtils.fullName([host!.firstName, host!.lastName]);
-    }
-    return displayName;
-  }
+    'online_details': onlineDetails?.toJson(),
+    'host': host?.toJson(),
+    'instructions': instructions,
+    'cancelled': cancelled,
+    
+    'date': DateTimeUtils.utcDateTimeToString(dateTimeUtc, format: _serverDateTimeFormat),
+    'location': location?.toJson(),
+  };
 
-  String? get category {
-    return Localization().getStringEx('model.wellness.appointment.category.label', 'MYMCKINLEY APPOINTMENTS');
-  }
+  @override
+  bool operator==(dynamic other) =>
+    (other is Appointment) &&
 
-  String? get title {
-    return Localization().getStringEx('model.wellness.appointment.title.label', 'MyMcKinley Appointment');
-  }
+    (id == other.id) &&
+    (type == other.type) &&
 
-  String? get imageUrl {
-    return _randomImageUrl;
-  }
+    (provider == other.provider) &&
+    (unit == other.unit) &&
+    (timeSlot == other.timeSlot) &&
+    (notes == other.notes) &&
 
-  String? get _randomImageUrl {
-    randomImageURL ??= Assets().randomStringFromListWithKey('images.random.events.Other');
-    return randomImageURL;
-  }
+    (onlineDetails == other.onlineDetails) &&
+    (host == other.host) &&
+    (instructions == other.instructions) &&
+    (cancelled == other.cancelled) &&
 
-  String? get imageKeyBasedOnCategory { //Keep consistent images
-      String? toutImageUrl;
-      switch (type) {
-        case AppointmentType.in_person:
-          toutImageUrl = 'photo-building';
-          break;
-        case AppointmentType.online:
-          toutImageUrl = 'photo-online';
-          break;
-        default:
-          toutImageUrl = imageUrl!;
-          break;
-      }
-      return toutImageUrl;
-  }
+    (dateTimeUtc == other.dateTimeUtc) &&
+    (location == other.location);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (type?.hashCode ?? 0) ^
+
+    (provider?.hashCode ?? 0) ^
+    (unit?.hashCode ?? 0) ^
+    (timeSlot?.hashCode ?? 0) ^
+    (notes?.hashCode ?? 0) ^
+
+    (onlineDetails?.hashCode ?? 0) ^
+    (host?.hashCode ?? 0) ^
+    (instructions?.hashCode ?? 0) ^
+    (cancelled?.hashCode ?? 0) ^
+    
+    (dateTimeUtc?.hashCode ?? 0) ^
+    (location?.hashCode ?? 0);
+
+  // Accessories
+
+  DateTime? get startDateTimeUtc =>
+    timeSlot?.startTimeUtc ?? dateTimeUtc;
+
+  bool get isUpcoming =>
+    startDateTimeUtc?.isAfter(DateTime.now().toUtc()) ?? false;
+
+  String? get locationTitle =>
+    unit?.name ?? location?.title;
 
   static List<Appointment>? listFromJson(List<dynamic>? jsonList) {
     List<Appointment>? items;
@@ -119,39 +173,6 @@ class Appointment with Explore, Favorite {
       }
     }
     return items;
-  }
-
-  static String? typeToDisplayString(AppointmentType? type) {
-    switch (type) {
-      case AppointmentType.in_person:
-        return Localization().getStringEx('model.wellness.appointment.type.in_person.label', 'In Person');
-      case AppointmentType.online:
-        return Localization().getStringEx('model.wellness.appointment.type.online.label', 'Telehealth');
-      default:
-        return null;
-    }
-  }
-
-  static String? typeToKeyString(AppointmentType? type) {
-    switch (type) {
-      case AppointmentType.in_person:
-        return 'InPerson';
-      case AppointmentType.online:
-        return 'Online';
-      default:
-        return null;
-    }
-  }
-
-  static AppointmentType? typeFromString(String? type) {
-    switch (type) {
-      case 'InPerson':
-        return AppointmentType.in_person;
-      case 'Online':
-        return AppointmentType.online;
-      default:
-        return null;
-    }
   }
 
   // Favorite
@@ -166,52 +187,29 @@ class Appointment with Explore, Favorite {
   @override String? get exploreLongDescription => null;
   @override String? get explorePlaceId => null;
   @override String? get exploreShortDescription => null;
-  @override DateTime? get exploreStartDateUtc => dateTimeUtc;
-  @override String? get exploreSubTitle => location?.title;
-  @override String? get exploreTitle => title;
-  @override Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'date_time': DateTimeUtils.utcDateTimeToString(dateTimeUtc),
-      'type': typeToKeyString(type),
-      'location': location?.toJson(),
-      'online_details': onlineDetails?.toJson(),
-      'cancelled': cancelled,
-      'instructions': instructions,
-      'host': host?.toJson()
-    };
+  @override DateTime? get exploreStartDateUtc => startDateTimeUtc;
+  @override String? get exploreSubTitle => locationTitle;
+  @override String? get exploreTitle => "${provider?.name ?? 'MyMcKinley'} Appointment";
+//@override Map<String, dynamic> toJson();
+}
+
+///////////////////////////////
+/// AppointmentType
+
+AppointmentType? appointmentTypeFromString(String? value) {
+  switch (value) {
+    case 'InPerson': return AppointmentType.in_person;
+    case 'Online': return AppointmentType.online;
   }
+  return null;
+}
 
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      (json['id'] != null) &&
-      (json['date_time'] != null) &&
-      (json['type'] != null);
+String? appointmentTypeToString(AppointmentType? value) {
+  switch (value) {
+    case AppointmentType.in_person: return 'InPerson';
+    case AppointmentType.online: return 'Online';
+    default: return null;
   }
-
-  @override
-  bool operator==(dynamic other) =>
-    (other is Appointment) &&
-    (id == other.id) &&
-    (dateTimeUtc == other.dateTimeUtc) &&
-    (type == other.type) &&
-    (onlineDetails == other.onlineDetails) &&
-    (location == other.location) &&
-    (cancelled == other.cancelled) &&
-    (instructions == other.instructions) &&
-    (host == other.host);
-
-  @override
-  int get hashCode =>
-    (id?.hashCode ?? 0) ^
-    (dateTimeUtc?.hashCode ?? 0) ^
-    (type?.hashCode ?? 0) ^
-    (onlineDetails?.hashCode ?? 0) ^
-    (location?.hashCode ?? 0) ^
-    (cancelled?.hashCode ?? 0) ^
-    (instructions?.hashCode ?? 0) ^
-    (host?.hashCode ?? 0);
 }
 
 ///////////////////////////////
@@ -267,6 +265,8 @@ class AppointmentLocation {
   final String? phone;
 
   AppointmentLocation({this.id, this.latitude, this.longitude, this.title, this.phone});
+
+  String? get address => title; //TBD: ?
 
   Map<String, dynamic> toJson() {
     return {
@@ -380,8 +380,14 @@ class AppointmentsAccount {
 class AppointmentProvider {
   final String? id;
   final String? name;
+  final bool? supportsSchedule;
+  final bool? supportsReschedule;
+  final bool? supportsCancel;
 
-  AppointmentProvider({this.id, this.name});
+  AppointmentProvider({
+    this.id, this.name,
+    this.supportsSchedule, this.supportsReschedule, this.supportsCancel
+  });
 
   // JSON Serialization
 
@@ -389,6 +395,9 @@ class AppointmentProvider {
     return (json != null) ? AppointmentProvider(
       id: JsonUtils.stringValue(json['id']),
       name: JsonUtils.stringValue(json['name']),
+      supportsSchedule: JsonUtils.boolValue(json['scheduling']),
+      supportsReschedule: JsonUtils.boolValue(json['rescheduling']),
+      supportsCancel: JsonUtils.boolValue(json['canceling']),
     ) : null;
   }
 
@@ -396,6 +405,9 @@ class AppointmentProvider {
     return {
       'id': id,
       'name': name,
+      'scheduling': supportsSchedule,
+      'rescheduling': supportsReschedule,
+      'canceling': supportsCancel,
     };
   }
 
@@ -427,12 +439,18 @@ class AppointmentProvider {
   bool operator==(dynamic other) =>
     (other is AppointmentProvider) &&
     (id == other.id) &&
-    (name == other.name);
+    (name == other.name) &&
+    (supportsSchedule == other.supportsSchedule) &&
+    (supportsReschedule == other.supportsReschedule) &&
+    (supportsCancel == other.supportsCancel);
 
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
-    (name?.hashCode ?? 0);
+    (name?.hashCode ?? 0) ^
+    (supportsSchedule?.hashCode ?? 0) ^
+    (supportsReschedule?.hashCode ?? 0) ^
+    (supportsCancel?.hashCode ?? 0);
 
   // Accessories
 
@@ -540,6 +558,7 @@ class AppointmentUnit {
 class AppointmentTimeSlot {
   static final String dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
 
+  final String? id;
   final String? providerId;
   final String? unitId;
   final DateTime? startTimeUtc;
@@ -550,12 +569,13 @@ class AppointmentTimeSlot {
   final String? notes;
   final bool? notesRequired;
 
-  AppointmentTimeSlot({this.providerId, this.unitId, this.startTimeUtc, this.endTimeUtc, this.capacity, this.filled, this.details, this.notes, this.notesRequired});
+  AppointmentTimeSlot({this.id, this.providerId, this.unitId, this.startTimeUtc, this.endTimeUtc, this.capacity, this.filled, this.details, this.notes, this.notesRequired});
 
   // JSON Serialization
 
   static AppointmentTimeSlot? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? AppointmentTimeSlot(
+      id: JsonUtils.stringValue(json['id']),
       providerId: JsonUtils.stringValue(json['provider_id']),
       unitId: JsonUtils.stringValue(json['unit_id']),
       startTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_time']), format: dateTimeFormat, isUtc: true),
@@ -570,6 +590,7 @@ class AppointmentTimeSlot {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'provider_id': providerId,
       'unit_id': unitId,
       'start_time': DateTimeUtils.utcDateTimeToString(startTimeUtc, format: dateTimeFormat),
@@ -609,6 +630,7 @@ class AppointmentTimeSlot {
   @override
   bool operator==(dynamic other) =>
     (other is AppointmentTimeSlot) &&
+    (id == other.id) &&
     (providerId == other.providerId) &&
     (unitId == other.unitId) &&
     (startTimeUtc == other.startTimeUtc) &&
@@ -621,6 +643,7 @@ class AppointmentTimeSlot {
 
   @override
   int get hashCode =>
+    (id?.hashCode ?? 0) ^
     (providerId?.hashCode ?? 0) ^
     (unitId?.hashCode ?? 0) ^
     (startTimeUtc?.hashCode ?? 0) ^
@@ -636,4 +659,14 @@ class AppointmentTimeSlot {
   DateTime? get startTime => startTimeUtc?.toLocal();
   DateTime? get endTime => endTimeUtc?.toLocal();
 
+  static AppointmentTimeSlot? findInList(List<AppointmentTimeSlot>? timeSlots, { String? id }) {
+    if (timeSlots != null) {
+      for (AppointmentTimeSlot timeSlot in timeSlots) {
+        if ((id == null) || (timeSlot.id == id)) {
+          return timeSlot;
+        }
+      }
+    }
+    return null;
+  }
 }

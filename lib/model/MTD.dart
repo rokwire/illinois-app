@@ -315,16 +315,6 @@ class MTDStop with Explore implements Favorite {
     }
   }
 
-
-  // ExploreJsonHandler
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      (json['stop_id'] != null) &&
-      (json['stop_name'] != null) &&
-      (json['code'] != null);
-  }
-
   bool get hasLocation => (latitude != null) && (longitude != null);
 
   // Explore implementation

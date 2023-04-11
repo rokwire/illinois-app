@@ -5,6 +5,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.40] - 2023-04-11
+### Changed
+- Updated Research Project tweaks [#3112](https://github.com/rokwire/illinois-app/issues/3112).
+### Fixed
+- Fixed map type selection in ExploeMapPanel.notifySelect notification [#3060](https://github.com/rokwire/illinois-app/issues/3060).
+### Addes
+- Auto fill Guide Highlights favorites [#3032](https://github.com/rokwire/illinois-app/issues/3032).
+
+## [4.3.39] - 2023-04-10
+### Deleted
+- "My College of Medicine Courses" in Academics panel and all related stuff [#3105](https://github.com/rokwire/illinois-app/issues/3105).
+### Addes
+- Added reschedule appointment preview [#3074](https://github.com/rokwire/illinois-app/issues/3074).
+### Changed
+- Hooked up appointments provicers API [#3074](https://github.com/rokwire/illinois-app/issues/3074).
+### Fixed
+- Do not display empty compund widgets in Home/Customize [#3078](https://github.com/rokwire/illinois-app/issues/3078).
+
+## [4.3.38] - 2023-04-07
+### Deleted
+- Removed ExploreJsonHandler definition, not used any more [#3070](https://github.com/rokwire/illinois-app/issues/3070).
+### Added
+- Allow deep linking to app tabs via notification [#3094](https://github.com/rokwire/illinois-app/issues/3094).
+- New "My College of Medicine Courses" item in Academics content [#3097](https://github.com/rokwire/illinois-app/issues/3097).
+### Changed
+- Schedule appointment preview progress [#3074](https://github.com/rokwire/illinois-app/issues/3074).
+
+## [4.3.37] - 2023-04-06
+### Changed
+- Schedule appointment preview progress [#3074](https://github.com/rokwire/illinois-app/issues/3074).
+
 ## [4.3.36] - 2023-04-05
 ### Changed
 - Display mental health resources grouped by sections [#3084](https://github.com/rokwire/illinois-app/issues/3084).

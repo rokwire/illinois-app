@@ -25,7 +25,6 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
-import 'package:illinois/service/Explore.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/StudentCourses.dart';
@@ -37,7 +36,6 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/OnCampus.dart';
@@ -148,12 +146,10 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     Wellness(),
     WellnessRings(),
     WPGUFMRadio(),
-    Laundries(),
     AppReview(),
     StudentCourses(),
     Appointments(),
     MTD(),
-    Explore(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Content(),

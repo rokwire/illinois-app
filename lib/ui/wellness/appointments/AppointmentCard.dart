@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -139,7 +140,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                         child: Styles().images?.getImage((widget.appointment.type == AppointmentType.online) ?
                                           'laptop' : 'location', excludeFromSemantics: true)),
                                     Expanded(
-                                        child: Text(StringUtils.ensureNotEmpty(Appointment.typeToDisplayString(widget.appointment.type)),
+                                        child: Text(StringUtils.ensureNotEmpty(appointmentTypeToDisplayString(widget.appointment.type)),
                                             overflow: TextOverflow.ellipsis,
                                             style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
                                     Visibility(

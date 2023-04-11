@@ -101,6 +101,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
+      FirebaseMessaging.notifyBrowseNotification,
+      FirebaseMessaging.notifyMapNotification,
+      FirebaseMessaging.notifyAcademicsNotification,
+      FirebaseMessaging.notifyWellnessNotification,
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyPollNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
@@ -235,6 +239,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyHomeNotification) {
       _onFirebaseHomeNotification();
     }
+    else if (name == FirebaseMessaging.notifyBrowseNotification) {
+      _onFirebaseTabNotification(RootTab.Browse);
+    }
+    else if (name == FirebaseMessaging.notifyMapNotification) {
+      _onFirebaseTabNotification(RootTab.Maps);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsNotification) {
+      _onFirebaseTabNotification(RootTab.Academics);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessNotification) {
+      _onFirebaseTabNotification(RootTab.Wellness);
+    }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
     }
@@ -254,7 +270,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onSelectHome();
     }
     else if (name == ExploreMapPanel.notifySelect) {
-      _onSelectMaps();
+      _onSelectMaps(param);
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
@@ -276,11 +292,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onSelectMaps() {
+  void _onSelectMaps(ExploreMapType? mapType) {
     int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
     if (mounted && (mapsIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      int lastTabIndex = _currentTabIndex;
       _selectTab(mapsIndex);
+      if ((lastTabIndex != mapsIndex) && (mapType != null) && !ExploreMapPanel.hasState) {
+        Widget? mapsWidget = _panels[RootTab.Maps];
+        ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
+        mapsPanel?.params[ExploreMapPanel.mapTypeKey] = mapType;
+      }
     }
   }
 
@@ -744,6 +766,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     // Pop to Home Panel and select the first tab
     Navigator.of(context).popUntil((route) => route.isFirst);
     _selectTab(0);
+  }
+
+  void _onFirebaseTabNotification(RootTab? tab) {
+    if (tab != null) {
+      // Pop to Home Panel
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      // Select tab
+      int? tabIndex = _getIndexByRootTab(tab);
+      if (tabIndex != null) {
+        _selectTab(tabIndex);
+      }
+    }
   }
 
   void _onFirebaseInboxNotification() {

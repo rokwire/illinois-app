@@ -39,7 +39,7 @@ class CanvasCourse {
             id: JsonUtils.intValue(json['id']),
             name: JsonUtils.stringValue(json['name']),
             accessRestrictedByDate: JsonUtils.boolValue(json['access_restricted_by_date']),
-            syllabusBody: JsonUtils.stringValue(json['syllabus_body']),
+            syllabusBody: JsonUtils.stringValue(json['syllabus_body'])
           )
         : null;
   }
@@ -53,7 +53,11 @@ class CanvasCourse {
       (other.syllabusBody == syllabusBody);
 
   @override
-  int get hashCode => (id?.hashCode ?? 0) ^ (name?.hashCode ?? 0) ^ (accessRestrictedByDate?.hashCode ?? 0) ^ (syllabusBody?.hashCode ?? 0);
+  int get hashCode =>
+      (id?.hashCode ?? 0) ^
+      (name?.hashCode ?? 0) ^
+      (accessRestrictedByDate?.hashCode ?? 0) ^
+      (syllabusBody?.hashCode ?? 0);
 }
 
 ////////////////////////////////

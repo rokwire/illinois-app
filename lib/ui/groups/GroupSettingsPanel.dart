@@ -30,7 +30,6 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -40,6 +39,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -167,7 +167,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         _buildResearchOpenLayout(),
         _buildResearchAudienceLayout(),
         _buildMembershipLayout(),
-        _buildProjectSettingsLayout(),
+        // _buildProjectSettingsLayout(),
+        _buildSettingsLayout(),
       ]);
     }
 
@@ -366,21 +367,28 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Link
   Widget _buildLinkField(){
+    String labelTitle = _isResearchProject ?
+      Localization().getStringEx("panel.groups_settings.project.link.title", "OPTIONAL WEBSITE LINK") :
+      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK");
+    String labelHint = _isResearchProject ?
+      Localization().getStringEx("panel.groups_settings,project.link.title.hint", "") :
+      Localization().getStringEx("panel.groups_settings.link.title.hint","");
+
     return
       Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-          Semantics(label:Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
-            hint: Localization().getStringEx("panel.groups_settings.link.title.hint",""), textField: true, excludeSemantics: true, value:  _group!.webURL,
+          Semantics(label:labelTitle,
+            hint: labelHint, textField: true, excludeSemantics: true, value:  _group!.webURL,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(bottom: 8, top:16),
                     child: Text(
-                      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
+                      labelTitle,
                       style: TextStyle(
                           color: Styles().colors!.fillColorPrimary,
                           fontSize: 14,
@@ -442,7 +450,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   void _onTapConfirmLinkUrl() {
     Analytics().logSelect(target: "Confirm Website url");
     if (_linkController.text.isNotEmpty) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _linkController.text)));
+      //Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _linkController.text)));
+      Uri? uri = Uri.tryParse(_linkController.text);
+      if (uri != null) {
+        Uri? fixedUri = UrlUtils.fixUri(uri);
+        if (fixedUri != null) {
+          _linkController.text = fixedUri.toString();
+          uri = fixedUri;
+        }
+        launchUrl(uri);
+      }
     }
   }
 
@@ -455,7 +472,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Expanded(flex: 5, child:
             _buildInfoHeader(
               Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
-              Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
+              _isResearchProject?
+                Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
+                Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
             )
           ),
           Container(width: 8),
@@ -1002,11 +1021,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (_group?.researchProject == true) {
       _group?.privacy = GroupPrivacy.public;
       _group?.hiddenForSearch = false;
-      _group?.canJoinAutomatically = false;
-      _group?.onlyAdminsCanCreatePolls = true;
       _group?.authManEnabled = false;
       _group?.authManGroupName = null;
       _group!.attendanceGroup = false;
+      //Unlocked Advanced setting
+      // _group?.canJoinAutomatically = false;
+      // _group?.onlyAdminsCanCreatePolls = true;
     }
     else {
       _group?.researchOpen = null;
@@ -1140,7 +1160,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   //ProjectSettings
-  Widget _buildProjectSettingsLayout() {
+/*  Widget _buildProjectSettingsLayout() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       EnabledToggleButton(
         label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
@@ -1158,7 +1178,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _group?.canJoinAutomatically = (_group?.canJoinAutomatically != true);
     });
-  }
+  }*/
 
   // Common
   Widget _buildInfoHeader(String title, String? description, { EdgeInsetsGeometry padding = const EdgeInsets.only(bottom: 8, top: 24)}){

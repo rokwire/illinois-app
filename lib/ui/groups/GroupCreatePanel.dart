@@ -19,7 +19,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
@@ -41,6 +40,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GroupCreatePanel extends StatefulWidget {
   final Group? group;
@@ -226,7 +226,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Container(height: 20),
         _buildTitle(Localization().getStringEx("panel.groups_create.participation.section.title", 'Participation'), "person-circle"),
         _buildMembershipLayout(),
-        _buildProjectSettingsLayout(),
+        // _buildProjectSettingsLayout(),
+        _buildSettingsLayout(),
       ]);
     }
 
@@ -384,20 +385,27 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Link
   Widget _buildLinkField(){
+    String labelTitle = _isResearchProject ?
+      Localization().getStringEx("panel.groups_settings.project.link.title", "OPTIONAL WEBSITE LINK") :
+      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK");
+    String labelHint = _isResearchProject ?
+      Localization().getStringEx("panel.groups_settings,project.link.title.hint", "") :
+      Localization().getStringEx("panel.groups_settings.link.title.hint","");
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child:Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-        Semantics(label:Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
-          hint: Localization().getStringEx("panel.groups_settings.link.title.hint",""), textField: true, excludeSemantics: true, value:  _group!.webURL,
+        Semantics(label:labelTitle,
+          hint: labelHint, textField: true, excludeSemantics: true, value:  _group!.webURL,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(bottom: 8, top:24),
                   child: Text(
-                    Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
+                    labelTitle,
                     style: TextStyle(
                         color: Styles().colors!.fillColorPrimary,
                         fontSize: 12,
@@ -454,7 +462,16 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onTapConfirmLinkUrl() {
     Analytics().logSelect(target: "Confirm Website url");
     if (_linkController.text.isNotEmpty) {
-      Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(url: _linkController.text)));
+      //Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(url: _linkController.text)));
+      Uri? uri = Uri.tryParse(_linkController.text);
+      if (uri != null) {
+        Uri? fixedUri = UrlUtils.fixUri(uri);
+        if (fixedUri != null) {
+          _linkController.text = fixedUri.toString();
+          uri = fixedUri;
+        }
+        launchUrl(uri);
+      }
     }
   }
 
@@ -545,8 +562,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           Expanded(flex: 5, child:
             GroupSectionTitle(
               title: Localization().getStringEx("panel.groups_create.attributes.title", "ATTRIBUTES"),
-              description: Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              requiredMark: Groups().contentAttributes?.hasRequired ?? false,
+              description: _isResearchProject?
+                Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
+                Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
+              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
           Container(width: 8),
@@ -929,7 +948,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   //ProjectSettings
-  Widget _buildProjectSettingsLayout() {
+/*  Widget _buildProjectSettingsLayout() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       EnabledToggleButton(
         label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
@@ -947,8 +966,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     setState(() {
       _group?.canJoinAutomatically = (_group?.canJoinAutomatically != true);
     });
-  }
-  
+  } */
   //Buttons
   Widget _buildButtonsLayout() {
     return Semantics(container: true, child: Container( color: Styles().colors!.white,
@@ -1016,11 +1034,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       if (_group?.researchProject == true) {
         _group?.privacy = GroupPrivacy.public;
         _group?.hiddenForSearch = false;
-        _group?.canJoinAutomatically = false;
-        _group?.onlyAdminsCanCreatePolls = true;
         _group?.authManEnabled = false;
         _group?.authManGroupName = null;
         _group!.attendanceGroup = false;
+        //Unlocked Advanced setting
+        // _group?.canJoinAutomatically = false;
+        // _group?.onlyAdminsCanCreatePolls = true;
       }
       else {
         _group?.researchOpen = null;

@@ -31,7 +31,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 
-class Dinings with Service implements ExploreJsonHandler {
+class Dinings with Service {
 
   static final String _olddiningsFileName = 'dinings_schedules.json';
 
@@ -53,19 +53,13 @@ class Dinings with Service implements ExploreJsonHandler {
   @override
   void createService() {
     super.createService();
-    Explore.addJsonHandler(this);
     _cleanDinigsCacheFile();
   }
 
   @override
   void destroyService() {
-    Explore.removeJsonHandler(this);
     super.destroyService();
   }
-
-  // ExploreJsonHandler
-  @override bool exploreCanJson(Map<String, dynamic>? json) => Dining.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Dining.fromJson(json);
 
   Future<List<Dining>?> loadBackendDinings(bool onlyOpened, PaymentType? paymentType, Position? locationData) async {
     if(_enabled) {
