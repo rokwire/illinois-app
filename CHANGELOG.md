@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Research Project tweaks [#3112](https://github.com/rokwire/illinois-app/issues/3112).
 ### Fixed
 - Fixed map type selection in ExploeMapPanel.notifySelect notification [#3060](https://github.com/rokwire/illinois-app/issues/3060).
+### Addes
+- Auto fill Guide Highlights favorites [#3032](https://github.com/rokwire/illinois-app/issues/3032).
 
 ## [4.3.39] - 2023-04-10
 ### Deleted

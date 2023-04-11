@@ -424,6 +424,15 @@ class Guide with Service implements NotificationsListener {
     false;
   }
 
+  bool _isEntryPromotion(Map<String, dynamic>? entry) {
+    Map<String, dynamic>? promotion = (entry != null) ? JsonUtils.mapValue(entryValue(entry, 'promotion')) : null;
+    return (promotion != null) ?
+      _checkPromotionInterval(promotion) &&
+      _checkPromotionRoles(promotion) &&
+      _checkPromotionCard(promotion) :
+    false;
+  }
+
   static bool _checkPromotionInterval(Map<String, dynamic>? promotion) {
     Map<String, dynamic>? interval = (promotion != null) ? JsonUtils.mapValue(promotion['interval']) : null;
     if (interval != null) {
@@ -481,17 +490,13 @@ class Guide with Service implements NotificationsListener {
         bool? isFavorite = JsonUtils.boolValue(entryValue(guideEntry, 'content_type_favorite'));
         if (isFavorite == true) {
           String? guideEntryId = entryId(guideEntry);
-          String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
-          if ((guideEntryId != null) && (guideEntryContentType != null)) {
-            String processedKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType, processed: true);
-            LinkedHashSet<String> processedGuideEntryIds = (favorites[processedKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(processedKeyName)?? LinkedHashSet<String>()));
-            if (!processedGuideEntryIds.contains(guideEntryId)) {
-              String favoriteKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType);
-              LinkedHashSet<String> favoriteGuideEntryIds = (favorites[favoriteKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(favoriteKeyName) ?? LinkedHashSet<String>()));
-              favoriteGuideEntryIds.add(guideEntryId); // Mark guideEntryId as favorite
-              processedGuideEntryIds.add(guideEntryId); // Mark guideEntryId as processed
-              modifiedFavoriteKeys.add(favoriteKeyName);
-              modifiedFavoriteKeys.add(processedKeyName);
+          if (guideEntryId != null) {
+            String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
+            if (guideEntryContentType != null) {
+              _processDefaultFavorites(guideEntryId: guideEntryId, guideEntryContentType: guideEntryContentType, favorites: favorites, modifiedFavoriteKeys: modifiedFavoriteKeys);
+            }
+            if (_isEntryPromotion(guideEntry)) {
+              _processDefaultFavorites(guideEntryId: guideEntryId, guideEntryContentType: campusHighlightContentType, favorites: favorites, modifiedFavoriteKeys: modifiedFavoriteKeys);
             }
           }
         }
@@ -500,6 +505,24 @@ class Guide with Service implements NotificationsListener {
       for (String modifiedFavoriteKey in modifiedFavoriteKeys) {
         Auth2().prefs?.setFavorites(modifiedFavoriteKey, favorites[modifiedFavoriteKey]);
       }
+    }
+  }
+
+  void _processDefaultFavorites({
+    required String guideEntryId,
+    required String guideEntryContentType,
+    required Map<String, LinkedHashSet<String>> favorites,
+    required Set<String> modifiedFavoriteKeys
+  }) {
+    String processedKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType, processed: true);
+    LinkedHashSet<String> processedGuideEntryIds = (favorites[processedKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(processedKeyName)?? LinkedHashSet<String>()));
+    if (!processedGuideEntryIds.contains(guideEntryId)) {
+      String favoriteKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType);
+      LinkedHashSet<String> favoriteGuideEntryIds = (favorites[favoriteKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(favoriteKeyName) ?? LinkedHashSet<String>()));
+      favoriteGuideEntryIds.add(guideEntryId); // Mark guideEntryId as favorite
+      processedGuideEntryIds.add(guideEntryId); // Mark guideEntryId as processed
+      modifiedFavoriteKeys.add(favoriteKeyName);
+      modifiedFavoriteKeys.add(processedKeyName);
     }
   }
 
