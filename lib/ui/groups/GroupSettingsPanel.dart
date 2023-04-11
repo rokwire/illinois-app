@@ -1019,11 +1019,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (_group?.researchProject == true) {
       _group?.privacy = GroupPrivacy.public;
       _group?.hiddenForSearch = false;
-      _group?.canJoinAutomatically = false;
-      _group?.onlyAdminsCanCreatePolls = true;
       _group?.authManEnabled = false;
       _group?.authManGroupName = null;
       _group!.attendanceGroup = false;
+      //Unlocked Advanced setting
+      // _group?.canJoinAutomatically = false;
+      // _group?.onlyAdminsCanCreatePolls = true;
     }
     else {
       _group?.researchOpen = null;
