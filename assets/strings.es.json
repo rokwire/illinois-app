@@ -2317,6 +2317,8 @@
 	"panel.groups_settings.description.project.field.hint": "",
     "panel.groups_settings.link.title": "WEBSITE LINK",
     "panel.groups_settings.link.title.hint": "",
+    "panel.groups_settings.project.link.title": "OPTIONAL WEBSITE LINK",
+    "panel.groups_settings.project.link.title.hint": "",
     "panel.groups_settings.link.hint": "Add URL",
     "panel.groups_settings.link.button.confirm.link": "Confirm website URL",
     "panel.groups_settings.link.button.confirm.link.hint": "",

@@ -384,20 +384,27 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Link
   Widget _buildLinkField(){
+    String labelTitle = _isResearchProject ?
+      Localization().getStringEx("panel.groups_settings.project.link.title", "OPTIONAL WEBSITE LINK") :
+      Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK");
+    String labelHint = _isResearchProject ?
+      Localization().getStringEx("panel.groups_settings,project.link.title.hint", "") :
+      Localization().getStringEx("panel.groups_settings.link.title.hint","");
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child:Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-        Semantics(label:Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
-          hint: Localization().getStringEx("panel.groups_settings.link.title.hint",""), textField: true, excludeSemantics: true, value:  _group!.webURL,
+        Semantics(label:labelTitle,
+          hint: labelHint, textField: true, excludeSemantics: true, value:  _group!.webURL,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(bottom: 8, top:24),
                   child: Text(
-                    Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
+                    labelTitle,
                     style: TextStyle(
                         color: Styles().colors!.fillColorPrimary,
                         fontSize: 12,
