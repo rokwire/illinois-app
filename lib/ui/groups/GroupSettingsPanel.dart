@@ -167,7 +167,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         _buildResearchOpenLayout(),
         _buildResearchAudienceLayout(),
         _buildMembershipLayout(),
-        _buildProjectSettingsLayout(),
+        // _buildProjectSettingsLayout(),
+        _buildSettingsLayout(),
       ]);
     }
 
@@ -1156,7 +1157,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   //ProjectSettings
-  Widget _buildProjectSettingsLayout() {
+/*  Widget _buildProjectSettingsLayout() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       EnabledToggleButton(
         label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
@@ -1174,7 +1175,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _group?.canJoinAutomatically = (_group?.canJoinAutomatically != true);
     });
-  }
+  }*/
 
   // Common
   Widget _buildInfoHeader(String title, String? description, { EdgeInsetsGeometry padding = const EdgeInsets.only(bottom: 8, top: 24)}){

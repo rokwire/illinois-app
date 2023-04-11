@@ -226,7 +226,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Container(height: 20),
         _buildTitle(Localization().getStringEx("panel.groups_create.participation.section.title", 'Participation'), "person-circle"),
         _buildMembershipLayout(),
-        _buildProjectSettingsLayout(),
+        // _buildProjectSettingsLayout(),
+        _buildSettingsLayout(),
       ]);
     }
 
@@ -945,7 +946,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   //ProjectSettings
-  Widget _buildProjectSettingsLayout() {
+/*  Widget _buildProjectSettingsLayout() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       EnabledToggleButton(
         label: Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants'),
@@ -963,8 +964,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     setState(() {
       _group?.canJoinAutomatically = (_group?.canJoinAutomatically != true);
     });
-  }
-  
+  } */
   //Buttons
   Widget _buildButtonsLayout() {
     return Semantics(container: true, child: Container( color: Styles().colors!.white,
