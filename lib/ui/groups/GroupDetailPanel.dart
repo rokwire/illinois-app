@@ -240,6 +240,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (mounted) {
       if (group != null) {
         _group = group;
+        if (_isResearchProject && _isMember) {
+          _currentTab = _DetailTab.About;
+        }
         _redirectToPostIfExists();
         _loadGroupAdmins();
         _loadInitialPosts();
