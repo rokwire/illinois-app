@@ -19,7 +19,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
@@ -41,6 +40,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GroupCreatePanel extends StatefulWidget {
   final Group? group;
@@ -461,7 +461,16 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onTapConfirmLinkUrl() {
     Analytics().logSelect(target: "Confirm Website url");
     if (_linkController.text.isNotEmpty) {
-      Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(url: _linkController.text)));
+      //Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(url: _linkController.text)));
+      Uri? uri = Uri.tryParse(_linkController.text);
+      if (uri != null) {
+        Uri? fixedUri = UrlUtils.fixUri(uri);
+        if (fixedUri != null) {
+          _linkController.text = fixedUri.toString();
+          uri = fixedUri;
+        }
+        launchUrl(uri);
+      }
     }
   }
 

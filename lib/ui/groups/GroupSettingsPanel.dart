@@ -30,7 +30,6 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -40,6 +39,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -449,7 +449,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   void _onTapConfirmLinkUrl() {
     Analytics().logSelect(target: "Confirm Website url");
     if (_linkController.text.isNotEmpty) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _linkController.text)));
+      //Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _linkController.text)));
+      Uri? uri = Uri.tryParse(_linkController.text);
+      if (uri != null) {
+        Uri? fixedUri = UrlUtils.fixUri(uri);
+        if (fixedUri != null) {
+          _linkController.text = fixedUri.toString();
+          uri = fixedUri;
+        }
+        launchUrl(uri);
+      }
     }
   }
 
