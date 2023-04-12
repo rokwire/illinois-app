@@ -634,6 +634,7 @@ class Appointments with Service implements NotificationsListener {
   }
 
   Future<Appointment?> cancelAppointment(Appointment appointment) async {
+
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
@@ -642,10 +643,22 @@ class Appointments with Service implements NotificationsListener {
     else {
       throw AppointmentsException(description: 'Random Update Failure');
     }
+
+    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(appointment.id)) {
+      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      http.Response? response = await Network().get(url, auth: Auth2());
+      if (response?.statusCode == 200) {
+        return Appointment.fromOther(appointment, cancelled: true);
+      }
+      throw AppointmentsException(error: AppointmentsError.serverResponse, description: StringUtils.isNotEmpty(response?.body) ? response?.body : response?.reasonPhrase);
+    }
+    else {
+      throw AppointmentsException(error: AppointmentsError.internal);
+    }*/
   }
 }
 
-enum AppointmentsError { serverResponse, unknown }
+enum AppointmentsError { serverResponse, internal, unknown }
 
 class AppointmentsException implements Exception {
   final AppointmentsError error;
@@ -659,6 +672,7 @@ class AppointmentsException implements Exception {
   String get errorDescription {
     switch (error) {
       case AppointmentsError.serverResponse: return 'Server Response Error';
+      case AppointmentsError.internal: return 'Internal Error Occured';
       case AppointmentsError.unknown: return 'Unknown Error Occured';
     }
   }
