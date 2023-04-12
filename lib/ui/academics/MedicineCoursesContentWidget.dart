@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Board of Trustees of the University of Illinois.
+ * Copyright 2023 Board of Trustees of the University of Illinois.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,22 +28,20 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class CanvasCoursesContentWidget extends StatefulWidget {
-  CanvasCoursesContentWidget();
+class MedicineCoursesContentWidget extends StatefulWidget {
+  MedicineCoursesContentWidget();
 
   @override
-  _CanvasCoursesContentWidgetState createState() => _CanvasCoursesContentWidgetState();
+  _MedicineCoursesContentWidgetState createState() => _MedicineCoursesContentWidgetState();
 }
 
-class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget> implements NotificationsListener {
-  List<CanvasCourse>? _courses;
+class _MedicineCoursesContentWidgetState extends State<MedicineCoursesContentWidget> implements NotificationsListener {
+  List<CanvasCourse>? _medicineCourses;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [
-      Canvas.notifyCoursesUpdated,
-    ]);
-    _courses = Canvas().giesCourses;
+    NotificationService().subscribe(this, [Canvas.notifyCoursesUpdated]);
+    _medicineCourses = Canvas().medicineCourses;
     super.initState();
   }
 
@@ -69,29 +67,34 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.'),);
-    }
-    else if (!Auth2().isOidcLoggedIn) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
-    }
-    else if (_courses == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
-    }
-    else if (_courses?.isEmpty ?? true) {
-      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),);
-    }
-    else {
+      return _buildMessageContent(
+        Localization()
+            .getStringEx('panel.medicine_courses.load.offline.error.msg', 'My College of Medicine Courses not available while offline.'),
+      );
+    } else if (!Auth2().isOidcLoggedIn) {
+      return _buildMessageContent(
+        Localization().getStringEx('panel.medicine_courses.load.logged_out.error.msg',
+            'You need to be logged in with your NetID to access My College of Medicine Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),
+      );
+    } else if (_medicineCourses == null) {
+      return _buildMessageContent(
+        Localization().getStringEx('panel.medicine_courses.load.failed.error.msg', 'Unable to load courses.'),
+      );
+    } else if (_medicineCourses?.isEmpty ?? true) {
+      return _buildMessageContent(
+        Localization()
+            .getStringEx('panel.medicine_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Medicine courses.'),
+      );
+    } else {
       return _buildCoursesContent();
     }
   }
 
   Widget _buildMessageContent(String message) {
-    return _buildCenterWidget(widget: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 28),
-        child: Text(
-            message,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+    return _buildCenterWidget(
+        widget: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 28),
+            child: Text(message, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
 
   Widget _buildCoursesContent() {
@@ -100,8 +103,8 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   List<Widget> _buildCoursesWidgetList() {
     List<Widget> widgets = <Widget>[];
-    if (CollectionUtils.isNotEmpty(_courses)) {
-      for (CanvasCourse course in _courses!) {
+    if (CollectionUtils.isNotEmpty(_medicineCourses)) {
+      for (CanvasCourse course in _medicineCourses!) {
         widgets.add(Padding(
             padding: EdgeInsets.only(top: 10),
             child: GestureDetector(onTap: () => _onTapCourse(course.id!), child: CanvasCourseCard(course: course))));
@@ -126,7 +129,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   void _updateCourses() {
     setStateIfMounted(() {
-      _courses = Canvas().giesCourses;
+      _medicineCourses = Canvas().medicineCourses;
     });
   }
 }

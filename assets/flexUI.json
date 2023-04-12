@@ -59,7 +59,7 @@
 			"settings.linked.phone": ["info", "remove", "verify"],
 			"settings.linked.email": ["info", "remove", "verify"],
 	
-			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "todo_list", "skills_self_evaluation", "due_date_catalog", "my_illini"],
+			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "medicine_courses", "academics_events", "todo_list", "skills_self_evaluation", "due_date_catalog", "my_illini"],
 			"academics.skills_self_evaluation.features": ["authentication", "netid_login"],
 
 			"wellness": ["daily_tips", "rings", "appointments", "appointments2", "health_screener", "podcast", "resources", "mental_health", "struggling"],
@@ -116,6 +116,7 @@
 				"_new_student_checklist"                 : ["${config.settings.groups.new_student}"],
 				"canvas"                                 : ["${config.settings.groups.canvas}"],
 				"canvas_courses"                         : ["${config.settings.groups.canvas}"],
+				"medicine_courses"                       : ["${config.settings.groups.canvas}"],
 				"mtd_bus_pass"                           : ["${config.settings.groups.mtd_bus_pass}"]
 			},
 			"locations": {
@@ -153,6 +154,7 @@
 				"new_student_checklist"               : { "shibbolethLoggedIn": true },
 				"canvas"                              : { "shibbolethLoggedIn": true },
 				"canvas_courses"                      : { "shibbolethLoggedIn": true },
+				"medicine_courses"                    : { "shibbolethLoggedIn": true },
 				"student_courses"                     : { "shibbolethLoggedIn": true },
 	
 				"settings.connect"                    : { "loggedIn": false },
