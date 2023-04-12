@@ -25,6 +25,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
+import 'package:illinois/ui/academics/MedicineCoursesContentWidget.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
@@ -230,6 +231,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.uiuc_checklist;
     } else if (code == 'canvas_courses') {
       return AcademicsContent.canvas_courses;
+    } else if (code == 'medicine_courses') {
+      return AcademicsContent.medicine_courses;
     } else if (code == 'student_courses') {
       return AcademicsContent.student_courses;
     } else if (code == 'academics_events') {
@@ -361,6 +364,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
       case AcademicsContent.canvas_courses:
         return CanvasCoursesContentWidget();
+      case AcademicsContent.medicine_courses:
+        return MedicineCoursesContentWidget();
       case AcademicsContent.student_courses:
         return StudentCoursesContentWidget();
       case AcademicsContent.skills_self_evaluation:
@@ -395,6 +400,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
       case AcademicsContent.canvas_courses:
         return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
+      case AcademicsContent.medicine_courses:
+        return Localization().getStringEx('panel.academics.section.medicine_courses.label', 'My College of Medicine Courses');
       case AcademicsContent.student_courses:
         return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
       case AcademicsContent.skills_self_evaluation:
@@ -420,4 +427,4 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 }
 
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, skills_self_evaluation, todo_list, due_date_catalog, my_illini }
+enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, medicine_courses, student_courses, skills_self_evaluation, todo_list, due_date_catalog, my_illini }

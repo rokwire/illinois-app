@@ -161,6 +161,7 @@ class Config extends rokwire.Config {
 
   String? get canvasCourseDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['course_format']);
   String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
+  List<int>? get canvasMedicineCoursesAccountIds => JsonUtils.listIntsValue(canvas['medicine_courses_account_ids']);
 
   // Getters: McKinley
 
