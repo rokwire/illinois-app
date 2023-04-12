@@ -15,6 +15,8 @@
  */
 
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -1563,7 +1565,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {
-        launchUrl(uri);
+        launchUrl(UrlUtils.fixUri(uri) ?? uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
       }
     }
   }
