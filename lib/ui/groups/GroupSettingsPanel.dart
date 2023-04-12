@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -458,7 +460,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           _linkController.text = fixedUri.toString();
           uri = fixedUri;
         }
-        launchUrl(uri);
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
       }
     }
   }

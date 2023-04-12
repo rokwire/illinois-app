@@ -5,19 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- My College of Medicine Courses [#3118](https://github.com/rokwire/illinois-app/issues/3118).
+### Changed
+- Updated Mental Health Resource buildings [#3120](https://github.com/rokwire/illinois-app/issues/3120).
+- In Android, open an external browser for the Optional Web Link when we see it as More Info  (like in about) [#3122](https://github.com/rokwire/illinois-app/issues/3122).
 
 ## [4.3.40] - 2023-04-11
 ### Changed
 - Updated Research Project tweaks [#3112](https://github.com/rokwire/illinois-app/issues/3112).
 ### Fixed
 - Fixed map type selection in ExploeMapPanel.notifySelect notification [#3060](https://github.com/rokwire/illinois-app/issues/3060).
-### Addes
+### Added
 - Auto fill Guide Highlights favorites [#3032](https://github.com/rokwire/illinois-app/issues/3032).
 
 ## [4.3.39] - 2023-04-10
 ### Deleted
 - "My College of Medicine Courses" in Academics panel and all related stuff [#3105](https://github.com/rokwire/illinois-app/issues/3105).
-### Addes
+### Added
 - Added reschedule appointment preview [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 ### Changed
 - Hooked up appointments provicers API [#3074](https://github.com/rokwire/illinois-app/issues/3074).

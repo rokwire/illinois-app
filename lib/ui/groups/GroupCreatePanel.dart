@@ -15,6 +15,8 @@
  */
 
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
@@ -470,7 +472,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           _linkController.text = fixedUri.toString();
           uri = fixedUri;
         }
-        launchUrl(uri);
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
       }
     }
   }

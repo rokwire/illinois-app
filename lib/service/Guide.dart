@@ -426,11 +426,7 @@ class Guide with Service implements NotificationsListener {
 
   bool _isEntryPromotion(Map<String, dynamic>? entry) {
     Map<String, dynamic>? promotion = (entry != null) ? JsonUtils.mapValue(entryValue(entry, 'promotion')) : null;
-    return (promotion != null) ?
-      _checkPromotionInterval(promotion) &&
-      _checkPromotionRoles(promotion) &&
-      _checkPromotionCard(promotion) :
-    false;
+    return (promotion != null);
   }
 
   static bool _checkPromotionInterval(Map<String, dynamic>? promotion) {
