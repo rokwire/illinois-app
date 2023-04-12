@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - My College of Medicine Courses [#3118](https://github.com/rokwire/illinois-app/issues/3118).
+### Changed
+- Updated Mental Health Resource buildings [#3120](https://github.com/rokwire/illinois-app/issues/3120).
 
 ## [4.3.40] - 2023-04-11
 ### Changed
