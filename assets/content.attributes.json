@@ -342,6 +342,7 @@
 			{ "label": "Ctr S. Asian & MidEast Studies", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "E Asian & Pacific Studies Cntr", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "E. Asian Languages & Cultures", "requirements": { "college" : "Liberal Arts & Sciences" }},
+			{ "label": "Earth Sci & Environmental Chng", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "Economics", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "English", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "Entomology", "requirements": { "college" : "Liberal Arts & Sciences" }},
