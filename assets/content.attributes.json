@@ -403,6 +403,7 @@
 			{ "label": "Police Training Institute", "requirements": { "college" : "Public Safety" }},
 									
 			{ "label": "Center for Children's Books", "requirements": { "college" : "School of Information Sciences" }},
+			{ "label": "Illinois Informatics Institute", "requirements": { "college" : "School of Information Sciences" }},
 			{ "label": "Informatics", "requirements": { "college" : "School of Information Sciences" }},
 			{ "label": "Information Sciences", "requirements": { "college" : "School of Information Sciences" }},
 
