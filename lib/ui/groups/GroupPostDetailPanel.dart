@@ -415,7 +415,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       String? optionsIconPath;
       void Function()? optionsFunctionTap;
       if (_isReplyVisible) {
-        optionsIconPath = 'options';
+        optionsIconPath = 'more';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
       replyWidgetList.add(
@@ -745,8 +745,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onTapPostLink(String? url) {
     Analytics().logSelect(target: 'link');
     if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context,
-          CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
   }
 
