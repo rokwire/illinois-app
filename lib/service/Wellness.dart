@@ -54,12 +54,11 @@ class Wellness with Service implements NotificationsListener {
   static const String _contentCacheFileName = "wellness.content.json";
   static const String _tipsContentCategory = "wellness_tips";
   static const String _resourcesContentCategory = "wellness_resources";
-//static const String _mentalHealthCategory = "wellness_mental_health";
-  static const List<String> _contentCategories = [_tipsContentCategory, _resourcesContentCategory /*, _mentalHealthCategory */];
+  static const String _mentalHealthCategory = "wellness_mental_health";
+  static const List<String> _contentCategories = [_tipsContentCategory, _resourcesContentCategory, _mentalHealthCategory ];
 
   File? _contentCacheFile;
   Map<String, dynamic>? _contentMap;
-  Map<String, dynamic>? _assetsMentalHealth;
 
   String? _dailyTipId;
   DateTime? _dailyTipTime;
@@ -84,6 +83,7 @@ class Wellness with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _contentCacheFile = await _getContentCacheFile();
+    
     _contentMap = await _loadContentMapFromCache();
     if (_contentMap != null) {
       _updateContentMapFromNet();
@@ -98,8 +98,6 @@ class Wellness with Service implements NotificationsListener {
     _dailyTipId = Storage().wellnessDailyTipId;
     _dailyTipTime = DateTime.fromMillisecondsSinceEpoch(Storage().wellnessDailyTipTime ?? 0);
     _updateDailyTip(notify: false);
-
-    _assetsMentalHealth = JsonUtils.decodeMap(await AppBundle.loadString('assets/wellness.mental-health.json'));
 
     if (_contentMap != null) {
       await super.initService();
@@ -413,8 +411,8 @@ class Wellness with Service implements NotificationsListener {
 
   // Mental Health
 
-  Map<String, dynamic>? get mentalHealth => _assetsMentalHealth;
-    //(_contentMap != null) ? JsonUtils.mapValue(_contentMap![_mentalHealthCategory]) : null;
+  Map<String, dynamic>? get mentalHealth => 
+    (_contentMap != null) ? JsonUtils.mapValue(_contentMap![_mentalHealthCategory]) : null;
 
   Future<List<Building>?> loadMentalHealthBuildings() async {
     List<Building>? result;
