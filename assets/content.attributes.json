@@ -362,6 +362,7 @@
 			{ "label": "Latin American & Carib Studies", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "Latina/Latino Studies", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "Lemann Center", "requirements": { "college" : "Liberal Arts & Sciences" }},
+			{ "label": "Liberal Arts & Sciences", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "Liberal Arts & Sciences Courses", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "Life Sciences", "requirements": { "college" : "Liberal Arts & Sciences" }},
 			{ "label": "Linguistics", "requirements": { "college" : "Liberal Arts & Sciences" }},
