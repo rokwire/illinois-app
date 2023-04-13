@@ -227,31 +227,35 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   Widget _buildDateBar() {
     String selectedDateString = DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate);
-    Widget selectedDateWidget = Row(children: [
-      Padding(padding: EdgeInsets.only(right: 8), child:
-        Styles().images?.getImage('calendar')
-      ),
-      Expanded(child:
-        Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin.underline'),)
-      ),
-    ],);
 
-    return (widget.sourceAppointment == null) ?
-      InkWell(onTap: _onEditDate, child:
-        Padding(padding: EdgeInsets.all(16), child:
-          selectedDateWidget
-        )
-      ) :
-      Padding(padding: EdgeInsets.only(top: 16), child:
-        InkWell(onTap: _onEditDate, child:
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New Appointment:'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
-              selectedDateWidget
-            ],),
-          ),
-        )
-      );
+    return Padding(padding: EdgeInsets.all(16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text((widget.sourceAppointment == null) ?
+          Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing avalable appointments for:') :
+          Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New Appointment:'),
+          style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+        ),
+        Padding(padding: EdgeInsets.only(top: 2, bottom: 6), child:
+          Row(children: [
+            Padding(padding: EdgeInsets.only(right: 8), child:
+              Styles().images?.getImage('calendar')
+            ),
+            Expanded(child:
+              Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin'),)
+            ),
+          ],),
+        ),
+        RoundedButton(
+          label: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.title", "Select Alternative Date"),
+          hint: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.hint", ""),
+          backgroundColor: Styles().colors!.surface,
+          textColor: Styles().colors?.fillColorPrimary,
+          borderColor: Styles().colors?.fillColorSecondary,
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          onTap: ()=> _onEditDate(),
+        ),
+      ],)
+    );
   }
 
   void _onEditDate() {
@@ -282,7 +286,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     );
   }
 
-  bool get _canContinue => (_selectedSlot != null);
+  bool get _canContinue => (_selectedSlot != null) && (_loadingTimeSlots != true);
 
   void _onContinue() {
     if (_canContinue) {
