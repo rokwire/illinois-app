@@ -1741,11 +1741,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                 padding: EdgeInsets.only(top: 8, bottom: 16),
                 child: TextField(
                     controller: _bodyController,
-                    onChanged: (String text){
-                      if (widget.onBodyChanged != null) {
-                        widget.onBodyChanged!(text);
-                      }
-                    },
+                    onChanged: _notifyChanged,
                     maxLines: 15,
                     minLines: 1,
                     textCapitalization: TextCapitalization.sentences,
@@ -1759,6 +1755,12 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
           ],
         )
     );
+  }
+
+  void _notifyChanged(String text) {
+    if (widget.onBodyChanged != null) {
+      widget.onBodyChanged!(text);
+    }
   }
 
   //HTML Body input Actions
@@ -1836,6 +1838,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
     _bodyController.text = result;
     _bodyController.selection = TextSelection.fromPosition(
         TextPosition(offset: (endPosition + firstValue.length)));
+    _notifyChanged(result);
   }
   
   //Dialog
