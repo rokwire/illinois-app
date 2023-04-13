@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.3.42] - 2023-04-13
 ### Changed
 - UI updates in AppointmentTimeSlotPanel [#3125](https://github.com/rokwire/illinois-app/issues/3125).
 - Removed tappable items from Appointment Unit card [#3127](https://github.com/rokwire/illinois-app/issues/3127).
