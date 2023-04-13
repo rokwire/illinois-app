@@ -30,7 +30,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -744,9 +743,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapPostLink(String? url) {
     Analytics().logSelect(target: 'link');
-    if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    UrlUtils.launchExternal(url);
   }
 
   void _reloadPost() {

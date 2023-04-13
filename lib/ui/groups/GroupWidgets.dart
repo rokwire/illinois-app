@@ -41,7 +41,6 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
@@ -1349,9 +1348,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   void _onLinkTap(String? url) {
     Analytics().logSelect(target: url);
-    if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    UrlUtils.launchExternal(url);
   }
 
   int getVisibleRepliesCount() {
@@ -1531,9 +1528,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   void _onLinkTap(String? url) {
     Analytics().logSelect(target: url);
-    if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    UrlUtils.launchExternal(url);
   }
 
   void _onTapCard(){

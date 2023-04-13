@@ -15,8 +15,6 @@
  */
 
 
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -58,7 +56,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
@@ -1561,13 +1558,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onWebsite() {
     Analytics().logSelect(target: 'Group url', attributes: _group?.analyticsAttributes);
-    String? url = _group?.webURL;
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(UrlUtils.fixUri(uri) ?? uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-      }
-    }
+    UrlUtils.launchExternal(_group?.webURL);
   }
 
   void _onPolicy () {

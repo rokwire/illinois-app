@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - UI updates in AppointmentTimeSlotPanel [#3125](https://github.com/rokwire/illinois-app/issues/3125).
 - Removed tappable items from Appointment Unit card [#3127](https://github.com/rokwire/illinois-app/issues/3127).
+- Open group post urls in an external browser [#3129](https://github.com/rokwire/illinois-app/issues/3129).
 
 ## [4.3.41] - 2023-04-12
 ### Added
