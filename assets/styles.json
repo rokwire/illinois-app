@@ -680,7 +680,7 @@
     "list-outline": {"src": "images/icon-list-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size issue"},
 
     "star-outline-gray": {"src": "images/icon-star-gray-frame-thin.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
-    "thumbs-up-outline-gray": {"src": "images/icon-thumbs-up-outline-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
+    "thumbs-up-outline-gray": {"src": "images/icon-thumbs-up-outline.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
     "check-circle-outline-gray": {"src": "images/deselected.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "box-outline-gray": {"src": "images/deselected-checkbox.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "location-outline-gray": {"src": "images/tab-navigate.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "size"},
