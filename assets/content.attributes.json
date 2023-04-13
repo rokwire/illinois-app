@@ -255,6 +255,7 @@
 			{ "label": "Bureau Economic & Business Res", "requirements": { "college" : "Gies College of Business" }},
 			{ "label": "Business Administration", "requirements": { "college" : "Gies College of Business" }},
 			{ "label": "Business Online Programs", "requirements": { "college" : "Gies College of Business" }},
+			{ "label": "College of Business", "requirements": { "college" : "Gies College of Business" }},
 			{ "label": "Ctr Business & Public Policy", "requirements": { "college" : "Gies College of Business" }},
 			{ "label": "Disruption and Innovation", "requirements": { "college" : "Gies College of Business" }},
 			{ "label": "Diversity, Equity, Inclusion", "requirements": { "college" : "Gies College of Business" }},
