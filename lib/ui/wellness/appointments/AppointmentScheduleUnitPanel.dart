@@ -329,30 +329,26 @@ class _AppointmentUnitCard extends StatelessWidget {
                           Text(unit.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
                         ),
                         
-                        InkWell(onTap: () => _onLocation(), child:
-                          Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 4), child:
-                                Styles().images?.getImage('location', excludeFromSemantics: true),
-                              ),
-                              Expanded(child:
-                                Text(unit.location?.address ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline"))
-                              ),
-                            ],),
-                          ),
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 4), child:
+                              Styles().images?.getImage('location', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(unit.location?.address ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                            ),
+                          ],),
                         ),
 
-                        InkWell(onTap: () => _onHoursOfOperation(context), child:
-                          Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child:
-                                Styles().images?.getImage('calendar', excludeFromSemantics: true),
-                              ),
-                              Expanded(child:
-                                Text(unit.hoursOfOperation ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline"))
-                              ),
-                            ],),
-                          ),
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 6), child:
+                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(unit.hoursOfOperation ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                            ),
+                          ],),
                         ),
                       ],)
                     ),
@@ -360,9 +356,7 @@ class _AppointmentUnitCard extends StatelessWidget {
                     Padding(padding: EdgeInsets.only(left: 16), child:
                       Semantics(button: true, label: "appointment image", hint: "Double tap to expand image", child:
                         SizedBox(width: imageSize, height: imageSize, child:
-                          InkWell(onTap: () => _onCardImage(context, imageKey), child:
-                            Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
-                          )
+                          Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
                         ),
                       ),
                     )
@@ -384,31 +378,4 @@ class _AppointmentUnitCard extends StatelessWidget {
       )
     );
   }
-
-  void _onCardImage(BuildContext context,String? imageKey) {
-    Analytics().logSelect(target: 'Appointment Unit Image');
-    Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) =>
-      ModalImagePanel(imageKey: imageKey, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image'))
-    ));
-  }
-
-  void _onLocation() {
-    //TBD: Maps2 panel with marker
-    dynamic destination = ((unit.location?.latitude != null) && (unit.location?.longitude != null)) ? LatLng(unit.location!.latitude!, unit.location!.longitude!) : unit.location?.address;
-    if (destination != null) {
-      GeoMapUtils.launchDirections(destination: destination, travelMode: GeoMapUtils.traveModeWalking);
-    }
-  }
-
-  void _onHoursOfOperation(BuildContext context) {
-    showDialog(context: context, builder: (_) => InfoPopup(
-      backColor: Styles().colors?.surface,
-      padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
-      alignment: Alignment.center,
-      infoText: "${provider?.name?.toUpperCase()}\n${unit.name}\n${unit.hoursOfOperation}",
-      infoTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
-      closeIcon: Styles().images?.getImage('close'),
-    ),);
-  }
-
 }
