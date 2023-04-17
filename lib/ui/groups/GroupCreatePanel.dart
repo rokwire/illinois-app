@@ -464,7 +464,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onTapConfirmLinkUrl() {
     Analytics().logSelect(target: "Confirm Website url");
     if (_linkController.text.isNotEmpty) {
-      //Navigator.push(context, CupertinoPageRoute( builder: (context) => WebPanel(url: _linkController.text)));
       Uri? uri = Uri.tryParse(_linkController.text);
       if (uri != null) {
         Uri? fixedUri = UrlUtils.fixUri(uri);

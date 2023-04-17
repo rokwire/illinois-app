@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.3.42] - 2023-04-13
+### Changed
+- UI updates in AppointmentTimeSlotPanel [#3125](https://github.com/rokwire/illinois-app/issues/3125).
+- Removed tappable items from Appointment Unit card [#3127](https://github.com/rokwire/illinois-app/issues/3127).
+- Open group post urls in an external browser [#3129](https://github.com/rokwire/illinois-app/issues/3129).
+- Load mental health buildings mapping from content service [#3131](https://github.com/rokwire/illinois-app/issues/3131).
+- Updated colleges and departments in content attributes [#3133](https://github.com/rokwire/illinois-app/issues/3133).
+
+## [4.3.41] - 2023-04-12
 ### Added
 - My College of Medicine Courses [#3118](https://github.com/rokwire/illinois-app/issues/3118).
 ### Changed
