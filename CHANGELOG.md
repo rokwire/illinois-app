@@ -6,8 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
--  Updated Dining description [#3110](https://github.com/rokwire/illinois-app/issues/3110).
--  Increase padding for notifications badge [#2919](https://github.com/rokwire/illinois-app/issues/2919).
+- Updated Dining description [#3110](https://github.com/rokwire/illinois-app/issues/3110).
+- Increase padding for notifications badge [#2919](https://github.com/rokwire/illinois-app/issues/2919).
+### Added
+- Created appointment schedule host and questions UI, in progress [#3136](https://github.com/rokwire/illinois-app/issues/3136).
 
 ## [4.3.42] - 2023-04-13
 ### Changed
