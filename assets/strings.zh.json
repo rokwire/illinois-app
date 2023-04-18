@@ -281,7 +281,7 @@
 	"panel.browse.section.campus_resources.title": "校園資源",
 	"panel.browse.section.campus_resources.description": "可讓您訪問您經常使用的應用程序部分的快捷方式。",
 	"panel.browse.section.dinings.title": "用餐",
-	"panel.browse.section.dinings.description": "歡迎學生、教職員工和客人在任何宿舍用餐地點用餐。",
+	"panel.browse.section.dinings.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
 	"panel.browse.section.events.title": "活動",
 	"panel.browse.section.events.description": "查找校園和世界各地的活動。",
 	"panel.browse.section.feeds.title": "飼料",
@@ -3246,7 +3246,7 @@
 	"widget.home.dinings.header.title": "用餐",
 	"widget.home.dinings.text.empty.description": "在 Dinings 中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
 	"widget.home.dinings.all.button.title": "宿舍餐廳",
-	"widget.home.dinings.all.button.description": "歡迎學生、教職員工和客人在任何宿舍用餐地點就餐。",
+	"widget.home.dinings.all.button.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
 	"widget.home.dinings.open.button.title": "宿舍餐廳現在開放",
 	"widget.home.dinings.open.button.description": "快速訪問當前打開的任何位置。",
 
