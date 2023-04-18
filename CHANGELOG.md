@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+-  Updated Dining description [#3110](https://github.com/rokwire/illinois-app/issues/3110).
+-  Increase padding for notifications badge [#2919](https://github.com/rokwire/illinois-app/issues/2919).
+
 ## [4.3.42] - 2023-04-13
 ### Changed
 - UI updates in AppointmentTimeSlotPanel [#3125](https://github.com/rokwire/illinois-app/issues/3125).
