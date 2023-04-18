@@ -518,10 +518,15 @@ class Appointments with Service implements NotificationsListener {
     AppointmentHost(id: '27', firstName: 'Michael', lastName: 'Jackson', phone: '+1 123 937 4927', email: 'michael@example.com',            speciality: 'dentist',            photoUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv', description: 'Adipiscing vitae proin sagittis nisl rhoncus. Massa sed elementum tempus egestas. Morbi tristique senectus et netus. Turpis massa sed elementum tempus egestas sed sed.'),
     AppointmentHost(id: '28', firstName: 'Speedy', lastName: 'Gonzales', phone: '+1 435 928 3827', email: 'speedy@example.com', speciality: 'gastroenterologist', photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
   ];
+
   // Time Slots
 
-  Future<List<AppointmentTimeSlot>?> loadTimeSlots({ String? unitId, required DateTime dateLocal }) async {
+  Future<List<AppointmentTimeSlot>?> loadTimeSlots({ String? providerId, String? unitId, String? hostId, required DateTime dateLocal }) async {
     await Future.delayed(Duration(milliseconds: 1500));
+    return _sampleTimeSlots(dateLocal: dateLocal);
+  }
+
+  List<AppointmentTimeSlot> _sampleTimeSlots({ required DateTime dateLocal }) {
     DateTime midnighDateUtc = DateUtils.dateOnly(dateLocal).toUtc();
     DateTime startDateUtc = midnighDateUtc.add(Duration(hours: 8));
     DateTime endDateUtc = startDateUtc.add(Duration(hours: 12));
@@ -539,6 +544,30 @@ class Appointments with Service implements NotificationsListener {
       dateTimeUtc = endDateTime;
     }
     return result;
+  }
+
+  // Questions
+  
+  Future<List<AppointmentQuestion>?> loadQuestions({ String? providerId, String? unitId, String? hostId }) async {
+    await Future.delayed(Duration(milliseconds: 1500));
+    return _sampleQuestions;
+  }
+
+  List<AppointmentQuestion> get _sampleQuestions => <AppointmentQuestion>[
+    AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.edit, required: true),
+    AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.list, values: ["Bellow 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true),
+    AppointmentQuestion(id: "33", title: "What are your symptoms?", type: AppointmentQuestionType.multiList, values: ["Fever", "Chills", "Shaking or Shivering", "Shortness of breath", "Difficulty breathing", "Muscle or joint pain", "Fatigue", "Loss of taste and/or smell", "Fever or chills", "Cough", "Sore Throat", "Nausea or vomiting", "Diarrhea"], required: true),
+    AppointmentQuestion(id: "34", title: "Are you feel sick?", type: AppointmentQuestionType.checkbox, required: true),
+  ];
+
+  // Time Slots And Questions
+
+  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? hostId, required DateTime dateLocal }) async {
+    await Future.delayed(Duration(milliseconds: 1500));
+    return AppointmentTimeSlotsAndQuestions(
+      timeSlots: _sampleTimeSlots(dateLocal: dateLocal),
+      questions: _sampleQuestions,
+    );
   }
 
   // Appointments
@@ -693,4 +722,10 @@ class AppointmentsException implements Exception {
       case AppointmentsError.unknown: return 'Unknown Error Occured';
     }
   }
+}
+
+class AppointmentTimeSlotsAndQuestions {
+  final List<AppointmentTimeSlot>? timeSlots;
+  final List<AppointmentQuestion>? questions;
+  AppointmentTimeSlotsAndQuestions({this.timeSlots, this.questions});
 }

@@ -585,6 +585,171 @@ class AppointmentUnit {
 }
 
 ///////////////////////////////
+/// AppointmentQuestion
+
+class AppointmentQuestion {
+  final String? id;
+  final String? providerId;
+  final String? unitId;
+  final String? hostId;
+
+  final String? title;
+  final bool? required;
+  final AppointmentQuestionType? type;
+  final List<String>? values;
+  final String? answer;
+
+  AppointmentQuestion({this.id, this.providerId, this.unitId, this.hostId,
+    this.title, this.required, this.type, this.values, this.answer
+  });
+
+  factory AppointmentQuestion.fromOther(AppointmentQuestion? other, {
+    String? id,
+    String? providerId,
+    String? unitId,
+    String? hostId,
+
+    String? title,
+    bool? required,
+    AppointmentQuestionType? type,
+    final List<String>? values,
+    String? answer,
+  }) {
+    return AppointmentQuestion(
+      id: id ?? other?.id,
+      providerId: providerId ?? other?.providerId,
+      unitId: unitId ?? other?.unitId,
+      hostId: hostId ?? other?.hostId,
+
+      title: title ?? other?.title,
+      required: required ?? other?.required,
+      type: type ?? other?.type,
+      values: values ?? other?.values,
+      answer: answer ?? other?.answer,
+    );
+  }
+
+  // JSON Serialization
+
+  static AppointmentQuestion? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentQuestion(
+      id: JsonUtils.stringValue(json['id']),
+      providerId: JsonUtils.stringValue(json['provider_id']),
+      unitId: JsonUtils.stringValue(json['unit_id']),
+      hostId: JsonUtils.stringValue(json['person_id']),
+
+      title: JsonUtils.stringValue(json['question']),
+      required: JsonUtils.boolValue(json['required']),
+      type: AppointmentQuestionType.fromJson(JsonUtils.stringValue(json['type'])),
+      values: JsonUtils.listStringsValue(json['selection_values']),
+      answer: JsonUtils.stringValue(json['answer']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'provider_id': providerId,
+      'unit_id': unitId,
+      'person_id': hostId,
+
+      'question': title,
+      'required': required,
+      'type': type?.toJson(),
+      'values': values,
+      'answer': answer,
+    };
+  }
+
+  static List<AppointmentQuestion>? listFromJson(List<dynamic>? jsonList) {
+    List<AppointmentQuestion>? result;
+    if (jsonList != null) {
+      result = <AppointmentQuestion>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, AppointmentQuestion.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<AppointmentQuestion>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  // Euality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentQuestion) &&
+    (id == other.id) &&
+    (providerId == other.providerId) &&
+    (unitId == other.unitId) &&
+    (hostId == other.hostId) &&
+
+    (title == other.title) &&
+    (required == other.required) &&
+    (type == other.type) &&
+    (DeepCollectionEquality().equals(values, other.values)) &&
+    (answer == other.answer);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (providerId?.hashCode ?? 0) ^
+    (unitId?.hashCode ?? 0) ^
+    (hostId?.hashCode ?? 0) ^
+
+    (title?.hashCode ?? 0) ^
+    (required?.hashCode ?? 0) ^
+    (type?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(values)) ^
+    (answer?.hashCode ?? 0);
+
+  // Accessories
+
+  //...
+}
+
+///////////////////////////////
+/// AppointmentQuestionType
+
+class AppointmentQuestionType {
+  static const AppointmentQuestionType edit = AppointmentQuestionType._internal('edit');
+  static const AppointmentQuestionType list = AppointmentQuestionType._internal('list');
+  static const AppointmentQuestionType multiList = AppointmentQuestionType._internal('multi-list');
+  static const AppointmentQuestionType checkbox = AppointmentQuestionType._internal('checkbox');
+
+  final String _value;
+
+  const AppointmentQuestionType._internal(this._value);
+
+  static AppointmentQuestionType? fromString(String? value) =>
+    (value != null) ? AppointmentQuestionType._internal(value) : null;
+
+  static AppointmentQuestionType? fromJson(dynamic value) =>
+    (value is String) ? AppointmentQuestionType._internal(value) : null;
+
+  @override
+  String toString() => _value;
+
+  String toJson() => _value;
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentQuestionType) && (other._value == _value);
+
+  @override
+  int get hashCode => _value.hashCode;
+}
+
+///////////////////////////////
 /// AppointmentTimeSlot
 
 class AppointmentTimeSlot {
