@@ -578,6 +578,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       scheduleParam: AppointmentScheduleParam(
         provider: _appointment?.provider,
         unit: _appointment?.unit,
+        host: _appointment?.host,
       ),
       sourceAppointment: _appointment,
       onFinish: (BuildContext context, Appointment? appointment) {

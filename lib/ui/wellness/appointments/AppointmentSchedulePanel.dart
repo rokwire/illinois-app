@@ -26,6 +26,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class AppointmentSchedulePanel extends StatefulWidget {
@@ -101,6 +102,9 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
                       // Location
                       _buildLocationDetail(),
 
+                      // Host
+                      _buildHostDetail(),
+
                       // Date & Time
                       _buildDateTimeDetail(),
                     ]),
@@ -138,6 +142,17 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
         ),
       ],),
     ),
+  );
+
+  Widget _buildHostDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 6), child:
+    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(padding: EdgeInsets.only(right: 4), child:
+        Styles().images?.getImage('person', excludeFromSemantics: true),
+      ),
+      Expanded(child:
+        Text(_displayHostName ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+      ),
+    ],),
   );
 
   Widget _buildDateTimeDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
@@ -223,6 +238,20 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   String? get _displayAppointmentTime =>
     widget.scheduleParam.timeSlot?.displayScheduleTime;
   
+  String? get _displayHostName {
+    String? fullName = widget.scheduleParam.host?.displayName;
+    String? speciality = widget.scheduleParam.host?.speciality;
+    if (StringUtils.isNotEmpty(fullName) && StringUtils.isNotEmpty(speciality)) {
+      return "$fullName, $speciality";
+    }
+    else if (StringUtils.isNotEmpty(fullName)) {
+      return fullName;
+    }
+    else if (StringUtils.isNotEmpty(speciality)) {
+      return speciality;
+    }
+  }
+    
 
   List<DropdownMenuItem<AppointmentType>> get _appontmentTypesDropdownList =>
     AppointmentType.values.map<DropdownMenuItem<AppointmentType>>((AppointmentType appointmentType) =>
@@ -322,34 +351,30 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 class AppointmentScheduleParam {
   final List<AppointmentProvider>? providers;
   final AppointmentProvider? provider;
-
-  final List<AppointmentUnit>? units;
   final AppointmentUnit? unit;
-
+  final AppointmentHost? host;
   final AppointmentTimeSlot? timeSlot;
+  final List<AppointmentQuestion>? questions;
 
   AppointmentScheduleParam({
     this.providers, this.provider,
-    this.units, this.unit,
-    this.timeSlot,
+    this.unit, this.host, this.timeSlot, this.questions,
   });
 
   factory AppointmentScheduleParam.fromOther(AppointmentScheduleParam? other, {
     List<AppointmentProvider>? providers,
     AppointmentProvider? provider,
-
-    List<AppointmentUnit>? units,
     AppointmentUnit? unit,
-
+    AppointmentHost? host,
     AppointmentTimeSlot? timeSlot,
+    List<AppointmentQuestion>? questions,
   }) => AppointmentScheduleParam(
     providers: providers ?? other?.providers,
     provider: provider ?? other?.provider,
-
-    units: units ?? other?.units,
     unit: unit ?? other?.unit,
-
-    timeSlot: timeSlot ?? other?.timeSlot
+    host: host ?? other?.host,
+    timeSlot: timeSlot ?? other?.timeSlot,
+    questions: questions ?? other?.questions,
   );
 
 }
