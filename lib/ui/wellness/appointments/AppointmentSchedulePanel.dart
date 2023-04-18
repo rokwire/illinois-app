@@ -322,30 +322,26 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 class AppointmentScheduleParam {
   final List<AppointmentProvider>? providers;
   final AppointmentProvider? provider;
-
   final AppointmentUnit? unit;
-
+  final AppointmentHost? host;
   final AppointmentTimeSlot? timeSlot;
 
   AppointmentScheduleParam({
     this.providers, this.provider,
-    this.unit,
-    this.timeSlot,
+    this.unit, this.host, this.timeSlot,
   });
 
   factory AppointmentScheduleParam.fromOther(AppointmentScheduleParam? other, {
     List<AppointmentProvider>? providers,
     AppointmentProvider? provider,
-
     AppointmentUnit? unit,
-
+    AppointmentHost? host,
     AppointmentTimeSlot? timeSlot,
   }) => AppointmentScheduleParam(
     providers: providers ?? other?.providers,
     provider: provider ?? other?.provider,
-
     unit: unit ?? other?.unit,
-
+    host: host ?? other?.host,
     timeSlot: timeSlot ?? other?.timeSlot
   );
 

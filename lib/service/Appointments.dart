@@ -501,6 +501,23 @@ class Appointments with Service implements NotificationsListener {
     AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm', details: 'Donec iaculis est eget leo egestas ullamcorper.'),
   ];
 
+  // Hosts
+
+  Future<List<AppointmentHost>?> loadHosts({ required String unitId }) async {
+    await Future.delayed(Duration(milliseconds: 1500));
+    return _sampleHosts;
+  }
+
+  List<AppointmentHost> get _sampleHosts => <AppointmentHost>[
+    AppointmentHost(id: '21', firstName: 'Agatha', lastName: 'Christie', phone: '+1 415 898 7905', email: 'agatha@example.com',        speciality: 'neurologist',        photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU', description: 'Vulputate mi sit amet mauris. Neque sodales ut etiam sit. Dictum at tempor commodo ullamcorper a. Duis at consectetur lorem donec massa.'),
+    AppointmentHost(id: '22', firstName: 'Amanda', lastName: 'Lear',     phone: '+1 345 345 9455', email: 'amanda@example.com',    speciality: 'physiotherapist',    photoUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg', description: 'Ultricies tristique nulla aliquet enim tortor at auctor. Pulvinar pellentesque habitant morbi tristique senectus. Sapien pellentesque habitant morbi tristique senectus et netus.'),
+    AppointmentHost(id: '23', firstName: 'Bill',   lastName: 'Gates',    phone: '+1 448 826 0934', email: 'bill@example.com',         speciality: 'pumologist',         photoUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg', description: 'Amet dictum sit amet justo donec enim diam. In vitae turpis massa sed elementum tempus egestas sed. In est ante in nibh mauris cursus mattis. Pellentesque adipiscing commodo elit at imperdiet.'),
+    AppointmentHost(id: '24', firstName: 'Chalres', lastName: 'Darwin',  phone: '+1 972 345 9253', email: 'chalres@example.com',     speciality: 'anthropologist',     photoUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*', description: 'Volutpat diam ut venenatis tellus in. Id faucibus nisl tincidunt eget nullam. Enim ut tellus elementum sagittis vitae et leo. Quisque id diam vel quam elementum pulvinar etiam. '),
+    AppointmentHost(id: '25', firstName: 'Fredy',  lastName: 'Mercury',  phone: '+1 485 571 0375', email: 'fredy@example.com',       speciality: 'psychologist',       photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU', description: 'Vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet. Massa eget egestas purus viverra. Sagittis eu volutpat odio facilisis mauris sit amet massa vitae. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique.'),
+    AppointmentHost(id: '26', firstName: 'Frank',  lastName: 'Zapa',     phone: '+1 725 898 9173', email: 'frank@example.com',            speciality: 'surgeon',            photoUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k', description: 'Enim blandit volutpat maecenas volutpat blandit aliquam etiam. A cras semper auctor neque. Aenean sed adipiscing diam donec adipiscing.'),
+    AppointmentHost(id: '27', firstName: 'Michael', lastName: 'Jackson', phone: '+1 123 937 4927', email: 'michael@example.com',            speciality: 'dentist',            photoUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv', description: 'Adipiscing vitae proin sagittis nisl rhoncus. Massa sed elementum tempus egestas. Morbi tristique senectus et netus. Turpis massa sed elementum tempus egestas sed sed.'),
+    AppointmentHost(id: '28', firstName: 'Speedy', lastName: 'Gonzales', phone: '+1 435 928 3827', email: 'speedy@example.com', speciality: 'gastroenterologist', photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
+  ];
   // Time Slots
 
   Future<List<AppointmentTimeSlot>?> loadTimeSlots({ String? unitId, required DateTime dateLocal }) async {

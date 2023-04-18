@@ -20,8 +20,8 @@ import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentScheduleHostPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -218,9 +218,8 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   }
 
   void _onUnit(AppointmentUnit unit) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
-      scheduleParam: AppointmentScheduleParam(
-        providers: _providers,
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleHostPanel(
+      scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
         provider: _selectedProvider,
         unit: unit
       ),

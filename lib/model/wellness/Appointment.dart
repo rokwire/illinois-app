@@ -312,35 +312,67 @@ class AppointmentLocation {
 /// AppointmentHost
 
 class AppointmentHost {
+  final String? id;
   final String? firstName;
   final String? lastName;
+  final String? phone;
+  final String? email;
+  final String? speciality;
+  final String? description;
+  final String? photoUrl;
 
-  AppointmentHost({this.firstName, this.lastName});
+  AppointmentHost({this.id, this.firstName, this.lastName, this.phone, this.email, this.speciality, this.description, this.photoUrl});
+
+  // JSON Serialization
+
+  static AppointmentHost? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentHost(
+      id: JsonUtils.stringValue(json['id']),
+      firstName: JsonUtils.stringValue(json['first_name']),
+      lastName: JsonUtils.stringValue(json['last_name']),
+      phone: JsonUtils.stringValue(json['phone']),
+      email: JsonUtils.stringValue(json['email']),
+      speciality: JsonUtils.stringValue(json['speciality']),
+      description: JsonUtils.stringValue(json['description']),
+      photoUrl: JsonUtils.stringValue(json['photoUrl']),
+    ) : null;
+  }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': firstName,
       'first_name': firstName,
-      'last_name': lastName
+      'last_name': lastName,
+      'phone': phone,
+      'email': email,
+      'speciality': speciality,
+      'description': description,
+      'photoUrl': photoUrl,
     };
-  }
-
-  static AppointmentHost? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    return AppointmentHost(firstName: JsonUtils.stringValue(json['first_name']), lastName: JsonUtils.stringValue(json['last_name']));
   }
 
   @override
   bool operator==(dynamic other) =>
     (other is AppointmentHost) &&
+    (id == other.id) &&
     (firstName == other.firstName) &&
-    (lastName == other.lastName);
+    (lastName == other.lastName) &&
+    (phone == other.phone) &&
+    (email == other.email) &&
+    (speciality == other.speciality) &&
+    (description == other.description) &&
+    (photoUrl == other.photoUrl);
 
   @override
   int get hashCode =>
+    (id?.hashCode ?? 0) ^
     (firstName?.hashCode ?? 0) ^
-    (lastName?.hashCode ?? 0);
+    (lastName?.hashCode ?? 0) ^
+    (phone?.hashCode ?? 0) ^
+    (email?.hashCode ?? 0) ^
+    (speciality?.hashCode ?? 0) ^
+    (description?.hashCode ?? 0) ^
+    (photoUrl?.hashCode ?? 0);
 }
 
 ///////////////////////////////
