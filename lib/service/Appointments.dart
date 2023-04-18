@@ -503,7 +503,7 @@ class Appointments with Service implements NotificationsListener {
 
   // Hosts
 
-  Future<List<AppointmentHost>?> loadHosts({ required String unitId }) async {
+  Future<List<AppointmentHost>?> loadHosts({ required String providerId, required String unitId }) async {
     await Future.delayed(Duration(milliseconds: 1500));
     return _sampleHosts;
   }

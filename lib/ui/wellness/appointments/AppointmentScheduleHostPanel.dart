@@ -128,13 +128,17 @@ class _AppointmentScheduleHostPanelState extends State<AppointmentScheduleHostPa
   String? get _unitId =>
     widget.scheduleParam?.unit?.id;
 
+  String? get _providerId =>
+    widget.scheduleParam?.provider?.id;
+
   void _loadHosts() {
     String? unitId = _unitId;
-    if (unitId != null) {
+    String? providerId = _providerId;
+    if ((unitId != null) && (providerId != null)) {
       applyStateIfMounted(() {
         _isLoadingHosts = true;
       });
-      Appointments().loadHosts(unitId: unitId).then((List<AppointmentHost>? result) {
+      Appointments().loadHosts(providerId: providerId, unitId: unitId).then((List<AppointmentHost>? result) {
         setStateIfMounted(() {
           _hosts = result;
           _isLoadingHosts = false;
