@@ -222,7 +222,6 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       scheduleParam: AppointmentScheduleParam(
         providers: _providers,
         provider: _selectedProvider,
-        units: _units,
         unit: unit
       ),
       onFinish: widget.onFinish,

@@ -323,14 +323,13 @@ class AppointmentScheduleParam {
   final List<AppointmentProvider>? providers;
   final AppointmentProvider? provider;
 
-  final List<AppointmentUnit>? units;
   final AppointmentUnit? unit;
 
   final AppointmentTimeSlot? timeSlot;
 
   AppointmentScheduleParam({
     this.providers, this.provider,
-    this.units, this.unit,
+    this.unit,
     this.timeSlot,
   });
 
@@ -338,7 +337,6 @@ class AppointmentScheduleParam {
     List<AppointmentProvider>? providers,
     AppointmentProvider? provider,
 
-    List<AppointmentUnit>? units,
     AppointmentUnit? unit,
 
     AppointmentTimeSlot? timeSlot,
@@ -346,7 +344,6 @@ class AppointmentScheduleParam {
     providers: providers ?? other?.providers,
     provider: provider ?? other?.provider,
 
-    units: units ?? other?.units,
     unit: unit ?? other?.unit,
 
     timeSlot: timeSlot ?? other?.timeSlot
