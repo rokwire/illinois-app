@@ -337,7 +337,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
-          launchUrl(uri);
+          UrlUtils.launchExternal(url);
         }
       }
     }
