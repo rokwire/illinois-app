@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Created appointment schedule host and questions UI preview [#3136](https://github.com/rokwire/illinois-app/issues/3136).
+### Changed
+- GroupDetail: moved group sync/update message to GroupMembersPanel [#3135](https://github.com/rokwire/illinois-app/issues/3135).
 
 ## [4.3.43] - 2023-04-18
 ### Changed

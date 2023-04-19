@@ -275,8 +275,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
 
     return Column(children: <Widget>[
-      SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
-      _buildMembersSearch(),
+        SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
+        _buildMembersSearch(),
+        _buildDateUpdatedFields(),
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
             RibbonButton(
@@ -359,6 +360,28 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ),
       ),
     );
+  }
+
+  Widget _buildDateUpdatedFields() {
+    if (!_isAdmin) {
+      return Container();
+    }
+    bool showSynced = _group?.authManEnabled == true && StringUtils.isNotEmpty(_group?.displayManagedMembershipUpdateTime);
+    bool showUpdated = StringUtils.isNotEmpty(_group?.displayMembershipUpdateTime);
+
+    return Visibility(visible: showSynced || showUpdated,
+      child: Container(child: Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+        Visibility(visible: showSynced,
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
+            Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+        ])),
+        Visibility(visible: showUpdated,
+          child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
+            Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+        ])))
+    ]))));
   }
 
   Future<void> _onPullToRefresh() async {
