@@ -559,7 +559,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         } else {
           Uri? uri = Uri.tryParse(url!);
           if (uri != null) {
-            launchUrl(uri);
+            UrlUtils.launchExternal(url);
           }
         }
       }
