@@ -21,7 +21,6 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gateway.dart';
@@ -53,7 +52,6 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 enum ExploreMapType { Events, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
 
@@ -602,21 +600,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
     if (_selectedMapExplore is Explore) {
-      String? url = ((_selectedMapType == ExploreMapType.MentalHealth) && (_selectedMapExplore is Building)) ?
-        Wellness().mentalHealthBuildingUrl(buildingId: (_selectedMapExplore as Building).id) : null;
-      
-      if (url == null) {
         (_selectedMapExplore as Explore).exploreLaunchDetail(context);
-      }
-      else if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else {
-        Uri? uri = Uri.tryParse(url);
-        if (uri != null) {
-          launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      }
     }
     else if (_selectedMapExplore is List<Explore>) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _selectedMapType,),));

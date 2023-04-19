@@ -374,6 +374,17 @@ class Building with Explore {
     }
     return jsonList;
   }
+
+  static Building? findInList(List<Building>? values, {String? id}) {
+    if (values != null) {
+      for (Building value in values) {
+        if ((id != null) && (value.id == id)) {
+          return value;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 // BuildingEntrance
