@@ -5,9 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Created appointment schedule host and questions UI preview [#3136](https://github.com/rokwire/illinois-app/issues/3136).
 ### Changed
--  Updated Dining description [#3110](https://github.com/rokwire/illinois-app/issues/3110).
--  Increase padding for notifications badge [#2919](https://github.com/rokwire/illinois-app/issues/2919).
+- GroupDetail: moved group sync/update message to GroupMembersPanel [#3135](https://github.com/rokwire/illinois-app/issues/3135).
+- Some links are open in external browser [#3088](https://github.com/rokwire/illinois-app/issues/3088).
+- Reworked Mental Health Resources [#3142](https://github.com/rokwire/illinois-app/issues/3142).
+### Deleted
+- Removed Explore.toJson definition, not used any more [#3070](https://github.com/rokwire/illinois-app/issues/3070).
+### Fixed
+- Fix Dining feedback dialog [#3087](https://github.com/rokwire/illinois-app/issues/3087).
+- Fix HomeToDoWidget item checkmark [#3080](https://github.com/rokwire/illinois-app/issues/3080).
+
+## [4.3.43] - 2023-04-18
+### Changed
+- Updated Dining description [#3110](https://github.com/rokwire/illinois-app/issues/3110).
+- Increase padding for notifications badge [#2919](https://github.com/rokwire/illinois-app/issues/2919).
+### Added
+- Created appointment schedule host and questions UI, in progress [#3136](https://github.com/rokwire/illinois-app/issues/3136).
 
 ## [4.3.42] - 2023-04-13
 ### Changed

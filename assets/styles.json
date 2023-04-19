@@ -663,6 +663,7 @@
     "qr": {"src": "images/icon-qr-code.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
     "notification": {"src": "images/notifications-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "color issue, size issue"},
     "phone": {"src": "images/icon-phone.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo":  "size"},
+    "mail": {"src": "images/icon-mail.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo":  "size"},
     "person": {"src": "images/identiy-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size"},
     "key": {"src": "images/icon-login-grey.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo":  "size"},
     "check": {"src": "images/icon-check-simple.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 12, "todo": "size issue"},

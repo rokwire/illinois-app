@@ -25,7 +25,6 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String? favoriteKey;
@@ -559,7 +558,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         } else {
           Uri? uri = Uri.tryParse(url!);
           if (uri != null) {
-            launchUrl(uri);
+            UrlUtils.launchExternal(url);
           }
         }
       }

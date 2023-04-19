@@ -33,6 +33,7 @@ class Appointment with Explore, Favorite {
   final AppointmentProvider? provider;
   final AppointmentUnit? unit;
   final AppointmentTimeSlot? timeSlot;
+  final List<AppointmentQuestion>? questions;
   final String? notes;
 
   final AppointmentOnlineDetails? onlineDetails;
@@ -48,14 +49,14 @@ class Appointment with Explore, Favorite {
 
   Appointment({
     this.id, this.type,
-    this.provider, this.unit, this.timeSlot, this.notes,
+    this.provider, this.unit, this.timeSlot, this.questions, this.notes,
     this.onlineDetails, this.host, this.instructions, this.cancelled, 
     this.dateTimeUtc, this.location,
   });
 
   factory Appointment.fromOther(Appointment? other, {
     String? id, AppointmentType? type,
-    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentTimeSlot? timeSlot, String? notes, 
+    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentTimeSlot? timeSlot, List<AppointmentQuestion>? questions, String? notes, 
     AppointmentOnlineDetails? onlineDetails, AppointmentHost? host, String? instructions, bool? cancelled,
     DateTime? dateTimeUtc, AppointmentLocation? location, }) {
     return Appointment(
@@ -65,6 +66,7 @@ class Appointment with Explore, Favorite {
       provider: provider ?? other?.provider,
       unit: unit ?? other?.unit,
       timeSlot: timeSlot ?? other?.timeSlot,
+      questions: questions ?? other?.questions,
       notes: notes ?? other?.notes,
       
       onlineDetails: onlineDetails ?? other?.onlineDetails,
@@ -85,6 +87,7 @@ class Appointment with Explore, Favorite {
       provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])) ,
       unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])) ,
       timeSlot: AppointmentTimeSlot.fromJson(JsonUtils.mapValue(json['time_slot'])) ,
+      questions: AppointmentQuestion.listFromJson(JsonUtils.listValue(json['questions'])),
       notes: JsonUtils.stringValue(json['user_notes']),
       
       onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
@@ -104,6 +107,7 @@ class Appointment with Explore, Favorite {
     'provider': provider?.toJson(),
     'unit': unit?.toJson(),
     'time_slot': timeSlot?.toJson(),
+    'questions': AppointmentQuestion.listToJson(questions),
     'user_notes': notes,
 
     'online_details': onlineDetails?.toJson(),
@@ -125,6 +129,7 @@ class Appointment with Explore, Favorite {
     (provider == other.provider) &&
     (unit == other.unit) &&
     (timeSlot == other.timeSlot) &&
+    (DeepCollectionEquality().equals(questions, other.questions)) &&
     (notes == other.notes) &&
 
     (onlineDetails == other.onlineDetails) &&
@@ -143,6 +148,7 @@ class Appointment with Explore, Favorite {
     (provider?.hashCode ?? 0) ^
     (unit?.hashCode ?? 0) ^
     (timeSlot?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(questions)) ^
     (notes?.hashCode ?? 0) ^
 
     (onlineDetails?.hashCode ?? 0) ^
@@ -312,35 +318,67 @@ class AppointmentLocation {
 /// AppointmentHost
 
 class AppointmentHost {
+  final String? id;
   final String? firstName;
   final String? lastName;
+  final String? phone;
+  final String? email;
+  final String? speciality;
+  final String? description;
+  final String? photoUrl;
 
-  AppointmentHost({this.firstName, this.lastName});
+  AppointmentHost({this.id, this.firstName, this.lastName, this.phone, this.email, this.speciality, this.description, this.photoUrl});
+
+  // JSON Serialization
+
+  static AppointmentHost? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentHost(
+      id: JsonUtils.stringValue(json['id']),
+      firstName: JsonUtils.stringValue(json['first_name']),
+      lastName: JsonUtils.stringValue(json['last_name']),
+      phone: JsonUtils.stringValue(json['phone']),
+      email: JsonUtils.stringValue(json['email']),
+      speciality: JsonUtils.stringValue(json['speciality']),
+      description: JsonUtils.stringValue(json['description']),
+      photoUrl: JsonUtils.stringValue(json['photoUrl']),
+    ) : null;
+  }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': firstName,
       'first_name': firstName,
-      'last_name': lastName
+      'last_name': lastName,
+      'phone': phone,
+      'email': email,
+      'speciality': speciality,
+      'description': description,
+      'photoUrl': photoUrl,
     };
-  }
-
-  static AppointmentHost? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    return AppointmentHost(firstName: JsonUtils.stringValue(json['first_name']), lastName: JsonUtils.stringValue(json['last_name']));
   }
 
   @override
   bool operator==(dynamic other) =>
     (other is AppointmentHost) &&
+    (id == other.id) &&
     (firstName == other.firstName) &&
-    (lastName == other.lastName);
+    (lastName == other.lastName) &&
+    (phone == other.phone) &&
+    (email == other.email) &&
+    (speciality == other.speciality) &&
+    (description == other.description) &&
+    (photoUrl == other.photoUrl);
 
   @override
   int get hashCode =>
+    (id?.hashCode ?? 0) ^
     (firstName?.hashCode ?? 0) ^
-    (lastName?.hashCode ?? 0);
+    (lastName?.hashCode ?? 0) ^
+    (phone?.hashCode ?? 0) ^
+    (email?.hashCode ?? 0) ^
+    (speciality?.hashCode ?? 0) ^
+    (description?.hashCode ?? 0) ^
+    (photoUrl?.hashCode ?? 0);
 }
 
 ///////////////////////////////
@@ -474,11 +512,12 @@ class AppointmentUnit {
   final String? id;
   final String? providerId;
   final String? name;
+  final String? address;
   final AppointmentLocation? location;
   final String? hoursOfOperation;
   final String? details;
 
-  AppointmentUnit({this.id, this.providerId, this.name, this.location, this.hoursOfOperation, this.details});
+  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.location, this.hoursOfOperation, this.details});
 
   // JSON Serialization
 
@@ -487,9 +526,10 @@ class AppointmentUnit {
       id: JsonUtils.stringValue(json['id']),
       providerId: JsonUtils.stringValue(json['provider_id']),
       name: JsonUtils.stringValue(json['name']),
+      address: JsonUtils.stringValue(json['address']),
       location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
-      hoursOfOperation: JsonUtils.stringValue(json['hours_of_operation']),
-      details: JsonUtils.stringValue(json['details']),
+      hoursOfOperation: JsonUtils.stringValue(json['hours_of_operations']),
+      details: JsonUtils.stringValue(json['notes']),
     ) : null;
   }
 
@@ -498,9 +538,10 @@ class AppointmentUnit {
       'id': id,
       'provider_id': providerId,
       'name': name,
+      'address': address,
       'location': location?.toJson(),
-      'hours_of_operation': hoursOfOperation,
-      'details': details,
+      'hours_of_operations': hoursOfOperation,
+      'notes': details,
     };
   }
 
@@ -534,6 +575,7 @@ class AppointmentUnit {
     (id == other.id) &&
     (providerId == other.providerId) &&
     (name == other.name) &&
+    (address == other.address) &&
     (location == other.location) &&
     (hoursOfOperation == other.hoursOfOperation) &&
     (details == other.details);
@@ -543,6 +585,7 @@ class AppointmentUnit {
     (id?.hashCode ?? 0) ^
     (providerId?.hashCode ?? 0) ^
     (name?.hashCode ?? 0) ^
+    (address?.hashCode ?? 0) ^
     (location?.hashCode ?? 0) ^
     (hoursOfOperation?.hashCode ?? 0) ^
     (details?.hashCode ?? 0);
@@ -550,6 +593,204 @@ class AppointmentUnit {
   // Accessories
 
   //...
+}
+
+///////////////////////////////
+/// AppointmentQuestion
+
+class AppointmentQuestion {
+  final String? id;
+  final String? providerId;
+  final String? unitId;
+  final String? hostId;
+
+  final String? title;
+  final bool? required;
+  final AppointmentQuestionType? type;
+  final List<String>? values;
+  final String? answer;
+
+  AppointmentQuestion({this.id, this.providerId, this.unitId, this.hostId,
+    this.title, this.required, this.type, this.values, this.answer
+  });
+
+  factory AppointmentQuestion.fromOther(AppointmentQuestion? other, {
+    String? id,
+    String? providerId,
+    String? unitId,
+    String? hostId,
+
+    String? title,
+    bool? required,
+    AppointmentQuestionType? type,
+    final List<String>? values,
+    String? answer,
+  }) {
+    return AppointmentQuestion(
+      id: id ?? other?.id,
+      providerId: providerId ?? other?.providerId,
+      unitId: unitId ?? other?.unitId,
+      hostId: hostId ?? other?.hostId,
+
+      title: title ?? other?.title,
+      required: required ?? other?.required,
+      type: type ?? other?.type,
+      values: values ?? other?.values,
+      answer: answer ?? other?.answer,
+    );
+  }
+
+  // JSON Serialization
+
+  static AppointmentQuestion? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentQuestion(
+      id: JsonUtils.stringValue(json['id']),
+      providerId: JsonUtils.stringValue(json['provider_id']),
+      unitId: JsonUtils.stringValue(json['unit_id']),
+      hostId: JsonUtils.stringValue(json['person_id']),
+
+      title: JsonUtils.stringValue(json['question']),
+      required: JsonUtils.boolValue(json['required']),
+      type: AppointmentQuestionType.fromJson(JsonUtils.stringValue(json['type'])),
+      values: JsonUtils.listStringsValue(json['selection_values']),
+      answer: JsonUtils.stringValue(json['answer']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'provider_id': providerId,
+      'unit_id': unitId,
+      'person_id': hostId,
+
+      'question': title,
+      'required': required,
+      'type': type?.toJson(),
+      'values': values,
+      'answer': answer,
+    };
+  }
+
+  static List<AppointmentQuestion>? listFromJson(List<dynamic>? jsonList) {
+    List<AppointmentQuestion>? result;
+    if (jsonList != null) {
+      result = <AppointmentQuestion>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, AppointmentQuestion.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<AppointmentQuestion>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  static bool listIsEqualToQuestion(List<AppointmentQuestion>? list1, List<AppointmentQuestion>? list2) {
+    if ((list1 != null) && (list2 != null)) {
+      if (list1.length == list2.length) {
+        for (int index = 0; index < list1.length; index++) {
+          if (!list1[index].isEqualToQuestion(list2[index])) {
+            return false;
+          }
+        }
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    else if ((list1 == null) && (list2 == null)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  // Euality
+
+  bool isEqualToQuestion(AppointmentQuestion other) =>
+    (id == other.id) &&
+    (providerId == other.providerId) &&
+    (unitId == other.unitId) &&
+    (hostId == other.hostId) &&
+
+    (title == other.title) &&
+    (required == other.required) &&
+    (type == other.type) &&
+    (DeepCollectionEquality().equals(values, other.values));
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentQuestion) &&
+    (id == other.id) &&
+    (providerId == other.providerId) &&
+    (unitId == other.unitId) &&
+    (hostId == other.hostId) &&
+
+    (title == other.title) &&
+    (required == other.required) &&
+    (type == other.type) &&
+    (DeepCollectionEquality().equals(values, other.values)) &&
+    (answer == other.answer);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (providerId?.hashCode ?? 0) ^
+    (unitId?.hashCode ?? 0) ^
+    (hostId?.hashCode ?? 0) ^
+
+    (title?.hashCode ?? 0) ^
+    (required?.hashCode ?? 0) ^
+    (type?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(values)) ^
+    (answer?.hashCode ?? 0);
+
+  // Accessories
+
+  //...
+}
+
+///////////////////////////////
+/// AppointmentQuestionType
+
+class AppointmentQuestionType {
+  static const AppointmentQuestionType edit = AppointmentQuestionType._internal('edit');
+  static const AppointmentQuestionType list = AppointmentQuestionType._internal('list');
+  static const AppointmentQuestionType multiList = AppointmentQuestionType._internal('multi-list');
+  static const AppointmentQuestionType checkbox = AppointmentQuestionType._internal('checkbox');
+
+  final String _value;
+
+  const AppointmentQuestionType._internal(this._value);
+
+  static AppointmentQuestionType? fromString(String? value) =>
+    (value != null) ? AppointmentQuestionType._internal(value) : null;
+
+  static AppointmentQuestionType? fromJson(dynamic value) =>
+    (value is String) ? AppointmentQuestionType._internal(value) : null;
+
+  @override
+  String toString() => _value;
+
+  String toJson() => _value;
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentQuestionType) && (other._value == _value);
+
+  @override
+  int get hashCode => _value.hashCode;
 }
 
 ///////////////////////////////

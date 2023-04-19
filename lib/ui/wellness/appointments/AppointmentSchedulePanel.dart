@@ -101,6 +101,9 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
                       // Location
                       _buildLocationDetail(),
 
+                      // Host
+                      _buildHostDetail(),
+
                       // Date & Time
                       _buildDateTimeDetail(),
                     ]),
@@ -113,9 +116,6 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
                       _buildLabel(Localization().getStringEx('panel.appointment.schedule.notes.label', 'NOTES'), required: widget.scheduleParam.timeSlot?.notesRequired == true),
                       _buildNotesTextField(),
-
-                      _buildSubmit(),
-
                     ])
                   )
                 ])
@@ -123,7 +123,10 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
             ], addSemanticIndexes: false))
           ])
         )
-      )
+      ),
+      SafeArea(child:
+        _buildSubmit(),
+      ),
     ]);
   }
 
@@ -140,6 +143,20 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ),
   );
 
+  Widget _buildHostDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 6), child:
+    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(padding: EdgeInsets.only(right: 4), child:
+        Styles().images?.getImage('person', excludeFromSemantics: true),
+      ),
+      Expanded(child:
+        Text(_displayHostName ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+      ),
+    ],),
+  );
+
+  String? get _displayHostName =>
+    widget.scheduleParam.host?.displayName;
+
   Widget _buildDateTimeDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(right: 4), child:
@@ -151,6 +168,9 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ],),
   );
 
+  String? get _displayAppointmentTime =>
+    widget.scheduleParam.timeSlot?.displayScheduleTime;
+  
   Widget _buildLabel(String text, { bool required = false}) => Padding(padding: EdgeInsets.only(top: 12, bottom: 2), child: Row(children: [Expanded(child:
     RichText(text:
       TextSpan(text: text, style: Styles().textStyles?.getTextStyle('widget.title.tiny'), children: <InlineSpan>[
@@ -210,19 +230,17 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ],),
   );
 
-  Widget _buildSubmit() => Padding(padding: EdgeInsets.only(top: 12, bottom: 24), child:
-    RoundedButton(
-      label: (widget.sourceAppointment == null) ?
-        Localization().getStringEx('panel.appointment.schedule.submit.button.title', 'Submit') :
-        Localization().getStringEx('panel.appointment.reschedule.submit.button.title', 'Reschedule'),
-      progress: _isSubmitting,
-      onTap: _onSubmit,
-    )
+  Widget _buildSubmit() => Padding(padding: EdgeInsets.all(16), child:
+    Semantics(explicitChildNodes: true, child: 
+      RoundedButton(
+        label: (widget.sourceAppointment == null) ?
+          Localization().getStringEx('panel.appointment.schedule.submit.button.title', 'Submit') :
+          Localization().getStringEx('panel.appointment.reschedule.submit.button.title', 'Reschedule'),
+        progress: _isSubmitting,
+        onTap: _onSubmit,
+      ),
+    ),
   );
-
-  String? get _displayAppointmentTime =>
-    widget.scheduleParam.timeSlot?.displayScheduleTime;
-  
 
   List<DropdownMenuItem<AppointmentType>> get _appontmentTypesDropdownList =>
     AppointmentType.values.map<DropdownMenuItem<AppointmentType>>((AppointmentType appointmentType) =>
@@ -322,34 +340,38 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 class AppointmentScheduleParam {
   final List<AppointmentProvider>? providers;
   final AppointmentProvider? provider;
-
-  final List<AppointmentUnit>? units;
   final AppointmentUnit? unit;
-
+  final AppointmentHost? host;
   final AppointmentTimeSlot? timeSlot;
+  final List<AppointmentQuestion>? questions;
 
   AppointmentScheduleParam({
     this.providers, this.provider,
-    this.units, this.unit,
-    this.timeSlot,
+    this.unit, this.host, this.timeSlot, this.questions,
   });
 
   factory AppointmentScheduleParam.fromOther(AppointmentScheduleParam? other, {
     List<AppointmentProvider>? providers,
     AppointmentProvider? provider,
-
-    List<AppointmentUnit>? units,
     AppointmentUnit? unit,
-
+    AppointmentHost? host,
     AppointmentTimeSlot? timeSlot,
+    List<AppointmentQuestion>? questions,
   }) => AppointmentScheduleParam(
     providers: providers ?? other?.providers,
     provider: provider ?? other?.provider,
-
-    units: units ?? other?.units,
     unit: unit ?? other?.unit,
+    host: host ?? other?.host,
+    timeSlot: timeSlot ?? other?.timeSlot,
+    questions: questions ?? other?.questions,
+  );
 
-    timeSlot: timeSlot ?? other?.timeSlot
+  factory AppointmentScheduleParam.fromAppointment(Appointment? appointment) => AppointmentScheduleParam(
+    provider: appointment?.provider,
+    unit: appointment?.unit,
+    host: appointment?.host,
+    timeSlot: appointment?.timeSlot,
+    questions: appointment?.questions,
   );
 
 }

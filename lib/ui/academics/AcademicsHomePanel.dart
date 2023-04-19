@@ -39,7 +39,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AcademicsHomePanel extends StatefulWidget {
   final AcademicsContent? content;
@@ -337,7 +336,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
-          launchUrl(uri);
+          UrlUtils.launchExternal(url);
         }
       }
     }

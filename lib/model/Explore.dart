@@ -25,7 +25,6 @@ class ExplorePOI with Explore implements Favorite {
     ) : null;
   }
 
-  @override
   toJson() {
     return {
       "placeId": placeId,

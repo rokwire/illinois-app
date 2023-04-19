@@ -21,12 +21,14 @@ import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentScheduleQuestionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppointmentScheduleTimePanel extends StatefulWidget {
   final AppointmentScheduleParam scheduleParam;
@@ -45,6 +47,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   AppointmentTimeSlot? _selectedSlot;
   
   List<AppointmentTimeSlot> _timeSlots = <AppointmentTimeSlot>[];
+  List<AppointmentQuestion>? _questions;
   bool _loadingTimeSlots = false;
 
   @override
@@ -290,11 +293,27 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   void _onContinue() {
     if (_canContinue) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(
-        scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam, timeSlot: _selectedSlot),
-        sourceAppointment: widget.sourceAppointment,
-        onFinish: widget.onFinish,
-      ),));
+
+      List<AppointmentQuestion>? questions = widget.sourceAppointment?.questions ?? _questions;
+      if (CollectionUtils.isNotEmpty(questions)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleQuesionsPanel(
+          scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
+            timeSlot: _selectedSlot,
+            questions: questions
+          ),
+          sourceAppointment: widget.sourceAppointment,
+          onFinish: widget.onFinish,
+        ),));
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(
+          scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
+            timeSlot: _selectedSlot
+          ),
+          sourceAppointment: widget.sourceAppointment,
+          onFinish: widget.onFinish,
+        ),));
+      }
     }
     else {
       SystemSound.play(SystemSoundType.click);
@@ -305,18 +324,23 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     setState(() {
       _loadingTimeSlots = true;
     });
-    Appointments().loadTimeSlots(unitId: widget.scheduleParam.unit?.id, dateLocal: _selectedDate).then((List<AppointmentTimeSlot>? result) {
+    Appointments().loadTimeSlotsAndQuestions(
+      providerId: widget.scheduleParam.provider?.id,
+      unitId: widget.scheduleParam.unit?.id,
+      hostId: widget.scheduleParam.host?.id,
+      dateLocal: _selectedDate).then((AppointmentTimeSlotsAndQuestions? result) {
       if (mounted) {
         setState(() {
           _loadingTimeSlots = false;
-          _timeSlots = result ?? <AppointmentTimeSlot>[];
+          _timeSlots = result?.timeSlots ?? <AppointmentTimeSlot>[];
+          _questions = result?.questions;
           if (_selectedSlot != null) {
-            _selectedSlot = _findSelectedTimeSlot(result, _selectedSlot?.startMinutesSinceMidnightUtc, slotFilter: _isTimeSlotAvailable);
+            _selectedSlot = _findSelectedTimeSlot(result?.timeSlots, _selectedSlot?.startMinutesSinceMidnightUtc, slotFilter: _isTimeSlotAvailable);
           }
           else {
             String? timeSlotId = widget.sourceAppointment?.timeSlot?.id;
-            AppointmentTimeSlot? timeSlot = (timeSlotId != null) ? AppointmentTimeSlot.findInList(result, id: timeSlotId) : null;
-            _selectedSlot = timeSlot ?? _findSelectedTimeSlot(result, widget.sourceAppointment?.startMinutesSinceMidnightUtc);  
+            AppointmentTimeSlot? timeSlot = (timeSlotId != null) ? AppointmentTimeSlot.findInList(result?.timeSlots, id: timeSlotId) : null;
+            _selectedSlot = timeSlot ?? _findSelectedTimeSlot(result?.timeSlots, widget.sourceAppointment?.startMinutesSinceMidnightUtc);  
           }
         });
       }
