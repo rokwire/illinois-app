@@ -26,7 +26,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class AppointmentSchedulePanel extends StatefulWidget {
@@ -117,9 +116,6 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
                       _buildLabel(Localization().getStringEx('panel.appointment.schedule.notes.label', 'NOTES'), required: widget.scheduleParam.timeSlot?.notesRequired == true),
                       _buildNotesTextField(),
-
-                      _buildSubmit(),
-
                     ])
                   )
                 ])
@@ -127,7 +123,10 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
             ], addSemanticIndexes: false))
           ])
         )
-      )
+      ),
+      SafeArea(child:
+        _buildSubmit(),
+      ),
     ]);
   }
 
@@ -155,22 +154,8 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ],),
   );
 
-  String? get _displayHostName {
-    String? fullName = widget.scheduleParam.host?.displayName;
-    String? speciality = widget.scheduleParam.host?.speciality;
-    if (StringUtils.isNotEmpty(fullName) && StringUtils.isNotEmpty(speciality)) {
-      return "$fullName, $speciality";
-    }
-    else if (StringUtils.isNotEmpty(fullName)) {
-      return fullName;
-    }
-    else if (StringUtils.isNotEmpty(speciality)) {
-      return speciality;
-    }
-    else {
-      return null;
-    }
-  }
+  String? get _displayHostName =>
+    widget.scheduleParam.host?.displayName;
 
   Widget _buildDateTimeDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -245,14 +230,16 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ],),
   );
 
-  Widget _buildSubmit() => Padding(padding: EdgeInsets.only(top: 12, bottom: 24), child:
-    RoundedButton(
-      label: (widget.sourceAppointment == null) ?
-        Localization().getStringEx('panel.appointment.schedule.submit.button.title', 'Submit') :
-        Localization().getStringEx('panel.appointment.reschedule.submit.button.title', 'Reschedule'),
-      progress: _isSubmitting,
-      onTap: _onSubmit,
-    )
+  Widget _buildSubmit() => Padding(padding: EdgeInsets.all(16), child:
+    Semantics(explicitChildNodes: true, child: 
+      RoundedButton(
+        label: (widget.sourceAppointment == null) ?
+          Localization().getStringEx('panel.appointment.schedule.submit.button.title', 'Submit') :
+          Localization().getStringEx('panel.appointment.reschedule.submit.button.title', 'Reschedule'),
+        progress: _isSubmitting,
+        onTap: _onSubmit,
+      ),
+    ),
   );
 
   List<DropdownMenuItem<AppointmentType>> get _appontmentTypesDropdownList =>
@@ -377,6 +364,14 @@ class AppointmentScheduleParam {
     host: host ?? other?.host,
     timeSlot: timeSlot ?? other?.timeSlot,
     questions: questions ?? other?.questions,
+  );
+
+  factory AppointmentScheduleParam.fromAppointment(Appointment? appointment) => AppointmentScheduleParam(
+    provider: appointment?.provider,
+    unit: appointment?.unit,
+    host: appointment?.host,
+    timeSlot: appointment?.timeSlot,
+    questions: appointment?.questions,
   );
 
 }

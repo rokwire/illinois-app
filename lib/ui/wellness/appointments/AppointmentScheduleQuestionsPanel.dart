@@ -50,7 +50,32 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
 
   @override
   void initState() {
+    _initSelection();
     super.initState();
+  }
+
+  void _initSelection() {
+    List<AppointmentQuestion>? questions = widget.scheduleParam.questions;
+    if (questions != null) {
+      for (AppointmentQuestion question in questions) {
+        String? questionId = question.id;
+        if (questionId != null) {
+          String? answer = question.answer;
+          if (question.type == AppointmentQuestionType.edit) {
+            _textControllers[questionId] = TextEditingController(text: answer);
+            _focusNodes[questionId] = FocusNode();
+          }
+
+          List<String>? answers = (question.type == AppointmentQuestionType.multiList) ? answer?.split('\n') : null;
+          if (answers != null) {
+            _selection[questionId] = LinkedHashSet<String>.from(answers.reversed);
+          }
+          else if (answer != null) {
+            _selection[questionId] = LinkedHashSet<String>.from(<String>[answer]);
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -58,9 +83,13 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     for (TextEditingController textController in _textControllers.values) {
       textController.dispose();
     }
+    _textControllers.clear();
+
     for (FocusNode focusNode in _focusNodes.values) {
       focusNode.dispose();
     }
+    _focusNodes.clear();
+
     super.dispose();
   }
 
@@ -159,15 +188,14 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   }
 
   Widget _buildQuestionEdit(AppointmentQuestion question) {
-    String questionId = question.id ?? '';
-    TextEditingController textController = (_textControllers[questionId] ??= TextEditingController());
-    FocusNode focusNode = (_focusNodes[questionId] ??= FocusNode());
+    TextEditingController? textController = _textControllers[question.id];
+    FocusNode? focusNode = _focusNodes[question.id];
     return Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
       Container(
         decoration: BoxDecoration(
           border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1),
           color: Styles().colors!.white),
-        child: Semantics(textField: true, excludeSemantics: true, value: textController.text,
+        child: Semantics(textField: true, excludeSemantics: true, value: textController?.text,
           label: Localization().getStringEx('panel.appointment.schedule.notes.field', 'NOTES FIELD'),
           hint: Localization().getStringEx('panel.appointment.schedule.notes.field.hint', ''),
           child: TextField(controller: textController, focusNode: focusNode, maxLines: 10,
@@ -181,17 +209,19 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   }
 
   void _onEditChanged(AppointmentQuestion question, String value) {
-    String questionId = question.id ?? '';
-    LinkedHashSet<String>? selection = _selection[questionId];
-    bool wasEmpty = (selection == null) || selection.isEmpty || selection.first.isEmpty;
-    bool isEmpty = value.isEmpty;
-    if (wasEmpty != isEmpty) {
-      setState(() {
+    String? questionId = question.id;
+    if (questionId != null) {
+      LinkedHashSet<String>? selection = _selection[questionId];
+      bool wasEmpty = (selection == null) || selection.isEmpty || selection.first.isEmpty;
+      bool isEmpty = value.isEmpty;
+      if (wasEmpty != isEmpty) {
+        setState(() {
+          _selection[questionId] = LinkedHashSet.from(<String>[value]);
+        });
+      }
+      else {
         _selection[questionId] = LinkedHashSet.from(<String>[value]);
-      });
-    }
-    else {
-      _selection[questionId] = LinkedHashSet.from(<String>[value]);
+      }
     }
   }
 
@@ -235,16 +265,16 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
 
     Analytics().logSelect(target: '${question.title} => $answer');
 
-    String questionId = question.id ?? '';
+    String? questionId = question.id;
     setState(() {
-      LinkedHashSet<String>? selectedAnswers = _selection[questionId];
+      LinkedHashSet<String>? selectedAnswers = (questionId != null) ? _selection[questionId] : null;
       if ((selectedAnswers != null) && selectedAnswers.contains(answer)) {
         selectedAnswers.remove(answer);
         if (selectedAnswers.isEmpty) {
           _selection.remove(questionId);
         }
       }
-      else {
+      else if (questionId != null) {
         selectedAnswers ??= (_selection[questionId] = LinkedHashSet<String>());
         if (question.type == AppointmentQuestionType.list) {
           selectedAnswers.clear();
@@ -300,33 +330,35 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   }
 
   void _onCheckbox({ required AppointmentQuestion question }) {
-    bool? value;
-    String questionId = question.id ?? '';
-    LinkedHashSet<String>? selectedAnswers = _selection[questionId];
-    if ((selectedAnswers != null) && selectedAnswers.isNotEmpty) {
-      if (selectedAnswers.first == true.toString()) {
+    String? questionId = question.id;
+    if (questionId != null) {
+      bool? value;
+      LinkedHashSet<String>? selectedAnswers = _selection[questionId];
+      if ((selectedAnswers != null) && selectedAnswers.isNotEmpty) {
+        if (selectedAnswers.first == true.toString()) {
+          value = true;
+        }
+        else if (selectedAnswers.first == false.toString()) {
+          value = false;
+        }
+      }
+      // value = (value != true);
+      if (value == null) {
         value = true;
       }
-      else if (selectedAnswers.first == false.toString()) {
+      else if (value == true) {
         value = false;
       }
+      else {
+        value = null;
+      }
+      setState(() {
+        if (value != null)
+          _selection[questionId] = LinkedHashSet<String>.from(<String>[value.toString()]);
+        else
+          _selection.remove(questionId);
+      });
     }
-    // value = (value != true);
-    if (value == null) {
-      value = true;
-    }
-    else if (value == true) {
-      value = false;
-    }
-    else {
-      value = null;
-    }
-    setState(() {
-      if (value != null)
-        _selection[questionId] = LinkedHashSet<String>.from(<String>[value.toString()]);
-      else
-        _selection.remove(questionId);
-    });
   }
 
   String _displayQuestionTitle(AppointmentQuestion question, { int? index }) {

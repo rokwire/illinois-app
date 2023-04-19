@@ -300,6 +300,8 @@ class _AppointmentUnitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     const double imageSize = 64;
     const String imageKey = 'photo-building';
+    String? unitAddress = unit.address ?? unit.location?.address;
+    String? unitHours = unit.hoursOfOperation;
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
@@ -322,26 +324,30 @@ class _AppointmentUnitCard extends StatelessWidget {
                           Text(unit.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
                         ),
                         
-                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Padding(padding: EdgeInsets.only(right: 4), child:
-                              Styles().images?.getImage('location', excludeFromSemantics: true),
-                            ),
-                            Expanded(child:
-                              Text(unit.location?.address ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
-                            ),
-                          ],),
+                        Visibility(visible: StringUtils.isNotEmpty(unitAddress), child:
+                          Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Padding(padding: EdgeInsets.only(right: 4), child:
+                                Styles().images?.getImage('location', excludeFromSemantics: true),
+                              ),
+                              Expanded(child:
+                                Text(unitAddress ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                              ),
+                            ],),
+                          ),
                         ),
 
-                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Padding(padding: EdgeInsets.only(right: 6), child:
-                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
-                            ),
-                            Expanded(child:
-                              Text(unit.hoursOfOperation ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
-                            ),
-                          ],),
+                        Visibility(visible: StringUtils.isNotEmpty(unitHours), child:
+                          Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Padding(padding: EdgeInsets.only(right: 6), child:
+                                Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                              ),
+                              Expanded(child:
+                                Text(unitHours ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                              ),
+                            ],),
+                          ),
                         ),
                       ],)
                     ),

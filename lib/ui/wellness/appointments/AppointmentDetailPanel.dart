@@ -575,11 +575,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   void _onReschedule() {
     Analytics().logSelect(target: "Reschedule");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
-      scheduleParam: AppointmentScheduleParam(
-        provider: _appointment?.provider,
-        unit: _appointment?.unit,
-        host: _appointment?.host,
-      ),
+      scheduleParam: AppointmentScheduleParam.fromAppointment(_appointment),
       sourceAppointment: _appointment,
       onFinish: (BuildContext context, Appointment? appointment) {
         if (appointment != null) {
