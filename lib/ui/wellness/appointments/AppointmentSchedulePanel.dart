@@ -366,4 +366,12 @@ class AppointmentScheduleParam {
     questions: questions ?? other?.questions,
   );
 
+  factory AppointmentScheduleParam.fromAppointment(Appointment? appointment) => AppointmentScheduleParam(
+    provider: appointment?.provider,
+    unit: appointment?.unit,
+    host: appointment?.host,
+    timeSlot: appointment?.timeSlot,
+    questions: appointment?.questions,
+  );
+
 }

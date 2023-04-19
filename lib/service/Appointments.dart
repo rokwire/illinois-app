@@ -633,6 +633,7 @@ class Appointments with Service implements NotificationsListener {
       provider: provider,
       unit: unit,
       timeSlot: AppointmentTimeSlot(startTimeUtc: startTimeUtc, endTimeUtc: endTimeUtc),
+      questions: _sampleQuestions(withAnswers: true),
       notes: 'Sample notes (${Random().nextInt(5) + 1})',
 
       onlineDetails: details,
