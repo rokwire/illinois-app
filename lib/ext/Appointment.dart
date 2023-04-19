@@ -39,8 +39,22 @@ extension AppointmentExt on Appointment {
 
 extension AppointmentHostExt on AppointmentHost {
 
-  String? get displayName =>
-    StringUtils.fullName([firstName, lastName]);
+  String? get displayName {
+    String? fullName = StringUtils.fullName([firstName, lastName]);
+    if (StringUtils.isNotEmpty(fullName) && StringUtils.isNotEmpty(speciality)) {
+      return "$fullName, $speciality";
+    }
+    else if (StringUtils.isNotEmpty(fullName)) {
+      return fullName;
+    }
+    else if (StringUtils.isNotEmpty(speciality)) {
+      return speciality;
+    }
+    else {
+      return null;
+    }
+
+  }
 
 }
 

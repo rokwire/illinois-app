@@ -26,7 +26,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class AppointmentSchedulePanel extends StatefulWidget {
@@ -155,22 +154,8 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ],),
   );
 
-  String? get _displayHostName {
-    String? fullName = widget.scheduleParam.host?.displayName;
-    String? speciality = widget.scheduleParam.host?.speciality;
-    if (StringUtils.isNotEmpty(fullName) && StringUtils.isNotEmpty(speciality)) {
-      return "$fullName, $speciality";
-    }
-    else if (StringUtils.isNotEmpty(fullName)) {
-      return fullName;
-    }
-    else if (StringUtils.isNotEmpty(speciality)) {
-      return speciality;
-    }
-    else {
-      return null;
-    }
-  }
+  String? get _displayHostName =>
+    widget.scheduleParam.host?.displayName;
 
   Widget _buildDateTimeDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
