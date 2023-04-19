@@ -587,7 +587,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildGroupContent() {
     List<Widget> content = [
       _buildImageHeader(),
-      _buildDateUpdatedFields(),
       _buildGroupInfo()
     ];
     if (_isMemberOrAdmin) {
@@ -637,22 +636,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ],
       ),
     ) : Container();
-  }
-
-  Widget _buildDateUpdatedFields() {
-    if (!_isAdmin) {
-      return Container();
-    }
-    return Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(top: 10, left: 16, right: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-      Visibility(visible: _group?.authManEnabled == true, child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Managed Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-          Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-      ])),
-      Visibility(visible: true, child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Membership Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-        Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-      ])))
-    ])));
   }
 
   Widget _buildGroupInfo() {
