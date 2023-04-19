@@ -117,9 +117,6 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
                       _buildLabel(Localization().getStringEx('panel.appointment.schedule.notes.label', 'NOTES'), required: widget.scheduleParam.timeSlot?.notesRequired == true),
                       _buildNotesTextField(),
-
-                      _buildSubmit(),
-
                     ])
                   )
                 ])
@@ -127,7 +124,10 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
             ], addSemanticIndexes: false))
           ])
         )
-      )
+      ),
+      SafeArea(child:
+        _buildSubmit(),
+      ),
     ]);
   }
 
@@ -245,14 +245,16 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ],),
   );
 
-  Widget _buildSubmit() => Padding(padding: EdgeInsets.only(top: 12, bottom: 24), child:
-    RoundedButton(
-      label: (widget.sourceAppointment == null) ?
-        Localization().getStringEx('panel.appointment.schedule.submit.button.title', 'Submit') :
-        Localization().getStringEx('panel.appointment.reschedule.submit.button.title', 'Reschedule'),
-      progress: _isSubmitting,
-      onTap: _onSubmit,
-    )
+  Widget _buildSubmit() => Padding(padding: EdgeInsets.all(16), child:
+    Semantics(explicitChildNodes: true, child: 
+      RoundedButton(
+        label: (widget.sourceAppointment == null) ?
+          Localization().getStringEx('panel.appointment.schedule.submit.button.title', 'Submit') :
+          Localization().getStringEx('panel.appointment.reschedule.submit.button.title', 'Reschedule'),
+        progress: _isSubmitting,
+        onTap: _onSubmit,
+      ),
+    ),
   );
 
   List<DropdownMenuItem<AppointmentType>> get _appontmentTypesDropdownList =>
