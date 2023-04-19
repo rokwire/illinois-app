@@ -268,7 +268,7 @@ class Game with Explore implements Favorite {
   // Explore implementation
 
   @override String? get exploreId => id;
-  @override String get exploreTitle => title;
+  @override String? get exploreTitle => title;
   @override String? get exploreSubTitle => null;
   @override String? get exploreShortDescription => shortDescription;
   @override String? get exploreLongDescription => longDescription;
@@ -284,7 +284,6 @@ class Game with Explore implements Favorite {
   @override String get favoriteKey => favoriteKeyName;
   @override String? get favoriteId => id;
   
-  @override
   Map<String, dynamic> toJson() {
     return {
       "id": id,
