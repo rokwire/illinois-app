@@ -483,7 +483,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     String detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
     Color? exploreColor;
     Widget? descriptionWidget;
-    bool canDirections = _userLocationEnabled, canDetail = true;
+    bool canDirections = true, canDetail = true;
     void Function() onTapDetail = _onTapMapExploreDetail;
 
     if (_selectedMapExplore is Explore) {
@@ -577,24 +577,22 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onTapMapExploreDirections() async {
     Analytics().logSelect(target: 'Directions');
-    if (_userLocationEnabled) {
-      dynamic explore = _selectedMapExplore;
-      _selectMapExplore(null);
-      Future<bool>? launchTask;
-      if (explore is Explore) {
-        launchTask = explore.launchDirections();
-      }
-      else if (explore is List<Explore>) {
-        launchTask = GeoMapUtils.launchDirections(destination: ExploreMap.centerOfList(explore), travelMode: GeoMapUtils.traveModeWalking);
-      }
+    
+    dynamic explore = _selectedMapExplore;
+    _selectMapExplore(null);
+    Future<bool>? launchTask;
+    if (explore is Explore) {
+      launchTask = explore.launchDirections();
+    }
+    else if (explore is List<Explore>) {
+      launchTask = GeoMapUtils.launchDirections(destination: ExploreMap.centerOfList(explore), travelMode: GeoMapUtils.traveModeWalking);
+    }
 
-      if ((launchTask != null) && !await launchTask) {
-        AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.failed.msg", "Failed to launch navigation directions."));  
-      }
+    if ((launchTask != null) && !await launchTask) {
+      AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.failed.msg", "Failed to launch navigation directions."));  
     }
-    else {
-      AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.na.msg", "You need to enable location services in order to get navigation directions."));
-    }
+    
+    // AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.na.msg", "You need to enable location services in order to get navigation directions."));
   }
   
   void _onTapMapExploreDetail() {
