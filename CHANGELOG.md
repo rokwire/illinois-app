@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed Explore.toJson definition, not used any more [#3070](https://github.com/rokwire/illinois-app/issues/3070).
 ### Fixed
 - Fix Dining feedback dialog [#3087](https://github.com/rokwire/illinois-app/issues/3087).
+- Fix HomeToDoWidget item checkmark [#3080](https://github.com/rokwire/illinois-app/issues/3080).
 
 ## [4.3.43] - 2023-04-18
 ### Changed
