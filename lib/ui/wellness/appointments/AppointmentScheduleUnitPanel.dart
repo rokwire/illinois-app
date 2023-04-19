@@ -300,7 +300,7 @@ class _AppointmentUnitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     const double imageSize = 64;
     const String imageKey = 'photo-building';
-    String? unitAddress = unit.location?.address;
+    String? unitAddress = unit.address ?? unit.location?.address;
     String? unitHours = unit.hoursOfOperation;
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:

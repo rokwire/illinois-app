@@ -512,11 +512,12 @@ class AppointmentUnit {
   final String? id;
   final String? providerId;
   final String? name;
+  final String? address;
   final AppointmentLocation? location;
   final String? hoursOfOperation;
   final String? details;
 
-  AppointmentUnit({this.id, this.providerId, this.name, this.location, this.hoursOfOperation, this.details});
+  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.location, this.hoursOfOperation, this.details});
 
   // JSON Serialization
 
@@ -525,9 +526,10 @@ class AppointmentUnit {
       id: JsonUtils.stringValue(json['id']),
       providerId: JsonUtils.stringValue(json['provider_id']),
       name: JsonUtils.stringValue(json['name']),
+      address: JsonUtils.stringValue(json['address']),
       location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
-      hoursOfOperation: JsonUtils.stringValue(json['hours_of_operation']),
-      details: JsonUtils.stringValue(json['details']),
+      hoursOfOperation: JsonUtils.stringValue(json['hours_of_operations']),
+      details: JsonUtils.stringValue(json['notes']),
     ) : null;
   }
 
@@ -536,9 +538,10 @@ class AppointmentUnit {
       'id': id,
       'provider_id': providerId,
       'name': name,
+      'address': address,
       'location': location?.toJson(),
-      'hours_of_operation': hoursOfOperation,
-      'details': details,
+      'hours_of_operations': hoursOfOperation,
+      'notes': details,
     };
   }
 
@@ -572,6 +575,7 @@ class AppointmentUnit {
     (id == other.id) &&
     (providerId == other.providerId) &&
     (name == other.name) &&
+    (address == other.address) &&
     (location == other.location) &&
     (hoursOfOperation == other.hoursOfOperation) &&
     (details == other.details);
@@ -581,6 +585,7 @@ class AppointmentUnit {
     (id?.hashCode ?? 0) ^
     (providerId?.hashCode ?? 0) ^
     (name?.hashCode ?? 0) ^
+    (address?.hashCode ?? 0) ^
     (location?.hashCode ?? 0) ^
     (hoursOfOperation?.hashCode ?? 0) ^
     (details?.hashCode ?? 0);

@@ -490,7 +490,7 @@ class Appointments with Service implements NotificationsListener {
   // Units
 
   Future<List<AppointmentUnit>?> loadUnits({ required String providerId }) async {
-    //String? url = "${Config().appointmentsUrl}/services/providers?providers-ids=$providerId";
+    //String? url = "${Config().appointmentsUrl}/services/units?providers-ids=$providerId";
     //http.Response? response = await Network().get(url, auth: Auth2());
     //return (response?.statusCode == 200) ? AppointmentUnit.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     await Future.delayed(Duration(milliseconds: 1500));
