@@ -155,6 +155,23 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ],),
   );
 
+  String? get _displayHostName {
+    String? fullName = widget.scheduleParam.host?.displayName;
+    String? speciality = widget.scheduleParam.host?.speciality;
+    if (StringUtils.isNotEmpty(fullName) && StringUtils.isNotEmpty(speciality)) {
+      return "$fullName, $speciality";
+    }
+    else if (StringUtils.isNotEmpty(fullName)) {
+      return fullName;
+    }
+    else if (StringUtils.isNotEmpty(speciality)) {
+      return speciality;
+    }
+    else {
+      return null;
+    }
+  }
+
   Widget _buildDateTimeDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(right: 4), child:
@@ -166,6 +183,9 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ],),
   );
 
+  String? get _displayAppointmentTime =>
+    widget.scheduleParam.timeSlot?.displayScheduleTime;
+  
   Widget _buildLabel(String text, { bool required = false}) => Padding(padding: EdgeInsets.only(top: 12, bottom: 2), child: Row(children: [Expanded(child:
     RichText(text:
       TextSpan(text: text, style: Styles().textStyles?.getTextStyle('widget.title.tiny'), children: <InlineSpan>[
@@ -234,24 +254,6 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
       onTap: _onSubmit,
     )
   );
-
-  String? get _displayAppointmentTime =>
-    widget.scheduleParam.timeSlot?.displayScheduleTime;
-  
-  String? get _displayHostName {
-    String? fullName = widget.scheduleParam.host?.displayName;
-    String? speciality = widget.scheduleParam.host?.speciality;
-    if (StringUtils.isNotEmpty(fullName) && StringUtils.isNotEmpty(speciality)) {
-      return "$fullName, $speciality";
-    }
-    else if (StringUtils.isNotEmpty(fullName)) {
-      return fullName;
-    }
-    else if (StringUtils.isNotEmpty(speciality)) {
-      return speciality;
-    }
-  }
-    
 
   List<DropdownMenuItem<AppointmentType>> get _appontmentTypesDropdownList =>
     AppointmentType.values.map<DropdownMenuItem<AppointmentType>>((AppointmentType appointmentType) =>
