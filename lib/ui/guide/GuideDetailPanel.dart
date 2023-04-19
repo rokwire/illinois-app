@@ -25,7 +25,6 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String? favoriteKey;

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - GroupDetail: moved group sync/update message to GroupMembersPanel [#3135](https://github.com/rokwire/illinois-app/issues/3135).
 - Some links are open in external browser [#3088](https://github.com/rokwire/illinois-app/issues/3088).
+- Reworked Mental Health Resources [#3142](https://github.com/rokwire/illinois-app/issues/3142).
 ### Deleted
 - Removed Explore.toJson definition, not used any more [#3070](https://github.com/rokwire/illinois-app/issues/3070).
 ### Fixed

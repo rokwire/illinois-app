@@ -21,7 +21,6 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Gateway.dart';
@@ -53,7 +52,6 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 enum ExploreMapType { Events, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, MentalHealth, StateFarmWayfinding }
 
@@ -485,7 +483,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     String detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
     Color? exploreColor;
     Widget? descriptionWidget;
-    bool canDirections = _userLocationEnabled, canDetail = true;
+    bool canDirections = true, canDetail = true;
     void Function() onTapDetail = _onTapMapExploreDetail;
 
     if (_selectedMapExplore is Explore) {
@@ -579,44 +577,28 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onTapMapExploreDirections() async {
     Analytics().logSelect(target: 'Directions');
-    if (_userLocationEnabled) {
-      dynamic explore = _selectedMapExplore;
-      _selectMapExplore(null);
-      Future<bool>? launchTask;
-      if (explore is Explore) {
-        launchTask = explore.launchDirections();
-      }
-      else if (explore is List<Explore>) {
-        launchTask = GeoMapUtils.launchDirections(destination: ExploreMap.centerOfList(explore), travelMode: GeoMapUtils.traveModeWalking);
-      }
+    
+    dynamic explore = _selectedMapExplore;
+    _selectMapExplore(null);
+    Future<bool>? launchTask;
+    if (explore is Explore) {
+      launchTask = explore.launchDirections();
+    }
+    else if (explore is List<Explore>) {
+      launchTask = GeoMapUtils.launchDirections(destination: ExploreMap.centerOfList(explore), travelMode: GeoMapUtils.traveModeWalking);
+    }
 
-      if ((launchTask != null) && !await launchTask) {
-        AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.failed.msg", "Failed to launch navigation directions."));  
-      }
+    if ((launchTask != null) && !await launchTask) {
+      AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.failed.msg", "Failed to launch navigation directions."));  
     }
-    else {
-      AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.na.msg", "You need to enable location services in order to get navigation directions."));
-    }
+    
+    // AppAlert.showMessage(context, Localization().getStringEx("panel.explore.directions.na.msg", "You need to enable location services in order to get navigation directions."));
   }
   
   void _onTapMapExploreDetail() {
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
     if (_selectedMapExplore is Explore) {
-      String? url = ((_selectedMapType == ExploreMapType.MentalHealth) && (_selectedMapExplore is Building)) ?
-        Wellness().mentalHealthBuildingUrl(buildingId: (_selectedMapExplore as Building).id) : null;
-      
-      if (url == null) {
         (_selectedMapExplore as Explore).exploreLaunchDetail(context);
-      }
-      else if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else {
-        Uri? uri = Uri.tryParse(url);
-        if (uri != null) {
-          launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      }
     }
     else if (_selectedMapExplore is List<Explore>) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: _selectedMapExplore, exploreMapType: _selectedMapType,),));
