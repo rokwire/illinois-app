@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/occupation/OccupationMatch.dart';
-import 'package:illinois/service/skills/OccupationsService.dart';
+import 'package:illinois/service/OccupationMatching.dart';
 import 'package:illinois/ui/academics/OccupationDetails.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -53,7 +53,7 @@ class OccupationList extends StatelessWidget {
 
   Widget _buildOccupationListView() {
     return FutureBuilder(
-        future: OccupationsService().getAllOccupationMatches(),
+        future: OccupationMatching().getAllOccupationMatches(),
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return Center(child: CircularProgressIndicator());

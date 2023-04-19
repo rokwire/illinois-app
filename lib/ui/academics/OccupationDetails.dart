@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/model/occupation/OccupationMatch.dart';
 import 'package:illinois/model/occupation/Skill.dart';
-import 'package:illinois/service/skills/OccupationsService.dart';
+import 'package:illinois/service/OccupationMatching.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -18,7 +18,7 @@ class OccupationDetails extends StatelessWidget {
         title: 'Occupation Details',
       ),
       body: FutureBuilder(
-          future: OccupationsService().getOccupation(occupationCode: occupationMatch.occupation?.code ?? ""),
+          future: OccupationMatching().getOccupation(occupationCode: occupationMatch.occupation?.code ?? ""),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return Center(child: CircularProgressIndicator());
