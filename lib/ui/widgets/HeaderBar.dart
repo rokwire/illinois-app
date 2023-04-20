@@ -111,6 +111,16 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     Color? leadingOvalColor,
     String? leadingIconKey = defaultLeadingIconKey,
     void Function()? onLeading,
+
+    Widget? titleWidget,
+    String? title,
+    TextStyle? textStyle,
+    Color? textColor,
+    String? fontFamily,
+    double? fontSize = 16.0,
+    double? letterSpacing = 1.0,
+    int? maxLines,
+    TextAlign? textAlign,
   }) : super(
     pinned: pinned,
     floating: floating,
@@ -134,6 +144,16 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     leadingOvalColor: leadingOvalColor ?? Styles().colors?.fillColorPrimary,
     leadingIconKey: leadingIconKey,
     onLeading: onLeading,
+
+    titleWidget: titleWidget,
+    title: title,
+    textStyle: textStyle,
+    textColor: textColor ?? Styles().colors?.white,
+    fontFamily: fontFamily ?? Styles().fontFamilies?.extraBold,
+    fontSize: fontSize,
+    letterSpacing: letterSpacing,
+    maxLines: maxLines,
+    textAlign: textAlign,
   );
 
   @override
@@ -169,7 +189,6 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     double? letterSpacing = 1.0,
     int? maxLines,
     TextAlign? textAlign,
-    bool? centerTitle = false,
 
     List<Widget>? actions,
   }) : super(key: key,
@@ -194,7 +213,6 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     letterSpacing: letterSpacing,
     maxLines: maxLines,
     textAlign: textAlign,
-    centerTitle: centerTitle,
 
     actions: actions,
   );
