@@ -327,7 +327,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildTimeDetail() {
-    String? displayTime = _appointment!.displayDate;
+    String? displayTime = _appointment?.displayScheduleTime;
     return StringUtils.isNotEmpty(displayTime) ? Semantics(label: displayTime, excludeSemantics: true, child:
       Padding(padding: EdgeInsets.only(bottom: 8), child:
         Row(children: <Widget>[

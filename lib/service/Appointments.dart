@@ -498,10 +498,10 @@ class Appointments with Service implements NotificationsListener {
   }
 
   List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
-    AppointmentUnit(id: '11', name: 'House of Horror', location: AppointmentLocation(title: '1109 S Lincoln Ave Urbana, IL 61801', phone: '+1 415 370 9574'), hoursOfOperation: '8:00am - 17:30pm', details: 'Lorem ipsum sit dolor amet.'),
-    AppointmentUnit(id: '12', name: "Dante's Inferno", location: AppointmentLocation(title: '1103 S Sixth St Champaign, IL 61820', phone: '+1 650 207 7211'), hoursOfOperation: '8:30am - 12:30pm', details: 'Proin sed lacinia ex.'),
-    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', location: AppointmentLocation(title: '1402 Springfield Ave Urbana, IL 61801', phone: '+1 217 300 5249'), hoursOfOperation: '7:00am - 9:00pm', details: 'Class aptent taciti sociosqu ad litora.'),
-    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm', details: 'Donec iaculis est eget leo egestas ullamcorper.'),
+    AppointmentUnit(id: '11', name: 'House of Horror', location: AppointmentLocation(title: '1109 S Lincoln Ave Urbana, IL 61801', phone: '+1 415 370 9574'), hoursOfOperation: '8:00am - 17:30pm', imageUrl: 'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png', details: { AppointmentUnit.descriptionDetailKey : 'Lorem ipsum sit dolor amet.' }),
+    AppointmentUnit(id: '12', name: "Dante's Inferno", location: AppointmentLocation(title: '1103 S Sixth St Champaign, IL 61820', phone: '+1 650 207 7211'), hoursOfOperation: '8:30am - 12:30pm', imageUrl: 'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg', details: { AppointmentUnit.descriptionDetailKey : 'Proin sed lacinia ex.' }),
+    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', location: AppointmentLocation(title: '1402 Springfield Ave Urbana, IL 61801', phone: '+1 217 300 5249'), hoursOfOperation: '7:00am - 9:00pm', imageUrl: 'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png', details: { AppointmentUnit.descriptionDetailKey : 'Class aptent taciti sociosqu ad litora.' }),
+    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm', imageUrl: 'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop', details: { AppointmentUnit.descriptionDetailKey : 'Donec iaculis est eget leo egestas ullamcorper.' }),
   ];
 
   // Hosts
@@ -542,7 +542,6 @@ class Appointments with Service implements NotificationsListener {
         startTimeUtc: dateTimeUtc,
         endTimeUtc: endDateTime,
         filled: Random().nextInt(4) == 0,
-        notesRequired: Random().nextInt(4) != 0,
       ));
       dateTimeUtc = endDateTime;
     }
@@ -553,14 +552,21 @@ class Appointments with Service implements NotificationsListener {
   
   Future<List<AppointmentQuestion>?> loadQuestions({ String? providerId, String? unitId, String? hostId }) async {
     await Future.delayed(Duration(milliseconds: 1500));
-    return _sampleQuestions();
+    return _sampleQuestions;
   }
 
-  List<AppointmentQuestion> _sampleQuestions({bool withAnswers = false}) => <AppointmentQuestion>[
-    AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.edit, required: true, answer: withAnswers ? "I don't know." : null),
-    AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.list, values: ["Bellow 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true, answer: withAnswers ? "36-37℃" : null),
-    AppointmentQuestion(id: "33", title: "What are your symptoms?", type: AppointmentQuestionType.multiList, values: ["Fever", "Chills", "Shaking or Shivering", "Shortness of breath", "Difficulty breathing", "Muscle or joint pain", "Fatigue", "Loss of taste and/or smell", "Fever or chills", "Cough", "Sore Throat", "Nausea or vomiting", "Diarrhea"], required: true, answer: withAnswers ? "Fever\nChills\nCough" : null),
-    AppointmentQuestion(id: "34", title: "Are you feel sick?", type: AppointmentQuestionType.checkbox, required: true, answer: withAnswers ? "true" : null),
+  List<AppointmentQuestion> get _sampleQuestions => <AppointmentQuestion>[
+    AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.text, required: true),
+    AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.select, values: ["Below 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true),
+    AppointmentQuestion(id: "33", title: "What are your symptoms?", type: AppointmentQuestionType.multiSelect, values: ["Fever", "Chills", "Shaking or Shivering", "Shortness of breath", "Difficulty breathing", "Muscle or joint pain", "Fatigue", "Loss of taste and/or smell", "Fever or chills", "Cough", "Sore Throat", "Nausea or vomiting", "Diarrhea"], required: true),
+    AppointmentQuestion(id: "34", title: "Are you feeling sick?", type: AppointmentQuestionType.checkbox, required: true),
+  ];
+
+  List<AppointmentAnswer> get _sampleAnswers => <AppointmentAnswer>[
+    AppointmentAnswer(questionId: "31", answers: ["I don't know."]),
+    AppointmentAnswer(questionId: "32", answers: ["36-37℃"]),
+    AppointmentAnswer(questionId: "33", answers: ["Fever", "Chills", "Cough"]),
+    AppointmentAnswer(questionId: "34", answers: ["true"]),
   ];
 
   // Time Slots And Questions
@@ -569,7 +575,7 @@ class Appointments with Service implements NotificationsListener {
     await Future.delayed(Duration(milliseconds: 1500));
     return AppointmentTimeSlotsAndQuestions(
       timeSlots: _sampleTimeSlots(dateLocal: dateLocal),
-      questions: _sampleQuestions(),
+      questions: _sampleQuestions,
     );
   }
 
@@ -632,20 +638,19 @@ class Appointments with Service implements NotificationsListener {
     return Appointment(
       id: id,
       type: type,
+      startTimeUtc: startTimeUtc,
+      endTimeUtc: endTimeUtc,
 
       provider: provider,
       unit: unit,
-      timeSlot: AppointmentTimeSlot(startTimeUtc: startTimeUtc, endTimeUtc: endTimeUtc),
-      questions: _sampleQuestions(withAnswers: true),
+      location: unit.location,
+      host: host,
+      answers: _sampleAnswers,
       notes: 'Sample notes (${Random().nextInt(5) + 1})',
 
       onlineDetails: details,
-      host: host,
       instructions: 'Sample instructions (${5 - Random().nextInt(5) + 1})',
       cancelled: cancelled,
-
-      dateTimeUtc: startTimeUtc,
-      location: unit.location,
     );
   }
   
@@ -664,38 +669,75 @@ class Appointments with Service implements NotificationsListener {
     Appointment.fromJson({"id":"08c122e3","provider":provider.toJson(),"date":"2023-02-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
   ];*/
 
-  Future<Appointment?> createAppointment(Appointment appointment) async {
+  Future<Appointment?> createAppointment({
+    AppointmentProvider? provider,
+    AppointmentUnit? unit,
+    AppointmentHost? host,
+    AppointmentType? type,
+    AppointmentTimeSlot? timeSlot,
+    List<AppointmentAnswer>? answers,
+  }) async {
+
+    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(provider?.id) && StringUtils.isNotEmpty(unit?.id) && StringUtils.isNotEmpty(host?.id) && (type != null) && (timeSlot?.startTimeUtc != null)) {
+      String? url = "${Config().appointmentsUrl}/services/appointments";
+      String? post = JsonUtils.encode({
+        'provider_id': provider?.id,
+        'unit_id': unit?.id,
+        'person_id': host?.id,
+        'type': appointmentTypeToString(type),
+        'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
+        'answers': AppointmentAnswer.listToJson(answers),
+      });
+      http.Response? response = await Network().post(url, auth: Auth2(), body: post);
+      if (response?.statusCode == 200) {
+        return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
+      }
+      throw AppointmentsException.fromServerResponse(response);
+    }
+    throw AppointmentsException.internal();*/
+    
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
-      return appointment;
+      return Appointment(provider: provider, unit: unit, host: host, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
     }
     else {
-      throw AppointmentsException(description: 'Random Create Failure');
+      throw AppointmentsException.unknown('Random Create Failure');
     }
   }
 
-  Future<Appointment?> updateAppointment(Appointment appointment) async {
+  Future<Appointment?> updateAppointment(Appointment appointment, {
+    AppointmentType? type,
+    AppointmentTimeSlot? timeSlot,
+    List<AppointmentAnswer>? answers,
+  }) async {
+
+    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(appointment.id)) {
+      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      String? post = JsonUtils.encode({
+        'type': appointmentTypeToString(type),
+        'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
+        'answers': AppointmentAnswer.listToJson(answers),
+      });
+      http.Response? response = await Network().put(url, auth: Auth2(), body: post);
+      if (response?.statusCode == 200) {
+        return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
+      }
+      throw AppointmentsException.fromServerResponse(response);
+    }
+    throw AppointmentsException.internal();*/
+
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
-      return appointment;
+      return Appointment.fromOther(appointment, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
     }
     else {
-      throw AppointmentsException(description: 'Random Update Failure');
+      throw AppointmentsException.unknown('Random Update Failure');
     }
   }
 
   Future<Appointment?> cancelAppointment(Appointment appointment) async {
-
-    await Future.delayed(Duration(milliseconds: 1500));
-    if (Random().nextInt(2) == 0) {
-      NotificationService().notify(notifyAppointmentsChanged);
-      return Appointment.fromOther(appointment, cancelled: true);
-    }
-    else {
-      throw AppointmentsException(description: 'Random Update Failure');
-    }
 
     /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(appointment.id)) {
       String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
@@ -703,11 +745,18 @@ class Appointments with Service implements NotificationsListener {
       if (response?.statusCode == 200) {
         return Appointment.fromOther(appointment, cancelled: true);
       }
-      throw AppointmentsException(error: AppointmentsError.serverResponse, description: StringUtils.isNotEmpty(response?.body) ? response?.body : response?.reasonPhrase);
+      throw AppointmentsException.fromServerResponse(response);
+    }
+    throw AppointmentsException.internal();*/
+
+    await Future.delayed(Duration(milliseconds: 1500));
+    if (Random().nextInt(2) == 0) {
+      NotificationService().notify(notifyAppointmentsChanged);
+      return Appointment.fromOther(appointment, cancelled: true);
     }
     else {
-      throw AppointmentsException(error: AppointmentsError.internal);
-    }*/
+      throw AppointmentsException.unknown('Random Update Failure');
+    }
   }
 }
 
@@ -717,7 +766,22 @@ class AppointmentsException implements Exception {
   final AppointmentsError error;
   final String? description;
 
-  AppointmentsException({this.error = AppointmentsError.unknown, this.description});
+  AppointmentsException({ this.error = AppointmentsError.unknown, this.description});
+
+  factory AppointmentsException.fromServerResponse(http.Response? response) => AppointmentsException(
+    error: AppointmentsError.serverResponse,
+    description: StringUtils.isNotEmpty(response?.body) ? response?.body : response?.reasonPhrase
+  );
+
+  factory AppointmentsException.internal([String? description]) => AppointmentsException(
+    error: AppointmentsError.internal,
+    description: description
+  );
+  
+  factory AppointmentsException.unknown([String? description]) => AppointmentsException(
+    error: AppointmentsError.unknown,
+    description: description
+  );
 
   @override
   String toString() => description ?? errorDescription;

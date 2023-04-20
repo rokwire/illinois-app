@@ -29,18 +29,19 @@ import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-class AppointmentScheduleQuesionsPanel extends StatefulWidget {
+class AppointmentScheduleQuestionsPanel extends StatefulWidget {
+  final List<AppointmentQuestion> questions;
   final AppointmentScheduleParam scheduleParam;
   final Appointment? sourceAppointment;
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleQuesionsPanel({Key? key, required this.scheduleParam, this.sourceAppointment, this.onFinish}) : super(key: key);
+  AppointmentScheduleQuestionsPanel({Key? key, required this.questions, required this.scheduleParam, this.sourceAppointment, this.onFinish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleQuestionsPanelState();
 }
 
-class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQuesionsPanel> {
+class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQuestionsPanel> {
 
   final double _hPadding = 24;
 
@@ -52,30 +53,6 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   void initState() {
     _initSelection();
     super.initState();
-  }
-
-  void _initSelection() {
-    List<AppointmentQuestion>? questions = widget.scheduleParam.questions;
-    if (questions != null) {
-      for (AppointmentQuestion question in questions) {
-        String? questionId = question.id;
-        if (questionId != null) {
-          String? answer = question.answer;
-          if (question.type == AppointmentQuestionType.edit) {
-            _textControllers[questionId] = TextEditingController(text: answer);
-            _focusNodes[questionId] = FocusNode();
-          }
-
-          List<String>? answers = (question.type == AppointmentQuestionType.multiList) ? answer?.split('\n') : null;
-          if (answers != null) {
-            _selection[questionId] = LinkedHashSet<String>.from(answers.reversed);
-          }
-          else if (answer != null) {
-            _selection[questionId] = LinkedHashSet<String>.from(<String>[answer]);
-          }
-        }
-      }
-    }
   }
 
   @override
@@ -97,8 +74,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: (widget.sourceAppointment == null) ?
-        Localization().getStringEx('panel.appointment.schedule.time.header.title', 'Schedule Appointment') :
-        Localization().getStringEx('panel.appointment.reschedule.time.header.title', 'Reschedule Appointment')
+        Localization().getStringEx('panel.appointment.schedule.questions.header.title', 'Schedule Appointment') :
+        Localization().getStringEx('panel.appointment.reschedule.questions.header.title', 'Reschedule Appointment')
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -109,7 +86,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   Widget _buildContent() {
     return Column(children: [
       Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: _hPadding), child:
-        Text(Localization().getStringEx('panel.appointment.schedule.quesions.label.heading', 'Appointment Quesions'),
+        Text(Localization().getStringEx('panel.appointment.schedule.questions.label.heading', 'Appointment Questions'),
           
           style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
         ),
@@ -129,11 +106,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
 
   List<Widget> _buildQuestions() {
     List<Widget> contentList = <Widget>[];
-    List<AppointmentQuestion>? questions = widget.scheduleParam.questions;
-    if (questions != null) {
-      for (int index = 0; index < questions.length; index++) {
-        contentList.add(_buildQuestion(questions[index], index: index + 1));
-      }
+    for (int index = 0; index < widget.questions.length; index++) {
+      contentList.add(_buildQuestion(widget.questions[index], index: index + 1));
     }
     return contentList;
   }
@@ -170,13 +144,13 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   }
 
   Widget _buildQuestionBody(AppointmentQuestion question) {
-    if (question.type == AppointmentQuestionType.edit) {
+    if (question.type == AppointmentQuestionType.text) {
       return _buildQuestionEdit(question);
     }
-    else if (question.type == AppointmentQuestionType.list) {
+    else if (question.type == AppointmentQuestionType.select) {
       return _buildQuestionAnswersList(question);
     }
-    else if (question.type == AppointmentQuestionType.multiList) {
+    else if (question.type == AppointmentQuestionType.multiSelect) {
       return _buildQuestionAnswersList(question);
     }
     else if (question.type == AppointmentQuestionType.checkbox) {
@@ -240,7 +214,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     bool selected = selectedAnswers?.contains(answer) ?? false;
     String semanticsValue = selected ? Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
-    String imageKey = (question.type == AppointmentQuestionType.multiList) ?
+    String imageKey = (question.type == AppointmentQuestionType.multiSelect) ?
       (selected ? "check-box-filled" : "box-outline-gray") :
       (selected ? "check-circle-filled" : "circle-outline");
     return Semantics(label: answer, value: semanticsValue, button: true, child:
@@ -276,7 +250,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
       }
       else if (questionId != null) {
         selectedAnswers ??= (_selection[questionId] = LinkedHashSet<String>());
-        if (question.type == AppointmentQuestionType.list) {
+        if (question.type == AppointmentQuestionType.select) {
           selectedAnswers.clear();
         }
         selectedAnswers.add(answer);
@@ -316,7 +290,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
                 Text(question.title ?? '', style:
-                  Styles().textStyles?.getTextStyle('widget.group.dropdown_button.value'),
+                  Styles().textStyles?.getTextStyle('widget.detail.regular'),
                 )
               ),
             ),
@@ -362,13 +336,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   }
 
   String _displayQuestionTitle(AppointmentQuestion question, { int? index }) {
-    if (question.type != AppointmentQuestionType.checkbox) {
-      String title = question.title ?? '';
-      return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
-    }
-    else {
-      return '';
-    }
+    String title = question.title ?? '';
+    return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
   }
 
   Widget _buildCommandBar() {
@@ -387,41 +356,54 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     );
   }
 
+  void _initSelection() {
+    for (AppointmentQuestion question in widget.questions) {
+      String? questionId = question.id;
+      if (questionId != null) {
+        List<String>? answers = AppointmentAnswer.findInList(widget.sourceAppointment?.answers, questionId: questionId)?.answers;
+        
+        if (question.type == AppointmentQuestionType.text) {
+          String? answer = ((answers != null) && answers.isNotEmpty) ? answers.first : null;
+          _textControllers[questionId] = TextEditingController(text: answer);
+          _focusNodes[questionId] = FocusNode();
+        }
+
+        if (answers != null) {
+          _selection[questionId] = LinkedHashSet<String>.from(answers.reversed);
+        }
+      }
+    }
+  }
+
   bool _canContinue() => _invalidQuesion() == null;
 
   AppointmentQuestion? _invalidQuesion() {
-    List<AppointmentQuestion>? questions = widget.scheduleParam.questions;
-    if (questions != null) {
-      for (AppointmentQuestion question in questions) {
-        if (question.required == true) {
-          LinkedHashSet<String>? selection = _selection[question.id];
-          if ((selection == null) || selection.isEmpty || selection.first.isEmpty) {
-            return question;
-          }
+    for (AppointmentQuestion question in widget.questions) {
+      if (question.required == true) {
+        LinkedHashSet<String>? selection = _selection[question.id];
+        if ((selection == null) || selection.isEmpty || selection.first.isEmpty) {
+          return question;
         }
       }
     }
     return null;
   }
 
-  List<AppointmentQuestion> get _answeredQuesions {
-    List<AppointmentQuestion> result = <AppointmentQuestion>[];
-    List<AppointmentQuestion>? questions = widget.scheduleParam.questions;
-    if (questions != null) {
-      for (AppointmentQuestion question in questions) {
-        LinkedHashSet<String>? answersList = _selection[question.id];
-        String? answer = ((answersList != null) && answersList.isNotEmpty) ?
-          answersList.toList().join('\n') : null;
-        result.add(AppointmentQuestion.fromOther(question, answer: answer));
-      }
+  List<AppointmentAnswer> get _answers {
+    List<AppointmentAnswer> answers = <AppointmentAnswer>[];
+    for (AppointmentQuestion question in widget.questions) {
+      LinkedHashSet<String>? answersList = _selection[question.id];
+      answers.add(AppointmentAnswer.fromQuestion(question, answers: answersList?.toList()));
     }
-    return result;
+    return answers;
   }
 
   void _onContinue() {
     if (_canContinue()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(
-        scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam, questions: _answeredQuesions),
+        scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
+          answers: _answers
+        ),
         sourceAppointment: widget.sourceAppointment,
         onFinish: widget.onFinish,
       ),));

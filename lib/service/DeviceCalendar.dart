@@ -144,7 +144,7 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     if (appointment == null) {
       return null;
     }
-    DateTime? calendarEventStartDateTime = AppDateTime().getUniLocalTimeFromUtcTime(appointment.dateTimeUtc);
+    DateTime? calendarEventStartDateTime = AppDateTime().getUniLocalTimeFromUtcTime(appointment.startTimeUtc);
     DateTime? calendarEventEndDateTime = calendarEventStartDateTime?.add(Duration(hours: 1));
     return _DeviceCalendarEvent(
       title: appointment.title,

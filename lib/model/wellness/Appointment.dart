@@ -29,53 +29,50 @@ class Appointment with Explore, Favorite {
 
   final String? id;
   final AppointmentType? type;
+  final DateTime? startTimeUtc;
+  final DateTime? endTimeUtc;
 
   final AppointmentProvider? provider;
   final AppointmentUnit? unit;
-  final AppointmentTimeSlot? timeSlot;
-  final List<AppointmentQuestion>? questions;
+  final AppointmentLocation? location;
+  final AppointmentHost? host;
+  final List<AppointmentAnswer>? answers;
   final String? notes;
 
   final AppointmentOnlineDetails? onlineDetails;
-  final AppointmentHost? host;
   final String? instructions;
   final bool? cancelled;
-
-  final DateTime? dateTimeUtc; // Obsolete
-  final AppointmentLocation? location; // Obsolete?
 
   //Util fields
   String? imageUrl; // to return same random image for this instance
 
   Appointment({
-    this.id, this.type,
-    this.provider, this.unit, this.timeSlot, this.questions, this.notes,
-    this.onlineDetails, this.host, this.instructions, this.cancelled, 
-    this.dateTimeUtc, this.location,
+    this.id, this.type, this.startTimeUtc, this.endTimeUtc,
+    this.provider, this.unit, this.location, this.host, this.answers, this.notes,
+    this.onlineDetails, this.instructions, this.cancelled,
   });
 
   factory Appointment.fromOther(Appointment? other, {
-    String? id, AppointmentType? type,
-    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentTimeSlot? timeSlot, List<AppointmentQuestion>? questions, String? notes, 
-    AppointmentOnlineDetails? onlineDetails, AppointmentHost? host, String? instructions, bool? cancelled,
-    DateTime? dateTimeUtc, AppointmentLocation? location, }) {
+    String? id, AppointmentType? type, DateTime? startTimeUtc, DateTime? endTimeUtc,
+    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentLocation? location, AppointmentHost? host, List<AppointmentAnswer>? answers, String? notes, 
+    AppointmentOnlineDetails? onlineDetails, String? instructions, bool? cancelled,
+  }) {
     return Appointment(
       id: id ?? other?.id,
       type: type ?? other?.type,
+      startTimeUtc: startTimeUtc ?? other?.startTimeUtc,
+      endTimeUtc: startTimeUtc ?? other?.endTimeUtc,
       
       provider: provider ?? other?.provider,
       unit: unit ?? other?.unit,
-      timeSlot: timeSlot ?? other?.timeSlot,
-      questions: questions ?? other?.questions,
+      location: location ?? other?.location,
+      host: host ?? other?.host,
+      answers: answers ?? other?.answers,
       notes: notes ?? other?.notes,
       
       onlineDetails: onlineDetails ?? other?.onlineDetails,
-      host: host ?? other?.host,
       instructions: instructions ?? other?.instructions,
       cancelled: cancelled ?? other?.cancelled,
-
-      dateTimeUtc: dateTimeUtc ?? other?.dateTimeUtc,
-      location: location ?? other?.location,
     );
   }
 
@@ -83,89 +80,84 @@ class Appointment with Explore, Favorite {
     return (json != null) ? Appointment(
       id: JsonUtils.stringValue(json['id']),
       type: appointmentTypeFromString(JsonUtils.stringValue(json['type'])),
+      startTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
+      endTimeUtc: DateTimeUtils.dateTimeFromString(json['end_time'], format: _serverDateTimeFormat, isUtc: true),
 
       provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])) ,
       unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])) ,
-      timeSlot: AppointmentTimeSlot.fromJson(JsonUtils.mapValue(json['time_slot'])) ,
-      questions: AppointmentQuestion.listFromJson(JsonUtils.listValue(json['questions'])),
+      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
+      host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])),
+      answers: AppointmentAnswer.listFromJson(JsonUtils.listValue(json['answers'])),
       notes: JsonUtils.stringValue(json['user_notes']),
       
       onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
-      host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])),
       instructions: JsonUtils.stringValue(json['instructions']),
       cancelled: JsonUtils.boolValue(json['cancelled']),
-
-      dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
-      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
     ) : null;
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'type': appointmentTypeToString(type),
+    'date': DateTimeUtils.utcDateTimeToString(startTimeUtc, format: _serverDateTimeFormat),
+    'end_time': DateTimeUtils.utcDateTimeToString(endTimeUtc, format: _serverDateTimeFormat),
 
     'provider': provider?.toJson(),
     'unit': unit?.toJson(),
-    'time_slot': timeSlot?.toJson(),
-    'questions': AppointmentQuestion.listToJson(questions),
+    'location': location?.toJson(),
+    'host': host?.toJson(),
+    'answers': AppointmentAnswer.listToJson(answers),
     'user_notes': notes,
 
     'online_details': onlineDetails?.toJson(),
-    'host': host?.toJson(),
     'instructions': instructions,
     'cancelled': cancelled,
     
-    'date': DateTimeUtils.utcDateTimeToString(dateTimeUtc, format: _serverDateTimeFormat),
-    'location': location?.toJson(),
   };
 
   @override
   bool operator==(dynamic other) =>
     (other is Appointment) &&
+    (startTimeUtc == other.startTimeUtc) &&
+    (endTimeUtc == other.endTimeUtc) &&
 
     (id == other.id) &&
     (type == other.type) &&
 
     (provider == other.provider) &&
     (unit == other.unit) &&
-    (timeSlot == other.timeSlot) &&
-    (DeepCollectionEquality().equals(questions, other.questions)) &&
+    (location == other.location) &&
+    (host == other.host) &&
+    (DeepCollectionEquality().equals(answers, other.answers)) &&
     (notes == other.notes) &&
 
     (onlineDetails == other.onlineDetails) &&
-    (host == other.host) &&
     (instructions == other.instructions) &&
-    (cancelled == other.cancelled) &&
+    (cancelled == other.cancelled);
 
-    (dateTimeUtc == other.dateTimeUtc) &&
-    (location == other.location);
 
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
     (type?.hashCode ?? 0) ^
+    (startTimeUtc?.hashCode ?? 0) ^
+    (endTimeUtc?.hashCode ?? 0) ^
 
     (provider?.hashCode ?? 0) ^
     (unit?.hashCode ?? 0) ^
-    (timeSlot?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(questions)) ^
+    (location?.hashCode ?? 0) ^
+    (host?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(answers)) ^
     (notes?.hashCode ?? 0) ^
 
     (onlineDetails?.hashCode ?? 0) ^
-    (host?.hashCode ?? 0) ^
     (instructions?.hashCode ?? 0) ^
-    (cancelled?.hashCode ?? 0) ^
-    
-    (dateTimeUtc?.hashCode ?? 0) ^
-    (location?.hashCode ?? 0);
+    (cancelled?.hashCode ?? 0);
 
   // Accessories
 
-  DateTime? get startDateTimeUtc =>
-    timeSlot?.startTimeUtc ?? dateTimeUtc;
-
   bool get isUpcoming =>
-    startDateTimeUtc?.isAfter(DateTime.now().toUtc()) ?? false;
+    startTimeUtc?.isAfter(DateTime.now().toUtc()) ?? false;
 
   String? get locationTitle =>
     unit?.name ?? location?.title;
@@ -193,7 +185,7 @@ class Appointment with Explore, Favorite {
   @override String? get exploreLongDescription => null;
   @override String? get explorePlaceId => null;
   @override String? get exploreShortDescription => null;
-  @override DateTime? get exploreStartDateUtc => startDateTimeUtc;
+  @override DateTime? get exploreStartDateUtc => startTimeUtc;
   @override String? get exploreSubTitle => locationTitle;
   @override String? get exploreTitle => "${provider?.name ?? 'MyMcKinley'} Appointment";
 //@override Map<String, dynamic> toJson();
@@ -340,7 +332,7 @@ class AppointmentHost {
       email: JsonUtils.stringValue(json['email']),
       speciality: JsonUtils.stringValue(json['speciality']),
       description: JsonUtils.stringValue(json['description']),
-      photoUrl: JsonUtils.stringValue(json['photoUrl']),
+      photoUrl: JsonUtils.stringValue(json['image_url']),
     ) : null;
   }
 
@@ -353,7 +345,7 @@ class AppointmentHost {
       'email': email,
       'speciality': speciality,
       'description': description,
-      'photoUrl': photoUrl,
+      'image_url': photoUrl,
     };
   }
 
@@ -509,15 +501,18 @@ class AppointmentProvider {
 /// AppointmentUnit
 
 class AppointmentUnit {
+  static final String descriptionDetailKey = 'description';
+
   final String? id;
   final String? providerId;
   final String? name;
   final String? address;
   final AppointmentLocation? location;
   final String? hoursOfOperation;
-  final String? details;
+  final String? imageUrl;
+  final Map<String, dynamic>? details;
 
-  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.location, this.hoursOfOperation, this.details});
+  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.location, this.hoursOfOperation, this.imageUrl, this.details});
 
   // JSON Serialization
 
@@ -529,7 +524,8 @@ class AppointmentUnit {
       address: JsonUtils.stringValue(json['address']),
       location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
       hoursOfOperation: JsonUtils.stringValue(json['hours_of_operations']),
-      details: JsonUtils.stringValue(json['notes']),
+      imageUrl: JsonUtils.stringValue(json['image_url']),
+      details: JsonUtils.mapValue(json['details']),
     ) : null;
   }
 
@@ -541,7 +537,8 @@ class AppointmentUnit {
       'address': address,
       'location': location?.toJson(),
       'hours_of_operations': hoursOfOperation,
-      'notes': details,
+      'image_url': imageUrl,
+      'details': details,
     };
   }
 
@@ -578,7 +575,8 @@ class AppointmentUnit {
     (address == other.address) &&
     (location == other.location) &&
     (hoursOfOperation == other.hoursOfOperation) &&
-    (details == other.details);
+    (imageUrl == other.imageUrl) &&
+    (DeepCollectionEquality().equals(details, other.details));
 
   @override
   int get hashCode =>
@@ -588,9 +586,13 @@ class AppointmentUnit {
     (address?.hashCode ?? 0) ^
     (location?.hashCode ?? 0) ^
     (hoursOfOperation?.hashCode ?? 0) ^
-    (details?.hashCode ?? 0);
+    (imageUrl?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(details));
 
   // Accessories
+
+  String? get desriptionDetail =>
+    (details != null) ? JsonUtils.stringValue(details![descriptionDetailKey]) : null;
 
   //...
 }
@@ -608,37 +610,10 @@ class AppointmentQuestion {
   final bool? required;
   final AppointmentQuestionType? type;
   final List<String>? values;
-  final String? answer;
 
   AppointmentQuestion({this.id, this.providerId, this.unitId, this.hostId,
-    this.title, this.required, this.type, this.values, this.answer
+    this.title, this.required, this.type, this.values
   });
-
-  factory AppointmentQuestion.fromOther(AppointmentQuestion? other, {
-    String? id,
-    String? providerId,
-    String? unitId,
-    String? hostId,
-
-    String? title,
-    bool? required,
-    AppointmentQuestionType? type,
-    final List<String>? values,
-    String? answer,
-  }) {
-    return AppointmentQuestion(
-      id: id ?? other?.id,
-      providerId: providerId ?? other?.providerId,
-      unitId: unitId ?? other?.unitId,
-      hostId: hostId ?? other?.hostId,
-
-      title: title ?? other?.title,
-      required: required ?? other?.required,
-      type: type ?? other?.type,
-      values: values ?? other?.values,
-      answer: answer ?? other?.answer,
-    );
-  }
 
   // JSON Serialization
 
@@ -653,7 +628,6 @@ class AppointmentQuestion {
       required: JsonUtils.boolValue(json['required']),
       type: AppointmentQuestionType.fromJson(JsonUtils.stringValue(json['type'])),
       values: JsonUtils.listStringsValue(json['selection_values']),
-      answer: JsonUtils.stringValue(json['answer']),
     ) : null;
   }
 
@@ -668,7 +642,6 @@ class AppointmentQuestion {
       'required': required,
       'type': type?.toJson(),
       'values': values,
-      'answer': answer,
     };
   }
 
@@ -694,40 +667,7 @@ class AppointmentQuestion {
     return jsonList;
   }
 
-  static bool listIsEqualToQuestion(List<AppointmentQuestion>? list1, List<AppointmentQuestion>? list2) {
-    if ((list1 != null) && (list2 != null)) {
-      if (list1.length == list2.length) {
-        for (int index = 0; index < list1.length; index++) {
-          if (!list1[index].isEqualToQuestion(list2[index])) {
-            return false;
-          }
-        }
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    else if ((list1 == null) && (list2 == null)) {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-
   // Euality
-
-  bool isEqualToQuestion(AppointmentQuestion other) =>
-    (id == other.id) &&
-    (providerId == other.providerId) &&
-    (unitId == other.unitId) &&
-    (hostId == other.hostId) &&
-
-    (title == other.title) &&
-    (required == other.required) &&
-    (type == other.type) &&
-    (DeepCollectionEquality().equals(values, other.values));
 
   @override
   bool operator==(dynamic other) =>
@@ -740,8 +680,7 @@ class AppointmentQuestion {
     (title == other.title) &&
     (required == other.required) &&
     (type == other.type) &&
-    (DeepCollectionEquality().equals(values, other.values)) &&
-    (answer == other.answer);
+    (DeepCollectionEquality().equals(values, other.values));
 
   @override
   int get hashCode =>
@@ -753,8 +692,107 @@ class AppointmentQuestion {
     (title?.hashCode ?? 0) ^
     (required?.hashCode ?? 0) ^
     (type?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(values)) ^
-    (answer?.hashCode ?? 0);
+    (DeepCollectionEquality().hash(values));
+
+  // Accessories
+
+  //...
+}
+
+///////////////////////////////
+/// AppointmentAnswer
+
+class AppointmentAnswer {
+  final String? questionId;
+  final String? providerId;
+  final String? unitId;
+  final String? hostId;
+  final List<String>? answers;
+
+  AppointmentAnswer({this.questionId, this.providerId, this.unitId, this.hostId, this.answers});
+
+  factory AppointmentAnswer.fromQuestion(AppointmentQuestion? question, { List<String>? answers }) =>
+    AppointmentAnswer(
+      questionId: question?.id,
+      providerId: question?.providerId,
+      unitId: question?.unitId,
+      hostId: question?.hostId,
+      answers: answers,
+    );
+
+  // JSON Serialization
+
+  static AppointmentAnswer? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentAnswer(
+      questionId: JsonUtils.stringValue(json['question_id']),
+      providerId: JsonUtils.stringValue(json['provider_id']),
+      unitId: JsonUtils.stringValue(json['unit_id']),
+      hostId: JsonUtils.stringValue(json['person_id']),
+      answers: JsonUtils.stringListValue(json['answer']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'question_id': questionId,
+      'provider_id': providerId,
+      'unit_id': unitId,
+      'person_id': hostId,
+      'answers': answers,
+    };
+  }
+
+  static List<AppointmentAnswer>? listFromJson(List<dynamic>? jsonList) {
+    List<AppointmentAnswer>? result;
+    if (jsonList != null) {
+      result = <AppointmentAnswer>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, AppointmentAnswer.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<AppointmentAnswer>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  static AppointmentAnswer? findInList(List<AppointmentAnswer>? answers, { String? questionId}) {
+    if (answers != null) {
+      for (AppointmentAnswer answer in answers) {
+        if ((questionId != null) && (answer.questionId == questionId)) {
+          return answer;
+        }
+      }
+    }
+    return null;
+  }
+
+  // Euality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentAnswer) &&
+    (questionId == other.questionId) &&
+    (providerId == other.providerId) &&
+    (unitId == other.unitId) &&
+    (hostId == other.hostId) &&
+    (DeepCollectionEquality().equals(answers, other.answers));
+
+  @override
+  int get hashCode =>
+    (questionId?.hashCode ?? 0) ^
+    (providerId?.hashCode ?? 0) ^
+    (unitId?.hashCode ?? 0) ^
+    (hostId?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(answers));
 
   // Accessories
 
@@ -765,9 +803,9 @@ class AppointmentQuestion {
 /// AppointmentQuestionType
 
 class AppointmentQuestionType {
-  static const AppointmentQuestionType edit = AppointmentQuestionType._internal('edit');
-  static const AppointmentQuestionType list = AppointmentQuestionType._internal('list');
-  static const AppointmentQuestionType multiList = AppointmentQuestionType._internal('multi-list');
+  static const AppointmentQuestionType text = AppointmentQuestionType._internal('text');
+  static const AppointmentQuestionType select = AppointmentQuestionType._internal('select');
+  static const AppointmentQuestionType multiSelect = AppointmentQuestionType._internal('multi-select');
   static const AppointmentQuestionType checkbox = AppointmentQuestionType._internal('checkbox');
 
   final String _value;
@@ -799,7 +837,6 @@ class AppointmentQuestionType {
 class AppointmentTimeSlot {
   static final String dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
 
-  final String? id;
   final String? providerId;
   final String? unitId;
   final DateTime? startTimeUtc;
@@ -807,16 +844,18 @@ class AppointmentTimeSlot {
   final String? capacity;
   final bool? filled;
   final Map<String, dynamic>? details;
-  final String? notes;
-  final bool? notesRequired;
 
-  AppointmentTimeSlot({this.id, this.providerId, this.unitId, this.startTimeUtc, this.endTimeUtc, this.capacity, this.filled, this.details, this.notes, this.notesRequired});
+  AppointmentTimeSlot({this.providerId, this.unitId, this.startTimeUtc, this.endTimeUtc, this.capacity, this.filled, this.details});
+
+  factory AppointmentTimeSlot.fromAppointment(Appointment? appointment) => AppointmentTimeSlot(
+    startTimeUtc: appointment?.startTimeUtc,
+    endTimeUtc: appointment?.endTimeUtc,
+  );
 
   // JSON Serialization
 
   static AppointmentTimeSlot? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? AppointmentTimeSlot(
-      id: JsonUtils.stringValue(json['id']),
       providerId: JsonUtils.stringValue(json['provider_id']),
       unitId: JsonUtils.stringValue(json['unit_id']),
       startTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_time']), format: dateTimeFormat, isUtc: true),
@@ -824,14 +863,11 @@ class AppointmentTimeSlot {
       capacity: JsonUtils.stringValue(json['capacity']),
       filled: JsonUtils.boolValue(json['filled']),
       details: JsonUtils.mapValue(json['details']),
-      notes: JsonUtils.stringValue(json['notes']),
-      notesRequired: JsonUtils.boolValue(json['notes_required']),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'provider_id': providerId,
       'unit_id': unitId,
       'start_time': DateTimeUtils.utcDateTimeToString(startTimeUtc, format: dateTimeFormat),
@@ -839,8 +875,6 @@ class AppointmentTimeSlot {
       'capacity': capacity,
       'filled': filled,
       'details': details,
-      'notes': notes,
-      'notes_required': notesRequired,
     };
   }
 
@@ -871,43 +905,26 @@ class AppointmentTimeSlot {
   @override
   bool operator==(dynamic other) =>
     (other is AppointmentTimeSlot) &&
-    (id == other.id) &&
     (providerId == other.providerId) &&
     (unitId == other.unitId) &&
     (startTimeUtc == other.startTimeUtc) &&
     (endTimeUtc == other.endTimeUtc) &&
     (capacity == other.capacity) &&
     (filled == other.filled) &&
-    (DeepCollectionEquality().equals(details, other.details)) &&
-    (notes == other.notes) &&
-    (notesRequired == other.notesRequired);
+    (DeepCollectionEquality().equals(details, other.details));
 
   @override
   int get hashCode =>
-    (id?.hashCode ?? 0) ^
     (providerId?.hashCode ?? 0) ^
     (unitId?.hashCode ?? 0) ^
     (startTimeUtc?.hashCode ?? 0) ^
     (endTimeUtc?.hashCode ?? 0) ^
     (capacity?.hashCode ?? 0) ^
     (filled?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(details)) ^
-    (notes?.hashCode ?? 0) ^
-    (notesRequired?.hashCode ?? 0);
+    (DeepCollectionEquality().hash(details));
 
   // Accessories
 
   DateTime? get startTime => startTimeUtc?.toLocal();
   DateTime? get endTime => endTimeUtc?.toLocal();
-
-  static AppointmentTimeSlot? findInList(List<AppointmentTimeSlot>? timeSlots, { String? id }) {
-    if (timeSlots != null) {
-      for (AppointmentTimeSlot timeSlot in timeSlots) {
-        if ((id == null) || (timeSlot.id == id)) {
-          return timeSlot;
-        }
-      }
-    }
-    return null;
-  }
 }

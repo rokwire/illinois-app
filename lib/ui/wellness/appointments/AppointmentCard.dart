@@ -129,7 +129,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                   child: Row(children: [
                                     Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
                                     Expanded(
-                                        child: Text(StringUtils.ensureNotEmpty(widget.appointment.displayDate),
+                                        child: Text(StringUtils.ensureNotEmpty(widget.appointment.displayScheduleTime),
                                             style: Styles().textStyles?.getTextStyle("widget.item.regular")))
                                   ])),
                               Padding(
