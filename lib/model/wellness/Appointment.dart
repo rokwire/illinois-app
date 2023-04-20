@@ -33,7 +33,7 @@ class Appointment with Explore, Favorite {
   final AppointmentProvider? provider;
   final AppointmentUnit? unit;
   final AppointmentTimeSlot? timeSlot;
-  final List<AppointmentQuestion>? questions;
+  final List<AppointmentAnswer>? answers;
   final String? notes;
 
   final AppointmentOnlineDetails? onlineDetails;
@@ -49,14 +49,14 @@ class Appointment with Explore, Favorite {
 
   Appointment({
     this.id, this.type,
-    this.provider, this.unit, this.timeSlot, this.questions, this.notes,
+    this.provider, this.unit, this.timeSlot, this.answers, this.notes,
     this.onlineDetails, this.host, this.instructions, this.cancelled, 
     this.dateTimeUtc, this.location,
   });
 
   factory Appointment.fromOther(Appointment? other, {
     String? id, AppointmentType? type,
-    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentTimeSlot? timeSlot, List<AppointmentQuestion>? questions, String? notes, 
+    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentTimeSlot? timeSlot, List<AppointmentAnswer>? answers, String? notes, 
     AppointmentOnlineDetails? onlineDetails, AppointmentHost? host, String? instructions, bool? cancelled,
     DateTime? dateTimeUtc, AppointmentLocation? location, }) {
     return Appointment(
@@ -66,7 +66,7 @@ class Appointment with Explore, Favorite {
       provider: provider ?? other?.provider,
       unit: unit ?? other?.unit,
       timeSlot: timeSlot ?? other?.timeSlot,
-      questions: questions ?? other?.questions,
+      answers: answers ?? other?.answers,
       notes: notes ?? other?.notes,
       
       onlineDetails: onlineDetails ?? other?.onlineDetails,
@@ -87,7 +87,7 @@ class Appointment with Explore, Favorite {
       provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])) ,
       unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])) ,
       timeSlot: AppointmentTimeSlot.fromJson(JsonUtils.mapValue(json['time_slot'])) ,
-      questions: AppointmentQuestion.listFromJson(JsonUtils.listValue(json['questions'])),
+      answers: AppointmentAnswer.listFromJson(JsonUtils.listValue(json['answers'])),
       notes: JsonUtils.stringValue(json['user_notes']),
       
       onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
@@ -107,7 +107,7 @@ class Appointment with Explore, Favorite {
     'provider': provider?.toJson(),
     'unit': unit?.toJson(),
     'time_slot': timeSlot?.toJson(),
-    'questions': AppointmentQuestion.listToJson(questions),
+    'answers': AppointmentAnswer.listToJson(answers),
     'user_notes': notes,
 
     'online_details': onlineDetails?.toJson(),
@@ -129,7 +129,7 @@ class Appointment with Explore, Favorite {
     (provider == other.provider) &&
     (unit == other.unit) &&
     (timeSlot == other.timeSlot) &&
-    (DeepCollectionEquality().equals(questions, other.questions)) &&
+    (DeepCollectionEquality().equals(answers, other.answers)) &&
     (notes == other.notes) &&
 
     (onlineDetails == other.onlineDetails) &&
@@ -148,7 +148,7 @@ class Appointment with Explore, Favorite {
     (provider?.hashCode ?? 0) ^
     (unit?.hashCode ?? 0) ^
     (timeSlot?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(questions)) ^
+    (DeepCollectionEquality().hash(answers)) ^
     (notes?.hashCode ?? 0) ^
 
     (onlineDetails?.hashCode ?? 0) ^
@@ -608,37 +608,10 @@ class AppointmentQuestion {
   final bool? required;
   final AppointmentQuestionType? type;
   final List<String>? values;
-  final String? answer;
 
   AppointmentQuestion({this.id, this.providerId, this.unitId, this.hostId,
-    this.title, this.required, this.type, this.values, this.answer
+    this.title, this.required, this.type, this.values
   });
-
-  factory AppointmentQuestion.fromOther(AppointmentQuestion? other, {
-    String? id,
-    String? providerId,
-    String? unitId,
-    String? hostId,
-
-    String? title,
-    bool? required,
-    AppointmentQuestionType? type,
-    final List<String>? values,
-    String? answer,
-  }) {
-    return AppointmentQuestion(
-      id: id ?? other?.id,
-      providerId: providerId ?? other?.providerId,
-      unitId: unitId ?? other?.unitId,
-      hostId: hostId ?? other?.hostId,
-
-      title: title ?? other?.title,
-      required: required ?? other?.required,
-      type: type ?? other?.type,
-      values: values ?? other?.values,
-      answer: answer ?? other?.answer,
-    );
-  }
 
   // JSON Serialization
 
@@ -653,7 +626,6 @@ class AppointmentQuestion {
       required: JsonUtils.boolValue(json['required']),
       type: AppointmentQuestionType.fromJson(JsonUtils.stringValue(json['type'])),
       values: JsonUtils.listStringsValue(json['selection_values']),
-      answer: JsonUtils.stringValue(json['answer']),
     ) : null;
   }
 
@@ -668,7 +640,6 @@ class AppointmentQuestion {
       'required': required,
       'type': type?.toJson(),
       'values': values,
-      'answer': answer,
     };
   }
 
@@ -694,40 +665,7 @@ class AppointmentQuestion {
     return jsonList;
   }
 
-  static bool listIsEqualToQuestion(List<AppointmentQuestion>? list1, List<AppointmentQuestion>? list2) {
-    if ((list1 != null) && (list2 != null)) {
-      if (list1.length == list2.length) {
-        for (int index = 0; index < list1.length; index++) {
-          if (!list1[index].isEqualToQuestion(list2[index])) {
-            return false;
-          }
-        }
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    else if ((list1 == null) && (list2 == null)) {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-
   // Euality
-
-  bool isEqualToQuestion(AppointmentQuestion other) =>
-    (id == other.id) &&
-    (providerId == other.providerId) &&
-    (unitId == other.unitId) &&
-    (hostId == other.hostId) &&
-
-    (title == other.title) &&
-    (required == other.required) &&
-    (type == other.type) &&
-    (DeepCollectionEquality().equals(values, other.values));
 
   @override
   bool operator==(dynamic other) =>
@@ -740,8 +678,7 @@ class AppointmentQuestion {
     (title == other.title) &&
     (required == other.required) &&
     (type == other.type) &&
-    (DeepCollectionEquality().equals(values, other.values)) &&
-    (answer == other.answer);
+    (DeepCollectionEquality().equals(values, other.values));
 
   @override
   int get hashCode =>
@@ -753,8 +690,107 @@ class AppointmentQuestion {
     (title?.hashCode ?? 0) ^
     (required?.hashCode ?? 0) ^
     (type?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(values)) ^
-    (answer?.hashCode ?? 0);
+    (DeepCollectionEquality().hash(values));
+
+  // Accessories
+
+  //...
+}
+
+///////////////////////////////
+/// AppointmentAnswer
+
+class AppointmentAnswer {
+  final String? questionId;
+  final String? providerId;
+  final String? unitId;
+  final String? hostId;
+  final List<String>? answers;
+
+  AppointmentAnswer({this.questionId, this.providerId, this.unitId, this.hostId, this.answers});
+
+  factory AppointmentAnswer.fromQuestion(AppointmentQuestion? question, { List<String>? answers }) =>
+    AppointmentAnswer(
+      questionId: question?.id,
+      providerId: question?.providerId,
+      unitId: question?.unitId,
+      hostId: question?.hostId,
+      answers: answers,
+    );
+
+  // JSON Serialization
+
+  static AppointmentAnswer? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentAnswer(
+      questionId: JsonUtils.stringValue(json['question_id']),
+      providerId: JsonUtils.stringValue(json['provider_id']),
+      unitId: JsonUtils.stringValue(json['unit_id']),
+      hostId: JsonUtils.stringValue(json['person_id']),
+      answers: JsonUtils.stringListValue(json['answer']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'question_id': questionId,
+      'provider_id': providerId,
+      'unit_id': unitId,
+      'person_id': hostId,
+      'answers': answers,
+    };
+  }
+
+  static List<AppointmentAnswer>? listFromJson(List<dynamic>? jsonList) {
+    List<AppointmentAnswer>? result;
+    if (jsonList != null) {
+      result = <AppointmentAnswer>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, AppointmentAnswer.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<AppointmentAnswer>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  static AppointmentAnswer? findInList(List<AppointmentAnswer>? answers, { String? questionId}) {
+    if (answers != null) {
+      for (AppointmentAnswer answer in answers) {
+        if ((questionId != null) && (answer.questionId == questionId)) {
+          return answer;
+        }
+      }
+    }
+    return null;
+  }
+
+  // Euality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentAnswer) &&
+    (questionId == other.questionId) &&
+    (providerId == other.providerId) &&
+    (unitId == other.unitId) &&
+    (hostId == other.hostId) &&
+    (DeepCollectionEquality().equals(answers, other.answers));
+
+  @override
+  int get hashCode =>
+    (questionId?.hashCode ?? 0) ^
+    (providerId?.hashCode ?? 0) ^
+    (unitId?.hashCode ?? 0) ^
+    (hostId?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(answers));
 
   // Accessories
 

@@ -293,13 +293,10 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   void _onContinue() {
     if (_canContinue) {
-
-      List<AppointmentQuestion>? questions = widget.sourceAppointment?.questions ?? _questions;
-      if (CollectionUtils.isNotEmpty(questions)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleQuesionsPanel(
+      if (CollectionUtils.isNotEmpty(_questions)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleQuesionsPanel(questions: _questions!,
           scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
             timeSlot: _selectedSlot,
-            questions: questions
           ),
           sourceAppointment: widget.sourceAppointment,
           onFinish: widget.onFinish,

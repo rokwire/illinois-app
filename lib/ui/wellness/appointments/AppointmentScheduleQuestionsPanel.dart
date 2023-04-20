@@ -30,11 +30,12 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class AppointmentScheduleQuesionsPanel extends StatefulWidget {
+  final List<AppointmentQuestion> questions;
   final AppointmentScheduleParam scheduleParam;
   final Appointment? sourceAppointment;
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleQuesionsPanel({Key? key, required this.scheduleParam, this.sourceAppointment, this.onFinish}) : super(key: key);
+  AppointmentScheduleQuesionsPanel({Key? key, required this.questions, required this.scheduleParam, this.sourceAppointment, this.onFinish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleQuestionsPanelState();
@@ -52,30 +53,6 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   void initState() {
     _initSelection();
     super.initState();
-  }
-
-  void _initSelection() {
-    List<AppointmentQuestion>? questions = widget.scheduleParam.questions;
-    if (questions != null) {
-      for (AppointmentQuestion question in questions) {
-        String? questionId = question.id;
-        if (questionId != null) {
-          String? answer = question.answer;
-          if (question.type == AppointmentQuestionType.text) {
-            _textControllers[questionId] = TextEditingController(text: answer);
-            _focusNodes[questionId] = FocusNode();
-          }
-
-          List<String>? answers = (question.type == AppointmentQuestionType.multiSelect) ? answer?.split('\n') : null;
-          if (answers != null) {
-            _selection[questionId] = LinkedHashSet<String>.from(answers.reversed);
-          }
-          else if (answer != null) {
-            _selection[questionId] = LinkedHashSet<String>.from(<String>[answer]);
-          }
-        }
-      }
-    }
   }
 
   @override
@@ -129,11 +106,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
 
   List<Widget> _buildQuestions() {
     List<Widget> contentList = <Widget>[];
-    List<AppointmentQuestion>? questions = widget.scheduleParam.questions;
-    if (questions != null) {
-      for (int index = 0; index < questions.length; index++) {
-        contentList.add(_buildQuestion(questions[index], index: index + 1));
-      }
+    for (int index = 0; index < widget.questions.length; index++) {
+      contentList.add(_buildQuestion(widget.questions[index], index: index + 1));
     }
     return contentList;
   }
@@ -387,41 +361,54 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     );
   }
 
+  void _initSelection() {
+    for (AppointmentQuestion question in widget.questions) {
+      String? questionId = question.id;
+      if (questionId != null) {
+        List<String>? answers = AppointmentAnswer.findInList(widget.sourceAppointment?.answers, questionId: questionId)?.answers;
+        
+        if (question.type == AppointmentQuestionType.text) {
+          String? answer = ((answers != null) && answers.isNotEmpty) ? answers.first : null;
+          _textControllers[questionId] = TextEditingController(text: answer);
+          _focusNodes[questionId] = FocusNode();
+        }
+
+        if (answers != null) {
+          _selection[questionId] = LinkedHashSet<String>.from(answers.reversed);
+        }
+      }
+    }
+  }
+
   bool _canContinue() => _invalidQuesion() == null;
 
   AppointmentQuestion? _invalidQuesion() {
-    List<AppointmentQuestion>? questions = widget.scheduleParam.questions;
-    if (questions != null) {
-      for (AppointmentQuestion question in questions) {
-        if (question.required == true) {
-          LinkedHashSet<String>? selection = _selection[question.id];
-          if ((selection == null) || selection.isEmpty || selection.first.isEmpty) {
-            return question;
-          }
+    for (AppointmentQuestion question in widget.questions) {
+      if (question.required == true) {
+        LinkedHashSet<String>? selection = _selection[question.id];
+        if ((selection == null) || selection.isEmpty || selection.first.isEmpty) {
+          return question;
         }
       }
     }
     return null;
   }
 
-  List<AppointmentQuestion> get _answeredQuesions {
-    List<AppointmentQuestion> result = <AppointmentQuestion>[];
-    List<AppointmentQuestion>? questions = widget.scheduleParam.questions;
-    if (questions != null) {
-      for (AppointmentQuestion question in questions) {
-        LinkedHashSet<String>? answersList = _selection[question.id];
-        String? answer = ((answersList != null) && answersList.isNotEmpty) ?
-          answersList.toList().join('\n') : null;
-        result.add(AppointmentQuestion.fromOther(question, answer: answer));
-      }
+  List<AppointmentAnswer> get _answers {
+    List<AppointmentAnswer> answers = <AppointmentAnswer>[];
+    for (AppointmentQuestion question in widget.questions) {
+      LinkedHashSet<String>? answersList = _selection[question.id];
+      answers.add(AppointmentAnswer.fromQuestion(question, answers: answersList?.toList()));
     }
-    return result;
+    return answers;
   }
 
   void _onContinue() {
     if (_canContinue()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(
-        scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam, questions: _answeredQuesions),
+        scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
+          answers: _answers
+        ),
         sourceAppointment: widget.sourceAppointment,
         onFinish: widget.onFinish,
       ),));

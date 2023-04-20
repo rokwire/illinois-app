@@ -343,11 +343,11 @@ class AppointmentScheduleParam {
   final AppointmentUnit? unit;
   final AppointmentHost? host;
   final AppointmentTimeSlot? timeSlot;
-  final List<AppointmentQuestion>? questions;
+  final List<AppointmentAnswer>? answers;
 
   AppointmentScheduleParam({
     this.providers, this.provider,
-    this.unit, this.host, this.timeSlot, this.questions,
+    this.unit, this.host, this.timeSlot, this.answers,
   });
 
   factory AppointmentScheduleParam.fromOther(AppointmentScheduleParam? other, {
@@ -356,14 +356,14 @@ class AppointmentScheduleParam {
     AppointmentUnit? unit,
     AppointmentHost? host,
     AppointmentTimeSlot? timeSlot,
-    List<AppointmentQuestion>? questions,
+    List<AppointmentAnswer>? answers,
   }) => AppointmentScheduleParam(
     providers: providers ?? other?.providers,
     provider: provider ?? other?.provider,
     unit: unit ?? other?.unit,
     host: host ?? other?.host,
     timeSlot: timeSlot ?? other?.timeSlot,
-    questions: questions ?? other?.questions,
+    answers: answers ?? other?.answers,
   );
 
   factory AppointmentScheduleParam.fromAppointment(Appointment? appointment) => AppointmentScheduleParam(
@@ -371,7 +371,7 @@ class AppointmentScheduleParam {
     unit: appointment?.unit,
     host: appointment?.host,
     timeSlot: appointment?.timeSlot,
-    questions: appointment?.questions,
+    answers: appointment?.answers,
   );
 
 }

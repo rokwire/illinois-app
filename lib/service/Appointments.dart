@@ -553,14 +553,21 @@ class Appointments with Service implements NotificationsListener {
   
   Future<List<AppointmentQuestion>?> loadQuestions({ String? providerId, String? unitId, String? hostId }) async {
     await Future.delayed(Duration(milliseconds: 1500));
-    return _sampleQuestions();
+    return _sampleQuestions;
   }
 
-  List<AppointmentQuestion> _sampleQuestions({bool withAnswers = false}) => <AppointmentQuestion>[
-    AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.text, required: true, answer: withAnswers ? "I don't know." : null),
-    AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.select, values: ["Bellow 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true, answer: withAnswers ? "36-37℃" : null),
-    AppointmentQuestion(id: "33", title: "What are your symptoms?", type: AppointmentQuestionType.multiSelect, values: ["Fever", "Chills", "Shaking or Shivering", "Shortness of breath", "Difficulty breathing", "Muscle or joint pain", "Fatigue", "Loss of taste and/or smell", "Fever or chills", "Cough", "Sore Throat", "Nausea or vomiting", "Diarrhea"], required: true, answer: withAnswers ? "Fever\nChills\nCough" : null),
-    AppointmentQuestion(id: "34", title: "Are you feel sick?", type: AppointmentQuestionType.checkbox, required: true, answer: withAnswers ? "true" : null),
+  List<AppointmentQuestion> get _sampleQuestions => <AppointmentQuestion>[
+    AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.text, required: true),
+    AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.select, values: ["Bellow 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true),
+    AppointmentQuestion(id: "33", title: "What are your symptoms?", type: AppointmentQuestionType.multiSelect, values: ["Fever", "Chills", "Shaking or Shivering", "Shortness of breath", "Difficulty breathing", "Muscle or joint pain", "Fatigue", "Loss of taste and/or smell", "Fever or chills", "Cough", "Sore Throat", "Nausea or vomiting", "Diarrhea"], required: true),
+    AppointmentQuestion(id: "34", title: "Are you feel sick?", type: AppointmentQuestionType.checkbox, required: true),
+  ];
+
+  List<AppointmentAnswer> get _sampleAnswers => <AppointmentAnswer>[
+    AppointmentAnswer(questionId: "31", answers: ["I don't know."]),
+    AppointmentAnswer(questionId: "32", answers: ["36-37℃"]),
+    AppointmentAnswer(questionId: "33", answers: ["Fever", "Chills", "Cough"]),
+    AppointmentAnswer(questionId: "34", answers: ["true"]),
   ];
 
   // Time Slots And Questions
@@ -569,7 +576,7 @@ class Appointments with Service implements NotificationsListener {
     await Future.delayed(Duration(milliseconds: 1500));
     return AppointmentTimeSlotsAndQuestions(
       timeSlots: _sampleTimeSlots(dateLocal: dateLocal),
-      questions: _sampleQuestions(),
+      questions: _sampleQuestions,
     );
   }
 
@@ -636,7 +643,7 @@ class Appointments with Service implements NotificationsListener {
       provider: provider,
       unit: unit,
       timeSlot: AppointmentTimeSlot(startTimeUtc: startTimeUtc, endTimeUtc: endTimeUtc),
-      questions: _sampleQuestions(withAnswers: true),
+      answers: _sampleAnswers,
       notes: 'Sample notes (${Random().nextInt(5) + 1})',
 
       onlineDetails: details,
