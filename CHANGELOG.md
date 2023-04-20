@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added title parameters to SliverToutHeaderBar [#3149](https://github.com/rokwire/illinois-app/issues/3149).
 - Embed video in Mental Health panel [#3148](https://github.com/rokwire/illinois-app/issues/3148).
+### Changed
+- Schedule appointments updates [#3149](https://github.com/rokwire/illinois-app/issues/3149).
 
 ## [4.3.44] - 2023-04-19
 ### Added
