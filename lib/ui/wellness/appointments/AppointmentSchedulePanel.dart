@@ -287,10 +287,10 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   void _onSubmit() {
     Analytics().logSelect(target: 'Submit');
 
-    if ((widget.scheduleParam.timeSlot?.notesRequired == true) && _notesController.text.isEmpty) {
+    /*if ((widget.scheduleParam.timeSlot?.notesRequired == true) && _notesController.text.isEmpty) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.schedule.notes.empty.message', 'Please fill your notes.')).then((_) => _notesFocus.requestFocus());
       return;
-    }
+    }*/
 
     setStateIfMounted(() {
       _isSubmitting = true;
@@ -302,16 +302,14 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
         provider: widget.scheduleParam.provider,
         unit: widget.scheduleParam.unit,
         host: widget.scheduleParam.host,
-        dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
+        timeSlot: widget.scheduleParam.timeSlot,
+        answers: widget.scheduleParam.answers,
       ) :
-      Appointments().updateAppointment(Appointment.fromOther(widget.sourceAppointment,
+      Appointments().updateAppointment(widget.sourceAppointment!,
         type: _appointmentType,
         timeSlot: widget.scheduleParam.timeSlot,
-        notes: _notesController.text,
-        dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
-
-        cancelled: false,
-      ));
+        answers: widget.scheduleParam.answers,
+      );
 
     processAppointment.then((Appointment? appointment) {
       String message = (widget.sourceAppointment == null) ?
@@ -368,7 +366,7 @@ class AppointmentScheduleParam {
     provider: appointment?.provider,
     unit: appointment?.unit,
     host: appointment?.host,
-    timeSlot: appointment?.timeSlot,
+    timeSlot: AppointmentTimeSlot.fromAppointment(appointment),
     answers: appointment?.answers,
   );
 

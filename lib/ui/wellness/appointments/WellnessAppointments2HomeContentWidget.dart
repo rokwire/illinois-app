@@ -340,16 +340,16 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
       DateTime nowUtc = DateTime.now().toUtc();
       for (Appointment appointment in appointments) {
-        List<Appointment>? targetList = ((appointment.dateTimeUtc == null) || nowUtc.isBefore(appointment.dateTimeUtc!)) ? _upcomingAppointments : _pastAppointments;
+        List<Appointment>? targetList = ((appointment.startTimeUtc == null) || nowUtc.isBefore(appointment.startTimeUtc!)) ? _upcomingAppointments : _pastAppointments;
         targetList?.add(appointment);
       }
 
       _upcomingAppointments?.sort((Appointment appointment1, Appointment appointment2) =>
-        SortUtils.compare(appointment1.dateTimeUtc, appointment2.dateTimeUtc, descending: false)
+        SortUtils.compare(appointment1.startTimeUtc, appointment2.startTimeUtc, descending: false)
       );
 
       _pastAppointments?.sort((Appointment appointment1, Appointment appointment2) =>
-        SortUtils.compare(appointment1.dateTimeUtc, appointment2.dateTimeUtc, descending: true)
+        SortUtils.compare(appointment1.startTimeUtc, appointment2.startTimeUtc, descending: true)
       );
     }
   }

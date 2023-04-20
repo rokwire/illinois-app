@@ -542,7 +542,6 @@ class Appointments with Service implements NotificationsListener {
         startTimeUtc: dateTimeUtc,
         endTimeUtc: endDateTime,
         filled: Random().nextInt(4) == 0,
-        notesRequired: Random().nextInt(4) != 0,
       ));
       dateTimeUtc = endDateTime;
     }
@@ -639,20 +638,19 @@ class Appointments with Service implements NotificationsListener {
     return Appointment(
       id: id,
       type: type,
+      startTimeUtc: startTimeUtc,
+      endTimeUtc: endTimeUtc,
 
       provider: provider,
       unit: unit,
-      timeSlot: AppointmentTimeSlot(startTimeUtc: startTimeUtc, endTimeUtc: endTimeUtc),
+      location: unit.location,
+      host: host,
       answers: _sampleAnswers,
       notes: 'Sample notes (${Random().nextInt(5) + 1})',
 
       onlineDetails: details,
-      host: host,
       instructions: 'Sample instructions (${5 - Random().nextInt(5) + 1})',
       cancelled: cancelled,
-
-      dateTimeUtc: startTimeUtc,
-      location: unit.location,
     );
   }
   
@@ -676,18 +674,18 @@ class Appointments with Service implements NotificationsListener {
     AppointmentUnit? unit,
     AppointmentHost? host,
     AppointmentType? type,
-    DateTime? dateTimeUtc,
+    AppointmentTimeSlot? timeSlot,
     List<AppointmentAnswer>? answers,
   }) async {
 
-    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(provider?.id) && StringUtils.isNotEmpty(unit?.id) && StringUtils.isNotEmpty(host?.id) && (type != null) && (dateTimeUtc != null)) {
+    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(provider?.id) && StringUtils.isNotEmpty(unit?.id) && StringUtils.isNotEmpty(host?.id) && (type != null) && (timeSlot?.startTimeUtc != null)) {
       String? url = "${Config().appointmentsUrl}/services/appointments";
       String? post = JsonUtils.encode({
         'provider_id': provider?.id,
         'unit_id': unit?.id,
         'person_id': host?.id,
         'type': appointmentTypeToString(type),
-        'time': dateTimeUtc.millisecondsSinceEpoch,
+        'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
         'answers': AppointmentAnswer.listToJson(answers),
       });
       http.Response? response = await Network().post(url, auth: Auth2(), body: post);
@@ -701,16 +699,16 @@ class Appointments with Service implements NotificationsListener {
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
-      return Appointment(provider: provider, unit: unit, host: host, type: type, dateTimeUtc: dateTimeUtc, answers: answers);
+      return Appointment(provider: provider, unit: unit, host: host, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
     }
     else {
-      throw AppointmentsException(description: 'Random Create Failure');
+      throw AppointmentsException.unknown('Random Create Failure');
     }
   }
 
   Future<Appointment?> updateAppointment(Appointment appointment, {
     AppointmentType? type,
-    DateTime? dateTimeUtc,
+    AppointmentTimeSlot? timeSlot,
     List<AppointmentAnswer>? answers,
   }) async {
 
@@ -718,7 +716,7 @@ class Appointments with Service implements NotificationsListener {
       String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
       String? post = JsonUtils.encode({
         'type': appointmentTypeToString(type),
-        'time': dateTimeUtc?.millisecondsSinceEpoch,
+        'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
         'answers': AppointmentAnswer.listToJson(answers),
       });
       http.Response? response = await Network().put(url, auth: Auth2(), body: post);
@@ -732,10 +730,10 @@ class Appointments with Service implements NotificationsListener {
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
-      return Appointment.fromOther(appointment, type: type, dateTimeUtc: dateTimeUtc, answers: answers);
+      return Appointment.fromOther(appointment, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
     }
     else {
-      throw AppointmentsException(description: 'Random Update Failure');
+      throw AppointmentsException.unknown('Random Update Failure');
     }
   }
 
@@ -757,7 +755,7 @@ class Appointments with Service implements NotificationsListener {
       return Appointment.fromOther(appointment, cancelled: true);
     }
     else {
-      throw AppointmentsException(description: 'Random Update Failure');
+      throw AppointmentsException.unknown('Random Update Failure');
     }
   }
 }
