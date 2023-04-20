@@ -58,7 +58,7 @@ class _AppointmentScheduleHostPanelState extends State<AppointmentScheduleHostPa
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.unit.header.title', 'Schedule Appointment')),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.host.header.title', 'Schedule Appointment')),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
       //bottomNavigationBar: uiuc.TabBar()

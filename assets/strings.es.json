@@ -2766,6 +2766,11 @@
 	"panel.appointment.reschedule.time.label.unknown": "Unknown",
 
     "panel.appointment.schedule.unit.header.title": "Schedule Appointment",
+    "panel.appointment.schedule.host.header.title": "Schedule Appointment",
+
+    "panel.appointment.schedule.questions.label.heading": "Appointment Questions",
+    "panel.appointment.schedule.questions.header.title": "Schedule Appointment",
+    "panel.appointment.reschedule.questions.header.title": "Reschedule Appointment",
 
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
     "widget.game_day.label.no_games":"No hay juegos hoy.",

@@ -29,19 +29,19 @@ import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-class AppointmentScheduleQuesionsPanel extends StatefulWidget {
+class AppointmentScheduleQuestionsPanel extends StatefulWidget {
   final List<AppointmentQuestion> questions;
   final AppointmentScheduleParam scheduleParam;
   final Appointment? sourceAppointment;
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleQuesionsPanel({Key? key, required this.questions, required this.scheduleParam, this.sourceAppointment, this.onFinish}) : super(key: key);
+  AppointmentScheduleQuestionsPanel({Key? key, required this.questions, required this.scheduleParam, this.sourceAppointment, this.onFinish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleQuestionsPanelState();
 }
 
-class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQuesionsPanel> {
+class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQuestionsPanel> {
 
   final double _hPadding = 24;
 
@@ -74,8 +74,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: (widget.sourceAppointment == null) ?
-        Localization().getStringEx('panel.appointment.schedule.time.header.title', 'Schedule Appointment') :
-        Localization().getStringEx('panel.appointment.reschedule.time.header.title', 'Reschedule Appointment')
+        Localization().getStringEx('panel.appointment.schedule.questions.header.title', 'Schedule Appointment') :
+        Localization().getStringEx('panel.appointment.reschedule.questions.header.title', 'Reschedule Appointment')
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
@@ -86,7 +86,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   Widget _buildContent() {
     return Column(children: [
       Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: _hPadding), child:
-        Text(Localization().getStringEx('panel.appointment.schedule.quesions.label.heading', 'Appointment Quesions'),
+        Text(Localization().getStringEx('panel.appointment.schedule.questions.label.heading', 'Appointment Questions'),
           
           style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
         ),
@@ -290,7 +290,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
                 Text(question.title ?? '', style:
-                  Styles().textStyles?.getTextStyle('widget.group.dropdown_button.value'),
+                  Styles().textStyles?.getTextStyle('widget.detail.regular'),
                 )
               ),
             ),
@@ -336,13 +336,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   }
 
   String _displayQuestionTitle(AppointmentQuestion question, { int? index }) {
-    if (question.type != AppointmentQuestionType.checkbox) {
-      String title = question.title ?? '';
-      return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
-    }
-    else {
-      return '';
-    }
+    String title = question.title ?? '';
+    return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
   }
 
   Widget _buildCommandBar() {
