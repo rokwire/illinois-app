@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
@@ -24,6 +25,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart' as flutter_webview;
 
 class WellnessMentalHealthContentWidget extends StatefulWidget {
   WellnessMentalHealthContentWidget();
@@ -37,12 +39,16 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
   Map<String, List<Map<String, dynamic>>> _sectionLists = <String, List<Map<String, dynamic>>>{};
   List<String> _sections = <String>[];
 
+  bool _isVideoLoading = false;
+  String? _videoUrl;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       Guide.notifyChanged,
     ]);
+    _initVideo();
     _buildContentData();
     super.initState();
   }
@@ -78,6 +84,10 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
 
   Widget _buildContentUi() {
     List<Widget> widgetList = <Widget>[];
+
+    if (StringUtils.isNotEmpty(_videoUrl)) {
+      widgetList.add(_buildContentVideo());
+    }
 
     for (String section in _sections) {
       List<Map<String, dynamic>>? sectionList = _sectionLists[section];
@@ -173,6 +183,34 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
       if (uri != null) {
         launchUrl(uri, mode: LaunchMode.externalApplication);
       }
+    }
+  }
+
+  Widget _buildContentVideo() {
+    if (StringUtils.isEmpty(_videoUrl)) {
+      return Container();
+    }
+    double width = MediaQuery.of(context).size.width;
+    double height = (width * 3) / 4;
+    return Stack(alignment: Alignment.center, children: [
+      Container(
+          height: height,
+          child: flutter_webview.WebView(
+              initialUrl: _videoUrl,
+              javascriptMode: flutter_webview.JavascriptMode.unrestricted,
+              onPageFinished: (url) {
+                setState(() {
+                  _isVideoLoading = false;
+                });
+              })),
+      Visibility(visible: _isVideoLoading, child: CircularProgressIndicator())
+    ]);
+  }
+
+  void _initVideo() {
+    _videoUrl = Config().wellnessMentalHealthVideoUrl;
+    if (StringUtils.isNotEmpty(_videoUrl)) {
+      _isVideoLoading = true;
     }
   }
 }
