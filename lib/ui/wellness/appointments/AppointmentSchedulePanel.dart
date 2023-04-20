@@ -114,8 +114,8 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
                       _buildLabel(Localization().getStringEx('panel.appointment.schedule.type.label', 'APPOINTMENT TYPE'), required: true),
                       _buildAppontmentTypeDropdown(),
 
-                      _buildLabel(Localization().getStringEx('panel.appointment.schedule.notes.label', 'NOTES'), required: widget.scheduleParam.timeSlot?.notesRequired == true),
-                      _buildNotesTextField(),
+                      //_buildLabel(Localization().getStringEx('panel.appointment.schedule.notes.label', 'NOTES'), required: widget.scheduleParam.timeSlot?.notesRequired == true),
+                      //_buildNotesTextField(),
                     ])
                   )
                 ])
@@ -195,6 +195,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ),
   );
 
+  // ignore: unused_element
   Widget _buildNotesTextField() => Padding(padding: EdgeInsets.only(bottom: 8), child:
     Stack(children: [
       Container(
@@ -296,16 +297,13 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     });
 
     Future<Appointment?> processAppointment = (widget.sourceAppointment == null) ?
-      Appointments().createAppointment(Appointment(
+      Appointments().createAppointment(
         type: _appointmentType,
-
         provider: widget.scheduleParam.provider,
         unit: widget.scheduleParam.unit,
-        timeSlot: widget.scheduleParam.timeSlot,
-        notes: _notesController.text,
-
+        host: widget.scheduleParam.host,
         dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
-      )) :
+      ) :
       Appointments().updateAppointment(Appointment.fromOther(widget.sourceAppointment,
         type: _appointmentType,
         timeSlot: widget.scheduleParam.timeSlot,

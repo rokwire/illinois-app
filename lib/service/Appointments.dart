@@ -671,22 +671,68 @@ class Appointments with Service implements NotificationsListener {
     Appointment.fromJson({"id":"08c122e3","provider":provider.toJson(),"date":"2023-02-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
   ];*/
 
-  Future<Appointment?> createAppointment(Appointment appointment) async {
+  Future<Appointment?> createAppointment({
+    AppointmentProvider? provider,
+    AppointmentUnit? unit,
+    AppointmentHost? host,
+    AppointmentType? type,
+    DateTime? dateTimeUtc,
+    List<AppointmentAnswer>? answers,
+  }) async {
+
+    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(provider?.id) && StringUtils.isNotEmpty(unit?.id) && StringUtils.isNotEmpty(host?.id) && (type != null) && (dateTimeUtc != null)) {
+      String? url = "${Config().appointmentsUrl}/services/appointments";
+      String? post = JsonUtils.encode({
+        'provider_id': provider?.id,
+        'unit_id': unit?.id,
+        'person_id': host?.id,
+        'type': appointmentTypeToString(type),
+        'time': dateTimeUtc.millisecondsSinceEpoch,
+        'answers': AppointmentAnswer.listToJson(answers),
+      });
+      http.Response? response = await Network().post(url, auth: Auth2(), body: post);
+      if (response?.statusCode == 200) {
+        return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
+      }
+      throw AppointmentsException.fromServerResponse(response);
+    }
+    throw AppointmentsException.internal();*/
+    
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
-      return appointment;
+      return Appointment(provider: provider, unit: unit, host: host, type: type, dateTimeUtc: dateTimeUtc, answers: answers);
     }
     else {
       throw AppointmentsException(description: 'Random Create Failure');
     }
   }
 
-  Future<Appointment?> updateAppointment(Appointment appointment) async {
+  Future<Appointment?> updateAppointment(Appointment appointment, {
+    AppointmentType? type,
+    DateTime? dateTimeUtc,
+    List<AppointmentAnswer>? answers,
+  }) async {
+
+    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(appointment.id)) {
+      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      String? post = JsonUtils.encode({
+        'type': appointmentTypeToString(type),
+        'time': dateTimeUtc?.millisecondsSinceEpoch,
+        'answers': AppointmentAnswer.listToJson(answers),
+      });
+      http.Response? response = await Network().put(url, auth: Auth2(), body: post);
+      if (response?.statusCode == 200) {
+        return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
+      }
+      throw AppointmentsException.fromServerResponse(response);
+    }
+    throw AppointmentsException.internal();*/
+
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
-      return appointment;
+      return Appointment.fromOther(appointment, type: type, dateTimeUtc: dateTimeUtc, answers: answers);
     }
     else {
       throw AppointmentsException(description: 'Random Update Failure');
@@ -694,6 +740,16 @@ class Appointments with Service implements NotificationsListener {
   }
 
   Future<Appointment?> cancelAppointment(Appointment appointment) async {
+
+    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(appointment.id)) {
+      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      http.Response? response = await Network().get(url, auth: Auth2());
+      if (response?.statusCode == 200) {
+        return Appointment.fromOther(appointment, cancelled: true);
+      }
+      throw AppointmentsException.fromServerResponse(response);
+    }
+    throw AppointmentsException.internal();*/
 
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
@@ -703,18 +759,6 @@ class Appointments with Service implements NotificationsListener {
     else {
       throw AppointmentsException(description: 'Random Update Failure');
     }
-
-    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(appointment.id)) {
-      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
-      http.Response? response = await Network().get(url, auth: Auth2());
-      if (response?.statusCode == 200) {
-        return Appointment.fromOther(appointment, cancelled: true);
-      }
-      throw AppointmentsException(error: AppointmentsError.serverResponse, description: StringUtils.isNotEmpty(response?.body) ? response?.body : response?.reasonPhrase);
-    }
-    else {
-      throw AppointmentsException(error: AppointmentsError.internal);
-    }*/
   }
 }
 
@@ -724,7 +768,22 @@ class AppointmentsException implements Exception {
   final AppointmentsError error;
   final String? description;
 
-  AppointmentsException({this.error = AppointmentsError.unknown, this.description});
+  AppointmentsException({ this.error = AppointmentsError.unknown, this.description});
+
+  factory AppointmentsException.fromServerResponse(http.Response? response) => AppointmentsException(
+    error: AppointmentsError.serverResponse,
+    description: StringUtils.isNotEmpty(response?.body) ? response?.body : response?.reasonPhrase
+  );
+
+  factory AppointmentsException.internal([String? description]) => AppointmentsException(
+    error: AppointmentsError.internal,
+    description: description
+  );
+  
+  factory AppointmentsException.unknown([String? description]) => AppointmentsException(
+    error: AppointmentsError.unknown,
+    description: description
+  );
 
   @override
   String toString() => description ?? errorDescription;
