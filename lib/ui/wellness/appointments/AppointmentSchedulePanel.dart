@@ -76,12 +76,13 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
   Widget _buildContentUi() {
     String toutImageKey = appointmentTypeImageKey(_appointmentType);
+    String toutTitle = Localization().getStringEx('panel.appointment.schedule.header.title', 'Schedule Appointment');
 
     return Column(children: <Widget>[
       Expanded(child:
         Container(child:
           CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-            SliverToutHeaderBar(flexImageKey: toutImageKey, flexRightToLeftTriangleColor: Colors.white),
+            SliverToutHeaderBar(flexImageKey: toutImageKey, title: toutTitle, flexRightToLeftTriangleColor: Colors.white),
             SliverList(delegate: SliverChildListDelegate([
               Padding(padding: EdgeInsets.zero, child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
