@@ -170,16 +170,12 @@ class _AppointmentHostCard extends StatelessWidget {
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
+                Text(host.speciality?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),),
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Row(children: [
-                        Expanded(child:
-                          Text(host.speciality?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),)
-                        ),
-                      ]),
 
-                      Padding(padding: EdgeInsets.only(bottom: 6), child:
+                      Padding(padding: EdgeInsets.only(top: 6, bottom: 2), child:
                         Row(children: [
                           Expanded(child:
                             Text(host.displayName ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
@@ -219,7 +215,7 @@ class _AppointmentHostCard extends StatelessWidget {
 
                   Padding(padding: EdgeInsets.only(left: 16), child:
                     Semantics(button: true, label: "host image", hint: "Double tap to expand image", child:
-                      SizedBox(width: 96, height: 96, child:
+                      SizedBox(width: 72, height: 72, child:
                         StringUtils.isNotEmpty(host.photoUrl) ?
                           Image.network(host.photoUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
                           Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true)

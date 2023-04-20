@@ -498,10 +498,10 @@ class Appointments with Service implements NotificationsListener {
   }
 
   List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
-    AppointmentUnit(id: '11', name: 'House of Horror', location: AppointmentLocation(title: '1109 S Lincoln Ave Urbana, IL 61801', phone: '+1 415 370 9574'), hoursOfOperation: '8:00am - 17:30pm', details: 'Lorem ipsum sit dolor amet.'),
-    AppointmentUnit(id: '12', name: "Dante's Inferno", location: AppointmentLocation(title: '1103 S Sixth St Champaign, IL 61820', phone: '+1 650 207 7211'), hoursOfOperation: '8:30am - 12:30pm', details: 'Proin sed lacinia ex.'),
-    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', location: AppointmentLocation(title: '1402 Springfield Ave Urbana, IL 61801', phone: '+1 217 300 5249'), hoursOfOperation: '7:00am - 9:00pm', details: 'Class aptent taciti sociosqu ad litora.'),
-    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm', details: 'Donec iaculis est eget leo egestas ullamcorper.'),
+    AppointmentUnit(id: '11', name: 'House of Horror', location: AppointmentLocation(title: '1109 S Lincoln Ave Urbana, IL 61801', phone: '+1 415 370 9574'), hoursOfOperation: '8:00am - 17:30pm', imageUrl: 'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png', details: { AppointmentUnit.descriptionDetailKey : 'Lorem ipsum sit dolor amet.' }),
+    AppointmentUnit(id: '12', name: "Dante's Inferno", location: AppointmentLocation(title: '1103 S Sixth St Champaign, IL 61820', phone: '+1 650 207 7211'), hoursOfOperation: '8:30am - 12:30pm', imageUrl: 'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg', details: { AppointmentUnit.descriptionDetailKey : 'Proin sed lacinia ex.' }),
+    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', location: AppointmentLocation(title: '1402 Springfield Ave Urbana, IL 61801', phone: '+1 217 300 5249'), hoursOfOperation: '7:00am - 9:00pm', imageUrl: 'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png', details: { AppointmentUnit.descriptionDetailKey : 'Class aptent taciti sociosqu ad litora.' }),
+    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm', imageUrl: 'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop', details: { AppointmentUnit.descriptionDetailKey : 'Donec iaculis est eget leo egestas ullamcorper.' }),
   ];
 
   // Hosts

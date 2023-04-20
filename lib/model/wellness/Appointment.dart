@@ -332,7 +332,7 @@ class AppointmentHost {
       email: JsonUtils.stringValue(json['email']),
       speciality: JsonUtils.stringValue(json['speciality']),
       description: JsonUtils.stringValue(json['description']),
-      photoUrl: JsonUtils.stringValue(json['photoUrl']),
+      photoUrl: JsonUtils.stringValue(json['image_url']),
     ) : null;
   }
 
@@ -345,7 +345,7 @@ class AppointmentHost {
       'email': email,
       'speciality': speciality,
       'description': description,
-      'photoUrl': photoUrl,
+      'image_url': photoUrl,
     };
   }
 
@@ -501,15 +501,18 @@ class AppointmentProvider {
 /// AppointmentUnit
 
 class AppointmentUnit {
+  static final String descriptionDetailKey = 'description';
+
   final String? id;
   final String? providerId;
   final String? name;
   final String? address;
   final AppointmentLocation? location;
   final String? hoursOfOperation;
-  final String? details;
+  final String? imageUrl;
+  final Map<String, dynamic>? details;
 
-  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.location, this.hoursOfOperation, this.details});
+  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.location, this.hoursOfOperation, this.imageUrl, this.details});
 
   // JSON Serialization
 
@@ -521,7 +524,8 @@ class AppointmentUnit {
       address: JsonUtils.stringValue(json['address']),
       location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
       hoursOfOperation: JsonUtils.stringValue(json['hours_of_operations']),
-      details: JsonUtils.stringValue(json['notes']),
+      imageUrl: JsonUtils.stringValue(json['image_url']),
+      details: JsonUtils.mapValue(json['details']),
     ) : null;
   }
 
@@ -533,7 +537,8 @@ class AppointmentUnit {
       'address': address,
       'location': location?.toJson(),
       'hours_of_operations': hoursOfOperation,
-      'notes': details,
+      'image_url': imageUrl,
+      'details': details,
     };
   }
 
@@ -570,7 +575,8 @@ class AppointmentUnit {
     (address == other.address) &&
     (location == other.location) &&
     (hoursOfOperation == other.hoursOfOperation) &&
-    (details == other.details);
+    (imageUrl == other.imageUrl) &&
+    (DeepCollectionEquality().equals(details, other.details));
 
   @override
   int get hashCode =>
@@ -580,9 +586,13 @@ class AppointmentUnit {
     (address?.hashCode ?? 0) ^
     (location?.hashCode ?? 0) ^
     (hoursOfOperation?.hashCode ?? 0) ^
-    (details?.hashCode ?? 0);
+    (imageUrl?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(details));
 
   // Accessories
+
+  String? get desriptionDetail =>
+    (details != null) ? JsonUtils.stringValue(details![descriptionDetailKey]) : null;
 
   //...
 }
