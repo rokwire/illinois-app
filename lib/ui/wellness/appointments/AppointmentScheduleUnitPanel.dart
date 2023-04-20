@@ -18,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentScheduleHostPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
@@ -298,79 +297,74 @@ class _AppointmentUnitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double imageSize = 64;
     const String imageKey = 'photo-building';
     String? unitAddress = unit.address ?? unit.location?.address;
     String? unitHours = unit.hoursOfOperation;
+    String? unitDesription = unit.desriptionDetail;
+    
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
           Container(decoration: BoxDecoration(color: Styles().colors!.surface, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                
-                Row(children: [
+                Text(provider?.name?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
-                    Text(provider?.name?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),)
-                  ),
-                ]),
-                
-                
-                Padding(padding: EdgeInsets.only(top: 6), child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Expanded(child:
-                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Padding(padding: EdgeInsets.only(bottom: 2), child:
-                          Text(unit.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
-                        ),
-                        
-                        Visibility(visible: StringUtils.isNotEmpty(unitAddress), child:
-                          Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 4), child:
-                                Styles().images?.getImage('location', excludeFromSemantics: true),
-                              ),
-                              Expanded(child:
-                                Text(unitAddress ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
-                              ),
-                            ],),
-                          ),
-                        ),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-                        Visibility(visible: StringUtils.isNotEmpty(unitHours), child:
-                          Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child:
-                                Styles().images?.getImage('calendar', excludeFromSemantics: true),
-                              ),
-                              Expanded(child:
-                                Text(unitHours ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
-                              ),
-                            ],),
-                          ),
-                        ),
-                      ],)
-                    ),
-                    
-                    Padding(padding: EdgeInsets.only(left: 16), child:
-                      Semantics(button: true, label: "appointment image", hint: "Double tap to expand image", child:
-                        SizedBox(width: imageSize, height: imageSize, child:
-                          Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
+                      Padding(padding: EdgeInsets.only(top: 6, bottom: 2), child:
+                        Text(unit.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
+                      ),
+                      
+                      Visibility(visible: StringUtils.isNotEmpty(unitAddress), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 4), child:
+                              Styles().images?.getImage('location', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(unitAddress ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                            ),
+                          ],),
                         ),
                       ),
-                    )
-                  ]),
-                ),
 
+                      Visibility(visible: StringUtils.isNotEmpty(unitHours), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 6), child:
+                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(unitHours ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                            ),
+                          ],),
+                        ),
+                      ),
+                    ]),
+                  ),
+                  Visibility(visible: StringUtils.isNotEmpty(unitDesription), child:
+                    Padding(padding: EdgeInsets.only(left: 16), child:
+                      Semantics(button: true, label: "appointment image", hint: "Double tap to expand image", child:
+                        SizedBox(width: 72, height: 72, child:
+                          StringUtils.isNotEmpty(unit.imageUrl) ?
+                            Image.network(unit.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
+                            Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill)
+                        ),
+                      ),
+                    ),
+                  ),
+                ]),
                 Padding(padding: EdgeInsets.only(top: 4), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Expanded(child:
-                      Text(unit.details ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                      Text(unit.desriptionDetail ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
                     ),
                   ],),
                 ),
-              ])
-            )
+              ]),
+            ),
           ),
           Container(color: Styles().colors?.fillColorSecondary, height: 4,)
         ],)

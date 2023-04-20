@@ -53,7 +53,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateUtils.dateOnly(widget.sourceAppointment?.startDateTimeUtc?.toLocal() ?? DateTime.now());
+    _selectedDate = DateUtils.dateOnly(widget.sourceAppointment?.startTimeUtc?.toLocal() ?? DateTime.now());
     _loadTimeSlots();
   }
 
@@ -210,8 +210,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       return Container();
     }
     else {
-      String? currentDateString = widget.sourceAppointment?.timeSlot?.displayScheduleTime ??
-        AppointmentTimeSlotExt.getDisplayScheduleTime(widget.sourceAppointment?.dateTimeUtc?.toLocal(), null) ??
+      String? currentDateString = AppointmentTimeSlotExt.getDisplayScheduleTime(widget.sourceAppointment?.startTimeUtc, widget.sourceAppointment?.endTimeUtc) ??
         Localization().getStringEx('panel.appointment.reschedule.time.label.unknown', 'Unknown');
       
       return Padding(padding:EdgeInsets.only(left: 16, right: 16, top: 16), child:
@@ -234,7 +233,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     return Padding(padding: EdgeInsets.all(16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text((widget.sourceAppointment == null) ?
-          Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing avalable appointments for:') :
+          Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing available appointments for:') :
           Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New Appointment:'),
           style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
         ),
@@ -293,13 +292,10 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   void _onContinue() {
     if (_canContinue) {
-
-      List<AppointmentQuestion>? questions = widget.sourceAppointment?.questions ?? _questions;
-      if (CollectionUtils.isNotEmpty(questions)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleQuesionsPanel(
+      if (CollectionUtils.isNotEmpty(_questions)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleQuestionsPanel(questions: _questions!,
           scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
             timeSlot: _selectedSlot,
-            questions: questions
           ),
           sourceAppointment: widget.sourceAppointment,
           onFinish: widget.onFinish,
@@ -334,14 +330,11 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
           _loadingTimeSlots = false;
           _timeSlots = result?.timeSlots ?? <AppointmentTimeSlot>[];
           _questions = result?.questions;
-          if (_selectedSlot != null) {
-            _selectedSlot = _findSelectedTimeSlot(result?.timeSlots, _selectedSlot?.startMinutesSinceMidnightUtc, slotFilter: _isTimeSlotAvailable);
-          }
-          else {
-            String? timeSlotId = widget.sourceAppointment?.timeSlot?.id;
-            AppointmentTimeSlot? timeSlot = (timeSlotId != null) ? AppointmentTimeSlot.findInList(result?.timeSlots, id: timeSlotId) : null;
-            _selectedSlot = timeSlot ?? _findSelectedTimeSlot(result?.timeSlots, widget.sourceAppointment?.startMinutesSinceMidnightUtc);  
-          }
+          _selectedSlot = _findSelectedTimeSlot(
+            result?.timeSlots,
+            _selectedSlot?.startMinutesSinceMidnightUtc ?? widget.sourceAppointment?.startMinutesSinceMidnightUtc,
+            slotFilter: _isTimeSlotAvailable
+          );
         });
       }
     });

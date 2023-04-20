@@ -76,12 +76,13 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
   Widget _buildContentUi() {
     String toutImageKey = appointmentTypeImageKey(_appointmentType);
+    String toutTitle = Localization().getStringEx('panel.appointment.schedule.header.title', 'Schedule Appointment');
 
     return Column(children: <Widget>[
       Expanded(child:
         Container(child:
           CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-            SliverToutHeaderBar(flexImageKey: toutImageKey, flexRightToLeftTriangleColor: Colors.white),
+            SliverToutHeaderBar(flexImageKey: toutImageKey, title: toutTitle, flexRightToLeftTriangleColor: Colors.white),
             SliverList(delegate: SliverChildListDelegate([
               Padding(padding: EdgeInsets.zero, child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -114,8 +115,8 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
                       _buildLabel(Localization().getStringEx('panel.appointment.schedule.type.label', 'APPOINTMENT TYPE'), required: true),
                       _buildAppontmentTypeDropdown(),
 
-                      _buildLabel(Localization().getStringEx('panel.appointment.schedule.notes.label', 'NOTES'), required: widget.scheduleParam.timeSlot?.notesRequired == true),
-                      _buildNotesTextField(),
+                      //_buildLabel(Localization().getStringEx('panel.appointment.schedule.notes.label', 'NOTES'), required: widget.scheduleParam.timeSlot?.notesRequired == true),
+                      //_buildNotesTextField(),
                     ])
                   )
                 ])
@@ -195,6 +196,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ),
   );
 
+  // ignore: unused_element
   Widget _buildNotesTextField() => Padding(padding: EdgeInsets.only(bottom: 8), child:
     Stack(children: [
       Container(
@@ -286,34 +288,29 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   void _onSubmit() {
     Analytics().logSelect(target: 'Submit');
 
-    if ((widget.scheduleParam.timeSlot?.notesRequired == true) && _notesController.text.isEmpty) {
+    /*if ((widget.scheduleParam.timeSlot?.notesRequired == true) && _notesController.text.isEmpty) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.appointment.schedule.notes.empty.message', 'Please fill your notes.')).then((_) => _notesFocus.requestFocus());
       return;
-    }
+    }*/
 
     setStateIfMounted(() {
       _isSubmitting = true;
     });
 
     Future<Appointment?> processAppointment = (widget.sourceAppointment == null) ?
-      Appointments().createAppointment(Appointment(
+      Appointments().createAppointment(
         type: _appointmentType,
-
         provider: widget.scheduleParam.provider,
         unit: widget.scheduleParam.unit,
+        host: widget.scheduleParam.host,
         timeSlot: widget.scheduleParam.timeSlot,
-        notes: _notesController.text,
-
-        dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
-      )) :
-      Appointments().updateAppointment(Appointment.fromOther(widget.sourceAppointment,
+        answers: widget.scheduleParam.answers,
+      ) :
+      Appointments().updateAppointment(widget.sourceAppointment!,
         type: _appointmentType,
         timeSlot: widget.scheduleParam.timeSlot,
-        notes: _notesController.text,
-        dateTimeUtc: widget.scheduleParam.timeSlot?.startTimeUtc,
-
-        cancelled: false,
-      ));
+        answers: widget.scheduleParam.answers,
+      );
 
     processAppointment.then((Appointment? appointment) {
       String message = (widget.sourceAppointment == null) ?
@@ -343,11 +340,11 @@ class AppointmentScheduleParam {
   final AppointmentUnit? unit;
   final AppointmentHost? host;
   final AppointmentTimeSlot? timeSlot;
-  final List<AppointmentQuestion>? questions;
+  final List<AppointmentAnswer>? answers;
 
   AppointmentScheduleParam({
     this.providers, this.provider,
-    this.unit, this.host, this.timeSlot, this.questions,
+    this.unit, this.host, this.timeSlot, this.answers,
   });
 
   factory AppointmentScheduleParam.fromOther(AppointmentScheduleParam? other, {
@@ -356,22 +353,22 @@ class AppointmentScheduleParam {
     AppointmentUnit? unit,
     AppointmentHost? host,
     AppointmentTimeSlot? timeSlot,
-    List<AppointmentQuestion>? questions,
+    List<AppointmentAnswer>? answers,
   }) => AppointmentScheduleParam(
     providers: providers ?? other?.providers,
     provider: provider ?? other?.provider,
     unit: unit ?? other?.unit,
     host: host ?? other?.host,
     timeSlot: timeSlot ?? other?.timeSlot,
-    questions: questions ?? other?.questions,
+    answers: answers ?? other?.answers,
   );
 
   factory AppointmentScheduleParam.fromAppointment(Appointment? appointment) => AppointmentScheduleParam(
     provider: appointment?.provider,
     unit: appointment?.unit,
     host: appointment?.host,
-    timeSlot: appointment?.timeSlot,
-    questions: appointment?.questions,
+    timeSlot: AppointmentTimeSlot.fromAppointment(appointment),
+    answers: appointment?.answers,
   );
 
 }

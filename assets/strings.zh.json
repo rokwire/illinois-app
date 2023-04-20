@@ -2753,7 +2753,7 @@
 	"panel.appointment.reschedule.notes.submit.failed.message": "Failed to reschedule appointment:",
 
 	"panel.appointment.schedule.time.header.title": "Schedule Appointment",
-	"panel.appointment.schedule.time.label.current.appointment": "Showing avalable appointments for:",
+	"panel.appointment.schedule.time.label.current.appointment": "Showing available appointments for:",
 	"panel.appointment.schedule.time.button.select.date.title": "Select Alternative Date",
 	"panel.appointment.schedule.time.button.select.date.hint": "",
 	"panel.appointment.schedule.time.button.continue.title": "Next",
@@ -2766,6 +2766,11 @@
 	"panel.appointment.reschedule.time.label.unknown": "Unknown",
 
 	"panel.appointment.schedule.unit.header.title": "Schedule Appointment",
+	"panel.appointment.schedule.host.header.title": "Schedule Appointment",
+
+	"panel.appointment.schedule.questions.label.heading": "Appointment Questions",
+	"panel.appointment.schedule.questions.header.title": "Schedule Appointment",
+	"panel.appointment.reschedule.questions.header.title": "Reschedule Appointment",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 	"widget.game_day.label.no_games":"今天沒有比賽。",

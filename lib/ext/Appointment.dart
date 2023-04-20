@@ -1,6 +1,5 @@
 
 import 'package:illinois/model/wellness/Appointment.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -12,11 +11,11 @@ import 'package:sprintf/sprintf.dart';
 
 extension AppointmentExt on Appointment {
 
-  String? get displayDate =>
-    AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(startDateTimeUtc), format: 'MMM dd, h:mm a');
+  String? get displayScheduleTime =>
+    AppointmentTimeSlotExt.getDisplayScheduleTime(startTimeUtc, endTimeUtc);
 
   int? get startMinutesSinceMidnightUtc =>
-    AppointmentTimeSlotExt.getStartMinutesSinceMidnightUtc(startDateTimeUtc);
+    AppointmentTimeSlotExt.getStartMinutesSinceMidnightUtc(startTimeUtc);
 
   String? get displayHostName =>
     host?.displayName;
@@ -64,17 +63,18 @@ extension AppointmentHostExt on AppointmentHost {
 extension AppointmentTimeSlotExt on AppointmentTimeSlot {
 
   String? get displayScheduleTime =>
-    getDisplayScheduleTime(startTime, endTime);
+    getDisplayScheduleTime(startTimeUtc, endTimeUtc);
 
-  static String? getDisplayScheduleTime(DateTime? startTime, DateTime? endTime) {
-    if (startTime != null) {
-      if (endTime != null) {
-        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy hh:mm').format(startTime);
-        String endTimeStr = DateFormat('hh:mm aaa').format(endTime);
+  static String? getDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
+    if (startTimeUtc != null) {
+      if (endTimeUtc != null) {
+        //AppDateTime().getDeviceTimeFromUtcTime(startTime)
+        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy hh:mm').format(startTimeUtc.toLocal());
+        String endTimeStr = DateFormat('hh:mm aaa').format(endTimeUtc.toLocal());
         return "$startTimeStr - $endTimeStr";
       }
       else {
-        return DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(startTime);
+        return DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(startTimeUtc.toLocal());
       }
     }
     return null;
