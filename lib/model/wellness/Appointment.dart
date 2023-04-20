@@ -765,9 +765,9 @@ class AppointmentQuestion {
 /// AppointmentQuestionType
 
 class AppointmentQuestionType {
-  static const AppointmentQuestionType edit = AppointmentQuestionType._internal('edit');
-  static const AppointmentQuestionType list = AppointmentQuestionType._internal('list');
-  static const AppointmentQuestionType multiList = AppointmentQuestionType._internal('multi-list');
+  static const AppointmentQuestionType text = AppointmentQuestionType._internal('text');
+  static const AppointmentQuestionType select = AppointmentQuestionType._internal('select');
+  static const AppointmentQuestionType multiSelect = AppointmentQuestionType._internal('multi-select');
   static const AppointmentQuestionType checkbox = AppointmentQuestionType._internal('checkbox');
 
   final String _value;

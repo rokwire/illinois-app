@@ -557,9 +557,9 @@ class Appointments with Service implements NotificationsListener {
   }
 
   List<AppointmentQuestion> _sampleQuestions({bool withAnswers = false}) => <AppointmentQuestion>[
-    AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.edit, required: true, answer: withAnswers ? "I don't know." : null),
-    AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.list, values: ["Bellow 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true, answer: withAnswers ? "36-37℃" : null),
-    AppointmentQuestion(id: "33", title: "What are your symptoms?", type: AppointmentQuestionType.multiList, values: ["Fever", "Chills", "Shaking or Shivering", "Shortness of breath", "Difficulty breathing", "Muscle or joint pain", "Fatigue", "Loss of taste and/or smell", "Fever or chills", "Cough", "Sore Throat", "Nausea or vomiting", "Diarrhea"], required: true, answer: withAnswers ? "Fever\nChills\nCough" : null),
+    AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.text, required: true, answer: withAnswers ? "I don't know." : null),
+    AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.select, values: ["Bellow 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true, answer: withAnswers ? "36-37℃" : null),
+    AppointmentQuestion(id: "33", title: "What are your symptoms?", type: AppointmentQuestionType.multiSelect, values: ["Fever", "Chills", "Shaking or Shivering", "Shortness of breath", "Difficulty breathing", "Muscle or joint pain", "Fatigue", "Loss of taste and/or smell", "Fever or chills", "Cough", "Sore Throat", "Nausea or vomiting", "Diarrhea"], required: true, answer: withAnswers ? "Fever\nChills\nCough" : null),
     AppointmentQuestion(id: "34", title: "Are you feel sick?", type: AppointmentQuestionType.checkbox, required: true, answer: withAnswers ? "true" : null),
   ];
 

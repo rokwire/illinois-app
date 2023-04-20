@@ -61,12 +61,12 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
         String? questionId = question.id;
         if (questionId != null) {
           String? answer = question.answer;
-          if (question.type == AppointmentQuestionType.edit) {
+          if (question.type == AppointmentQuestionType.text) {
             _textControllers[questionId] = TextEditingController(text: answer);
             _focusNodes[questionId] = FocusNode();
           }
 
-          List<String>? answers = (question.type == AppointmentQuestionType.multiList) ? answer?.split('\n') : null;
+          List<String>? answers = (question.type == AppointmentQuestionType.multiSelect) ? answer?.split('\n') : null;
           if (answers != null) {
             _selection[questionId] = LinkedHashSet<String>.from(answers.reversed);
           }
@@ -170,13 +170,13 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
   }
 
   Widget _buildQuestionBody(AppointmentQuestion question) {
-    if (question.type == AppointmentQuestionType.edit) {
+    if (question.type == AppointmentQuestionType.text) {
       return _buildQuestionEdit(question);
     }
-    else if (question.type == AppointmentQuestionType.list) {
+    else if (question.type == AppointmentQuestionType.select) {
       return _buildQuestionAnswersList(question);
     }
-    else if (question.type == AppointmentQuestionType.multiList) {
+    else if (question.type == AppointmentQuestionType.multiSelect) {
       return _buildQuestionAnswersList(question);
     }
     else if (question.type == AppointmentQuestionType.checkbox) {
@@ -240,7 +240,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     bool selected = selectedAnswers?.contains(answer) ?? false;
     String semanticsValue = selected ? Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
-    String imageKey = (question.type == AppointmentQuestionType.multiList) ?
+    String imageKey = (question.type == AppointmentQuestionType.multiSelect) ?
       (selected ? "check-box-filled" : "box-outline-gray") :
       (selected ? "check-circle-filled" : "circle-outline");
     return Semantics(label: answer, value: semanticsValue, button: true, child:
@@ -276,7 +276,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
       }
       else if (questionId != null) {
         selectedAnswers ??= (_selection[questionId] = LinkedHashSet<String>());
-        if (question.type == AppointmentQuestionType.list) {
+        if (question.type == AppointmentQuestionType.select) {
           selectedAnswers.clear();
         }
         selectedAnswers.add(answer);
