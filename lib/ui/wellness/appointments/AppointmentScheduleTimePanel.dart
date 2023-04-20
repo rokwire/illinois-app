@@ -233,7 +233,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     return Padding(padding: EdgeInsets.all(16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text((widget.sourceAppointment == null) ?
-          Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing avalable appointments for:') :
+          Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing available appointments for:') :
           Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New Appointment:'),
           style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
         ),

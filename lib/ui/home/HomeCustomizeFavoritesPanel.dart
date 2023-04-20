@@ -449,10 +449,10 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
 
   void _setFavorite({required String code, required bool value}) {
     HomeFavorite favorite = HomeFavorite(code);
-    List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite.id}']);
-    if (avalableSectionFavorites != null) {
+    List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite.id}']);
+    if (availableSectionFavorites != null) {
       List<Favorite> favorites = <Favorite>[favorite];
-      for (String sectionEntry in avalableSectionFavorites) {
+      for (String sectionEntry in availableSectionFavorites) {
         favorites.add(HomeFavorite(sectionEntry, category: favorite.id));
       }
       Auth2().prefs?.setListFavorite(favorites, value);
@@ -624,9 +624,9 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   }
 
   void _setSectionFavorites(String favoriteId, bool value) {
-      List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.$favoriteId']);            
-      if (avalableSectionFavorites != null) {
-        Iterable<Favorite> favorites = avalableSectionFavorites.map((e) => HomeFavorite(e, category: favoriteId));
+      List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.$favoriteId']);            
+      if (availableSectionFavorites != null) {
+        Iterable<Favorite> favorites = availableSectionFavorites.map((e) => HomeFavorite(e, category: favoriteId));
         Auth2().prefs?.setListFavorite(favorites, value);
       }
   }
