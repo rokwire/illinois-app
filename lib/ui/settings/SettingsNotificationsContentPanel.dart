@@ -82,7 +82,6 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeMap,
       FirebaseMessaging.payloadTypeAcademics,
       FirebaseMessaging.payloadTypeWellness,
-      FirebaseMessaging.payloadTypeInbox,
       FirebaseMessaging.payloadTypeEventDetail,
       FirebaseMessaging.payloadTypeGameDetail,
       FirebaseMessaging.payloadTypeAthleticsGameStarted,
