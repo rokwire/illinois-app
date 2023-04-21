@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Polls.dart';
+import 'package:illinois/service/OccupationMatching.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
@@ -90,15 +91,6 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
           textColor: Styles().colors?.fillColorPrimaryVariant,
           backgroundColor: Styles().colors?.surface,
           onTap: _onTapStartEvaluation
-        )),
-        // TODO: Temporary button for development so that we dont' have to complete the BESSI everytime to check the new pages
-        Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
-          label: Localization().getStringEx("panel.skills_self_evaluation.go_to_results.button.label", 'Go To Results'),
-          textColor: Styles().colors?.fillColorPrimaryVariant,
-          backgroundColor: Styles().colors?.surface,
-          onTap: () {
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel()));
-                  }
         )),
       ]),),
       decoration: BoxDecoration(
@@ -256,6 +248,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   void _gotoResults(SurveyResponse? response) {
+    OccupationMatching().postResults(surveyResponse: response);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
   }
 

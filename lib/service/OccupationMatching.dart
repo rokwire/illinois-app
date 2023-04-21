@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/occupation/Occupation.dart';
 import 'package:illinois/model/occupation/OccupationMatch.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -48,9 +49,15 @@ class OccupationMatching with Service {
     return null;
   }
 
-  Future<void> postResults({required Map<String, dynamic> surveyResult}) async {
+  Future<void> postResults({required SurveyResponse? surveyResponse}) async {
+    Map<String, dynamic> surveyResult = {
+      "scores": surveyResponse?.survey.stats?.scores.entries.map((mapEntry) => {
+        "workstyle": mapEntry.key,
+        "score": mapEntry.value,
+      }).toList(),
+    };
     String url = '$_bbBaseUrl/survey-data';
-    Network().post(url, auth: Auth2(), body: jsonEncode(surveyResult),);
+    Network().post(url, auth: Auth2(), body: jsonEncode(surveyResult));
   }
 
   Future<List<OccupationMatch>?> getOccupationsByKeyword({required String keyword}) {
