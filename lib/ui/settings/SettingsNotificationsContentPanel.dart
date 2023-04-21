@@ -77,6 +77,11 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       Inbox().readMessage(message.messageId);
     }
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
+      FirebaseMessaging.payloadTypeHome,
+      FirebaseMessaging.payloadTypeBrowse,
+      FirebaseMessaging.payloadTypeMap,
+      FirebaseMessaging.payloadTypeAcademics,
+      FirebaseMessaging.payloadTypeWellness,
       FirebaseMessaging.payloadTypeEventDetail,
       FirebaseMessaging.payloadTypeGameDetail,
       FirebaseMessaging.payloadTypeAthleticsGameStarted,
