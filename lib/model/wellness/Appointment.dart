@@ -871,8 +871,8 @@ class AppointmentTimeSlot {
   final String? unitId;
   final DateTime? startTimeUtc;
   final DateTime? endTimeUtc;
-  final String? capacity;
-  final bool? filled;
+  final int? capacity;
+  final int? filled;
   final Map<String, dynamic>? details;
 
   AppointmentTimeSlot({this.providerId, this.unitId, this.startTimeUtc, this.endTimeUtc, this.capacity, this.filled, this.details});
@@ -890,8 +890,8 @@ class AppointmentTimeSlot {
       unitId: JsonUtils.stringValue(json['unit_id']),
       startTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['start_time']), format: dateTimeFormat, isUtc: true),
       endTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_time']), format: dateTimeFormat, isUtc: true),
-      capacity: JsonUtils.stringValue(json['capacity']),
-      filled: JsonUtils.boolValue(json['filled']),
+      capacity: JsonUtils.intValue(json['capacity']),
+      filled: JsonUtils.intValue(json['filled']),
       details: JsonUtils.mapValue(json['details']),
     ) : null;
   }
@@ -957,4 +957,5 @@ class AppointmentTimeSlot {
 
   DateTime? get startTime => startTimeUtc?.toLocal();
   DateTime? get endTime => endTimeUtc?.toLocal();
+  bool get available => ((capacity != null) && (filled != null) && (0 <= filled!) && (filled! < capacity!));
 }

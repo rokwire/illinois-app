@@ -541,7 +541,8 @@ class Appointments with Service implements NotificationsListener {
       result.add(AppointmentTimeSlot(
         startTimeUtc: dateTimeUtc,
         endTimeUtc: endDateTime,
-        filled: Random().nextInt(4) == 0,
+        capacity: 16,
+        filled: (Random().nextInt(4) == 0) ? 16 : 0,
       ));
       dateTimeUtc = endDateTime;
     }
