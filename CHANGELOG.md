@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Appointments model synked with backend [#3149](https://github.com/rokwire/illinois-app/issues/3149).
 - My Groups empty message change [#3066](https://github.com/rokwire/illinois-app/issues/3066).
+### Fixed
+- Fixed system widgets update in Home panel [#3111](https://github.com/rokwire/illinois-app/issues/3111).
 
 ## [4.3.45] - 2023-04-20
 ### Added
