@@ -404,7 +404,7 @@ extension ExploreMap on Explore {
 
     if (building != null) {
       Position? userLocation = await LocationServices().location;
-      BuildingEntrance? buildingEntrance = (this as Building).nearstEntrance(userLocation, requireAda: StudentCourses().requireAda);
+      BuildingEntrance? buildingEntrance = building.nearstEntrance(userLocation, requireAda: StudentCourses().requireAda);
       if ((buildingEntrance != null) && buildingEntrance.hasValidLocation) {
         return LatLng(buildingEntrance.latitude!, buildingEntrance.longitude!);
       }

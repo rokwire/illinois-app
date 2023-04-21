@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed system widgets update in Home panel [#3111](https://github.com/rokwire/illinois-app/issues/3111).
 - Handling tap action in inbox notifications [#3159](https://github.com/rokwire/illinois-app/issues/3159).
+- Fixed buildings target location evaluation for maps directions [#3100](https://github.com/rokwire/illinois-app/issues/3100).
 
 ## [4.3.45] - 2023-04-20
 ### Added
