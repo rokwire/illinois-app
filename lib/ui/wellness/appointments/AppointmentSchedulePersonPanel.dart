@@ -207,6 +207,13 @@ class _AppointmentPersonCard extends StatelessWidget {
                         ),
                       ),*/
 
+                      Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Expanded(child:
+                            Text(person.notes ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                          ),
+                        ],),
+                      ),
 
                     ]),
                   ),
@@ -222,13 +229,6 @@ class _AppointmentPersonCard extends StatelessWidget {
                   ),
                 ]),
 
-                Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Expanded(child:
-                      Text(person.notes ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
-                    ),
-                  ],),
-                ),
 
               ])
             )
