@@ -563,10 +563,10 @@ class Appointments with Service implements NotificationsListener {
   ];
 
   List<AppointmentAnswer> get _sampleAnswers => <AppointmentAnswer>[
-    AppointmentAnswer(questionId: "31", answers: ["I don't know."]),
-    AppointmentAnswer(questionId: "32", answers: ["36-37℃"]),
-    AppointmentAnswer(questionId: "33", answers: ["Fever", "Chills", "Cough"]),
-    AppointmentAnswer(questionId: "34", answers: ["true"]),
+    AppointmentAnswer(questionId: "31", values: ["I don't know."]),
+    AppointmentAnswer(questionId: "32", values: ["36-37℃"]),
+    AppointmentAnswer(questionId: "33", values: ["Fever", "Chills", "Cough"]),
+    AppointmentAnswer(questionId: "34", values: ["true"]),
   ];
 
   // Time Slots And Questions

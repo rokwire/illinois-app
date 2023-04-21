@@ -737,17 +737,17 @@ class AppointmentAnswer {
   final String? providerId;
   final String? unitId;
   final String? hostId;
-  final List<String>? answers;
+  final List<String>? values;
 
-  AppointmentAnswer({this.questionId, this.providerId, this.unitId, this.hostId, this.answers});
+  AppointmentAnswer({this.questionId, this.providerId, this.unitId, this.hostId, this.values});
 
-  factory AppointmentAnswer.fromQuestion(AppointmentQuestion? question, { List<String>? answers }) =>
+  factory AppointmentAnswer.fromQuestion(AppointmentQuestion? question, { List<String>? values }) =>
     AppointmentAnswer(
       questionId: question?.id,
       providerId: question?.providerId,
       unitId: question?.unitId,
       hostId: question?.hostId,
-      answers: answers, //TBD: values
+      values: values,
     );
 
   // JSON Serialization
@@ -758,7 +758,7 @@ class AppointmentAnswer {
       providerId: JsonUtils.stringValue(json['provider_id']),
       unitId: JsonUtils.stringValue(json['unit_id']),
       hostId: JsonUtils.stringValue(json['person_id']),
-      answers: JsonUtils.stringListValue(json['answer']),
+      values: JsonUtils.stringListValue(json['values']),
     ) : null;
   }
 
@@ -768,7 +768,7 @@ class AppointmentAnswer {
       'provider_id': providerId,
       'unit_id': unitId,
       'person_id': hostId,
-      'answers': answers,
+      'values': values,
     };
   }
 
@@ -814,7 +814,7 @@ class AppointmentAnswer {
     (providerId == other.providerId) &&
     (unitId == other.unitId) &&
     (hostId == other.hostId) &&
-    (DeepCollectionEquality().equals(answers, other.answers));
+    (DeepCollectionEquality().equals(values, other.values));
 
   @override
   int get hashCode =>
@@ -822,7 +822,7 @@ class AppointmentAnswer {
     (providerId?.hashCode ?? 0) ^
     (unitId?.hashCode ?? 0) ^
     (hostId?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(answers));
+    (DeepCollectionEquality().hash(values));
 
   // Accessories
 
