@@ -470,18 +470,15 @@ class AppointmentProvider {
 /// AppointmentUnit
 
 class AppointmentUnit {
-  static final String descriptionDetailKey = 'description';
-
   final String? id;
   final String? providerId;
   final String? name;
   final String? address;
-  final AppointmentLocation? location;
   final String? hoursOfOperation;
   final String? imageUrl;
-  final Map<String, dynamic>? details;
+  final String? notes;
 
-  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.location, this.hoursOfOperation, this.imageUrl, this.details});
+  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.hoursOfOperation, this.imageUrl, this.notes});
 
   // JSON Serialization
 
@@ -491,10 +488,9 @@ class AppointmentUnit {
       providerId: JsonUtils.stringValue(json['provider_id']),
       name: JsonUtils.stringValue(json['name']),
       address: JsonUtils.stringValue(json['address']),
-      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
       hoursOfOperation: JsonUtils.stringValue(json['hours_of_operations']),
       imageUrl: JsonUtils.stringValue(json['image_url']),
-      details: JsonUtils.mapValue(json['details']),
+      notes: JsonUtils.stringValue(json['notes']),
     ) : null;
   }
 
@@ -504,10 +500,9 @@ class AppointmentUnit {
       'provider_id': providerId,
       'name': name,
       'address': address,
-      'location': location?.toJson(),
       'hours_of_operations': hoursOfOperation,
       'image_url': imageUrl,
-      'details': details,
+      'notes': notes,
     };
   }
 
@@ -542,10 +537,9 @@ class AppointmentUnit {
     (providerId == other.providerId) &&
     (name == other.name) &&
     (address == other.address) &&
-    (location == other.location) &&
     (hoursOfOperation == other.hoursOfOperation) &&
     (imageUrl == other.imageUrl) &&
-    (DeepCollectionEquality().equals(details, other.details));
+    (notes == other.notes);
 
   @override
   int get hashCode =>
@@ -553,15 +547,11 @@ class AppointmentUnit {
     (providerId?.hashCode ?? 0) ^
     (name?.hashCode ?? 0) ^
     (address?.hashCode ?? 0) ^
-    (location?.hashCode ?? 0) ^
     (hoursOfOperation?.hashCode ?? 0) ^
     (imageUrl?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(details));
+    (notes?.hashCode ?? 0);
 
   // Accessories
-
-  String? get desriptionDetail =>
-    (details != null) ? JsonUtils.stringValue(details![descriptionDetailKey]) : null;
 
   //...
 }

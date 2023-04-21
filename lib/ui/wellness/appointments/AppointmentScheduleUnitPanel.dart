@@ -298,9 +298,9 @@ class _AppointmentUnitCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const String imageKey = 'photo-building';
-    String? unitAddress = unit.address ?? unit.location?.address;
+    String? unitAddress = unit.address;
     String? unitHours = unit.hoursOfOperation;
-    String? unitDesription = unit.desriptionDetail;
+    String? unitDesription = unit.notes;
     
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
@@ -344,24 +344,24 @@ class _AppointmentUnitCard extends StatelessWidget {
                       ),
                     ]),
                   ),
-                  Visibility(visible: StringUtils.isNotEmpty(unitDesription), child:
-                    Padding(padding: EdgeInsets.only(left: 16), child:
-                      Semantics(button: true, label: "appointment image", hint: "Double tap to expand image", child:
-                        SizedBox(width: 72, height: 72, child:
-                          StringUtils.isNotEmpty(unit.imageUrl) ?
-                            Image.network(unit.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
-                            Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill)
-                        ),
+                  Padding(padding: EdgeInsets.only(left: 16), child:
+                    Semantics(button: true, label: "appointment image", hint: "Double tap to expand image", child:
+                      SizedBox(width: 72, height: 72, child:
+                        StringUtils.isNotEmpty(unit.imageUrl) ?
+                          Image.network(unit.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
+                          Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill)
                       ),
                     ),
                   ),
                 ]),
-                Padding(padding: EdgeInsets.only(top: 4), child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Expanded(child:
-                      Text(unit.desriptionDetail ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
-                    ),
-                  ],),
+                Visibility(visible: StringUtils.isNotEmpty(unitDesription), child:
+                  Padding(padding: EdgeInsets.only(top: 4), child:
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Expanded(child:
+                        Text(unitDesription ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                      ),
+                    ],),
+                  ),
                 ),
               ]),
             ),

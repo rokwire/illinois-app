@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -129,7 +128,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
           Styles().images?.getImage('location', excludeFromSemantics: true),
         ),
         Expanded(child:
-          Text(widget.scheduleParam.unit?.location?.address ?? widget.sourceAppointment?.location?.address ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline"))
+          Text(widget.scheduleParam.unit?.address ?? widget.sourceAppointment?.unit?.address ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline"))
         ),
       ],),
     ),
@@ -218,10 +217,9 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   void _onLocation() {
     Analytics().logSelect(target: 'Location');
     //TBD: Maps2 panel with marker
-    AppointmentLocation? unitLocation = widget.scheduleParam.unit?.location ?? widget.sourceAppointment?.location;
-    dynamic destination = (unitLocation != null) ? (((unitLocation.latitude != null) && (unitLocation.longitude != null)) ? LatLng(unitLocation.latitude!, unitLocation.longitude!) : unitLocation.address) : null;
-    if (destination != null) {
-      GeoMapUtils.launchDirections(destination: destination, travelMode: GeoMapUtils.traveModeWalking);
+    String? address = widget.scheduleParam.unit?.address ?? widget.sourceAppointment?.unit?.address;
+    if (address != null) {
+      GeoMapUtils.launchDirections(destination: address, travelMode: GeoMapUtils.traveModeWalking);
     }
   }
 
