@@ -323,7 +323,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     Appointments().loadTimeSlotsAndQuestions(
       providerId: widget.scheduleParam.provider?.id,
       unitId: widget.scheduleParam.unit?.id,
-      hostId: widget.scheduleParam.host?.id,
+      personId: widget.scheduleParam.person?.id,
       dateLocal: _selectedDate).then((AppointmentTimeSlotsAndQuestions? result) {
       if (mounted) {
         setState(() {

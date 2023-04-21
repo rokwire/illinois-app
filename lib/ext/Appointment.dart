@@ -18,7 +18,7 @@ extension AppointmentExt on Appointment {
     AppointmentTimeSlotExt.getStartMinutesSinceMidnightUtc(startTimeUtc);
 
   String? get displayHostName =>
-    host?.displayName;
+    person?.name ?? host?.displayName;
 
   String get displayProviderName =>
     this.provider?.name ?? Localization().getStringEx('model.wellness.appointment.default.provider.label', 'MyMcKinley');
@@ -37,24 +37,7 @@ extension AppointmentExt on Appointment {
 /// AppointmentHost
 
 extension AppointmentHostExt on AppointmentHost {
-
-  String? get displayName {
-    String? fullName = StringUtils.fullName([firstName, lastName]);
-    if (StringUtils.isNotEmpty(fullName) && StringUtils.isNotEmpty(speciality)) {
-      return "$fullName, $speciality";
-    }
-    else if (StringUtils.isNotEmpty(fullName)) {
-      return fullName;
-    }
-    else if (StringUtils.isNotEmpty(speciality)) {
-      return speciality;
-    }
-    else {
-      return null;
-    }
-
-  }
-
+  String? get displayName => StringUtils.fullName([firstName, lastName]);
 }
 
 ///////////////////////////////

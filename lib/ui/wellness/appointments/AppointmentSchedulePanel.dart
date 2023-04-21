@@ -42,25 +42,18 @@ class AppointmentSchedulePanel extends StatefulWidget {
 
 class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
-  final TextEditingController _notesController = TextEditingController();
-  final FocusNode _notesFocus = FocusNode();
-
   late AppointmentType _appointmentType;
-  late String _notes;
 
   bool _isSubmitting = false;
 
   @override
   void initState() {
     _appointmentType = widget.sourceAppointment?.type ?? AppointmentType.in_person;
-    _notesController.text = _notes = widget.sourceAppointment?.notes ?? '';
     super.initState();
   }
 
   @override
   void dispose() {
-    _notesController.dispose();
-    _notesFocus.dispose();
     super.dispose();
   }
 
@@ -102,8 +95,8 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
                       // Location
                       _buildLocationDetail(),
 
-                      // Host
-                      _buildHostDetail(),
+                      // Person
+                      _buildPersonDetail(),
 
                       // Date & Time
                       _buildDateTimeDetail(),
@@ -115,8 +108,6 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
                       _buildLabel(Localization().getStringEx('panel.appointment.schedule.type.label', 'APPOINTMENT TYPE'), required: true),
                       _buildAppontmentTypeDropdown(),
 
-                      //_buildLabel(Localization().getStringEx('panel.appointment.schedule.notes.label', 'NOTES'), required: widget.scheduleParam.timeSlot?.notesRequired == true),
-                      //_buildNotesTextField(),
                     ])
                   )
                 ])
@@ -144,19 +135,16 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ),
   );
 
-  Widget _buildHostDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 6), child:
+  Widget _buildPersonDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 6), child:
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(right: 4), child:
         Styles().images?.getImage('person', excludeFromSemantics: true),
       ),
       Expanded(child:
-        Text(_displayHostName ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+        Text(widget.scheduleParam.person?.name ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
       ),
     ],),
   );
-
-  String? get _displayHostName =>
-    widget.scheduleParam.host?.displayName;
 
   Widget _buildDateTimeDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -196,41 +184,6 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ),
   );
 
-  // ignore: unused_element
-  Widget _buildNotesTextField() => Padding(padding: EdgeInsets.only(bottom: 8), child:
-    Stack(children: [
-      Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1),
-          color: Styles().colors!.white),
-        child: Semantics(textField: true, excludeSemantics: true, value: _notesController.text,
-          label: Localization().getStringEx('panel.appointment.schedule.notes.field', 'NOTES FIELD'),
-          hint: Localization().getStringEx('panel.appointment.schedule.notes.field.hint', ''),
-          child: TextField(controller: _notesController, focusNode: _notesFocus, maxLines: 10,
-            decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8)),
-            style: Styles().textStyles?.getTextStyle('widget.item.regular.thin'),
-            onChanged: _onNoteChanged,
-          )
-        ),
-      ),
-
-      Align(alignment: Alignment.topRight, child:
-        Visibility(visible:  _notesController.text.isNotEmpty, child:
-          Semantics (button: true, excludeSemantics: true,
-            label: Localization().getStringEx('dialog.clear.title', 'Clear'),
-            hint: Localization().getStringEx('dialog.clear.hint', ''),
-            child: GestureDetector(onTap: _onClearNote,
-              child: Container(width: 36, height: 36,
-                child: Align(alignment: Alignment.center,
-                  child: Text('X', style: Styles().textStyles?.getTextStyle('widget.button.title.medium.thin'),),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ],),
-  );
 
   Widget _buildSubmit() => Padding(padding: EdgeInsets.all(16), child:
     Semantics(explicitChildNodes: true, child: 
@@ -272,19 +225,6 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     }
   }
 
-  void _onNoteChanged(String value) {
-    bool wasEmpty = _notes.isEmpty;
-    _notes = value;
-    if (wasEmpty != _notes.isEmpty) {
-      setState(() {});
-    }
-  }
-
-  void _onClearNote() {
-    Analytics().logSelect(target: 'Clear Notes');
-    _notesController.text = _notes = '';
-  }
-
   void _onSubmit() {
     Analytics().logSelect(target: 'Submit');
 
@@ -302,7 +242,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
         type: _appointmentType,
         provider: widget.scheduleParam.provider,
         unit: widget.scheduleParam.unit,
-        host: widget.scheduleParam.host,
+        person: widget.scheduleParam.person,
         timeSlot: widget.scheduleParam.timeSlot,
         answers: widget.scheduleParam.answers,
       ) :
@@ -338,27 +278,24 @@ class AppointmentScheduleParam {
   final List<AppointmentProvider>? providers;
   final AppointmentProvider? provider;
   final AppointmentUnit? unit;
-  final AppointmentHost? host;
+  final AppointmentPerson? person;
   final AppointmentTimeSlot? timeSlot;
   final List<AppointmentAnswer>? answers;
 
-  AppointmentScheduleParam({
-    this.providers, this.provider,
-    this.unit, this.host, this.timeSlot, this.answers,
-  });
+  AppointmentScheduleParam({ this.providers, this.provider, this.unit, this.person, this.timeSlot, this.answers, });
 
   factory AppointmentScheduleParam.fromOther(AppointmentScheduleParam? other, {
     List<AppointmentProvider>? providers,
     AppointmentProvider? provider,
     AppointmentUnit? unit,
-    AppointmentHost? host,
+    AppointmentPerson? person,
     AppointmentTimeSlot? timeSlot,
     List<AppointmentAnswer>? answers,
   }) => AppointmentScheduleParam(
     providers: providers ?? other?.providers,
     provider: provider ?? other?.provider,
     unit: unit ?? other?.unit,
-    host: host ?? other?.host,
+    person: person ?? other?.person,
     timeSlot: timeSlot ?? other?.timeSlot,
     answers: answers ?? other?.answers,
   );
@@ -366,7 +303,7 @@ class AppointmentScheduleParam {
   factory AppointmentScheduleParam.fromAppointment(Appointment? appointment) => AppointmentScheduleParam(
     provider: appointment?.provider,
     unit: appointment?.unit,
-    host: appointment?.host,
+    person: appointment?.person,
     timeSlot: AppointmentTimeSlot.fromAppointment(appointment),
     answers: appointment?.answers,
   );

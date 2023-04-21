@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
@@ -28,21 +27,21 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
-class AppointmentScheduleHostPanel extends StatefulWidget {
+class AppointmentSchedulePersonPanel extends StatefulWidget {
 
   final AppointmentScheduleParam? scheduleParam;
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleHostPanel({Key? key, this.scheduleParam, this.onFinish}) : super(key: key);
+  AppointmentSchedulePersonPanel({Key? key, this.scheduleParam, this.onFinish}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AppointmentScheduleHostPanelState();
+  State<StatefulWidget> createState() => _AppointmentSchedulePersonPanelState();
 }
 
-class _AppointmentScheduleHostPanelState extends State<AppointmentScheduleHostPanel> {
+class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePersonPanel> {
 
-  List<AppointmentHost>? _hosts;
-  bool _isLoadingHosts = false;
+  List<AppointmentPerson>? _persons;
+  bool _isLoadingPersons = false;
 
   @override
   void initState() {
@@ -69,41 +68,41 @@ class _AppointmentScheduleHostPanelState extends State<AppointmentScheduleHostPa
     if (_unitId == null) {
       return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.unit.empty', 'No selected unit'));
     }
-    else if (_isLoadingHosts) {
+    else if (_isLoadingPersons) {
       return _buildLoadingContent();
     }
-    else if (_hosts == null) {
+    else if (_persons == null) {
       return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.hosts.failed', 'Failed to load hosts for unit'));
     }
-    else if (_hosts?.length == 0) {
+    else if (_persons?.length == 0) {
       return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.hosts.empty', 'No hosts available for selected unit'));
     }
     else  {
-      return _buildHostsList();
+      return _buildPersonsList();
     }
   }
 
-  Widget _buildHostsList() {
-    List<Widget> hostsList = <Widget>[];
-    if (_hosts != null) {
-      for (AppointmentHost host in _hosts!) {
-        if (hostsList.isNotEmpty) {
-          hostsList.add(Container(height: 8,));
+  Widget _buildPersonsList() {
+    List<Widget> personsList = <Widget>[];
+    if (_persons != null) {
+      for (AppointmentPerson person in _persons!) {
+        if (personsList.isNotEmpty) {
+          personsList.add(Container(height: 8,));
         }
-        hostsList.add(_AppointmentHostCard(host: host, onTap: () => _onHost(host)));
+        personsList.add(_AppointmentPersonCard(person: person, onTap: () => _onPerson(person)));
       }
     }
-    hostsList.add(Container(height: 24)); // Ensures width for providers dropdown container
+    personsList.add(Container(height: 24)); // Ensures width for providers dropdown container
     
     return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: hostsList)
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: personsList)
     );
   }
 
-  void _onHost(AppointmentHost host) {
+  void _onPerson(AppointmentPerson person) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
       scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
-        host: host
+        person: person
       ),
       onFinish: widget.onFinish,
     )));
@@ -136,29 +135,29 @@ class _AppointmentScheduleHostPanelState extends State<AppointmentScheduleHostPa
     String? providerId = _providerId;
     if ((unitId != null) && (providerId != null)) {
       applyStateIfMounted(() {
-        _isLoadingHosts = true;
+        _isLoadingPersons = true;
       });
-      Appointments().loadHosts(providerId: providerId, unitId: unitId).then((List<AppointmentHost>? result) {
+      Appointments().loadPersons(providerId: providerId, unitId: unitId).then((List<AppointmentPerson>? result) {
         setStateIfMounted(() {
-          _hosts = result;
-          _isLoadingHosts = false;
+          _persons = result;
+          _isLoadingPersons = false;
         });
      });
     }
     else {
       setStateIfMounted(() {
-        _hosts = null;
+        _persons = null;
       });
     }
   }
 }
 
-class _AppointmentHostCard extends StatelessWidget {
+class _AppointmentPersonCard extends StatelessWidget {
 
-  final AppointmentHost host;
+  final AppointmentPerson person;
   final void Function()? onTap;
 
-  _AppointmentHostCard({Key? key, required this.host, this.onTap}) : super(key: key);
+  _AppointmentPersonCard({Key? key, required this.person, this.onTap}) : super(key: key);
 
 
   @override
@@ -169,8 +168,7 @@ class _AppointmentHostCard extends StatelessWidget {
           Container(decoration: BoxDecoration(color: Styles().colors!.surface, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
-                Text(host.speciality?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),),
+                //Text(person.speciality?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),),
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -178,36 +176,36 @@ class _AppointmentHostCard extends StatelessWidget {
                       Padding(padding: EdgeInsets.only(top: 6, bottom: 2), child:
                         Row(children: [
                           Expanded(child:
-                            Text(host.displayName ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
+                            Text(person.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
                           ),
                         ]),
                       ),
 
-                      Visibility(visible: StringUtils.isNotEmpty(host.email), child:
+                      /*Visibility(visible: StringUtils.isNotEmpty(person.email), child:
                         Padding(padding: EdgeInsets.only(top: 4), child:
                           Row(children: [
                             Padding(padding: EdgeInsets.only(right: 4), child:
                               Styles().images?.getImage('mail', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(host.email ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                              Text(person.email ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
                             ),
                           ],),
                         ),
-                      ),
+                      ),*/
 
-                      Visibility(visible: StringUtils.isNotEmpty(host.phone), child:
+                      /*Visibility(visible: StringUtils.isNotEmpty(person.phone), child:
                         Padding(padding: EdgeInsets.only(top: 4), child:
                           Row(children: [
                             Padding(padding: EdgeInsets.only(right: 4), child:
                               Styles().images?.getImage('phone', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(host.phone ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                              Text(person.phone ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
                             ),
                           ],),
                         ),
-                      ),
+                      ),*/
 
 
                     ]),
@@ -216,8 +214,8 @@ class _AppointmentHostCard extends StatelessWidget {
                   Padding(padding: EdgeInsets.only(left: 16), child:
                     Semantics(button: true, label: "host image", hint: "Double tap to expand image", child:
                       SizedBox(width: 72, height: 72, child:
-                        StringUtils.isNotEmpty(host.photoUrl) ?
-                          Image.network(host.photoUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
+                        StringUtils.isNotEmpty(person.imageUrl) ?
+                          Image.network(person.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
                           Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true)
                       ),
                     ),
@@ -227,7 +225,7 @@ class _AppointmentHostCard extends StatelessWidget {
                 Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Expanded(child:
-                      Text(host.description ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                      Text(person.notes ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
                     ),
                   ],),
                 ),

@@ -34,11 +34,11 @@ class Appointment with Explore, Favorite {
 
   final AppointmentProvider? provider;
   final AppointmentUnit? unit;
-  final AppointmentLocation? location;
-  final AppointmentHost? host;
+  final AppointmentPerson? person;
   final List<AppointmentAnswer>? answers;
-  final String? notes;
 
+  final AppointmentHost? host;
+  final AppointmentLocation? location;
   final AppointmentOnlineDetails? onlineDetails;
   final String? instructions;
   final bool? cancelled;
@@ -48,14 +48,14 @@ class Appointment with Explore, Favorite {
 
   Appointment({
     this.id, this.type, this.startTimeUtc, this.endTimeUtc,
-    this.provider, this.unit, this.location, this.host, this.answers, this.notes,
-    this.onlineDetails, this.instructions, this.cancelled,
+    this.provider, this.unit, this.person, this.answers,
+    this.host, this.location, this.onlineDetails, this.instructions, this.cancelled,
   });
 
   factory Appointment.fromOther(Appointment? other, {
     String? id, AppointmentType? type, DateTime? startTimeUtc, DateTime? endTimeUtc,
-    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentLocation? location, AppointmentHost? host, List<AppointmentAnswer>? answers, String? notes, 
-    AppointmentOnlineDetails? onlineDetails, String? instructions, bool? cancelled,
+    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentPerson? person, List<AppointmentAnswer>? answers,
+    AppointmentHost? host, AppointmentLocation? location, AppointmentOnlineDetails? onlineDetails, String? instructions, bool? cancelled,
   }) {
     return Appointment(
       id: id ?? other?.id,
@@ -65,11 +65,11 @@ class Appointment with Explore, Favorite {
       
       provider: provider ?? other?.provider,
       unit: unit ?? other?.unit,
-      location: location ?? other?.location,
-      host: host ?? other?.host,
+      person: person ?? other?.person,
       answers: answers ?? other?.answers,
-      notes: notes ?? other?.notes,
       
+      host: host ?? other?.host,
+      location: location ?? other?.location,
       onlineDetails: onlineDetails ?? other?.onlineDetails,
       instructions: instructions ?? other?.instructions,
       cancelled: cancelled ?? other?.cancelled,
@@ -81,15 +81,15 @@ class Appointment with Explore, Favorite {
       id: JsonUtils.stringValue(json['id']),
       type: appointmentTypeFromString(JsonUtils.stringValue(json['type'])),
       startTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
-      endTimeUtc: DateTimeUtils.dateTimeFromString(json['end_time'], format: _serverDateTimeFormat, isUtc: true),
+      endTimeUtc: DateTimeUtils.dateTimeFromString(json['end_date'], format: _serverDateTimeFormat, isUtc: true),
 
-      provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])) ,
-      unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])) ,
-      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
-      host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])),
+      provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])),
+      unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])),
+      person: AppointmentPerson.fromJson(JsonUtils.mapValue(json['person'])),
       answers: AppointmentAnswer.listFromJson(JsonUtils.listValue(json['answers'])),
-      notes: JsonUtils.stringValue(json['user_notes']),
       
+      host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])),
+      location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
       onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
       instructions: JsonUtils.stringValue(json['instructions']),
       cancelled: JsonUtils.boolValue(json['cancelled']),
@@ -100,15 +100,15 @@ class Appointment with Explore, Favorite {
     'id': id,
     'type': appointmentTypeToString(type),
     'date': DateTimeUtils.utcDateTimeToString(startTimeUtc, format: _serverDateTimeFormat),
-    'end_time': DateTimeUtils.utcDateTimeToString(endTimeUtc, format: _serverDateTimeFormat),
+    'end_date': DateTimeUtils.utcDateTimeToString(endTimeUtc, format: _serverDateTimeFormat),
 
     'provider': provider?.toJson(),
     'unit': unit?.toJson(),
-    'location': location?.toJson(),
-    'host': host?.toJson(),
+    'person': person?.toJson(),
     'answers': AppointmentAnswer.listToJson(answers),
-    'user_notes': notes,
 
+    'host': host?.toJson(),
+    'location': location?.toJson(),
     'online_details': onlineDetails?.toJson(),
     'instructions': instructions,
     'cancelled': cancelled,
@@ -118,19 +118,18 @@ class Appointment with Explore, Favorite {
   @override
   bool operator==(dynamic other) =>
     (other is Appointment) &&
+    (id == other.id) &&
+    (type == other.type) &&
     (startTimeUtc == other.startTimeUtc) &&
     (endTimeUtc == other.endTimeUtc) &&
 
-    (id == other.id) &&
-    (type == other.type) &&
-
     (provider == other.provider) &&
     (unit == other.unit) &&
-    (location == other.location) &&
-    (host == other.host) &&
+    (person == other.person) &&
     (DeepCollectionEquality().equals(answers, other.answers)) &&
-    (notes == other.notes) &&
 
+    (host == other.host) &&
+    (location == other.location) &&
     (onlineDetails == other.onlineDetails) &&
     (instructions == other.instructions) &&
     (cancelled == other.cancelled);
@@ -145,11 +144,11 @@ class Appointment with Explore, Favorite {
 
     (provider?.hashCode ?? 0) ^
     (unit?.hashCode ?? 0) ^
-    (location?.hashCode ?? 0) ^
-    (host?.hashCode ?? 0) ^
+    (person?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(answers)) ^
-    (notes?.hashCode ?? 0) ^
 
+    (host?.hashCode ?? 0) ^
+    (location?.hashCode ?? 0) ^
     (onlineDetails?.hashCode ?? 0) ^
     (instructions?.hashCode ?? 0) ^
     (cancelled?.hashCode ?? 0);
@@ -310,67 +309,37 @@ class AppointmentLocation {
 /// AppointmentHost
 
 class AppointmentHost {
-  final String? id;
   final String? firstName;
   final String? lastName;
-  final String? phone;
-  final String? email;
-  final String? speciality;
-  final String? description;
-  final String? photoUrl;
 
-  AppointmentHost({this.id, this.firstName, this.lastName, this.phone, this.email, this.speciality, this.description, this.photoUrl});
+  AppointmentHost({this.firstName, this.lastName});
 
   // JSON Serialization
 
   static AppointmentHost? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? AppointmentHost(
-      id: JsonUtils.stringValue(json['id']),
       firstName: JsonUtils.stringValue(json['first_name']),
       lastName: JsonUtils.stringValue(json['last_name']),
-      phone: JsonUtils.stringValue(json['phone']),
-      email: JsonUtils.stringValue(json['email']),
-      speciality: JsonUtils.stringValue(json['speciality']),
-      description: JsonUtils.stringValue(json['description']),
-      photoUrl: JsonUtils.stringValue(json['image_url']),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': firstName,
       'first_name': firstName,
       'last_name': lastName,
-      'phone': phone,
-      'email': email,
-      'speciality': speciality,
-      'description': description,
-      'image_url': photoUrl,
     };
   }
 
   @override
   bool operator==(dynamic other) =>
     (other is AppointmentHost) &&
-    (id == other.id) &&
     (firstName == other.firstName) &&
-    (lastName == other.lastName) &&
-    (phone == other.phone) &&
-    (email == other.email) &&
-    (speciality == other.speciality) &&
-    (description == other.description) &&
-    (photoUrl == other.photoUrl);
+    (lastName == other.lastName);
 
   @override
   int get hashCode =>
-    (id?.hashCode ?? 0) ^
     (firstName?.hashCode ?? 0) ^
-    (lastName?.hashCode ?? 0) ^
-    (phone?.hashCode ?? 0) ^
-    (email?.hashCode ?? 0) ^
-    (speciality?.hashCode ?? 0) ^
-    (description?.hashCode ?? 0) ^
-    (photoUrl?.hashCode ?? 0);
+    (lastName?.hashCode ?? 0);
 }
 
 ///////////////////////////////
@@ -598,6 +567,77 @@ class AppointmentUnit {
 }
 
 ///////////////////////////////
+/// AppointmentPerson
+
+class AppointmentPerson {
+  final String? id;
+  final String? name;
+  final String? notes;
+  final String? imageUrl;
+
+  AppointmentPerson({this.id, this.name, this.notes, this.imageUrl});
+
+  // JSON Serialization
+
+  static AppointmentPerson? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentPerson(
+      id: JsonUtils.stringValue(json['id']),
+      name: JsonUtils.stringValue(json['name']),
+      notes: JsonUtils.stringValue(json['notes']),
+      imageUrl: JsonUtils.stringValue(json['image_url']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'notes': imageUrl,
+      'image_url': imageUrl,
+    };
+  }
+
+  static List<AppointmentPerson>? listFromJson(List<dynamic>? jsonList) {
+    List<AppointmentPerson>? result;
+    if (jsonList != null) {
+      result = <AppointmentPerson>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(result, AppointmentPerson.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<AppointmentPerson>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  // Euality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentPerson) &&
+    (id == other.id) &&
+    (name == other.name) &&
+    (notes == other.notes) &&
+    (imageUrl == other.imageUrl);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (name?.hashCode ?? 0) ^
+    (notes?.hashCode ?? 0) ^
+    (imageUrl?.hashCode ?? 0);
+}
+
+///////////////////////////////
 /// AppointmentQuestion
 
 class AppointmentQuestion {
@@ -717,7 +757,7 @@ class AppointmentAnswer {
       providerId: question?.providerId,
       unitId: question?.unitId,
       hostId: question?.hostId,
-      answers: answers,
+      answers: answers, //TBD: values
     );
 
   // JSON Serialization
