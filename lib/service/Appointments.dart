@@ -498,28 +498,28 @@ class Appointments with Service implements NotificationsListener {
   }
 
   List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
-    AppointmentUnit(id: '11', name: 'House of Horror', location: AppointmentLocation(title: '1109 S Lincoln Ave Urbana, IL 61801', phone: '+1 415 370 9574'), hoursOfOperation: '8:00am - 17:30pm', imageUrl: 'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png', details: { AppointmentUnit.descriptionDetailKey : 'Lorem ipsum sit dolor amet.' }),
-    AppointmentUnit(id: '12', name: "Dante's Inferno", location: AppointmentLocation(title: '1103 S Sixth St Champaign, IL 61820', phone: '+1 650 207 7211'), hoursOfOperation: '8:30am - 12:30pm', imageUrl: 'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg', details: { AppointmentUnit.descriptionDetailKey : 'Proin sed lacinia ex.' }),
-    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', location: AppointmentLocation(title: '1402 Springfield Ave Urbana, IL 61801', phone: '+1 217 300 5249'), hoursOfOperation: '7:00am - 9:00pm', imageUrl: 'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png', details: { AppointmentUnit.descriptionDetailKey : 'Class aptent taciti sociosqu ad litora.' }),
-    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm', imageUrl: 'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop', details: { AppointmentUnit.descriptionDetailKey : 'Donec iaculis est eget leo egestas ullamcorper.' }),
+    AppointmentUnit(id: '11', name: 'House of Horror', address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', imageUrl: 'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png', notes: 'Lorem ipsum sit dolor amet.'),
+    AppointmentUnit(id: '12', name: "Dante's Inferno", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', imageUrl: 'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg', notes: 'Proin sed lacinia ex.'),
+    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', address: '1402 Springfield Ave Urbana, IL 61801', hoursOfOperation: '7:00am - 9:00pm', imageUrl: 'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png', notes: 'Class aptent taciti sociosqu ad litora.'),
+    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', address: '505 E Armory Ave  Champaign, IL 61820', hoursOfOperation: '10:00am - 12:30pm', imageUrl: 'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop', notes: 'Donec iaculis est eget leo egestas ullamcorper.'),
   ];
 
-  // Hosts
+  // Persons
 
-  Future<List<AppointmentHost>?> loadHosts({ required String providerId, required String unitId }) async {
+  Future<List<AppointmentPerson>?> loadPersons({ required String providerId, required String unitId }) async {
     await Future.delayed(Duration(milliseconds: 1500));
-    return _sampleHosts;
+    return _samplePersons;
   }
 
-  List<AppointmentHost> get _sampleHosts => <AppointmentHost>[
-    AppointmentHost(id: '21', firstName: 'Agatha', lastName: 'Christie', phone: '+1 415 898 7905', email: 'agatha@example.com',        speciality: 'neurologist',        photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU', description: 'Vulputate mi sit amet mauris. Neque sodales ut etiam sit. Dictum at tempor commodo ullamcorper a. Duis at consectetur lorem donec massa.'),
-    AppointmentHost(id: '22', firstName: 'Amanda', lastName: 'Lear',     phone: '+1 345 345 9455', email: 'amanda@example.com',    speciality: 'physiotherapist',    photoUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg', description: 'Ultricies tristique nulla aliquet enim tortor at auctor. Pulvinar pellentesque habitant morbi tristique senectus. Sapien pellentesque habitant morbi tristique senectus et netus.'),
-    AppointmentHost(id: '23', firstName: 'Bill',   lastName: 'Gates',    phone: '+1 448 826 0934', email: 'bill@example.com',         speciality: 'pumologist',         photoUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg', description: 'Amet dictum sit amet justo donec enim diam. In vitae turpis massa sed elementum tempus egestas sed. In est ante in nibh mauris cursus mattis. Pellentesque adipiscing commodo elit at imperdiet.'),
-    AppointmentHost(id: '24', firstName: 'Chalres', lastName: 'Darwin',  phone: '+1 972 345 9253', email: 'chalres@example.com',     speciality: 'anthropologist',     photoUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*', description: 'Volutpat diam ut venenatis tellus in. Id faucibus nisl tincidunt eget nullam. Enim ut tellus elementum sagittis vitae et leo. Quisque id diam vel quam elementum pulvinar etiam. '),
-    AppointmentHost(id: '25', firstName: 'Fredy',  lastName: 'Mercury',  phone: '+1 485 571 0375', email: 'fredy@example.com',       speciality: 'psychologist',       photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU', description: 'Vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet. Massa eget egestas purus viverra. Sagittis eu volutpat odio facilisis mauris sit amet massa vitae. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique.'),
-    AppointmentHost(id: '26', firstName: 'Frank',  lastName: 'Zapa',     phone: '+1 725 898 9173', email: 'frank@example.com',            speciality: 'surgeon',            photoUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k', description: 'Enim blandit volutpat maecenas volutpat blandit aliquam etiam. A cras semper auctor neque. Aenean sed adipiscing diam donec adipiscing.'),
-    AppointmentHost(id: '27', firstName: 'Michael', lastName: 'Jackson', phone: '+1 123 937 4927', email: 'michael@example.com',            speciality: 'dentist',            photoUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv', description: 'Adipiscing vitae proin sagittis nisl rhoncus. Massa sed elementum tempus egestas. Morbi tristique senectus et netus. Turpis massa sed elementum tempus egestas sed sed.'),
-    AppointmentHost(id: '28', firstName: 'Speedy', lastName: 'Gonzales', phone: '+1 435 928 3827', email: 'speedy@example.com', speciality: 'gastroenterologist', photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
+  List<AppointmentPerson> get _samplePersons => <AppointmentPerson>[
+    AppointmentPerson(id: '21', name: 'Agatha Christie', imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU', notes: 'Vulputate mi sit amet mauris. Neque sodales ut etiam sit. Dictum at tempor commodo ullamcorper a. Duis at consectetur lorem donec massa.'),
+    AppointmentPerson(id: '22', name: 'Amanda Lear',     imageUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg', notes: 'Ultricies tristique nulla aliquet enim tortor at auctor. Pulvinar pellentesque habitant morbi tristique senectus. Sapien pellentesque habitant morbi tristique senectus et netus.'),
+    AppointmentPerson(id: '23', name: 'Bill Gates',      imageUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg', notes: 'Amet dictum sit amet justo donec enim diam. In vitae turpis massa sed elementum tempus egestas sed. In est ante in nibh mauris cursus mattis. Pellentesque adipiscing commodo elit at imperdiet.'),
+    AppointmentPerson(id: '24', name: 'Chalres Darwin',  imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*', notes: 'Volutpat diam ut venenatis tellus in. Id faucibus nisl tincidunt eget nullam. Enim ut tellus elementum sagittis vitae et leo. Quisque id diam vel quam elementum pulvinar etiam. '),
+    AppointmentPerson(id: '25', name: 'Fredy Mercury',   imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU', notes: 'Vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet. Massa eget egestas purus viverra. Sagittis eu volutpat odio facilisis mauris sit amet massa vitae. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique.'),
+    AppointmentPerson(id: '26', name: 'Frank Zapa',      imageUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k', notes: 'Enim blandit volutpat maecenas volutpat blandit aliquam etiam. A cras semper auctor neque. Aenean sed adipiscing diam donec adipiscing.'),
+    AppointmentPerson(id: '27', name: 'Michael Jackson', imageUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv', notes: 'Adipiscing vitae proin sagittis nisl rhoncus. Massa sed elementum tempus egestas. Morbi tristique senectus et netus. Turpis massa sed elementum tempus egestas sed sed.'),
+    AppointmentPerson(id: '28', name: 'Speedy Gonzales', imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
   ];
 
   // Time Slots
@@ -541,7 +541,8 @@ class Appointments with Service implements NotificationsListener {
       result.add(AppointmentTimeSlot(
         startTimeUtc: dateTimeUtc,
         endTimeUtc: endDateTime,
-        filled: Random().nextInt(4) == 0,
+        capacity: 16,
+        filled: (Random().nextInt(4) == 0) ? 16 : 0,
       ));
       dateTimeUtc = endDateTime;
     }
@@ -563,15 +564,15 @@ class Appointments with Service implements NotificationsListener {
   ];
 
   List<AppointmentAnswer> get _sampleAnswers => <AppointmentAnswer>[
-    AppointmentAnswer(questionId: "31", answers: ["I don't know."]),
-    AppointmentAnswer(questionId: "32", answers: ["36-37℃"]),
-    AppointmentAnswer(questionId: "33", answers: ["Fever", "Chills", "Cough"]),
-    AppointmentAnswer(questionId: "34", answers: ["true"]),
+    AppointmentAnswer(questionId: "31", values: ["I don't know."]),
+    AppointmentAnswer(questionId: "32", values: ["36-37℃"]),
+    AppointmentAnswer(questionId: "33", values: ["Fever", "Chills", "Cough"]),
+    AppointmentAnswer(questionId: "34", values: ["true"]),
   ];
 
   // Time Slots And Questions
 
-  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? hostId, required DateTime dateLocal }) async {
+  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? personId, required DateTime dateLocal }) async {
     await Future.delayed(Duration(milliseconds: 1500));
     return AppointmentTimeSlotsAndQuestions(
       timeSlots: _sampleTimeSlots(dateLocal: dateLocal),
@@ -627,8 +628,8 @@ class Appointments with Service implements NotificationsListener {
       meetingPasscode: id.substring(24, 30).toUpperCase(),
     ) : null;
     
-    List<AppointmentHost> hosts = _sampleHosts;
-    AppointmentHost host = hosts[Random().nextInt(hosts.length)];
+    List<AppointmentPerson> persons = _samplePersons;
+    AppointmentPerson person = persons[Random().nextInt(persons.length)];
     
     bool cancelled = ((Random().nextInt(3) % 5) == 0);
 
@@ -643,11 +644,11 @@ class Appointments with Service implements NotificationsListener {
 
       provider: provider,
       unit: unit,
-      location: unit.location,
-      host: host,
+      person: person,
       answers: _sampleAnswers,
-      notes: 'Sample notes (${Random().nextInt(5) + 1})',
 
+      host: null,
+      location: null,
       onlineDetails: details,
       instructions: 'Sample instructions (${5 - Random().nextInt(5) + 1})',
       cancelled: cancelled,
@@ -672,7 +673,7 @@ class Appointments with Service implements NotificationsListener {
   Future<Appointment?> createAppointment({
     AppointmentProvider? provider,
     AppointmentUnit? unit,
-    AppointmentHost? host,
+    AppointmentPerson? person,
     AppointmentType? type,
     AppointmentTimeSlot? timeSlot,
     List<AppointmentAnswer>? answers,
@@ -699,7 +700,7 @@ class Appointments with Service implements NotificationsListener {
     await Future.delayed(Duration(milliseconds: 1500));
     if (Random().nextInt(2) == 0) {
       NotificationService().notify(notifyAppointmentsChanged);
-      return Appointment(provider: provider, unit: unit, host: host, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
+      return Appointment(provider: provider, unit: unit, person: person, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
     }
     else {
       throw AppointmentsException.unknown('Random Create Failure');

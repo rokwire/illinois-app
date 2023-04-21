@@ -17,6 +17,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -419,9 +420,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
 
     if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
-      String text = Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet");
-      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
-        Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+      return Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+          child: RichText(
+              textAlign: TextAlign.left,
+              text: TextSpan(
+                  style: Styles().textStyles?.getTextStyle("widget.message.dark.regular"),
+                  children:[
+                    TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
+                    TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles?.getTextStyle("widget.link.button.title.regular"),
+                        recognizer: TapGestureRecognizer()..onTap = () {
+                          Analytics().logSelect(target: "All Groups");
+                          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
+                        }, ),
+                      TextSpan(text:"."),
+              ]
+              ))
       );
     }
     else {
