@@ -360,7 +360,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     for (AppointmentQuestion question in widget.questions) {
       String? questionId = question.id;
       if (questionId != null) {
-        List<String>? answers = AppointmentAnswer.findInList(widget.sourceAppointment?.answers, questionId: questionId)?.answers;
+        List<String>? answers = AppointmentAnswer.findInList(widget.sourceAppointment?.answers, questionId: questionId)?.values;
         
         if (question.type == AppointmentQuestionType.text) {
           String? answer = ((answers != null) && answers.isNotEmpty) ? answers.first : null;
@@ -393,7 +393,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     List<AppointmentAnswer> answers = <AppointmentAnswer>[];
     for (AppointmentQuestion question in widget.questions) {
       LinkedHashSet<String>? answersList = _selection[question.id];
-      answers.add(AppointmentAnswer.fromQuestion(question, answers: answersList?.toList()));
+      answers.add(AppointmentAnswer.fromQuestion(question, values: answersList?.toList()));
     }
     return answers;
   }

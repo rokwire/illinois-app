@@ -162,7 +162,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
     Color? backColor;
     String textStyle;
-    if (timeSlot.filled == true) {
+    if (!timeSlot.available) {
       backColor = Styles().colors?.background;
       textStyle = 'widget.button.title.disabled';
     }
@@ -193,7 +193,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   void _onTimeSlot(AppointmentTimeSlot timeSlot) {
     if (mounted) {
-      if (timeSlot.filled != true) {
+      if (timeSlot.available) {
         setState(() {
           _selectedSlot = timeSlot;
         });
@@ -323,7 +323,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     Appointments().loadTimeSlotsAndQuestions(
       providerId: widget.scheduleParam.provider?.id,
       unitId: widget.scheduleParam.unit?.id,
-      hostId: widget.scheduleParam.host?.id,
+      personId: widget.scheduleParam.person?.id,
       dateLocal: _selectedDate).then((AppointmentTimeSlotsAndQuestions? result) {
       if (mounted) {
         setState(() {
@@ -333,7 +333,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
           _selectedSlot = _findSelectedTimeSlot(
             result?.timeSlots,
             _selectedSlot?.startMinutesSinceMidnightUtc ?? widget.sourceAppointment?.startMinutesSinceMidnightUtc,
-            slotFilter: _isTimeSlotAvailable
+            slotFilter: (AppointmentTimeSlot timeSlot) => timeSlot.available,
           );
         });
       }
@@ -350,6 +350,4 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     }
     return null;
   }
-
-  static bool _isTimeSlotAvailable(AppointmentTimeSlot timeSlot) => timeSlot.filled != true;
 }
