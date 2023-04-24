@@ -54,7 +54,8 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Appointments.notifyAppointmentsChanged
+      Appointments.notifyAppointmentsChanged,
+      Storage.notifySettingChanged
     ]);
     _initProviders();
     super.initState();
@@ -71,6 +72,11 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   void onNotification(String name, param) {
     if (name == Appointments.notifyAppointmentsChanged) {
       _loadAppointments();
+    }
+    else if (name == Storage.notifySettingChanged) {
+      if (param == Storage.debugUseSampleAppointmentsKey) {
+        _initProviders();
+      }
     }
   }
 
@@ -225,13 +231,18 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
   List<Widget> _buildAppointmentsList() {
     if ((_upcomingAppointments == null) || (_pastAppointments == null)) {
-      return <Widget>[_buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.failed', 'Failed to load appointments'))];
+      return <Widget>[_buildMessageContent(
+        Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.failed', 'Failed to load appointments'))
+      ];
     }
     else  {
       List<Widget> contentList = <Widget>[];
 
       if (_upcomingAppointments?.length == 0) {
-        contentList.add(_buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.upcoming.empty', 'No upcoming appointments for selected provider(s)')));
+        contentList.add(_buildStatusContent(
+          Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.upcoming.empty', 'You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.').
+            replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'))
+        ));
       }
       else {
         for (Appointment appointment in _upcomingAppointments!) {
@@ -241,16 +252,16 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
         }
       }
 
-          
+      contentList.add(_buildHeading(
+        Localization().getStringEx('panel.wellness.appointments2.home.heading.appointments.past', 'Recent Past Appointments'),
+      ));
 
-      if (_upcomingAppointments?.length == 0) {
-        contentList.add(_buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.past.empty', 'No past appointments for selected provider(s)')));
+      if (_pastAppointments?.length == 0) {
+        contentList.add(_buildStatusContent(
+          Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.past.empty', "You don't have recent past appointments linked within the Illinois app.")
+        ));
       }
-      if (_pastAppointments?.length != 0) {
-        contentList.add(Padding(padding: EdgeInsets.only(top: 16), child:
-          Text(Localization().getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'), textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle( "panel.wellness_appointments.title.large"),)
-        ),);
-
+      else {
         for (Appointment appointment in _pastAppointments!) {
           contentList.add(Padding(padding: EdgeInsets.only(top: 16), child:
             AppointmentCard(appointment: appointment)
@@ -260,6 +271,20 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
       return contentList;
     }
+  }
+
+  Widget _buildHeading(String text) {
+    return Padding(padding: EdgeInsets.only(top: 16), child:
+      Text(text, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle('panel.wellness_appointments.title.large'))
+    );
+  }
+
+  Widget _buildStatusContent(String text) {
+    return Padding(padding: EdgeInsets.only(top: 16), child:
+    Row(children: [Expanded(child:
+      Text(text, textAlign: TextAlign.left, style:Styles().textStyles?.getTextStyle("widget.message.medium.thin")),
+    )],)
+    );
   }
 
   Widget _buildLoadingContent() {
@@ -324,7 +349,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     setStateIfMounted(() {
       _isLoadingAppointments = true;
     });
-    Appointments().loadAppointments(providerId: _selectedProvider?.id, tmpProviders: _providers).then((List<Appointment>? result) {
+    Appointments().loadAppointments(providerId: _selectedProvider?.id).then((List<Appointment>? result) {
       setStateIfMounted(() {
         _buildAppointments(result);
         _isLoadingAppointments = false;
