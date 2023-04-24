@@ -29,7 +29,9 @@ import 'package:sprintf/sprintf.dart';
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String? favoriteKey;
   final String? guideEntryId;
-  GuideDetailPanel({ this.guideEntryId, this.favoriteKey = GuideFavorite.favoriteKeyName });
+  final Map<String, dynamic>? guideEntry;
+  final bool showTabBar;
+  GuideDetailPanel({ this.guideEntryId, this.guideEntry, this.favoriteKey = GuideFavorite.favoriteKeyName, this.showTabBar = true });
 
   @override
   _GuideDetailPanelState createState() => _GuideDetailPanelState();
@@ -38,35 +40,20 @@ class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
   Map<String, dynamic> get analyticsPageAttributes => Guide().entryAnalyticsAttributes(Guide().entryById(guideEntryId)) ?? {};
 }
 
-class _GuideDetailPanelState extends State<GuideDetailPanel> implements NotificationsListener {
+class _GuideDetailPanelState extends State<GuideDetailPanel> {
 
   Map<String, dynamic>? _guideEntry;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [
-      Guide.notifyChanged,
-    ]);
-    _guideEntry = Guide().entryById(widget.guideEntryId);
+    _guideEntry = Guide().entryById(widget.guideEntryId) ?? widget.guideEntry;
     RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
     super.initState();
   }
 
   @override
   void dispose() {
-    NotificationService().unsubscribe(this);
     super.dispose();
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Guide.notifyChanged) {
-      setStateIfMounted(() {
-        _guideEntry = Guide().entryById(widget.guideEntryId);
-      });
-    }
   }
 
   @override
@@ -74,16 +61,16 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     return Scaffold(
       appBar: HeaderBar(title: JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'header_title'))),
       body: Column(children: <Widget>[
-          Expanded(child:
-            SingleChildScrollView(child:
-              SafeArea(child:
-                GuideDetailWidget(guideEntryId: widget.guideEntryId, favoriteKey: widget.favoriteKey,)
-              ),
+        Expanded(child:
+          SingleChildScrollView(child:
+            SafeArea(child:
+              GuideDetailWidget(guideEntryId: widget.guideEntryId, guideEntry: widget.guideEntry, favoriteKey: widget.favoriteKey,)
             ),
           ),
-          uiuc.TabBar(),
-        ],),
+        ),
+      ],),
       backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: widget.showTabBar ? uiuc.TabBar() : null,
     );
   }
 }
@@ -91,8 +78,9 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
 class GuideDetailWidget extends StatefulWidget {
   final String? favoriteKey;
   final String? guideEntryId;
+  final Map<String, dynamic>? guideEntry;
   final Color? headingColor;
-  GuideDetailWidget({Key? key, this.guideEntryId, this.favoriteKey, this.headingColor }) : super(key: key);
+  GuideDetailWidget({Key? key, this.guideEntryId, this.guideEntry, this.favoriteKey, this.headingColor }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GuideDetailWidgetState();
@@ -100,6 +88,7 @@ class GuideDetailWidget extends StatefulWidget {
 
 class _GuideDetailWidgetState extends State<GuideDetailWidget> implements NotificationsListener {
   Map<String, dynamic>? _guideEntry;
+  String? _guideEntryId;
   bool _isFavorite = false;
 
   @override
@@ -109,8 +98,9 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
     ]);
-    _guideEntry = Guide().entryById(widget.guideEntryId);
-    _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: widget.guideEntryId));
+    _guideEntry = Guide().entryById(widget.guideEntryId) ?? widget.guideEntry;
+    _guideEntryId = Guide().entryId(_guideEntry);
+    _isFavorite = (widget.favoriteKey != null) && (_guideEntryId != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: _guideEntryId));
     super.initState();
   }
 
@@ -125,13 +115,17 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
   @override
   void onNotification(String name, dynamic param) {
     if (name == Guide.notifyChanged) {
-      setStateIfMounted(() {
-        _guideEntry = Guide().entryById(widget.guideEntryId);
-      });
+      if ((widget.guideEntryId != null) && mounted) {
+        setState(() {
+          _guideEntry = Guide().entryById(widget.guideEntryId) ?? widget.guideEntry;
+          _guideEntryId = Guide().entryId(_guideEntry);
+          _isFavorite = (widget.favoriteKey != null) && (_guideEntryId != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: _guideEntryId));
+        });
+      }
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {
-        _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: widget.guideEntryId));
+        _isFavorite = (widget.favoriteKey != null) && (_guideEntryId != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: _guideEntryId));
       });
     }
     else if (name == FlexUI.notifyChanged) {
@@ -533,7 +527,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     ),);
   }
 
-  bool get _canFavorite => (widget.favoriteKey != null) && Auth2().canFavorite;
+  bool get _canFavorite => (widget.favoriteKey != null) && (_guideEntryId != null) && Auth2().canFavorite;
 
   void _onTapFavorite() {
     if (widget.favoriteKey != null) {

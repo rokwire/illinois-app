@@ -228,7 +228,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   Map<String, dynamic>? entryById(String? id) {
-    return (_contentMap != null) ? _contentMap![id] : null;
+    return ((_contentMap != null) && (id != null)) ? _contentMap![id] : null;
   }
 
   dynamic entryValue(Map<String, dynamic>? entry, String key) {
