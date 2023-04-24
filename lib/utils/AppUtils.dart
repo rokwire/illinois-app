@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppAlert {
   
@@ -356,7 +364,41 @@ class AppDateTimeUtils {
       return 'Just now';
     }
   }
+}
 
+class AppPrivacyPolicy {
+
+  static Future<bool> launch(BuildContext context) async {
+    if ((Config().privacyPolicyUrl != null) && await UrlUtils.isHostAvailable(Config().privacyPolicyUrl)) {
+      if (Platform.isIOS) {
+        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
+        if (privacyPolicyUri != null) {
+          return launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
+        }
+        else {
+          return false;
+        }
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
+        return true;
+      }
+    }
+    else if ((Config().privacyPolicyGuideId != null) && (Guide().entryById(Config().privacyPolicyGuideId) != null)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: Config().privacyPolicyGuideId, showTabBar: true,)));
+      return true;
+    }
+    else {
+      Map<String, dynamic>? privacyPolicyGuideEntry = JsonUtils.decodeMap(await AppBundle.loadString('assets/privacy.notice.json'));
+      if (privacyPolicyGuideEntry != null) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: privacyPolicyGuideEntry, showTabBar: true,)));
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+  }
 }
 
 extension StateExt on State {
