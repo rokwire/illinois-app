@@ -959,3 +959,19 @@ class AppointmentTimeSlot {
   DateTime? get endTime => endTimeUtc?.toLocal();
   bool get available => ((capacity != null) && (filled != null) && (0 <= filled!) && (filled! < capacity!));
 }
+
+///////////////////////////////
+/// AppointmentTimeSlotsAndQuestions
+
+class AppointmentTimeSlotsAndQuestions {
+  final List<AppointmentTimeSlot>? timeSlots;
+  final List<AppointmentQuestion>? questions;
+  AppointmentTimeSlotsAndQuestions({this.timeSlots, this.questions});
+
+  static AppointmentTimeSlotsAndQuestions? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? AppointmentTimeSlotsAndQuestions(
+      timeSlots: AppointmentTimeSlot.listFromJson(JsonUtils.listValue(json['time_slots'])),
+      questions: AppointmentQuestion.listFromJson(JsonUtils.listValue(json['questions'])),
+    ) : null;
+  }
+}

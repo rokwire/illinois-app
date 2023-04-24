@@ -179,6 +179,10 @@ class Storage extends rokwire.Storage {
   bool? get debugUseCanvasLms => getBoolWithName(debugUseCanvasLmsKey);
   set debugUseCanvasLms(bool? value) => setBoolWithName(debugUseCanvasLmsKey, value);
 
+  static const String debugUseSampleAppointmentsKey  = 'debug_use_sample_appontments';
+  bool? get debugUseSampleAppointments => getBoolWithName(debugUseSampleAppointmentsKey);
+  set debugUseSampleAppointments(bool? value) => setBoolWithName(debugUseSampleAppointmentsKey, value);
+
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
