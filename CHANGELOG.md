@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix MyCalendarSettings toggle buttons [#3083](https://github.com/rokwire/illinois-app/issues/3083).
 - Improve Accessibility for HomeToutWidget [#3026](https://github.com/rokwire/illinois-app/issues/3026).
+- Athletics events filter [#3077](https://github.com/rokwire/illinois-app/issues/3077).
 ### Added
 - Show user's profile picture in Wellness Rings [#3081](https://github.com/rokwire/illinois-app/issues/3081).
 
