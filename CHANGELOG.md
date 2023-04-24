@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display video thumb in "Mental Health Resources". Play the video in another panel with subtitles [#3164](https://github.com/rokwire/illinois-app/issues/3164).
 ### Fixed
 - Fix MyCalendarSettings toggle buttons [#3083](https://github.com/rokwire/illinois-app/issues/3083).
+- Improve Accessibility for HomeToutWidget [#3026](https://github.com/rokwire/illinois-app/issues/3026).
 
 ## [4.3.46] - 2023-04-21
 ### Changed
