@@ -562,7 +562,7 @@ class Appointments with Service implements NotificationsListener {
 
   Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? personId, required DateTime dateLocal }) async {
     if (_useSampleData != true) {
-      int startTime = dateLocal.millisecondsSinceEpoch;
+      int startTime = DateUtils.dateOnly(dateLocal).millisecondsSinceEpoch;
       int endTime = startTime + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
       String? url = "${Config().appointmentsUrl}/services/slots?provider-id=$providerId&unit-id=$unitId&person-id=$personId&start-time=$startTime&end-time=$endTime";
       http.Response? response = await Network().get(url, auth: Auth2());
