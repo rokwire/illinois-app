@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.3.47] - 2023-04-24
+### Changed
+- Display video thumb in "Mental Health Resources". Play the video in another panel with subtitles [#3164](https://github.com/rokwire/illinois-app/issues/3164).
+- Hook up appointments APIs [#3167](https://github.com/rokwire/illinois-app/issues/3167).
+- Launch privacy policy content when offline [#3052](https://github.com/rokwire/illinois-app/issues/3052).
+### Fixed
+- Fix MyCalendarSettings toggle buttons [#3083](https://github.com/rokwire/illinois-app/issues/3083).
+- Improve Accessibility for HomeToutWidget [#3026](https://github.com/rokwire/illinois-app/issues/3026).
+- Athletics events filter [#3077](https://github.com/rokwire/illinois-app/issues/3077).
+### Added
+- Show user's profile picture in Wellness Rings [#3081](https://github.com/rokwire/illinois-app/issues/3081).
+
 ## [4.3.46] - 2023-04-21
 ### Changed
 - Appointments model synked with backend [#3149](https://github.com/rokwire/illinois-app/issues/3149).

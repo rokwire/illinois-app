@@ -71,6 +71,8 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
+  Map<String, dynamic> get wellness => JsonUtils.mapValue(content['wellness']) ?? {};
+
   // Getters: Secret Keys
 
   String? get illiniCashAppKey       => JsonUtils.stringValue(secretIlliniCash['app_key']);
@@ -104,13 +106,13 @@ class Config extends rokwire.Config {
   String? get feedbackUrl            => JsonUtils.stringValue(otherUniversityServices['feedback_url']);
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
+  String? get privacyPolicyGuideId   => JsonUtils.stringValue(otherUniversityServices['privacy_policy_guide_id']);
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
   String? get canvasUrl              => JsonUtils.stringValue(otherUniversityServices['canvas_url']);
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get wellness8DimensionsUrl => JsonUtils.stringValue(otherUniversityServices['wellness_8_dimensions_url']);
-  String? get wellnessMentalHealthVideoUrl => JsonUtils.stringValue(otherUniversityServices['wellness_mental_health_video_url']);
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
   String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
@@ -173,6 +175,12 @@ class Config extends rokwire.Config {
   String? get canvasCourseDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['course_format']);
   String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
   List<int>? get canvasMedicineCoursesAccountIds => JsonUtils.listIntsValue(canvas['medicine_courses_account_ids']);
+
+  // Getters: Wellness
+
+  String? get wellnessMentalHealthCcUrl => JsonUtils.stringValue(wellness['mental_health_cc_url']);
+  String? get wellnessMentalHealthThumbUrl => JsonUtils.stringValue(wellness['mental_health_thumb_url']);
+  String? get wellnessMentalHealthVideoUrl => JsonUtils.stringValue(wellness['mental_health_video_url']);
 
   // Getters: McKinley
 

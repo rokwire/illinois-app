@@ -139,14 +139,12 @@ class ExplorePanelState extends State<ExplorePanel>
     
     if (widget.exploreType == ExploreType.Events) {
       _loadEventCategories().then((List<dynamic>? result) {
-        if (mounted) {
-          setState(() {
-            _eventCategories = result;
-          });
-        }
+        _eventCategories = result;
+        _loadExplores();
       });
+    } else {
+      _loadExplores();
     }
-    _loadExplores();
 
     super.initState();
   }

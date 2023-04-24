@@ -106,7 +106,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   Widget _buildImageWidget(String imageUrl) {
     final double triangleHeight = 40;
     return Stack(children: [
-    ModalImageHolder(child: Image.network(imageUrl, semanticLabel: 'tout',
+    Semantics(label: "tout", image: true, excludeSemantics: true, child: ModalImageHolder(child: Image.network(imageUrl, semanticLabel: '',
           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
@@ -118,7 +118,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                 child: Center(
                     child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white))))
             : child;
-      })),
+      }))),
       Align(
           alignment: Alignment.topCenter,
           child: CustomPaint(

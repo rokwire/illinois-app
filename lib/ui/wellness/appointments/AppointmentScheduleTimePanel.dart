@@ -266,7 +266,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _selectedDate = result;
+          _selectedDate = DateUtils.dateOnly(result);
         });
         _loadTimeSlots();
       }

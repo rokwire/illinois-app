@@ -1872,6 +1872,8 @@
     "panel.wellness.sections.health_screener.dropdown.filter.type.title": "Type:",
     "panel.wellness.sections.health_screener.offline.error.msg": "Illinois Health Screener no está disponible sin conexión.",
 
+    "panel.wellness.sections.mental_health.video.title": "Salud mental",
+
     "panel.wellness.todo.tab.daily.label": "Diariamente",
     "panel.wellness.todo.tab.category.label": "Categoría",
     "panel.wellness.todo.tab.weekly.label": "Semanalmente",
@@ -1957,8 +1959,9 @@
     "panel.wellness.appointments2.home.message.hosts.failed": "Failed to load hosts for unit",
     "panel.wellness.appointments2.home.message.hosts.empty": "No hosts available for selected unit",
     "panel.wellness.appointments2.home.message.appointments.failed": "Failed to load appointments",
-    "panel.wellness.appointments2.home.message.appointments.upcoming.empty": "No upcoming appointments for selected provider(s)",
-    "panel.wellness.appointments2.home.message.appointments.past.empty": "No past appointments for selected provider(s)",
+    "panel.wellness.appointments2.home.message.appointments.upcoming.empty": "You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.",
+    "panel.wellness.appointments2.home.message.appointments.past.empty": "You don't have recent past appointments linked within the Illinois app.",
+    "panel.wellness.appointments2.home.heading.appointments.past": "Recent Past Appointments",
     "panel.wellness.appointments2.home.label.providers.all": "All Providers",
 
     "panel.wellness.home.header.title": "Bienestar",

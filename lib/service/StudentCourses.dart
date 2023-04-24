@@ -30,7 +30,7 @@ class StudentCourses with Service implements NotificationsListener {
   static const String notifyCachedCoursesChanged = 'edu.illinois.rokwire.student_courses.cache.changed';
 
   static const String _courseTermsName = "course.terms.json";
-  static const String _courseDebugContentName = "course.debug.content.json.json";
+  static const String _courseDebugContentName = "course.debug.content.json";
   static const String _requireAdaSetting = 'edu.illinois.rokwire.settings.student_course.require_ada';
 
   late Directory _appDocDir;
