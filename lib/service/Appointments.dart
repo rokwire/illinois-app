@@ -20,6 +20,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -479,22 +480,43 @@ class Appointments with Service implements NotificationsListener {
     }
   }
 
+  // Debug
+
+  bool? get _useSampleData => Storage().debugUseSampleAppointments;
+
   // Providers
 
   Future<List<AppointmentProvider>?> loadProviders() async {
-    String? url = "${Config().appointmentsUrl}/services/providers";
-    http.Response? response = await Network().get(url, auth: Auth2());
-    return (response?.statusCode == 200) ? AppointmentProvider.listFromJson(JsonUtils.decodeList(response?.body)) : null;
+    if (_useSampleData != true) {
+      String? url = "${Config().appointmentsUrl}/services/providers";
+      http.Response? response = await Network().get(url, auth: Auth2());
+      return (response?.statusCode == 200) ? AppointmentProvider.listFromJson(JsonUtils.decodeList(response?.body)) : null;
+    }
+    else {
+      await Future.delayed(Duration(milliseconds: 1500));
+      return _sampleProviders;
+    }
   }
+
+  List<AppointmentProvider> get _sampleProviders =>  <AppointmentProvider>[
+    AppointmentProvider(id: '1', name: 'McKinley'),
+    AppointmentProvider(id: '2', name: 'Grainger'),
+    AppointmentProvider(id: '3', name: 'Lorem Ipsum'),
+    AppointmentProvider(id: '4', name: 'Sit Dolor Amet'),
+  ];
 
   // Units
 
   Future<List<AppointmentUnit>?> loadUnits({ required String providerId }) async {
-    //String? url = "${Config().appointmentsUrl}/services/units?providers-ids=$providerId";
-    //http.Response? response = await Network().get(url, auth: Auth2());
-    //return (response?.statusCode == 200) ? AppointmentUnit.listFromJson(JsonUtils.decodeList(response?.body)) : null;
-    await Future.delayed(Duration(milliseconds: 1500));
-    return _sampleUnits;
+    if (_useSampleData != true) {
+      String? url = "${Config().appointmentsUrl}/services/units?providers-ids=$providerId";
+      http.Response? response = await Network().get(url, auth: Auth2());
+      return (response?.statusCode == 200) ? AppointmentUnit.listFromJson(JsonUtils.decodeList(response?.body)) : null;
+    }
+    else {
+      await Future.delayed(Duration(milliseconds: 1500));
+      return _sampleUnits;
+    }
   }
 
   List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
@@ -507,8 +529,22 @@ class Appointments with Service implements NotificationsListener {
   // Persons
 
   Future<List<AppointmentPerson>?> loadPersons({ required String providerId, required String unitId }) async {
-    await Future.delayed(Duration(milliseconds: 1500));
-    return _samplePersons;
+    if (_useSampleData != true) {
+      String? url = "${Config().appointmentsUrl}/services/people";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String? post = JsonUtils.encode([{
+        'provider_id': providerId,
+        'unit_ids': [ unitId ],
+      }]);
+      http.Response? response = await Network().get(url, body: post, headers: headers, auth: Auth2());
+      return (response?.statusCode == 200) ? AppointmentPerson.listFromJson(JsonUtils.decodeList(response?.body)) : null;
+    }
+    else {
+      await Future.delayed(Duration(milliseconds: 1500));
+      return _samplePersons;
+    }
   }
 
   List<AppointmentPerson> get _samplePersons => <AppointmentPerson>[
@@ -522,11 +558,23 @@ class Appointments with Service implements NotificationsListener {
     AppointmentPerson(id: '28', name: 'Speedy Gonzales', imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
   ];
 
-  // Time Slots
+  // Time Slots And Questions
 
-  Future<List<AppointmentTimeSlot>?> loadTimeSlots({ String? providerId, String? unitId, String? hostId, required DateTime dateLocal }) async {
-    await Future.delayed(Duration(milliseconds: 1500));
-    return _sampleTimeSlots(dateLocal: dateLocal);
+  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? personId, required DateTime dateLocal }) async {
+    if (_useSampleData != true) {
+      int startTime = dateLocal.millisecondsSinceEpoch;
+      int endTime = startTime + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
+      String? url = "${Config().appointmentsUrl}/services/slots?provider-id=$providerId&unit-id=$unitId&person-id=$personId&start-time=$startTime&end-time=$endTime";
+      http.Response? response = await Network().get(url, auth: Auth2());
+      return (response?.statusCode == 200) ? AppointmentTimeSlotsAndQuestions.fromJson(JsonUtils.decodeMap(response?.body)) : null;
+    }
+    else {
+      await Future.delayed(Duration(milliseconds: 1500));
+      return AppointmentTimeSlotsAndQuestions(
+        timeSlots: _sampleTimeSlots(dateLocal: dateLocal),
+        questions: _sampleQuestions,
+      );
+    }
   }
 
   List<AppointmentTimeSlot> _sampleTimeSlots({ required DateTime dateLocal }) {
@@ -549,13 +597,6 @@ class Appointments with Service implements NotificationsListener {
     return result;
   }
 
-  // Questions
-  
-  Future<List<AppointmentQuestion>?> loadQuestions({ String? providerId, String? unitId, String? hostId }) async {
-    await Future.delayed(Duration(milliseconds: 1500));
-    return _sampleQuestions;
-  }
-
   List<AppointmentQuestion> get _sampleQuestions => <AppointmentQuestion>[
     AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.text, required: true),
     AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.select, values: ["Below 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true),
@@ -570,33 +611,23 @@ class Appointments with Service implements NotificationsListener {
     AppointmentAnswer(questionId: "34", values: ["true"]),
   ];
 
-  // Time Slots And Questions
-
-  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? personId, required DateTime dateLocal }) async {
-    await Future.delayed(Duration(milliseconds: 1500));
-    return AppointmentTimeSlotsAndQuestions(
-      timeSlots: _sampleTimeSlots(dateLocal: dateLocal),
-      questions: _sampleQuestions,
-    );
-  }
-
   // Appointments
 
-  Future<List<Appointment>?> loadAppointments({String? providerId, List<AppointmentProvider>? tmpProviders}) async {
-    await Future.delayed(Duration(milliseconds: 1500));
-    AppointmentProvider? provider = (providerId != null) ? tmpProviders?.firstWhere((provider) => provider.id == providerId, orElse: () => tmpProviders.first) : null;
-    if (provider != null) {
-      return _sampleAppointments(provider: provider);
-    }
-    else if (tmpProviders != null) {
-      List<Appointment> result = <Appointment>[];
-      for (AppointmentProvider provider in tmpProviders) {
-        result.addAll(_sampleAppointments(provider: provider));
-      }
-      return result;
+  Future<List<Appointment>?> loadAppointments({String? providerId}) async {
+    if (_useSampleData != true) {
+      String? url = "${Config().appointmentsUrl}/services/appointments?providers-ids=$providerId";
+      http.Response? response = await Network().get(url, auth: Auth2());
+      return (response?.statusCode == 200) ? Appointment.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     else {
-      return <Appointment>[];
+      await Future.delayed(Duration(milliseconds: 1500));
+      AppointmentProvider? provider = (providerId != null) ? _sampleProviders.firstWhere((provider) => provider.id == providerId, orElse: () => _sampleProviders.first) : null;
+      if (provider != null) {
+        return _sampleAppointments(provider: provider);
+      }
+      else {
+        return <Appointment>[];
+      }
     }
   }
 
@@ -678,32 +709,34 @@ class Appointments with Service implements NotificationsListener {
     AppointmentTimeSlot? timeSlot,
     List<AppointmentAnswer>? answers,
   }) async {
-
-    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(provider?.id) && StringUtils.isNotEmpty(unit?.id) && StringUtils.isNotEmpty(host?.id) && (type != null) && (timeSlot?.startTimeUtc != null)) {
+    if (_useSampleData != true) {
       String? url = "${Config().appointmentsUrl}/services/appointments";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
       String? post = JsonUtils.encode({
         'provider_id': provider?.id,
         'unit_id': unit?.id,
-        'person_id': host?.id,
+        'person_id': person?.id,
         'type': appointmentTypeToString(type),
         'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
         'answers': AppointmentAnswer.listToJson(answers),
       });
-      http.Response? response = await Network().post(url, auth: Auth2(), body: post);
+      http.Response? response = await Network().post(url, body: post, headers: headers, auth: Auth2());
       if (response?.statusCode == 200) {
         return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
       }
       throw AppointmentsException.fromServerResponse(response);
     }
-    throw AppointmentsException.internal();*/
-    
-    await Future.delayed(Duration(milliseconds: 1500));
-    if (Random().nextInt(2) == 0) {
-      NotificationService().notify(notifyAppointmentsChanged);
-      return Appointment(provider: provider, unit: unit, person: person, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
-    }
     else {
-      throw AppointmentsException.unknown('Random Create Failure');
+      await Future.delayed(Duration(milliseconds: 1500));
+      if (Random().nextInt(2) == 0) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment(provider: provider, unit: unit, person: person, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
+      }
+      else {
+        throw AppointmentsException.unknown('Random Create Failure');
+      }
     }
   }
 
@@ -712,51 +745,52 @@ class Appointments with Service implements NotificationsListener {
     AppointmentTimeSlot? timeSlot,
     List<AppointmentAnswer>? answers,
   }) async {
-
-    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(appointment.id)) {
+    if (_useSampleData != true) {
       String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
       String? post = JsonUtils.encode({
         'type': appointmentTypeToString(type),
         'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
         'answers': AppointmentAnswer.listToJson(answers),
       });
-      http.Response? response = await Network().put(url, auth: Auth2(), body: post);
+      http.Response? response = await Network().put(url, body: post, headers: headers, auth: Auth2());
       if (response?.statusCode == 200) {
         return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
       }
       throw AppointmentsException.fromServerResponse(response);
     }
-    throw AppointmentsException.internal();*/
-
-    await Future.delayed(Duration(milliseconds: 1500));
-    if (Random().nextInt(2) == 0) {
-      NotificationService().notify(notifyAppointmentsChanged);
-      return Appointment.fromOther(appointment, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
-    }
     else {
-      throw AppointmentsException.unknown('Random Update Failure');
+      await Future.delayed(Duration(milliseconds: 1500));
+      if (Random().nextInt(2) == 0) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromOther(appointment, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
+      }
+      else {
+        throw AppointmentsException.unknown('Random Update Failure');
+      }
     }
   }
 
   Future<Appointment?> cancelAppointment(Appointment appointment) async {
-
-    /*if (StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(appointment.id)) {
-      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
-      http.Response? response = await Network().get(url, auth: Auth2());
-      if (response?.statusCode == 200) {
-        return Appointment.fromOther(appointment, cancelled: true);
-      }
-      throw AppointmentsException.fromServerResponse(response);
-    }
-    throw AppointmentsException.internal();*/
-
-    await Future.delayed(Duration(milliseconds: 1500));
-    if (Random().nextInt(2) == 0) {
-      NotificationService().notify(notifyAppointmentsChanged);
-      return Appointment.fromOther(appointment, cancelled: true);
+    if (_useSampleData != true) {
+        String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+        http.Response? response = await Network().delete(url, auth: Auth2());
+        if (response?.statusCode == 200) {
+          return Appointment.fromOther(appointment, cancelled: true);
+        }
+        throw AppointmentsException.fromServerResponse(response);
     }
     else {
-      throw AppointmentsException.unknown('Random Update Failure');
+      await Future.delayed(Duration(milliseconds: 1500));
+      if (Random().nextInt(2) == 0) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromOther(appointment, cancelled: true);
+      }
+      else {
+        throw AppointmentsException.unknown('Random Update Failure');
+      }
     }
   }
 }
@@ -794,10 +828,4 @@ class AppointmentsException implements Exception {
       case AppointmentsError.unknown: return 'Unknown Error Occured';
     }
   }
-}
-
-class AppointmentTimeSlotsAndQuestions {
-  final List<AppointmentTimeSlot>? timeSlots;
-  final List<AppointmentQuestion>? questions;
-  AppointmentTimeSlotsAndQuestions({this.timeSlots, this.questions});
 }
