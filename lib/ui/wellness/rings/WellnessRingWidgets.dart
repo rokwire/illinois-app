@@ -1,12 +1,15 @@
 import 'package:confetti/confetti.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 // Widgets
@@ -45,6 +48,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     NotificationService().subscribe(this, [
       WellnessRings.notifyUserRingsUpdated,
       WellnessRings.notifyUserRingsAccomplished,
+      Auth2.notifyPictureChanged,
     ]);
     _loadRingsData();
     _controllerCenter = ConfettiController(duration: const Duration(seconds: 5));
@@ -198,14 +202,27 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     return Container();
   }
 
-  Widget _buildProfilePicture() { //TBD update image resource
+  Widget _buildProfilePicture() {
+    Uint8List? profileImageBytes = Auth2().authPicture;
+    bool hasProfilePicture = (profileImageBytes != null);
+    Image? profileImage = hasProfilePicture ? Image.memory(profileImageBytes) : null;
+    Widget profilePictureWidget = hasProfilePicture
+        ? ModalImageHolder(
+            image: profileImage?.image,
+            child: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    image: DecorationImage(fit: hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))),
+          )
+        : (Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true) ?? Container());
     return
       Stack(
         children: [
           Container(
             padding: EdgeInsets.all(1),
             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white,),
-            child: Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true),
+            child: profilePictureWidget,
           ),
           Center(
               child: ConfettiWidget(
@@ -309,6 +326,10 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
       }
       if(widget.accomplishmentConfettiEnabled) {
         _playConfetti();
+      }
+    } else if (name == Auth2.notifyPictureChanged) {
+      if (mounted) {
+        setState(() {});
       }
     }
   }
