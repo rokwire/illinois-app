@@ -301,11 +301,13 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   }
 
   Widget _buildScheduleButton() {
-    return LinkButton(
-      title: Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', 'Schedule an appointment'),
-      onTap: _onScheduleAppointment,
-      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular.underline"),
-      padding: EdgeInsets.only(top: 8, bottom: 16),
+    return Visibility(visible: _canScheduleAppointment, child:
+      LinkButton(
+        title: Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', 'Schedule an appointment'),
+        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular.underline"),
+        padding: EdgeInsets.only(top: 8, bottom: 16),
+        onTap: _onScheduleAppointment,
+      ),
     );
   }
 
@@ -367,6 +369,11 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
         SortUtils.compare(appointment1.startTimeUtc, appointment2.startTimeUtc, descending: true)
       );
     }
+  }
+
+  bool get _canScheduleAppointment {
+    return  (_selectedProvider != null) ? (_selectedProvider?.supportsSchedule == true) :
+      (AppointmentProvider.findInList(_providers, supportsSchedule: true) != null);
   }
 
   void _onScheduleAppointment() {
