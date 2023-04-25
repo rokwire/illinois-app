@@ -15,7 +15,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/Location.dart' as Native;
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Appointments.dart';

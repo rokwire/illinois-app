@@ -517,6 +517,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
+      case "academics.appointments":          _onTapAcademicsAppointments(context); break;
 
       case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
@@ -591,7 +592,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
       case "my.wellness_mental_health":      _onTapWellnessMentalHealth(context); break;
-      case "my.my_appointments":             _onTapMyAppointments(context); break;
+      case "my.my_appointments":             _onTapWellnessAppointments(context); break;
 
       case "inbox.all_notifications":        _onTapNotifications(context); break;
       case "inbox.unread_notifications":     _onTapNotifications(context, unread: true); break;
@@ -616,8 +617,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
       case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
       case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
-      case "wellness.my_appointments":          _onTapMyAppointments(context); break;
-      case "wellness.appointments2":            _onTapAppointments2(context); break;
+      case "wellness.my_appointments":          _onTapWellnessAppointments(context); break;
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
     }
@@ -1045,14 +1045,14 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.mentalHealth,); } ));
   }
 
-  void _onTapMyAppointments(BuildContext context) {
-    Analytics().logSelect(target: "My Appointments");
+  void _onTapWellnessAppointments(BuildContext context) {
+    Analytics().logSelect(target: "MyMcKinley Appointments");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.appointments); } ));
   }
 
-  void _onTapAppointments2(BuildContext context) {
+  void _onTapAcademicsAppointments(BuildContext context) {
     Analytics().logSelect(target: "Appointments");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.appointments2); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.appointments,)));
   }
 
   void _onTapCreatePoll(BuildContext context) {

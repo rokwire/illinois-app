@@ -16,10 +16,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentScheduleTimePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -66,16 +66,16 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
 
   Widget _buildContent() {
     if (_unitId == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.unit.empty', 'No selected unit'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.unit.empty', 'No selected unit'));
     }
     else if (_isLoadingPersons) {
       return _buildLoadingContent();
     }
     else if (_persons == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.hosts.failed', 'Failed to load hosts for unit'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.hosts.failed', 'Failed to load hosts for unit'));
     }
     else if (_persons?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.hosts.empty', 'No hosts available for selected unit'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.hosts.empty', 'No hosts available for selected unit'));
     }
     else  {
       return _buildPersonsList();
@@ -94,7 +94,7 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
     }
     personsList.add(Container(height: 24)); // Ensures width for providers dropdown container
     
-    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: personsList)
     );
   }

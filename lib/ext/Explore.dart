@@ -6,7 +6,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
@@ -19,7 +19,7 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -410,9 +410,10 @@ extension ExploreMap on Explore {
       }
     }
 
-    return (exploreLocation?.isLocationCoordinateValid ?? false) ? LatLng(
-      exploreLocation?.latitude?.toDouble() ?? 0,
-      exploreLocation?.longitude?.toDouble() ?? 0
+    ExploreLocation? location = exploreLocation;
+    return (location?.isLocationCoordinateValid ?? false) ? LatLng(
+      location?.latitude?.toDouble() ?? 0,
+      location?.longitude?.toDouble() ?? 0
     ) : null;
   }
 

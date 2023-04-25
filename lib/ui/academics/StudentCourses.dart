@@ -270,15 +270,17 @@ class StudentCourseCard extends StatelessWidget {
                     ),
                   ),
                   
-                  Visibility(visible: courseLocation.isNotEmpty && course.hasLocation, child:
-                    InkWell(onTap: _onLocaltion, child:
+                  Visibility(visible: courseLocation.isNotEmpty, child:
+                    InkWell(onTap: course.hasValidLocation ? _onLocaltion : null, child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
                         Row(children: [
                           Padding(padding: EdgeInsets.only(right: 6), child:
                             Styles().images?.getImage('location', excludeFromSemantics: true),
                           ),
                           Expanded(child:
-                            Text(courseLocation, style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
+                            Text(courseLocation, style: course.hasValidLocation ?
+                              Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline") :
+                              Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
                             ),
                           )
                           
@@ -452,16 +454,17 @@ class StudentCourseDetailPanel extends StatelessWidget {
 
   Widget _buildLocation(){
     String courseLocation = course?.section?.displayLocation ?? '';
-    return Visibility(visible: courseLocation.isNotEmpty && (course?.hasLocation ?? false), child:
-      InkWell(onTap: _onLocation, child:
+    return Visibility(visible: courseLocation.isNotEmpty, child:
+      InkWell(onTap: (course?.hasValidLocation ?? false) ? _onLocation : null, child:
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
               Styles().images?.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
-              Text(courseLocation, style:
-               Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
+              Text(courseLocation, style: (course?.hasValidLocation ?? false) ?
+                Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline") :
+                Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
               ),
             )
           ],),

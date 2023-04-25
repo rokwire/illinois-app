@@ -16,15 +16,15 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentScheduleUnitPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentScheduleUnitPanel.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -32,14 +32,14 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessAppointments2HomeContentWidget extends StatefulWidget {
-  WellnessAppointments2HomeContentWidget();
+class AcademicsAppointmentsContentWidget extends StatefulWidget {
+  AcademicsAppointmentsContentWidget();
 
   @override
-  State<WellnessAppointments2HomeContentWidget> createState() => _WellnessAppointments2HomeContentWidgetState();
+  State<AcademicsAppointmentsContentWidget> createState() => _AcademicsAppointmentsContentWidgetState();
 }
 
-class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppointments2HomeContentWidget> implements NotificationsListener {
+class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmentsContentWidget> implements NotificationsListener {
 
   List<AppointmentProvider>? _providers;
   bool _isLoadingProviders = false;
@@ -82,7 +82,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
   @override
   Widget build(BuildContext context) {
-    Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments');
+    Widget? accessWidget = AccessCard.builder(resource: 'academics.appointments');
     if (accessWidget != null) {
       return accessWidget;
     }
@@ -90,27 +90,27 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.failed', 'Failed to load providers'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.empty', 'No providers available'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available'));
     }
     else if (_providers?.length == 1) {
-      return Column(children: [
-        Padding(padding: EdgeInsets.only(bottom: 2), child:
-          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.zero, child:
+          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.fat'))
         ),
         _buildAppointmentsContent(),
       ]);
     }
     else {
-      return Column(children: [
-        _buildProvidersDropdown(),
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.only(bottom: 8), child:
+          _buildProvidersDropdown(),
+        ),
         Expanded(child:
           Stack(children: [
-            Padding(padding: EdgeInsets.only(top: 16), child:
-              _buildAppointmentsContent()
-            ),
+            _buildAppointmentsContent(),
             _buildProvidersDropdownContainer()
           ],)
           
@@ -120,17 +120,15 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   Widget _buildProvidersDropdown() {
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-      Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
-        RibbonButton(
-          textColor: Styles().colors!.fillColorSecondary,
-          backgroundColor: Styles().colors!.white,
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-          rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
-          label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
-          onTap: _onProvidersDropdown
-        )
+    return Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
+      RibbonButton(
+        textColor: Styles().colors!.fillColorSecondary,
+        backgroundColor: Styles().colors!.white,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
+        label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
+        onTap: _onProvidersDropdown
       )
     );
   }
@@ -165,7 +163,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
         rightIconKey: null,
-        label: Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
+        label: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: () => _onTapProvider(null)
       ));
 
@@ -211,18 +209,17 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
   Widget _buildAppointmentsContent() {
     //if (_selectedProvider == null) {
-    //  return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
+    //  return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider'));
     //}
     if (_isLoadingAppointments) {
       return _buildLoadingContent();
     }
     else {
       return RefreshIndicator(onRefresh: _onPullToRefresh, child:
-        SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16), child:
+        SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildScheduleDescription(),
+            _buildScheduleButton(),
             ..._buildAppointmentsList(),
-            Container(height: 24) // Ensures width for providers dropdown container
           ])
         )
       );
@@ -232,7 +229,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   List<Widget> _buildAppointmentsList() {
     if ((_upcomingAppointments == null) || (_pastAppointments == null)) {
       return <Widget>[_buildMessageContent(
-        Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.failed', 'Failed to load appointments'))
+        Localization().getStringEx('panel.academics.appointments.home.message.appointments.failed', 'Failed to load appointments'))
       ];
     }
     else  {
@@ -240,25 +237,25 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
       if (_upcomingAppointments?.length == 0) {
         contentList.add(_buildStatusContent(
-          Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.upcoming.empty', 'You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.').
+          Localization().getStringEx('panel.academics.appointments.home.message.appointments.upcoming.empty', 'You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.').
             replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'))
         ));
       }
       else {
         for (Appointment appointment in _upcomingAppointments!) {
-          contentList.add(Padding(padding: EdgeInsets.only(top: 16), child:
+          contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child:
             AppointmentCard(appointment: appointment)
           ));
         }
       }
 
       contentList.add(_buildHeading(
-        Localization().getStringEx('panel.wellness.appointments2.home.heading.appointments.past', 'Recent Past Appointments'),
+        Localization().getStringEx('panel.academics.appointments.home.heading.appointments.past', 'Recent Past Appointments'),
       ));
 
       if (_pastAppointments?.length == 0) {
         contentList.add(_buildStatusContent(
-          Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.past.empty', "You don't have recent past appointments linked within the Illinois app.")
+          Localization().getStringEx('panel.academics.appointments.home.message.appointments.past.empty', "You don't have recent past appointments linked within the Illinois app.")
         ));
       }
       else {
@@ -303,20 +300,15 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     );
   }
 
-  Widget _buildScheduleDescription() {
-    String descriptionHtml = Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', '<a href={{schedule_url}}>Schedule an appointment</a>');
-    return HtmlWidget(descriptionHtml,
-      onTapUrl : _onDesciptionLink,
-      textStyle:  Styles().textStyles?.getTextStyle("widget.message.medium"),
-      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary!) } : null
+  Widget _buildScheduleButton() {
+    return Visibility(visible: _canScheduleAppointment, child:
+      LinkButton(
+        title: Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', 'Schedule an appointment'),
+        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular.underline"),
+        padding: EdgeInsets.only(top: 8, bottom: 16),
+        onTap: _onScheduleAppointment,
+      ),
     );
-  }
-
-  bool _onDesciptionLink(String url) {
-    if (url == '{{schedule_url}}') {
-      _onScheduleAppointment();
-    }
-    return true;
   }
 
   void _initProviders() {
@@ -379,11 +371,16 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     }
   }
 
+  bool get _canScheduleAppointment {
+    return  (_selectedProvider != null) ? (_selectedProvider?.supportsSchedule == true) :
+      (AppointmentProvider.findInList(_providers, supportsSchedule: true) != null);
+  }
+
   void _onScheduleAppointment() {
     //AppointmentSchedulePanel.present(context);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleUnitPanel(
+      providers: _providers,
       scheduleParam: AppointmentScheduleParam(
-        providers: _providers,
         provider: _selectedProvider,
       ),
       onFinish: (BuildContext context, Appointment? appointment) => Navigator.of(context).popUntil((route) => route.isFirst),

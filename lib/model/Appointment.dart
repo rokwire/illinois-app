@@ -453,16 +453,33 @@ class AppointmentProvider {
 
   // Accessories
 
-  static AppointmentProvider? findInList(List<AppointmentProvider>? providers, { String? id }) {
+  static AppointmentProvider? findInList(List<AppointmentProvider>? providers, { String? id, bool? supportsSchedule, bool? supportsReschedule, bool? supportsCancel }) {
     if (providers != null) {
       for (AppointmentProvider provider in providers) {
-        if ((id == null) || (provider.id == id)) {
+        if (((id == null) || (provider.id == id)) &&
+            ((supportsSchedule == null) || (provider.supportsSchedule == supportsSchedule)) &&
+            ((supportsReschedule == null) || (provider.supportsReschedule == supportsReschedule)) &&
+            ((supportsCancel == null) || (provider.supportsCancel == supportsCancel))) {
           return provider;
         }
-
       }
     }
     return null;
+  }
+
+  static List<AppointmentProvider>? subList(List<AppointmentProvider>? providers, { bool? supportsSchedule, bool? supportsReschedule, bool? supportsCancel }) {
+    List<AppointmentProvider>? result;
+    if (providers != null) {
+      result = <AppointmentProvider>[];
+      for (AppointmentProvider provider in providers) {
+        if (((supportsSchedule == null) || (provider.supportsSchedule == supportsSchedule)) &&
+            ((supportsReschedule == null) || (provider.supportsReschedule == supportsReschedule)) &&
+            ((supportsCancel == null) || (provider.supportsCancel == supportsCancel))) {
+          result.add(provider);
+        }
+      }
+    }
+    return result;
   }
 }
 

@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.3.48] - 2023-04-25
+### Changed
+- New applointments UI moved from Wellness to Academics [#3179](https://github.com/rokwire/illinois-app/issues/3179).
+- Acknowledge appointment provider flags [#3181](https://github.com/rokwire/illinois-app/issues/3181).
+- Pass ExternalAuthorization header to new Appointments network calls [#3167](https://github.com/rokwire/illinois-app/issues/3167).
+- Acknowledged new v2/appointments API [#3167](https://github.com/rokwire/illinois-app/issues/3167).
+### Fixed
+- Do not display location link for student course when location is not available [#3100](https://github.com/rokwire/illinois-app/issues/3100).
+
 ## [4.3.47] - 2023-04-24
 ### Changed
 - Display video thumb in "Mental Health Resources". Play the video in another panel with subtitles [#3164](https://github.com/rokwire/illinois-app/issues/3164).

@@ -24,6 +24,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
 import 'package:illinois/ui/academics/MedicineCoursesContentWidget.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
@@ -39,6 +40,13 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+enum AcademicsContent { events,
+  gies_checklist, uiuc_checklist,
+  canvas_courses, medicine_courses, student_courses,
+  skills_self_evaluation,
+  todo_list, due_date_catalog, my_illini, appointments
+}
 
 class AcademicsHomePanel extends StatefulWidget {
   final AcademicsContent? content;
@@ -244,6 +252,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.due_date_catalog;
     } else if (code == 'my_illini') {
       return AcademicsContent.my_illini;
+    } else if (code == 'appointments') {
+      return AcademicsContent.appointments;
     } else {
       return null;
     }
@@ -343,7 +353,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 
   Widget get _contentWidget {
-    return ((_selectedContent == AcademicsContent.gies_checklist) || (_selectedContent == AcademicsContent.uiuc_checklist) || (_selectedContent == AcademicsContent.student_courses)) ?
+    return ((_selectedContent == AcademicsContent.gies_checklist) ||
+            (_selectedContent == AcademicsContent.uiuc_checklist) ||
+            (_selectedContent == AcademicsContent.student_courses) ||
+            (_selectedContent == AcademicsContent.appointments)) ?
       _rawContentWidget :
       SingleChildScrollView(child:
         Padding(padding: EdgeInsets.only(bottom: 16), child:
@@ -374,6 +387,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.due_date_catalog:
         String? guideId = Guide().detailIdFromUrl(Config().dateCatalogUrl);
         return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
+      case AcademicsContent.appointments:
+        return AcademicsAppointmentsContentWidget();
       default:
         return Container();
     }
@@ -411,6 +426,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.due_date_catalog.label', 'Due Date Catalog');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
+      case AcademicsContent.appointments:
+        return Localization().getStringEx('panel.academics.section.appointments.label', 'Appointments');
     }
   }
 
@@ -425,5 +442,3 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     }
   }
 }
-
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, medicine_courses, student_courses, skills_self_evaluation, todo_list, due_date_catalog, my_illini }

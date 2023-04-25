@@ -1,7 +1,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:illinois/ext/Appointment.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';

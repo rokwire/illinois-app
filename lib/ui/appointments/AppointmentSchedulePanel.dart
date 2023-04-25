@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
@@ -273,24 +273,21 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 }
 
 class AppointmentScheduleParam {
-  final List<AppointmentProvider>? providers;
   final AppointmentProvider? provider;
   final AppointmentUnit? unit;
   final AppointmentPerson? person;
   final AppointmentTimeSlot? timeSlot;
   final List<AppointmentAnswer>? answers;
 
-  AppointmentScheduleParam({ this.providers, this.provider, this.unit, this.person, this.timeSlot, this.answers, });
+  AppointmentScheduleParam({ this.provider, this.unit, this.person, this.timeSlot, this.answers, });
 
   factory AppointmentScheduleParam.fromOther(AppointmentScheduleParam? other, {
-    List<AppointmentProvider>? providers,
     AppointmentProvider? provider,
     AppointmentUnit? unit,
     AppointmentPerson? person,
     AppointmentTimeSlot? timeSlot,
     List<AppointmentAnswer>? answers,
   }) => AppointmentScheduleParam(
-    providers: providers ?? other?.providers,
     provider: provider ?? other?.provider,
     unit: unit ?? other?.unit,
     person: person ?? other?.person,

@@ -20,12 +20,12 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Appointment.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentScheduleTimePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentScheduleTimePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -570,7 +570,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     Auth2().prefs?.toggleFavorite(_appointment);
   }
 
-  bool get _canReschedule => /* (_appointment?.provider?.supportsReschedule == true) && */ (_appointment?.unit != null) && (_appointment?.cancelled != true);
+  bool get _canReschedule => (_appointment?.provider?.supportsReschedule == true) && (_appointment?.unit != null) && (_appointment?.cancelled != true);
 
   void _onReschedule() {
     Analytics().logSelect(target: "Reschedule");
@@ -589,7 +589,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     ),));
   }
 
-  bool get _canCancel => /* (_appointment?.provider?.supportsCancel == true) && */ _appointment?.cancelled != true;
+  bool get _canCancel => (_appointment?.provider?.supportsCancel == true) && _appointment?.cancelled != true;
 
   void _onCancel() {
     Analytics().logSelect(target: "Cancel");

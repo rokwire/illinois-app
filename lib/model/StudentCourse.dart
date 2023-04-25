@@ -33,7 +33,7 @@ class StudentCourse with Explore {
     'coursesection': section?.toJson(),
   };
 
-  bool get hasLocation => section?.building?.hasLocation ?? false;
+  bool get hasValidLocation => section?.building?.hasValidLocation ?? false;
   
   @override
   bool operator==(dynamic other) =>
@@ -278,7 +278,7 @@ class Building with Explore {
     'entrances': BuildingEntrance.listToJson(entrances),
   };
 
-  bool get hasLocation => (latitude != null) && (longitude != null);
+  bool get hasValidLocation => (latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0);
 
   @override
   bool operator==(dynamic other) =>

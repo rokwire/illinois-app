@@ -16,11 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePersonPanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePersonPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -31,10 +31,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppointmentScheduleUnitPanel extends StatefulWidget {
 
+  final List<AppointmentProvider>? providers;
   final AppointmentScheduleParam? scheduleParam;
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleUnitPanel({Key? key, this.scheduleParam, this.onFinish}) : super(key: key);
+  AppointmentScheduleUnitPanel({Key? key, this.providers, this.scheduleParam, this.onFinish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleUnitPanelState();
@@ -76,13 +77,18 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.failed', 'Failed to load providers'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.empty', 'No providers available'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available'));
     }
     else if (_providers?.length == 1) {
-      return _buildUnitsContent();
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.fat'))
+        ),
+        _buildUnitsContent(),
+      ]);
     }
     else {
       return Column(children: [
@@ -183,16 +189,16 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
 
   Widget _buildUnitsContent() {
     if (_selectedProvider == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider'));
     }
     else if (_isLoadingUnits) {
       return _buildLoadingContent();
     }
     else if (_units == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.units.failed', 'Failed to load units for provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.failed', 'Failed to load units for provider'));
     }
     else if (_units?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.units.empty', 'No units available for selected provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.empty', 'No units available for selected provider'));
     }
     else  {
       return _buildUnitsList();
@@ -243,21 +249,21 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   }
 
   void _initProviders() {
-    if (CollectionUtils.isNotEmpty(widget.scheduleParam?.providers)) {
-      _providers = widget.scheduleParam?.providers;
+    if (CollectionUtils.isNotEmpty(widget.providers)) {
+      _providers = AppointmentProvider.subList(widget.providers, supportsSchedule: true);
       _selectedProvider = widget.scheduleParam?.provider ??
         AppointmentProvider.findInList(_providers, id: Storage().selectedAppointmentProviderId) ??
-        (((_providers != null) && _providers!.isNotEmpty) ? _providers!.first : null);
+        ((_providers?.isNotEmpty == true) ? _providers?.first : null);
       _loadUnits();
     }
     else {
       _isLoadingProviders = true;
       Appointments().loadProviders().then((List<AppointmentProvider>? result) {
         setStateIfMounted(() {
-          _providers = result;
+          _providers = AppointmentProvider.subList(result);
           _selectedProvider = AppointmentProvider.findInList(result, id: widget.scheduleParam?.provider?.id) ??
             AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId) ??
-            (((_providers != null) && _providers!.isNotEmpty) ? _providers!.first : null);
+            ((_providers?.isNotEmpty == true) ? _providers?.first : null);
           _isLoadingProviders = false;
         });
         _loadUnits();
