@@ -501,8 +501,8 @@ class Appointments with Service implements NotificationsListener {
   List<AppointmentProvider> get _sampleProviders =>  <AppointmentProvider>[
     AppointmentProvider(id: '1', name: 'McKinley', supportsSchedule: true, supportsReschedule: true, supportsCancel: true),
     AppointmentProvider(id: '2', name: 'Grainger', supportsSchedule: false, supportsReschedule: false, supportsCancel: false),
-    AppointmentProvider(id: '3', name: 'Lorem Ipsum', supportsSchedule: true, supportsReschedule: false, supportsCancel: false),
-    AppointmentProvider(id: '4', name: 'Sit Dolor Amet', supportsSchedule: true, supportsReschedule: false, supportsCancel: false),
+    AppointmentProvider(id: '3', name: 'Lorem Ipsum', supportsSchedule: true, supportsReschedule: true, supportsCancel: false),
+    AppointmentProvider(id: '4', name: 'Sit Dolor Amet', supportsSchedule: true, supportsReschedule: false, supportsCancel: true),
   ];
 
   // Units
@@ -666,7 +666,7 @@ class Appointments with Service implements NotificationsListener {
     List<AppointmentPerson> persons = _samplePersons;
     AppointmentPerson person = persons[Random().nextInt(persons.length)];
     
-    bool cancelled = ((Random().nextInt(3) % 5) == 0);
+    bool cancelled = (provider.supportsCancel == true) && ((Random().nextInt(3) % 5) == 0);
 
     DateTime startTimeUtc = DateTime(day.year, day.month, day.day, Random().nextInt(8) + 8, 30).toUtc();
     DateTime endTimeUtc = startTimeUtc.add(Duration(minutes: 30));
