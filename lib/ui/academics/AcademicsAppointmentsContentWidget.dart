@@ -32,14 +32,14 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessAppointments2HomeContentWidget extends StatefulWidget {
-  WellnessAppointments2HomeContentWidget();
+class AcademicsAppointmentsContentWidget extends StatefulWidget {
+  AcademicsAppointmentsContentWidget();
 
   @override
-  State<WellnessAppointments2HomeContentWidget> createState() => _WellnessAppointments2HomeContentWidgetState();
+  State<AcademicsAppointmentsContentWidget> createState() => _AcademicsAppointmentsContentWidgetState();
 }
 
-class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppointments2HomeContentWidget> implements NotificationsListener {
+class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmentsContentWidget> implements NotificationsListener {
 
   List<AppointmentProvider>? _providers;
   bool _isLoadingProviders = false;
@@ -82,7 +82,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
 
   @override
   Widget build(BuildContext context) {
-    Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments');
+    Widget? accessWidget = AccessCard.builder(resource: 'academics.appointments');
     if (accessWidget != null) {
       return accessWidget;
     }
@@ -120,17 +120,15 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
   }
 
   Widget _buildProvidersDropdown() {
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-      Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
-        RibbonButton(
-          textColor: Styles().colors!.fillColorSecondary,
-          backgroundColor: Styles().colors!.white,
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-          rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
-          label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
-          onTap: _onProvidersDropdown
-        )
+    return Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
+      RibbonButton(
+        textColor: Styles().colors!.fillColorSecondary,
+        backgroundColor: Styles().colors!.white,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
+        label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
+        onTap: _onProvidersDropdown
       )
     );
   }
@@ -218,7 +216,7 @@ class _WellnessAppointments2HomeContentWidgetState extends State<WellnessAppoint
     }
     else {
       return RefreshIndicator(onRefresh: _onPullToRefresh, child:
-        SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16), child:
+        SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             _buildScheduleDescription(),
             ..._buildAppointmentsList(),

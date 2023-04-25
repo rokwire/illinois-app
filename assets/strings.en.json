@@ -319,6 +319,7 @@
     "panel.browse.entry.academics.campus_reminders.title": "Campus Reminders",
     "panel.browse.entry.academics.wellness_todo.title": "To-Do List",
     "panel.browse.entry.academics.due_date_catalog.title": "Due Date Catalog",
+    "panel.browse.entry.academics.appointments.title": "Appointments",
 
     "panel.browse.entry.app_help.video_tutorial.title": "Video Tutorial",
     "panel.browse.entry.app_help.feedback.title": "Feedback",
@@ -416,7 +417,6 @@
     "panel.browse.entry.wellness.wellness_rings.title": "Rings",
     "panel.browse.entry.wellness.wellness_todo.title": "To-Do List",
     "panel.browse.entry.wellness.my_appointments.title": "MyMcKinley Appointments",
-    "panel.browse.entry.wellness.appointments2.title": "Appointments",
     "panel.browse.entry.wellness.wellness_tips.title": "Daily Tip",
     "panel.browse.entry.wellness.wellness_health_screener.title": "Illinois Health Screener",
     "panel.browse.entry.wellness.wellness_resources.title": "Resources",
@@ -448,6 +448,7 @@
     "panel.academics.section.todo_list.label": "To-Do List",
     "panel.academics.section.due_date_catalog.label": "Due Date Catalog",
     "panel.academics.section.my_illini.label": "myIllini",
+    "panel.academics.section.appointments.label": "Appointments",
     "panel.academics.section.events.offline.msg": "No academic events are available while offline.",
     "panel.academics.section.events.empty.msg": "No academic events.",
 

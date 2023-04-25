@@ -318,6 +318,7 @@
     "panel.browse.entry.academics.campus_reminders.title": "Recordatorios del campus",
     "panel.browse.entry.academics.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.academics.due_date_catalog.title": "Catálogo de fecha de vencimiento",
+    "panel.browse.entry.academics.appointments.title": "Equipo",
 
     "panel.browse.entry.app_help.video_tutorial.title": "Videotutorial",
     "panel.browse.entry.app_help.feedback.title": "Retroalimentación",
@@ -415,7 +416,6 @@
     "panel.browse.entry.wellness.wellness_rings.title": "Anillos",
     "panel.browse.entry.wellness.wellness_todo.title": "Lista de quehaceres",
     "panel.browse.entry.wellness.my_appointments.title": "Mis citas de McKinley",
-    "panel.browse.entry.wellness.ppointments2.title": "Equipo",
     "panel.browse.entry.wellness.wellness_tips.title": "Consejo diario",
     "panel.browse.entry.wellness.wellness_health_screener.title": "Evaluador de salud de Illinois",
     "panel.browse.entry.wellness.wellness_resources.title": "Resources",
@@ -447,6 +447,7 @@
     "panel.academics.section.todo_list.label": "Lista de quehaceres",
     "panel.academics.section.due_date_catalog.label": "Catálogo de fecha de vencimiento",
     "panel.academics.section.my_illini.label": "myIllini",
+    "panel.academics.section.appointments.label": "Equipo",
     "panel.academics.section.events.offline.msg": "No hay eventos académicos disponibles sin conexión.",
     "panel.academics.section.events.empty.msg": "Sin eventos académicos.",
 

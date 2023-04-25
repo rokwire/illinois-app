@@ -318,6 +318,7 @@
 	"panel.browse.entry.academics.campus_reminders.title": "校園提醒",
 	"panel.browse.entry.academics.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.academics.due_date_catalog.title": "到期日目錄",
+	"panel.browse.entry.academics.appointments.title": "約會",
 
 	"panel.browse.entry.app_help.video_tutorial.title": "視頻教程",
 	"panel.browse.entry.app_help.feedback.title": "反饋",
@@ -415,7 +416,6 @@
 	"panel.browse.entry.wellness.wellness_rings.title": "戒指",
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.wellness.my_appointments.title": "我的麥金利約會",
-	"panel.browse.entry.wellness.appointments2.title": "約會",
 	"panel.browse.entry.wellness.wellness_tips.title": "每日提示",
 	"panel.browse.entry.wellness.wellness_health_screener.title": "伊利諾伊州健康篩查員",
 	"panel.browse.entry.wellness.wellness_resources.title": "資源",
@@ -446,6 +446,7 @@
     "panel.academics.section.skills_self_evaluation.label": "技能自我評估",
     "panel.academics.section.todo_list.label": "待辦事項清單",
 	"panel.academics.section.due_date_catalog.label": "到期日目錄",
+	"panel.academics.section.appointments.label": "約會",
 	"panel.academics.section.my_illini.label": "myIllini",
 	"panel.academics.section.events.offline.msg": "離線時沒有可用的學術活動.",
 	"panel.academics.section.events.empty.msg": "沒有學術活動.",
