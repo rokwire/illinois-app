@@ -569,7 +569,17 @@ class Appointments with Service implements NotificationsListener {
     if (_useSampleData != true) {
       int startTime = DateUtils.dateOnly(dateLocal).millisecondsSinceEpoch;
       int endTime = startTime + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
-      String? url = "${Config().appointmentsUrl}/services/slots?provider-id=$providerId&unit-id=$unitId&person-id=$personId&start-time=$startTime&end-time=$endTime";
+      String urlParams = 'start-time=$startTime&end-time=$endTime';
+      if (providerId != null) {
+        urlParams += "&provider-id=$providerId";
+      }
+      if (unitId != null) {
+        urlParams += "&unit-id=$unitId";
+      }
+      if (personId != null) {
+        urlParams += "&person-id=$personId";
+      }
+      String? url = "${Config().appointmentsUrl}/services/slots?$urlParams";
       http.Response? response = await Network().get(url, headers: externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentTimeSlotsAndQuestions.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
