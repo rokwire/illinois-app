@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - New applointments UI moved from Wellness to Academics [#3179](https://github.com/rokwire/illinois-app/issues/3179).
+- Acknowledge appointment provider flags [#3181](https://github.com/rokwire/illinois-app/issues/3181).
 
 ## [4.3.47] - 2023-04-24
 ### Changed
