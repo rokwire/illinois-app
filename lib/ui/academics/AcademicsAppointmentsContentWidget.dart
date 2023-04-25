@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
@@ -25,6 +24,7 @@ import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentScheduleUnitPanel.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -97,7 +97,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     }
     else if (_providers?.length == 1) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: EdgeInsets.only(bottom: 8), child:
+        Padding(padding: EdgeInsets.zero, child:
           Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.fat'))
         ),
         _buildAppointmentsContent(),
@@ -105,12 +105,12 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     }
     else {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _buildProvidersDropdown(),
+        Padding(padding: EdgeInsets.only(bottom: 8), child:
+          _buildProvidersDropdown(),
+        ),
         Expanded(child:
           Stack(children: [
-            Padding(padding: EdgeInsets.only(top: 16), child:
-              _buildAppointmentsContent()
-            ),
+            _buildAppointmentsContent(),
             _buildProvidersDropdownContainer()
           ],)
           
@@ -218,9 +218,8 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       return RefreshIndicator(onRefresh: _onPullToRefresh, child:
         SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildScheduleDescription(),
+            _buildScheduleButton(),
             ..._buildAppointmentsList(),
-            Container(height: 24) // Ensures width for providers dropdown container
           ])
         )
       );
@@ -244,7 +243,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       }
       else {
         for (Appointment appointment in _upcomingAppointments!) {
-          contentList.add(Padding(padding: EdgeInsets.only(top: 16), child:
+          contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child:
             AppointmentCard(appointment: appointment)
           ));
         }
@@ -301,20 +300,13 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     );
   }
 
-  Widget _buildScheduleDescription() {
-    String descriptionHtml = Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', '<a href={{schedule_url}}>Schedule an appointment</a>');
-    return HtmlWidget(descriptionHtml,
-      onTapUrl : _onDesciptionLink,
-      textStyle:  Styles().textStyles?.getTextStyle("widget.message.medium"),
-      customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary!) } : null
+  Widget _buildScheduleButton() {
+    return LinkButton(
+      title: Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', 'Schedule an appointment'),
+      onTap: _onScheduleAppointment,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular.underline"),
+      padding: EdgeInsets.only(top: 8, bottom: 16),
     );
-  }
-
-  bool _onDesciptionLink(String url) {
-    if (url == '{{schedule_url}}') {
-      _onScheduleAppointment();
-    }
-    return true;
   }
 
   void _initProviders() {
