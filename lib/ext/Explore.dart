@@ -6,7 +6,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';

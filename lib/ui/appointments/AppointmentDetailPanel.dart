@@ -20,7 +20,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Appointment.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
