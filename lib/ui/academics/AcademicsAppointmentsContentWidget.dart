@@ -96,15 +96,15 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available'));
     }
     else if (_providers?.length == 1) {
-      return Column(children: [
-        Padding(padding: EdgeInsets.only(bottom: 2), child:
-          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.only(bottom: 8), child:
+          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.fat'))
         ),
         _buildAppointmentsContent(),
       ]);
     }
     else {
-      return Column(children: [
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _buildProvidersDropdown(),
         Expanded(child:
           Stack(children: [

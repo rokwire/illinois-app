@@ -82,7 +82,12 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available'));
     }
     else if (_providers?.length == 1) {
-      return _buildUnitsContent();
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.fat'))
+        ),
+        _buildUnitsContent(),
+      ]);
     }
     else {
       return Column(children: [
