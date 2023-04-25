@@ -66,16 +66,16 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
 
   Widget _buildContent() {
     if (_unitId == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.unit.empty', 'No selected unit'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.unit.empty', 'No selected unit'));
     }
     else if (_isLoadingPersons) {
       return _buildLoadingContent();
     }
     else if (_persons == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.hosts.failed', 'Failed to load hosts for unit'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.hosts.failed', 'Failed to load hosts for unit'));
     }
     else if (_persons?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.hosts.empty', 'No hosts available for selected unit'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.hosts.empty', 'No hosts available for selected unit'));
     }
     else  {
       return _buildPersonsList();

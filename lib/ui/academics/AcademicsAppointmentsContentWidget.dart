@@ -90,10 +90,10 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.failed', 'Failed to load providers'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.empty', 'No providers available'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available'));
     }
     else if (_providers?.length == 1) {
       return Column(children: [
@@ -127,7 +127,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
         rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
-        label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
+        label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: _onProvidersDropdown
       )
     );
@@ -163,7 +163,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
         rightIconKey: null,
-        label: Localization().getStringEx('panel.wellness.appointments2.home.label.providers.all', 'All Providers'),
+        label: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: () => _onTapProvider(null)
       ));
 
@@ -209,7 +209,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
   Widget _buildAppointmentsContent() {
     //if (_selectedProvider == null) {
-    //  return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
+    //  return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider'));
     //}
     if (_isLoadingAppointments) {
       return _buildLoadingContent();
@@ -230,7 +230,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   List<Widget> _buildAppointmentsList() {
     if ((_upcomingAppointments == null) || (_pastAppointments == null)) {
       return <Widget>[_buildMessageContent(
-        Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.failed', 'Failed to load appointments'))
+        Localization().getStringEx('panel.academics.appointments.home.message.appointments.failed', 'Failed to load appointments'))
       ];
     }
     else  {
@@ -238,7 +238,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
       if (_upcomingAppointments?.length == 0) {
         contentList.add(_buildStatusContent(
-          Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.upcoming.empty', 'You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.').
+          Localization().getStringEx('panel.academics.appointments.home.message.appointments.upcoming.empty', 'You currently have no upcoming appointments linked within the {{app_title}} app. New appointments may take up to 20 minutes to appear in the {{app_title}} app.').
             replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'))
         ));
       }
@@ -251,12 +251,12 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       }
 
       contentList.add(_buildHeading(
-        Localization().getStringEx('panel.wellness.appointments2.home.heading.appointments.past', 'Recent Past Appointments'),
+        Localization().getStringEx('panel.academics.appointments.home.heading.appointments.past', 'Recent Past Appointments'),
       ));
 
       if (_pastAppointments?.length == 0) {
         contentList.add(_buildStatusContent(
-          Localization().getStringEx('panel.wellness.appointments2.home.message.appointments.past.empty', "You don't have recent past appointments linked within the Illinois app.")
+          Localization().getStringEx('panel.academics.appointments.home.message.appointments.past.empty', "You don't have recent past appointments linked within the Illinois app.")
         ));
       }
       else {
