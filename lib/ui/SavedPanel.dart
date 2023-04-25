@@ -24,7 +24,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
