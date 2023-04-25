@@ -379,8 +379,8 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   void _onScheduleAppointment() {
     //AppointmentSchedulePanel.present(context);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleUnitPanel(
+      providers: _providers,
       scheduleParam: AppointmentScheduleParam(
-        providers: _providers,
         provider: _selectedProvider,
       ),
       onFinish: (BuildContext context, Appointment? appointment) => Navigator.of(context).popUntil((route) => route.isFirst),

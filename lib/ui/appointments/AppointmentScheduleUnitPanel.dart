@@ -31,10 +31,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppointmentScheduleUnitPanel extends StatefulWidget {
 
+  final List<AppointmentProvider>? providers;
   final AppointmentScheduleParam? scheduleParam;
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleUnitPanel({Key? key, this.scheduleParam, this.onFinish}) : super(key: key);
+  AppointmentScheduleUnitPanel({Key? key, this.providers, this.scheduleParam, this.onFinish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleUnitPanelState();
@@ -248,21 +249,21 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   }
 
   void _initProviders() {
-    if (CollectionUtils.isNotEmpty(widget.scheduleParam?.providers)) {
-      _providers = widget.scheduleParam?.providers;
+    if (CollectionUtils.isNotEmpty(widget.providers)) {
+      _providers = AppointmentProvider.subList(widget.providers, supportsSchedule: true);
       _selectedProvider = widget.scheduleParam?.provider ??
         AppointmentProvider.findInList(_providers, id: Storage().selectedAppointmentProviderId) ??
-        (((_providers != null) && _providers!.isNotEmpty) ? _providers!.first : null);
+        ((_providers?.isNotEmpty == true) ? _providers?.first : null);
       _loadUnits();
     }
     else {
       _isLoadingProviders = true;
       Appointments().loadProviders().then((List<AppointmentProvider>? result) {
         setStateIfMounted(() {
-          _providers = result;
+          _providers = AppointmentProvider.subList(result);
           _selectedProvider = AppointmentProvider.findInList(result, id: widget.scheduleParam?.provider?.id) ??
             AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId) ??
-            (((_providers != null) && _providers!.isNotEmpty) ? _providers!.first : null);
+            ((_providers?.isNotEmpty == true) ? _providers?.first : null);
           _isLoadingProviders = false;
         });
         _loadUnits();

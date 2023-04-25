@@ -466,6 +466,21 @@ class AppointmentProvider {
     }
     return null;
   }
+
+  static List<AppointmentProvider>? subList(List<AppointmentProvider>? providers, { bool? supportsSchedule, bool? supportsReschedule, bool? supportsCancel }) {
+    List<AppointmentProvider>? result;
+    if (providers != null) {
+      result = <AppointmentProvider>[];
+      for (AppointmentProvider provider in providers) {
+        if (((supportsSchedule == null) || (provider.supportsSchedule == supportsSchedule)) &&
+            ((supportsReschedule == null) || (provider.supportsReschedule == supportsReschedule)) &&
+            ((supportsCancel == null) || (provider.supportsCancel == supportsCancel))) {
+          result.add(provider);
+        }
+      }
+    }
+    return result;
+  }
 }
 
 ///////////////////////////////
