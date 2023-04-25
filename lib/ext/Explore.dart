@@ -410,9 +410,10 @@ extension ExploreMap on Explore {
       }
     }
 
-    return (exploreLocation?.isLocationCoordinateValid ?? false) ? LatLng(
-      exploreLocation?.latitude?.toDouble() ?? 0,
-      exploreLocation?.longitude?.toDouble() ?? 0
+    ExploreLocation? location = exploreLocation;
+    return (location?.isLocationCoordinateValid ?? false) ? LatLng(
+      location?.latitude?.toDouble() ?? 0,
+      location?.longitude?.toDouble() ?? 0
     ) : null;
   }
 
