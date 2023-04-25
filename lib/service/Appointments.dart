@@ -499,10 +499,10 @@ class Appointments with Service implements NotificationsListener {
   }
 
   List<AppointmentProvider> get _sampleProviders =>  <AppointmentProvider>[
-    AppointmentProvider(id: '1', name: 'McKinley'),
-    AppointmentProvider(id: '2', name: 'Grainger'),
-    AppointmentProvider(id: '3', name: 'Lorem Ipsum'),
-    AppointmentProvider(id: '4', name: 'Sit Dolor Amet'),
+    AppointmentProvider(id: '1', name: 'McKinley', supportsSchedule: true, supportsReschedule: true, supportsCancel: true),
+    AppointmentProvider(id: '2', name: 'Grainger', supportsSchedule: false, supportsReschedule: false, supportsCancel: false),
+    AppointmentProvider(id: '3', name: 'Lorem Ipsum', supportsSchedule: true, supportsReschedule: false, supportsCancel: false),
+    AppointmentProvider(id: '4', name: 'Sit Dolor Amet', supportsSchedule: true, supportsReschedule: false, supportsCancel: false),
   ];
 
   // Units
@@ -626,7 +626,11 @@ class Appointments with Service implements NotificationsListener {
         return _sampleAppointments(provider: provider);
       }
       else {
-        return <Appointment>[];
+        List<Appointment> result = <Appointment>[];
+        for(AppointmentProvider provider in _sampleProviders) {
+          result.addAll(_sampleAppointments(provider: provider));
+        }
+        return result;
       }
     }
   }
