@@ -27,7 +27,7 @@ import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';

@@ -26,7 +26,7 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessMentalHealthContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
-import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeContentWidget.dart';
+import 'package:illinois/ui/wellness/WellnessAppointmentsContentWidget.dart';
 import 'package:illinois/ui/wellness/appointments/WellnessAppointments2HomeContentWidget.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
@@ -253,7 +253,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       case WellnessContent.todo:
         return WellnessToDoHomeContentWidget();
       case WellnessContent.appointments:
-        return WellnessAppointmentsHomeContentWidget();
+        return WellnessAppointmentsContentWidget();
       case WellnessContent.appointments2:
         return WellnessAppointments2HomeContentWidget();
       case WellnessContent.healthScreener:

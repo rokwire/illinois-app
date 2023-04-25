@@ -31,7 +31,7 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';

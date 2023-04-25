@@ -27,7 +27,7 @@ import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
