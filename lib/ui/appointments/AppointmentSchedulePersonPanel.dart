@@ -94,7 +94,7 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
     }
     personsList.add(Container(height: 24)); // Ensures width for providers dropdown container
     
-    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: personsList)
     );
   }
