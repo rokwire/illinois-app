@@ -20,6 +20,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -482,6 +483,9 @@ class Appointments with Service implements NotificationsListener {
 
   // Debug
 
+  static String get externalAuthorizationHeaderKey => Gateway.ExternalAuthorizationHeaderKey;
+  Map<String, String?> get externalAuthorizationHeader => Gateway().externalAuthorizationHeader;
+
   bool? get _useSampleData => Storage().debugUseSampleAppointments;
 
   // Providers
@@ -489,7 +493,7 @@ class Appointments with Service implements NotificationsListener {
   Future<List<AppointmentProvider>?> loadProviders() async {
     if (_useSampleData != true) {
       String? url = "${Config().appointmentsUrl}/services/providers";
-      http.Response? response = await Network().get(url, auth: Auth2());
+      http.Response? response = await Network().get(url, headers: externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentProvider.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     else {
@@ -510,7 +514,7 @@ class Appointments with Service implements NotificationsListener {
   Future<List<AppointmentUnit>?> loadUnits({ required String providerId }) async {
     if (_useSampleData != true) {
       String? url = "${Config().appointmentsUrl}/services/units?providers-ids=$providerId";
-      http.Response? response = await Network().get(url, auth: Auth2());
+      http.Response? response = await Network().get(url, headers: externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentUnit.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     else {
@@ -531,13 +535,14 @@ class Appointments with Service implements NotificationsListener {
   Future<List<AppointmentPerson>?> loadPersons({ required String providerId, required String unitId }) async {
     if (_useSampleData != true) {
       String? url = "${Config().appointmentsUrl}/services/people";
-      Map<String, String> headers = {
+      Map<String, String?> headers = {
         'Content-Type': 'application/json'
       };
       String? post = JsonUtils.encode([{
         'provider_id': providerId,
         'unit_ids': [ unitId ],
       }]);
+      headers.addAll(externalAuthorizationHeader);
       http.Response? response = await Network().get(url, body: post, headers: headers, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentPerson.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
@@ -565,7 +570,7 @@ class Appointments with Service implements NotificationsListener {
       int startTime = DateUtils.dateOnly(dateLocal).millisecondsSinceEpoch;
       int endTime = startTime + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
       String? url = "${Config().appointmentsUrl}/services/slots?provider-id=$providerId&unit-id=$unitId&person-id=$personId&start-time=$startTime&end-time=$endTime";
-      http.Response? response = await Network().get(url, auth: Auth2());
+      http.Response? response = await Network().get(url, headers: externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentTimeSlotsAndQuestions.fromJson(JsonUtils.decodeMap(response?.body)) : null;
     }
     else {
@@ -616,7 +621,7 @@ class Appointments with Service implements NotificationsListener {
   Future<List<Appointment>?> loadAppointments({String? providerId}) async {
     if (_useSampleData != true) {
       String? url = "${Config().appointmentsUrl}/services/appointments?providers-ids=$providerId";
-      http.Response? response = await Network().get(url, auth: Auth2());
+      http.Response? response = await Network().get(url, headers: externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? Appointment.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     else {
@@ -715,9 +720,10 @@ class Appointments with Service implements NotificationsListener {
   }) async {
     if (_useSampleData != true) {
       String? url = "${Config().appointmentsUrl}/services/appointments";
-      Map<String, String> headers = {
+      Map<String, String?> headers = {
         'Content-Type': 'application/json'
       };
+      headers.addAll(externalAuthorizationHeader);
       String? post = JsonUtils.encode({
         'provider_id': provider?.id,
         'unit_id': unit?.id,
@@ -751,9 +757,10 @@ class Appointments with Service implements NotificationsListener {
   }) async {
     if (_useSampleData != true) {
       String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
-      Map<String, String> headers = {
+      Map<String, String?> headers = {
         'Content-Type': 'application/json'
       };
+      headers.addAll(externalAuthorizationHeader);
       String? post = JsonUtils.encode({
         'type': appointmentTypeToString(type),
         'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
@@ -780,7 +787,7 @@ class Appointments with Service implements NotificationsListener {
   Future<Appointment?> cancelAppointment(Appointment appointment) async {
     if (_useSampleData != true) {
         String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
-        http.Response? response = await Network().delete(url, auth: Auth2());
+        http.Response? response = await Network().delete(url, headers: externalAuthorizationHeader, auth: Auth2());
         if (response?.statusCode == 200) {
           return Appointment.fromOther(appointment, cancelled: true);
         }
