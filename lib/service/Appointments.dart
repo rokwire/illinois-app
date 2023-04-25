@@ -620,7 +620,10 @@ class Appointments with Service implements NotificationsListener {
 
   Future<List<Appointment>?> loadAppointments({String? providerId}) async {
     if (_useSampleData != true) {
-      String? url = "${Config().appointmentsUrl}/services/appointments?providers-ids=$providerId";
+      String url = "${Config().appointmentsUrl}/services/v2/appointments";
+      if (providerId != null) {
+        url += "?providers-ids=$providerId";
+      }
       http.Response? response = await Network().get(url, headers: externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? Appointment.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
