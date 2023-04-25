@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- New applointments UI moved from Wellness to Academics [#3179](https://github.com/rokwire/illinois-app/issues/3179).
+
 ## [4.3.47] - 2023-04-24
 ### Changed
 - Display video thumb in "Mental Health Resources". Play the video in another panel with subtitles [#3164](https://github.com/rokwire/illinois-app/issues/3164).

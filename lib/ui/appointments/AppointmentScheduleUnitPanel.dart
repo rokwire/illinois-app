@@ -19,8 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePersonPanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePersonPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -76,10 +76,10 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.failed', 'Failed to load providers'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.empty', 'No providers available'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available'));
     }
     else if (_providers?.length == 1) {
       return _buildUnitsContent();
@@ -183,16 +183,16 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
 
   Widget _buildUnitsContent() {
     if (_selectedProvider == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider'));
     }
     else if (_isLoadingUnits) {
       return _buildLoadingContent();
     }
     else if (_units == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.units.failed', 'Failed to load units for provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.failed', 'Failed to load units for provider'));
     }
     else if (_units?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.units.empty', 'No units available for selected provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.empty', 'No units available for selected provider'));
     }
     else  {
       return _buildUnitsList();

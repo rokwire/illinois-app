@@ -22,7 +22,7 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -33,14 +33,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class WellnessAppointmentsHomeContentWidget extends StatefulWidget {
-  WellnessAppointmentsHomeContentWidget();
+class WellnessAppointmentsContentWidget extends StatefulWidget {
+  WellnessAppointmentsContentWidget();
 
   @override
-  State<WellnessAppointmentsHomeContentWidget> createState() => _WellnessAppointmentsHomeContentWidgetState();
+  State<WellnessAppointmentsContentWidget> createState() => _WellnessAppointmentsContentWidgetState();
 }
 
-class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointmentsHomeContentWidget> implements NotificationsListener {
+class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointmentsContentWidget> implements NotificationsListener {
   List<Appointment>? _upcomingAppointments;
   List<Appointment>? _pastAppointments;
   late bool _appointmentsCanDisplay;
