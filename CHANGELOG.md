@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Handle appointments when user is not logged in [#3167](https://github.com/rokwire/illinois-app/issues/3167).
+### Fixed
+- Fixed passing group or project when browsing for events for them [#3175](https://github.com/rokwire/illinois-app/issues/3175).
 
 ## [4.3.48] - 2023-04-25
 ### Changed
