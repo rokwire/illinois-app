@@ -53,9 +53,9 @@ class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAtt
   final bool previewMode;
   final Core.Position? initialLocationData;
   final String? superEventTitle;
-  final String? browseGroupId;
+  final Group? browseGroup;
 
-  ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle, this.browseGroupId});
+  ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle, this.browseGroup});
 
   @override
   _EventDetailPanelState createState() => _EventDetailPanelState();
@@ -810,14 +810,18 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _buildGroupButtons(){
-    return (StringUtils.isEmpty(widget.browseGroupId) || (widget.event?.isGroupPrivate ?? false))? Container():
+    return (StringUtils.isNotEmpty(widget.browseGroup?.id) && ((widget.browseGroup?.researchProject == true) || !(widget.event?.isGroupPrivate ?? false))) ?
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: Column(
             children: [
               RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
-                hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+                label: (widget.browseGroup?.researchProject == true) ?
+                  Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
+                  Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+                hint: (widget.browseGroup?.researchProject == true) ?
+                  Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
+                  Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorPrimary,
                 textColor: Styles().colors!.fillColorPrimary,
@@ -827,7 +831,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               Container(height: 6,),
               GroupMembersSelectionWidget(
                 selectedMembers: _groupMembersSelection,
-                groupId: widget.browseGroupId,
+                groupId: widget.browseGroup?.id,
                 onSelectionChanged: (members){
                   setState(() {
                     _groupMembersSelection = members;
@@ -835,7 +839,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 },),
             ],
           )
-        );
+        ) : Container();
   }
 
   void _addRecentItem(){
@@ -890,7 +894,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     setState(() {
       _addToGroupInProgress = true;
     });
-    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget.event?.id, toMembers: _groupMembersSelection).then((value){
+    Groups().linkEventToGroup(groupId: widget.browseGroup?.id, eventId: widget.event?.id, toMembers: _groupMembersSelection).then((value){
       setState(() {
         _addToGroupInProgress = true;
       });
