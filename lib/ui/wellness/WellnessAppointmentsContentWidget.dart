@@ -67,7 +67,7 @@ class _WellnessAppointmentsContentWidgetState extends State<WellnessAppointments
   Widget _buildContent() {
     Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments');
     if (accessWidget != null) {
-      return accessWidget;
+      return Column(mainAxisSize: MainAxisSize.min, children: [ accessWidget ],);
     }
     else if (!_appointmentsCanDisplay) {
       return Padding(
