@@ -99,7 +99,7 @@ FLAVOUR_ENV_NAME=$(tr '[:lower:]' '[:upper:]' <<<"${ENV_NAME:0:1}")${ENV_NAME:1}
 APK_BUILD_PATH="${BUILD_DIR}/app/outputs/flutter-apk/app-illinois$ENV_NAME-release.apk"
 VERSION=$(grep "version:" pubspec.yaml | sed -e 's/.* //' | sed -e 's/+.*//')
 SHORT_VERSION_NAME=${VERSION%.*}
-if [-z "$TAG"] || ["$TAG" = ""]
+if [ -z "$TAG" ] || [ "$TAG" = "" ]
 then
     BUILD_OUTPUT_NAME="$BRAND-$VERSION-$ENV"
 else
