@@ -90,7 +90,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _group?.onlyAdminsCanCreatePolls ??= true;
     _group?.researchOpen ??= (_group?.researchProject == true) ? true : null;
     _group?.privacy ??= (_group?.researchProject == true) ? GroupPrivacy.public : GroupPrivacy.private;
-    _group?.settings ??= GroupSettingsExt.initialDefaultSettings();
+    _group?.settings ??= GroupSettingsExt.initialDefaultSettings(group: _group);
 
     _groupTitleController.text = _group?.title ?? '';
     _groupDescriptionController.text = _group?.description ?? '';
