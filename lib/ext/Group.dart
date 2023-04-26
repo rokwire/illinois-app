@@ -246,10 +246,17 @@ extension GroupPostExt on GroupPost {
 }
 
 extension GroupSettingsExt on GroupSettings{
-  static GroupSettings initialDefaultSettings(){
-    return GroupSettings(
+  static GroupSettings initialDefaultSettings({Group? group}){
+      //Set Default values to true
+    return (group?.researchProject != true) ?
+      GroupSettings(
         memberInfoPreferences: MemberInfoPreferences(allowMemberInfo: true, viewMemberNetId: false, viewMemberName: true, viewMemberEmail: false),
-        memberPostPreferences: MemberPostPreferences(allowSendPost: true, sendPostToSpecificMembers: false, sendPostToAll: true, sendPostToAdmins: true, sendPostReplies: true, sendPostReactions: true)); //Set Default values to true
+        memberPostPreferences: MemberPostPreferences(allowSendPost: true, sendPostToSpecificMembers: false, sendPostToAll: true, sendPostToAdmins: true, sendPostReplies: true, sendPostReactions: true)
+      ) :
+      GroupSettings(
+        memberInfoPreferences: MemberInfoPreferences(allowMemberInfo: false, viewMemberNetId: false, viewMemberName: false, viewMemberEmail: false),
+        memberPostPreferences: MemberPostPreferences(allowSendPost: false, sendPostToSpecificMembers: false, sendPostToAll: false, sendPostToAdmins: false, sendPostReplies: false, sendPostReactions: false)
+      ); 
   }
 }
 
