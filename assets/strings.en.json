@@ -3274,6 +3274,7 @@
     "widget.access.polls.name": "Polls",
     "widget.access.wellness.appointments.name": "MyMcKinley Appointments",
     "widget.access.wellness.health_screener.name": "Illinois Health Screener",
+    "widget.access.academics.appointments.name": "Academics Appointments",
     "widget.access.roles.unsatisfied.title": "%s is unavailable",
     "widget.access.privacy.unsatisfied.title": "Update privacy level to access %s",
     "widget.access.privacy.unsatisfied.message": "Update your privacy level to at least ",

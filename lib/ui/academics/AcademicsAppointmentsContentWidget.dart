@@ -82,9 +82,9 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
   @override
   Widget build(BuildContext context) {
-    Widget? accessWidget = AccessCard.builder(resource: 'academics.appointments');
+    Widget? accessWidget = AccessCard.builder(resource: 'academics.appointments', padding: EdgeInsets.zero);
     if (accessWidget != null) {
-      return accessWidget;
+      return Column(mainAxisSize: MainAxisSize.min, children: [ accessWidget ],);
     }
     else if (_isLoadingProviders) {
       return _buildLoadingContent();
