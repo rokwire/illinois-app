@@ -3271,6 +3271,7 @@
     "widget.access.polls.name": "快速投票",
     "widget.access.wellness.appointments.name": "我的麥金利約會",
     "widget.access.wellness.health_screener.name": "伊利諾伊州健康篩查員",
+    "widget.access.academics.appointments.name": "Academics Appointments",
     "widget.access.roles.unsatisfied.title": "%s 不可用",
     "widget.access.privacy.unsatisfied.title": "更新隱私級別以訪問 %s",
     "widget.access.privacy.unsatisfied.message": "將您的隱私級別至少更新為 ",
