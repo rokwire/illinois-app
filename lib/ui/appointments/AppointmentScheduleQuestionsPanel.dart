@@ -289,8 +289,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
-                Text(question.title ?? '', style:
-                  Styles().textStyles?.getTextStyle('widget.detail.regular'),
+                Text(question.title ?? '', style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
+                  semanticsLabel: "",
                 )
               ),
             ),
