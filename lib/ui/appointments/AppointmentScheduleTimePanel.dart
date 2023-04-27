@@ -117,52 +117,53 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   Widget _buildTimeSlots() {
-    List<Widget> columns = <Widget>[];
-    List<Widget>? row;
-    int? rowHour;
+    Set<int> startMinutes = <int>{};
+    Map<int, Map<int, AppointmentTimeSlot>> timeSlotRows = <int, Map<int, AppointmentTimeSlot>>{};
     for (AppointmentTimeSlot timeSlot in _timeSlots) {
-      int? slotHour = timeSlot.startTime?.hour;
-      if (slotHour != null) {
-        if (slotHour != rowHour) {
-          if ((row != null) && (row.isNotEmpty)) {
-            columns.add(Row(children: row,));
-          }
-          row = <Widget>[];
-          rowHour = slotHour;
-        }
-        else if (row == null) {
-          row = <Widget>[];
-        }
-        row.add(Expanded(child: _buildTimeSlot(timeSlot)));
+      DateTime? slotStartTime = timeSlot.startTime;
+      int? slotStartHour = slotStartTime?.hour;
+      int? slotStartMinute = slotStartTime?.minute;
+      if ((slotStartHour != null) && (slotStartMinute != null)) {
+        Map<int, AppointmentTimeSlot> timeSlotRow = (timeSlotRows[slotStartHour] ??= <int, AppointmentTimeSlot>{});
+        timeSlotRow[slotStartMinute] = timeSlot;
+        startMinutes.add(slotStartMinute);
       }
     }
-    if ((row != null) && (row.isNotEmpty)) {
-      columns.add(Row(children: row,));
+
+    List<Widget> rows = <Widget>[];
+    for (int hour in timeSlotRows.keys) {
+      List<Widget> row = <Widget>[];
+      Map<int, AppointmentTimeSlot>? slotsPerHour = timeSlotRows[hour];
+      for (int startMinute in startMinutes) {
+        AppointmentTimeSlot? timeSlot = (slotsPerHour != null) ? slotsPerHour[startMinute] : null;
+        row.add(Expanded(child: _buildTimeSlot(timeSlot)));  
+      }
+      rows.add(Row(children: row,));
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
       SingleChildScrollView(child:
-        Column(children: columns,),
+        Column(children: rows,),
       ),
     );
   }
 
-  Widget _buildTimeSlot(AppointmentTimeSlot timeSlot) {
+  Widget _buildTimeSlot(AppointmentTimeSlot? timeSlot) {
     String? timeString;
-    if (timeSlot.startTime != null) {
-      if (timeSlot.endTime != null) {
-        String startTime = DateFormat('hh:mm').format(timeSlot.startTime!);
+    if (timeSlot?.startTime != null) {
+      if (timeSlot?.endTime != null) {
+        String startTime = DateFormat('hh:mm').format(timeSlot!.startTime!);
         String endTime = DateFormat('hh:mm aaa').format(timeSlot.endTime!);
         timeString = "$startTime - $endTime";
       }
       else {
-        timeString = DateFormat('hh:mm aaa').format(timeSlot.startTime!);
+        timeString = DateFormat('hh:mm aaa').format(timeSlot!.startTime!);
       }
     }
 
     Color? backColor;
     String textStyle;
-    if (!timeSlot.available) {
+    if (timeSlot?.available != true) {
       backColor = Styles().colors?.background;
       textStyle = 'widget.button.title.disabled';
     }
@@ -191,9 +192,9 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     );
   }
 
-  void _onTimeSlot(AppointmentTimeSlot timeSlot) {
+  void _onTimeSlot(AppointmentTimeSlot? timeSlot) {
     if (mounted) {
-      if (timeSlot.available) {
+      if ((timeSlot != null) && timeSlot.available) {
         setState(() {
           _selectedSlot = timeSlot;
         });
@@ -304,7 +305,8 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       else {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(
           scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
-            timeSlot: _selectedSlot
+            timeSlot: _selectedSlot,
+            answers: (_questions != null) ? <AppointmentAnswer>[] : null,
           ),
           sourceAppointment: widget.sourceAppointment,
           onFinish: widget.onFinish,

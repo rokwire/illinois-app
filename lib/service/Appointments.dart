@@ -522,13 +522,18 @@ class Appointments with Service implements NotificationsListener {
       return _sampleUnits;
     }
     else if (_isServiceAvailable) {
-      String? url = "${Config().appointmentsUrl}/services/units?providers-ids=$providerId";
+      String? url = "${Config().appointmentsUrl}/services/units?provider-id=$providerId";
       http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentUnit.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     else {
       return null;
     }
+  }
+
+  Future<AppointmentUnit?> loadUnit({required String providerId, required String unitId}) async {
+    List<AppointmentUnit>? units = await loadUnits(providerId: providerId);
+    return AppointmentUnit.findInList(units, id: unitId);
   }
 
   List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
@@ -546,21 +551,18 @@ class Appointments with Service implements NotificationsListener {
       return _samplePersons;
     }
     else if (_isServiceAvailable) {
-      String? url = "${Config().appointmentsUrl}/services/people";
-      Map<String, String?> headers = {
-        'Content-Type': 'application/json'
-      };
-      String? post = JsonUtils.encode([{
-        'provider_id': providerId,
-        'unit_ids': [ unitId ],
-      }]);
-      headers.addAll(Gateway().externalAuthorizationHeader);
-      http.Response? response = await Network().get(url, body: post, headers: headers, auth: Auth2());
+      String? url = "${Config().appointmentsUrl}/services/people?provider-id=$providerId&unit-id=$unitId";
+      http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentPerson.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     else {
       return null;
     }
+  }
+
+  Future<AppointmentPerson?> loadPerson({required String providerId, required String unitId, required String personId}) async {
+    List<AppointmentPerson>? persons = await loadPersons(providerId: providerId, unitId: unitId);
+    return AppointmentPerson.findInList(persons, id: personId);
   }
 
   List<AppointmentPerson> get _samplePersons => <AppointmentPerson>[
@@ -691,6 +693,7 @@ class Appointments with Service implements NotificationsListener {
 
     List<AppointmentUnit> units = _sampleUnits;
     AppointmentUnit unit = units[Random().nextInt(units.length)];
+    AppointmentLocation location = AppointmentLocation.fromUnit(unit);
 
     AppointmentOnlineDetails? details = (type == AppointmentType.online) ? AppointmentOnlineDetails(
       meetingId: id.substring(0, 8).toUpperCase(),
@@ -700,6 +703,7 @@ class Appointments with Service implements NotificationsListener {
     
     List<AppointmentPerson> persons = _samplePersons;
     AppointmentPerson person = persons[Random().nextInt(persons.length)];
+    AppointmentHost host = AppointmentHost.fromPerson(person);
     
     bool cancelled = (provider.supportsCancel == true) && ((Random().nextInt(3) % 5) == 0);
 
@@ -713,12 +717,12 @@ class Appointments with Service implements NotificationsListener {
       endTimeUtc: endTimeUtc,
 
       provider: provider,
-      unit: unit,
-      person: person,
+      unitId: unit.id,
+      personId: person.id,
       answers: _sampleAnswers,
 
-      host: null,
-      location: null,
+      host: host,
+      location: location,
       onlineDetails: details,
       instructions: 'Sample instructions (${5 - Random().nextInt(5) + 1})',
       cancelled: cancelled,
@@ -752,7 +756,7 @@ class Appointments with Service implements NotificationsListener {
       await Future.delayed(Duration(milliseconds: 1500));
       if (Random().nextInt(2) == 0) {
         NotificationService().notify(notifyAppointmentsChanged);
-        return Appointment(provider: provider, unit: unit, person: person, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
+        return Appointment(provider: provider, unitId: unit?.id, personId: person?.id, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
       }
       else {
         throw AppointmentsException.unknown('Random Create Failure');
@@ -774,6 +778,7 @@ class Appointments with Service implements NotificationsListener {
       });
       http.Response? response = await Network().post(url, body: post, headers: headers, auth: Auth2());
       if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
         return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
       }
       throw AppointmentsException.fromServerResponse(response);
@@ -811,6 +816,7 @@ class Appointments with Service implements NotificationsListener {
       });
       http.Response? response = await Network().put(url, body: post, headers: headers, auth: Auth2());
       if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
         return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
       }
       throw AppointmentsException.fromServerResponse(response);
@@ -832,12 +838,13 @@ class Appointments with Service implements NotificationsListener {
       }
     }
     else if (_isServiceAvailable) {
-        String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
-        http.Response? response = await Network().delete(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
-        if (response?.statusCode == 200) {
-          return Appointment.fromOther(appointment, cancelled: true);
-        }
-        throw AppointmentsException.fromServerResponse(response);
+      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      http.Response? response = await Network().delete(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
+      if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromOther(appointment, cancelled: true);
+      }
+      throw AppointmentsException.fromServerResponse(response);
     }
     else {
       throw AppointmentsException.notAvailable();
