@@ -778,6 +778,7 @@ class Appointments with Service implements NotificationsListener {
       });
       http.Response? response = await Network().post(url, body: post, headers: headers, auth: Auth2());
       if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
         return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
       }
       throw AppointmentsException.fromServerResponse(response);
@@ -815,6 +816,7 @@ class Appointments with Service implements NotificationsListener {
       });
       http.Response? response = await Network().put(url, body: post, headers: headers, auth: Auth2());
       if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
         return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
       }
       throw AppointmentsException.fromServerResponse(response);
@@ -836,12 +838,13 @@ class Appointments with Service implements NotificationsListener {
       }
     }
     else if (_isServiceAvailable) {
-        String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
-        http.Response? response = await Network().delete(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
-        if (response?.statusCode == 200) {
-          return Appointment.fromOther(appointment, cancelled: true);
-        }
-        throw AppointmentsException.fromServerResponse(response);
+      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      http.Response? response = await Network().delete(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
+      if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromOther(appointment, cancelled: true);
+      }
+      throw AppointmentsException.fromServerResponse(response);
     }
     else {
       throw AppointmentsException.notAvailable();
