@@ -123,34 +123,31 @@ extension ExploreExt on Explore {
       return Localization().getStringEx('panel.explore.item.events.name', 'Events');
     }
     else if (exploresType == "dining") {
-      return Localization().getStringEx('panel.explore.item.dinings.name', 'Dinings');
+      return Localization().getStringEx('panel.explore.item.dinings.name', 'Dining Locations');
     }
     else if (exploresType == "laundryroom") {
-      return Localization().getStringEx('panel.explore.item.laundry.name', 'Laundry');
+      return Localization().getStringEx('panel.explore.item.laundry.name', 'Laundry Rooms');
     }
     else if (exploresType == "game") {
-      return Localization().getStringEx('panel.explore.item.games.name', 'Games');
-    }
-    else if (exploresType == "place") {
-      return Localization().getStringEx('panel.explore.item.places.name', 'Places');
+      return Localization().getStringEx('panel.explore.item.games.name', 'Game Locations');
     }
     else if (exploresType == "building") {
       return Localization().getStringEx('panel.explore.item.buildings.name', 'Buildings');
     }
     else if (exploresType == "wellnessbuilding") {
-      return Localization().getStringEx('panel.explore.item.wellnessbuildings.name', 'Resources');
+      return Localization().getStringEx('panel.explore.item.wellnessbuildings.name', 'Therapist Locations');
     }
     else if (exploresType == "mtdstop") {
       return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'Bus Stops');
     }
     else if (exploresType == "studentcourse") {
-      return Localization().getStringEx('panel.explore.item.courses.name', 'Courses');
+      return Localization().getStringEx('panel.explore.item.courses.name', 'Course Locations');
     }
     else if (exploresType == "appointment") {
-      return Localization().getStringEx('panel.explore.item.appointments.name', 'Appointments');
+      return Localization().getStringEx('panel.explore.item.appointments.name', 'Appointment Locations');
     }
     else if (exploresType == "explorepoi") {
-      return Localization().getStringEx('panel.explore.item.pois.name', 'POIs');
+      return Localization().getStringEx('panel.explore.item.pois.name', 'MTD Destinations');
     }
     else {
       return Localization().getStringEx('panel.explore.item.unknown.name', 'Explores');
@@ -348,37 +345,37 @@ extension ExploreMap on Explore {
 
   String? getMapGroupMarkerTitle(int count) {
     if (this is Event) {
-      return sprintf('%s Events', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.events.count', '%s Events'), [count]);
     }
     else if (this is Dining) {
-      return sprintf('%s Dining Locations', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.dinings.count', '%s Dining Locations'), [count]);
     }
     else if (this is LaundryRoom) {
-      return sprintf('%s Laundry Rooms', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.laundry.count', '%s Laundry Rooms'), [count]);
     }
     else if (this is Game) {
-      return sprintf('%s Games', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.games.count', '%s Game Locations'), [count]);
     }
     else if (this is MTDStop) {
-      return sprintf('%s MTD Stops', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.mtd_stops.count', '%s MTD Stops'), [count]);
     }
     else if (this is StudentCourse) {
-      return sprintf('%s Courses', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.courses.count', '%s Course Locations'), [count]);
     }
     else if (this is ExplorePOI) {
-      return sprintf('%s MTD Destinations', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.pois.count', '%s MTD Destinations'), [count]);
     }
     else if (this is Building) {
-      return sprintf('%s Buildings', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.buildings.count', '%s Buildings'), [count]);
     }
     else if (this is WellnessBuilding) {
-      return sprintf('%s Resources', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.wellnessbuildings.count', '%s Therapist Locations'), [count]);
     }
     else if (this is Appointment) {
-      return sprintf('%s Appointments', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.appointments.count', '%s Appointment Locations'), [count]);
     }
     else {
-      return sprintf('%s Explores', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.explores.count', '%s Explores'), [count]);
     }
   }
 
