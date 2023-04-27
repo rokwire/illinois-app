@@ -83,7 +83,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx("panel.food_special_offers.title.text", "Specials"),
+        title: Localization().getStringEx("panel.food_special_offers.title.text", "Dining News"),
         //textStyle: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16 ),
       ),
       body: Column(
