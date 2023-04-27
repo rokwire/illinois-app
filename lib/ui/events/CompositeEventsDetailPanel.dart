@@ -26,6 +26,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -54,9 +55,9 @@ class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPage
 
   final Event? parentEvent;
   final Core.Position? initialLocationData;
-  final String? browseGroupId;
+  final Group? browseGroup;
 
-  CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData, this.browseGroupId});
+  CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData, this.browseGroup});
 
   @override
   _CompositeEventsDetailPanelState createState() => _CompositeEventsDetailPanelState();
@@ -613,20 +614,23 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Widget _buildGroupButtons(){
-    return StringUtils.isEmpty(widget.browseGroupId)? Container():
-    Container(
+    return StringUtils.isNotEmpty(widget.browseGroup?.id) ? Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child:
           RoundedButton(
-            label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
-            hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
+            label: (widget.browseGroup?.researchProject == true) ?
+              Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
+              Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+            hint: (widget.browseGroup?.researchProject == true) ?
+              Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
+              Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorPrimary,
             textColor: Styles().colors!.fillColorPrimary,
             progress: _addToGroupInProgress,
             onTap: _onTapAddToGroup,
           ),
-    );
+    ) : Container();
   }
 
   void _onTapAddToGroup() {
@@ -634,7 +638,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     setState(() {
       _addToGroupInProgress = true;
     });
-    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget.parentEvent?.id).then((value){
+    Groups().linkEventToGroup(groupId: widget.browseGroup?.id, eventId: widget.parentEvent?.id).then((value){
       setState(() {
         _addToGroupInProgress = true;
       });

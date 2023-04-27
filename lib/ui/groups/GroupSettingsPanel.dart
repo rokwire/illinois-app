@@ -87,9 +87,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     _researchRequiresConsentConfirmation = StringUtils.isNotEmpty(_group?.researchConsentStatement) ;
 
-    if(_group!=null) {
-      _group?.settings ??= GroupSettingsExt.initialDefaultSettings(); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
-    }
+    _group?.settings ??= GroupSettingsExt.initialDefaultSettings(group: _group); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
     super.initState();
   }
 
