@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Rename Map > Mental Health Resources to Map > Find a Therapist [#3194](https://github.com/rokwire/illinois-app/issues/3194).
 - Rename "Specials" to "Dining News" in Residence Hall Dining [#3187](https://github.com/rokwire/illinois-app/issues/3187).
+### Fixed
+- Cleaned up directions / url launching in Event detail panel [#3193](https://github.com/rokwire/illinois-app/issues/3193).
 
 ## [4.3.49] - 2023-04-26
 ### Changed
