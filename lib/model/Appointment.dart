@@ -33,8 +33,8 @@ class Appointment with Explore, Favorite {
   final DateTime? endTimeUtc;
 
   final AppointmentProvider? provider;
-  final AppointmentUnit? unit;
-  final AppointmentPerson? person;
+  final String? unitId;
+  final String? personId;
   final List<AppointmentAnswer>? answers;
 
   final AppointmentHost? host;
@@ -48,13 +48,13 @@ class Appointment with Explore, Favorite {
 
   Appointment({
     this.id, this.type, this.startTimeUtc, this.endTimeUtc,
-    this.provider, this.unit, this.person, this.answers,
+    this.provider, this.unitId, this.personId, this.answers,
     this.host, this.location, this.onlineDetails, this.instructions, this.cancelled,
   });
 
   factory Appointment.fromOther(Appointment? other, {
     String? id, AppointmentType? type, DateTime? startTimeUtc, DateTime? endTimeUtc,
-    AppointmentProvider? provider, AppointmentUnit? unit, AppointmentPerson? person, List<AppointmentAnswer>? answers,
+    AppointmentProvider? provider, String? unitId, String? personId, List<AppointmentAnswer>? answers,
     AppointmentHost? host, AppointmentLocation? location, AppointmentOnlineDetails? onlineDetails, String? instructions, bool? cancelled,
   }) {
     return Appointment(
@@ -63,9 +63,9 @@ class Appointment with Explore, Favorite {
       startTimeUtc: startTimeUtc ?? other?.startTimeUtc,
       endTimeUtc: startTimeUtc ?? other?.endTimeUtc,
       
+      unitId: unitId ?? other?.unitId,
+      personId: personId ?? other?.personId,
       provider: provider ?? other?.provider,
-      unit: unit ?? other?.unit,
-      person: person ?? other?.person,
       answers: answers ?? other?.answers,
       
       host: host ?? other?.host,
@@ -84,8 +84,8 @@ class Appointment with Explore, Favorite {
       endTimeUtc: DateTimeUtils.dateTimeFromString(json['end_date'], format: _serverDateTimeFormat, isUtc: true),
 
       provider: AppointmentProvider.fromJson(JsonUtils.mapValue(json['provider'])),
-      unit: AppointmentUnit.fromJson(JsonUtils.mapValue(json['unit'])),
-      person: AppointmentPerson.fromJson(JsonUtils.mapValue(json['person'])),
+      unitId: JsonUtils.stringValue(json['unit_id']),
+      personId: JsonUtils.stringValue(json['person_id']),
       answers: AppointmentAnswer.listFromJson(JsonUtils.listValue(json['answers'])),
       
       host: AppointmentHost.fromJson(JsonUtils.mapValue(json['host'])),
@@ -103,8 +103,8 @@ class Appointment with Explore, Favorite {
     'end_date': DateTimeUtils.utcDateTimeToString(endTimeUtc, format: _serverDateTimeFormat),
 
     'provider': provider?.toJson(),
-    'unit': unit?.toJson(),
-    'person': person?.toJson(),
+    'unit_id': unitId,
+    'person_id': personId,
     'answers': AppointmentAnswer.listToJson(answers),
 
     'host': host?.toJson(),
@@ -124,8 +124,8 @@ class Appointment with Explore, Favorite {
     (endTimeUtc == other.endTimeUtc) &&
 
     (provider == other.provider) &&
-    (unit == other.unit) &&
-    (person == other.person) &&
+    (unitId == other.unitId) &&
+    (personId == other.personId) &&
     (DeepCollectionEquality().equals(answers, other.answers)) &&
 
     (host == other.host) &&
@@ -143,8 +143,8 @@ class Appointment with Explore, Favorite {
     (endTimeUtc?.hashCode ?? 0) ^
 
     (provider?.hashCode ?? 0) ^
-    (unit?.hashCode ?? 0) ^
-    (person?.hashCode ?? 0) ^
+    (unitId?.hashCode ?? 0) ^
+    (personId?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(answers)) ^
 
     (host?.hashCode ?? 0) ^
@@ -155,11 +155,10 @@ class Appointment with Explore, Favorite {
 
   // Accessories
 
+  String? get providerId => provider?.id;
+
   bool get isUpcoming =>
     startTimeUtc?.isAfter(DateTime.now().toUtc()) ?? false;
-
-  String? get locationTitle =>
-    unit?.name ?? location?.title;
 
   static List<Appointment>? listFromJson(List<dynamic>? jsonList) {
     List<Appointment>? items;
@@ -185,7 +184,7 @@ class Appointment with Explore, Favorite {
   @override String? get explorePlaceId => null;
   @override String? get exploreShortDescription => null;
   @override DateTime? get exploreStartDateUtc => startTimeUtc;
-  @override String? get exploreSubTitle => locationTitle;
+  @override String? get exploreSubTitle => location?.title;
   @override String? get exploreTitle => "${provider?.name ?? 'MyMcKinley'} Appointment";
 //@override Map<String, dynamic> toJson();
 }
@@ -263,6 +262,13 @@ class AppointmentLocation {
 
   AppointmentLocation({this.id, this.latitude, this.longitude, this.title, this.phone});
 
+  factory AppointmentLocation.fromUnit(AppointmentUnit unit) {
+    return AppointmentLocation(
+      id: unit.id,
+      title: unit.address
+    );
+  }
+
   String? get address => title; //TBD: ?
 
   Map<String, dynamic> toJson() {
@@ -313,6 +319,19 @@ class AppointmentHost {
   final String? lastName;
 
   AppointmentHost({this.firstName, this.lastName});
+
+  factory AppointmentHost.fromPerson(AppointmentPerson person) {
+    String? firstName, lastName;
+    List<String>? names = person.name?.split(' ');
+    if ((names != null) && (names.length > 1)) {
+      firstName = names[0];
+      lastName = (names.length > 2) ? names.sublist(1).join(' ') : names[1];
+    }
+    else {
+      firstName = person.name;
+    }
+    return AppointmentHost(firstName: firstName, lastName: lastName);
+  }
 
   // JSON Serialization
 
@@ -570,6 +589,17 @@ class AppointmentUnit {
 
   // Accessories
 
+  static AppointmentUnit? findInList(List<AppointmentUnit>? units, { String? id }) {
+    if (units != null) {
+      for (AppointmentUnit unit in units) {
+        if ((id != null) && (unit.id == id)) {
+          return unit;
+        }
+      }
+    }
+    return null;
+  }
+
   //...
 }
 
@@ -642,6 +672,21 @@ class AppointmentPerson {
     (name?.hashCode ?? 0) ^
     (notes?.hashCode ?? 0) ^
     (imageUrl?.hashCode ?? 0);
+
+  // Accessories
+
+  static AppointmentPerson? findInList(List<AppointmentPerson>? persons, { String? id }) {
+    if (persons != null) {
+      for (AppointmentPerson person in persons) {
+        if ((id != null) && (person.id == id)) {
+          return person;
+        }
+      }
+    }
+    return null;
+  }
+
+  //...
 }
 
 ///////////////////////////////

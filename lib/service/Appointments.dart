@@ -531,6 +531,11 @@ class Appointments with Service implements NotificationsListener {
     }
   }
 
+  Future<AppointmentUnit?> loadUnit({required String providerId, required String unitId}) async {
+    List<AppointmentUnit>? units = await loadUnits(providerId: providerId);
+    return AppointmentUnit.findInList(units, id: unitId);
+  }
+
   List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
     AppointmentUnit(id: '11', name: 'House of Horror', address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', imageUrl: 'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png', notes: 'Lorem ipsum sit dolor amet.'),
     AppointmentUnit(id: '12', name: "Dante's Inferno", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', imageUrl: 'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg', notes: 'Proin sed lacinia ex.'),
@@ -553,6 +558,11 @@ class Appointments with Service implements NotificationsListener {
     else {
       return null;
     }
+  }
+
+  Future<AppointmentPerson?> loadPerson({required String providerId, required String unitId, required String personId}) async {
+    List<AppointmentPerson>? persons = await loadPersons(providerId: providerId, unitId: unitId);
+    return AppointmentPerson.findInList(persons, id: personId);
   }
 
   List<AppointmentPerson> get _samplePersons => <AppointmentPerson>[
@@ -683,6 +693,7 @@ class Appointments with Service implements NotificationsListener {
 
     List<AppointmentUnit> units = _sampleUnits;
     AppointmentUnit unit = units[Random().nextInt(units.length)];
+    AppointmentLocation location = AppointmentLocation.fromUnit(unit);
 
     AppointmentOnlineDetails? details = (type == AppointmentType.online) ? AppointmentOnlineDetails(
       meetingId: id.substring(0, 8).toUpperCase(),
@@ -692,6 +703,7 @@ class Appointments with Service implements NotificationsListener {
     
     List<AppointmentPerson> persons = _samplePersons;
     AppointmentPerson person = persons[Random().nextInt(persons.length)];
+    AppointmentHost host = AppointmentHost.fromPerson(person);
     
     bool cancelled = (provider.supportsCancel == true) && ((Random().nextInt(3) % 5) == 0);
 
@@ -705,12 +717,12 @@ class Appointments with Service implements NotificationsListener {
       endTimeUtc: endTimeUtc,
 
       provider: provider,
-      unit: unit,
-      person: person,
+      unitId: unit.id,
+      personId: person.id,
       answers: _sampleAnswers,
 
-      host: null,
-      location: null,
+      host: host,
+      location: location,
       onlineDetails: details,
       instructions: 'Sample instructions (${5 - Random().nextInt(5) + 1})',
       cancelled: cancelled,
@@ -744,7 +756,7 @@ class Appointments with Service implements NotificationsListener {
       await Future.delayed(Duration(milliseconds: 1500));
       if (Random().nextInt(2) == 0) {
         NotificationService().notify(notifyAppointmentsChanged);
-        return Appointment(provider: provider, unit: unit, person: person, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
+        return Appointment(provider: provider, unitId: unit?.id, personId: person?.id, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
       }
       else {
         throw AppointmentsException.unknown('Random Create Failure');
