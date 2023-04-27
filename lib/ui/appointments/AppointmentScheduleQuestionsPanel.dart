@@ -217,7 +217,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     String imageKey = (question.type == AppointmentQuestionType.multiSelect) ?
       (selected ? "check-box-filled" : "box-outline-gray") :
       (selected ? "check-circle-filled" : "circle-outline");
-    return Semantics(label: answer, value: semanticsValue, button: true, child:
+    return Semantics(label: answer, value: semanticsValue, button: true, inMutuallyExclusiveGroup: true, child:
       Padding(padding: EdgeInsets.only(left: _hPadding - 12, right: _hPadding), child:
         Row(children: [
           InkWell(onTap: (){ _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(selected == true), answer); }, child:
@@ -227,7 +227,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
           ),
           Expanded(child:
             Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-              Text(answer, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+              Text(answer, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,semanticsLabel: "",)
             ),
           ),
         ]),
@@ -276,7 +276,10 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
       case false: imageKey = "box-outline-gray"; break;
       default:    imageKey = "box-inside-light-gray"; break;
     }
-    
+
+    bool selected = value == true;
+    String semanticsValue = selected ? Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
+
     return Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
       Container (
         decoration: BoxDecoration(
@@ -285,7 +288,24 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
           borderRadius: BorderRadius.all(Radius.circular(4))
         ),
         //padding: const EdgeInsets.only(left: 12, right: 8),
-        child: InkWell(onTap: () => _onCheckbox(question: question),
+        child: Semantics(label: question.title ?? '', value: semanticsValue, button: true,
+          child: InkWell(onTap: () {
+            _onCheckbox(question: question);
+
+            //Calculate new value for announce
+            bool? value;
+            LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+            if ((selectedAnswers != null) && selectedAnswers.isNotEmpty) {
+              if (selectedAnswers.first == true.toString()) {
+                value = true;
+              }
+              else if (selectedAnswers.first == false.toString()) {
+                value = false;
+              }
+            }
+
+            AppSemantics.announceCheckBoxStateChange(context,  value ?? false, question.title ?? '');
+            },
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
@@ -300,10 +320,11 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
           ]),
         ),
       ),
-    );
+    ));
   }
 
   void _onCheckbox({ required AppointmentQuestion question }) {
+
     String? questionId = question.id;
     if (questionId != null) {
       bool? value;
@@ -350,6 +371,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
           backgroundColor: Styles().colors!.surface,
           textColor: canContinue ? Styles().colors!.fillColorPrimary : Styles().colors?.surfaceAccent,
           borderColor: canContinue ? Styles().colors!.fillColorSecondary : Styles().colors?.surfaceAccent,
+          enabled: canContinue,
           onTap: ()=> _onContinue(),
         ),
       ),
