@@ -522,7 +522,7 @@ class Appointments with Service implements NotificationsListener {
       return _sampleUnits;
     }
     else if (_isServiceAvailable) {
-      String? url = "${Config().appointmentsUrl}/services/units?providers-ids=$providerId";
+      String? url = "${Config().appointmentsUrl}/services/units?provider-id=$providerId";
       http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentUnit.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
@@ -546,16 +546,8 @@ class Appointments with Service implements NotificationsListener {
       return _samplePersons;
     }
     else if (_isServiceAvailable) {
-      String? url = "${Config().appointmentsUrl}/services/people";
-      Map<String, String?> headers = {
-        'Content-Type': 'application/json'
-      };
-      String? post = JsonUtils.encode([{
-        'provider_id': providerId,
-        'unit_ids': [ unitId ],
-      }]);
-      headers.addAll(Gateway().externalAuthorizationHeader);
-      http.Response? response = await Network().get(url, body: post, headers: headers, auth: Auth2());
+      String? url = "${Config().appointmentsUrl}/services/people?provider-id=$providerId&unit-id=$unitId";
+      http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentPerson.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     else {
