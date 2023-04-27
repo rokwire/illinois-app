@@ -305,7 +305,8 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       else {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(
           scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
-            timeSlot: _selectedSlot
+            timeSlot: _selectedSlot,
+            answers: (_questions != null) ? <AppointmentAnswer>[] : null,
           ),
           sourceAppointment: widget.sourceAppointment,
           onFinish: widget.onFinish,
