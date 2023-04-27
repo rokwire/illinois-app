@@ -436,52 +436,33 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     String? locationId = widget.event?.location?.locationId;
     String? urlFromLocation = locationId ??  locationDescription;
     bool isLocationIdUrl = Uri.tryParse(urlFromLocation)?.isAbsolute ?? false;
-    String value = virtualUrl ??
-        (isLocationIdUrl? urlFromLocation : "");
-
+    String value = virtualUrl ?? (isLocationIdUrl ? urlFromLocation : "");
+    String semanticsLabel = "$eventType, $virtualUrl";
+    String semanticsHint = Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link');
     bool isValueVisible = StringUtils.isNotEmpty(value);
-    return GestureDetector(
-      onTap: _onLocationDetailTapped,
-      child: Semantics(
-          label: "$eventType, $virtualUrl",
-          hint: Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link'),
-          button: true,
-          excludeSemantics: true,
-          child:Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(right: 10),
-                          child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
-                        ),
-                        Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 16,
-                                color: Styles().colors!.textBackground)),),
-                      ]),
-                  Container(height: 4,),
-                  Visibility(visible: isValueVisible, child: Container(
-                      padding: EdgeInsets.only(left: 30),
-                      child: Container(
-                          decoration: underlineLocationDecoration,
-                          padding: EdgeInsets.only(bottom: 2),
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 14,
-                                color: Styles().colors!.fillColorPrimary),
-                          ))))
-                ],)
-          )
+
+    return GestureDetector(onTap: _onLocationDetailTapped, child:
+      Semantics(label: semanticsLabel, hint: semanticsHint, button: true, excludeSemantics: true, child:
+        Padding(padding: EdgeInsets.only(bottom: 8), child:
+          Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 10), child:
+                Styles().images?.getImage(iconRes, excludeFromSemantics: true),
+              ),
+              Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child:
+                Text(eventType, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+              ),
+            ]),
+            Container(height: 4,),
+            Visibility(visible: isValueVisible, child:
+              Container(padding: EdgeInsets.only(left: 30), child:
+                Container(decoration: underlineLocationDecoration, padding: EdgeInsets.only(bottom: 2), child:
+                  Text(value, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary),)
+                ),
+              ),
+            ),
+          ],),
+        ),
       ),
     );
   }
