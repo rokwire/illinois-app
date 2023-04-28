@@ -13,6 +13,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class StudentCoursesContentWidget extends StatefulWidget {
@@ -160,16 +161,18 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
 
-    return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
-      DropdownButtonHideUnderline(child:
-        DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
-          isExpanded: false,
-          style: getTermDropDownItemStyle(selected: true),
-          //alignment: AlignmentDirectional.centerEnd,
-          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: getTermDropDownItemStyle(selected: true)) : null,
-          items: _buildTermDropDownItems(),
-          onChanged: _onTermDropDownValueChanged
+    return Visibility(visible: CollectionUtils.isNotEmpty(StudentCourses().terms), child:
+      Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton<String>(
+            icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
+            isExpanded: false,
+            style: getTermDropDownItemStyle(selected: true),
+            //alignment: AlignmentDirectional.centerEnd,
+            hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: getTermDropDownItemStyle(selected: true)) : null,
+            items: _buildTermDropDownItems(),
+            onChanged: _onTermDropDownValueChanged
+          ),
         ),
       ),
     );
