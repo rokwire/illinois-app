@@ -59,6 +59,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   Appointment? _appointment;
   Core.Position? _locationData;
   bool _loading = false;
+  bool _isPreparingReschedule = false;
   bool _isCanceling = false;
 
   @override
@@ -266,6 +267,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       commands.add(Expanded(child:
         RoundedButton(
           label: Localization().getStringEx('panel.appointment.detail.reschedule.button.title', 'Reschedule'),
+          progress: _isPreparingReschedule,
           onTap: _onReschedule,
         ),
       ));
@@ -357,7 +359,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
     String typeLabel = appointmentTypeToDisplayString(type)!;
     String? longDisplayLocation = _appointment?.getLongDisplayLocation(_locationData) ?? "";
-    String? locationTitle = _appointment?.locationTitle;
+    String? locationTitle = _appointment?.location?.title;
     String? locationTextValue;
     if (StringUtils.isNotEmpty(longDisplayLocation)) {
       locationTextValue = longDisplayLocation;
@@ -464,7 +466,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildHostDetail() {
-    String? displayHostName = _appointment!.displayHostName;
+    String? displayHostName = _appointment?.host?.displayName;
     if (StringUtils.isEmpty(displayHostName)) {
       return null;
     }
@@ -570,23 +572,36 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     Auth2().prefs?.toggleFavorite(_appointment);
   }
 
-  bool get _canReschedule => (_appointment?.provider?.supportsReschedule == true) && (_appointment?.unit != null) && (_appointment?.cancelled != true);
+  bool get _canReschedule => (_appointment?.provider?.supportsReschedule == true) && (_appointment?.unitId != null) && (_appointment?.cancelled != true);
 
   void _onReschedule() {
     Analytics().logSelect(target: "Reschedule");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
-      scheduleParam: AppointmentScheduleParam.fromAppointment(_appointment),
-      sourceAppointment: _appointment,
-      onFinish: (BuildContext context, Appointment? appointment) {
-        if (appointment != null) {
-          setStateIfMounted(() {
-            _appointment = appointment;
-          });
-        }
-        Navigator.of(context).popUntil((Route route) =>
-          AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType);
-      },
-    ),));
+
+    setStateIfMounted(() {
+      _isPreparingReschedule = true;
+    });
+
+    AppointmentScheduleParam.fromAppointment(_appointment).then((AppointmentScheduleParam scheduleParam) {
+      if (mounted) {
+        setState(() {
+          _isPreparingReschedule = false;
+        });
+
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
+          scheduleParam: scheduleParam,
+          sourceAppointment: _appointment,
+          onFinish: (BuildContext context, Appointment? appointment) {
+            if (appointment != null) {
+              setStateIfMounted(() {
+                _appointment = appointment;
+              });
+            }
+            Navigator.of(context).popUntil((Route route) =>
+              AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType);
+          },
+        ),));
+      }
+    });
   }
 
   bool get _canCancel => (_appointment?.provider?.supportsCancel == true) && _appointment?.cancelled != true;

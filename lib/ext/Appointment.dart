@@ -17,9 +17,6 @@ extension AppointmentExt on Appointment {
   int? get startMinutesSinceMidnightUtc =>
     AppointmentTimeSlotExt.getStartMinutesSinceMidnightUtc(startTimeUtc);
 
-  String? get displayHostName =>
-    person?.name ?? host?.displayName;
-
   String get displayProviderName =>
     this.provider?.name ?? Localization().getStringEx('model.wellness.appointment.default.provider.label', 'MyMcKinley');
 

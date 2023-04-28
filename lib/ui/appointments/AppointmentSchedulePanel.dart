@@ -121,44 +121,53 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     ]);
   }
 
-  Widget _buildLocationDetail() => InkWell(onTap: () => _onLocation(), child:
-    Padding(padding: EdgeInsets.only(top: 8, bottom: 8), child:
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(padding: EdgeInsets.only(right: 4), child:
-          Styles().images?.getImage('location', excludeFromSemantics: true),
+  Widget _buildLocationDetail() {
+    String? displayLocation = widget.scheduleParam.unit?.address ?? widget.sourceAppointment?.location?.address;
+    return ((displayLocation != null) && displayLocation.isNotEmpty) ?
+      InkWell(onTap: () => _onLocation(), child:
+        Padding(padding: EdgeInsets.only(top: 8, bottom: 8), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: EdgeInsets.only(right: 4), child:
+              Styles().images?.getImage('location', excludeFromSemantics: true),
+            ),
+            Expanded(child:
+              Text(displayLocation, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline"))
+            ),
+          ],),
         ),
-        Expanded(child:
-          Text(widget.scheduleParam.unit?.address ?? widget.sourceAppointment?.unit?.address ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline"))
-        ),
-      ],),
-    ),
-  );
+      ) : Container();
+  }
 
-  Widget _buildPersonDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 6), child:
-    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(padding: EdgeInsets.only(right: 4), child:
-        Styles().images?.getImage('person', excludeFromSemantics: true),
-      ),
-      Expanded(child:
-        Text(widget.scheduleParam.person?.name ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
-      ),
-    ],),
-  );
+  Widget _buildPersonDetail() {
+    String? displayPerson = widget.scheduleParam.person?.name ?? widget.sourceAppointment?.host?.displayName;
+    return ((displayPerson != null) && displayPerson.isNotEmpty) ? 
+      Padding(padding: EdgeInsets.only(top: 8, bottom: 6), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(padding: EdgeInsets.only(right: 4), child:
+            Styles().images?.getImage('person', excludeFromSemantics: true),
+          ),
+          Expanded(child:
+            Text(displayPerson, style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+          ),
+        ],),
+      ) : Container();
+  }
 
-  Widget _buildDateTimeDetail() => Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
-    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(padding: EdgeInsets.only(right: 4), child:
-        Styles().images?.getImage('calendar', excludeFromSemantics: true),
-      ),
-      Expanded(child:
-        Text(_displayAppointmentTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
-      ),
-    ],),
-  );
+  Widget _buildDateTimeDetail() {
+    String? displayTime = widget.scheduleParam.timeSlot?.displayScheduleTime ?? widget.sourceAppointment?.displayScheduleTime;
+    return ((displayTime != null) && displayTime.isNotEmpty) ?
+      Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(padding: EdgeInsets.only(right: 4), child:
+            Styles().images?.getImage('calendar', excludeFromSemantics: true),
+          ),
+          Expanded(child:
+            Text(displayTime, style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+          ),
+        ],),
+      ) : Container();
+  }
 
-  String? get _displayAppointmentTime =>
-    widget.scheduleParam.timeSlot?.displayScheduleTime;
-  
   Widget _buildLabel(String text, { bool required = false}) => Padding(padding: EdgeInsets.only(top: 12, bottom: 2), child: Row(children: [Expanded(child:
     RichText(text:
       TextSpan(text: text, style: Styles().textStyles?.getTextStyle('widget.title.tiny'), children: <InlineSpan>[
@@ -217,7 +226,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   void _onLocation() {
     Analytics().logSelect(target: 'Location');
     //TBD: Maps2 panel with marker
-    String? address = widget.scheduleParam.unit?.address ?? widget.sourceAppointment?.unit?.address;
+    String? address = widget.scheduleParam.unit?.address ?? widget.sourceAppointment?.location?.address;
     if (address != null) {
       GeoMapUtils.launchDirections(destination: address, travelMode: GeoMapUtils.traveModeWalking);
     }
@@ -295,12 +304,27 @@ class AppointmentScheduleParam {
     answers: answers ?? other?.answers,
   );
 
-  factory AppointmentScheduleParam.fromAppointment(Appointment? appointment) => AppointmentScheduleParam(
-    provider: appointment?.provider,
-    unit: appointment?.unit,
-    person: appointment?.person,
-    timeSlot: AppointmentTimeSlot.fromAppointment(appointment),
-    answers: appointment?.answers,
-  );
+  static Future<AppointmentScheduleParam> fromAppointment(Appointment? appointment) async {
+
+    String? providerId = appointment?.providerId;
+    String? unitId = appointment?.unitId;
+    String? personId = appointment?.personId;
+
+    List<dynamic> results = await Future.wait([
+      ((providerId != null) && (unitId != null)) ? Appointments().loadUnit(providerId: providerId, unitId: unitId) : Future.value(null),
+      ((providerId != null) && (unitId != null) && (personId != null)) ? Appointments().loadPerson(providerId: providerId, unitId: unitId, personId: personId) : Future.value(null),
+    ]);
+
+    AppointmentUnit? unit = ((0 < results.length) && (results[0] is AppointmentUnit)) ? results[0] : null;
+    AppointmentPerson? person = ((1 < results.length) && (results[1] is AppointmentPerson)) ? results[1] : null;
+
+    return AppointmentScheduleParam(
+      provider: appointment?.provider,
+      unit: unit,
+      person: person,
+      timeSlot: AppointmentTimeSlot.fromAppointment(appointment),
+      answers: appointment?.answers,
+    );
+  }
 
 }

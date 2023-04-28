@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
@@ -44,9 +43,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-
-import 'package:illinois/ui/WebPanel.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event? event;
@@ -371,56 +367,34 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       return null;
     }
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
-    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = "location";
-    String? locationId = widget.event?.location?.locationId;
-    String locationText = widget.event?.getLongDisplayLocation(_locationData)??"";
-    String value = locationId ?? locationText;
-    bool isValueVisible = StringUtils.isNotEmpty(value);
-    return GestureDetector(
-        onTap: _onLocationDetailTapped,
-        child: Semantics(
-          label: "$eventType, $locationText",
-          hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
-          button: true,
-          excludeSemantics: true,
-          child:Padding(
-            padding: EdgeInsets.only(bottom: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
-                ),
-                Container(decoration: (null), padding: EdgeInsets.only(bottom: (0)), child: Text(eventType,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground)),),
-              ]),
-              Container(height: 4,),
-              Visibility(visible: isValueVisible, child: Container(
-                  padding: EdgeInsets.only(left: 30),
-                  child: Container(
-                      decoration: underlineLocationDecoration,
-                      padding: EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            fontSize: 14,
-                            color: Styles().colors!.fillColorPrimary),
-                      ))))
-            ],)
-          )
-        ),
-      );
+    String locationText = widget.event?.getLongDisplayLocation(_locationData) ?? "";
+    bool canHandleLocation = (widget.event?.location?.isLocationCoordinateValid == true);
+    TextStyle locationTextStyle = canHandleLocation ?
+      TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary, decoration: TextDecoration.underline, decorationThickness: 1, decorationColor: Styles().colors!.fillColorSecondary) :
+      TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary);
+    String semanticsLabel = "$eventType, $locationText";
+    String semanticsHint = Localization().getStringEx('panel.explore_detail.button.directions.hint', '');
+    
+    return GestureDetector(onTap: canHandleLocation ? _onLocationDetailTapped : null, child:
+      Semantics(label: semanticsLabel, hint: semanticsHint, button: canHandleLocation, excludeSemantics: true, child:
+        Padding(padding: EdgeInsets.only(bottom: 8), child:
+          Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 10), child:
+                Styles().images?.getImage("location", excludeFromSemantics: true),
+              ),
+              Text(eventType, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+            ]),
+            Container(height: 4,),
+            Visibility(visible: StringUtils.isNotEmpty(locationText), child:
+              Container(padding: EdgeInsets.only(left: 30), child:
+                Text(locationText, style: locationTextStyle)
+              )
+            )
+          ],)
+        )
+      ),
+    );
   }
 
   Widget? _exploreOnlineDetail() {
@@ -429,59 +403,31 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     }
 
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event");
-    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = "laptop";
     String? virtualUrl = widget.event?.virtualEventUrl;
-    String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
-    String? locationId = widget.event?.location?.locationId;
-    String? urlFromLocation = locationId ??  locationDescription;
-    bool isLocationIdUrl = Uri.tryParse(urlFromLocation)?.isAbsolute ?? false;
-    String value = virtualUrl ??
-        (isLocationIdUrl? urlFromLocation : "");
+    String? locationDescription = widget.event?.location?.description;
+    String? linkUrl = virtualUrl ?? (UrlUtils.isValidUrl(locationDescription) ? locationDescription : null);
+    bool canHandleLink = StringUtils.isNotEmpty(linkUrl);
+    String semanticsLabel = "$eventType, $virtualUrl";
+    String semanticsHint = Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link');
 
-    bool isValueVisible = StringUtils.isNotEmpty(value);
-    return GestureDetector(
-      onTap: _onLocationDetailTapped,
-      child: Semantics(
-          label: "$eventType, $virtualUrl",
-          hint: Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link'),
-          button: true,
-          excludeSemantics: true,
-          child:Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(right: 10),
-                          child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
-                        ),
-                        Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 16,
-                                color: Styles().colors!.textBackground)),),
-                      ]),
-                  Container(height: 4,),
-                  Visibility(visible: isValueVisible, child: Container(
-                      padding: EdgeInsets.only(left: 30),
-                      child: Container(
-                          decoration: underlineLocationDecoration,
-                          padding: EdgeInsets.only(bottom: 2),
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 14,
-                                color: Styles().colors!.fillColorPrimary),
-                          ))))
-                ],)
-          )
+    return GestureDetector(onTap: canHandleLink ? (() => _onTapWebButton(linkUrl, "Event Link ")) : null, child:
+      Semantics(label: semanticsLabel, hint: semanticsHint, button: true, excludeSemantics: true, child:
+        Padding(padding: EdgeInsets.only(bottom: 8), child:
+          Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 10), child:
+                Styles().images?.getImage("laptop", excludeFromSemantics: true),
+              ),
+              Text(eventType, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+            ]),
+            Container(height: 4,),
+            Visibility(visible: canHandleLink, child:
+              Container(padding: EdgeInsets.only(left: 30), child:
+                Text(linkUrl ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary, decoration: TextDecoration.underline, decorationThickness: 1, decorationColor: Styles().colors!.fillColorSecondary),)
+              ),
+            ),
+          ],),
+        ),
       ),
     );
   }
@@ -677,7 +623,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
             updatedDesc,
-            onTapUrl : (url) { _launchUrl(url, 'Description'); return true; },
+            onTapUrl : (url) { _onTapWebButton(url, 'Description'); return true; },
             textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
         )
     );
@@ -860,28 +806,13 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   void _onTapWebButton(String? url, String analyticsName){
-    if(StringUtils.isNotEmpty(url)){
-      Navigator.push(
-          context,
-          CupertinoPageRoute(
-              builder: (context) =>
-                  WebPanel(url: url,
-                      analyticsName: "WebPanel($analyticsName)",
-                      analyticsSource: widget.event?.analyticsAttributes,
-                  )));
-    }
+    Analytics().logSelect(target: "$analyticsName ($url)");
+    UrlUtils.launchExternal(url);
   }
 
   void _onLocationDetailTapped() {
-    if((widget.event?.displayAsVirtual ?? false) == true){
-      String? url = widget.event?.location?.description;
-      if(StringUtils.isNotEmpty(url)) {
-        _onTapWebButton(url, "Event Link ");
-      }
-    } else if(widget.event?.location?.latitude != null && widget.event?.location?.longitude != null) {
-      Analytics().logSelect(target: "Location Directions");
-      widget.event?.launchDirections();
-    }
+    Analytics().logSelect(target: "Location Directions");
+    widget.event?.launchDirections();
   }
 
   void _onTapModify() {
@@ -914,23 +845,6 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     });
   }
   
-  void _launchUrl(String? url, String analyticsName) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
-          url: url,
-          analyticsName: "WebPanel($analyticsName)",
-          analyticsSource: widget.event?.analyticsAttributes,
-        )));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
-      }
-    }
-  }
-
   // NotificationsListener
   
   @override

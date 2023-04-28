@@ -72,15 +72,17 @@ class StudentCourses with Service implements NotificationsListener {
     _selectedTermId = Storage().selectedCourseTermId;
     
     // Init terms
-    _terms = await _loadTermsFromCache();
-    if (_terms != null) {
-      _updateTerms();
-    }
-    else {
-      String? termsJsonString = await _loadTermsStringFromNet();
-      _terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
+    if (_canLoadTerms) {
+      _terms = await _loadTermsFromCache();
       if (_terms != null) {
-        _saveTermsStringToCache(termsJsonString);
+        _updateTerms();
+      }
+      else {
+        String? termsJsonString = await _loadTermsStringFromNet();
+        _terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
+        if (_terms != null) {
+          _saveTermsStringToCache(termsJsonString);
+        }
       }
     }
 
@@ -92,7 +94,7 @@ class StudentCourses with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config()]);
+    return Set.from([Storage(), Config(), Auth2()]);
   }
 
   // NotificationsListener
@@ -100,13 +102,16 @@ class StudentCourses with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
-      if (StringUtils.isNotEmpty(Auth2().uin)) {
-        _courses.clear();
-      }
+      _onLoginChanged();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
+  }
+
+  void _onLoginChanged() {
+    _updateCourses();
+    _updateTerms();
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -117,7 +122,7 @@ class StudentCourses with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _courses.clear();
+          _updateCourses(true);
         }
       }
       _updateTermsIfNeeded();
@@ -143,36 +148,53 @@ class StudentCourses with Service implements NotificationsListener {
     return StudentCourseTerm.listFromJson(JsonUtils.decodeList(await _loadTermsStringFromCache()));
   }
 
+  bool get _canLoadTerms =>
+    StringUtils.isNotEmpty(Config().gatewayUrl) && (Gateway().externalAuthorizationHeaderValue != null);
+
   Future<String?> _loadTermsStringFromNet() async {
-    if (StringUtils.isNotEmpty(Config().gatewayUrl)) {
+    if (_canLoadTerms) {
       Response? response = await Network().get("${Config().gatewayUrl}/termsessions/listcurrent", auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
       return (response?.statusCode == 200) ? response?.body : null;
     }
     return null;
   }
 
-  Future<void> _updateTerms() async {
-    String? termsJsonString = await _loadTermsStringFromNet();
-    List<StudentCourseTerm>? terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
-    if ((terms != null) && !const DeepCollectionEquality().equals(_terms, terms)) {
-      _terms = terms;
-      _saveTermsStringToCache(termsJsonString);
-      NotificationService().notify(notifyTermsChanged);
-      _updateSelectedTermId();
+  Future<void> _updateTermsIfNeeded() async {
+    if (_canLoadTerms) {
+      DateTime? lastCheckMidnight = (0 < _lastTermsCheckTime) ? DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(_lastTermsCheckTime)) : null;
+
+      DateTime now = DateTime.now();
+      DateTime todayMidnight = DateTimeUtils.midnight(now)!;
+
+      // Do it one a week
+      if ((_terms == null) || (lastCheckMidnight == null) || (todayMidnight.difference(lastCheckMidnight).inDays >= 7)) {
+        _lastTermsCheckTime = now.millisecondsSinceEpoch;
+        await _updateTerms();
+      }
+    }
+    else if (terms != null) {
+      _applyTerms(null);
     }
   }
 
-  Future<void> _updateTermsIfNeeded() async {
-    DateTime? lastCheckMidnight = (0 < _lastTermsCheckTime) ? DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(_lastTermsCheckTime)) : null;
-
-    DateTime now = DateTime.now();
-    DateTime todayMidnight = DateTimeUtils.midnight(now)!;
-
-    // Do it one a week
-    if ((lastCheckMidnight == null) || (todayMidnight.difference(lastCheckMidnight).inDays >= 7)) {
-      _lastTermsCheckTime = now.millisecondsSinceEpoch;
-      await _updateTerms();
+  Future<void> _updateTerms() async {
+    if (_canLoadTerms) {
+      String? termsJsonString = await _loadTermsStringFromNet();
+      List<StudentCourseTerm>? terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
+      if ((terms != null) && !const DeepCollectionEquality().equals(_terms, terms)) {
+        _applyTerms(terms, termsJsonString);
+      }
     }
+    else if (_terms != null) {
+      _applyTerms(null);
+    }
+  }
+
+  void _applyTerms(List<StudentCourseTerm>? terms, [ String? termsJsonString ]) {
+    _terms = terms;
+    _saveTermsStringToCache(termsJsonString);
+    NotificationService().notify(notifyTermsChanged);
+    _updateSelectedTermId();
   }
 
   // Selected Term
@@ -210,14 +232,17 @@ class StudentCourses with Service implements NotificationsListener {
 
   // StudentCourses
 
+  bool get _canLoadCourses =>
+    StringUtils.isNotEmpty(Config().gatewayUrl) && (Gateway().externalAuthorizationHeaderValue != null) && StringUtils.isNotEmpty(Auth2().uin);
+
   Future<List<StudentCourse>?> loadCourses({required String termId, bool forceLoad = false}) async {
     if (_debugCourses != null) {
       return _debugCourses;
     }
-    else {
+    else if (_canLoadCourses) {
       bool coursesRefreshed = false;
       List<StudentCourse>? cachedCourses = _courses[termId];
-      if (((cachedCourses == null) || forceLoad) && StringUtils.isNotEmpty(Config().gatewayUrl) && StringUtils.isNotEmpty(termId) && StringUtils.isNotEmpty(Auth2().uin)) {
+      if (((cachedCourses == null) || forceLoad) && StringUtils.isNotEmpty(termId)) {
         if (_loadCoursesCompleters == null) {
           _loadCoursesCompleters = <Completer<List<StudentCourse>?>>{};
           
@@ -262,6 +287,15 @@ class StudentCourses with Service implements NotificationsListener {
         NotificationService().notify(notifyCachedCoursesChanged, termId);
       }
       return cachedCourses;
+    }
+    else {
+      return null;
+    }
+  }
+
+  void _updateCourses([bool forceClear = false]) {
+    if (forceClear || (!_canLoadCourses && _courses.isNotEmpty)) {
+      _courses.clear();
     }
   }
   
