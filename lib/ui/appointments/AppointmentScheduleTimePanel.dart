@@ -180,18 +180,21 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-       child: Container(
-        decoration: BoxDecoration(
-          color: backColor,
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+       child: Semantics(
+         button: true, enabled: timeSlot?.available == true, inMutuallyExclusiveGroup: true, selected: _selectedSlot == timeSlot,
+         child: Container(
+          decoration: BoxDecoration(
+            color: backColor,
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+          ),
+          child: InkWell(onTap: () => _onTimeSlot(timeSlot),
+            child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Text(timeString ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
+            )
+          ),
         ),
-        child: InkWell(onTap: () => _onTimeSlot(timeSlot),
-          child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Text(timeString ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
-          )
-        ),
-      ),
+       )
     );
   }
 

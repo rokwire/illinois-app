@@ -201,11 +201,11 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
-          GestureDetector(
-              onTap: _onTapVideo,
-              child: Semantics(
-                  button: true,
-                  child: Padding(
+          Semantics(button: true,
+              label: "${_video?.title ?? ""} video",
+              child: GestureDetector(
+                onTap: _onTapVideo,
+                child: Padding(
                       padding: EdgeInsets.all(16),
                       child: Stack(alignment: Alignment.center, children: [
                         hasImage
