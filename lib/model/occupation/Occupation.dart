@@ -1,23 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'Skill.dart';
+import 'WorkStyles.dart';
+import 'TechnologySkill.dart';
 
 class Occupation {
   String? code;
   String? title;
   String? description;
   String? onetLink;
-  List<Skill>? skills;
-  List<Skill>? technicalSkills;
+  List<WorkStyle>? workStyles;
+  List<TechnologySkill>? technologySkills;
 
   Occupation({
     this.code,
     this.title,
     this.description,
     this.onetLink,
-    this.skills,
-    this.technicalSkills,
+    this.workStyles,
+    this.technologySkills,
   });
 
   factory Occupation.fromJson(Map<String, dynamic> json) {
@@ -26,8 +27,8 @@ class Occupation {
       title: JsonUtils.stringValue(json["title"]) ?? "",
       description: JsonUtils.stringValue(json["description"]) ?? "",
       onetLink: JsonUtils.stringValue(json["onetLink"]) ?? "",
-      skills: Skill.listFromJson(json["skills"]) ?? [],
-      technicalSkills: Skill.listFromJson(json["technicalSkills"]) ?? [],
+      workStyles: WorkStyle.listFromJson(json["work_styles"]) ?? [],
+      technologySkills: TechnologySkill.listFromJson(json["technology_skills"]) ?? [],
     );
   }
 
@@ -51,6 +52,6 @@ class Occupation {
 
   @override
   String toString() {
-    return 'Occupation(code: $code, title: $title, description: $description, onetLink: $onetLink, skills: $skills, technicalSkills: $technicalSkills)';
+    return 'Occupation(code: $code, title: $title, description: $description, onetLink: $onetLink, workStyles: $workStyles, technologySkills: $technologySkills)';
   }
 }
