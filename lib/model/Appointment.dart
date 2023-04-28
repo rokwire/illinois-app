@@ -506,6 +506,8 @@ class AppointmentProvider {
 /// AppointmentUnit
 
 class AppointmentUnit {
+  static final String dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
+
   final String? id;
   final String? providerId;
   final String? name;
@@ -513,8 +515,9 @@ class AppointmentUnit {
   final String? hoursOfOperation;
   final String? imageUrl;
   final String? notes;
+  final DateTime? nextAvailableTimeUtc;
 
-  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.hoursOfOperation, this.imageUrl, this.notes});
+  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.hoursOfOperation, this.imageUrl, this.notes, this.nextAvailableTimeUtc});
 
   // JSON Serialization
 
@@ -527,6 +530,7 @@ class AppointmentUnit {
       hoursOfOperation: JsonUtils.stringValue(json['hours_of_operations']),
       imageUrl: JsonUtils.stringValue(json['image_url']),
       notes: JsonUtils.stringValue(json['notes']),
+      nextAvailableTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['next_available']), format: dateTimeFormat, isUtc: true)
     ) : null;
   }
 
@@ -539,6 +543,7 @@ class AppointmentUnit {
       'hours_of_operations': hoursOfOperation,
       'image_url': imageUrl,
       'notes': notes,
+      'next_available': DateTimeUtils.utcDateTimeToString(nextAvailableTimeUtc, format: dateTimeFormat),
     };
   }
 
@@ -575,7 +580,8 @@ class AppointmentUnit {
     (address == other.address) &&
     (hoursOfOperation == other.hoursOfOperation) &&
     (imageUrl == other.imageUrl) &&
-    (notes == other.notes);
+    (notes == other.notes) &&
+    (nextAvailableTimeUtc == other.nextAvailableTimeUtc);
 
   @override
   int get hashCode =>
@@ -585,7 +591,8 @@ class AppointmentUnit {
     (address?.hashCode ?? 0) ^
     (hoursOfOperation?.hashCode ?? 0) ^
     (imageUrl?.hashCode ?? 0) ^
-    (notes?.hashCode ?? 0);
+    (notes?.hashCode ?? 0) ^
+    (nextAvailableTimeUtc?.hashCode ?? 0);
 
   // Accessories
 
@@ -607,12 +614,15 @@ class AppointmentUnit {
 /// AppointmentPerson
 
 class AppointmentPerson {
+  static final String dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
+
   final String? id;
   final String? name;
   final String? notes;
   final String? imageUrl;
+  final DateTime? nextAvailableTimeUtc;
 
-  AppointmentPerson({this.id, this.name, this.notes, this.imageUrl});
+  AppointmentPerson({this.id, this.name, this.notes, this.imageUrl, this.nextAvailableTimeUtc});
 
   // JSON Serialization
 
@@ -622,6 +632,7 @@ class AppointmentPerson {
       name: JsonUtils.stringValue(json['name']),
       notes: JsonUtils.stringValue(json['notes']),
       imageUrl: JsonUtils.stringValue(json['image_url']),
+      nextAvailableTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['next_available']), format: dateTimeFormat, isUtc: true)
     ) : null;
   }
 
@@ -631,6 +642,7 @@ class AppointmentPerson {
       'name': name,
       'notes': imageUrl,
       'image_url': imageUrl,
+      'next_available': DateTimeUtils.utcDateTimeToString(nextAvailableTimeUtc, format: dateTimeFormat),
     };
   }
 
@@ -664,14 +676,16 @@ class AppointmentPerson {
     (id == other.id) &&
     (name == other.name) &&
     (notes == other.notes) &&
-    (imageUrl == other.imageUrl);
+    (imageUrl == other.imageUrl) &&
+    (nextAvailableTimeUtc == other.nextAvailableTimeUtc);
 
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
     (name?.hashCode ?? 0) ^
     (notes?.hashCode ?? 0) ^
-    (imageUrl?.hashCode ?? 0);
+    (imageUrl?.hashCode ?? 0) ^
+    (nextAvailableTimeUtc?.hashCode ?? 0);
 
   // Accessories
 
