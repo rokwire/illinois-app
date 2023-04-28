@@ -18,13 +18,13 @@ printUtputUrls() {
     echo "Generated URLs for the report"
     if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "android" ]; then
       #echo "$BRAND $VERSION $FLAVOR_ENV $TAG Android:"
-      echo "$BRAND_NAME $SHORT_VERSION_NAME $FLAVOR_ENV $TAG Android:"
+      echo "$BRAND_NAME $SHORT_VERSION_NAME $FLAVOR_ENV $TAG Android"
       echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.apk"
       echo ""
     fi
     if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
     #echo "$BRAND $VERSION $FLAVOR_ENV $TAG iOS:"
-    echo "$BRAND_NAME $SHORT_VERSION_NAME $FLAVOR_ENV $TAG iOS:"
+    echo "$BRAND_NAME $SHORT_VERSION_NAME $FLAVOR_ENV $TAG iOS"
     echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.ipa"
     echo "itms-services://?action=download-manifest&url=https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.plist"
     echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.png"

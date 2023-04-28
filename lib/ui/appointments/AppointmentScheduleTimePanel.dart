@@ -181,7 +181,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
        child: Semantics(
-         button: true, enabled: timeSlot.available, inMutuallyExclusiveGroup: true, selected: _selectedSlot == timeSlot,
+         button: true, enabled: timeSlot?.available == true, inMutuallyExclusiveGroup: true, selected: _selectedSlot == timeSlot,
          child: Container(
           decoration: BoxDecoration(
             color: backColor,

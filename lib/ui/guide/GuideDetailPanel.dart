@@ -264,27 +264,30 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     String? imageUrl = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'image'));
     Uri? imageUri = (imageUrl != null) ? Uri.tryParse(imageUrl) : null;
     if (StringUtils.isNotEmpty(imageUri?.scheme)) {
-      return Stack(alignment: Alignment.bottomCenter, children: [
-        Container(color: widget.headingColor ?? Styles().colors?.white, padding: EdgeInsets.all(16), child:
-          Row(children: [
-            Expanded(child:
-              Column(children: [
-                Image.network(imageUrl!, excludeFromSemantics: true,),
-              ]),
+      return Semantics(
+          label: "Image",
+          button: true,
+          child:Stack(alignment: Alignment.bottomCenter, children: [
+            Container(color: widget.headingColor ?? Styles().colors?.white, padding: EdgeInsets.all(16), child:
+              Row(children: [
+                Expanded(child:
+                  Column(children: [
+                    Image.network(imageUrl!, excludeFromSemantics: true,),
+                  ]),
+                ),
+              ],)
             ),
-          ],)
-        ),
-        Container(color: Styles().colors!.background, height: 48, width: MediaQuery.of(context).size.width),
-        Container(padding: EdgeInsets.all(16), child:
-          Row(children: [
-            Expanded(child:
-              Column(children: [
-                ModalImageHolder(child: Image.network(imageUrl, excludeFromSemantics: true,)),
-              ]),
+            Container(color: Styles().colors!.background, height: 48, width: MediaQuery.of(context).size.width),
+            Container(padding: EdgeInsets.all(16), child:
+              Row(children: [
+                Expanded(child:
+                  Column(children: [
+                    ModalImageHolder(child: Image.network(imageUrl, excludeFromSemantics: true,)),
+                  ]),
+                ),
+              ],)
             ),
-          ],)
-        ),
-      ],);
+          ],));
     }
     else {
       return Container();
