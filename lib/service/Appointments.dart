@@ -772,6 +772,7 @@ class Appointments with Service implements NotificationsListener {
         'provider_id': provider?.id,
         'unit_id': unit?.id,
         'person_id': person?.id,
+        'slot_id': timeSlot?.id,
         'type': appointmentTypeToString(type),
         'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
         'answers': AppointmentAnswer.listToJson(answers),
