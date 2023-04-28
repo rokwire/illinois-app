@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
@@ -162,6 +163,8 @@ class _AppointmentPersonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? nextAvailableTime = person.displayNextAvailableTime;
+
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
@@ -188,7 +191,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                               Styles().images?.getImage('mail', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(person.email ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                              Text(person.email ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
                             ),
                           ],),
                         ),
@@ -201,18 +204,19 @@ class _AppointmentPersonCard extends StatelessWidget {
                               Styles().images?.getImage('phone', excludeFromSemantics: true),
                             ),
                             Expanded(child:
-                              Text(person.phone ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                              Text(person.phone ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
                             ),
                           ],),
                         ),
                       ),*/
 
-                      Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Expanded(child:
-                            Text(person.notes ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
-                          ),
-                        ],),
+                      Visibility(visible: StringUtils.isNotEmpty(nextAvailableTime), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next available appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
+                            Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular")),
+                          ],)
+                        ),
                       ),
 
                     ]),
@@ -229,6 +233,13 @@ class _AppointmentPersonCard extends StatelessWidget {
                   ),
                 ]),
 
+                Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Expanded(child:
+                      Text(person.notes ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                    ),
+                  ],),
+                ),
 
               ])
             )
