@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cleanup data caching in StudentCourses service [#3200](https://github.com/rokwire/illinois-app/issues/3200).
 ### Changed
 - Pass time slot id to create appointment API [#3202](https://github.com/rokwire/illinois-app/issues/3202).
+### Added
+- Added Appointments section in Browse [#3204](https://github.com/rokwire/illinois-app/issues/3204).
 
 ## [4.3.50] - 2023-04-27
 ### Changed
