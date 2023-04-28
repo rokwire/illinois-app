@@ -272,6 +272,8 @@
     "panel.browse.section.academics.description": "Herramientas para administrar su vida académica en {{app_title}}.",
     "panel.browse.section.app_help.title": "Ayuda de la aplicación",
     "panel.browse.section.app_help.description": "Mire tutoriales en video y proporcione comentarios sobre su experiencia con la aplicación de {{app_title}}.",
+    "panel.browse.section.appointments.title": "Equipo",
+    "panel.browse.section.appointments.description": "Vea, programe o cancele sus diversas citas en el campus.",
     "panel.browse.section.athletics.title": "Atletismo",
     "panel.browse.section.athletics.description": "Disfrute de sus equipos de atletismo favoritos de {{app_title}} con horarios, actualizaciones en vivo, noticias, listas y más.",
     "panel.browse.section.safer.title": "Acceso al edificio",
@@ -324,6 +326,8 @@
     "panel.browse.entry.app_help.feedback.title": "Retroalimentación",
     "panel.browse.entry.app_help.review.title": "Revisar",
     "panel.browse.entry.app_help.faqs.title": "Preguntas frecuentes",
+
+    "panel.browse.entry.appointments.appointments.title": "Equipo",
 
     "panel.browse.entry.athletics.my_game_day.title": "Mi dia de juego",
     "panel.browse.entry.athletics.upcoming_games.title": "Próximos Eventos",

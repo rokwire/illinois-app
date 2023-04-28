@@ -524,6 +524,8 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.review":                _onTapReview(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
+      case "appointments.appointments":       _onTapAcademicsAppointments(context); break;
+      
       case "athletics.my_game_day":          _onTapMyGameDay(context); break;
       case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.my_athletics":         _onTapMyAthletics(context); break;
