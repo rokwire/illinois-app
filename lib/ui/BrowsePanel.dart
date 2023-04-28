@@ -304,7 +304,7 @@ class _BrowseSection extends StatelessWidget {
                   Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
                 )
               ),
-              Opacity(opacity: _hasBrowseContent ? 1 : 0, child:
+              Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
                 Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
                   InkWell(onTap: () => _onTapSectionFavorite(context), child:
                     FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
@@ -378,6 +378,18 @@ class _BrowseSection extends StatelessWidget {
 
   bool get _hasBrowseContent => _browseEntriesCodes?.isNotEmpty ?? false;
 
+  bool get _hasFavoriteContent {
+    if (_browseEntriesCodes?.isNotEmpty ?? false) {
+      for (String code in _browseEntriesCodes!) {
+        HomeFavorite? entryFavorite = _favorite(code);
+        if (entryFavorite != null) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   bool? get _isSectionFavorite {
     int favCount = 0, unfavCount = 0, totalCount = 0;
     if (_browseEntriesCodes?.isNotEmpty ?? false) {
@@ -393,11 +405,13 @@ class _BrowseSection extends StatelessWidget {
           }
         }
       }
-      if ((favCount == totalCount)) {
-        return true;
-      }
-      else if (unfavCount == totalCount) {
-        return false;
+      if (0 < totalCount) {
+        if (favCount == totalCount) {
+          return true;
+        }
+        else if (unfavCount == totalCount) {
+          return false;
+        }
       }
     }
     return null;
@@ -525,7 +539,7 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
       case "appointments.appointments":       _onTapAcademicsAppointments(context); break;
-      
+
       case "athletics.my_game_day":          _onTapMyGameDay(context); break;
       case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.my_athletics":         _onTapMyAthletics(context); break;
