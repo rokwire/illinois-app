@@ -522,7 +522,7 @@ class Appointments with Service implements NotificationsListener {
       return _sampleUnits;
     }
     else if (_isServiceAvailable) {
-      String? url = "${Config().appointmentsUrl}/services/units?providers-ids=$providerId";
+      String? url = "${Config().appointmentsUrl}/services/units?provider-id=$providerId";
       http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentUnit.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
@@ -531,11 +531,16 @@ class Appointments with Service implements NotificationsListener {
     }
   }
 
+  Future<AppointmentUnit?> loadUnit({required String providerId, required String unitId}) async {
+    List<AppointmentUnit>? units = await loadUnits(providerId: providerId);
+    return AppointmentUnit.findInList(units, id: unitId);
+  }
+
   List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
-    AppointmentUnit(id: '11', name: 'House of Horror', address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', imageUrl: 'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png', notes: 'Lorem ipsum sit dolor amet.'),
-    AppointmentUnit(id: '12', name: "Dante's Inferno", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', imageUrl: 'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg', notes: 'Proin sed lacinia ex.'),
-    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', address: '1402 Springfield Ave Urbana, IL 61801', hoursOfOperation: '7:00am - 9:00pm', imageUrl: 'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png', notes: 'Class aptent taciti sociosqu ad litora.'),
-    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', address: '505 E Armory Ave  Champaign, IL 61820', hoursOfOperation: '10:00am - 12:30pm', imageUrl: 'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop', notes: 'Donec iaculis est eget leo egestas ullamcorper.'),
+    AppointmentUnit(id: '11', name: 'House of Horror', address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 14, 30), imageUrl: 'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png', notes: 'Lorem ipsum sit dolor amet.'),
+    AppointmentUnit(id: '12', name: "Dante's Inferno", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 09, 30), imageUrl: 'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg', notes: 'Proin sed lacinia ex.'),
+    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', address: '1402 Springfield Ave Urbana, IL 61801', hoursOfOperation: '7:00am - 9:00pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 16, 00), imageUrl: 'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png', notes: 'Class aptent taciti sociosqu ad litora.'),
+    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', address: '505 E Armory Ave  Champaign, IL 61820', hoursOfOperation: '10:00am - 12:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: 'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop', notes: 'Donec iaculis est eget leo egestas ullamcorper.'),
   ];
 
   // Persons
@@ -546,16 +551,8 @@ class Appointments with Service implements NotificationsListener {
       return _samplePersons;
     }
     else if (_isServiceAvailable) {
-      String? url = "${Config().appointmentsUrl}/services/people";
-      Map<String, String?> headers = {
-        'Content-Type': 'application/json'
-      };
-      String? post = JsonUtils.encode([{
-        'provider_id': providerId,
-        'unit_ids': [ unitId ],
-      }]);
-      headers.addAll(Gateway().externalAuthorizationHeader);
-      http.Response? response = await Network().get(url, body: post, headers: headers, auth: Auth2());
+      String? url = "${Config().appointmentsUrl}/services/people?provider-id=$providerId&unit-id=$unitId";
+      http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
       return (response?.statusCode == 200) ? AppointmentPerson.listFromJson(JsonUtils.decodeList(response?.body)) : null;
     }
     else {
@@ -563,15 +560,20 @@ class Appointments with Service implements NotificationsListener {
     }
   }
 
+  Future<AppointmentPerson?> loadPerson({required String providerId, required String unitId, required String personId}) async {
+    List<AppointmentPerson>? persons = await loadPersons(providerId: providerId, unitId: unitId);
+    return AppointmentPerson.findInList(persons, id: personId);
+  }
+
   List<AppointmentPerson> get _samplePersons => <AppointmentPerson>[
-    AppointmentPerson(id: '21', name: 'Agatha Christie', imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU', notes: 'Vulputate mi sit amet mauris. Neque sodales ut etiam sit. Dictum at tempor commodo ullamcorper a. Duis at consectetur lorem donec massa.'),
-    AppointmentPerson(id: '22', name: 'Amanda Lear',     imageUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg', notes: 'Ultricies tristique nulla aliquet enim tortor at auctor. Pulvinar pellentesque habitant morbi tristique senectus. Sapien pellentesque habitant morbi tristique senectus et netus.'),
-    AppointmentPerson(id: '23', name: 'Bill Gates',      imageUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg', notes: 'Amet dictum sit amet justo donec enim diam. In vitae turpis massa sed elementum tempus egestas sed. In est ante in nibh mauris cursus mattis. Pellentesque adipiscing commodo elit at imperdiet.'),
-    AppointmentPerson(id: '24', name: 'Chalres Darwin',  imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*', notes: 'Volutpat diam ut venenatis tellus in. Id faucibus nisl tincidunt eget nullam. Enim ut tellus elementum sagittis vitae et leo. Quisque id diam vel quam elementum pulvinar etiam. '),
-    AppointmentPerson(id: '25', name: 'Fredy Mercury',   imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU', notes: 'Vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet. Massa eget egestas purus viverra. Sagittis eu volutpat odio facilisis mauris sit amet massa vitae. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique.'),
-    AppointmentPerson(id: '26', name: 'Frank Zapa',      imageUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k', notes: 'Enim blandit volutpat maecenas volutpat blandit aliquam etiam. A cras semper auctor neque. Aenean sed adipiscing diam donec adipiscing.'),
-    AppointmentPerson(id: '27', name: 'Michael Jackson', imageUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv', notes: 'Adipiscing vitae proin sagittis nisl rhoncus. Massa sed elementum tempus egestas. Morbi tristique senectus et netus. Turpis massa sed elementum tempus egestas sed sed.'),
-    AppointmentPerson(id: '28', name: 'Speedy Gonzales', imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
+    AppointmentPerson(id: '21', name: 'Agatha Christie', nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU', notes: 'Vulputate mi sit amet mauris. Neque sodales ut etiam sit. Dictum at tempor commodo ullamcorper a. Duis at consectetur lorem donec massa.'),
+    AppointmentPerson(id: '22', name: 'Amanda Lear',     nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 14, 00), imageUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg', notes: 'Ultricies tristique nulla aliquet enim tortor at auctor. Pulvinar pellentesque habitant morbi tristique senectus. Sapien pellentesque habitant morbi tristique senectus et netus.'),
+    AppointmentPerson(id: '23', name: 'Bill Gates',      nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 16, 30), imageUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg', notes: 'Amet dictum sit amet justo donec enim diam. In vitae turpis massa sed elementum tempus egestas sed. In est ante in nibh mauris cursus mattis. Pellentesque adipiscing commodo elit at imperdiet.'),
+    AppointmentPerson(id: '24', name: 'Chalres Darwin',  nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 09, 00), imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*', notes: 'Volutpat diam ut venenatis tellus in. Id faucibus nisl tincidunt eget nullam. Enim ut tellus elementum sagittis vitae et leo. Quisque id diam vel quam elementum pulvinar etiam. '),
+    AppointmentPerson(id: '25', name: 'Fredy Mercury',   nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 11, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU', notes: 'Vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet. Massa eget egestas purus viverra. Sagittis eu volutpat odio facilisis mauris sit amet massa vitae. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique.'),
+    AppointmentPerson(id: '26', name: 'Frank Zapa',      nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 15, 00), imageUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k', notes: 'Enim blandit volutpat maecenas volutpat blandit aliquam etiam. A cras semper auctor neque. Aenean sed adipiscing diam donec adipiscing.'),
+    AppointmentPerson(id: '27', name: 'Michael Jackson', nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 08, 00), imageUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv', notes: 'Adipiscing vitae proin sagittis nisl rhoncus. Massa sed elementum tempus egestas. Morbi tristique senectus et netus. Turpis massa sed elementum tempus egestas sed sed.'),
+    AppointmentPerson(id: '28', name: 'Speedy Gonzales', nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 11, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
   ];
 
   // Time Slots And Questions
@@ -691,6 +693,7 @@ class Appointments with Service implements NotificationsListener {
 
     List<AppointmentUnit> units = _sampleUnits;
     AppointmentUnit unit = units[Random().nextInt(units.length)];
+    AppointmentLocation location = AppointmentLocation.fromUnit(unit);
 
     AppointmentOnlineDetails? details = (type == AppointmentType.online) ? AppointmentOnlineDetails(
       meetingId: id.substring(0, 8).toUpperCase(),
@@ -700,6 +703,7 @@ class Appointments with Service implements NotificationsListener {
     
     List<AppointmentPerson> persons = _samplePersons;
     AppointmentPerson person = persons[Random().nextInt(persons.length)];
+    AppointmentHost host = AppointmentHost.fromPerson(person);
     
     bool cancelled = (provider.supportsCancel == true) && ((Random().nextInt(3) % 5) == 0);
 
@@ -713,12 +717,12 @@ class Appointments with Service implements NotificationsListener {
       endTimeUtc: endTimeUtc,
 
       provider: provider,
-      unit: unit,
-      person: person,
+      unitId: unit.id,
+      personId: person.id,
       answers: _sampleAnswers,
 
-      host: null,
-      location: null,
+      host: host,
+      location: location,
       onlineDetails: details,
       instructions: 'Sample instructions (${5 - Random().nextInt(5) + 1})',
       cancelled: cancelled,
@@ -752,7 +756,7 @@ class Appointments with Service implements NotificationsListener {
       await Future.delayed(Duration(milliseconds: 1500));
       if (Random().nextInt(2) == 0) {
         NotificationService().notify(notifyAppointmentsChanged);
-        return Appointment(provider: provider, unit: unit, person: person, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
+        return Appointment(provider: provider, unitId: unit?.id, personId: person?.id, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
       }
       else {
         throw AppointmentsException.unknown('Random Create Failure');
@@ -768,12 +772,14 @@ class Appointments with Service implements NotificationsListener {
         'provider_id': provider?.id,
         'unit_id': unit?.id,
         'person_id': person?.id,
+        'slot_id': timeSlot?.id,
         'type': appointmentTypeToString(type),
         'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
         'answers': AppointmentAnswer.listToJson(answers),
       });
       http.Response? response = await Network().post(url, body: post, headers: headers, auth: Auth2());
       if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
         return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
       }
       throw AppointmentsException.fromServerResponse(response);
@@ -811,6 +817,7 @@ class Appointments with Service implements NotificationsListener {
       });
       http.Response? response = await Network().put(url, body: post, headers: headers, auth: Auth2());
       if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
         return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
       }
       throw AppointmentsException.fromServerResponse(response);
@@ -832,12 +839,13 @@ class Appointments with Service implements NotificationsListener {
       }
     }
     else if (_isServiceAvailable) {
-        String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
-        http.Response? response = await Network().delete(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
-        if (response?.statusCode == 200) {
-          return Appointment.fromOther(appointment, cancelled: true);
-        }
-        throw AppointmentsException.fromServerResponse(response);
+      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      http.Response? response = await Network().delete(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
+      if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromOther(appointment, cancelled: true);
+      }
+      throw AppointmentsException.fromServerResponse(response);
     }
     else {
       throw AppointmentsException.notAvailable();

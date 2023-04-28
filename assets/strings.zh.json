@@ -272,6 +272,8 @@
 	"panel.browse.section.academics.description": "在{{app_title}}管理您的學術生活的工具。",
 	"panel.browse.section.app_help.title": "應用幫助",
 	"panel.browse.section.app_help.description": "觀看視頻教程並就您的{{app_title}}應用體驗提供反饋。",
+	"panel.browse.section.appointments.title": "約會",
+	"panel.browse.section.appointments.description": "查看、安排或取消您在校園內的各種約會。",
 	"panel.browse.section.athletics.title": "競技",
 	"panel.browse.section.athletics.description": "享受您最喜愛的{{app_title}}田徑隊的賽程、實時更新、新聞、名冊等。",
 	"panel.browse.section.safer.title": "建築物訪問",
@@ -324,6 +326,8 @@
 	"panel.browse.entry.app_help.feedback.title": "反饋",
 	"panel.browse.entry.app_help.review.title": "審查",
 	"panel.browse.entry.app_help.faqs.title": "常見問題",
+
+	"panel.browse.entry.appointments.appointments.title": "約會",
 
 	"panel.browse.entry.athletics.my_game_day.title": "我的比賽日",
 	"panel.browse.entry.athletics.upcoming_games.title": "接下來的活動",
@@ -2764,6 +2768,7 @@
 	"panel.appointment.schedule.notes.empty.message": "Please fill your notes.",
 	"panel.appointment.schedule.notes.submit.succeeded.message": "Your appointment was scheduled successfully.",
 	"panel.appointment.schedule.notes.submit.failed.message": "Failed to schedule appointment:",
+	"panel.appointment.schedule.next_available_appointment.label": "Next available appointment:",
 
 	"panel.appointment.reschedule.submit.button.title": "Reschedule",
 	"panel.appointment.reschedule.notes.submit.succeeded.message": "Your appointment was rescheduled successfully.",

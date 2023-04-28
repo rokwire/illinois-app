@@ -53,7 +53,10 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateUtils.dateOnly(widget.sourceAppointment?.startTimeUtc?.toLocal() ?? DateTime.now());
+    _selectedDate = DateUtils.dateOnly(widget.sourceAppointment?.startTimeUtc?.toLocal() ??
+      widget.scheduleParam.person?.nextAvailableTimeUtc?.toLocal() ??
+      widget.scheduleParam.unit?.nextAvailableTimeUtc?.toLocal() ??
+      DateTime.now());
     _loadTimeSlots();
   }
 
@@ -117,52 +120,53 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   Widget _buildTimeSlots() {
-    List<Widget> columns = <Widget>[];
-    List<Widget>? row;
-    int? rowHour;
+    Set<int> startMinutes = <int>{};
+    Map<int, Map<int, AppointmentTimeSlot>> timeSlotRows = <int, Map<int, AppointmentTimeSlot>>{};
     for (AppointmentTimeSlot timeSlot in _timeSlots) {
-      int? slotHour = timeSlot.startTime?.hour;
-      if (slotHour != null) {
-        if (slotHour != rowHour) {
-          if ((row != null) && (row.isNotEmpty)) {
-            columns.add(Row(children: row,));
-          }
-          row = <Widget>[];
-          rowHour = slotHour;
-        }
-        else if (row == null) {
-          row = <Widget>[];
-        }
-        row.add(Expanded(child: _buildTimeSlot(timeSlot)));
+      DateTime? slotStartTime = timeSlot.startTime;
+      int? slotStartHour = slotStartTime?.hour;
+      int? slotStartMinute = slotStartTime?.minute;
+      if ((slotStartHour != null) && (slotStartMinute != null)) {
+        Map<int, AppointmentTimeSlot> timeSlotRow = (timeSlotRows[slotStartHour] ??= <int, AppointmentTimeSlot>{});
+        timeSlotRow[slotStartMinute] = timeSlot;
+        startMinutes.add(slotStartMinute);
       }
     }
-    if ((row != null) && (row.isNotEmpty)) {
-      columns.add(Row(children: row,));
+
+    List<Widget> rows = <Widget>[];
+    for (int hour in timeSlotRows.keys) {
+      List<Widget> row = <Widget>[];
+      Map<int, AppointmentTimeSlot>? slotsPerHour = timeSlotRows[hour];
+      for (int startMinute in startMinutes) {
+        AppointmentTimeSlot? timeSlot = (slotsPerHour != null) ? slotsPerHour[startMinute] : null;
+        row.add(Expanded(child: _buildTimeSlot(timeSlot)));  
+      }
+      rows.add(Row(children: row,));
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
       SingleChildScrollView(child:
-        Column(children: columns,),
+        Column(children: rows,),
       ),
     );
   }
 
-  Widget _buildTimeSlot(AppointmentTimeSlot timeSlot) {
+  Widget _buildTimeSlot(AppointmentTimeSlot? timeSlot) {
     String? timeString;
-    if (timeSlot.startTime != null) {
-      if (timeSlot.endTime != null) {
-        String startTime = DateFormat('hh:mm').format(timeSlot.startTime!);
+    if (timeSlot?.startTime != null) {
+      if (timeSlot?.endTime != null) {
+        String startTime = DateFormat('hh:mm').format(timeSlot!.startTime!);
         String endTime = DateFormat('hh:mm aaa').format(timeSlot.endTime!);
         timeString = "$startTime - $endTime";
       }
       else {
-        timeString = DateFormat('hh:mm aaa').format(timeSlot.startTime!);
+        timeString = DateFormat('hh:mm aaa').format(timeSlot!.startTime!);
       }
     }
 
     Color? backColor;
     String textStyle;
-    if (!timeSlot.available) {
+    if (timeSlot?.available != true) {
       backColor = Styles().colors?.background;
       textStyle = 'widget.button.title.disabled';
     }
@@ -176,24 +180,27 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-       child: Container(
-        decoration: BoxDecoration(
-          color: backColor,
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+       child: Semantics(
+         button: true, enabled: timeSlot?.available == true, inMutuallyExclusiveGroup: true, selected: _selectedSlot == timeSlot,
+         child: Container(
+          decoration: BoxDecoration(
+            color: backColor,
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+          ),
+          child: InkWell(onTap: () => _onTimeSlot(timeSlot),
+            child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Text(timeString ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
+            )
+          ),
         ),
-        child: InkWell(onTap: () => _onTimeSlot(timeSlot),
-          child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Text(timeString ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
-          )
-        ),
-      ),
+       )
     );
   }
 
-  void _onTimeSlot(AppointmentTimeSlot timeSlot) {
+  void _onTimeSlot(AppointmentTimeSlot? timeSlot) {
     if (mounted) {
-      if (timeSlot.available) {
+      if ((timeSlot != null) && timeSlot.available) {
         setState(() {
           _selectedSlot = timeSlot;
         });
@@ -261,8 +268,8 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   void _onEditDate() {
-    DateTime firstDate = DateUtils.dateOnly(DateTime.now());
-    DateTime lastDate = firstDate.add(Duration(days: 356));
+    DateTime firstDate = DateUtils.dateOnly(DateTimeUtils.min(DateTime.now(), _selectedDate));
+    DateTime lastDate = DateUtils.dateOnly(DateTimeUtils.max(DateTime.now(), _selectedDate)).add(Duration(days: 356));
     showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -304,7 +311,8 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       else {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePanel(
           scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
-            timeSlot: _selectedSlot
+            timeSlot: _selectedSlot,
+            answers: (_questions != null) ? <AppointmentAnswer>[] : null,
           ),
           sourceAppointment: widget.sourceAppointment,
           onFinish: widget.onFinish,

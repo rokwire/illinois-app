@@ -5,9 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.3.51] - 2023-04-28
+### Fixed
+- Cleanup data caching in StudentCourses service [#3200](https://github.com/rokwire/illinois-app/issues/3200).
+- Cleanup Accessibility for MentalHealthResources and Appointments Scheduling [#3182](https://github.com/rokwire/illinois-app/issues/3182).
+### Changed
+- Pass time slot id to create appointment API [#3202](https://github.com/rokwire/illinois-app/issues/3202).
+- Added nextAvailable to appointment person and unit [#3206](https://github.com/rokwire/illinois-app/issues/3206).
+### Added
+- Added Appointments section in Browse [#3204](https://github.com/rokwire/illinois-app/issues/3204).
+
+## [4.3.50] - 2023-04-27
 ### Changed
 - Rename Map > Mental Health Resources to Map > Find a Therapist [#3194](https://github.com/rokwire/illinois-app/issues/3194).
 - Rename "Specials" to "Dining News" in Residence Hall Dining [#3187](https://github.com/rokwire/illinois-app/issues/3187).
+- Handled Appointmnts service APIs updates [#3198](https://github.com/rokwire/illinois-app/issues/3198).
+- Cleanuped UI and logic using real data feed [#3198](https://github.com/rokwire/illinois-app/issues/3198).
 ### Fixed
 - Cleaned up directions / url launching in Event detail panel [#3193](https://github.com/rokwire/illinois-app/issues/3193).
 

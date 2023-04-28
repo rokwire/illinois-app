@@ -273,6 +273,8 @@
     "panel.browse.section.academics.description": "Tools for managing your academic life at {{app_title}}.",
     "panel.browse.section.app_help.title": "App Help",
     "panel.browse.section.app_help.description": "Watch video tutorials and provide feedback on your {{app_title}} app experience.",
+    "panel.browse.section.appointments.title": "Appointments",
+    "panel.browse.section.appointments.description": "View, schedule or cancel your various appointments around campus.",
     "panel.browse.section.athletics.title": "Athletics",
     "panel.browse.section.athletics.description": "Enjoy your favorite {{app_title}} athletics teams with schedules, live updates, news, rosters and more.",
     "panel.browse.section.safer.title": "Building Access",
@@ -325,6 +327,8 @@
     "panel.browse.entry.app_help.feedback.title": "Feedback",
     "panel.browse.entry.app_help.review.title": "Review",
     "panel.browse.entry.app_help.faqs.title": "FAQs",
+
+    "panel.browse.entry.appointments.appointments.title": "Appointments",
 
     "panel.browse.entry.athletics.my_game_day.title": "My Game Day",
     "panel.browse.entry.athletics.sport_events.title": "Upcoming Events",
@@ -2767,6 +2771,7 @@
     "panel.appointment.schedule.notes.empty.message": "Please fill your notes.",
     "panel.appointment.schedule.notes.submit.succeeded.message": "Your appointment was scheduled successfully.",
     "panel.appointment.schedule.notes.submit.failed.message": "Failed to schedule appointment:",
+    "panel.appointment.schedule.next_available_appointment.label": "Next available appointment:",
 
     "panel.appointment.reschedule.submit.button.title": "Reschedule",
     "panel.appointment.reschedule.notes.submit.succeeded.message": "Your appointment was rescheduled successfully.",
