@@ -53,7 +53,10 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateUtils.dateOnly(widget.sourceAppointment?.startTimeUtc?.toLocal() ?? DateTime.now());
+    _selectedDate = DateUtils.dateOnly(widget.sourceAppointment?.startTimeUtc?.toLocal() ??
+      widget.scheduleParam.person?.nextAvailableTimeUtc?.toLocal() ??
+      widget.scheduleParam.unit?.nextAvailableTimeUtc?.toLocal() ??
+      DateTime.now());
     _loadTimeSlots();
   }
 
@@ -262,8 +265,8 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   void _onEditDate() {
-    DateTime firstDate = DateUtils.dateOnly(DateTime.now());
-    DateTime lastDate = firstDate.add(Duration(days: 356));
+    DateTime firstDate = DateUtils.dateOnly(DateTimeUtils.min(DateTime.now(), _selectedDate));
+    DateTime lastDate = DateUtils.dateOnly(DateTimeUtils.max(DateTime.now(), _selectedDate)).add(Duration(days: 356));
     showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {

@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Storage.dart';
@@ -307,6 +308,7 @@ class _AppointmentUnitCard extends StatelessWidget {
     String? unitAddress = unit.address;
     String? unitHours = unit.hoursOfOperation;
     String? unitDesription = unit.notes;
+    String? nextAvailableTime = unit.displayNextAvailableTime;
     
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
@@ -348,6 +350,16 @@ class _AppointmentUnitCard extends StatelessWidget {
                           ],),
                         ),
                       ),
+
+                      Visibility(visible: StringUtils.isNotEmpty(nextAvailableTime), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next available appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
+                            Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular")),
+                          ],)
+                        ),
+                      ),
+
                     ]),
                   ),
                   Padding(padding: EdgeInsets.only(left: 16), child:
@@ -364,7 +376,7 @@ class _AppointmentUnitCard extends StatelessWidget {
                   Padding(padding: EdgeInsets.only(top: 4), child:
                     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Expanded(child:
-                        Text(unitDesription ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                        Text(unitDesription ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
                       ),
                     ],),
                   ),
