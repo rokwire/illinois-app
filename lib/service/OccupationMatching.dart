@@ -20,6 +20,8 @@ class OccupationMatching with Service {
   static String? _bbBaseUrl = Config().skillsToJobsUrl;
 
   Future<List<OccupationMatch>?> getAllOccupationMatches() async {
+    int responseStart = 0;
+    int responseLimit = 10;
     String url = '$_bbBaseUrl/user-match-results';
     Response? response = await Network().get(url, auth: Auth2());
     int responseCode = response?.statusCode ?? -1;
@@ -27,7 +29,10 @@ class OccupationMatching with Service {
     if (responseCode == 200) {
       Map<String, dynamic>? responseMap = JsonUtils.decodeMap(responseBody);
       if (responseMap != null) {
-        List<OccupationMatch>? surveys = OccupationMatch.listFromJson(responseMap['matches']);
+        List<OccupationMatch>? surveys = OccupationMatch.listFromJson(responseMap['matches'])?.sublist(
+          responseStart,
+          responseLimit,
+        );
         return surveys;
       }
     }
@@ -51,10 +56,12 @@ class OccupationMatching with Service {
 
   Future<void> postResults({required SurveyResponse? surveyResponse}) async {
     Map<String, dynamic> surveyResult = {
-      "scores": surveyResponse?.survey.stats?.scores.entries.map((mapEntry) => {
-        "workstyle": mapEntry.key,
-        "score": mapEntry.value,
-      }).toList(),
+      "scores": surveyResponse?.survey.stats?.scores.entries
+          .map((mapEntry) => {
+                "workstyle": mapEntry.key,
+                "score": mapEntry.value,
+              })
+          .toList(),
     };
     String url = '$_bbBaseUrl/survey-data';
     Network().post(url, auth: Auth2(), body: jsonEncode(surveyResult));
