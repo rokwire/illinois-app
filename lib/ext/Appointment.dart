@@ -38,6 +38,22 @@ extension AppointmentHostExt on AppointmentHost {
 }
 
 ///////////////////////////////
+/// AppointmentUnit
+
+extension AppointmentUnitExt on AppointmentUnit {
+  String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toLocal()) : null;
+}
+
+///////////////////////////////
+/// AppointmentPerson
+
+extension AppointmentPersonExt on AppointmentPerson {
+  String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toLocal()) : null;
+}
+
+///////////////////////////////
 /// AppointmentTimeSlot
 
 extension AppointmentTimeSlotExt on AppointmentTimeSlot {
