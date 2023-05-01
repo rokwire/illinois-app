@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Pass time slot id to update appointment API [#3213](https://github.com/rokwire/illinois-app/issues/3213).
+- Update Appointments to work in University time [#3215](https://github.com/rokwire/illinois-app/issues/3215).
 
 ## [4.3.51] - 2023-04-28
 ### Fixed
