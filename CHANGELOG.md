@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.3.52] - 2023-05-01
 ### Changed
 - Pass time slot id to update appointment API [#3213](https://github.com/rokwire/illinois-app/issues/3213).
 - Update Appointments to work in University time [#3215](https://github.com/rokwire/illinois-app/issues/3215).
