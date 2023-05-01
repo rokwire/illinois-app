@@ -813,6 +813,7 @@ class Appointments with Service implements NotificationsListener {
       String? post = JsonUtils.encode({
         'type': appointmentTypeToString(type),
         'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
+        'slot_id': timeSlot?.id,
         'answers': AppointmentAnswer.listToJson(answers),
       });
       http.Response? response = await Network().put(url, body: post, headers: headers, auth: Auth2());
