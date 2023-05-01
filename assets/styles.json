@@ -510,7 +510,6 @@
     "panel.settings.location.toggle_button.additional_info.disabled": {"font_family": "regular", "size": 12.0, "color": "textSurfaceTransparent15"},
 
     "panel.settings.login.validation.text": {"font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
-    "panel.settings.login.button.underline": {"font_family": "bold", "size": 16.0, "color": "blueShade900", "decoration": "underline"},
     "panel.settings.login.title.large": {"extends": "widget.title.extra_huge.fat"},
 
     "panel.settings.privacy_center.title.medium.fat": {"extends": "widget.info.regular.extra_fat"},
