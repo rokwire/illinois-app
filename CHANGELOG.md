@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Appointments to work in University time [#3215](https://github.com/rokwire/illinois-app/issues/3215).
 ### Fixed
 - Fixed "Forgot Password" link text color [#3211](https://github.com/rokwire/illinois-app/issues/3211).
+- Fixed principle investigator typo [#3212](https://github.com/rokwire/illinois-app/issues/3212).
 
 ## [4.3.51] - 2023-04-28
 ### Fixed
