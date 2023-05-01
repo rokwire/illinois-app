@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Pass time slot id to update appointment API [#3213](https://github.com/rokwire/illinois-app/issues/3213).
 - Update Appointments to work in University time [#3215](https://github.com/rokwire/illinois-app/issues/3215).
+- Removed notifications UI from Saved panel [#2903](https://github.com/rokwire/illinois-app/issues/2903).
 ### Fixed
 - Fixed "Forgot Password" link text color [#3211](https://github.com/rokwire/illinois-app/issues/3211).
 - Fixed principle investigator typo [#3212](https://github.com/rokwire/illinois-app/issues/3212).

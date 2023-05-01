@@ -1256,9 +1256,6 @@
     "panel.saved.label.campus_guide": "My Campus Guide",
     "panel.saved.label.appointments": "MyMcKinley Appointments",
 
-    "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
-    "panel.saved.notifications.enable.label": "Enable notifications",
-    "panel.saved.notifications.skip.label": "Not right now",
     "panel.saved.button.all.title": "View All",
     "panel.saved.button.all.hint": "Tap to see all items",
     "panel.saved.button.more.title": "Show All",
