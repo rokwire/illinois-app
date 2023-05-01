@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 
 class AppointmentScheduleTimePanel extends StatefulWidget {
   final AppointmentScheduleParam scheduleParam;
@@ -43,7 +44,7 @@ class AppointmentScheduleTimePanel extends StatefulWidget {
 
 class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePanel> {
 
-  late DateTime _selectedDate;
+  late TZDateTime _selectedDateTz;
   AppointmentTimeSlot? _selectedSlot;
   
   List<AppointmentTimeSlot> _timeSlots = <AppointmentTimeSlot>[];
@@ -53,10 +54,11 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateUtils.dateOnly(widget.sourceAppointment?.startTimeUtc?.toLocal() ??
-      widget.scheduleParam.person?.nextAvailableTimeUtc?.toLocal() ??
-      widget.scheduleParam.unit?.nextAvailableTimeUtc?.toLocal() ??
-      DateTime.now());
+    _selectedDateTz = TZDateTimeUtils.dateOnly(TZDateTime.from(widget.sourceAppointment?.startTimeUtc ??
+        widget.scheduleParam.person?.nextAvailableTimeUtc ??
+        widget.scheduleParam.unit?.nextAvailableTimeUtc ??
+        DateTime.now(),
+      AppointmentTimeSlotExt.timezone));
     _loadTimeSlots();
   }
 
@@ -235,7 +237,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   Widget _buildDateBar() {
-    String selectedDateString = DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate);
+    String selectedDateString = DateFormat('EEEE, MMMM d, yyyy').format(_selectedDateTz);
 
     return Padding(padding: EdgeInsets.all(16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -268,12 +270,13 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   void _onEditDate() {
-    DateTime firstDate = DateUtils.dateOnly(DateTimeUtils.min(DateTime.now(), _selectedDate));
-    DateTime lastDate = DateUtils.dateOnly(DateTimeUtils.max(DateTime.now(), _selectedDate)).add(Duration(days: 356));
-    showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate).then((DateTime? result) {
+    TZDateTime nowTz = TZDateTime.from(DateTime.now(), AppointmentTimeSlotExt.timezone);
+    TZDateTime firstDateTz = TZDateTimeUtils.dateOnly(TZDateTimeUtils.min(nowTz, _selectedDateTz));
+    DateTime lastDateTz = DateUtils.dateOnly(DateTimeUtils.max(nowTz, _selectedDateTz)).add(Duration(days: 356));
+    showDatePicker(context: context, initialDate: _selectedDateTz, firstDate: firstDateTz, lastDate: lastDateTz, currentDate: nowTz).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _selectedDate = DateUtils.dateOnly(result);
+          _selectedDateTz = TZDateTimeUtils.dateOnly(TZDateTime.from(result, AppointmentTimeSlotExt.timezone));
         });
         _loadTimeSlots();
       }
@@ -328,12 +331,13 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     setState(() {
       _loadingTimeSlots = true;
     });
+    DateTime targetDateTz = _selectedDateTz;
     Appointments().loadTimeSlotsAndQuestions(
       providerId: widget.scheduleParam.provider?.id,
       unitId: widget.scheduleParam.unit?.id,
       personId: widget.scheduleParam.person?.id,
-      dateLocal: _selectedDate).then((AppointmentTimeSlotsAndQuestions? result) {
-      if (mounted) {
+      dateUtc: _selectedDateTz.toUtc()).then((AppointmentTimeSlotsAndQuestions? result) {
+      if (mounted && (targetDateTz == _selectedDateTz)) {
         setState(() {
           _loadingTimeSlots = false;
           _timeSlots = result?.timeSlots ?? <AppointmentTimeSlot>[];

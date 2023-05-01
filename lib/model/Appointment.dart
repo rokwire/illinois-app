@@ -1035,9 +1035,6 @@ class AppointmentTimeSlot {
     (DeepCollectionEquality().hash(details));
 
   // Accessories
-
-  DateTime? get startTime => startTimeUtc?.toLocal();
-  DateTime? get endTime => endTimeUtc?.toLocal();
   bool get available => ((capacity != null) && (filled != null) && (0 <= filled!) && (filled! < capacity!));
 }
 

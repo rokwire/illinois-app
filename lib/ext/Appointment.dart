@@ -1,10 +1,12 @@
 
 import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:timezone/timezone.dart';
 
 ///////////////////////////////
 /// Appointment
@@ -58,6 +60,11 @@ extension AppointmentPersonExt on AppointmentPerson {
 
 extension AppointmentTimeSlotExt on AppointmentTimeSlot {
 
+  static Location get timezone => AppDateTime().universityLocation ?? local;
+
+  TZDateTime? get startTime => (startTimeUtc != null) ? TZDateTime.from(startTimeUtc!, timezone) : null;
+  TZDateTime? get endTime => (endTimeUtc != null) ? TZDateTime.from(endTimeUtc!, timezone) : null;
+
   String? get displayScheduleTime =>
     getDisplayScheduleTime(startTimeUtc, endTimeUtc);
 
@@ -65,12 +72,12 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
     if (startTimeUtc != null) {
       if (endTimeUtc != null) {
         //AppDateTime().getDeviceTimeFromUtcTime(startTime)
-        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy hh:mm').format(startTimeUtc.toLocal());
-        String endTimeStr = DateFormat('hh:mm aaa').format(endTimeUtc.toLocal());
+        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy hh:mm').format(TZDateTime.from(startTimeUtc, AppointmentTimeSlotExt.timezone));
+        String endTimeStr = DateFormat('hh:mm aaa').format(TZDateTime.from(endTimeUtc, AppointmentTimeSlotExt.timezone));
         return "$startTimeStr - $endTimeStr";
       }
       else {
-        return DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(startTimeUtc.toLocal());
+        return DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(TZDateTime.from(startTimeUtc, AppointmentTimeSlotExt.timezone));
       }
     }
     return null;
