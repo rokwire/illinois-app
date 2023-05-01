@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 
 class AppointmentScheduleTimePanel extends StatefulWidget {
   final AppointmentScheduleParam scheduleParam;
@@ -53,10 +54,12 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateUtils.dateOnly(widget.sourceAppointment?.startTimeUtc?.toLocal() ??
-      widget.scheduleParam.person?.nextAvailableTimeUtc?.toLocal() ??
-      widget.scheduleParam.unit?.nextAvailableTimeUtc?.toLocal() ??
-      DateTime.now());
+    _selectedDate = DateUtils.dateOnly(
+      widget.sourceAppointment?.startTimeUtc?.toUniOrLocal() ??
+      widget.scheduleParam.person?.nextAvailableTimeUtc?.toUniOrLocal() ??
+      widget.scheduleParam.unit?.nextAvailableTimeUtc?.toUniOrLocal() ??
+      DateTimeUni.nowUniOrLocal()
+    );
     _loadTimeSlots();
   }
 
@@ -268,12 +271,13 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   void _onEditDate() {
-    DateTime firstDate = DateUtils.dateOnly(DateTimeUtils.min(DateTime.now(), _selectedDate));
-    DateTime lastDate = DateUtils.dateOnly(DateTimeUtils.max(DateTime.now(), _selectedDate)).add(Duration(days: 356));
-    showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate).then((DateTime? result) {
+    DateTime now = DateTimeUni.nowUniOrLocal();
+    DateTime firstDate = DateUtils.dateOnly(DateTimeUtils.min(now, _selectedDate));
+    DateTime lastDate = DateUtils.dateOnly(DateTimeUtils.max(now, _selectedDate)).add(Duration(days: 356));
+    showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate, currentDate: now).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _selectedDate = DateUtils.dateOnly(result);
+          _selectedDate = DateUtils.dateOnly(result.toUniOrLocal());
         });
         _loadTimeSlots();
       }
@@ -328,12 +332,13 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     setState(() {
       _loadingTimeSlots = true;
     });
+    DateTime targetDate = _selectedDate;
     Appointments().loadTimeSlotsAndQuestions(
       providerId: widget.scheduleParam.provider?.id,
       unitId: widget.scheduleParam.unit?.id,
       personId: widget.scheduleParam.person?.id,
-      dateLocal: _selectedDate).then((AppointmentTimeSlotsAndQuestions? result) {
-      if (mounted) {
+      dateUtc: _selectedDate.toUtc()).then((AppointmentTimeSlotsAndQuestions? result) {
+      if (mounted && (targetDate == _selectedDate)) {
         setState(() {
           _loadingTimeSlots = false;
           _timeSlots = result?.timeSlots ?? <AppointmentTimeSlot>[];

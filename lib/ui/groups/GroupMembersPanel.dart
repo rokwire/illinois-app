@@ -519,45 +519,45 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   String _getSectionHeading() {
     switch (_selectedMemberStatus) {
       case GroupMemberStatus.admin:
-        return _isResearchProject ? "Principle Investigators" : Localization().getStringEx("panel.manage_members.label.admins", "Admins");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.admins", "Principal Investigators") : Localization().getStringEx("panel.manage_members.label.admins", "Admins");
       case GroupMemberStatus.member:
-        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
       case GroupMemberStatus.pending:
-        return _isResearchProject ? "Requests" : Localization().getStringEx("panel.manage_members.label.requests", "Requests");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.requests", "Requests") : Localization().getStringEx("panel.manage_members.label.requests", "Requests");
       case GroupMemberStatus.rejected:
-        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
       default: // All
-        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
     }
   }
 
   String _getEmptyMembersMessage() {
     switch (_selectedMemberStatus) {
       case GroupMemberStatus.admin:
-        return _isResearchProject ? 'There are no principle investigators.' : Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.admin.empty.project.message', 'There are no principal investigators.') : Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
       case GroupMemberStatus.member:
-        return _isResearchProject ? 'There are no participants.' : Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.member.empty.project.message', 'There are no participants.') : Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
       case GroupMemberStatus.pending:
-        return _isResearchProject ? 'There are no pending participants.' : Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.pending.empty.project.message', 'There are no pending participants.') : Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
       case GroupMemberStatus.rejected:
-        return _isResearchProject ? 'There are no rejected participants.' : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.rejected.empty.project.message', 'There are no rejected participants.') : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
       default: // All
-        return _isResearchProject ? 'There are no participants.' : Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.all.empty.project.message', 'There are no participants.') : Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
     }
   }
 
   String? _memberStatusToString(GroupMemberStatus? status) {
     switch (status) {
       case GroupMemberStatus.admin:
-        return _isResearchProject ? 'Principle Investigators' : Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.admin.project.label', 'Principal Investigator') : Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
       case GroupMemberStatus.member:
-        return _isResearchProject ? 'Participants' : Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.member.project.label', 'Participant') : Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
       case GroupMemberStatus.pending:
-        return Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.pending.project.label', 'Pending') : Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
       case GroupMemberStatus.rejected:
-        return Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Rejected');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.rejected.project.label', 'Rejected') : Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Rejected');
       default:
-        return Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.all.project.label', 'All') : Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
     }
   }
 

@@ -1,6 +1,7 @@
 
 import 'package:illinois/model/Appointment.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -42,7 +43,7 @@ extension AppointmentHostExt on AppointmentHost {
 
 extension AppointmentUnitExt on AppointmentUnit {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
-    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toLocal()) : null;
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) : null;
 }
 
 ///////////////////////////////
@@ -50,13 +51,16 @@ extension AppointmentUnitExt on AppointmentUnit {
 
 extension AppointmentPersonExt on AppointmentPerson {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
-    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toLocal()) : null;
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) : null;
 }
 
 ///////////////////////////////
 /// AppointmentTimeSlot
 
 extension AppointmentTimeSlotExt on AppointmentTimeSlot {
+
+  DateTime? get startTime => startTimeUtc?.toUniOrLocal();
+  DateTime? get endTime => endTimeUtc?.toUniOrLocal();
 
   String? get displayScheduleTime =>
     getDisplayScheduleTime(startTimeUtc, endTimeUtc);
@@ -65,12 +69,12 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
     if (startTimeUtc != null) {
       if (endTimeUtc != null) {
         //AppDateTime().getDeviceTimeFromUtcTime(startTime)
-        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy hh:mm').format(startTimeUtc.toLocal());
-        String endTimeStr = DateFormat('hh:mm aaa').format(endTimeUtc.toLocal());
+        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy hh:mm').format(startTimeUtc.toUniOrLocal());
+        String endTimeStr = DateFormat('hh:mm aaa').format(endTimeUtc.toUniOrLocal());
         return "$startTimeStr - $endTimeStr";
       }
       else {
-        return DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(startTimeUtc.toLocal());
+        return DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(startTimeUtc.toUniOrLocal());
       }
     }
     return null;

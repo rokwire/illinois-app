@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.3.52] - 2023-05-01
+### Changed
+- Pass time slot id to update appointment API [#3213](https://github.com/rokwire/illinois-app/issues/3213).
+- Update Appointments to work in University time [#3215](https://github.com/rokwire/illinois-app/issues/3215).
+- Removed notifications UI from Saved panel [#2903](https://github.com/rokwire/illinois-app/issues/2903).
+### Fixed
+- Fixed "Forgot Password" link text color [#3211](https://github.com/rokwire/illinois-app/issues/3211).
+- Fixed principle investigator typo [#3212](https://github.com/rokwire/illinois-app/issues/3212).
+
 ## [4.3.51] - 2023-04-28
 ### Fixed
 - Cleanup data caching in StudentCourses service [#3200](https://github.com/rokwire/illinois-app/issues/3200).

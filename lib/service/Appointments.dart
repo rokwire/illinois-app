@@ -578,16 +578,16 @@ class Appointments with Service implements NotificationsListener {
 
   // Time Slots And Questions
 
-  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? personId, required DateTime dateLocal }) async {
+  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? personId, required DateTime dateUtc }) async {
     if (_useSampleData == true) {
       await Future.delayed(Duration(milliseconds: 1500));
       return AppointmentTimeSlotsAndQuestions(
-        timeSlots: _sampleTimeSlots(dateLocal: dateLocal),
+        timeSlots: _sampleTimeSlots(dateLocal: dateUtc.toLocal()),
         questions: _sampleQuestions,
       );
     }
     else if (_isServiceAvailable) {
-      int startTime = DateUtils.dateOnly(dateLocal).millisecondsSinceEpoch;
+      int startTime = dateUtc.millisecondsSinceEpoch.abs();
       int endTime = startTime + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
       String urlParams = 'start-time=$startTime&end-time=$endTime';
       if (providerId != null) {
@@ -813,6 +813,7 @@ class Appointments with Service implements NotificationsListener {
       String? post = JsonUtils.encode({
         'type': appointmentTypeToString(type),
         'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
+        'slot_id': timeSlot?.id,
         'answers': AppointmentAnswer.listToJson(answers),
       });
       http.Response? response = await Network().put(url, body: post, headers: headers, auth: Auth2());

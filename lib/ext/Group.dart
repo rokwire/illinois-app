@@ -188,13 +188,13 @@ String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
 String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
   if (value != null) {
     if (value == GroupMemberStatus.pending) {
-      return 'Pending';
+      return Localization().getStringEx('model.research_project.member.status.pending', 'Pending');
     } else if (value == GroupMemberStatus.member) {
-      return 'Participant';
+      return Localization().getStringEx('model.research_project.member.status.member', 'Participant');
     } else if (value == GroupMemberStatus.admin) {
-      return 'Principle Investigator';
+      return Localization().getStringEx('model.research_project.member.status.admin', 'Principal Investigator');
     } else if (value == GroupMemberStatus.rejected) {
-      return 'Denied';
+      return Localization().getStringEx('model.research_project.member.status.rejected', 'Denied');
     }
   }
   return null;
