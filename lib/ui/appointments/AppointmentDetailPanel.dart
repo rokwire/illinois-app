@@ -572,7 +572,11 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     Auth2().prefs?.toggleFavorite(_appointment);
   }
 
-  bool get _canReschedule => (_appointment?.provider?.supportsReschedule == true) && (_appointment?.unitId != null) && (_appointment?.cancelled != true);
+  bool get _canReschedule => (_appointment?.provider?.supportsReschedule == true) &&
+    (_appointment?.unitId != null) &&
+    (_appointment?.personId != null) &&
+    (_appointment?.cancelled != true) &&
+    (_appointment?.startTimeUtc?.add(Duration(hours: 2)).isAfter(DateTime.now().toUtc()) ?? false);
 
   void _onReschedule() {
     Analytics().logSelect(target: "Reschedule");
@@ -604,7 +608,9 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     });
   }
 
-  bool get _canCancel => (_appointment?.provider?.supportsCancel == true) && _appointment?.cancelled != true;
+  bool get _canCancel => (_appointment?.provider?.supportsCancel == true) &&
+    (_appointment?.cancelled != true) &&
+    (_appointment?.startTimeUtc?.add(Duration(hours: 2)).isAfter(DateTime.now().toUtc()) ?? false);
 
   void _onCancel() {
     Analytics().logSelect(target: "Cancel");
