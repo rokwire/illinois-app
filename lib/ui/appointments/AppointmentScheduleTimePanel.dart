@@ -264,7 +264,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
           textColor: Styles().colors?.fillColorPrimary,
           borderColor: Styles().colors?.fillColorSecondary,
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          onTap: ()=> _onEditDate(),
+          onTap: _onEditDate,
         ),
       ],)
     );
@@ -277,7 +277,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate, currentDate: now).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _selectedDate = DateUtils.dateOnly(result.toUniOrLocal());
+          _selectedDate = DateUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, DateTimeUni.timezoneUniOrLocal)!);
         });
         _loadTimeSlots();
       }
