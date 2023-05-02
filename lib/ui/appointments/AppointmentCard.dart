@@ -33,7 +33,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
 
-  AppointmentCard({required this.appointment});
+  AppointmentCard({Key? key, required this.appointment}) : super(key: key);
 
   @override
   _AppointmentCardState createState() => _AppointmentCardState();

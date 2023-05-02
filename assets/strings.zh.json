@@ -2792,6 +2792,7 @@
 	"panel.appointment.schedule.time.button.continue.title": "Next",
 	"panel.appointment.schedule.time.button.continue.hint": "",
 	"panel.appointment.schedule.time.label.empty": "No time slots available for this date",
+	"panel.appointment.schedule.time.label.failed": "Failed to load time slots",
 
 	"panel.appointment.reschedule.time.header.title": "Reschedule Appointment",
 	"panel.appointment.reschedule.time.label.current.appointment": "Current Appointment:",

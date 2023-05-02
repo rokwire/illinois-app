@@ -47,7 +47,9 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   late DateTime _selectedDate;
   AppointmentTimeSlot? _selectedSlot;
   
-  List<AppointmentTimeSlot> _timeSlots = <AppointmentTimeSlot>[];
+  Map<int, Map<int, AppointmentTimeSlot>>? _timeSlotsMap;
+  List<int>? _timeSlotHours;
+  List<int>? _timeSlotMinutes;
   List<AppointmentQuestion>? _questions;
   bool _loadingTimeSlots = false;
 
@@ -98,8 +100,11 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     if (_loadingTimeSlots) {
       return _buildLoading();
     }
-    else if (_timeSlots.isEmpty) {
-      return _buildEmpty();
+    if (_timeSlotsMap == null) {
+      return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.failed', 'Failed to load time slots'));
+    }
+    else if (_timeSlotsMap?.isEmpty ?? true) {
+      return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.empty', 'No time slots available for this date'));
     }
     else {
       return _buildTimeSlots();
@@ -114,37 +119,26 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     );
   }
 
-  Widget _buildEmpty() {
+  Widget _buildStatus(String status) {
     return Center(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
-        Text(Localization().getStringEx('panel.appointment.schedule.time.label.empty', 'No time slots available for this date'), style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        Text(status, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
       )
     );
   }
 
   Widget _buildTimeSlots() {
-    Set<int> startMinutes = <int>{};
-    Map<int, Map<int, AppointmentTimeSlot>> timeSlotRows = <int, Map<int, AppointmentTimeSlot>>{};
-    for (AppointmentTimeSlot timeSlot in _timeSlots) {
-      DateTime? slotStartTime = timeSlot.startTime;
-      int? slotStartHour = slotStartTime?.hour;
-      int? slotStartMinute = slotStartTime?.minute;
-      if ((slotStartHour != null) && (slotStartMinute != null)) {
-        Map<int, AppointmentTimeSlot> timeSlotRow = (timeSlotRows[slotStartHour] ??= <int, AppointmentTimeSlot>{});
-        timeSlotRow[slotStartMinute] = timeSlot;
-        startMinutes.add(slotStartMinute);
-      }
-    }
-
     List<Widget> rows = <Widget>[];
-    for (int hour in timeSlotRows.keys) {
-      List<Widget> row = <Widget>[];
-      Map<int, AppointmentTimeSlot>? slotsPerHour = timeSlotRows[hour];
-      for (int startMinute in startMinutes) {
-        AppointmentTimeSlot? timeSlot = (slotsPerHour != null) ? slotsPerHour[startMinute] : null;
-        row.add(Expanded(child: _buildTimeSlot(timeSlot)));  
+    if ((_timeSlotsMap != null) && (_timeSlotHours != null) && (_timeSlotMinutes != null)) {
+      for (int hour in _timeSlotHours!) {
+        List<Widget> row = <Widget>[];
+        Map<int, AppointmentTimeSlot>? slotsPerHour = _timeSlotsMap![hour];
+        for (int startMinute in _timeSlotMinutes!) {
+          AppointmentTimeSlot? timeSlot = (slotsPerHour != null) ? slotsPerHour[startMinute] : null;
+          row.add(Expanded(child: _buildTimeSlot(timeSlot)));  
+        }
+        rows.add(Row(children: row,));
       }
-      rows.add(Row(children: row,));
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
@@ -264,7 +258,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
           textColor: Styles().colors?.fillColorPrimary,
           borderColor: Styles().colors?.fillColorSecondary,
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          onTap: ()=> _onEditDate(),
+          onTap: _onEditDate,
         ),
       ],)
     );
@@ -277,7 +271,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate, currentDate: now).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _selectedDate = DateUtils.dateOnly(result.toUniOrLocal());
+          _selectedDate = DateUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, DateTimeUni.timezoneUniOrLocal)!);
         });
         _loadTimeSlots();
       }
@@ -341,7 +335,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       if (mounted && (targetDate == _selectedDate)) {
         setState(() {
           _loadingTimeSlots = false;
-          _timeSlots = result?.timeSlots ?? <AppointmentTimeSlot>[];
+          _applyTimeSlots(result?.timeSlots);
           _questions = result?.questions;
           _selectedSlot = _findSelectedTimeSlot(
             result?.timeSlots,
@@ -351,6 +345,38 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         });
       }
     });
+  }
+
+  void _applyTimeSlots(List<AppointmentTimeSlot>? timeSlots) {
+    if (timeSlots != null) {
+      Set<int> startMinutes = <int>{};
+      Map<int, Map<int, AppointmentTimeSlot>> timeSlotsMap = <int, Map<int, AppointmentTimeSlot>>{};
+      for (AppointmentTimeSlot timeSlot in timeSlots) {
+        DateTime? slotStartTime = timeSlot.startTime;
+        int? slotStartHour = slotStartTime?.hour;
+        int? slotStartMinute = slotStartTime?.minute;
+        if ((slotStartHour != null) && (slotStartMinute != null)) {
+          Map<int, AppointmentTimeSlot> timeSlotRow = (timeSlotsMap[slotStartHour] ??= <int, AppointmentTimeSlot>{});
+          timeSlotRow[slotStartMinute] = timeSlot;
+          startMinutes.add(slotStartMinute);
+        }
+      }
+
+      List<int> startMinutesList = List.from(startMinutes);
+      startMinutesList.sort();
+
+      List<int> startHoursList = List.from(timeSlotsMap.keys);
+      startHoursList.sort();
+
+      _timeSlotsMap = timeSlotsMap;
+      _timeSlotMinutes = startMinutesList;
+      _timeSlotHours = startHoursList;
+    }
+    else {
+      _timeSlotsMap = null;
+      _timeSlotMinutes = null;
+      _timeSlotHours = null;
+    }
   }
 
   AppointmentTimeSlot? _findSelectedTimeSlot(List<AppointmentTimeSlot>? timeSlots, int? startMinutesSinceMidnightUtc, { bool Function(AppointmentTimeSlot timeSlot)? slotFilter }) {
