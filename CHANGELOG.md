@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Appointments UI updates [#3225](https://github.com/rokwire/illinois-app/issues/3225).
+### Fixed
+- Fixed athletics games event title style [#3210](https://github.com/rokwire/illinois-app/issues/3210).
 
 ## [4.3.53] - 2023-05-02
 ### Changed
