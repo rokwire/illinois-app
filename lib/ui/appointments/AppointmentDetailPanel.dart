@@ -155,7 +155,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget _buildAppointmentContent() {
-    String? toutImageKey = _appointment?.imageKeyBasedOnCategory;
+    String? toutImageKey = _appointment?.imageKey;
 
     return Column(children: <Widget>[
       Expanded(child: Container(child:

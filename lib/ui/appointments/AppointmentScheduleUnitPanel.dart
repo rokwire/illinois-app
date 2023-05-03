@@ -78,10 +78,10 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers.'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available.'));
     }
     else if (_providers?.length == 1) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -190,16 +190,16 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
 
   Widget _buildUnitsContent() {
     if (_selectedProvider == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider.'));
     }
     else if (_isLoadingUnits) {
       return _buildLoadingContent();
     }
     else if (_units == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.failed', 'Failed to load units for provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.failed', 'Failed to load locations for provider.'));
     }
     else if (_units?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.empty', 'No units available for selected provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.empty', 'No locations available for selected provider.'));
     }
     else  {
       return _buildUnitsList();
@@ -279,16 +279,28 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
         _isLoadingUnits = true;
       });
       Appointments().loadUnits(providerId: providerId).then((List<AppointmentUnit>? result) {
-        setStateIfMounted(() {
-          _units = result;
-          _isLoadingUnits = false;
-        });
+        if (mounted && (providerId == _selectedProvider?.id)) {
+          _initUnitKeys(result, provider: _selectedProvider);
+          setState(() {
+            _units = result;
+            _isLoadingUnits = false;
+          });
+        }
      });
     }
     else {
       setStateIfMounted(() {
         _units = null;
       });
+    }
+  }
+
+  void _initUnitKeys(List<AppointmentUnit>? units, { AppointmentProvider? provider }) {
+    if (units != null) {
+      int index = 0;
+      for (AppointmentUnit unit in units) {
+        unit.imageKey(provider: provider, index: index++);
+      }
     }
   }
 }
@@ -304,12 +316,12 @@ class _AppointmentUnitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String imageKey = 'photo-building';
     String? unitAddress = unit.address;
     String? unitHours = unit.hoursOfOperation;
+    String? unitPersons = unit.displayNumberOfPersons;
     String? unitDesription = unit.notes;
     String? nextAvailableTime = unit.displayNextAvailableTime;
-    
+
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
@@ -351,12 +363,32 @@ class _AppointmentUnitCard extends StatelessWidget {
                         ),
                       ),
 
+                      Visibility(visible: StringUtils.isNotEmpty(unitPersons), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 6), child:
+                              Styles().images?.getImage('person', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(unitPersons ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                            ),
+                          ],),
+                        ),
+                      ),
+
                       Visibility(visible: StringUtils.isNotEmpty(nextAvailableTime), child:
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next available appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
-                            Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular")),
-                          ],)
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 6), child:
+                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next available appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular")),
+                                Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
+                              ],)
+                            ),
+                          ],),
                         ),
                       ),
 
@@ -367,7 +399,7 @@ class _AppointmentUnitCard extends StatelessWidget {
                       SizedBox(width: 72, height: 72, child:
                         StringUtils.isNotEmpty(unit.imageUrl) ?
                           Image.network(unit.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
-                          Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill)
+                          Styles().images?.getImage(unit.imageKey(provider: provider), excludeFromSemantics: true, fit: BoxFit.fill)
                       ),
                     ),
                   ),
