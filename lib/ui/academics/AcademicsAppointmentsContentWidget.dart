@@ -92,10 +92,10 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers.'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available.'));
     }
     else if (_providers?.length == 1) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -211,7 +211,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
   Widget _buildAppointmentsContent() {
     //if (_selectedProvider == null) {
-    //  return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider'));
+    //  return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider.'));
     //}
     if (_isLoadingAppointments) {
       return _buildLoadingContent();
@@ -231,7 +231,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   List<Widget> _buildAppointmentsList() {
     if ((_upcomingAppointments == null) || (_pastAppointments == null)) {
       return <Widget>[_buildMessageContent(
-        Localization().getStringEx('panel.academics.appointments.home.message.appointments.failed', 'Failed to load appointments'))
+        Localization().getStringEx('panel.academics.appointments.home.message.appointments.failed', 'Failed to load appointments.'))
       ];
     }
     else  {
