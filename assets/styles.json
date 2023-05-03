@@ -111,6 +111,7 @@
     "widget.text.medium": { "font_family": "medium"},
 
     "widget.heading.huge": { "font_family": "regular", "size": 32.0, "color": "white"},
+    "widget.heading.huge.extra_fat": { "font_family": "extra_bold", "size": 32.0, "color": "white"},
     "widget.heading.extra_large": { "font_family": "regular", "size": 24.0, "color": "white"},
     "widget.heading.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "white"},
     "widget.heading.large": { "font_family": "regular", "size": 20.0, "color": "white"},

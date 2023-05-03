@@ -169,7 +169,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             padding: EdgeInsets.only(top: 12),
                             child: Text(
                               widget.game?.title ?? '',
-                              style: Styles().textStyles?.getTextStyle("widget.heading.huge"),
+                              style: Styles().textStyles?.getTextStyle("widget.heading.huge.extra_fat"),
                             ),
                           ),
                           (!StringUtils.isEmpty(widget.game?.longDescription)
