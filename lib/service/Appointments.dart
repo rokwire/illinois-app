@@ -582,7 +582,7 @@ class Appointments with Service implements NotificationsListener {
     if (_useSampleData == true) {
       await Future.delayed(Duration(milliseconds: 1500));
       return AppointmentTimeSlotsAndQuestions(
-        timeSlots: _sampleTimeSlots(dateLocal: dateUtc.toLocal()),
+        timeSlots: _sampleTimeSlots(dateUtc: dateUtc),
         questions: _sampleQuestions,
       );
     }
@@ -608,9 +608,8 @@ class Appointments with Service implements NotificationsListener {
     }
   }
 
-  List<AppointmentTimeSlot> _sampleTimeSlots({ required DateTime dateLocal }) {
-    DateTime midnighDateUtc = DateUtils.dateOnly(dateLocal).toUtc();
-    DateTime startDateUtc = midnighDateUtc.add(Duration(hours: 8));
+  List<AppointmentTimeSlot> _sampleTimeSlots({ required DateTime dateUtc }) {
+    DateTime startDateUtc = dateUtc.add(Duration(hours: 8));
     DateTime endDateUtc = startDateUtc.add(Duration(hours: 12));
     Duration slotDuration = Duration(minutes: 30);
     List<AppointmentTimeSlot> result = <AppointmentTimeSlot>[];

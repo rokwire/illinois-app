@@ -30,6 +30,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:timezone/timezone.dart';
 
 class AppointmentScheduleTimePanel extends StatefulWidget {
   final AppointmentScheduleParam scheduleParam;
@@ -44,7 +45,7 @@ class AppointmentScheduleTimePanel extends StatefulWidget {
 
 class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePanel> {
 
-  late DateTime _selectedDate;
+  late TZDateTime _selectedDate;
   AppointmentTimeSlot? _selectedSlot;
   
   Map<int, Map<int, AppointmentTimeSlot>>? _timeSlotsMap;
@@ -56,7 +57,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateUtils.dateOnly(
+    _selectedDate = TZDateTimeUtils.dateOnly(
       widget.sourceAppointment?.startTimeUtc?.toUniOrLocal() ??
       widget.scheduleParam.person?.nextAvailableTimeUtc?.toUniOrLocal() ??
       widget.scheduleParam.unit?.nextAvailableTimeUtc?.toUniOrLocal() ??
@@ -265,13 +266,13 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   void _onEditDate() {
-    DateTime now = DateTimeUni.nowUniOrLocal();
-    DateTime firstDate = DateUtils.dateOnly(DateTimeUtils.min(now, _selectedDate));
-    DateTime lastDate = DateUtils.dateOnly(DateTimeUtils.max(now, _selectedDate)).add(Duration(days: 356));
+    TZDateTime now = DateTimeUni.nowUniOrLocal();
+    TZDateTime firstDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.min(now, _selectedDate));
+    TZDateTime lastDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.max(now, _selectedDate)).add(Duration(days: 356));
     showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate, currentDate: now).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _selectedDate = DateUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, DateTimeUni.timezoneUniOrLocal)!);
+          _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, DateTimeUni.timezoneUniOrLocal)!);
         });
         _loadTimeSlots();
       }
