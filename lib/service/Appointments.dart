@@ -509,9 +509,9 @@ class Appointments with Service implements NotificationsListener {
 
   List<AppointmentProvider> get _sampleProviders =>  <AppointmentProvider>[
     AppointmentProvider(id: '1', name: 'McKinley', supportsSchedule: true, supportsReschedule: true, supportsCancel: true),
-    AppointmentProvider(id: '2', name: 'Grainger', supportsSchedule: false, supportsReschedule: false, supportsCancel: false),
-    AppointmentProvider(id: '3', name: 'Lorem Ipsum', supportsSchedule: true, supportsReschedule: true, supportsCancel: false),
-    AppointmentProvider(id: '4', name: 'Sit Dolor Amet', supportsSchedule: true, supportsReschedule: false, supportsCancel: true),
+    AppointmentProvider(id: '2', name: 'Grainger', supportsSchedule: true, supportsReschedule: true, supportsCancel: false),
+    AppointmentProvider(id: '3', name: 'Lorem Ipsum', supportsSchedule: true, supportsReschedule: false, supportsCancel: false),
+    AppointmentProvider(id: '4', name: 'Sit Dolor Amet', supportsSchedule: false, supportsReschedule: false, supportsCancel: false),
   ];
 
   // Units
@@ -537,10 +537,10 @@ class Appointments with Service implements NotificationsListener {
   }
 
   List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
-    AppointmentUnit(id: '11', name: 'House of Horror', address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 14, 30), imageUrl: 'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png', notes: 'Lorem ipsum sit dolor amet.'),
-    AppointmentUnit(id: '12', name: "Dante's Inferno", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 09, 30), imageUrl: 'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg', notes: 'Proin sed lacinia ex.'),
-    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', address: '1402 Springfield Ave Urbana, IL 61801', hoursOfOperation: '7:00am - 9:00pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 16, 00), imageUrl: 'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png', notes: 'Class aptent taciti sociosqu ad litora.'),
-    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', address: '505 E Armory Ave  Champaign, IL 61820', hoursOfOperation: '10:00am - 12:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: 'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop', notes: 'Donec iaculis est eget leo egestas ullamcorper.'),
+    AppointmentUnit(id: '11', name: 'House of Horror', address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 14, 30), imageUrl: null /*'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png' */, notes: 'Lorem ipsum sit dolor amet.'),
+    AppointmentUnit(id: '12', name: "Dante's Inferno", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 09, 30), imageUrl: null /*'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg' */, notes: 'Proin sed lacinia ex.'),
+    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', address: '1402 Springfield Ave Urbana, IL 61801', hoursOfOperation: '7:00am - 9:00pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 16, 00), imageUrl: null /*'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png' */, notes: 'Class aptent taciti sociosqu ad litora.'),
+    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', address: '505 E Armory Ave  Champaign, IL 61820', hoursOfOperation: '10:00am - 12:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: null /*'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop' */, notes: 'Donec iaculis est eget leo egestas ullamcorper.'),
   ];
 
   // Persons

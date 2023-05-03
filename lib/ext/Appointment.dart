@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:illinois/model/Appointment.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -27,8 +29,20 @@ extension AppointmentExt on Appointment {
   String? get title =>
     sprintf(Localization().getStringEx('model.academics.appointment.title.label.format', '%s Appointment'), [displayProviderName]);
 
-  String? get imageKeyBasedOnCategory => //Keep consistent images
-    (type != null) ? appointmentTypeImageKey(type!) : (imageUrl ??= Assets().randomStringFromListWithKey('images.random.events.Other'));
+  String? get imageKey =>
+    cachedImageKey ??= buildImageKey(type: type, provider: provider);
+
+  static String? buildImageKey({AppointmentType? type, AppointmentUnit? unit, AppointmentProvider? provider}) {
+    if (type == AppointmentType.online) {
+      return 'photo-online';
+    }
+    else if (type == AppointmentType.in_person) {
+      return (unit?.imageKey(provider: provider) ?? provider?.randomImageKey ?? AppointmentProviderExt.defaultImageKey);
+    }
+    else {
+      return Assets().randomStringFromListWithKey('images.random.events.Other');
+    }
+  }
 }
 
 ///////////////////////////////
@@ -39,11 +53,32 @@ extension AppointmentHostExt on AppointmentHost {
 }
 
 ///////////////////////////////
+/// AppointmentProvider
+
+extension AppointmentProviderExt on AppointmentProvider {
+  static const String mcKinleyName = 'McKinley';
+  static const String graingerName = 'Grainger';
+  static const String defaultImageKey = 'photo-building';
+
+  String get randomImageKey =>
+    indexedImageKey(Random().nextInt(256));
+
+  String indexedImageKey(int index) => (name == graingerName) ?
+    'photo-grainger-${(index.abs() % 2) + 1}' : defaultImageKey;
+}
+
+///////////////////////////////
 /// AppointmentUnit
 
 extension AppointmentUnitExt on AppointmentUnit {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
     DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) : null;
+
+  String? imageKey({AppointmentProvider? provider, int? index}) =>
+    cachedImageKey ??= ((provider != null) ?
+      ((index != null) ? provider.indexedImageKey(index) : provider.randomImageKey) :
+      AppointmentProviderExt.defaultImageKey
+    );
 }
 
 ///////////////////////////////
@@ -89,13 +124,6 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
 
 ///////////////////////////////
 /// AppointmentType
-
-String appointmentTypeImageKey(AppointmentType appointmentType) {
-  switch (appointmentType) {
-    case AppointmentType.in_person: return 'photo-building';
-    case AppointmentType.online: return 'photo-online';
-  }
-}
 
 String? appointmentTypeToDisplayString(AppointmentType? type) {
   switch (type) {

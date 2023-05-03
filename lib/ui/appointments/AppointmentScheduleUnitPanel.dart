@@ -279,16 +279,28 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
         _isLoadingUnits = true;
       });
       Appointments().loadUnits(providerId: providerId).then((List<AppointmentUnit>? result) {
-        setStateIfMounted(() {
-          _units = result;
-          _isLoadingUnits = false;
-        });
+        if (mounted && (providerId == _selectedProvider?.id)) {
+          _initUnitKeys(result, provider: _selectedProvider);
+          setState(() {
+            _units = result;
+            _isLoadingUnits = false;
+          });
+        }
      });
     }
     else {
       setStateIfMounted(() {
         _units = null;
       });
+    }
+  }
+
+  void _initUnitKeys(List<AppointmentUnit>? units, { AppointmentProvider? provider }) {
+    if (units != null) {
+      int index = 0;
+      for (AppointmentUnit unit in units) {
+        unit.imageKey(provider: provider, index: index++);
+      }
     }
   }
 }
@@ -304,7 +316,6 @@ class _AppointmentUnitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String imageKey = 'photo-building';
     String? unitAddress = unit.address;
     String? unitHours = unit.hoursOfOperation;
     String? unitDesription = unit.notes;
@@ -367,7 +378,7 @@ class _AppointmentUnitCard extends StatelessWidget {
                       SizedBox(width: 72, height: 72, child:
                         StringUtils.isNotEmpty(unit.imageUrl) ?
                           Image.network(unit.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
-                          Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill)
+                          Styles().images?.getImage(unit.imageKey(provider: provider), excludeFromSemantics: true, fit: BoxFit.fill)
                       ),
                     ),
                   ),

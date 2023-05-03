@@ -43,8 +43,7 @@ class Appointment with Explore, Favorite {
   final String? instructions;
   final bool? cancelled;
 
-  //Util fields
-  String? imageUrl; // to return same random image for this instance
+  String? cachedImageKey;
 
   Appointment({
     this.id, this.type, this.startTimeUtc, this.endTimeUtc,
@@ -178,14 +177,14 @@ class Appointment with Explore, Favorite {
   
   // Explore
   @override String? get exploreId => id;
-  @override String? get exploreImageURL => imageUrl;
+  @override String? get exploreImageURL => null;
   @override ExploreLocation? get exploreLocation => ExploreLocation(locationId: location?.id, latitude: location?.latitude, longitude: location?.longitude, description: location?.title);
   @override String? get exploreLongDescription => null;
   @override String? get explorePlaceId => null;
   @override String? get exploreShortDescription => null;
   @override DateTime? get exploreStartDateUtc => startTimeUtc;
   @override String? get exploreSubTitle => location?.title;
-  @override String? get exploreTitle => "${provider?.name ?? 'MyMcKinley'} Appointment";
+  @override String? get exploreTitle => "${provider?.name} Appointment";
 //@override Map<String, dynamic> toJson();
 }
 
@@ -396,6 +395,7 @@ class AppointmentsAccount {
 /// AppointmentProvider
 
 class AppointmentProvider {
+
   final String? id;
   final String? name;
   final bool? supportsSchedule;
@@ -516,6 +516,8 @@ class AppointmentUnit {
   final String? imageUrl;
   final String? notes;
   final DateTime? nextAvailableTimeUtc;
+
+  String? cachedImageKey;
 
   AppointmentUnit({this.id, this.providerId, this.name, this.address, this.hoursOfOperation, this.imageUrl, this.notes, this.nextAvailableTimeUtc});
 
