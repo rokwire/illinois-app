@@ -2780,6 +2780,9 @@
     "panel.appointment.schedule.notes.submit.succeeded.message": "Your appointment was scheduled successfully.",
     "panel.appointment.schedule.notes.submit.failed.message": "Failed to schedule appointment:",
     "panel.appointment.schedule.next_available_appointment.label": "Next available appointment:",
+    "panel.appointment.schedule.persons_count.label": "%s Advisors",
+    "panel.appointment.schedule.person1_count.label": "1 Advisor",
+    "panel.appointment.schedule.person0_count.label": "No Advisors",
 
     "panel.appointment.reschedule.submit.button.title": "Reschedule",
     "panel.appointment.reschedule.notes.submit.succeeded.message": "Your appointment was rescheduled successfully.",

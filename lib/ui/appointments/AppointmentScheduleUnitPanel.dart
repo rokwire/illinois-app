@@ -318,9 +318,10 @@ class _AppointmentUnitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String? unitAddress = unit.address;
     String? unitHours = unit.hoursOfOperation;
+    String? unitPersons = unit.displayNumberOfPersons;
     String? unitDesription = unit.notes;
     String? nextAvailableTime = unit.displayNextAvailableTime;
-    
+
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
@@ -357,6 +358,19 @@ class _AppointmentUnitCard extends StatelessWidget {
                             ),
                             Expanded(child:
                               Text(unitHours ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                            ),
+                          ],),
+                        ),
+                      ),
+
+                      Visibility(visible: StringUtils.isNotEmpty(unitPersons), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 6), child:
+                              Styles().images?.getImage('person', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(unitPersons ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
                             ),
                           ],),
                         ),

@@ -74,6 +74,15 @@ extension AppointmentUnitExt on AppointmentUnit {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
     DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) : null;
 
+  String? get displayNumberOfPersons {
+    int count = numberOfPersons ?? 0;
+    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.persons_count.label', '%s Advisors'), [count]) :
+          ((0 < count) ?
+            Localization().getStringEx('panel.appointment.schedule.person1_count.label', '1 Advisor') :
+            Localization().getStringEx('panel.appointment.schedule.person0_count.label', 'No Advisors')
+          );
+  }
+
   String? imageKey({AppointmentProvider? provider, int? index}) =>
     cachedImageKey ??= ((provider != null) ?
       ((index != null) ? provider.indexedImageKey(index) : provider.randomImageKey) :
