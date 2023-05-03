@@ -43,8 +43,7 @@ class Appointment with Explore, Favorite {
   final String? instructions;
   final bool? cancelled;
 
-  //Util fields
-  String? imageUrl; // to return same random image for this instance
+  String? cachedImageKey;
 
   Appointment({
     this.id, this.type, this.startTimeUtc, this.endTimeUtc,
@@ -178,14 +177,14 @@ class Appointment with Explore, Favorite {
   
   // Explore
   @override String? get exploreId => id;
-  @override String? get exploreImageURL => imageUrl;
+  @override String? get exploreImageURL => null;
   @override ExploreLocation? get exploreLocation => ExploreLocation(locationId: location?.id, latitude: location?.latitude, longitude: location?.longitude, description: location?.title);
   @override String? get exploreLongDescription => null;
   @override String? get explorePlaceId => null;
   @override String? get exploreShortDescription => null;
   @override DateTime? get exploreStartDateUtc => startTimeUtc;
   @override String? get exploreSubTitle => location?.title;
-  @override String? get exploreTitle => "${provider?.name ?? 'MyMcKinley'} Appointment";
+  @override String? get exploreTitle => "${provider?.name} Appointment";
 //@override Map<String, dynamic> toJson();
 }
 
@@ -396,6 +395,7 @@ class AppointmentsAccount {
 /// AppointmentProvider
 
 class AppointmentProvider {
+
   final String? id;
   final String? name;
   final bool? supportsSchedule;
@@ -513,11 +513,14 @@ class AppointmentUnit {
   final String? name;
   final String? address;
   final String? hoursOfOperation;
+  final int?    numberOfPersons;
   final String? imageUrl;
   final String? notes;
   final DateTime? nextAvailableTimeUtc;
 
-  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.hoursOfOperation, this.imageUrl, this.notes, this.nextAvailableTimeUtc});
+  String? cachedImageKey;
+
+  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.hoursOfOperation, this.numberOfPersons, this.imageUrl, this.notes, this.nextAvailableTimeUtc});
 
   // JSON Serialization
 
@@ -528,6 +531,7 @@ class AppointmentUnit {
       name: JsonUtils.stringValue(json['name']),
       address: JsonUtils.stringValue(json['address']),
       hoursOfOperation: JsonUtils.stringValue(json['hours_of_operations']),
+      numberOfPersons: JsonUtils.intValue(json['number_of_persons']),
       imageUrl: JsonUtils.stringValue(json['image_url']),
       notes: JsonUtils.stringValue(json['notes']),
       nextAvailableTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['next_available']), format: dateTimeFormat, isUtc: true)
@@ -541,6 +545,7 @@ class AppointmentUnit {
       'name': name,
       'address': address,
       'hours_of_operations': hoursOfOperation,
+      'number_of_persons': numberOfPersons,
       'image_url': imageUrl,
       'notes': notes,
       'next_available': DateTimeUtils.utcDateTimeToString(nextAvailableTimeUtc, format: dateTimeFormat),
@@ -579,6 +584,7 @@ class AppointmentUnit {
     (name == other.name) &&
     (address == other.address) &&
     (hoursOfOperation == other.hoursOfOperation) &&
+    (numberOfPersons == other.numberOfPersons) &&
     (imageUrl == other.imageUrl) &&
     (notes == other.notes) &&
     (nextAvailableTimeUtc == other.nextAvailableTimeUtc);
@@ -590,6 +596,7 @@ class AppointmentUnit {
     (name?.hashCode ?? 0) ^
     (address?.hashCode ?? 0) ^
     (hoursOfOperation?.hashCode ?? 0) ^
+    (numberOfPersons?.hashCode ?? 0) ^
     (imageUrl?.hashCode ?? 0) ^
     (notes?.hashCode ?? 0) ^
     (nextAvailableTimeUtc?.hashCode ?? 0);

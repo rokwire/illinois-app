@@ -33,7 +33,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
 
-  AppointmentCard({required this.appointment});
+  AppointmentCard({Key? key, required this.appointment}) : super(key: key);
 
   @override
   _AppointmentCardState createState() => _AppointmentCardState();
@@ -57,7 +57,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
   @override
   Widget build(BuildContext context) {
     const double imageSize = 64;
-    String? imageKey = widget.appointment.imageKeyBasedOnCategory;
+    String? imageKey = widget.appointment.imageKey;
     bool isFavorite = Auth2().isFavorite(widget.appointment);
     bool starVisible = Auth2().canFavorite && widget.appointment.isUpcoming;
 

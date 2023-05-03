@@ -788,6 +788,9 @@
     "photo-online": {"src": "images/appointment-detail-online-tout.jpg", "type": "flutter.asset", "todo": "color, size"},
     "photo-building": {"src": "images/appointment-detail-inperson-tout.png", "type": "flutter.asset", "todo": "size"},
 
+    "photo-grainger-1": {"src": "images/appointment-unit-grainger-tout-1.jpg", "type": "flutter.asset", "todo": "color, size"},
+    "photo-grainger-2": {"src": "images/appointment-unit-grainger-tout-2.jpg", "type": "flutter.asset", "todo": "size"},
+
     "toggle-on": {"src": "images/switch-on.png", "type": "flutter.asset", "todo": "color issue, fuzzy"},
     "toggle-off": {"src": "images/switch-off.png", "type": "flutter.asset", "todo": "color issue, fuzzy"},
     "toggle-disabled": {"src": "images/off.png", "type": "flutter.asset", "todo": "cut-off, color issue, fuzzy"},

@@ -58,7 +58,7 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.host.header.title', 'Schedule Appointment')),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.person.header.title', 'Schedule Appointment')),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
       //bottomNavigationBar: uiuc.TabBar()
@@ -67,16 +67,16 @@ class _AppointmentSchedulePersonPanelState extends State<AppointmentSchedulePers
 
   Widget _buildContent() {
     if (_unitId == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.unit.empty', 'No selected unit'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.unit.empty', 'No selected location.'));
     }
     else if (_isLoadingPersons) {
       return _buildLoadingContent();
     }
     else if (_persons == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.hosts.failed', 'Failed to load hosts for unit'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.persons.failed', 'Failed to load advisors for location.'));
     }
     else if (_persons?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.hosts.empty', 'No hosts available for selected unit'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.persons.empty', 'No advisors available for selected location.'));
     }
     else  {
       return _buildPersonsList();
@@ -212,10 +212,17 @@ class _AppointmentPersonCard extends StatelessWidget {
 
                       Visibility(visible: StringUtils.isNotEmpty(nextAvailableTime), child:
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next available appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
-                            Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular")),
-                          ],)
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 6), child:
+                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next available appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular")),
+                                Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
+                              ],)
+                            ),
+                          ],),
                         ),
                       ),
 
@@ -223,7 +230,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                   ),
 
                   Padding(padding: EdgeInsets.only(left: 16), child:
-                    Semantics(button: true, label: "host image", hint: "Double tap to expand image", child:
+                    Semantics(button: true, label: "advisor image", hint: "Double tap to expand image", child:
                       SizedBox(width: 72, height: 72, child:
                         StringUtils.isNotEmpty(person.imageUrl) ?
                           Image.network(person.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :

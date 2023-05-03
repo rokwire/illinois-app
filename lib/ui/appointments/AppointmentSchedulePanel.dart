@@ -42,12 +42,13 @@ class AppointmentSchedulePanel extends StatefulWidget {
 class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
   late AppointmentType _appointmentType;
+  String? _toutImageKey;
 
   bool _isSubmitting = false;
 
   @override
   void initState() {
-    _appointmentType = widget.sourceAppointment?.type ?? AppointmentType.in_person;
+    _applyAppointmentType(widget.sourceAppointment?.type ?? AppointmentType.in_person);
     super.initState();
   }
 
@@ -67,14 +68,13 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   }
 
   Widget _buildContentUi() {
-    String toutImageKey = appointmentTypeImageKey(_appointmentType);
     String toutTitle = Localization().getStringEx('panel.appointment.schedule.header.title', 'Schedule Appointment');
 
     return Column(children: <Widget>[
       Expanded(child:
         Container(child:
           CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-            SliverToutHeaderBar(flexImageKey: toutImageKey, title: toutTitle, flexRightToLeftTriangleColor: Colors.white),
+            SliverToutHeaderBar(flexImageKey: _toutImageKey, title: toutTitle, flexRightToLeftTriangleColor: Colors.white),
             SliverList(delegate: SliverChildListDelegate([
               Padding(padding: EdgeInsets.zero, child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -218,9 +218,14 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   void _onSelectAppointmentType(AppointmentType? appointmentType) {
     if ((appointmentType != null) && mounted) {
       setState(() {
-        _appointmentType = appointmentType;
+        _applyAppointmentType(appointmentType);
       });
     }
+  }
+
+  void _applyAppointmentType (AppointmentType appointmentType) {
+    _appointmentType = appointmentType;
+    _toutImageKey = AppointmentExt.buildImageKey(type: _appointmentType, unit: widget.scheduleParam.unit, provider: widget.scheduleParam.provider);
   }
 
   void _onLocation() {

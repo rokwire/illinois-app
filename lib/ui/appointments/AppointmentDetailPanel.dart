@@ -155,7 +155,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget _buildAppointmentContent() {
-    String? toutImageKey = _appointment?.imageKeyBasedOnCategory;
+    String? toutImageKey = _appointment?.imageKey;
 
     return Column(children: <Widget>[
       Expanded(child: Container(child:
@@ -546,25 +546,31 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget _buildCancelDescription() {
-    final String urlLabelMacro = '{{mckinley_url_label}}';
-    final String urlMacro = '{{mckinley_url}}';
-    final String externalLinkIconMacro = '{{external_link_icon}}';
-    final String phoneMacro = '{{mckinley_phone}}';
-    String descriptionHtml = Localization().getStringEx("panel.appointment.detail.cancel.description",
-        "<b>To cancel an appointment,</b> go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.");
-    descriptionHtml = descriptionHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
-    descriptionHtml = descriptionHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
-    descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
-    descriptionHtml = descriptionHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: HtmlWidget(
-            StringUtils.ensureNotEmpty(descriptionHtml),
-            onTapUrl : (url) {_launchUrl(url); return true;},
-            textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
-        )
-    );
+    String? providerName = _appointment?.provider?.name;
+    if ((providerName == null) || (providerName == 'McKinley')) {
+      final String urlLabelMacro = '{{mckinley_url_label}}';
+      final String urlMacro = '{{mckinley_url}}';
+      final String externalLinkIconMacro = '{{external_link_icon}}';
+      final String phoneMacro = '{{mckinley_phone}}';
+      String descriptionHtml = Localization().getStringEx("panel.appointment.detail.cancel.description",
+          "<b>To cancel an appointment,</b> go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.");
+      descriptionHtml = descriptionHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
+      descriptionHtml = descriptionHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
+      descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
+      descriptionHtml = descriptionHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
+      return Padding(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: HtmlWidget(
+              StringUtils.ensureNotEmpty(descriptionHtml),
+              onTapUrl : (url) {_launchUrl(url); return true;},
+              textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
+              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
+          )
+      );
+    }
+    else {
+      return Container();
+    }
   }
 
   void _onFavorite() {
@@ -572,7 +578,11 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     Auth2().prefs?.toggleFavorite(_appointment);
   }
 
-  bool get _canReschedule => (_appointment?.provider?.supportsReschedule == true) && (_appointment?.unitId != null) && (_appointment?.cancelled != true);
+  bool get _canReschedule => (_appointment?.provider?.supportsReschedule == true) &&
+    (_appointment?.unitId != null) &&
+    (_appointment?.personId != null) &&
+    (_appointment?.cancelled != true) &&
+    (_appointment?.startTimeUtc?.add(Duration(hours: 2)).isAfter(DateTime.now().toUtc()) ?? false);
 
   void _onReschedule() {
     Analytics().logSelect(target: "Reschedule");
@@ -604,7 +614,9 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     });
   }
 
-  bool get _canCancel => (_appointment?.provider?.supportsCancel == true) && _appointment?.cancelled != true;
+  bool get _canCancel => (_appointment?.provider?.supportsCancel == true) &&
+    (_appointment?.cancelled != true) &&
+    (_appointment?.startTimeUtc?.add(Duration(hours: 2)).isAfter(DateTime.now().toUtc()) ?? false);
 
   void _onCancel() {
     Analytics().logSelect(target: "Cancel");

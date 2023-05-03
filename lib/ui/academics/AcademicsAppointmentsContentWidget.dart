@@ -49,7 +49,9 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
   List<Appointment>? _upcomingAppointments;
   List<Appointment>? _pastAppointments;
+  Map<String, GlobalKey> _upcomingAppointmentKeys = <String, GlobalKey>{};
   bool _isLoadingAppointments = false;
+  Set<void Function()> _didLoadCallbacks = <void Function()>{};
 
   @override
   void initState() {
@@ -90,10 +92,10 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers.'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available.'));
     }
     else if (_providers?.length == 1) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -209,7 +211,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
   Widget _buildAppointmentsContent() {
     //if (_selectedProvider == null) {
-    //  return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider'));
+    //  return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider.'));
     //}
     if (_isLoadingAppointments) {
       return _buildLoadingContent();
@@ -229,7 +231,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   List<Widget> _buildAppointmentsList() {
     if ((_upcomingAppointments == null) || (_pastAppointments == null)) {
       return <Widget>[_buildMessageContent(
-        Localization().getStringEx('panel.academics.appointments.home.message.appointments.failed', 'Failed to load appointments'))
+        Localization().getStringEx('panel.academics.appointments.home.message.appointments.failed', 'Failed to load appointments.'))
       ];
     }
     else  {
@@ -243,8 +245,10 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       }
       else {
         for (Appointment appointment in _upcomingAppointments!) {
+          String? appointmentId = appointment.id;
+          GlobalKey? appointmentKey = (appointmentId != null) ? (_upcomingAppointmentKeys[appointmentId] ??= GlobalKey()) : null;
           contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child:
-            AppointmentCard(appointment: appointment)
+            AppointmentCard(key: appointmentKey, appointment: appointment)
           ));
         }
       }
@@ -341,11 +345,15 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     setStateIfMounted(() {
       _isLoadingAppointments = true;
     });
+    String? providerId = _selectedProvider?.id;
     Appointments().loadAppointments(providerId: _selectedProvider?.id).then((List<Appointment>? result) {
-      setStateIfMounted(() {
-        _buildAppointments(result);
-        _isLoadingAppointments = false;
-      });
+      if ((providerId == _selectedProvider?.id) && mounted) {
+        setState(() {
+          _buildAppointments(result);
+          _isLoadingAppointments = false;
+          _notifyDidLoadCallbacks();
+        });
+      }
     });
   }
 
@@ -371,6 +379,13 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     }
   }
 
+  void _notifyDidLoadCallbacks() {
+    for (void Function() didLoadCallback in _didLoadCallbacks) {
+      didLoadCallback();
+    }
+    _didLoadCallbacks.clear();
+  }
+
   bool get _canScheduleAppointment {
     return  (_selectedProvider != null) ? (_selectedProvider?.supportsSchedule == true) :
       (AppointmentProvider.findInList(_providers, supportsSchedule: true) != null);
@@ -383,8 +398,29 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
       scheduleParam: AppointmentScheduleParam(
         provider: _selectedProvider,
       ),
-      onFinish: (BuildContext context, Appointment? appointment) => Navigator.of(context).popUntil((route) => route.isFirst),
+      onFinish: (BuildContext context, Appointment? appointment) => _didScheduleAppointment(context, appointment)
     )));
+  }
+
+  void _didScheduleAppointment(BuildContext context, Appointment? appointment) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    if (_isLoadingAppointments) {
+      _didLoadCallbacks.add(() {
+        _ensureVisibleAppintment(appointment);
+      });
+    }
+    else {
+      _ensureVisibleAppintment(appointment);
+    }
+  }
+
+  void _ensureVisibleAppintment(Appointment? appointment) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BuildContext? appointmentContext = _upcomingAppointmentKeys[appointment?.id]?.currentContext;
+      if (appointmentContext != null) {
+        Scrollable.ensureVisible(appointmentContext, duration: Duration(milliseconds: 300));
+      }
+    });
   }
 
   Future<void> _onPullToRefresh() async {
