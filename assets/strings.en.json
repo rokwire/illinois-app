@@ -3378,14 +3378,14 @@
     "model.wellness.todo.category.reminder.type.night_before.label": "Night Before (9:00 PM)",
     "model.wellness.todo.category.reminder.type.specific_time.label": "Specific Time",
 
-    "model.wellness.appointment.type.in_person.label": "In Person",
-    "model.wellness.appointment.type.online.label": "Telehealth",
-    "model.wellness.appointment.category.label.format": "%s Appointments",
-    "model.wellness.appointment.title.label.format": "%s Appointment",
-    "model.wellness.appointment.default.provider.label": "MyMcKinley",
+    "model.academics.appointment.type.in_person.label": "In Person",
+    "model.academics.appointment.type.online.label": "Telehealth",
+    "model.academics.appointment.category.label.format": "%s Appointments",
+    "model.academics.appointment.title.label.format": "%s Appointment",
+    "model.academics.appointment.default.provider.label": "MyMcKinley",
 
-    "model.wellness.appointment2.type.in_person.label": "In Person",
-    "model.wellness.appointment2.type.online.label": "Online",
+    "model.academics.appointment2.type.in_person.label": "In Person",
+    "model.academics.appointment2.type.online.label": "Online",
 
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",

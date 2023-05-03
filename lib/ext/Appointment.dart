@@ -19,13 +19,13 @@ extension AppointmentExt on Appointment {
     AppointmentTimeSlotExt.getStartMinutesSinceMidnightUtc(startTimeUtc);
 
   String get displayProviderName =>
-    this.provider?.name ?? Localization().getStringEx('model.wellness.appointment.default.provider.label', 'MyMcKinley');
+    this.provider?.name ?? Localization().getStringEx('model.academics.appointment.default.provider.label', 'MyMcKinley');
 
   String? get category =>
-    sprintf(Localization().getStringEx('model.wellness.appointment.category.label.format', '%s Appointments'), [displayProviderName]).toUpperCase();
+    sprintf(Localization().getStringEx('model.academics.appointment.category.label.format', '%s Appointments'), [displayProviderName]).toUpperCase();
 
   String? get title =>
-    sprintf(Localization().getStringEx('model.wellness.appointment.title.label.format', '%s Appointment'), [displayProviderName]);
+    sprintf(Localization().getStringEx('model.academics.appointment.title.label.format', '%s Appointment'), [displayProviderName]);
 
   String? get imageKeyBasedOnCategory => //Keep consistent images
     (type != null) ? appointmentTypeImageKey(type!) : (imageUrl ??= Assets().randomStringFromListWithKey('images.random.events.Other'));
@@ -100,9 +100,9 @@ String appointmentTypeImageKey(AppointmentType appointmentType) {
 String? appointmentTypeToDisplayString(AppointmentType? type) {
   switch (type) {
     case AppointmentType.in_person:
-      return Localization().getStringEx('model.wellness.appointment.type.in_person.label', 'In Person');
+      return Localization().getStringEx('model.academics.appointment.type.in_person.label', 'In Person');
     case AppointmentType.online:
-      return Localization().getStringEx('model.wellness.appointment.type.online.label', 'Telehealth');
+      return Localization().getStringEx('model.academics.appointment.type.online.label', 'Telehealth');
     default:
       return null;
   }
@@ -110,7 +110,7 @@ String? appointmentTypeToDisplayString(AppointmentType? type) {
 
 String appointment2TypeDisplayString(AppointmentType _appointmentType) {
   switch (_appointmentType) {
-    case AppointmentType.in_person: return Localization().getStringEx('model.wellness.appointment2.type.in_person.label', 'In Person');
-    case AppointmentType.online: return Localization().getStringEx('model.wellness.appointment2.type.online.label', 'Online');
+    case AppointmentType.in_person: return Localization().getStringEx('model.academics.appointment2.type.in_person.label', 'In Person');
+    case AppointmentType.online: return Localization().getStringEx('model.academics.appointment2.type.online.label', 'Online');
   }
 }

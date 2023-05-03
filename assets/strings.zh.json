@@ -3374,14 +3374,14 @@
 	"model.wellness.todo.category.reminder.type.night_before.label": "前一天晚上 (晚上 9:00)",
 	"model.wellness.todo.category.reminder.type.specific_time.label": "特定的時間",
 
-	"model.wellness.appointment.type.in_person.label": "親自",
-	"model.wellness.appointment.type.online.label": "遠程醫療",
-	"model.wellness.appointment.category.label.format": "%s 約會",
-	"model.wellness.appointment.title.label.format": "%s 預約",
-	"model.wellness.appointment.default.provider.label": "MyMcKinley",
+	"model.academics.appointment.type.in_person.label": "親自",
+	"model.academics.appointment.type.online.label": "遠程醫療",
+	"model.academics.appointment.category.label.format": "%s 約會",
+	"model.academics.appointment.title.label.format": "%s 預約",
+	"model.academics.appointment.default.provider.label": "MyMcKinley",
 
-	"model.wellness.appointment2.type.in_person.label": "In Person",
-	"model.wellness.appointment2.type.online.label": "Online",
+	"model.academics.appointment2.type.in_person.label": "In Person",
+	"model.academics.appointment2.type.online.label": "Online",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
