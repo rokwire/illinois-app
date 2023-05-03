@@ -72,7 +72,8 @@ extension AppointmentProviderExt on AppointmentProvider {
 
 extension AppointmentUnitExt on AppointmentUnit {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
-    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) : null;
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) :
+    Localization().getStringEx('panel.appointment.schedule.next_available_appointment.unknown.label', 'Unknown');
 
   String? get displayNumberOfPersons {
     int count = numberOfPersons ?? 0;
@@ -95,7 +96,8 @@ extension AppointmentUnitExt on AppointmentUnit {
 
 extension AppointmentPersonExt on AppointmentPerson {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
-    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) : null;
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) :
+    Localization().getStringEx('panel.appointment.schedule.next_available_appointment.unknown.label', 'Unknown');
 }
 
 ///////////////////////////////
