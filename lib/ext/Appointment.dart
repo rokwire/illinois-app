@@ -98,6 +98,15 @@ extension AppointmentPersonExt on AppointmentPerson {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
     DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) :
     Localization().getStringEx('panel.appointment.schedule.next_available_appointment.unknown.label', 'Unknown');
+
+  String? get displayNumberOfAvailableSlots {
+    int count = numberOfAvailableSlots ?? 0;
+    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.slots_count.label', '%s Slots Available'), [count]) :
+          ((0 < count) ?
+            Localization().getStringEx('panel.appointment.schedule.slot1_count.label', '1 Slot Available') :
+            Localization().getStringEx('panel.appointment.schedule.slot0_count.label', 'No Slots Available')
+          );
+  }
 }
 
 ///////////////////////////////

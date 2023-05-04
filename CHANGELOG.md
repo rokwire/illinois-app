@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - "My College of Medicine Compliance" label [#3231](https://github.com/rokwire/illinois-app/issues/3231).
+- Acknowledged new fields for appointment unit and person [#3230](https://github.com/rokwire/illinois-app/issues/3230).
 
 ## [4.3.54] - 2023-05-03
 ### Changed

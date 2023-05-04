@@ -512,15 +512,20 @@ class AppointmentUnit {
   final String? providerId;
   final String? name;
   final String? address;
-  final String? hoursOfOperation;
-  final int?    numberOfPersons;
+  final String? collegeName;
+  final String? collegeCode;
   final String? imageUrl;
   final String? notes;
+  final String? hoursOfOperation;
+  final int?    numberOfPersons;
   final DateTime? nextAvailableTimeUtc;
 
   String? cachedImageKey;
 
-  AppointmentUnit({this.id, this.providerId, this.name, this.address, this.hoursOfOperation, this.numberOfPersons, this.imageUrl, this.notes, this.nextAvailableTimeUtc});
+  AppointmentUnit({this.id, this.providerId,
+    this.name, this.address, this.collegeName, this.collegeCode, this.imageUrl,
+    this.notes, this.hoursOfOperation, this.numberOfPersons, this.nextAvailableTimeUtc
+  });
 
   // JSON Serialization
 
@@ -530,10 +535,12 @@ class AppointmentUnit {
       providerId: JsonUtils.stringValue(json['provider_id']),
       name: JsonUtils.stringValue(json['name']),
       address: JsonUtils.stringValue(json['address']),
-      hoursOfOperation: JsonUtils.stringValue(json['hours_of_operations']),
-      numberOfPersons: JsonUtils.intValue(json['number_of_persons']),
+      collegeName: JsonUtils.stringValue(json['college_name']),
+      collegeCode: JsonUtils.stringValue(json['college_code']),
       imageUrl: JsonUtils.stringValue(json['image_url']),
       notes: JsonUtils.stringValue(json['notes']),
+      hoursOfOperation: JsonUtils.stringValue(json['hours_of_operations']),
+      numberOfPersons: JsonUtils.intValue(json['number_available_people']),
       nextAvailableTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['next_available']), format: dateTimeFormat, isUtc: true)
     ) : null;
   }
@@ -544,10 +551,12 @@ class AppointmentUnit {
       'provider_id': providerId,
       'name': name,
       'address': address,
-      'hours_of_operations': hoursOfOperation,
-      'number_of_persons': numberOfPersons,
+      'college_name': collegeName,
+      'college_code': collegeCode,
       'image_url': imageUrl,
       'notes': notes,
+      'hours_of_operations': hoursOfOperation,
+      'number_available_people': numberOfPersons,
       'next_available': DateTimeUtils.utcDateTimeToString(nextAvailableTimeUtc, format: dateTimeFormat),
     };
   }
@@ -583,10 +592,12 @@ class AppointmentUnit {
     (providerId == other.providerId) &&
     (name == other.name) &&
     (address == other.address) &&
-    (hoursOfOperation == other.hoursOfOperation) &&
-    (numberOfPersons == other.numberOfPersons) &&
+    (collegeName == other.collegeName) &&
+    (collegeCode == other.collegeCode) &&
     (imageUrl == other.imageUrl) &&
     (notes == other.notes) &&
+    (hoursOfOperation == other.hoursOfOperation) &&
+    (numberOfPersons == other.numberOfPersons) &&
     (nextAvailableTimeUtc == other.nextAvailableTimeUtc);
 
   @override
@@ -595,10 +606,12 @@ class AppointmentUnit {
     (providerId?.hashCode ?? 0) ^
     (name?.hashCode ?? 0) ^
     (address?.hashCode ?? 0) ^
-    (hoursOfOperation?.hashCode ?? 0) ^
-    (numberOfPersons?.hashCode ?? 0) ^
+    (collegeName?.hashCode ?? 0) ^
+    (collegeCode?.hashCode ?? 0) ^
     (imageUrl?.hashCode ?? 0) ^
     (notes?.hashCode ?? 0) ^
+    (hoursOfOperation?.hashCode ?? 0) ^
+    (numberOfPersons?.hashCode ?? 0) ^
     (nextAvailableTimeUtc?.hashCode ?? 0);
 
   // Accessories
@@ -624,21 +637,29 @@ class AppointmentPerson {
   static final String dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
 
   final String? id;
+  final String? providerId;
+  final String? unitId;
   final String? name;
-  final String? notes;
   final String? imageUrl;
+  final String? notes;
+  final int?    numberOfAvailableSlots;
   final DateTime? nextAvailableTimeUtc;
 
-  AppointmentPerson({this.id, this.name, this.notes, this.imageUrl, this.nextAvailableTimeUtc});
+  AppointmentPerson({this.id, this.providerId, this.unitId,
+    this.name, this.imageUrl, this.notes,
+    this.numberOfAvailableSlots, this.nextAvailableTimeUtc});
 
   // JSON Serialization
 
   static AppointmentPerson? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? AppointmentPerson(
       id: JsonUtils.stringValue(json['id']),
+      providerId: JsonUtils.stringValue(json['provider_id']),
+      unitId: JsonUtils.stringValue(json['unit_id']),
       name: JsonUtils.stringValue(json['name']),
-      notes: JsonUtils.stringValue(json['notes']),
       imageUrl: JsonUtils.stringValue(json['image_url']),
+      notes: JsonUtils.stringValue(json['notes']),
+      numberOfAvailableSlots: JsonUtils.intValue(json['number_available_slots']),
       nextAvailableTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['next_available']), format: dateTimeFormat, isUtc: true)
     ) : null;
   }
@@ -646,9 +667,12 @@ class AppointmentPerson {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'provider_id': providerId,
+      'unit_id': unitId,
       'name': name,
-      'notes': imageUrl,
       'image_url': imageUrl,
+      'notes': imageUrl,
+      'number_available_slots': numberOfAvailableSlots,
       'next_available': DateTimeUtils.utcDateTimeToString(nextAvailableTimeUtc, format: dateTimeFormat),
     };
   }
@@ -681,17 +705,23 @@ class AppointmentPerson {
   bool operator==(dynamic other) =>
     (other is AppointmentPerson) &&
     (id == other.id) &&
+    (providerId == other.providerId) &&
+    (unitId == other.unitId) &&
     (name == other.name) &&
-    (notes == other.notes) &&
     (imageUrl == other.imageUrl) &&
+    (notes == other.notes) &&
+    (numberOfAvailableSlots == other.numberOfAvailableSlots) &&
     (nextAvailableTimeUtc == other.nextAvailableTimeUtc);
 
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
+    (providerId?.hashCode ?? 0) ^
+    (unitId?.hashCode ?? 0) ^
     (name?.hashCode ?? 0) ^
-    (notes?.hashCode ?? 0) ^
     (imageUrl?.hashCode ?? 0) ^
+    (notes?.hashCode ?? 0) ^
+    (numberOfAvailableSlots?.hashCode ?? 0) ^
     (nextAvailableTimeUtc?.hashCode ?? 0);
 
   // Accessories
