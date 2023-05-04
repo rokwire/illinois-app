@@ -446,7 +446,7 @@
     "panel.academics.section.gies_checklist.label": "iDegrees New Student Checklist",
     "panel.academics.section.uiuc_checklist.label": "New Student Checklist",
     "panel.academics.section.canvas_courses.label": "My Gies Canvas Courses",
-    "panel.academics.section.medicine_courses.label": "My College of Medicine Courses",
+    "panel.academics.section.medicine_courses.label": "My College of Medicine Compliance",
     "panel.academics.section.student_courses.label": "My Courses",
     "panel.academics.section.skills_self_evaluation.label": "Skills Self-Evaluation",
     "panel.academics.section.todo_list.label": "To-Do List",
@@ -1965,6 +1965,7 @@
     "panel.wellness.appointments.home.display.settings.on.label": "Display My Appointments",
     "panel.wellness.appointments.home.display.settings.off.label": "Don't Display My Appointments",
 
+    "panel.academics.appointments.home.header.title": "Appointments",
     "panel.academics.appointments.home.message.providers.failed": "Failed to load providers.",
     "panel.academics.appointments.home.message.providers.empty": "No providers available.",
     "panel.academics.appointments.home.message.provider.empty": "No selected provider.",
@@ -2337,9 +2338,11 @@
     "panel.groups_home.label.my_groups.empty": "You are not a member of any group. To join or create a group, see ",
     "panel.groups_home.label.my_groups.empty.link.all_groups": "All Groups",
     "panel.groups_home.label.my_groups.failed": "Failed to load groups",
-    "panel.groups_home.label.all_groups.empty": "There are no groups created yet",
+    "panel.groups_home.label.all_groups.empty": "There are no groups matching your filters.",
     "panel.groups_home.label.all_groups.failed": "Failed to load groups",
     "panel.groups_home.label.all_groups.filtered.empty": "No groups match the selected filter",
+    "panel.groups_home.groups.count.single.label": "group",
+    "panel.groups_home.groups.count.plural.label": "groups",
 
     "panel.groups_settings.label.heading": "Group Settings",
     "panel.groups_settings.label.project.heading": "Project Settings",
@@ -2625,8 +2628,8 @@
     "panel.canvas_courses.load.offline.error.msg": "My Gies Canvas Courses not available while offline.",
     "panel.canvas_courses.load.logged_out.error.msg": "You need to be signed in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
         
-    "panel.medicine_courses.load.offline.error.msg": "My College of Medicine Courses not available while offline.",
-    "panel.medicine_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My College of Medicine Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
+    "panel.medicine_courses.load.offline.error.msg": "My College of Medicine Compliance not available while offline.",
+    "panel.medicine_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My College of Medicine Compliance. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
     "panel.medicine_courses.load.failed.error.msg": "Unable to load courses.",
     "panel.medicine_courses.load.empty.error.msg": "You do not appear to be enrolled in any Medicine courses.",
 
@@ -2786,6 +2789,9 @@
     "panel.appointment.schedule.persons_count.label": "%s Advisors",
     "panel.appointment.schedule.person1_count.label": "1 Advisor",
     "panel.appointment.schedule.person0_count.label": "No Advisors",
+    "panel.appointment.schedule.slots_count.label": "%s Slots Available",
+    "panel.appointment.schedule.slot1_count.label": "1 Slot Available",
+    "panel.appointment.schedule.slot0_count.label": "No Slots Available",
 
     "panel.appointment.reschedule.submit.button.title": "Reschedule",
     "panel.appointment.reschedule.notes.submit.succeeded.message": "Your appointment was rescheduled successfully.",
@@ -2793,6 +2799,7 @@
     
     "panel.appointment.schedule.time.header.title": "Schedule Appointment",
 	"panel.appointment.schedule.time.label.current.appointment": "Showing available appointments for:",
+	"panel.appointment.schedule.time.label.unavailable.appointment": "There are no available dates for appointments.",
 	"panel.appointment.schedule.time.button.select.date.title": "Select Alternative Date",
 	"panel.appointment.schedule.time.button.select.date.hint": "",
 	"panel.appointment.schedule.time.button.continue.title": "Next",

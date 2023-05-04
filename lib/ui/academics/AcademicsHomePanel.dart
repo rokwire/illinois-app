@@ -415,7 +415,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.canvas_courses:
         return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
       case AcademicsContent.medicine_courses:
-        return Localization().getStringEx('panel.academics.section.medicine_courses.label', 'My College of Medicine Courses');
+        return Localization().getStringEx('panel.academics.section.medicine_courses.label', 'My College of Medicine Compliance');
       case AcademicsContent.student_courses:
         return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
       case AcademicsContent.skills_self_evaluation:

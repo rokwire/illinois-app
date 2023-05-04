@@ -163,6 +163,7 @@ class _AppointmentPersonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? numberOfAvailableSlots = person.displayNumberOfAvailableSlots;
     String? nextAvailableTime = person.displayNextAvailableTime;
 
     return InkWell(onTap: onTap, child:
@@ -185,7 +186,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                       ),
 
                       /*Visibility(visible: StringUtils.isNotEmpty(person.email), child:
-                        Padding(padding: EdgeInsets.only(top: 4), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(children: [
                             Padding(padding: EdgeInsets.only(right: 4), child:
                               Styles().images?.getImage('mail', excludeFromSemantics: true),
@@ -198,7 +199,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                       ),*/
 
                       /*Visibility(visible: StringUtils.isNotEmpty(person.phone), child:
-                        Padding(padding: EdgeInsets.only(top: 4), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(children: [
                             Padding(padding: EdgeInsets.only(right: 4), child:
                               Styles().images?.getImage('phone', excludeFromSemantics: true),
@@ -209,6 +210,19 @@ class _AppointmentPersonCard extends StatelessWidget {
                           ],),
                         ),
                       ),*/
+
+                      Visibility(visible: StringUtils.isNotEmpty(numberOfAvailableSlots), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(children: [
+                            Padding(padding: EdgeInsets.only(right: 4), child:
+                              Styles().images?.getImage('edit', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(numberOfAvailableSlots ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                            ),
+                          ],),
+                        ),
+                      ),
 
                       Visibility(visible: StringUtils.isNotEmpty(nextAvailableTime), child:
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:

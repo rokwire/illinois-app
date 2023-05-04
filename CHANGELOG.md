@@ -5,8 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.3.55] - 2023-05-04
+### Changed
+- "My College of Medicine Compliance" label [#3231](https://github.com/rokwire/illinois-app/issues/3231).
+- Acknowledged new fields for appointment unit and person [#3230](https://github.com/rokwire/illinois-app/issues/3230).
+- Load appointments in a standalone panel when invoked from Browse [#3234](https://github.com/rokwire/illinois-app/issues/3234).
+- Updates in Groups Home Panel [#3236](https://github.com/rokwire/illinois-app/issues/3236).
+- Updated logic in AppointmentTimeSchedule panel [#3238](https://github.com/rokwire/illinois-app/issues/3238).
+
+## [4.3.54] - 2023-05-03
 ### Changed
 - Appointments UI updates [#3225](https://github.com/rokwire/illinois-app/issues/3225).
+### Fixed
+- Fixed athletics games event title style [#3210](https://github.com/rokwire/illinois-app/issues/3210).
 
 ## [4.3.53] - 2023-05-02
 ### Changed

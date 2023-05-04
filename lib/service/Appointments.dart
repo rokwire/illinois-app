@@ -24,6 +24,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -537,10 +538,10 @@ class Appointments with Service implements NotificationsListener {
   }
 
   List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
-    AppointmentUnit(id: '11', name: 'House of Horror', address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 14, 30), imageUrl: null /*'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png' */, notes: 'Lorem ipsum sit dolor amet.'),
-    AppointmentUnit(id: '12', name: "Dante's Inferno", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 09, 30), imageUrl: null /*'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg' */, notes: 'Proin sed lacinia ex.'),
-    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', address: '1402 Springfield Ave Urbana, IL 61801', hoursOfOperation: '7:00am - 9:00pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 16, 00), imageUrl: null /*'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png' */, notes: 'Class aptent taciti sociosqu ad litora.'),
-    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', address: '505 E Armory Ave  Champaign, IL 61820', hoursOfOperation: '10:00am - 12:30pm', nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: null /*'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop' */, notes: 'Donec iaculis est eget leo egestas ullamcorper.'),
+    AppointmentUnit(id: '11', name: 'House of Horror', collegeName: 'Hell College of Engineering', collegeCode: "HC", address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', numberOfPersons: 12, nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 14, 30), imageUrl: null /*'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png' */, notes: 'Lorem ipsum sit dolor amet.'),
+    AppointmentUnit(id: '12', name: "Dante's Inferno", collegeName: 'Magical College of Arts', collegeCode: "M", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', numberOfPersons: 1, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 09, 30), imageUrl: null /*'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg' */, notes: 'Proin sed lacinia ex.'),
+    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', collegeName: 'Gryffindor', collegeCode: "GF", address: '1402 Springfield Ave Urbana, IL 61801', hoursOfOperation: '7:00am - 9:00pm', numberOfPersons: 0, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 16, 00), imageUrl: null /*'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png' */, notes: 'Class aptent taciti sociosqu ad litora.'),
+    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', collegeName: 'Wizengamot', collegeCode: "WG", address: '505 E Armory Ave  Champaign, IL 61820', hoursOfOperation: '10:00am - 12:30pm', numberOfPersons: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: null /*'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop' */, notes: 'Donec iaculis est eget leo egestas ullamcorper.'),
   ];
 
   // Persons
@@ -566,29 +567,30 @@ class Appointments with Service implements NotificationsListener {
   }
 
   List<AppointmentPerson> get _samplePersons => <AppointmentPerson>[
-    AppointmentPerson(id: '21', name: 'Agatha Christie', nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU', notes: 'Vulputate mi sit amet mauris. Neque sodales ut etiam sit. Dictum at tempor commodo ullamcorper a. Duis at consectetur lorem donec massa.'),
-    AppointmentPerson(id: '22', name: 'Amanda Lear',     nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 14, 00), imageUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg', notes: 'Ultricies tristique nulla aliquet enim tortor at auctor. Pulvinar pellentesque habitant morbi tristique senectus. Sapien pellentesque habitant morbi tristique senectus et netus.'),
-    AppointmentPerson(id: '23', name: 'Bill Gates',      nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 16, 30), imageUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg', notes: 'Amet dictum sit amet justo donec enim diam. In vitae turpis massa sed elementum tempus egestas sed. In est ante in nibh mauris cursus mattis. Pellentesque adipiscing commodo elit at imperdiet.'),
-    AppointmentPerson(id: '24', name: 'Chalres Darwin',  nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 09, 00), imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*', notes: 'Volutpat diam ut venenatis tellus in. Id faucibus nisl tincidunt eget nullam. Enim ut tellus elementum sagittis vitae et leo. Quisque id diam vel quam elementum pulvinar etiam. '),
-    AppointmentPerson(id: '25', name: 'Fredy Mercury',   nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 11, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU', notes: 'Vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet. Massa eget egestas purus viverra. Sagittis eu volutpat odio facilisis mauris sit amet massa vitae. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique.'),
-    AppointmentPerson(id: '26', name: 'Frank Zapa',      nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 15, 00), imageUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k', notes: 'Enim blandit volutpat maecenas volutpat blandit aliquam etiam. A cras semper auctor neque. Aenean sed adipiscing diam donec adipiscing.'),
-    AppointmentPerson(id: '27', name: 'Michael Jackson', nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 08, 00), imageUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv', notes: 'Adipiscing vitae proin sagittis nisl rhoncus. Massa sed elementum tempus egestas. Morbi tristique senectus et netus. Turpis massa sed elementum tempus egestas sed sed.'),
-    AppointmentPerson(id: '28', name: 'Speedy Gonzales', nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 11, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
+    AppointmentPerson(id: '21', name: 'Agatha Christie', numberOfAvailableSlots:  321, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU', notes: 'Vulputate mi sit amet mauris. Neque sodales ut etiam sit. Dictum at tempor commodo ullamcorper a. Duis at consectetur lorem donec massa.'),
+    AppointmentPerson(id: '22', name: 'Amanda Lear',     numberOfAvailableSlots:   42, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 14, 00), imageUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg', notes: 'Ultricies tristique nulla aliquet enim tortor at auctor. Pulvinar pellentesque habitant morbi tristique senectus. Sapien pellentesque habitant morbi tristique senectus et netus.'),
+    AppointmentPerson(id: '23', name: 'Bill Gates',      numberOfAvailableSlots:    1, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 16, 30), imageUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg', notes: 'Amet dictum sit amet justo donec enim diam. In vitae turpis massa sed elementum tempus egestas sed. In est ante in nibh mauris cursus mattis. Pellentesque adipiscing commodo elit at imperdiet.'),
+    AppointmentPerson(id: '24', name: 'Chalres Darwin',  numberOfAvailableSlots:    0, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 09, 00), imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*', notes: 'Volutpat diam ut venenatis tellus in. Id faucibus nisl tincidunt eget nullam. Enim ut tellus elementum sagittis vitae et leo. Quisque id diam vel quam elementum pulvinar etiam. '),
+    AppointmentPerson(id: '25', name: 'Fredy Mercury',   numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 11, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU', notes: 'Vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet. Massa eget egestas purus viverra. Sagittis eu volutpat odio facilisis mauris sit amet massa vitae. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique.'),
+    AppointmentPerson(id: '26', name: 'Frank Zapa',      numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 15, 00), imageUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k', notes: 'Enim blandit volutpat maecenas volutpat blandit aliquam etiam. A cras semper auctor neque. Aenean sed adipiscing diam donec adipiscing.'),
+    AppointmentPerson(id: '27', name: 'Michael Jackson', numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 08, 00), imageUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv', notes: 'Adipiscing vitae proin sagittis nisl rhoncus. Massa sed elementum tempus egestas. Morbi tristique senectus et netus. Turpis massa sed elementum tempus egestas sed sed.'),
+    AppointmentPerson(id: '28', name: 'Speedy Gonzales', numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 11, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
   ];
 
   // Time Slots And Questions
 
-  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? personId, required DateTime dateUtc }) async {
+  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({required DateTime startDateUtc, required DateTime endDateUtc,
+    String? providerId, String? unitId, String? personId, }) async {
     if (_useSampleData == true) {
       await Future.delayed(Duration(milliseconds: 1500));
       return AppointmentTimeSlotsAndQuestions(
-        timeSlots: _sampleTimeSlots(dateUtc: dateUtc),
+        timeSlots: _sampleTimeSlots(startDateUtc: startDateUtc, endDateUtc: endDateUtc),
         questions: _sampleQuestions,
       );
     }
     else if (_isServiceAvailable) {
-      int startTime = dateUtc.millisecondsSinceEpoch.abs();
-      int endTime = startTime + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
+      int startTime = startDateUtc.millisecondsSinceEpoch.abs();
+      int endTime = endDateUtc.millisecondsSinceEpoch.abs();
       String urlParams = 'start-time=$startTime&end-time=$endTime';
       if (providerId != null) {
         urlParams += "&provider-id=$providerId";
@@ -608,21 +610,42 @@ class Appointments with Service implements NotificationsListener {
     }
   }
 
-  List<AppointmentTimeSlot> _sampleTimeSlots({ required DateTime dateUtc }) {
-    DateTime startDateUtc = dateUtc.add(Duration(hours: 8));
-    DateTime endDateUtc = startDateUtc.add(Duration(hours: 12));
-    Duration slotDuration = Duration(minutes: 30);
+  List<AppointmentTimeSlot> _sampleTimeSlots({ required DateTime startDateUtc, required DateTime endDateUtc }) {
+    
+    DateTime dayUtc = startDateUtc;
     List<AppointmentTimeSlot> result = <AppointmentTimeSlot>[];
-    DateTime dateTimeUtc = startDateUtc;
-    while (dateTimeUtc.isBefore(endDateUtc)) {
-      DateTime endDateTime = dateTimeUtc.add(slotDuration);
-      result.add(AppointmentTimeSlot(
-        startTimeUtc: dateTimeUtc,
-        endTimeUtc: endDateTime,
-        capacity: 16,
-        filled: (Random().nextInt(4) == 0) ? 16 : 0,
-      ));
-      dateTimeUtc = endDateTime;
+    while (dayUtc.isBefore(endDateUtc)) {
+      DateTime dayLocal = dayUtc.toUniOrLocal();
+      if ((dayLocal.weekday != DateTime.saturday) && (dayLocal.weekday != DateTime.sunday)) {
+        final Duration slotDuration = Duration(minutes: 30);
+        
+        DateTime slotStartTimeUtc = dayUtc.add(Duration(hours: 8));
+        DateTime endTimeUtc = slotStartTimeUtc.add(Duration(hours: 4));
+        while (slotStartTimeUtc.isBefore(endTimeUtc)) {
+          DateTime slotEndTimeUtc = slotStartTimeUtc.add(slotDuration);
+          result.add(AppointmentTimeSlot(
+            startTimeUtc: slotStartTimeUtc,
+            endTimeUtc: slotEndTimeUtc,
+            capacity: 16,
+            filled: (Random().nextInt(4) == 0) ? 16 : 0,
+          ));
+          slotStartTimeUtc = slotEndTimeUtc;
+        }
+
+        slotStartTimeUtc = dayUtc.add(Duration(hours: 14));
+        endTimeUtc = slotStartTimeUtc.add(Duration(hours: 4));
+        while (slotStartTimeUtc.isBefore(endTimeUtc)) {
+          DateTime slotEndTimeUtc = slotStartTimeUtc.add(slotDuration);
+          result.add(AppointmentTimeSlot(
+            startTimeUtc: slotStartTimeUtc,
+            endTimeUtc: slotEndTimeUtc,
+            capacity: 16,
+            filled: (Random().nextInt(4) == 0) ? 16 : 0,
+          ));
+          slotStartTimeUtc = slotEndTimeUtc;
+        }
+      }
+      dayUtc = dayUtc.add(Duration(days: 1));
     }
     return result;
   }

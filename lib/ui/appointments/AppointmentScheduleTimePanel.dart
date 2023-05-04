@@ -23,6 +23,7 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentScheduleQuestionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -45,24 +46,32 @@ class AppointmentScheduleTimePanel extends StatefulWidget {
 
 class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePanel> {
 
-  late TZDateTime _selectedDate;
+  late TZDateTime _minDate;
+  late TZDateTime _maxDate;
+  TZDateTime? _selectedDate;
   AppointmentTimeSlot? _selectedSlot;
   
-  Map<int, Map<int, AppointmentTimeSlot>>? _timeSlotsMap;
-  List<int>? _timeSlotHours;
-  List<int>? _timeSlotMinutes;
+  List<AppointmentTimeSlot>? _timeSlots;
   List<AppointmentQuestion>? _questions;
+  
+  Map<int, Map<int, AppointmentTimeSlot>>? _daySlotsMap;
+  List<int>? _daySlotHours, _daySlotMinutes;
   bool _loadingTimeSlots = false;
 
   @override
   void initState() {
     super.initState();
-    _selectedDate = TZDateTimeUtils.dateOnly(
-      widget.sourceAppointment?.startTimeUtc?.toUniOrLocal() ??
-      widget.scheduleParam.person?.nextAvailableTimeUtc?.toUniOrLocal() ??
-      widget.scheduleParam.unit?.nextAvailableTimeUtc?.toUniOrLocal() ??
-      DateTimeUni.nowUniOrLocal()
-    );
+
+    TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
+    TZDateTime? nextAvailUni = widget.scheduleParam.person?.nextAvailableTimeUtc?.toUniOrLocal() ??
+      widget.scheduleParam.unit?.nextAvailableTimeUtc?.toUniOrLocal();
+    
+    _minDate = TZDateTimeUtils.dateOnly((nextAvailUni != null) ?
+      TZDateTimeUtils.max(nextAvailUni, nowUni) : nowUni);
+
+    _maxDate = TZDateTimeUtils.dateOnly((nextAvailUni != null) ?
+      TZDateTimeUtils.max(nextAvailUni.add(Duration(days: 14)), nowUni.add(Duration(days: 90))) : nowUni.add(Duration(days: 180)));
+
     _loadTimeSlots();
   }
 
@@ -85,26 +94,31 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   Widget _buildContent() {
-    return Column(children: [
-      _buildRescheduleBar(),
-      _buildDateBar(),
-      Expanded(child:
-        _buildTime()
-      ),
-      SafeArea(child:
-        _buildCommandBar(),
-      ),
-    ],);
-  }
-
-  Widget _buildTime() {
     if (_loadingTimeSlots) {
       return _buildLoading();
     }
-    if (_timeSlotsMap == null) {
+    else if (_timeSlots == null) {
       return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.failed', 'Failed to load time slots'));
     }
-    else if (_timeSlotsMap?.isEmpty ?? true) {
+    else if (_selectedDate == null) {
+      return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.unavailable.appointment', 'There are no available dates for appointments.'));
+    }
+    else {
+      return Column(children: [
+        _buildRescheduleBar(),
+        _buildDateBar(),
+        Expanded(child:
+          _buildTime()
+        ),
+        SafeArea(child:
+          _buildCommandBar(),
+        ),
+      ],);
+    }
+  }
+
+  Widget _buildTime() {
+    if (_daySlotsMap?.isEmpty ?? true) {
       return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.empty', 'No time slots available for this date'));
     }
     else {
@@ -122,19 +136,19 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   Widget _buildStatus(String status) {
     return Center(child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
-        Text(status, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+      Padding(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 48), child:
+        Text(status, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
       )
     );
   }
 
   Widget _buildTimeSlots() {
     List<Widget> rows = <Widget>[];
-    if ((_timeSlotsMap != null) && (_timeSlotHours != null) && (_timeSlotMinutes != null)) {
-      for (int hour in _timeSlotHours!) {
+    if ((_daySlotsMap != null) && (_daySlotHours != null) && (_daySlotMinutes != null)) {
+      for (int hour in _daySlotHours!) {
         List<Widget> row = <Widget>[];
-        Map<int, AppointmentTimeSlot>? slotsPerHour = _timeSlotsMap![hour];
-        for (int startMinute in _timeSlotMinutes!) {
+        Map<int, AppointmentTimeSlot>? slotsPerHour = _daySlotsMap![hour];
+        for (int startMinute in _daySlotMinutes!) {
           AppointmentTimeSlot? timeSlot = (slotsPerHour != null) ? slotsPerHour[startMinute] : null;
           row.add(Expanded(child: _buildTimeSlot(timeSlot)));  
         }
@@ -233,51 +247,77 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   }
 
   Widget _buildDateBar() {
-    String selectedDateString = DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate);
+    if (_selectedDate != null) {
+      String selectedDateString = DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate!);
 
-    return Padding(padding: EdgeInsets.all(16), child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text((widget.sourceAppointment == null) ?
-          Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing available appointments for:') :
-          Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New Appointment:'),
-          style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-        ),
-        Padding(padding: EdgeInsets.only(top: 2, bottom: 6), child:
-          Row(children: [
-            Padding(padding: EdgeInsets.only(right: 8), child:
-              Styles().images?.getImage('calendar')
-            ),
-            Expanded(child:
-              Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin'),)
-            ),
-          ],),
-        ),
-        RoundedButton(
-          label: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.title", "Select Alternative Date"),
-          hint: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.hint", ""),
-          backgroundColor: Styles().colors!.surface,
-          textColor: Styles().colors?.fillColorPrimary,
-          borderColor: Styles().colors?.fillColorSecondary,
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          onTap: _onEditDate,
-        ),
-      ],)
-    );
+      return Padding(padding: EdgeInsets.all(16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text((widget.sourceAppointment == null) ?
+            Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing available appointments for:') :
+            Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New Appointment:'),
+            style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+          ),
+          Padding(padding: EdgeInsets.only(top: 2, bottom: 12), child:
+            Row(children: [
+              Padding(padding: EdgeInsets.only(right: 8), child:
+                Styles().images?.getImage('calendar')
+              ),
+              Expanded(child:
+                Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin'),)
+              ),
+            ],),
+          ),
+          RoundedButton(
+            label: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.title", "Select Alternative Date"),
+            hint: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.hint", ""),
+            backgroundColor: Styles().colors!.surface,
+            textColor: Styles().colors?.fillColorPrimary,
+            borderColor: Styles().colors?.fillColorSecondary,
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            onTap: _onEditDate,
+          ),
+        ],)
+      );
+    }
+    else {
+      return Padding(padding: EdgeInsets.all(16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(Localization().getStringEx('panel.appointment.schedule.time.label.unavailable.appointment', 'There are no available dates for appointments.'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
+        ],)
+      );
+    }
   }
 
   void _onEditDate() {
-    TZDateTime now = DateTimeUni.nowUniOrLocal();
-    TZDateTime firstDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.min(now, _selectedDate));
-    TZDateTime lastDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.max(now, _selectedDate)).add(Duration(days: 356));
-    showDatePicker(context: context, initialDate: _selectedDate, firstDate: firstDate, lastDate: lastDate, currentDate: now).then((DateTime? result) {
-      if ((result != null) && mounted) {
-        setState(() {
-          _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, DateTimeUni.timezoneUniOrLocal)!);
-        });
-        _loadTimeSlots();
-      }
-    });
+    if (_selectedDate != null) {
+      showDatePicker(context: context,
+        initialDate: _selectedDate!,
+        firstDate: _minDate,
+        lastDate: _maxDate,
+        currentDate: DateTimeUni.nowUniOrLocal(),
+        selectableDayPredicate: _canSelectDate,
+      ).then((DateTime? result) {
+        if ((result != null) && mounted) {
+          setState(() {
+
+            _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, DateTimeUni.timezoneUniOrLocal)!);
+
+            _buildDaySlots(_timeSlots,
+              _selectedDate = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(result, DateTimeUni.timezoneUniOrLocal)!)
+            );
+
+            _selectedSlot = _findSelectedTimeSlot(
+              _timeSlots,
+              _selectedDate,
+              _selectedSlot?.startMinutesSinceMidnightUtc ?? widget.sourceAppointment?.startMinutesSinceMidnightUtc,
+              slotFilter: (AppointmentTimeSlot timeSlot) => timeSlot.available,
+            );
+          });
+        }
+      });
+    }
   }
+
 
   Widget _buildCommandBar() {
     return Padding(padding: EdgeInsets.all(16), child:
@@ -327,39 +367,48 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     setState(() {
       _loadingTimeSlots = true;
     });
-    DateTime targetDate = _selectedDate;
     Appointments().loadTimeSlotsAndQuestions(
       providerId: widget.scheduleParam.provider?.id,
       unitId: widget.scheduleParam.unit?.id,
       personId: widget.scheduleParam.person?.id,
-      dateUtc: _selectedDate.toUtc()).then((AppointmentTimeSlotsAndQuestions? result) {
-      if (mounted && (targetDate == _selectedDate)) {
-        setState(() {
-          _loadingTimeSlots = false;
-          _applyTimeSlots(result?.timeSlots);
-          _questions = result?.questions;
-          _selectedSlot = _findSelectedTimeSlot(
-            result?.timeSlots,
-            _selectedSlot?.startMinutesSinceMidnightUtc ?? widget.sourceAppointment?.startMinutesSinceMidnightUtc,
-            slotFilter: (AppointmentTimeSlot timeSlot) => timeSlot.available,
-          );
-        });
-      }
+      startDateUtc: _minDate,
+      endDateUtc: _maxDate,
+    ).then((AppointmentTimeSlotsAndQuestions? result) {
+      setStateIfMounted(() {
+        _loadingTimeSlots = false;
+        _timeSlots = result?.timeSlots;
+        _questions = result?.questions;
+        
+        _selectedDate = _findInitialSelectedDate(_timeSlots);
+        
+        _buildDaySlots(_timeSlots, _selectedDate);
+
+        _selectedSlot = _findSelectedTimeSlot(
+          _timeSlots,
+          _selectedDate,
+          _selectedSlot?.startMinutesSinceMidnightUtc ?? widget.sourceAppointment?.startMinutesSinceMidnightUtc,
+          slotFilter: (AppointmentTimeSlot timeSlot) => timeSlot.available,
+        );
+      });
     });
   }
 
-  void _applyTimeSlots(List<AppointmentTimeSlot>? timeSlots) {
-    if (timeSlots != null) {
+  void _buildDaySlots(List<AppointmentTimeSlot>? timeSlots, DateTime? selectedDate) {
+    if ((timeSlots != null) && (selectedDate != null)) {
       Set<int> startMinutes = <int>{};
-      Map<int, Map<int, AppointmentTimeSlot>> timeSlotsMap = <int, Map<int, AppointmentTimeSlot>>{};
+      Map<int, Map<int, AppointmentTimeSlot>>timeSlotsMap = <int, Map<int, AppointmentTimeSlot>>{};
+      int dateStartTimestamp = selectedDate.millisecondsSinceEpoch;
+      int dateEndTimestamp = dateStartTimestamp + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
       for (AppointmentTimeSlot timeSlot in timeSlots) {
-        DateTime? slotStartTime = timeSlot.startTime;
-        int? slotStartHour = slotStartTime?.hour;
-        int? slotStartMinute = slotStartTime?.minute;
-        if ((slotStartHour != null) && (slotStartMinute != null)) {
-          Map<int, AppointmentTimeSlot> timeSlotRow = (timeSlotsMap[slotStartHour] ??= <int, AppointmentTimeSlot>{});
-          timeSlotRow[slotStartMinute] = timeSlot;
-          startMinutes.add(slotStartMinute);
+        if ((dateStartTimestamp <= (timeSlot.startTimeUtc?.millisecondsSinceEpoch ?? 0)) && ((timeSlot.endTimeUtc?.millisecondsSinceEpoch ?? 0) <= dateEndTimestamp)) {
+          DateTime? slotStartTime = timeSlot.startTime;
+          int? slotStartHour = slotStartTime?.hour;
+          int? slotStartMinute = slotStartTime?.minute;
+          if ((slotStartHour != null) && (slotStartMinute != null)) {
+            Map<int, AppointmentTimeSlot> timeSlotRow = (timeSlotsMap[slotStartHour] ??= <int, AppointmentTimeSlot>{});
+            timeSlotRow[slotStartMinute] = timeSlot;
+            startMinutes.add(slotStartMinute);
+          }
         }
       }
 
@@ -369,21 +418,56 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       List<int> startHoursList = List.from(timeSlotsMap.keys);
       startHoursList.sort();
 
-      _timeSlotsMap = timeSlotsMap;
-      _timeSlotMinutes = startMinutesList;
-      _timeSlotHours = startHoursList;
+      _daySlotsMap = timeSlotsMap;
+      _daySlotMinutes = startMinutesList;
+      _daySlotHours = startHoursList;
     }
     else {
-      _timeSlotsMap = null;
-      _timeSlotMinutes = null;
-      _timeSlotHours = null;
+    _daySlotsMap = null;
+    _daySlotMinutes = null;
+    _daySlotHours = null;
     }
   }
 
-  AppointmentTimeSlot? _findSelectedTimeSlot(List<AppointmentTimeSlot>? timeSlots, int? startMinutesSinceMidnightUtc, { bool Function(AppointmentTimeSlot timeSlot)? slotFilter }) {
-    if ((timeSlots != null) && (startMinutesSinceMidnightUtc != null)) {
+  TZDateTime? _findInitialSelectedDate(List<AppointmentTimeSlot>? timeSlots) {
+    int minTimestamp = _minDate.millisecondsSinceEpoch;
+    if (timeSlots != null) {
       for (AppointmentTimeSlot timeSlot in timeSlots) {
-        if (((slotFilter == null) || slotFilter(timeSlot)) && (timeSlot.startMinutesSinceMidnightUtc == startMinutesSinceMidnightUtc)) {
+        if ((timeSlot.startTimeUtc != null) && (minTimestamp <= timeSlot.startTimeUtc!.microsecondsSinceEpoch)) {
+          return TZDateTimeUtils.dateOnly(timeSlot.startTimeUtc!.toUniOrLocal());
+        }
+      }
+    }
+    return null;
+  }
+
+  bool _canSelectDate(DateTime dateTime) {
+    int dateStartTimestamp = TZDateTimeUtils.dateOnly(TZDateTimeUtils.copyFromDateTime(dateTime, DateTimeUni.timezoneUniOrLocal)!).millisecondsSinceEpoch;
+    int dateEndTimestamp = dateStartTimestamp + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
+    if (_timeSlots != null) {
+      for (AppointmentTimeSlot timeSlot in _timeSlots!) {
+        if (
+          (dateStartTimestamp <= (timeSlot.startTimeUtc?.millisecondsSinceEpoch ?? 0)) &&
+          (dateEndTimestamp >= (timeSlot.endTimeUtc?.millisecondsSinceEpoch ?? 0))
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  AppointmentTimeSlot? _findSelectedTimeSlot(List<AppointmentTimeSlot>? timeSlots, DateTime? selectedDate, int? startMinutesSinceMidnightUtc, { bool Function(AppointmentTimeSlot timeSlot)? slotFilter }) {
+    if ((timeSlots != null) && (selectedDate != null) && (startMinutesSinceMidnightUtc != null)) {
+      int dateStartTimestamp = selectedDate.millisecondsSinceEpoch;
+      int dateEndTimestamp = dateStartTimestamp + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
+      for (AppointmentTimeSlot timeSlot in timeSlots) {
+        if (
+          (dateStartTimestamp <= (timeSlot.startTimeUtc?.millisecondsSinceEpoch ?? 0)) &&
+          (dateEndTimestamp >= (timeSlot.endTimeUtc?.millisecondsSinceEpoch ?? 0)) &&
+          ((slotFilter == null) || slotFilter(timeSlot)) &&
+          (timeSlot.startMinutesSinceMidnightUtc == startMinutesSinceMidnightUtc)
+        ) {
           return timeSlot;
         }
       }
