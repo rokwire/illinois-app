@@ -24,6 +24,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -578,17 +579,18 @@ class Appointments with Service implements NotificationsListener {
 
   // Time Slots And Questions
 
-  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({ String? providerId, String? unitId, String? personId, required DateTime dateUtc }) async {
+  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({required DateTime startDateUtc, required DateTime endDateUtc,
+    String? providerId, String? unitId, String? personId, }) async {
     if (_useSampleData == true) {
       await Future.delayed(Duration(milliseconds: 1500));
       return AppointmentTimeSlotsAndQuestions(
-        timeSlots: _sampleTimeSlots(dateUtc: dateUtc),
+        timeSlots: _sampleTimeSlots(startDateUtc: startDateUtc, endDateUtc: endDateUtc),
         questions: _sampleQuestions,
       );
     }
     else if (_isServiceAvailable) {
-      int startTime = dateUtc.millisecondsSinceEpoch.abs();
-      int endTime = startTime + 86400000; // 1 day in milliseconds = 24 * 60 * 60 * 1000
+      int startTime = startDateUtc.millisecondsSinceEpoch.abs();
+      int endTime = endDateUtc.millisecondsSinceEpoch.abs();
       String urlParams = 'start-time=$startTime&end-time=$endTime';
       if (providerId != null) {
         urlParams += "&provider-id=$providerId";
@@ -608,21 +610,42 @@ class Appointments with Service implements NotificationsListener {
     }
   }
 
-  List<AppointmentTimeSlot> _sampleTimeSlots({ required DateTime dateUtc }) {
-    DateTime startDateUtc = dateUtc.add(Duration(hours: 8));
-    DateTime endDateUtc = startDateUtc.add(Duration(hours: 12));
-    Duration slotDuration = Duration(minutes: 30);
+  List<AppointmentTimeSlot> _sampleTimeSlots({ required DateTime startDateUtc, required DateTime endDateUtc }) {
+    
+    DateTime dayUtc = startDateUtc;
     List<AppointmentTimeSlot> result = <AppointmentTimeSlot>[];
-    DateTime dateTimeUtc = startDateUtc;
-    while (dateTimeUtc.isBefore(endDateUtc)) {
-      DateTime endDateTime = dateTimeUtc.add(slotDuration);
-      result.add(AppointmentTimeSlot(
-        startTimeUtc: dateTimeUtc,
-        endTimeUtc: endDateTime,
-        capacity: 16,
-        filled: (Random().nextInt(4) == 0) ? 16 : 0,
-      ));
-      dateTimeUtc = endDateTime;
+    while (dayUtc.isBefore(endDateUtc)) {
+      DateTime dayLocal = dayUtc.toUniOrLocal();
+      if ((dayLocal.weekday != DateTime.saturday) && (dayLocal.weekday != DateTime.sunday)) {
+        final Duration slotDuration = Duration(minutes: 30);
+        
+        DateTime slotStartTimeUtc = dayUtc.add(Duration(hours: 8));
+        DateTime endTimeUtc = slotStartTimeUtc.add(Duration(hours: 4));
+        while (slotStartTimeUtc.isBefore(endTimeUtc)) {
+          DateTime slotEndTimeUtc = slotStartTimeUtc.add(slotDuration);
+          result.add(AppointmentTimeSlot(
+            startTimeUtc: slotStartTimeUtc,
+            endTimeUtc: slotEndTimeUtc,
+            capacity: 16,
+            filled: (Random().nextInt(4) == 0) ? 16 : 0,
+          ));
+          slotStartTimeUtc = slotEndTimeUtc;
+        }
+
+        slotStartTimeUtc = dayUtc.add(Duration(hours: 14));
+        endTimeUtc = slotStartTimeUtc.add(Duration(hours: 4));
+        while (slotStartTimeUtc.isBefore(endTimeUtc)) {
+          DateTime slotEndTimeUtc = slotStartTimeUtc.add(slotDuration);
+          result.add(AppointmentTimeSlot(
+            startTimeUtc: slotStartTimeUtc,
+            endTimeUtc: slotEndTimeUtc,
+            capacity: 16,
+            filled: (Random().nextInt(4) == 0) ? 16 : 0,
+          ));
+          slotStartTimeUtc = slotEndTimeUtc;
+        }
+      }
+      dayUtc = dayUtc.add(Duration(days: 1));
     }
     return result;
   }

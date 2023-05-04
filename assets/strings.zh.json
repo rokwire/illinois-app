@@ -2796,6 +2796,7 @@
 
 	"panel.appointment.schedule.time.header.title": "Schedule Appointment",
 	"panel.appointment.schedule.time.label.current.appointment": "Showing available appointments for:",
+	"panel.appointment.schedule.time.label.unavailable.appointment": "There are no available dates for appointments.",
 	"panel.appointment.schedule.time.button.select.date.title": "Select Alternative Date",
 	"panel.appointment.schedule.time.button.select.date.hint": "",
 	"panel.appointment.schedule.time.button.continue.title": "Next",
