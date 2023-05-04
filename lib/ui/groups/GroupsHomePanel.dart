@@ -530,7 +530,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
       else if (_allGroups!.isEmpty) {
-        text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups created yet");
+        text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups matching your filters.");
       }
       else {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.filtered.empty", "No groups match the selected filter");
