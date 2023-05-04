@@ -88,7 +88,9 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
           Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.fat'))
         ),
-        _buildUnitsContent(),
+        Expanded(child:
+          _buildUnitsContent(),
+        ),
       ]);
     }
     else {
