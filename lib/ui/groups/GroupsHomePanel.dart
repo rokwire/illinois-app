@@ -330,34 +330,37 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildContentAttributesDescription() {
-
-    List<InlineSpan> attributesList = <InlineSpan>[];
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.fat");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
-    if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
-      for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_contentAttributesSelection, complete: true);
-        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          displayAttributeValues = List.from(displayAttributeValues.map((String attribute) => "'$attribute'"));
-          if (attributesList.isNotEmpty) {
-            attributesList.add(TextSpan(text: " and " , style : regularStyle,));
+    if (_selectedContentType == rokwire.GroupsContentType.all) {
+      List<InlineSpan> attributesList = <InlineSpan>[];
+      ContentAttributes? contentAttributes = Groups().contentAttributes;
+      List<ContentAttribute>? attributes = contentAttributes?.attributes;
+      TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.fat");
+      TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+      if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+        for (ContentAttribute attribute in attributes) {
+          List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_contentAttributesSelection, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            displayAttributeValues = List.from(displayAttributeValues.map((String attribute) => "'$attribute'"));
+            if (attributesList.isNotEmpty) {
+              attributesList.add(TextSpan(text: " and " , style : regularStyle,));
+            }
+            attributesList.addAll(<InlineSpan>[
+              TextSpan(text: "${attribute.displayTitle}" , style : boldStyle,),
+              TextSpan(text: " is ${displayAttributeValues.join(' or ')}" , style : regularStyle,),
+            ]);
           }
-          attributesList.addAll(<InlineSpan>[
-            TextSpan(text: "${attribute.displayTitle}" , style : boldStyle,),
-            TextSpan(text: " is ${displayAttributeValues.join(' or ')}" , style : regularStyle,),
-          ]);
         }
       }
-    }
 
-    return attributesList.isNotEmpty ? 
-      Padding(padding: EdgeInsets.only(top: 0, bottom: 4, right: 12), child: 
-        Row(children: [ Expanded(child:
-          RichText(text: TextSpan(style: regularStyle, children: attributesList))
-        ),],)
-      ) : Container();
+      return attributesList.isNotEmpty ? 
+        Padding(padding: EdgeInsets.only(top: 0, bottom: 4, right: 12), child: 
+          Row(children: [ Expanded(child:
+            RichText(text: TextSpan(style: regularStyle, children: attributesList))
+          ),],)
+        ) : Container();
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildCommandsBar() {
