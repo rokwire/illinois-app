@@ -1965,6 +1965,7 @@
   "panel.wellness.appointments.home.display.settings.on.label": "顯示我的約會",
   "panel.wellness.appointments.home.display.settings.off.label": "不要顯示我的約會",
 
+	"panel.academics.appointments.home.header.title": "Appointments",
   "panel.academics.appointments.home.message.providers.failed": "Failed to load providers.",
   "panel.academics.appointments.home.message.providers.empty": "No providers available.",
 	"panel.academics.appointments.home.message.provider.empty": "No selected provider.",

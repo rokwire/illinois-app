@@ -21,6 +21,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
@@ -1068,7 +1069,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapAcademicsAppointments(BuildContext context) {
     Analytics().logSelect(target: "Appointments");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.appointments,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentsListPanel()));
   }
 
   void _onTapCreatePoll(BuildContext context) {
