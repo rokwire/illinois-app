@@ -24,8 +24,10 @@ import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentScheduleUnitPanel.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -426,6 +428,18 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   Future<void> _onPullToRefresh() async {
     _initProviders();
   }
+}
 
+class AppointmentsListPanel extends StatelessWidget {
+  AppointmentsListPanel();
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HeaderBar(title: Localization().getStringEx('panel.academics.appointments.home.header.title', 'Appointments')),
+      body: Padding(padding: EdgeInsets.all(16), child: AcademicsAppointmentsContentWidget()),
+      backgroundColor: Styles().colors!.white,
+      bottomNavigationBar: uiuc.TabBar()
+    );
+  }
 }
