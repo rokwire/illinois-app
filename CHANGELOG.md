@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- "My College of Medicine Compliance" label [#3231](https://github.com/rokwire/illinois-app/issues/3231).
+
 ## [4.3.54] - 2023-05-03
 ### Changed
 - Appointments UI updates [#3225](https://github.com/rokwire/illinois-app/issues/3225).
