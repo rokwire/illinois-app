@@ -2336,9 +2336,11 @@
     "panel.groups_home.label.my_groups.empty": "You are not a member of any group. To join or create a group, see ",
     "panel.groups_home.label.my_groups.empty.link.all_groups": "All Groups",
     "panel.groups_home.label.my_groups.failed": "Failed to load groups",
-    "panel.groups_home.label.all_groups.empty": "There are no groups created yet",
+    "panel.groups_home.label.all_groups.empty": "There are no groups matching your filters.",
     "panel.groups_home.label.all_groups.failed": "Failed to load groups",
     "panel.groups_home.label.all_groups.filtered.empty": "No groups match the selected filter",
+    "panel.groups_home.groups.count.single.label": "group",
+    "panel.groups_home.groups.count.plural.label": "groups",
 
     "panel.groups_settings.label.heading": "Group Settings",
     "panel.groups_settings.label.project.heading": "Project Settings",
