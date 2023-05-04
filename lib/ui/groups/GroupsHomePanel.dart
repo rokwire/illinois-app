@@ -282,6 +282,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Row(children: <Widget>[ Expanded(child:
         Wrap(alignment: WrapAlignment.spaceBetween, runAlignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.start, children: <Widget>[
           _buildFiltersBar(),
+          _buildGroupsCountBar(),
           _buildCommandsBar(),
         ],),
       )]),
@@ -360,6 +361,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         ) : Container();
     } else {
       return Container();
+    }
+  }
+
+  Widget _buildGroupsCountBar() {
+    if ((_selectedContentType != rokwire.GroupsContentType.all) || _isGroupsLoading) {
+      return SizedBox();
+    } else {
+      late int groupsCount;
+      switch (_selectedContentType) {
+        case rokwire.GroupsContentType.all:
+          groupsCount = _allGroups?.length ?? 0;
+          break;
+        case rokwire.GroupsContentType.my:
+          groupsCount = _userGroups?.length ?? 0;
+          break;
+        default:
+          groupsCount = 0;
+          break;
+      }
+      String groupsLabel = (groupsCount == 1)
+          ? Localization().getStringEx("panel.groups_home.groups.count.single.label", "group")
+          : Localization().getStringEx("panel.groups_home.groups.count.plural.label", "groups");
+      String countLabel = '$groupsCount $groupsLabel';
+      return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 7, vertical: 14),
+          child: Text(countLabel,
+              style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)));
     }
   }
 
