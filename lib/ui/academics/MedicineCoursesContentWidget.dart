@@ -69,12 +69,12 @@ class _MedicineCoursesContentWidgetState extends State<MedicineCoursesContentWid
     if (Connectivity().isOffline) {
       return _buildMessageContent(
         Localization()
-            .getStringEx('panel.medicine_courses.load.offline.error.msg', 'My College of Medicine Courses not available while offline.'),
+            .getStringEx('panel.medicine_courses.load.offline.error.msg', 'My College of Medicine Compliance not available while offline.'),
       );
     } else if (!Auth2().isOidcLoggedIn) {
       return _buildMessageContent(
         Localization().getStringEx('panel.medicine_courses.load.logged_out.error.msg',
-            'You need to be logged in with your NetID to access My College of Medicine Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),
+            'You need to be logged in with your NetID to access My College of Medicine Compliance. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),
       );
     } else if (_medicineCourses == null) {
       return _buildMessageContent(
