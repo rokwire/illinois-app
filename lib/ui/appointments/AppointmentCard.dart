@@ -165,31 +165,31 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                       ]),
                     ),
 
-                    Visibility(visible: StringUtils.isNotEmpty(imageKey), child:
-                      Padding(padding: EdgeInsets.only(left: 16), child:
-                        Semantics(label: semanticsImageLabel, button: true, hint: semanticsImageHint, child:
-                          InkWell(onTap: () => _onTapCardImage(imageKey), child:
-                            SizedBox(width: imageSize, height: imageSize, child:
-                              Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
+                    Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                      Opacity(opacity: StringUtils.isNotEmpty(imageKey) ? 1 : 0, child:
+                        Padding(padding: EdgeInsets.only(left: 16), child:
+                          Semantics(label: semanticsImageLabel, button: true, hint: semanticsImageHint, child:
+                            InkWell(onTap: () => StringUtils.isNotEmpty(imageKey) ? _onTapCardImage(imageKey) : null, child:
+                              SizedBox(width: imageSize, height: imageSize, child:
+                                Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
+                              )
                             )
                           )
                         )
+                      ),
+
+                      Visibility(visible: (widget.appointment.cancelled == true), child:
+                        Padding(padding: EdgeInsets.only(top: 6), child:
+                          Text(Localization().getStringEx('widget.appointment.card.cancelled.label', 'Cancelled'), textAlign: TextAlign.right, style:
+                            Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large")
+                          )
+                        ),
                       )
-                    )
+
+                    ],)
                   ]),
                 ),
 
-                Visibility(visible: (widget.appointment.cancelled == true), child:
-                  Padding(padding: EdgeInsets.only(right: 16), child:
-                    Row(children: [
-                      Expanded(child:
-                        Text(Localization().getStringEx('widget.appointment.card.cancelled.label', 'Cancelled'), textAlign: TextAlign.right, style:
-                          Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large")
-                        )
-                      )
-                    ],)
-                  ),
-                )
               ])
             )
           ),
@@ -206,12 +206,9 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
 
   void _onTapCardImage(String? imageKey) {
     Analytics().logSelect(target: 'Appointment Image');
-    Navigator.push(
-        context,
-        PageRouteBuilder(
-            opaque: false,
-            pageBuilder: (context, _, __) =>
-                ModalImagePanel(imageKey: imageKey, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image'))));
+    Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) =>
+      ModalImagePanel(imageKey: imageKey, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image')))
+    );
   }
 
   void _onTapExploreCardStar() {
