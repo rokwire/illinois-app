@@ -83,10 +83,10 @@ extension AppointmentUnitExt on AppointmentUnit {
 
   String? get displayNumberOfPersons {
     int count = numberOfPersons ?? 0;
-    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.persons_count.label', '%s Advisors'), [count]) :
+    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.persons_count.label', '%s Advisors with open appointments'), [count]) :
           ((0 < count) ?
-            Localization().getStringEx('panel.appointment.schedule.person1_count.label', '1 Advisor') :
-            Localization().getStringEx('panel.appointment.schedule.person0_count.label', 'No Advisors')
+            Localization().getStringEx('panel.appointment.schedule.person1_count.label', '1 Advisor with open appointments') :
+            Localization().getStringEx('panel.appointment.schedule.person0_count.label', 'No advisor swith open appointments')
           );
   }
 
