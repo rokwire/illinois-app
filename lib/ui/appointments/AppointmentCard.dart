@@ -90,9 +90,11 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
                   Expanded(child:
-                    Text(widget.appointment.category ?? '', style:
-                      Styles().textStyles?.getTextStyle("widget.item.small.semi_fat")
-                    )
+                    Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: canFavorite ? 0 : 16), child:
+                      Text(widget.appointment.category ?? '', style:
+                        Styles().textStyles?.getTextStyle("widget.item.small.semi_fat")
+                      ),
+                    ),
                   ),
                   Visibility(visible: canFavorite, child:
                     Semantics(label: semanticsFavLabel, hint: semanticsFavHint, button: true, child:
