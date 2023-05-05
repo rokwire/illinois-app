@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Appointment.dart';
@@ -79,9 +80,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
 
     _locationData = widget.initialLocationData;
-    _loadCurrentLocation().then((_) {
-      setStateIfMounted(() {});
-    });
+    _updateCurrentLocation();
 
     super.initState();
   }
@@ -100,14 +99,16 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     });
   }
 
-  Future<void> _loadCurrentLocation() async {
-    _locationData = FlexUI().isLocationServicesAvailable ? await LocationServices().location : null;
-  }
-
   void _updateCurrentLocation() {
-    _loadCurrentLocation().then((_) {
-      setStateIfMounted(() {});
-    });
+    if (FlexUI().isLocationServicesAvailable) {
+      LocationServices().location.then((Position? locationData) {
+        if ((locationData != null) && mounted) {
+          setState(() {
+            _locationData = locationData;
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -541,7 +542,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
 
   Widget _buildCancelDescription() {
     String? providerName = _appointment?.provider?.name;
-    if ((providerName == null) || (providerName == 'McKinley')) {
+    if (providerName == AppointmentProviderExt.mcKinleyName) {
       final String urlLabelMacro = '{{mckinley_url_label}}';
       final String urlMacro = '{{mckinley_url}}';
       final String externalLinkIconMacro = '{{external_link_icon}}';
@@ -696,3 +697,4 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
   }
 }
+
