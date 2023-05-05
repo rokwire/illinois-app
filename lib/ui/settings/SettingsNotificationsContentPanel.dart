@@ -92,7 +92,15 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       FirebaseMessaging.payloadTypePoll,
       FirebaseMessaging.payloadTypeProfileMy,
       FirebaseMessaging.payloadTypeProfileWhoAreYou,
-      FirebaseMessaging.payloadTypeProfilePrivacy
+      FirebaseMessaging.payloadTypeProfilePrivacy,
+      FirebaseMessaging.payloadTypeSettingsSections,
+      FirebaseMessaging.payloadTypeSettingsInterests,
+      FirebaseMessaging.payloadTypeSettingsFoodFilters,
+      FirebaseMessaging.payloadTypeSettingsSports,
+      FirebaseMessaging.payloadTypeSettingsFavorites,
+      FirebaseMessaging.payloadTypeSettingsAssessments,
+      FirebaseMessaging.payloadTypeSettingsCalendar,
+      FirebaseMessaging.payloadTypeSettingsAppointments
     });
   }
 

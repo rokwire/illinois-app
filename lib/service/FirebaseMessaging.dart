@@ -65,6 +65,14 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyProfileMyNotification          = "edu.illinois.rokwire.firebase.messaging.profile.my";
   static const String notifyProfileWhoAreYouNotification   = "edu.illinois.rokwire.firebase.messaging.profile.who_are_you";
   static const String notifyProfilePrivacyNotification     = "edu.illinois.rokwire.firebase.messaging.profile.privacy";
+  static const String notifySettingsSectionsNotification   = "edu.illinois.rokwire.firebase.messaging.settings.sections";
+  static const String notifySettingsInterestsNotification  = "edu.illinois.rokwire.firebase.messaging.settings.interests";
+  static const String notifySettingsFoodFiltersNotification  = "edu.illinois.rokwire.firebase.messaging.settings.food_filters";
+  static const String notifySettingsSportsNotification     = "edu.illinois.rokwire.firebase.messaging.settings.sports";
+  static const String notifySettingsFavoritesNotification  = "edu.illinois.rokwire.firebase.messaging.settings.favorites";
+  static const String notifySettingsAssessmentsNotification  = "edu.illinois.rokwire.firebase.messaging.settings.assessments";
+  static const String notifySettingsCalendarNotification   = "edu.illinois.rokwire.firebase.messaging.settings.calendar";
+  static const String notifySettingsAppointmentsNotification = "edu.illinois.rokwire.firebase.messaging.settings.appointments";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -157,6 +165,14 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeProfileMy = 'profile.my';
   static const String payloadTypeProfileWhoAreYou = 'profile.who_are_you';
   static const String payloadTypeProfilePrivacy = 'profile.privacy';
+  static const String payloadTypeSettingsSections = 'settings.sections';
+  static const String payloadTypeSettingsInterests = 'settings.interests';
+  static const String payloadTypeSettingsFoodFilters = 'settings.food_filters';
+  static const String payloadTypeSettingsSports = 'settings.sports';
+  static const String payloadTypeSettingsFavorites = 'settings.favorites';
+  static const String payloadTypeSettingsAssessments = 'settings.assessments';
+  static const String payloadTypeSettingsCalendar = 'settings.calendar';
+  static const String payloadTypeSettingsAppointments = 'settings.appointments';
 
   DateTime? _pausedDateTime;
   
@@ -333,6 +349,33 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeProfilePrivacy) {
       NotificationService().notify(notifyProfilePrivacyNotification, data);
+    }
+    else if (type == payloadTypeSettingsSections) {
+      NotificationService().notify(notifySettingsSectionsNotification, data);
+    }
+    else if (type == payloadTypeSettingsInterests) {
+      NotificationService().notify(notifySettingsInterestsNotification, data);
+    }
+    else if (type == payloadTypeSettingsInterests) {
+      NotificationService().notify(notifySettingsInterestsNotification, data);
+    }
+    else if (type == payloadTypeSettingsFoodFilters) {
+      NotificationService().notify(notifySettingsFoodFiltersNotification, data);
+    }
+    else if (type == payloadTypeSettingsSports) {
+      NotificationService().notify(notifySettingsSportsNotification, data);
+    }
+    else if (type == payloadTypeSettingsFavorites) {
+      NotificationService().notify(notifySettingsFavoritesNotification, data);
+    }
+    else if (type == payloadTypeSettingsAssessments) {
+      NotificationService().notify(notifySettingsAssessmentsNotification, data);
+    }
+    else if (type == payloadTypeSettingsCalendar) {
+      NotificationService().notify(notifySettingsCalendarNotification, data);
+    }
+    else if (type == payloadTypeSettingsAppointments) {
+      NotificationService().notify(notifySettingsAppointmentsNotification, data);
     }
     else if (_isScoreTypeMessage(type)) {
       NotificationService().notify(notifyScoreMessage, data);

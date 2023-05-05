@@ -26,7 +26,9 @@ import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
+import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -114,6 +116,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyProfileMyNotification,
       FirebaseMessaging.notifyProfileWhoAreYouNotification,
       FirebaseMessaging.notifyProfilePrivacyNotification,
+      FirebaseMessaging.notifySettingsSectionsNotification,
+      FirebaseMessaging.notifySettingsInterestsNotification,
+      FirebaseMessaging.notifySettingsFoodFiltersNotification,
+      FirebaseMessaging.notifySettingsSportsNotification,
+      FirebaseMessaging.notifySettingsFavoritesNotification,
+      FirebaseMessaging.notifySettingsAssessmentsNotification,
+      FirebaseMessaging.notifySettingsCalendarNotification,
+      FirebaseMessaging.notifySettingsAppointmentsNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
       ActionBuilder.notifyShowPanel,
@@ -278,6 +288,30 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyProfilePrivacyNotification) {
       _onFirebaseProfileNotification(profileContent: SettingsProfileContent.privacy);
+    }
+    else if (name == FirebaseMessaging.notifySettingsSectionsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.sections);
+    }
+    else if (name == FirebaseMessaging.notifySettingsInterestsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.interests);
+    }
+    else if (name == FirebaseMessaging.notifySettingsFoodFiltersNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.food_filters);
+    }
+    else if (name == FirebaseMessaging.notifySettingsSportsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.sports);
+    }
+    else if (name == FirebaseMessaging.notifySettingsFavoritesNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.favorites);
+    }
+    else if (name == FirebaseMessaging.notifySettingsAssessmentsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.assessments);
+    }
+    else if (name == FirebaseMessaging.notifySettingsCalendarNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.calendar);
+    }
+    else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
+      _onFirebaseSettingsNotification(settingsContent: SettingsContent.appointments);
     }
     else if (name == HomePanel.notifySelect) {
       _onSelectHome();
@@ -838,6 +872,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseProfileNotification({required SettingsProfileContent profileContent}) {
     SettingsProfileContentPanel.present(context, content: profileContent);
+  }
+
+  void _onFirebaseSettingsNotification({required SettingsContent settingsContent}) {
+    if (settingsContent == SettingsContent.favorites) {
+      HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
+    } else {
+      SettingsHomeContentPanel.present(context, content: settingsContent);
+    }
   }
 }
 
