@@ -14,8 +14,11 @@ import 'package:sprintf/sprintf.dart';
 
 extension AppointmentExt on Appointment {
 
-  String? get displayScheduleTime =>
-    AppointmentTimeSlotExt.getDisplayScheduleTime(startTimeUtc, endTimeUtc);
+  String? get displayLongScheduleTime =>
+    AppointmentTimeSlotExt.getLongDisplayScheduleTime(startTimeUtc, endTimeUtc);
+
+  String? get displayShortScheduleTime =>
+    AppointmentTimeSlotExt.getShortDisplayScheduleTime(startTimeUtc, endTimeUtc);
 
   int? get startMinutesSinceMidnightUtc =>
     AppointmentTimeSlotExt.getStartMinutesSinceMidnightUtc(startTimeUtc);
@@ -120,19 +123,36 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
   DateTime? get startTime => startTimeUtc?.toUniOrLocal();
   DateTime? get endTime => endTimeUtc?.toUniOrLocal();
 
-  String? get displayScheduleTime =>
-    getDisplayScheduleTime(startTimeUtc, endTimeUtc);
+  String? get displayLongScheduleTime =>
+    getLongDisplayScheduleTime(startTimeUtc, endTimeUtc);
 
-  static String? getDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
+  String? get displayShortScheduleTime =>
+    getShortDisplayScheduleTime(startTimeUtc, endTimeUtc);
+
+  static String? getLongDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
     if (startTimeUtc != null) {
       if (endTimeUtc != null) {
-        //AppDateTime().getDeviceTimeFromUtcTime(startTime)
-        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy hh:mm').format(startTimeUtc.toUniOrLocal());
-        String endTimeStr = DateFormat('hh:mm aaa').format(endTimeUtc.toUniOrLocal());
+        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy h:mm').format(startTimeUtc.toUniOrLocal());
+        String endTimeStr = DateFormat('h:mm aaa').format(endTimeUtc.toUniOrLocal());
         return "$startTimeStr - $endTimeStr";
       }
       else {
-        return DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(startTimeUtc.toUniOrLocal());
+        return DateFormat('EEEE, MMMM d, yyyy h:mm aaa').format(startTimeUtc.toUniOrLocal());
+      }
+    }
+    return null;
+  }
+
+  static String? getShortDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
+    if (startTimeUtc != null) {
+      if (endTimeUtc != null) {
+        //AppDateTime().getDeviceTimeFromUtcTime(startTime)
+        String startTimeStr = DateFormat('EEE, MMM d, yyyy h:mm').format(startTimeUtc.toUniOrLocal());
+        String endTimeStr = DateFormat('h:mm aaa').format(endTimeUtc.toUniOrLocal());
+        return "$startTimeStr-$endTimeStr";
+      }
+      else {
+        return DateFormat('EEE, MMM d, yyyy h:mm aaa').format(startTimeUtc.toUniOrLocal());
       }
     }
     return null;

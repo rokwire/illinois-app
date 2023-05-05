@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Switch Telehealth/Online depending on provider [#3241](https://github.com/rokwire/illinois-app/issues/3241).
+- Show person's name in Appointments card, clean up card's layout [#3241](https://github.com/rokwire/illinois-app/issues/3241).
 
 ## [4.3.55] - 2023-05-04
 ### Changed

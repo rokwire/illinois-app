@@ -154,7 +154,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   }
 
   Widget _buildDateTimeDetail() {
-    String? displayTime = widget.scheduleParam.timeSlot?.displayScheduleTime ?? widget.sourceAppointment?.displayScheduleTime;
+    String? displayTime = widget.scheduleParam.timeSlot?.displayLongScheduleTime ?? widget.sourceAppointment?.displayLongScheduleTime;
     return ((displayTime != null) && displayTime.isNotEmpty) ?
       Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
