@@ -89,7 +89,10 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeGroup,
       FirebaseMessaging.payloadTypeWellnessToDoItem,
       FirebaseMessaging.payloadTypeAppointment,
-      FirebaseMessaging.payloadTypePoll
+      FirebaseMessaging.payloadTypePoll,
+      FirebaseMessaging.payloadTypeProfileMy,
+      FirebaseMessaging.payloadTypeProfileWhoAreYou,
+      FirebaseMessaging.payloadTypeProfilePrivacy
     });
   }
 
