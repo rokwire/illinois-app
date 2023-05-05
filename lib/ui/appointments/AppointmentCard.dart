@@ -63,7 +63,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
 
     String typeImageKey = (widget.appointment.type == AppointmentType.online) ? 'laptop' : 'location';
     Color? headerColor = (widget.appointment.isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary);
-    String? displayTime = widget.appointment.displayScheduleTime;
+    String? displayTime = widget.appointment.displayShortScheduleTime;
     String? displayType = widget.appointment.displayType;
     String? displayHost = widget.appointment.host?.displayName;
 
