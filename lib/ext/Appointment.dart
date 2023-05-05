@@ -23,6 +23,9 @@ extension AppointmentExt on Appointment {
   String get displayProviderName =>
     this.provider?.name ?? Localization().getStringEx('model.academics.appointment.default.provider.label', 'MyMcKinley');
 
+  String? get displayType =>
+    appointmentTypeToDisplayString(type, provider: provider);
+
   String? get category =>
     sprintf(Localization().getStringEx('model.academics.appointment.category.label.format', '%s Appointments'), [displayProviderName]).toUpperCase();
 
@@ -145,20 +148,15 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
 ///////////////////////////////
 /// AppointmentType
 
-String? appointmentTypeToDisplayString(AppointmentType? type) {
+String? appointmentTypeToDisplayString(AppointmentType? type, { AppointmentProvider? provider }) {
   switch (type) {
     case AppointmentType.in_person:
       return Localization().getStringEx('model.academics.appointment.type.in_person.label', 'In Person');
     case AppointmentType.online:
-      return Localization().getStringEx('model.academics.appointment.type.online.label', 'Telehealth');
+      return (provider?.name == AppointmentProviderExt.mcKinleyName) ?
+        Localization().getStringEx('model.academics.appointment.type.telehealth.label', 'Telehealth') :
+        Localization().getStringEx('model.academics.appointment.type.online.label', 'Online');
     default:
       return null;
-  }
-}
-
-String appointment2TypeDisplayString(AppointmentType _appointmentType) {
-  switch (_appointmentType) {
-    case AppointmentType.in_person: return Localization().getStringEx('model.academics.appointment2.type.in_person.label', 'In Person');
-    case AppointmentType.online: return Localization().getStringEx('model.academics.appointment2.type.online.label', 'Online');
   }
 }

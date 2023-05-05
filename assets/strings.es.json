@@ -2760,8 +2760,8 @@
     "panel.checklist.text.course.term": "Term",
 
     "panel.appointment.detail.cancelled.label": "Cancelado",
-    "panel.appointment.detail.meeting.id.label": "Identificación de la reunión:",
-    "panel.appointment.detail.meeting.passcode.label": "Código de acceso:",
+    "panel.appointment.detail.meeting.id.label": "Identificación de la reunión: %s",
+    "panel.appointment.detail.meeting.passcode.label": "Código de acceso: %s",
     "panel.appointment.detail.instructions.label": "Preparación requerida",
     "panel.appointment.detail.cancel.description": "<b>Para cancelar una cita,</b> vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> o llame al <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> durante el horario laboral. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
     "panel.appointment.detail.error.msg": "No se pudieron cargar los datos de la cita.",
@@ -3385,13 +3385,14 @@
     "model.wellness.todo.category.reminder.type.specific_time.label": "Tiempo específico",
 
     "model.academics.appointment.type.in_person.label": "En persona",
-    "model.academics.appointment.type.online.label": "Telesalud",
+    "model.academics.appointment.type.telehealth.label": "Telesalud",
+    "model.academics.appointment.type.online.label": "En línea",
     "model.academics.appointment.category.label.format": "Citas %s",
     "model.academics.appointment.title.label.format": "Cita de %s",
     "model.academics.appointment.default.provider.label": "MyMcKinley",
 
-    "model.academics.appointment2.type.in_person.label": "In Person",
-    "model.academics.appointment2.type.online.label": "Online",
+    "model.academics.appointment2.type.in_person.label": "En persona",
+    "model.academics.appointment2.type.online.label": "En línea",
 
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",

@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Appointment.dart';
@@ -40,6 +41,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppointmentDetailPanel extends StatefulWidget {
@@ -78,9 +80,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
 
     _locationData = widget.initialLocationData;
-    _loadCurrentLocation().then((_) {
-      setStateIfMounted(() {});
-    });
+    _updateCurrentLocation();
 
     super.initState();
   }
@@ -99,14 +99,16 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     });
   }
 
-  Future<void> _loadCurrentLocation() async {
-    _locationData = FlexUI().isLocationServicesAvailable ? await LocationServices().location : null;
-  }
-
   void _updateCurrentLocation() {
-    _loadCurrentLocation().then((_) {
-      setStateIfMounted(() {});
-    });
+    if (FlexUI().isLocationServicesAvailable) {
+      LocationServices().location.then((Position? locationData) {
+        if ((locationData != null) && mounted) {
+          setState(() {
+            _locationData = locationData;
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -353,116 +355,109 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildLocationDetail() {
-    AppointmentType? type = _appointment!.type;
-    if (type != AppointmentType.in_person) {
+    if (_appointment?.type == AppointmentType.in_person) {
+      String? longDisplayLocation = _appointment?.getLongDisplayLocation(_locationData) ?? "";
+      String? locationTitle = _appointment?.location?.title;
+      String? locationTextValue;
+      if (StringUtils.isNotEmpty(longDisplayLocation)) {
+        locationTextValue = longDisplayLocation;
+      } else if (StringUtils.isNotEmpty(locationTitle)) {
+        if (locationTextValue != null) {
+          locationTextValue += ', $locationTitle';
+        } else {
+          locationTextValue = locationTitle;
+        }
+      }
+      return InkWell(onTap: _onLocationDetailTapped, child:
+        Padding(padding: EdgeInsets.only(bottom: 8), child:
+          Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 6), child:
+                Styles().images?.getImage('location', excludeFromSemantics: true)
+              ),
+              Text(_appointment?.displayType ?? '', style:
+                Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
+              )
+            ]),
+            Container(height: 4),
+            Visibility(visible: StringUtils.isNotEmpty(locationTextValue), child:
+              Container(padding: EdgeInsets.only(left: 26), child:
+                Container(padding: EdgeInsets.only(bottom: 2), child:
+                  Text(locationTextValue ?? '', style:
+                    Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
+                  )
+                )
+              )
+            )
+          ])
+        )
+      );
+    }
+    else {
       return null;
     }
-    String typeLabel = appointmentTypeToDisplayString(type)!;
-    String? longDisplayLocation = _appointment?.getLongDisplayLocation(_locationData) ?? "";
-    String? locationTitle = _appointment?.location?.title;
-    String? locationTextValue;
-    if (StringUtils.isNotEmpty(longDisplayLocation)) {
-      locationTextValue = longDisplayLocation;
-    } else if (StringUtils.isNotEmpty(locationTitle)) {
-      if (locationTextValue != null) {
-        locationTextValue += ', $locationTitle';
-      } else {
-        locationTextValue = locationTitle;
-      }
-    }
-    bool isLocationTextVisible = StringUtils.isNotEmpty(locationTextValue);
-    return InkWell(
-        onTap: _onLocationDetailTapped,
-        child: Padding(
-            padding: EdgeInsets.only(bottom: 8),
-            child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('location', excludeFromSemantics: true)),
-                    Text(typeLabel,
-                        style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline"))
-                  ]),
-                  Container(height: 4),
-                  Visibility(
-                      visible: isLocationTextVisible,
-                      child: Container(
-                          padding: EdgeInsets.only(left: 26),
-                          child: Container(
-                              padding: EdgeInsets.only(bottom: 2),
-                              child: Text(StringUtils.ensureNotEmpty(locationTextValue),
-                                  style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")))))
-                ])));
   }
 
   Widget? _buildOnlineOnlineDetails() {
-    AppointmentType? type = _appointment!.type;
-    if (type != AppointmentType.online) {
+    if (_appointment?.type == AppointmentType.online) {
+      String? meetingUrl = _appointment!.onlineDetails?.url;
+
+      String? meetingId = _appointment!.onlineDetails?.meetingId;
+      String? displayMeetingId = (meetingId != null) ?
+        sprintf(Localization().getStringEx('panel.appointment.detail.meeting.id.label', 'Meeting ID: %s'), [meetingId]) : null;
+
+      String? meetingPasscode = _appointment!.onlineDetails?.meetingPasscode;
+      String? displayMeetingPasscode = (meetingPasscode != null) ?
+        sprintf(Localization().getStringEx('panel.appointment.detail.meeting.passcode.label', 'Passcode: %s'), [meetingPasscode]) : null;
+
+      return Padding(padding: EdgeInsets.only(bottom: 8), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Padding(padding: EdgeInsets.only(right: 6), child:
+              Styles().images?.getImage('laptop', excludeFromSemantics: true)
+            ),
+            Container(padding: EdgeInsets.only(bottom: 2), child:
+              Text(_appointment?.displayType ?? '', style:
+                Styles().textStyles?.getTextStyle("widget.item.regular")
+              )
+            )
+          ]),
+          
+          Visibility(visible: StringUtils.isNotEmpty(meetingUrl), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(padding: EdgeInsets.only(left: 26, top: 4, bottom: 2), child:
+                LinkButton(title: meetingUrl, hint: '', padding: EdgeInsets.zero, fontSize: 16, onTap: () => _launchUrl(meetingUrl),)
+              )
+            ])
+          ),
+          
+          Visibility(visible: StringUtils.isNotEmpty(meetingId), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(padding: EdgeInsets.only(left: 26, top: 4, bottom: 2), child:
+                Text(displayMeetingId ?? '', style:
+                  Styles().textStyles?.getTextStyle("widget.item.regular")
+                )
+              )
+            ])
+          ),
+          
+          Visibility(visible: StringUtils.isNotEmpty(meetingPasscode), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(padding: EdgeInsets.only(left: 26, top: 4, bottom: 2), child:
+                Text(displayMeetingPasscode ?? '', style:
+                  Styles().textStyles?.getTextStyle("widget.item.regular")
+                )
+              )
+            ])
+          )
+        ])
+      );
+    }
+    else {
       return null;
     }
 
-    String typeLabel = appointmentTypeToDisplayString(type)!;
-    String? meetingUrl = _appointment!.onlineDetails?.url;
-    String? meetingId = _appointment!.onlineDetails?.meetingId;
-    String? meetingPasscode = _appointment!.onlineDetails?.meetingPasscode;
-    return Padding(
-        padding: EdgeInsets.only(bottom: 8),
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('laptop', excludeFromSemantics: true)),
-                Container(
-                    padding: EdgeInsets.only(bottom: 2),
-                    child: Text(typeLabel,
-                        style: Styles().textStyles?.getTextStyle("widget.item.regular")))
-              ]),
-              Visibility(
-                  visible: StringUtils.isNotEmpty(meetingUrl),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Container(height: 4),
-                    Container(
-                        padding: EdgeInsets.only(left: 26),
-                        child: Container(
-                            padding: EdgeInsets.only(bottom: 2),
-                            child: LinkButton(
-                              padding: EdgeInsets.zero,
-                              title: meetingUrl,
-                              hint: '',
-                              fontSize: 16,
-                              onTap: () => _launchUrl(meetingUrl),
-                            )))
-                  ])),
-              Visibility(
-                  visible: StringUtils.isNotEmpty(meetingId),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Container(height: 4),
-                    Container(
-                        padding: EdgeInsets.only(left: 26),
-                        child: Container(
-                            padding: EdgeInsets.only(bottom: 2),
-                            child: Text(
-                                Localization().getStringEx('panel.appointment.detail.meeting.id.label', 'Meeting ID:') + ' $meetingId',
-                                style: Styles().textStyles?.getTextStyle("widget.item.regular"))))
-                  ])),
-              Visibility(
-                  visible: StringUtils.isNotEmpty(meetingPasscode),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Container(height: 4),
-                    Container(
-                        padding: EdgeInsets.only(left: 26),
-                        child: Container(
-                            padding: EdgeInsets.only(bottom: 2),
-                            child: Text(
-                                Localization().getStringEx('panel.appointment.detail.meeting.passcode.label', 'Passcode:') +
-                                    ' $meetingPasscode',
-                                style: Styles().textStyles?.getTextStyle("widget.item.regular"))))
-                  ]))
-            ]));
   }
 
   Widget? _buildHostDetail() {
@@ -547,7 +542,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
 
   Widget _buildCancelDescription() {
     String? providerName = _appointment?.provider?.name;
-    if ((providerName == null) || (providerName == 'McKinley')) {
+    if (providerName == AppointmentProviderExt.mcKinleyName) {
       final String urlLabelMacro = '{{mckinley_url_label}}';
       final String urlMacro = '{{mckinley_url}}';
       final String externalLinkIconMacro = '{{external_link_icon}}';
@@ -702,3 +697,4 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
   }
 }
+
