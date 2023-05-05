@@ -98,7 +98,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       return _buildLoading();
     }
     else if (_timeSlots == null) {
-      return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.failed', 'Failed to load time slots'));
+      return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.failed', 'Failed to load available appointments'));
     }
     else if (_selectedDate == null) {
       return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.unavailable.appointment', 'There are no available dates for appointments.'));
@@ -119,7 +119,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
 
   Widget _buildTime() {
     if (_daySlotsMap?.isEmpty ?? true) {
-      return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.empty', 'No time slots available for this date'));
+      return _buildStatus(Localization().getStringEx('panel.appointment.schedule.time.label.empty', 'No appointments available for this date'));
     }
     else {
       return _buildTimeSlots();
