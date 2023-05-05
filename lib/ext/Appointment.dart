@@ -107,10 +107,10 @@ extension AppointmentPersonExt on AppointmentPerson {
 
   String? get displayNumberOfAvailableSlots {
     int count = numberOfAvailableSlots ?? 0;
-    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.slots_count.label', '%s Appointments Available'), [count]) :
+    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.slots_count.label', '%s Appointments available'), [count]) :
           ((0 < count) ?
-            Localization().getStringEx('panel.appointment.schedule.slot1_count.label', '1 Appointment Available') :
-            Localization().getStringEx('panel.appointment.schedule.slot0_count.label', 'No appointments Available')
+            Localization().getStringEx('panel.appointment.schedule.slot1_count.label', '1 Appointment available') :
+            Localization().getStringEx('panel.appointment.schedule.slot0_count.label', 'No appointments available')
           );
   }
 }

@@ -2786,9 +2786,9 @@
     "panel.appointment.schedule.persons_count.label": "%s Advisors with open appointments",
     "panel.appointment.schedule.person1_count.label": "1 Advisor with open appointments",
     "panel.appointment.schedule.person0_count.label": "No advisors with open appointments",
-    "panel.appointment.schedule.slots_count.label": "%s Appointments Available",
-    "panel.appointment.schedule.slot1_count.label": "1 Appointment Available",
-    "panel.appointment.schedule.slot0_count.label": "No appointments Available",
+    "panel.appointment.schedule.slots_count.label": "%s Appointments available",
+    "panel.appointment.schedule.slot1_count.label": "1 Appointment available",
+    "panel.appointment.schedule.slot0_count.label": "No appointments available",
 
     "panel.appointment.reschedule.submit.button.title": "Reschedule",
     "panel.appointment.reschedule.notes.submit.succeeded.message": "Your appointment was rescheduled successfully.",
