@@ -62,6 +62,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyCanvasAppDeepLinkNotification  = "edu.illinois.rokwire.firebase.messaging.app.canvas.deeplink";
   static const String notifyAppointmentNotification        = "edu.illinois.rokwire.firebase.messaging.appointment";
   static const String notifyWellnessToDoItemNotification   = "edu.illinois.rokwire.firebase.messaging.wellness.to_do";
+  static const String notifyProfileMyNotification          = "edu.illinois.rokwire.firebase.messaging.profile.my";
+  static const String notifyProfileWhoAreYouNotification   = "edu.illinois.rokwire.firebase.messaging.profile.who_are_you";
+  static const String notifyProfilePrivacyNotification     = "edu.illinois.rokwire.firebase.messaging.profile.privacy";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -151,6 +154,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeAppointment = 'appointment';
   static const String payloadTypeWellnessToDoItem = 'wellness_todo_entry';
   static const String payloadTypePoll = 'poll';
+  static const String payloadTypeProfileMy = 'profile.my';
+  static const String payloadTypeProfileWhoAreYou = 'profile.who_are_you';
+  static const String payloadTypeProfilePrivacy = 'profile.privacy';
 
   DateTime? _pausedDateTime;
   
@@ -318,6 +324,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeWellnessToDoItem) {
       NotificationService().notify(notifyWellnessToDoItemNotification, data);
+    }
+    else if (type == payloadTypeProfileMy) {
+      NotificationService().notify(notifyProfileMyNotification, data);
+    }
+    else if (type == payloadTypeProfileWhoAreYou) {
+      NotificationService().notify(notifyProfileWhoAreYouNotification, data);
+    }
+    else if (type == payloadTypeProfilePrivacy) {
+      NotificationService().notify(notifyProfilePrivacyNotification, data);
     }
     else if (_isScoreTypeMessage(type)) {
       NotificationService().notify(notifyScoreMessage, data);

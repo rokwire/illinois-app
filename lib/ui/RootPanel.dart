@@ -28,6 +28,7 @@ import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/polls/PollDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
@@ -110,6 +111,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
       FirebaseMessaging.notifyAppointmentNotification,
       FirebaseMessaging.notifyWellnessToDoItemNotification,
+      FirebaseMessaging.notifyProfileMyNotification,
+      FirebaseMessaging.notifyProfileWhoAreYouNotification,
+      FirebaseMessaging.notifyProfilePrivacyNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
       ActionBuilder.notifyShowPanel,
@@ -265,6 +269,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyWellnessToDoItemNotification) {
       _onFirebaseWellnessToDoItemNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyProfileMyNotification) {
+      _onFirebaseProfileNotification(profileContent: SettingsProfileContent.profile);
+    }
+    else if (name == FirebaseMessaging.notifyProfileWhoAreYouNotification) {
+      _onFirebaseProfileNotification(profileContent: SettingsProfileContent.who_are_you);
+    }
+    else if (name == FirebaseMessaging.notifyProfilePrivacyNotification) {
+      _onFirebaseProfileNotification(profileContent: SettingsProfileContent.privacy);
     }
     else if (name == HomePanel.notifySelect) {
       _onSelectHome();
@@ -821,6 +834,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list)));
       }
     }
+  }
+
+  void _onFirebaseProfileNotification({required SettingsProfileContent profileContent}) {
+    SettingsProfileContentPanel.present(context, content: profileContent);
   }
 }
 
