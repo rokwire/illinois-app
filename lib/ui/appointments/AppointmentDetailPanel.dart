@@ -56,7 +56,11 @@ class AppointmentDetailPanel extends StatefulWidget {
 }
 
 class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> implements NotificationsListener {
-  static final double _horizontalPadding = 24;
+  final double _outerSpacingH = 16;
+  final double _innerSpacingH = 4;
+  final double _innerSpacingV = 4;
+  final double _detailSpacingV = 8;
+  final double _iconSize = 18;
 
   Appointment? _appointment;
   Core.Position? _locationData;
@@ -160,29 +164,27 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     String? toutImageKey = _appointment?.imageKey;
 
     return Column(children: <Widget>[
-      Expanded(child: Container(child:
+      Expanded(child:
         CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
         SliverToutHeaderBar(flexImageKey: toutImageKey, flexRightToLeftTriangleColor: Colors.white),
         SliverList(delegate: SliverChildListDelegate([
-          Padding(padding: EdgeInsets.symmetric(horizontal: 0), child:
-            Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Container(padding: EdgeInsets.symmetric(horizontal: _horizontalPadding), color: Colors.white, child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  _buildTitle(),
-                  _buildDetails(),
-                  _buildCommands(),
-                ])
-              ),
-              Container(padding: EdgeInsets.symmetric(horizontal: _horizontalPadding), child:
-                Column(children: [
-                  _buildInstructionsDescription(),
-                  _buildCancelDescription()
-                ])
-              )
-            ])
-          )
+          Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Container(padding: EdgeInsets.symmetric(horizontal: _outerSpacingH), color: Colors.white, child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                _buildTitle(),
+                _buildDetails(),
+                _buildCommands(),
+              ])
+            ),
+            Container(padding: EdgeInsets.symmetric(horizontal: _outerSpacingH), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _buildInstructionsDescription(),
+                _buildCancelDescription()
+              ])
+            )
+          ])
         ], addSemanticIndexes: false))
-      ])))
+      ]))
     ]);
   }
 
@@ -219,7 +221,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   Widget _buildDetails() {
     List<Widget> details = [];
 
-    Widget? timeCancelled = _buildTimeAndCancelledRowDetail();
+    Widget? timeCancelled = _buildTimeAndCancelledDetail();
     if (timeCancelled != null) {
       details.add(timeCancelled);
     }
@@ -316,41 +318,35 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     );*/
   }
 
-  Widget? _buildTimeAndCancelledRowDetail() {
-    Widget? time = _buildTimeDetail();
-    Widget? cancelled = _buildCancelDetail();
-    if ((time != null) && (cancelled != null)) {
-      return Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [Flexible(child: time, fit: FlexFit.loose), cancelled]);
-    } else if (time != null) {
-      return time;
-    } else if (cancelled != null) {
-      return Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [cancelled]);
-    } else {
-      return null;
-    }
-  }
-
-  Widget? _buildTimeDetail() {
+  Widget? _buildTimeAndCancelledDetail() {
+    List<Widget> conentList = <Widget>[];
+    
     String? displayTime = _appointment?.displayLongScheduleTime;
-    return StringUtils.isNotEmpty(displayTime) ? Semantics(label: displayTime, excludeSemantics: true, child:
-      Padding(padding: EdgeInsets.only(bottom: 8), child:
-        Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 7), child:
-            Styles().images?.getImage('calendar', excludeFromSemantics: true)
+    if (StringUtils.isNotEmpty(displayTime)) {
+      conentList.add(Expanded(child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
+            SizedBox(width: _iconSize, height: _iconSize, child:
+              Styles().images?.getImage('calendar', excludeFromSemantics: true)
+            )
           ),
           Expanded(child:
             Text(displayTime!, style: Styles().textStyles?.getTextStyle("widget.item.regular"))
           )
         ])
-      )
-    ) : null;
-  }
+      ));
+    }
 
-  Widget? _buildCancelDetail() {
-    return (_appointment!.cancelled == true) ? Padding(padding: EdgeInsets.only(left: 7), child:
-      Text(Localization().getStringEx('panel.appointment.detail.cancelled.label', 'Cancelled'),style:
-        Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large")
-      )
+    if (_appointment!.cancelled == true) {
+      conentList.add(Padding(padding: EdgeInsets.only(left: _innerSpacingH), child:
+        Text(Localization().getStringEx('panel.appointment.detail.cancelled.label', 'Cancelled'),style:
+          Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large")
+        )
+      ));
+    }
+
+    return conentList.isNotEmpty ? Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: conentList,)
     ) : null;
   }
 
@@ -358,6 +354,8 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     if (_appointment?.type == AppointmentType.in_person) {
       String? longDisplayLocation = _appointment?.getLongDisplayLocation(_locationData) ?? "";
       String? locationTitle = _appointment?.location?.title;
+      bool canLocation = StringUtils.isNotEmpty(locationTitle);
+      TextStyle? linkStyle = Styles().textStyles?.getTextStyle(canLocation ? 'widget.button.light.title.medium.underline' : 'widget.button.light.title.medium');
       String? locationTextValue;
       if (StringUtils.isNotEmpty(longDisplayLocation)) {
         locationTextValue = longDisplayLocation;
@@ -368,28 +366,27 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
           locationTextValue = locationTitle;
         }
       }
-      return InkWell(onTap: _onLocationDetailTapped, child:
-        Padding(padding: EdgeInsets.only(bottom: 8), child:
-          Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 6), child:
+      return InkWell(onTap: canLocation ? _onLocationDetailTapped : null, child:
+        Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
+              SizedBox(width: _iconSize, height: _iconSize, child:
                 Styles().images?.getImage('location', excludeFromSemantics: true)
               ),
-              Text(_appointment?.displayType ?? '', style:
-                Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
-              )
-            ]),
-            Container(height: 4),
-            Visibility(visible: StringUtils.isNotEmpty(locationTextValue), child:
-              Container(padding: EdgeInsets.only(left: 26), child:
-                Container(padding: EdgeInsets.only(bottom: 2), child:
-                  Text(locationTextValue ?? '', style:
-                    Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
-                  )
+            ),
+            Expanded(child:
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(_appointment?.displayType ?? '', style: linkStyle),
+                
+                Visibility(visible: StringUtils.isNotEmpty(locationTextValue), child:
+                  Padding(padding: EdgeInsets.only(top: _innerSpacingV), child:
+                    Text(locationTextValue ?? '', style: linkStyle)
+                  ),
                 )
-              )
+              ],)
             )
-          ])
+          ],),
+
         )
       );
     }
@@ -409,48 +406,41 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       String? meetingPasscode = _appointment!.onlineDetails?.meetingPasscode;
       String? displayMeetingPasscode = (meetingPasscode != null) ?
         sprintf(Localization().getStringEx('panel.appointment.detail.meeting.passcode.label', 'Passcode: %s'), [meetingPasscode]) : null;
+      
+      TextStyle? detailStyle = Styles().textStyles?.getTextStyle('widget.item.regular');
 
-      return Padding(padding: EdgeInsets.only(bottom: 8), child:
+      return Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 6), child:
-              Styles().images?.getImage('laptop', excludeFromSemantics: true)
+            Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
+              SizedBox(width: _iconSize, height: _iconSize, child:
+                Styles().images?.getImage('laptop', excludeFromSemantics: true)
+              ),
             ),
-            Container(padding: EdgeInsets.only(bottom: 2), child:
-              Text(_appointment?.displayType ?? '', style:
-                Styles().textStyles?.getTextStyle("widget.item.regular")
+            Expanded(child:
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(_appointment?.displayType ?? '', style: detailStyle),
+
+              Visibility(visible: StringUtils.isNotEmpty(meetingUrl), child:
+                LinkButton(title: meetingUrl, hint: '', padding: EdgeInsets.only(top: _innerSpacingV), fontSize: 16, onTap: () => _launchUrl(meetingUrl),)
+              ),
+              
+              Visibility(visible: StringUtils.isNotEmpty(meetingId), child:
+                Padding(padding: EdgeInsets.only(top: _innerSpacingV), child:
+                  Text(displayMeetingId ?? '', style: detailStyle)
+                )
+              ),
+              
+              Visibility(visible: StringUtils.isNotEmpty(meetingPasscode), child:
+                Padding(padding: EdgeInsets.only(top: _innerSpacingV), child:
+                  Text(displayMeetingPasscode ?? '', style: detailStyle)
+                )
               )
+              ])
             )
           ]),
           
-          Visibility(visible: StringUtils.isNotEmpty(meetingUrl), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(padding: EdgeInsets.only(left: 26, top: 4, bottom: 2), child:
-                LinkButton(title: meetingUrl, hint: '', padding: EdgeInsets.zero, fontSize: 16, onTap: () => _launchUrl(meetingUrl),)
-              )
-            ])
-          ),
-          
-          Visibility(visible: StringUtils.isNotEmpty(meetingId), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(padding: EdgeInsets.only(left: 26, top: 4, bottom: 2), child:
-                Text(displayMeetingId ?? '', style:
-                  Styles().textStyles?.getTextStyle("widget.item.regular")
-                )
-              )
-            ])
-          ),
-          
-          Visibility(visible: StringUtils.isNotEmpty(meetingPasscode), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(padding: EdgeInsets.only(left: 26, top: 4, bottom: 2), child:
-                Text(displayMeetingPasscode ?? '', style:
-                  Styles().textStyles?.getTextStyle("widget.item.regular")
-                )
-              )
-            ])
-          )
         ])
       );
     }
@@ -462,82 +452,87 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
 
   Widget? _buildHostDetail() {
     String? displayHostName = _appointment?.host?.displayName;
-    if (StringUtils.isEmpty(displayHostName)) {
-      return null;
-    }
-    return Padding(
-        padding: EdgeInsets.only(bottom: 8),
-        child: Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 12), child: Styles().images?.getImage('person', excludeFromSemantics: true)),
-          Expanded(
-              child: Text(displayHostName!,
-                  style: Styles().textStyles?.getTextStyle("widget.item.regular")))
-        ]));
+    return  (StringUtils.isNotEmpty(displayHostName)) ? Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
+          SizedBox(width: _iconSize, height: _iconSize, child:
+            Styles().images?.getImage('person', excludeFromSemantics: true)
+          ),
+        ),
+
+        Expanded(child:
+          Text(displayHostName ?? '', style:
+            Styles().textStyles?.getTextStyle('widget.item.regular'))
+        )
+      ])
+    ) : null;
   }
 
   Widget? _buildInstructionsDetail() {
-    if (StringUtils.isEmpty(_appointment!.instructions)) {
-      return null;
-    }
-    return Padding(
-        padding: EdgeInsets.only(bottom: 8),
-        child: Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('info', excludeFromSemantics: true)),
-          Expanded(
-              child: Text(Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep'),
-                  style: Styles().textStyles?.getTextStyle("widget.item.regular")))
-        ]));
+    return StringUtils.isNotEmpty(_appointment?.instructions) ? Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
+          SizedBox(width: _iconSize, height: _iconSize, child:
+            Styles().images?.getImage('info', excludeFromSemantics: true)
+          ),
+        ),
+        Expanded(child:
+          Text(Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep'), style:
+            Styles().textStyles?.getTextStyle("widget.item.regular")
+          )
+        )
+      ])
+    ) : null;
   }
 
   Widget? _buildPhoneDetail() {
-    String? phone = _appointment!.location?.phone;
-    if (StringUtils.isEmpty(phone)) {
-      return null;
-    }
-    return Padding(
-        padding: EdgeInsets.only(bottom: 8),
-        child: Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 11), child: Styles().images?.getImage('phone', excludeFromSemantics: true)),
-          Expanded(
-              child: Text(phone!,
-                  style: Styles().textStyles?.getTextStyle("widget.item.regular")))
-        ]));
+    return StringUtils.isNotEmpty(_appointment?.location?.phone) ? Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
+          Styles().images?.getImage('phone', excludeFromSemantics: true)
+        ),
+        Expanded(child:
+          Text(_appointment?.location?.phone ?? '', style:
+            Styles().textStyles?.getTextStyle("widget.item.regular")
+          )
+        )
+      ])
+    ) : null;
   }
 
   Widget? _buildUrlDetail() {
-    String? url = Config().saferMcKinleyUrl;
-    if (StringUtils.isEmpty(url)) {
-      return null;
-    }
-    return InkWell(
-        onTap: () => _launchUrl(url),
-        child: Padding(
-            padding: EdgeInsets.only(bottom: 8),
-            child: Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('external-link', excludeFromSemantics: true)),
-              Expanded(
-                  child: Text(url!,
-                      style:Styles().textStyles?.getTextStyle("widget.item.regular")))
-            ])));
+    return StringUtils.isNotEmpty(Config().saferMcKinleyUrl) ? InkWell(onTap: () => _launchUrl(Config().saferMcKinleyUrl), child:
+      Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
+            Styles().images?.getImage('external-link', excludeFromSemantics: true)
+          ),
+          Expanded(child:
+            Text(Config().saferMcKinleyUrl ?? '', style:
+              Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
+            )
+          )
+        ])
+      )
+    ) : null;
   }
 
   Widget _buildInstructionsDescription() {
     String? instructions = _appointment!.instructions;
-    if (StringUtils.isEmpty(instructions)) {
+    if (StringUtils.isNotEmpty(instructions)) {
+      String instructionsHtml =
+          '<b>${Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep')}: </b> $instructions';
+      return Padding(padding: EdgeInsets.only(top: 10), child:
+        HtmlWidget(instructionsHtml,
+          onTapUrl : (url) {_launchUrl(url); return true;},
+          textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
+        )
+      );
+    }
+    else {
       return Container();
     }
-    String instructionsHtml =
-        '<b>${Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep')}: </b> $instructions';
-    return Padding(
-        padding: EdgeInsets.only(top: 10),
-        child:
-        HtmlWidget(
-            StringUtils.ensureNotEmpty(instructionsHtml),
-            onTapUrl : (url) {_launchUrl(url); return true;},
-            textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
-        )
-    );
   }
 
   Widget _buildCancelDescription() {
@@ -553,14 +548,13 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       descriptionHtml = descriptionHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
       descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
       descriptionHtml = descriptionHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
-      return Padding(
-          padding: EdgeInsets.symmetric(vertical: 10),
-          child: HtmlWidget(
-              StringUtils.ensureNotEmpty(descriptionHtml),
-              onTapUrl : (url) {_launchUrl(url); return true;},
-              textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
-              customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
-          )
+      
+      return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+        HtmlWidget(descriptionHtml,
+          onTapUrl : (url) {_launchUrl(url); return true;},
+          textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
+        )
       );
     }
     else {
