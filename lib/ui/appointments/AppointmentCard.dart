@@ -57,6 +57,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
   @override
   Widget build(BuildContext context) {
     const double imageSize = 64;
+    const double iconSize = 18;
     String? imageKey = widget.appointment.imageKey;
     String semanticsImageLabel = 'appointment image';
     String semanticsImageHint = 'Double tap to expand image';
@@ -119,8 +120,10 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                         Visibility(visible: StringUtils.isNotEmpty(displayTime), child:
                           Padding(padding: EdgeInsets.only(top: 4), child:
                             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child:
-                                Styles().images?.getImage('calendar', excludeFromSemantics: true)
+                              Padding(padding: EdgeInsets.only(right: 6), child: 
+                                SizedBox(width: iconSize, height: iconSize, child:
+                                  Styles().images?.getImage('calendar', excludeFromSemantics: true)
+                                )
                               ),
                               Expanded(child:
                                 Text(displayTime ?? '', style:
@@ -131,26 +134,13 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                           ),
                         ),
                         
-                        Visibility(visible: StringUtils.isNotEmpty(displayType), child:
-                          Padding(padding: EdgeInsets.only(top: 4), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child:
-                                Styles().images?.getImage(typeImageKey, excludeFromSemantics: true)
-                              ),
-                              Expanded(child:
-                                Text(displayType ?? '', overflow: TextOverflow.ellipsis, style:
-                                  Styles().textStyles?.getTextStyle("widget.item.regular")
-                                )
-                              ),
-                            ])
-                          ),
-                        ),
-
                         Visibility(visible: StringUtils.isNotEmpty(displayHost), child:
                           Padding(padding: EdgeInsets.only(top: 4), child:
                             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Padding(padding: EdgeInsets.only(right: 6), child:
-                                Styles().images?.getImage('person', excludeFromSemantics: true)
+                                SizedBox(width: iconSize, height: iconSize, child:
+                                  Styles().images?.getImage('person', excludeFromSemantics: true)
+                                )
                               ),
                               Expanded(child:
                                 Text(displayHost ?? '', overflow: TextOverflow.ellipsis, style:
@@ -161,6 +151,22 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                           ),
                         ),
 
+                        Visibility(visible: StringUtils.isNotEmpty(displayType), child:
+                          Padding(padding: EdgeInsets.only(top: 4), child:
+                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Padding(padding: EdgeInsets.only(right: 6), child:
+                                SizedBox(width: iconSize, height: iconSize, child:
+                                  Styles().images?.getImage(typeImageKey, excludeFromSemantics: true)
+                                )
+                              ),
+                              Expanded(child:
+                                Text(displayType ?? '', overflow: TextOverflow.ellipsis, style:
+                                  Styles().textStyles?.getTextStyle("widget.item.regular")
+                                )
+                              ),
+                            ])
+                          ),
+                        ),
 
                       ]),
                     ),
