@@ -154,7 +154,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
   }
 
   Widget _buildDateTimeDetail() {
-    String? displayTime = widget.scheduleParam.timeSlot?.displayScheduleTime ?? widget.sourceAppointment?.displayScheduleTime;
+    String? displayTime = widget.scheduleParam.timeSlot?.displayLongScheduleTime ?? widget.sourceAppointment?.displayLongScheduleTime;
     return ((displayTime != null) && displayTime.isNotEmpty) ?
       Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -183,7 +183,8 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
           DropdownButton<AppointmentType>(
             icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
             style: Styles().textStyles?.getTextStyle("widget.detail.light.regular"),
-            hint: Text(appointment2TypeDisplayString(_appointmentType), style: Styles().textStyles?.getTextStyle("widget.detail.regular"),),
+            hint: Text(appointmentTypeToDisplayString(_appointmentType, provider: widget.scheduleParam.provider) ?? '', style:
+              Styles().textStyles?.getTextStyle("widget.detail.regular"),),
             items: _appontmentTypesDropdownList,
             onChanged: _onSelectAppointmentType,
           )
@@ -210,7 +211,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
       DropdownMenuItem<AppointmentType>(
         value: appointmentType,
         child: Padding(padding: EdgeInsets.only(right: 16), child:
-          Text(appointment2TypeDisplayString(appointmentType), style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),),
+          Text(appointmentTypeToDisplayString(appointmentType, provider: widget.scheduleParam.provider) ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),),
         ),
       )
     ).toList();

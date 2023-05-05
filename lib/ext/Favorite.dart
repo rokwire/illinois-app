@@ -93,7 +93,7 @@ extension FavoriteExt on Favorite {
       return (this as ExplorePOI).exploreLocationDescription;
     }
     else if (this is Appointment) {
-      return (this as Appointment).displayScheduleTime;
+      return (this as Appointment).displayShortScheduleTime;
     }
     else {
       return null;
