@@ -14,14 +14,20 @@ import 'package:sprintf/sprintf.dart';
 
 extension AppointmentExt on Appointment {
 
-  String? get displayScheduleTime =>
-    AppointmentTimeSlotExt.getDisplayScheduleTime(startTimeUtc, endTimeUtc);
+  String? get displayLongScheduleTime =>
+    AppointmentTimeSlotExt.getLongDisplayScheduleTime(startTimeUtc, endTimeUtc);
+
+  String? get displayShortScheduleTime =>
+    AppointmentTimeSlotExt.getShortDisplayScheduleTime(startTimeUtc, endTimeUtc);
 
   int? get startMinutesSinceMidnightUtc =>
     AppointmentTimeSlotExt.getStartMinutesSinceMidnightUtc(startTimeUtc);
 
   String get displayProviderName =>
     this.provider?.name ?? Localization().getStringEx('model.academics.appointment.default.provider.label', 'MyMcKinley');
+
+  String? get displayType =>
+    appointmentTypeToDisplayString(type, provider: provider);
 
   String? get category =>
     sprintf(Localization().getStringEx('model.academics.appointment.category.label.format', '%s Appointments'), [displayProviderName]).toUpperCase();
@@ -77,10 +83,10 @@ extension AppointmentUnitExt on AppointmentUnit {
 
   String? get displayNumberOfPersons {
     int count = numberOfPersons ?? 0;
-    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.persons_count.label', '%s Advisors'), [count]) :
+    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.persons_count.label', '%s Advisors with open appointments'), [count]) :
           ((0 < count) ?
-            Localization().getStringEx('panel.appointment.schedule.person1_count.label', '1 Advisor') :
-            Localization().getStringEx('panel.appointment.schedule.person0_count.label', 'No Advisors')
+            Localization().getStringEx('panel.appointment.schedule.person1_count.label', '1 Advisor with open appointments') :
+            Localization().getStringEx('panel.appointment.schedule.person0_count.label', 'No advisor swith open appointments')
           );
   }
 
@@ -101,10 +107,10 @@ extension AppointmentPersonExt on AppointmentPerson {
 
   String? get displayNumberOfAvailableSlots {
     int count = numberOfAvailableSlots ?? 0;
-    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.slots_count.label', '%s Slots Available'), [count]) :
+    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.slots_count.label', '%s Appointments available'), [count]) :
           ((0 < count) ?
-            Localization().getStringEx('panel.appointment.schedule.slot1_count.label', '1 Slot Available') :
-            Localization().getStringEx('panel.appointment.schedule.slot0_count.label', 'No Slots Available')
+            Localization().getStringEx('panel.appointment.schedule.slot1_count.label', '1 Appointment available') :
+            Localization().getStringEx('panel.appointment.schedule.slot0_count.label', 'No appointments available')
           );
   }
 }
@@ -117,19 +123,36 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
   DateTime? get startTime => startTimeUtc?.toUniOrLocal();
   DateTime? get endTime => endTimeUtc?.toUniOrLocal();
 
-  String? get displayScheduleTime =>
-    getDisplayScheduleTime(startTimeUtc, endTimeUtc);
+  String? get displayLongScheduleTime =>
+    getLongDisplayScheduleTime(startTimeUtc, endTimeUtc);
 
-  static String? getDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
+  String? get displayShortScheduleTime =>
+    getShortDisplayScheduleTime(startTimeUtc, endTimeUtc);
+
+  static String? getLongDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
     if (startTimeUtc != null) {
       if (endTimeUtc != null) {
-        //AppDateTime().getDeviceTimeFromUtcTime(startTime)
-        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy hh:mm').format(startTimeUtc.toUniOrLocal());
-        String endTimeStr = DateFormat('hh:mm aaa').format(endTimeUtc.toUniOrLocal());
+        String startTimeStr = DateFormat('EEEE, MMMM d, yyyy h:mm').format(startTimeUtc.toUniOrLocal());
+        String endTimeStr = DateFormat('h:mm aaa').format(endTimeUtc.toUniOrLocal());
         return "$startTimeStr - $endTimeStr";
       }
       else {
-        return DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(startTimeUtc.toUniOrLocal());
+        return DateFormat('EEEE, MMMM d, yyyy h:mm aaa').format(startTimeUtc.toUniOrLocal());
+      }
+    }
+    return null;
+  }
+
+  static String? getShortDisplayScheduleTime(DateTime? startTimeUtc, DateTime? endTimeUtc) {
+    if (startTimeUtc != null) {
+      if (endTimeUtc != null) {
+        //AppDateTime().getDeviceTimeFromUtcTime(startTime)
+        String startTimeStr = DateFormat('EEE, MMM d, yyyy h:mm').format(startTimeUtc.toUniOrLocal());
+        String endTimeStr = DateFormat('h:mm aaa').format(endTimeUtc.toUniOrLocal());
+        return "$startTimeStr-$endTimeStr";
+      }
+      else {
+        return DateFormat('EEE, MMM d, yyyy h:mm aaa').format(startTimeUtc.toUniOrLocal());
       }
     }
     return null;
@@ -145,20 +168,15 @@ extension AppointmentTimeSlotExt on AppointmentTimeSlot {
 ///////////////////////////////
 /// AppointmentType
 
-String? appointmentTypeToDisplayString(AppointmentType? type) {
+String? appointmentTypeToDisplayString(AppointmentType? type, { AppointmentProvider? provider }) {
   switch (type) {
     case AppointmentType.in_person:
       return Localization().getStringEx('model.academics.appointment.type.in_person.label', 'In Person');
     case AppointmentType.online:
-      return Localization().getStringEx('model.academics.appointment.type.online.label', 'Telehealth');
+      return (provider?.name == AppointmentProviderExt.mcKinleyName) ?
+        Localization().getStringEx('model.academics.appointment.type.telehealth.label', 'Telehealth') :
+        Localization().getStringEx('model.academics.appointment.type.online.label', 'Online');
     default:
       return null;
-  }
-}
-
-String appointment2TypeDisplayString(AppointmentType _appointmentType) {
-  switch (_appointmentType) {
-    case AppointmentType.in_person: return Localization().getStringEx('model.academics.appointment2.type.in_person.label', 'In Person');
-    case AppointmentType.online: return Localization().getStringEx('model.academics.appointment2.type.online.label', 'Online');
   }
 }
