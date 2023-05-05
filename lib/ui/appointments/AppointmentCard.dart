@@ -140,7 +140,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                         child: Styles().images?.getImage((widget.appointment.type == AppointmentType.online) ?
                                           'laptop' : 'location', excludeFromSemantics: true)),
                                     Expanded(
-                                        child: Text(StringUtils.ensureNotEmpty(appointmentTypeToDisplayString(widget.appointment.type)),
+                                        child: Text(widget.appointment.displayType ?? '',
                                             overflow: TextOverflow.ellipsis,
                                             style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
                                     Visibility(

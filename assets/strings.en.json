@@ -2763,8 +2763,8 @@
     "panel.checklist.text.course.term": "Term",
 
     "panel.appointment.detail.cancelled.label": "Cancelled",
-    "panel.appointment.detail.meeting.id.label": "Meeting ID:",
-    "panel.appointment.detail.meeting.passcode.label": "Passcode:",
+    "panel.appointment.detail.meeting.id.label": "Meeting ID: %s",
+    "panel.appointment.detail.meeting.passcode.label": "Passcode: %s",
     "panel.appointment.detail.instructions.label": "Required prep",
     "panel.appointment.detail.cancel.description": "<b>To cancel an appointment,</b> go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
     "panel.appointment.detail.error.msg": "Failed to load appointment data.",
@@ -3389,7 +3389,8 @@
     "model.wellness.todo.category.reminder.type.specific_time.label": "Specific Time",
 
     "model.academics.appointment.type.in_person.label": "In Person",
-    "model.academics.appointment.type.online.label": "Telehealth",
+    "model.academics.appointment.type.telehealth.label": "Telehealth",
+    "model.academics.appointment.type.online.label": "Online",
     "model.academics.appointment.category.label.format": "%s Appointments",
     "model.academics.appointment.title.label.format": "%s Appointment",
     "model.academics.appointment.default.provider.label": "MyMcKinley",
