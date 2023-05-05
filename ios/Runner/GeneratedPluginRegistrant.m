@@ -78,6 +78,12 @@
 @import flutter_native_timezone;
 #endif
 
+#if __has_include(<flutter_passkey/FlutterPasskeyPlugin.h>)
+#import <flutter_passkey/FlutterPasskeyPlugin.h>
+#else
+@import flutter_passkey;
+#endif
+
 #if __has_include(<fluttertoast/FluttertoastPlugin.h>)
 #import <fluttertoast/FluttertoastPlugin.h>
 #else
@@ -201,6 +207,7 @@
   [FlutterExifRotationPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterExifRotationPlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
   [FlutterNativeTimezonePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterNativeTimezonePlugin"]];
+  [FlutterPasskeyPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterPasskeyPlugin"]];
   [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [GallerySaverPlugin registerWithRegistrar:[registry registrarForPlugin:@"GallerySaverPlugin"]];
   [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];

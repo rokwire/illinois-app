@@ -106,5 +106,6 @@
 
         <receiver android:name=".rokwire_plugin.GeofenceBroadcastReceiver" android:exported="false"/>
 
+        <meta-data android:name="asset_statements" android:resource="@string/asset_statements" />
     </application>
 </manifest>

@@ -66,7 +66,7 @@ android {
     
     defaultConfig {
         applicationId "edu.illinois.rokwire"
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

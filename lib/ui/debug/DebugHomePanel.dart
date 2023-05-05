@@ -22,6 +22,7 @@ import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPasskeyPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -288,6 +289,19 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                      label: "Passkey Login",
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: () {
+                        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPasskeyPanel()));
+                      }
+                  ),
+                ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
                     label: "Create Event",
