@@ -501,7 +501,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildUrlDetail() {
-    return StringUtils.isNotEmpty(Config().saferMcKinleyUrl) ? InkWell(onTap: () => _launchUrl(Config().saferMcKinleyUrl), child:
+    return ((_appointment?.provider?.name == AppointmentProviderExt.mcKinleyName) && StringUtils.isNotEmpty(Config().saferMcKinleyUrl)) ? InkWell(onTap: () => _launchUrl(Config().saferMcKinleyUrl), child:
       Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
