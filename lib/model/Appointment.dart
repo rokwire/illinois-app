@@ -402,7 +402,7 @@ class AppointmentProvider {
   final bool? supportsReschedule;
   final bool? supportsCancel;
 
-  AppointmentProvider({
+  const AppointmentProvider({
     this.id, this.name,
     this.supportsSchedule, this.supportsReschedule, this.supportsCancel
   });
@@ -645,7 +645,7 @@ class AppointmentPerson {
   final int?    numberOfAvailableSlots;
   final DateTime? nextAvailableTimeUtc;
 
-  AppointmentPerson({this.id, this.providerId, this.unitId,
+  const AppointmentPerson({this.id, this.providerId, this.unitId,
     this.name, this.imageUrl, this.notes,
     this.numberOfAvailableSlots, this.nextAvailableTimeUtc});
 
@@ -754,7 +754,7 @@ class AppointmentQuestion {
   final AppointmentQuestionType? type;
   final List<String>? values;
 
-  AppointmentQuestion({this.id, this.providerId, this.unitId, this.hostId,
+  const AppointmentQuestion({this.id, this.providerId, this.unitId, this.hostId,
     this.title, this.required, this.type, this.values
   });
 
@@ -852,7 +852,7 @@ class AppointmentAnswer {
   final String? hostId;
   final List<String>? values;
 
-  AppointmentAnswer({this.questionId, this.providerId, this.unitId, this.hostId, this.values});
+  const AppointmentAnswer({this.questionId, this.providerId, this.unitId, this.hostId, this.values});
 
   factory AppointmentAnswer.fromQuestion(AppointmentQuestion? question, { List<String>? values }) =>
     AppointmentAnswer(
