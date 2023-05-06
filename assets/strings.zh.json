@@ -2795,7 +2795,7 @@
 	"panel.appointment.reschedule.notes.submit.failed.message": "Failed to reschedule appointment:",
 
 	"panel.appointment.schedule.time.header.title": "Schedule Appointment",
-	"panel.appointment.schedule.time.label.current.appointment": "Showing available appointments for:",
+	"panel.appointment.schedule.time.label.current.appointment": "Showing available appointments for %s:",
 	"panel.appointment.schedule.time.label.unavailable.appointment": "There are no available dates for appointments.",
 	"panel.appointment.schedule.time.button.select.date.title": "Select Alternative Date",
 	"panel.appointment.schedule.time.button.select.date.hint": "",
@@ -2805,8 +2805,8 @@
 	"panel.appointment.schedule.time.label.failed": "Failed to load available appointments",
 
 	"panel.appointment.reschedule.time.header.title": "Reschedule Appointment",
-	"panel.appointment.reschedule.time.label.current.appointment": "Current Appointment:",
-	"panel.appointment.reschedule.time.label.new.appointment": "New Appointment:",
+	"panel.appointment.reschedule.time.label.current.appointment": "Current appointment for %s:",
+	"panel.appointment.reschedule.time.label.new.appointment": "New appointment:",
 	"panel.appointment.reschedule.time.label.unknown": "Unknown",
 
 	"panel.appointment.schedule.unit.header.title": "Schedule Appointment",
