@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Hide unknown next available appointment [#3252](https://github.com/rokwire/illinois-app/issues/3252).
 - Update static sample appointments data [#3254](https://github.com/rokwire/illinois-app/issues/3252).
+- Display person's name in appointment schedule time panel [#3256](https://github.com/rokwire/illinois-app/issues/3256).
 
 ## [4.3.56] - 2023-05-05
 ### Changed

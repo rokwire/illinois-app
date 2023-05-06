@@ -31,6 +31,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart';
 
 class AppointmentScheduleTimePanel extends StatefulWidget {
@@ -223,6 +224,8 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     }
   }
 
+  String get personName => widget.scheduleParam.person?.name ?? widget.sourceAppointment?.host?.displayName ?? '';
+
   Widget _buildRescheduleBar() {
 
     if (widget.sourceAppointment == null) {
@@ -234,7 +237,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       
       return Padding(padding:EdgeInsets.only(left: 16, right: 16, top: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(Localization().getStringEx('panel.appointment.reschedule.time.label.current.appointment', 'Current Appointment:'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
+          Text(sprintf(Localization().getStringEx('panel.appointment.reschedule.time.label.current.appointment', 'Current appointment for %s'), [personName]), style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
           Row(children: [
             Expanded(child:
                 Text(currentDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin'),)
@@ -253,8 +256,8 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       return Padding(padding: EdgeInsets.all(16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text((widget.sourceAppointment == null) ?
-            Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing available appointments for:') :
-            Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New Appointment:'),
+            sprintf(Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing available appointments for %s:'), [personName]) :
+            Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New appointment:'),
             style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
           ),
           Padding(padding: EdgeInsets.only(top: 2, bottom: 12), child:
