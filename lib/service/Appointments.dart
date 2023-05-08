@@ -508,7 +508,7 @@ class Appointments with Service implements NotificationsListener {
     }
   }
 
-  List<AppointmentProvider> get _sampleProviders =>  <AppointmentProvider>[
+  static const List<AppointmentProvider> _sampleProviders =  <AppointmentProvider>[
     AppointmentProvider(id: '1', name: 'McKinley', supportsSchedule: true, supportsReschedule: true, supportsCancel: true),
     AppointmentProvider(id: '2', name: 'Grainger', supportsSchedule: true, supportsReschedule: true, supportsCancel: false),
     AppointmentProvider(id: '3', name: 'Lorem Ipsum', supportsSchedule: true, supportsReschedule: false, supportsCancel: false),
@@ -537,7 +537,7 @@ class Appointments with Service implements NotificationsListener {
     return AppointmentUnit.findInList(units, id: unitId);
   }
 
-  List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
+  static List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
     AppointmentUnit(id: '11', name: 'House of Horror', collegeName: 'Hell College of Engineering', collegeCode: "HC", address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', numberOfPersons: 12, nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 14, 30), imageUrl: null /*'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png' */, notes: 'Lorem ipsum sit dolor amet.'),
     AppointmentUnit(id: '12', name: "Dante's Inferno", collegeName: 'Magical College of Arts', collegeCode: "M", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', numberOfPersons: 1, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 09, 30), imageUrl: null /*'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg' */, notes: 'Proin sed lacinia ex.'),
     AppointmentUnit(id: '13', name: 'Spem Omnem Hic', collegeName: 'Gryffindor', collegeCode: "GF", address: '1402 Springfield Ave Urbana, IL 61801', hoursOfOperation: '7:00am - 9:00pm', numberOfPersons: 0, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 16, 00), imageUrl: null /*'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png' */, notes: 'Class aptent taciti sociosqu ad litora.'),
@@ -566,15 +566,15 @@ class Appointments with Service implements NotificationsListener {
     return AppointmentPerson.findInList(persons, id: personId);
   }
 
-  List<AppointmentPerson> get _samplePersons => <AppointmentPerson>[
-    AppointmentPerson(id: '21', name: 'Agatha Christie', numberOfAvailableSlots:  321, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU', notes: 'Vulputate mi sit amet mauris. Neque sodales ut etiam sit. Dictum at tempor commodo ullamcorper a. Duis at consectetur lorem donec massa.'),
-    AppointmentPerson(id: '22', name: 'Amanda Lear',     numberOfAvailableSlots:   42, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 14, 00), imageUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg', notes: 'Ultricies tristique nulla aliquet enim tortor at auctor. Pulvinar pellentesque habitant morbi tristique senectus. Sapien pellentesque habitant morbi tristique senectus et netus.'),
-    AppointmentPerson(id: '23', name: 'Bill Gates',      numberOfAvailableSlots:    1, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 16, 30), imageUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg', notes: 'Amet dictum sit amet justo donec enim diam. In vitae turpis massa sed elementum tempus egestas sed. In est ante in nibh mauris cursus mattis. Pellentesque adipiscing commodo elit at imperdiet.'),
-    AppointmentPerson(id: '24', name: 'Chalres Darwin',  numberOfAvailableSlots:    0, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 09, 00), imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*', notes: 'Volutpat diam ut venenatis tellus in. Id faucibus nisl tincidunt eget nullam. Enim ut tellus elementum sagittis vitae et leo. Quisque id diam vel quam elementum pulvinar etiam. '),
-    AppointmentPerson(id: '25', name: 'Fredy Mercury',   numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 11, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU', notes: 'Vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet. Massa eget egestas purus viverra. Sagittis eu volutpat odio facilisis mauris sit amet massa vitae. Sit amet consectetur adipiscing elit pellentesque habitant morbi tristique.'),
-    AppointmentPerson(id: '26', name: 'Frank Zapa',      numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 15, 00), imageUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k', notes: 'Enim blandit volutpat maecenas volutpat blandit aliquam etiam. A cras semper auctor neque. Aenean sed adipiscing diam donec adipiscing.'),
-    AppointmentPerson(id: '27', name: 'Michael Jackson', numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 08, 00), imageUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv', notes: 'Adipiscing vitae proin sagittis nisl rhoncus. Massa sed elementum tempus egestas. Morbi tristique senectus et netus. Turpis massa sed elementum tempus egestas sed sed.'),
-    AppointmentPerson(id: '28', name: 'Speedy Gonzales', numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 11, 30), imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU', notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.'),
+  static List<AppointmentPerson> _samplePersons = <AppointmentPerson>[
+    AppointmentPerson(id: '21', name: 'Agatha Christie', numberOfAvailableSlots:  321, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), notes: _randomNote, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU'),
+    AppointmentPerson(id: '22', name: 'Amanda Lear',     numberOfAvailableSlots:   42, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 14, 00), notes: _randomNote, imageUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg'),
+    AppointmentPerson(id: '23', name: 'Bill Gates',      numberOfAvailableSlots:    1, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 16, 30), notes: _randomNote, imageUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg'),
+    AppointmentPerson(id: '24', name: 'Chalres Darwin',  numberOfAvailableSlots:    0, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 09, 00), notes: _randomNote, imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*'),
+    AppointmentPerson(id: '25', name: 'Fredy Mercury',   numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 11, 30), notes: _randomNote, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU'),
+    AppointmentPerson(id: '26', name: 'Frank Zapa',      numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 15, 00), notes: _randomNote, imageUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k'),
+    AppointmentPerson(id: '27', name: 'Michael Jackson', numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 08, 00), notes: _randomNote, imageUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv'),
+    AppointmentPerson(id: '28', name: 'Speedy Gonzales', numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 11, 30), notes: _randomNote, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU'),
   ];
 
   // Time Slots And Questions
@@ -650,14 +650,14 @@ class Appointments with Service implements NotificationsListener {
     return result;
   }
 
-  List<AppointmentQuestion> get _sampleQuestions => <AppointmentQuestion>[
+  static List<AppointmentQuestion> _sampleQuestions = <AppointmentQuestion>[
     AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.text, required: true),
     AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.select, values: ["Below 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true),
     AppointmentQuestion(id: "33", title: "What are your symptoms?", type: AppointmentQuestionType.multiSelect, values: ["Fever", "Chills", "Shaking or Shivering", "Shortness of breath", "Difficulty breathing", "Muscle or joint pain", "Fatigue", "Loss of taste and/or smell", "Fever or chills", "Cough", "Sore Throat", "Nausea or vomiting", "Diarrhea"], required: true),
     AppointmentQuestion(id: "34", title: "Are you feeling sick?", type: AppointmentQuestionType.checkbox, required: true),
   ];
 
-  List<AppointmentAnswer> get _sampleAnswers => <AppointmentAnswer>[
+  static List<AppointmentAnswer> _sampleAnswers = <AppointmentAnswer>[
     AppointmentAnswer(questionId: "31", values: ["I don't know."]),
     AppointmentAnswer(questionId: "32", values: ["36-37℃"]),
     AppointmentAnswer(questionId: "33", values: ["Fever", "Chills", "Cough"]),
@@ -746,10 +746,25 @@ class Appointments with Service implements NotificationsListener {
       host: host,
       location: location,
       onlineDetails: details,
-      instructions: 'Sample instructions (${5 - Random().nextInt(5) + 1})',
+      instructions: _randomNote,
       cancelled: cancelled,
     );
   }
+
+  static const List<String> _sampleNotes = <String>[
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ut dolor blandit, ornare sapien scelerisque, dignissim ligula. Donec ligula eros, elementum quis neque in",
+    "Facilisis ornare magna. Nulla at mi ut turpis dapibus volutpat porttitor sit amet mi. Vestibulum molestie felis non accumsan consectetur.",
+    "Curabitur at neque in ipsum molestie mollis ornare vitae urna. Pellentesque tincidunt imperdiet purus, eu facilisis nulla dictum id. Donec elementum mattis turpis, sed vestibulum tortor porttitor ac.",
+    "Maecenas vitae lectus ut tortor viverra accumsan id eget ex. Proin in neque quam. Donec lacinia porttitor mi eu pretium. Praesent fermentum massa eget egestas placerat.",
+    "Nulla orci eros, accumsan in fringilla vel, ultrices eu risus. Vivamus fringilla quis mauris eu iaculis. Nulla aliquet ipsum quis semper vehicula. Morbi gravida condimentum velit vel venenatis.",
+    "Ut quis metus et dolor tincidunt sagittis. Ut id velit libero. Ut pharetra dapibus ligula, at facilisis orci mattis nec. Suspendisse auctor varius venenatis. Vivamus bibendum elementum accumsan.",
+    "Phasellus dapibus bibendum turpis, ut volutpat eros venenatis vitae. Sed tincidunt pulvinar odio maximus porta. Cras semper venenatis pretium. Vestibulum malesuada leo at ex euismod euismod.",
+    "Proin imperdiet dictum diam ut dapibus. Sed massa lorem, pulvinar non suscipit et, sollicitudin ac orci. Phasellus auctor eros sem, id egestas diam tristique at.",
+    "Quisque congue est eu sodales tempor. Duis nunc lectus, pretium id blandit eget, feugiat eu turpis. Morbi dolor magna, rhoncus ac elit sed, dictum venenatis nisi. Aenean in auctor orci, et tristique dolor.",
+    "Etiam interdum ullamcorper est, sit amet venenatis leo tristique quis. Aenean at neque ut purus tincidunt laoreet auctor eget dolor. Quisque eget porttitor dui.",
+  ];
+
+  static String get _randomNote => _sampleNotes[Random().nextInt(_sampleNotes.length)];
   
   /*<Appointment>[
 
