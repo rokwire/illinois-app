@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.58] - 2023-05-09
+### Changed
+- Athletics entries in Browse [#3258](https://github.com/rokwire/illinois-app/issues/3258).
+
 ## [4.3.57] - 2023-05-06
 ### Changed
 - Hide unknown next available appointment [#3252](https://github.com/rokwire/illinois-app/issues/3252).
