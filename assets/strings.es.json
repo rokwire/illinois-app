@@ -997,7 +997,7 @@
     "panel.explore.state.online.empty.mtd_stops":"No hay ubicaciones de paradas de autobús disponibles.",
     "panel.explore.state.online.empty.mtd_destinations":"No hay ubicaciones de destino disponibles.",
     "panel.explore.state.online.empty.mental_health":"No hay ubicaciones de terapeutas disponibles.",
-    "panel.explore.state.online.empty.student_course":"No hay cursos para estudiantes disponibles.",
+    "panel.explore.state.online.empty.student_course":"No hay cursos de estudiantes registrados.",
     "panel.explore.state.online.empty.appointments":"No hay citas disponibles.",
     "panel.explore.state.online.empty.state_farm":"No hay State Farm Wayfinding disponibles.",
 
