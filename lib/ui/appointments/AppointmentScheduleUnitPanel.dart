@@ -386,7 +386,7 @@ class _AppointmentUnitCard extends StatelessWidget {
                             ),
                             Expanded(child:
                               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next available appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular")),
+                                Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next Available Appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular")),
                                 Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
                               ],)
                             ),
