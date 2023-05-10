@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Changed texts for Appointments scheduling [#3266](https://github.com/rokwire/illinois-app/issues/3266).
+### Fixed
+-Remove duplicated message for Maps pop up dialog [#3260](https://github.com/rokwire/illinois-app/issues/3260).
 
 ## [4.3.58] - 2023-05-09
 ### Changed
