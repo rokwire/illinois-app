@@ -997,7 +997,7 @@
 	"panel.explore.state.online.empty.mtd_stops":"沒有可用的巴士站位置。",
 	"panel.explore.state.online.empty.mtd_destinations":"沒有可用的目標位置。",
 	"panel.explore.state.online.empty.mental_health":"沒有可用的治療師位置。",
-	"panel.explore.state.online.empty.student_course":"沒有可用的學生課程。",
+	"panel.explore.state.online.empty.student_course":"沒有註冊學生課程。",
 	"panel.explore.state.online.empty.appointments":"沒有可用的約會。",
 	"panel.explore.state.online.empty.state_farm":"離線時無法使用 State Farm Wayfinding。",
 	

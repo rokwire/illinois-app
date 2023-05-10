@@ -998,7 +998,7 @@
     "panel.explore.state.online.empty.mtd_stops":"No bus stop locations available.",
     "panel.explore.state.online.empty.mtd_destinations":"No destination locations are available.",
     "panel.explore.state.online.empty.mental_health":"No therapist locations are available.",
-    "panel.explore.state.online.empty.student_course":"No student courses are available.",
+    "panel.explore.state.online.empty.student_course":"No student courses registered.",
     "panel.explore.state.online.empty.appointments":"No appointments are available.",
     "panel.explore.state.online.empty.state_farm":"No State Farm Wayfinding available.",
    
