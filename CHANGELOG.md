@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.3.60] - 2023-05-11
+### Fixed
+- Fixed WellnessRingWidget update mechanism that was causing infinite initialization loop when offline [#3270](https://github.com/rokwire/illinois-app/issues/3270).
+
 ## [4.3.59] - 2023-05-10
 ### Changed
 - Changed texts for Appointments scheduling [#3266](https://github.com/rokwire/illinois-app/issues/3266).
