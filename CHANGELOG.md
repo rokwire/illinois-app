@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed WellnessRingWidget update mechanism that was causing infinite initialization loop when offline [#3270](https://github.com/rokwire/illinois-app/issues/3270).
 
 ## [4.3.59] - 2023-05-10
 ### Changed
