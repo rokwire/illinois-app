@@ -59,7 +59,7 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
             Localization()
                 .getStringEx('panel.laundry.issues_submitted.success.header.label', 'Thank You! Your Service Request has been received.'),
             textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 30, fontFamily: Styles().fontFamilies!.medium)));
+            style: Styles().textStyles?.getTextStyle("widget.title.semi_huge")));
   }
 
   Widget _buildSuccessDescription() {
@@ -69,7 +69,7 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
             Localization().getStringEx('panel.laundry.issues_submitted.success.description.label',
                 'One of our technicians will arrive at your property within 3 business days to service the machine. We apologize for any inconvenience you may have experienced.'),
             textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies!.medium)));
+            style: Styles().textStyles?.getTextStyle("widget.description.medium_large")));
   }
 
   Widget _buildReturnWidget() {
@@ -80,7 +80,7 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
         borderColor: Styles().colors!.fillColorPrimary,
         label: Localization().getStringEx('panel.laundry.issues_submitted.return.button', 'Return'),
         onTap: _onTapBack,
-        leftIcon: Image.asset('images/chevron-left-white.png'));
+        leftIcon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true));
   }
 
   void _onTapBack() {

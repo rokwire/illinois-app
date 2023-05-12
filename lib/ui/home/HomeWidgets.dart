@@ -7,7 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -101,14 +101,14 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
 
           Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-              Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+              Styles().images?.getImage('drag-white', excludeFromSemantics: true),
             ),
           ),
 
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               Semantics(label: widget.title, header: true, excludeSemantics: true, child:
-                Text(widget.title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),)
+                Text(widget.title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),)
               )
             )
           ),
@@ -239,7 +239,7 @@ class HomeSlantWidget extends StatelessWidget {
   static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
 
   final String? title;
-  final Image? titleIcon;
+  final String? titleIconKey;
   final CrossAxisAlignment headerAxisAlignment;
 
   final double flatHeight;
@@ -252,7 +252,7 @@ class HomeSlantWidget extends StatelessWidget {
 
   const HomeSlantWidget({Key? key,
     this.title,
-    this.titleIcon,
+    this.titleIconKey,
     this.headerAxisAlignment = CrossAxisAlignment.center,
     
     this.flatHeight = 40,
@@ -275,12 +275,12 @@ class HomeSlantWidget extends StatelessWidget {
           child: Container(color: Styles().colors!.fillColorPrimary, child:
             Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
-              HomeTitleIcon(image: titleIcon),
+              HomeTitleIcon(image: Styles().images?.getImage(titleIconKey, excludeFromSemantics: true)),
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Semantics(label: title, header: true, excludeSemantics: true, child:
-                    Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                    Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat"))
                   )
                 )
               ),
@@ -321,7 +321,7 @@ class HomeSlantWidget extends StatelessWidget {
 
 class HomeTitleIcon extends StatelessWidget {
 
-  final Image? image;
+  final Widget? image;
   HomeTitleIcon({Key? key, this.image});
 
   @override
@@ -345,10 +345,10 @@ class HomeFavoriteButton extends FavoriteButton {
 
   @override
   bool? get isFavorite {
-    List<String>? avalableSectionFavorites = ((favorite != null) && (favorite?.id != null) && (favorite?.category == null)) ? JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']) : null;
-    if (avalableSectionFavorites != null) {
+    List<String>? availableSectionFavorites = ((favorite != null) && (favorite?.id != null) && (favorite?.category == null)) ? JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']) : null;
+    if (availableSectionFavorites != null) {
       int favCount = 0, unfavCount = 0;
-      for (String code in avalableSectionFavorites) {
+      for (String code in availableSectionFavorites) {
         if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: favorite?.id)) ?? false) {
           favCount++;
         }
@@ -356,10 +356,10 @@ class HomeFavoriteButton extends FavoriteButton {
           unfavCount++;
         }
       }
-      if (favCount == avalableSectionFavorites.length) {
+      if (favCount == availableSectionFavorites.length) {
         return true;
       }
-      else if (unfavCount == avalableSectionFavorites.length) {
+      else if (unfavCount == availableSectionFavorites.length) {
         return false;
       }
       else {
@@ -399,10 +399,10 @@ class HomeFavoriteButton extends FavoriteButton {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
         // process toggle home panel widget
-        List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
-        if (avalableSectionFavorites != null) {
+        List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
+        if (availableSectionFavorites != null) {
           List<Favorite> favorites = <Favorite>[favorite!];
-          for(String sectionEntry in avalableSectionFavorites) {
+          for(String sectionEntry in availableSectionFavorites) {
             favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
           }
           Auth2().prefs?.setListFavorite(favorites, value);
@@ -433,9 +433,9 @@ class HomeFavoriteButton extends FavoriteButton {
         else {
           // turn off home widget entry
           int sectionFavoritesCount = 0;
-          List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
-          if (avalableSectionFavorites != null) {
-            for (String sectionEntry in avalableSectionFavorites) {
+          List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
+          if (availableSectionFavorites != null) {
+            for (String sectionEntry in availableSectionFavorites) {
               if (Auth2().prefs?.isFavorite(HomeFavorite(sectionEntry, category: favorite?.category)) ?? false) {
                 sectionFavoritesCount++;
               }
@@ -507,12 +507,12 @@ class HomeDragFeedback extends StatelessWidget {
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+            Styles().images?.getImage('drag-white', excludeFromSemantics: true),
           ),
-          
+
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
+              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")?.copyWith(decoration: TextDecoration.none, shadows: <Shadow>[
                 Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
               ] ),),
             ),
@@ -551,7 +551,7 @@ class HomeCommandButton extends StatelessWidget {
                   Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
                 )
               ),
-              // Image.asset('images/chevron-right.png', excludeFromSemantics: true)
+              // Styles().images?.getImage('images/chevron-right.png', excludeFromSemantics: true)
               ((loading == true)
                 ? Padding(padding: EdgeInsets.all(16), child:
                     SizedBox(height: 16, width: 16, child:
@@ -563,7 +563,7 @@ class HomeCommandButton extends StatelessWidget {
             ],),
             StringUtils.isNotEmpty(description)
               ? Padding(padding: EdgeInsets.only(top: 5, right: 16), child:
-                  Text(description ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), semanticsLabel: "",),
+                  Text(description ?? '', style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"), semanticsLabel: "",),
                 )
               : Container(),
         ],),),),
@@ -596,13 +596,13 @@ class HomeMessageCard extends StatelessWidget {
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary))
+                Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"))
               ),
             )
           ]) : Container(),
           StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
             Expanded(child:
-              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground))
+              Text(message ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
             )
           ]) : Container(),
         ]),
@@ -637,25 +637,23 @@ class HomeMessageHtmlCard extends StatelessWidget {
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Html(data: title,
-                  onLinkTap: (url, renderContext, attributes, element) => _onTapLink(url),
-                  style: {
-                    "body": Style(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                    "a": Style(color: Styles().colors?.fillColorSecondary),
-                  },
-                ),
+                HtmlWidget(
+                    StringUtils.ensureNotEmpty(title),
+                    onTapUrl : (url) {_onTapLink(url); return true;},
+                    textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"),
+                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+                )
               ),
             )
           ]) : Container(),
           StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
             Expanded(child:
-                Html(data: message,
-                  onLinkTap: (url, renderContext, attributes, element) => _onTapLink(url),
-                  style: {
-                    "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                    "a": Style(color: Styles().colors?.fillColorSecondary),
-                  },
-                ),
+                HtmlWidget(
+                  StringUtils.ensureNotEmpty(message),
+                  onTapUrl : (url) {_onTapLink(url); return true;},
+                  textStyle:  Styles().textStyles?.getTextStyle("widget.card.detail.regular"),
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+               )
             )
           ]) : Container(),
         ]),
@@ -712,7 +710,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   String  get contentKey => 'home.$favoriteId';
   
   String? get title;
-  Image?  get titleIcon => Image.asset('images/campus-tools.png', excludeFromSemantics: true);
+  String?  get titleIconKey => 'campus-tools';
   
   String? get emptyTitle => null;
   String? get emptyMessage;
@@ -783,7 +781,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: favoriteId,
       title: title,
-      titleIcon: titleIcon,
+      titleIconKey: titleIconKey,
       childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );

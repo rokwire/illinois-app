@@ -261,23 +261,12 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
     return
       Stack(
-          alignment: Alignment.topCenter,
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Container(
-                  height: 88,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("images/slant-down-right-grey.png" ),
-                          fit: BoxFit.fill)),
-                )
-              ],
-            ),
-            Padding( padding: EdgeInsets.symmetric(horizontal: 16),
-                child: pollsContent,
-            )],);
-
+        alignment: Alignment.topCenter,
+        children: <Widget>[
+          Styles().images?.getImage("slant-dark") ?? Container(),
+          Padding( padding: EdgeInsets.symmetric(horizontal: 16),
+              child: pollsContent,
+          )]);
   }
 
   List<Poll>? get _polls {
@@ -360,7 +349,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 100,),
           Text(message,
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
+            style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")
           ),
           Container(height: 16,),
           Text(description,
@@ -378,7 +367,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 46,),
           Text(Localization().getStringEx("panel.polls_home.text.error","Error"),
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
+            style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")
           ),
           Container(height: 16,),
           Text(error,
@@ -924,7 +913,7 @@ class _PollCardState extends State<PollCard> {
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll!.options![optionIndex];
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
-      String checkboxImage = didVote ? 'images/checkbox-radio-selected.png' : 'images/checkbox-radio-unselected.png';
+      String checkboxIconKey = didVote ? 'check-circle-filled' : 'check-circle-outline-gray';
 
       String? votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
@@ -950,7 +939,7 @@ class _PollCardState extends State<PollCard> {
           child:
           Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
+            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage(checkboxIconKey, excludeFromSemantics: true)),
             Expanded(
               flex: 5,
               key: progressKey, child:
@@ -963,7 +952,7 @@ class _PollCardState extends State<PollCard> {
                       Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                         child: Text(option, style: useCustomColor? Styles().textStyles?.getTextStyle("panel.polls.home.check.accent") : Styles().textStyles?.getTextStyle("panel.polls.home.check")),)),
                         Visibility( visible: didVote,
-                        child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
+                        child: Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('check-circle-outline-gray', excludeFromSemantics: true))
                       ),
                     ],),)
               ),
@@ -1026,7 +1015,7 @@ class _PollCardState extends State<PollCard> {
       GestureDetector(onTap: _onDeletePollTapped, child:
         Stack(children: [
           Padding(padding: EdgeInsets.all(12), child:
-              Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,),
+          Styles().images?.getImage('trash', excludeFromSemantics: true),
           ),
           _showDeletePollProgress ? Padding(padding: EdgeInsets.all(9), child:
             SizedBox(height: 24, width: 24, child:

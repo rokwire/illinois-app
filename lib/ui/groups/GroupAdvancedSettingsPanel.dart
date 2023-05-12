@@ -31,6 +31,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: HeaderBar(title: "Advanced Settings"),
       body: Column(
           children: <Widget>[
             Expanded(
@@ -39,7 +40,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
                 child: CustomScrollView(
                     scrollDirection: Axis.vertical,
                     slivers: <Widget>[
-                      SliverHeaderBar(title: "Advanced Settings"),
+                      //SliverHeaderBar(title: "Advanced Settings"),
                       SliverList(
                         delegate: SliverChildListDelegate([
                         Container(
@@ -107,7 +108,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
     return Container( color: Styles().colors!.background,
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: EnabledToggleButton(
-          label: Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
+          label:_isResearchProject? Localization().getStringEx('panel.groups_settings.auto_join.project.enabled.label', 'Does not require my screening of potential participants') : Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
           enabled: true,
@@ -157,4 +158,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
    Navigator.of(context).pop(_settings);
   }
 
+  bool get _isResearchProject {
+    return widget.group?.researchProject ?? false;
+  }
 }

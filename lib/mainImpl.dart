@@ -25,7 +25,6 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
-import 'package:illinois/service/Explore.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/StudentCourses.dart';
@@ -37,7 +36,6 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
-import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/OnCampus.dart';
@@ -65,6 +63,8 @@ import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
+import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
@@ -84,7 +84,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/events.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 final AppExitListener appExitListener = AppExitListener();
@@ -130,6 +129,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     IlliniCash(),
     FlexUI(),
     Onboarding(),
+    Content(),
     Polls(),
     GeoFence(),
     Voter(),
@@ -146,18 +146,18 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     Wellness(),
     WellnessRings(),
     WPGUFMRadio(),
-    Laundries(),
     AppReview(),
     StudentCourses(),
     Appointments(),
     MTD(),
-    Explore(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Content(),
   ]);
   
   ServiceError? serviceError = await illinois.Services().init();
+
+  //_testSecretKeys();
 
   // do not show the red error widget when release mode
   if (kReleaseMode) {
@@ -459,3 +459,38 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     }
   }
 }
+
+/*void _testSecretKeys() {
+  String? encryptionKey = Config().encryptionKey;
+  String? encryptionIV = Config().encryptionIV;
+  
+  String? secretKeysDev, secretKeysDevEnc, secretKeysProd, secretKeysProdEnc, secretKeysTest, secretKeysTestEnc;
+  
+  // AESCrypt.decrypt
+
+  secretKeysDevEnc ??= '...';
+  secretKeysDev = AESCrypt.decrypt(secretKeysDevEnc, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysDev", lineLength: 912);
+
+  secretKeysProdEnc ??= '...';
+  secretKeysProd = AESCrypt.decrypt(secretKeysProdEnc, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysProd", lineLength: 912);
+
+  secretKeysTestEnc ??= '...';
+  secretKeysTest = AESCrypt.decrypt(secretKeysTestEnc, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysTest", lineLength: 912);
+  
+  // AESCrypt.encrypt
+  
+  secretKeysDev ??= '{...}';
+  secretKeysDevEnc = AESCrypt.encrypt(secretKeysDev, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysDevEnc", lineLength: 912);
+
+  secretKeysProd ??= '{...}';
+  secretKeysProdEnc = AESCrypt.encrypt(secretKeysProd, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysProdEnc", lineLength: 912);
+
+  secretKeysTest ??= '{...}';
+  secretKeysTestEnc = AESCrypt.encrypt(secretKeysTest, key: encryptionKey, iv: encryptionIV);
+  Log.d("$secretKeysTestEnc", lineLength: 912);
+}*/

@@ -16,35 +16,22 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/explore.dart';
-import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreListPanel.dart';
-import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:sprintf/sprintf.dart';
 
 enum _EventTab { All, Saved }
 
@@ -77,23 +64,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   List<Event>? _displayEvents;
 
-  Position? _locationData;
-  LocationServicesStatus? _locationServicesStatus;
-
   List<_EventFilter>? _tabFilters;
   _EventFilter? _initialSelectedFilter;
   bool _filterOptionsVisible = false;
 
   ScrollController _scrollController = ScrollController();
-
-  //Maps
-  static const double MapBarHeight = 114;
-
-  bool? _mapAllowed;
-  MapController? _nativeMapController;
-  ListMapDisplayType _displayType = ListMapDisplayType.List;
-  dynamic _selectedMapExplore;
-  late AnimationController _mapExploreBarAnimationController;
 
   bool _showSavedContent = false; //All by default
 
@@ -102,56 +77,31 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       Connectivity.notifyStatusChanged,
-      LocationServices.notifyStatusChanged,
       Localization.notifyStringsUpdated,
-      NativeCommunicator.notifyMapSelectExplore,
-      NativeCommunicator.notifyMapSelectLocation,
-      Auth2UserPrefs.notifyPrivacyLevelChanged,
-      FlexUI.notifyChanged,
     ]);
     _initFilters();
-    _initLocationService();
     _initEventTabs();
     _initEvents();
-    _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: -MapBarHeight, upperBound: 0, vsync: this);
     super.initState();
   }
 
   @override
   void dispose() {
-    if (_displayType == ListMapDisplayType.Map) {
-      Analytics().logMapHide();
-    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),
-      ),
-      body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child:
-              ExploreDisplayTypeHeader(displayType: _displayType,
-                searchVisible: false,
-                onTapList: () => _selectDisplayType(ListMapDisplayType.List),
-                onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
-            ),
-            Container( color: Styles().colors!.white,
-                   child : Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Row(
-                          children: _buildTabWidgets(),
-                        )),
-            ),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),),
+      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Container(color: Styles().colors!.white, child :
+          Padding(padding: EdgeInsets.all(12), child:
+            Row(children: _buildTabWidgets(),)
+          ),
+        ),
 
             Expanded(
-              flex: 9,
               child: Stack(
                 children: <Widget>[
                   Column(
@@ -173,12 +123,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                           child: Container(
                             color: Styles().colors!.background,
                             child: Center(
-                              child: Stack(
-                                children: <Widget>[
-                                  _buildMapView(context),
-                                  _buildListView(),
-                                ],
-                              ),
+                              child: _buildListView(),
                             ),
                           ))
                     ],
@@ -215,12 +160,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       exploresContent = _buildEmpty();
     }
 
-    return Visibility(visible: (_displayType == ListMapDisplayType.List), child:
-      Stack(children: [
-        Container(padding: EdgeInsets.symmetric(horizontal: 16), color: Styles().colors!.background, child: exploresContent),
-        _buildDimmedContainer(),
-      ])
-    );
+    return Stack(children: [
+      Container(padding: EdgeInsets.symmetric(horizontal: 16), color: Styles().colors!.background, child: exploresContent),
+      _buildDimmedContainer(),
+    ]);
   }
 
   List<Widget> _constructListContent() {
@@ -271,18 +214,6 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Container(child: Align(alignment: Alignment.center,
       child: Text(message, textAlign: TextAlign.center,),
     ));
-  }
-
-  //display type
-  void _selectDisplayType(ListMapDisplayType displayType) {
-    Analytics().logSelect(target: displayType.toString());
-    if (_displayType != displayType) {
-      _refresh(() {
-        _displayType = displayType;
-        _mapAllowed = (_displayType == ListMapDisplayType.Map) || (_mapAllowed == true);
-        _enableMap(_displayType == ListMapDisplayType.Map);
-      });
-    }
   }
 
   //Filters
@@ -385,12 +316,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
               padding: EdgeInsets.all(12),
               child: GestureDetector(
                 onTap: _onTapSearchTags,
-                child: Image.asset(
-                  'images/icon-search.png',
-                  color: Styles().colors!.fillColorSecondary,
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('search'),
               ),
             ),
           ),
@@ -582,191 +508,6 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  ///Maps
-  ///
-  Widget _buildMapView(BuildContext context) {
-    String? title, description;
-    Color? exploreColor = Colors.white;
-    if (_selectedMapExplore is Event) {
-      title = _selectedMapExplore?.exploreTitle;
-      description = _selectedMapExplore.exploreLocation?.description;
-      exploreColor = _selectedMapExplore.uiColor;
-    }
-    else if  (_selectedMapExplore is List<Event>) {
-      String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
-      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
-      description = _selectedMapExplore?.first?.exploreLocation?.description;
-      exploreColor = _selectedMapExplore.first?.uiColor;
-    }
-
-    double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
-    return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
-      (_mapAllowed == true) ? MapWidget(
-        onMapCreated: _onNativeMapCreated,
-        creationParams: { "myLocationEnabled" : _userLocationEnabled(), "levelsEnabled": Storage().debugMapShowLevels},
-      ) : Container(),
-      Positioned(
-          bottom: _mapExploreBarAnimationController.value,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: MapBarHeight,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid),
-                  bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid)),
-            ),
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text((title != null) ? title : "",
-                          overflow: TextOverflow.ellipsis,
-                          style: Styles().textStyles?.getTextStyle('panel.event_schedule.title')),
-                      Text((description != null) ? description : "",
-                          overflow: TextOverflow.ellipsis,
-                          style: Styles().textStyles?.getTextStyle('panel.event_schedule.map.description')),
-                      Container(
-                        height: 8,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          _userLocationEnabled() ?
-                          Row(
-                              children: <Widget>[
-                                SizedBox(width: buttonWidth, child: RoundedButton(
-                                    label: Localization().getStringEx('panel.events_schedule.button.directions.title', 'Directions'),
-                                    hint: Localization().getStringEx('panel.events_schedule.button.directions.hint', ''),
-                                    backgroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                    fontSize: 16.0,
-                                    textColor: Styles().colors!.fillColorPrimary,
-                                    borderColor: Styles().colors!.fillColorSecondary,
-                                    onTap: () {
-                                      Analytics().logSelect(target: 'Directions');
-                                      _presentMapExploreDirections(context);
-                                    }),),
-                                Container(
-                                  width: 12,
-                                ),
-                              ]) :
-                          Container(),
-                          SizedBox(width: buttonWidth, child: RoundedButton(
-                              label: Localization().getStringEx('panel.events_schedule.button.details.title', 'Details'),
-                              hint: Localization().getStringEx('panel.events_schedule.button.details.hint', ''),
-                              backgroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              fontSize: 16.0,
-                              textColor: Styles().colors!.fillColorPrimary,
-                              borderColor: Styles().colors!.fillColorSecondary,
-                              onTap: () {
-                                Analytics().logSelect(target: 'Details');
-                                _presentMapExploreDetail(context);
-                              }),),
-
-
-                        ],
-                      )
-                    ])),
-          ))
-    ]);
-  }
-
-  _selectMapExplore(dynamic explore) {
-    if (explore != null) {
-      _refresh(() { _selectedMapExplore = explore;});
-      _mapExploreBarAnimationController.forward();
-    }
-    else if (_selectedMapExplore != null) {
-      _mapExploreBarAnimationController.reverse().then((_){
-        _refresh(() { _selectedMapExplore = null;});
-      });
-    }
-  }
-
-  _presentMapExploreDirections(BuildContext context) async {
-    dynamic explore = _selectedMapExplore;
-    _mapExploreBarAnimationController.reverse().then((_){
-      _refresh(() { _selectedMapExplore = null;});
-    });
-    if (explore != null) {
-      NativeCommunicator().launchExploreMapDirections(target: explore);
-    }
-  }
-
-  _presentMapExploreDetail(BuildContext context) {
-    dynamic explore = _selectedMapExplore;
-    _mapExploreBarAnimationController.reverse().then((_){
-      _refresh(() { _selectedMapExplore = null;});
-    });
-
-    if (explore is Explore) {
-      Event? event = (explore is Event) ? explore : null;
-      if (event?.isGameEvent ?? false) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: event!.speaker, sportName: event.registrationLabel,)));
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: explore, initialLocationData: _locationData,)));
-      }
-    }
-    else if (explore is List<Explore>) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: explore)));
-    }
-  }
-
-  _onNativeMapCreated(mapController) {
-    _nativeMapController = mapController;
-    _placeEventOnMap(_displayEvents);
-    _enableMap(_displayType == ListMapDisplayType.Map);
-    _enableMyLocationOnMap();
-  }
-
-  _placeEventOnMap(List<Event>? explores) {
-    if (_nativeMapController != null) {
-      _nativeMapController!.placePOIs(explores);
-    }
-  }
-
-  _enableMap(bool enable) {
-    if (_nativeMapController != null) {
-      _nativeMapController!.enable(enable);
-      Analytics().logMapDisplay(action: enable ? Analytics.LogMapDisplayShowActionName : Analytics.LogMapDisplayHideActionName);
-    }
-  }
-
-  _enableMyLocationOnMap() {
-    if (_nativeMapController != null) {
-      _nativeMapController!.enableMyLocation(_userLocationEnabled());
-    }
-  }
-
-  Explore? _exploreFromMapExplore(Explore? mapExplore) {
-    String? mapExploreId = mapExplore?.exploreId;
-    if ((_displayEvents != null) && (mapExploreId != null)) {
-      for (Explore displayExplore in _displayEvents!) {
-        if ((displayExplore.runtimeType.toString() == mapExplore.runtimeType.toString()) && (displayExplore.exploreId != null) && (displayExplore.exploreId == mapExploreId)) {
-          return displayExplore;
-        }
-      }
-    }
-    return mapExplore; // null;
-  }
-
-  List<Explore> _exploresFromMapExplores(List<Explore>? mapExplores) {
-    List<Explore> explores = [];
-    if (mapExplores != null) {
-      for (Explore mapExplore in mapExplores) {
-        explores.add(_exploreFromMapExplore(mapExplore) ?? mapExplore);
-      }
-    }
-    return explores;
-  }
-
-  bool _userLocationEnabled() {
-    return FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
-  }
-
   //EventsLoading
   void _initEvents() {
     _events = widget.superEvent?.subEvents;
@@ -904,34 +645,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return null;
   }
 
-  //LocationServices
-  _initLocationService(){
-    if (FlexUI().isLocationServicesAvailable) {
-      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
-        _locationServicesStatus = locationServicesStatus;
-
-        if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
-          LocationServices().requestPermission().then((LocationServicesStatus? locationServicesStatus) {
-            _locationServicesStatus = locationServicesStatus;
-            _refresh((){});
-          });
-        }
-        else {
-          _refresh((){});
-        }
-      });
-    }
-    else {
-      _refresh((){});
-    }
-  }
-
   //Listeners
   @override
   void onNotification(String name, param) {
-    if (name == LocationServices.notifyStatusChanged) {
-      _onLocationServicesStatusChanged(param);
-    } else if(name == Auth2UserPrefs.notifyFavoritesChanged) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _refreshEvents();
     }
     else if (name == Connectivity.notifyStatusChanged) {
@@ -941,62 +658,6 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
     else if (name == Localization.notifyStringsUpdated) {
       setState(() { });
-    }
-    else if (name == NativeCommunicator.notifyMapSelectExplore) {
-      _onNativeMapSelectExplore(param);
-    }
-    else if (name == NativeCommunicator.notifyMapSelectLocation) {
-      _onNativeMapSelectLocation(param);
-    }
-    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _updateLocationServicesStatus();
-    }
-    else if (name == FlexUI.notifyChanged) {
-      _updateLocationServicesStatus();
-    }
-  }
-
-  void _updateLocationServicesStatus(){
-    if (FlexUI().isLocationServicesAvailable) {
-      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
-        _locationServicesStatus = locationServicesStatus;
-        _refresh((){});
-      });
-    }
-    else {
-      _refresh((){});
-    }
-  }
-
-  void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
-    if (FlexUI().isLocationServicesAvailable) {
-      _locationServicesStatus = status;
-      _refresh((){});
-    }
-  }
-
-  void _onNativeMapSelectExplore(Map<String, dynamic>? params) {
-    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
-    if (_nativeMapController!.mapId == mapId) {
-      dynamic explore;
-      dynamic exploreJson = (params != null) ? params['explore'] : null;
-      if (exploreJson is Map) {
-        explore = _exploreFromMapExplore(Explore.fromJson(exploreJson as Map<String, dynamic>?));
-      }
-      else if (exploreJson is List) {
-        explore = _exploresFromMapExplores(Explore.listFromJson(exploreJson));
-      }
-
-      if (explore != null) {
-        _selectMapExplore(explore);
-      }
-    }
-  }
-
-  void _onNativeMapSelectLocation(Map<String, dynamic>? params) {
-    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
-    if (_nativeMapController!.mapId == mapId) {
-      _selectMapExplore(null);
     }
   }
 }
@@ -1093,7 +754,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                           Container(
                               child: Padding(
                                   padding: EdgeInsets.only(right: 8),
-                                  child: Image.asset("images/icon-calendar.png"))),
+                                  child: Styles().images?.getImage('calendar'))),
                           Expanded(
                             child: Text(
                               widget.event!.title!,
@@ -1120,7 +781,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                                     child: Container(
                                         child: Padding(
                                             padding: EdgeInsets.only(left: 24),
-                                            child: Image.asset(favorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png'))))),
+                                            child: Styles().images?.getImage(favorite ? 'star-filled' : 'star-outline-gray'))))),
                           )
                         ],
                       )

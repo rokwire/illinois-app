@@ -25,7 +25,6 @@ class ExplorePOI with Explore implements Favorite {
     ) : null;
   }
 
-  @override
   toJson() {
     return {
       "placeId": placeId,
@@ -133,21 +132,8 @@ class ExplorePOI with Explore implements Favorite {
   @override ExploreLocation? get exploreLocation  => location;
   @override String?   get exploreLocationDescription => location?.displayCoordinates;
 
-  // ExploreJsonHandler
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      json.containsKey('placeId') &&
-      json.containsKey('name') &&
-      ExploreLocation.canJson(JsonUtils.mapValue(json['location']));
-  }
-
   // Favorite
   static const String favoriteKeyName = "poiLocations";
   @override String get favoriteKey => favoriteKeyName;
   @override String? get favoriteId => exploreId;
-}
-
-class ExplorePOIJsonHandler implements ExploreJsonHandler {
-  @override bool exploreCanJson(Map<String, dynamic>? json) => ExplorePOI.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => ExplorePOI.fromJson(json);
 }

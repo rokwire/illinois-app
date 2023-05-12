@@ -149,7 +149,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                   Align(
                                       alignment: Alignment.center,
                                       child:Container(
-                                        child: Image.asset("images/group_138.png", excludeFromSemantics: true,fit: BoxFit.fitWidth, width: 300,),
+                                        child: Styles().images?.getImage("personalize-illustration", excludeFromSemantics: true),
                                       )
                                   )
                                 ],

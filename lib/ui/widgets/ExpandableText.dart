@@ -32,8 +32,10 @@ class ExpandableText extends rokwire.ExpandableText {
     TextStyle? readMoreStyle,
 
     Widget? readMoreIcon,
-    String? readMoreIconAsset = 'images/icon-down-orange.png',
+    String? readMoreIconKey,
     EdgeInsetsGeometry readMoreIconPadding = const EdgeInsets.only(left: 7),
+
+    Widget? footerWidget,
   }) : super(text,
     key: key,
     textStyle: textStyle,
@@ -47,8 +49,10 @@ class ExpandableText extends rokwire.ExpandableText {
     readMoreStyle: readMoreStyle,
     
     readMoreIcon: readMoreIcon,
-    readMoreIconAsset: readMoreIconAsset,
+    readMoreIconKey: readMoreIconKey,
     readMoreIconPadding: readMoreIconPadding,
+
+    footerWidget: footerWidget,
   );
 
   @override

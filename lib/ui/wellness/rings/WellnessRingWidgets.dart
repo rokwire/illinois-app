@@ -1,12 +1,15 @@
 import 'package:confetti/confetti.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 // Widgets
@@ -45,6 +48,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     NotificationService().subscribe(this, [
       WellnessRings.notifyUserRingsUpdated,
       WellnessRings.notifyUserRingsAccomplished,
+      Auth2.notifyPictureChanged,
     ]);
     _loadRingsData();
     _controllerCenter = ConfettiController(duration: const Duration(seconds: 5));
@@ -185,8 +189,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                             shape: BoxShape.circle
                         ),
                         child: childWidget ??
-                            Center(child: Text("TBD",
-                              style: TextStyle(fontSize: 40),)),
+                            Center(child: Text("TBD",)),
                       )
                   ),
                 ],
@@ -199,14 +202,27 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     return Container();
   }
 
-  Widget _buildProfilePicture() { //TBD update image resource
+  Widget _buildProfilePicture() {
+    Uint8List? profileImageBytes = Auth2().authPicture;
+    bool hasProfilePicture = (profileImageBytes != null);
+    Image? profileImage = hasProfilePicture ? Image.memory(profileImageBytes) : null;
+    Widget profilePictureWidget = hasProfilePicture
+        ? ModalImageHolder(
+            image: profileImage?.image,
+            child: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    image: DecorationImage(fit: hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))),
+          )
+        : (Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true) ?? Container());
     return
       Stack(
         children: [
           Container(
             padding: EdgeInsets.all(1),
             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white,),
-            child:Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.asset('images/wellness_ring_profile.png', excludeFromSemantics: true).image))),
+            child: profilePictureWidget,
           ),
           Center(
               child: ConfettiWidget(
@@ -229,14 +245,15 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   @override
   void onNotification(String name, param) {
     if(name == WellnessRings.notifyUserRingsUpdated){
-      WellnessRings().loadWellnessRings().then((value){
-        _ringsData = value;
+      // WellnessRings().loadWellnessRings().then((value){  //This approach was causing bad loop when no internet connection. Check if it was workaround for other issue and remove if no other issues are caused
+      //   _ringsData = value;
+      _ringsData = WellnessRings().wellnessRings;
         if(mounted) {
           try { //Unhandled Exception: 'package:flutter/src/widgets/framework.dart': Failed assertion: line 4234 pos 12: '_lifecycleState != _ElementLifecycle.defunct': is not true.
             setState(() {});
           } catch (e) {print(e);}
         }
-      });
+      // });
     } else if( name == WellnessRings.notifyUserRingsAccomplished){
       if (widget.accomplishmentDialogEnabled && param != null && param is String) {
         WellnessRingDefinition? data = WellnessRings().wellnessRings
@@ -311,6 +328,10 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
       if(widget.accomplishmentConfettiEnabled) {
         _playConfetti();
       }
+    } else if (name == Auth2.notifyPictureChanged) {
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -363,10 +384,10 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                 Text(widget.label , semanticsLabel: "",
-                  style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.accent')),
+                  style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular.accent')),
                 widget.description==null ? Container():
                 Text(widget.description ?? "" , semanticsLabel: "",
-                  style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.regular')),
+                  style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular')),
                 ],),)),
               Container(
                 child: Row(
@@ -396,7 +417,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Image.asset('images/edit-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+          child: Styles().images?.getImage('edit-white', excludeFromSemantics: true),
         )));
   }
   Widget get _increaseValueButton{
@@ -424,7 +445,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                  child: Styles().images?.getImage('plus-circle-white', excludeFromSemantics: true, color:  Styles().colors!.white!),
                 ))
             ]
         ))
@@ -458,7 +479,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child:Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Image.asset('images/group-decrease.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                  child: Styles().images?.getImage('minus-circle-white', excludeFromSemantics: true),
               ))
             ]
           )
@@ -515,8 +536,8 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
                         textAlign: TextAlign.left,
                         text: TextSpan(
                             children:[
-                              TextSpan(text: "${widget.label}  ", style : Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.regular'), semanticsLabel: ""),
-                              TextSpan(text: widget.description, style : Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.accent'),),
+                              TextSpan(text: "${widget.label}  ", style : Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular'), semanticsLabel: ""),
+                              TextSpan(text: widget.description, style : Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular.accent'),),
                             ]
                         )),
                     )),
@@ -551,7 +572,7 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
                   Center(
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                        child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                        child: Styles().images?.getImage('plus-circle-white', excludeFromSemantics: true),
                       ))
                 ]
             )));

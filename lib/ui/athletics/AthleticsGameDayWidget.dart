@@ -19,6 +19,7 @@ import 'package:illinois/model/sport/SportDetails.dart';
 
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
@@ -27,7 +28,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class AthleticsGameDayWidget extends StatefulWidget {
   final Game? game;
-  AthleticsGameDayWidget({this.game});
+  final String? favoriteId;
+  AthleticsGameDayWidget({Key? key, this.game, this.favoriteId}) : super(key: key);
 
   _AthleticsGameDayWidgetState createState() => _AthleticsGameDayWidgetState();
 
@@ -46,39 +48,31 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          color: Styles().colors!.fillColorPrimary,
-          child: Semantics( excludeSemantics: true, header: true,
-            label: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
-            child:Padding(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-              child: Row(
-                children: <Widget>[
-                  StringUtils.isNotEmpty(widget.sportDefinition?.iconPath)
-                      ? Image.asset(widget.sportDefinition!.iconPath!, excludeFromSemantics: true)
-                      : Container(),
-                  Container(
-                    width: 10,
-                  ),
-                  Text(
-                    Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: Styles().fontFamilies!.extraBold,
-                        fontSize: 20),
-                  )
-                ],
-              ),
+
+    return (widget.favoriteId != null) ?
+      HomeSlantWidget(favoriteId: widget.favoriteId,
+        title: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
+        titleIconKey: widget.sportDefinition?.iconPath,
+        child: Padding(padding: EdgeInsets.only(bottom: 48), child:
+          AthleticsGameDetailHeading(game: widget.game),
+        ),
+      )
+    :
+      Column(children: <Widget>[
+        Container(color: Styles().colors!.fillColorPrimary, child:
+          Semantics(label: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'), excludeSemantics: true, header: true, child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
+              Row(children: <Widget>[
+                StringUtils.isNotEmpty(widget.sportDefinition?.iconPath)
+                  ? Styles().images?.getImage(widget.sportDefinition!.iconPath!, excludeFromSemantics: true) ?? Container()
+                  : Container(),
+                Container(width: 10,),
+                Text(Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'), style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat"),
+                )
+              ],),
             )
           ),
         ),
-        AthleticsGameDetailHeading(game: widget.game),
-        Container(
-          height: 48,
-        )
-      ],
-    );
+      ]);
   }
 }

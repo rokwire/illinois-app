@@ -1,7 +1,7 @@
 
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideEntryCard extends StatefulWidget {
-  final String favoriteKey;
+  final String? favoriteKey;
   final Map<String, dynamic>? guideEntry;
   GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName });
 
@@ -26,7 +26,7 @@ class GuideEntryCard extends StatefulWidget {
 
 class _GuideEntryCardState extends State<GuideEntryCard> implements NotificationsListener {
 
-  late bool _isFavorite;
+  bool _isFavorite = false;
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
     ]);
-    _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
+    _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: guideEntryId));
   }
 
   @override
@@ -50,7 +50,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {
-        _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
+        _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: guideEntryId));
       });
     }
     else if (name == FlexUI.notifyChanged) {
@@ -70,18 +70,25 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
         Text(reminderDate ?? '',
           style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 18, color: Styles().colors?.fillColorPrimary, ),),),
       Container(height: 4),
-      Html(data: titleHtml ?? '',
-        onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-        style: { "body": Style(fontFamily: Styles().fontFamilies?.medium, fontSize: FontSize(16), color: Styles().colors?.fillColorPrimary, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+      HtmlWidget(
+          StringUtils.ensureNotEmpty(titleHtml),
+          onTapUrl : (url) {_onTapLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+      )
     ] : <Widget>[
       Padding(padding: EdgeInsets.only(right: 17), child:
-        Html(data: titleHtml ?? '',
-          onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-          style: { "body": Style(fontFamily: Styles().fontFamilies?.extraBold, fontSize: FontSize(20), color: Styles().colors?.fillColorPrimary, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
+        HtmlWidget(
+          StringUtils.ensureNotEmpty(titleHtml),
+          onTapUrl : (url) {_onTapLink(url); return true;},
+          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
+        ),
+      ),
       Container(height: 8),
-      Html(data: descriptionHtml ?? '',
-        onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-        style: { "body": Style(fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), color: Styles().colors?.textBackground, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+      HtmlWidget(
+        StringUtils.ensureNotEmpty(descriptionHtml),
+        onTapUrl : (url) {_onTapLink(url); return true;},
+        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+      ),
     ];
 
     return Container(
@@ -97,7 +104,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
           ),)),
         Container(color: Styles().colors?.accentColor3, height: 4),
-        Visibility(visible: Auth2().canFavorite, child:
+        Visibility(visible: _canFavorite, child:
           Align(alignment: Alignment.topRight, child:
           Semantics(
             label: _isFavorite
@@ -110,11 +117,13 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
             child:
             GestureDetector(onTap: _onTapFavorite, child:
               Container(padding: EdgeInsets.only(top:16, right:16, left: 20, bottom: 20), child:
-                Image.asset(_isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
+              Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
           ),)),),),
       ],),
     );
   }
+
+  bool get _canFavorite => (widget.favoriteKey != null) && Auth2().canFavorite;
 
   void _onTapLink(String? url) {
     Analytics().logSelect(target: 'Link: $url');
@@ -127,9 +136,11 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   }
 
   void _onTapFavorite() {
-    String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
-    Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
+    if (widget.favoriteKey != null) {
+      String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
+      Analytics().logSelect(target: "Favorite: $title");
+      Auth2().prefs?.toggleFavorite(FavoriteItem(key: widget.favoriteKey!, id: guideEntryId));
+    }
   }
 
   void _onTapEntry() {

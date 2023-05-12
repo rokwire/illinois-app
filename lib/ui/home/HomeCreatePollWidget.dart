@@ -67,7 +67,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     return Visibility(visible: _visible, child:
         HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
-          titleIcon: Image.asset('images/icon-browse-quick-polls.png', scale: 32 / 18,),
+          titleIconKey: 'polls',
           flatHeight: 0, slantHeight: 0,
           childPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
           child: _buildContent(),
@@ -76,11 +76,11 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   Widget _buildContent() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
+        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
         Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Text((_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People in your Group can be notified to vote through the {{app_title}} app. Or you can give voters the four-digit poll number.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) :
         Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.")),
-          style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16,),),),
+          style: Styles().textStyles?.getTextStyle("widget.description.variant.regular")),),
         _buildButtons()
       ],);
   }

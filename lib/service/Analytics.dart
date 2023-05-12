@@ -41,9 +41,9 @@ import 'package:rokwire_plugin/service/analytics.dart' as rokwire;
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
+import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/service/Auth2.dart';
 
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -277,6 +277,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
   // Event Attributes
   static const String   LogAttributeUrl                    = "url";
+  static const String   LogAttributeSource                 = "source";
   static const String   LogAttributeEventId                = "event_id";
   static const String   LogAttributeEventName              = "event_name";
   static const String   LogAttributeEventCategory          = "event_category";
@@ -297,6 +298,10 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeGuideCategory          = "guide_category";
   static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
+
+  static const String   LogAnonymousUin                    = 'UINxxxxxx';
+  static const String   LogAnonymousFirstName              = 'FirstNameXXXXXX';
+  static const String   LogAnonymousLastName               = 'LastNameXXXXXX';
 
   // Data
 
@@ -335,9 +340,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       Auth2.notifyUserDeleted,
       
       Network.notifyHttpResponse,
-      
-      NativeCommunicator.notifyMapRouteStart,
-      NativeCommunicator.notifyMapRouteFinish,
       
       GeoFence.notifyRegionEnter,
       GeoFence.notifyRegionExit,
@@ -424,13 +426,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     
     else if (name == Network.notifyHttpResponse) {
       logHttpResponse(param);
-    }
-    
-    else if (name == NativeCommunicator.notifyMapRouteStart) {
-      logMapRoute(action: LogMapRouteStartActionName, params: param);
-    }
-    else if (name == NativeCommunicator.notifyMapRouteFinish) {
-      logMapRoute(action: LogMapRouteFinishActionName, params: param);
     }
     
     else if (name == GeoFence.notifyRegionEnter) {
@@ -842,15 +837,12 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   }
 
   void logFavorite(Favorite? favorite, {bool? on, String? title}) {
-    if (on == null) {
-      on = Auth2().isFavorite(favorite);
-    }
     logEvent({
       LogEventName          : LogFavoriteEventName,
-      LogFavoriteActionName : on ? LogFavoriteOnActionName : LogFavoriteOffActionName,
+      LogFavoriteActionName : (on ?? Auth2().isFavorite(favorite)) ? LogFavoriteOnActionName : LogFavoriteOffActionName,
       LogFavoriteTypeName   : favorite?.favoriteKey,
       LogFavoriteIdName     : favorite?.favoriteId,
-      LogFavoriteTitleName  : title,
+      LogFavoriteTitleName  : title ?? favorite?.favoriteTitle,
     });
   }
 

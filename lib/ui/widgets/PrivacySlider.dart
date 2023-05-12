@@ -62,7 +62,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             trackHeight: 10,
                             inactiveTickMarkColor: _inactiveTrackColor,
                             showValueIndicator: ShowValueIndicator.never,
-                            valueIndicatorTextStyle: TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies!.extraBold, color: Styles().colors!.fillColorPrimary)),
+                            valueIndicatorTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
                         child: MergeSemantics(
                             child: Semantics(
                                 label: Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),
@@ -109,8 +109,8 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                         child: PrivacyIcon(
                           currentPrivacyLevel: _currentLevel,
                           minPrivacyLevel: 1,
-                          enabledIcon: "images/view-only-blue.png",
-                          disabledIcon: "images/view-only-blue.png",
+                          enabledIconKey: "view-dark",
+                          disabledIconKey: "view-dark",
                         ),
                       ),
                       Padding(
@@ -118,8 +118,8 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                         child: PrivacyIcon(
                           currentPrivacyLevel: _currentLevel,
                           minPrivacyLevel: 2,
-                          enabledIcon: "images/location-sharing-blue.png",
-                          disabledIcon: "images/location-sharing-blue-off.png",
+                          enabledIconKey: "location-dark",
+                          disabledIconKey: "location-disabled-dark",
                         ),
                       ),
                       Padding(
@@ -127,8 +127,8 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                         child: PrivacyIcon(
                           currentPrivacyLevel: _currentLevel,
                           minPrivacyLevel: 3,
-                          enabledIcon: "images/personalization-blue.png",
-                          disabledIcon: "images/personalization-blue-off.png",
+                          enabledIconKey: "sliders-dark",
+                          disabledIconKey: "sliders-disabled-dark",
                         ),
                       ),
                       Row(
@@ -137,15 +137,15 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                           PrivacyIcon(
                             currentPrivacyLevel: _currentLevel,
                             minPrivacyLevel: 4,
-                            enabledIcon: "images/notifications-blue.png",
-                            disabledIcon: "images/notifications-blue-off.png",
+                            enabledIconKey: "notification-dark",
+                            disabledIconKey: "notification-disabled-dark",
                           ),
                           SizedBox(width: 16),
                           PrivacyIcon(
                             currentPrivacyLevel: _currentLevel,
                             minPrivacyLevel: 4,
-                            enabledIcon: "images/identiy-blue.png",
-                            disabledIcon: "images/identiy-blue-off.png",
+                            enabledIconKey: "person-dark",
+                            disabledIconKey: "person-disabled-dark",
                           ),
                         ],
                       ),
@@ -154,8 +154,8 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                         child: PrivacyIcon(
                           currentPrivacyLevel: _currentLevel,
                           minPrivacyLevel: 5,
-                          enabledIcon: "images/share-blue.png",
-                          disabledIcon: "images/share-blue-off.png",
+                          enabledIconKey: "share-dark",
+                          disabledIconKey: "share-disabled-dark",
                         ),
                       ),
                     ],
@@ -174,13 +174,13 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
 class PrivacyIcon extends StatelessWidget{
   final int? currentPrivacyLevel;
   final int minPrivacyLevel;
-  final enabledIcon;
-  final disabledIcon;
+  final String? enabledIconKey;
+  final String? disabledIconKey;
 
-  const PrivacyIcon({Key? key, this.minPrivacyLevel = 1, this.enabledIcon, this.disabledIcon, this.currentPrivacyLevel}) : super(key: key);
+  const PrivacyIcon({Key? key, this.minPrivacyLevel = 1, this.enabledIconKey, this.disabledIconKey, this.currentPrivacyLevel}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Image.asset(currentPrivacyLevel!>=minPrivacyLevel? enabledIcon : (disabledIcon??""), excludeFromSemantics: true,);
+    return Styles().images?.getImage(currentPrivacyLevel! >= minPrivacyLevel ? enabledIconKey : disabledIconKey, excludeFromSemantics: true) ?? Container();
   }
 
 }

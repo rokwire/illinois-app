@@ -138,12 +138,12 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
           child: Container(color: Styles().colors?.fillColorPrimary, child:
             Row(children: <Widget>[
 
-              HomeTitleIcon(image: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
+              HomeTitleIcon(image: Styles().images?.getImage('courses', excludeFromSemantics: true)),
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Semantics(label: HomeStudentCoursesWidget.title, header: true, excludeSemantics: true, child:
-                    Text(HomeStudentCoursesWidget.title, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20))
+                    Text(HomeStudentCoursesWidget.title, style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat"))
                   )
                 )
               ),
@@ -178,9 +178,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     ],);
   }
 
-  TextStyle getTermDropDownItemStyle({bool selected = false}) => selected ?
-    TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary) :
-    TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary);
+  TextStyle? getTermDropDownItemStyle({bool selected = false}) => selected ? Styles().textStyles?.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles?.getTextStyle("widget.button.title.medium");
 
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
@@ -188,10 +186,10 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
         DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down-white.png')),
+          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
           isExpanded: false,
           style: getTermDropDownItemStyle(selected: false),
-          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.white)) : null,
+          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: Styles().textStyles?.getTextStyle("widget.colourful_button.title")) : null,
           alignment: AlignmentDirectional.centerEnd,
           items: _buildTermDropDownItems(),
           onChanged: _onTermDropDownValueChanged

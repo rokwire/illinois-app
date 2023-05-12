@@ -285,7 +285,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
         title: Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events'),
         subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home.suggested_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
         favoriteId: widget.favoriteId,
-        rightIconAsset: 'images/settings-white.png',
+        rightIconKey: 'settings-white',
         rightIconAction: _navigateToSettings,
       ),
       Stack(children:<Widget>[
@@ -386,7 +386,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
   void _navigateToExploreEvents() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events)));
   }
 
   void _navigateToSettings() {
@@ -400,7 +400,7 @@ class _EventsRibbonHeader extends StatelessWidget {
   final String? subTitle;
 
   final String? rightIconLabel;
-  final String? rightIconAsset;
+  final String? rightIconKey;
   final void Function()? rightIconAction;
 
   final String? favoriteId;
@@ -411,7 +411,7 @@ class _EventsRibbonHeader extends StatelessWidget {
 
     // ignore: unused_element
     this.rightIconLabel,
-    this.rightIconAsset,
+    this.rightIconKey,
     this.rightIconAction,
 
     this.favoriteId,
@@ -422,7 +422,7 @@ class _EventsRibbonHeader extends StatelessWidget {
     List<Widget> titleList = <Widget>[];
 
     titleList.add(
-      HomeTitleIcon(image: Image.asset('images/icon-calendar.png')),
+      HomeTitleIcon(image: Styles().images?.getImage('calendar')),
     );
       
     titleList.add(
@@ -431,24 +431,24 @@ class _EventsRibbonHeader extends StatelessWidget {
           StringUtils.isNotEmpty(subTitle) ?
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Semantics(label: title, header: true, excludeSemantics: true, child:
-                Text(title ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat"))
               ),
               Semantics(label: subTitle, header: true, excludeSemantics: true, child:
-                Text(subTitle ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.regular, fontSize: 16 ),)
+                Text(subTitle ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular"))
               ),
             ],) :
             Semantics(label: title, header: true, excludeSemantics: true, child:
-              Text(title ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat"))
             ),
         ),
       ),
     );
 
-    Widget? rightIconWidget = (rightIconAsset != null) ?
+    Widget? rightIconWidget = (rightIconKey != null) ?
       Semantics(label: rightIconLabel, button: true, child:
         InkWell(onTap: rightIconAction, child:
           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-            Image.asset(rightIconAsset!, excludeFromSemantics: true,),
+            Styles().images?.getImage(rightIconKey, excludeFromSemantics: true,),
           )
         )
       ) : null;

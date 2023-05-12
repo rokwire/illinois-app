@@ -155,9 +155,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                         child: Text(
                           widget.sport!.name!,
                           maxLines: 2,
-
-                          style: TextStyle(
-                              color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                          style: Styles().textStyles?.getTextStyle("widget.title.huge")
                         ),
                       ),
                       Container(width: 24,),
@@ -170,7 +168,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                           onTap: _onTapSportPreference,
                           child: Padding(
                               padding: EdgeInsets.only(top: 8),
-                              child: hasSportPreference ? Image.asset('images/deselected-dark.png', excludeFromSemantics: true) : Image.asset('images/deselected.png', excludeFromSemantics: true)
+                              child: Styles().images?.getImage(hasSportPreference ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true),
                           ),
                         ),
                       )
@@ -192,19 +190,13 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     Text(
                       Localization().getStringEx("panel.athletics_team.label.record.title", "Record"),
                       textAlign: TextAlign.left,
-                      style: TextStyle(
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900),
+                      style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
                     ),),
                     Expanded(
                       child: Text(
                         StringUtils.ensureNotEmpty(_record?.overallRecordUnformatted),
                         textAlign: TextAlign.right,
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 32,
-                            fontWeight: FontWeight.w900),
+                        style: Styles().textStyles?.getTextStyle("widget.title.huge.extra_fat"),
                       )
                     )
                   ],
@@ -271,8 +263,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     Container(
                       height: 112,
                       width: double.infinity,
-                      child: Image.asset('images/slant-down-right.png',
-                        color: Styles().colors!.fillColorPrimary,
+                      child: Styles().images?.getImage('slant-dark',
                         fit: BoxFit.fill,
                         excludeFromSemantics: true
                       ),
@@ -291,12 +282,11 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                           children: <Widget>[
                             Padding(
                               padding: EdgeInsets.only(right: 16),
-                              child: Image.asset('images/icon-schedule.png', excludeFromSemantics: true),
+                              child: Styles().images?.getImage('calendar', excludeFromSemantics: true),
                             ),
                             Text(
                               Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule'),
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 20),
+                              style: Styles().textStyles?.getTextStyle("widget.title.light.large"),
                             )
                           ],
                         ),
@@ -350,14 +340,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       color: Styles().colors!.fillColorPrimary,
                       height: 40,
                     ),
-                    Container(
-                      height: 112,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage(
-                                  'images/slant-down-right-blue.png'),
-                              fit: BoxFit.fill)),
-                    )
+                    Styles().images?.getImage('slant-dark', excludeFromSemantics: true) ?? Container(),
                   ],
                 ),
                 Column(
@@ -375,12 +358,11 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(right: 16),
-                                child: Image.asset('images/icon-news.png', excludeFromSemantics: true),
+                                child: Styles().images?.getImage('news', excludeFromSemantics: true),
                               ),
                               Text(
                                 Localization().getStringEx("panel.athletics_team.button.news.title", 'News'),
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
+                                style: Styles().textStyles?.getTextStyle("widget.title.light.large")
                               )
                             ],
                           ),
@@ -439,8 +421,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
                         Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster'),
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary, fontSize: 20),
+                        style: Styles().textStyles?.getTextStyle("widget.title.large"),
                       ),
                     ),
                   ),
@@ -497,10 +478,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
                         Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff'),
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900),
+                        style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat"),
                       ),
                     ),
                   ),
@@ -548,7 +526,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               padding: EdgeInsets.only(bottom: 32),
               child: Text(
                 followLabel,
-                style: TextStyle(color: Styles().colors!.textBackground, fontSize: 20),
+                style: Styles().textStyles?.getTextStyle("widget.item.large"),
               ),
             ),
             Stack(
@@ -559,7 +537,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                   child: Container(
                     height: 98,
                     width: double.infinity,
-                    child: Image.asset('images/slant-down-right-rotated.png', color: Styles().colors!.fillColorSecondary,fit: BoxFit.fill, excludeFromSemantics: true),
+                    child: Styles().images?.getImage('images/slant-down-right-rotated.png', color: Styles().colors!.fillColorSecondary,fit: BoxFit.fill, excludeFromSemantics: true),
                   ),
                 ),
                 Row(
@@ -572,7 +550,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       excludeSemantics: true,
                       child: _TeamSocialCell(
                         name:"Facebook",
-                        iconResource: 'images/fb-16x32.png',
+                        iconKey: 'facebook-logo',
                         webUrl: facebookPageUrl,
                       ),
                     ),
@@ -583,7 +561,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       excludeSemantics: true,
                       child: _TeamSocialCell(
                         name:"Twitter",
-                        iconResource: 'images/twitter-32x28.png',
+                        iconKey: 'twitter-logo',
                         webUrl: twitterUrl,
                       ),
                     ),
@@ -593,8 +571,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       button: true,
                       excludeSemantics: true,
                       child: _TeamSocialCell(
-                        name:"Youtube",
-                        iconResource: 'images/you-tube-32x24.png',
+                        name:"YouTube",
+                        iconKey: 'youtube-logo',
                         webUrl: Config().youtubeUrl,
                       ),
                     ),
@@ -605,7 +583,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       excludeSemantics: true,
                       child: _TeamSocialCell(
                         name:"Instagram",
-                        iconResource: 'images/ig-32x32.png',
+                        iconKey: 'instagram-logo',
                         webUrl: instagramUrl,
                       ),
                     )
@@ -630,7 +608,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
           //Only the first item got image
           imageUrl: news.imageUrl,
           slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
-          slantImageAsset: 'images/slant-down-right-blue.png',
+          slantImageKey: 'slant-dark',
           child: _buildAthleticsNewsCard(news)
         ) : _buildAthleticsNewsCard(news);
       },
@@ -844,17 +822,13 @@ class _GameResult extends StatelessWidget {
             children: <Widget>[
               Text(
                 header!,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    color: Styles().colors!.fillColorPrimary,
-                    fontSize: 14),
+                style: Styles().textStyles?.getTextStyle("widget.title.small")
               ),
               Padding(
                 padding: EdgeInsets.only(top: 6),
                 child: Text(
                   result!,
-                  style:
-                      TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 24),
+                  style:Styles().textStyles?.getTextStyle("widget.title.extra_large"),
                 ),
               )
             ],
@@ -895,18 +869,11 @@ class _RosterItem extends StatelessWidget {
               Container(height: 12,),
               Text(
                 name!,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.bold,
-                    color: Styles().colors!.fillColorPrimary,
-                    fontSize: 16),
-              ),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
               Text(
                 StringUtils.ensureNotEmpty(position),
                 softWrap: true,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    color: Styles().colors!.textBackground,
-                    fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular"),
               ),
             ],
           ),
@@ -982,10 +949,10 @@ class _RosterItem extends StatelessWidget {
 
 class _TeamSocialCell extends StatelessWidget {
   final String? name;
-  final String? iconResource;
+  final String? iconKey;
   final String? webUrl;
 
-  _TeamSocialCell({this.iconResource, this.webUrl, this.name});
+  _TeamSocialCell({this.iconKey, this.webUrl, this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -998,7 +965,7 @@ class _TeamSocialCell extends StatelessWidget {
             color: Styles().colors!.fillColorPrimary,
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Center(
-          child: Image.asset(iconResource!, excludeFromSemantics: true),
+          child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
         ),
       ),
     );

@@ -96,7 +96,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
         GestureDetector(onTap: _nop,
           child: Container(width: 36, height: 36,
             child: Align(alignment: Alignment.center,
-              child: Image.asset('images/icon-share.png', excludeFromSemantics: true),
+              child: Styles().images?.getImage('share', excludeFromSemantics: true),
             ),
           ),
         ),

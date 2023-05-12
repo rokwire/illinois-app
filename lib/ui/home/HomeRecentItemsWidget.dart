@@ -145,7 +145,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeRecentItemsWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'history',
       child: _buildContent(),
     );
   }
@@ -354,7 +354,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
       Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
       Localization().getStringEx('widget.card.button.favorite.on.hint','');
 
-    String favIcon = isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png';
+    Widget? favIcon = Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
 
     return Padding(padding: EdgeInsets.only(bottom: 8), child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), clipBehavior: Clip.none, child:
@@ -366,7 +366,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(right: 24), child:
-                        Text(widget.recentItem.title ?? '', style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold, color: Styles().colors!.fillColorPrimary,),)
+                        Text(widget.recentItem.title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.regular.extra_fat"))
                       ),
                     ),
                   ]),
@@ -381,11 +381,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
               Align(alignment: Alignment.topRight, child:
                 GestureDetector(onTap: _onTapFavorite, child:
                   Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:
-                    Container(padding: EdgeInsets.all(16), child: 
-                      Image.asset(favIcon)
-              ),),),),
-            ),
-
+                    Container(padding: EdgeInsets.all(16), child: favIcon))))),
           ],),
       ),
     ),);
@@ -423,9 +419,9 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
       String displayDate = Localization().getStringEx('widget.home_recent_item_card.label.date', 'Date');
       return Semantics(label: displayDate, excludeSemantics: true, child:
         Row(children: <Widget>[
-          Image.asset('images/icon-calendar.png'),
+          Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.only(right: 5),),
-          Text(displayDate, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: Styles().colors!.textBackground)),
+          Text(displayDate, style: Styles().textStyles?.getTextStyle("widget.card.detail.tiny.medium_fat")),
         ],),
       );
     } else {
@@ -438,9 +434,9 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(label: displayTime, excludeSemantics: true, child:
         Row(children: <Widget>[
-            Image.asset('images/icon-calendar.png'),
+          Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 5),),
-            Text(displayTime, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: Styles().colors!.textBackground)),
+            Text(displayTime, style: Styles().textStyles?.getTextStyle("widget.card.detail.tiny.medium_fat")),
         ],),
       );
     } else {
@@ -450,7 +446,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
 
   Widget _descriptionDetail() {
     return Semantics(label: widget.recentItem.descripton ?? '', excludeSemantics: true, child:
-      Text(widget.recentItem.descripton ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground)),
+      Text(widget.recentItem.descripton ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small.medium")),
     );
   }
 

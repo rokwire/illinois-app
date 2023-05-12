@@ -55,14 +55,6 @@ class LaundryRoom with Explore implements Favorite {
 
   LaundryRoom({this.id, this.name, this.status, this.location});
 
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      ((json['ID'] != null) || (json['id'] != null)) &&
-      ((json['Name'] != null) || (json['title'] != null)) &&
-      ((json['Status'] != null) || (json['status'] != null)) &&
-      ((json['Location'] != null) || (json['location'] != null));
-  }
-
   static LaundryRoom? fromJson(Map<String, dynamic>? json) {
     return (json != null)
         ? LaundryRoom(

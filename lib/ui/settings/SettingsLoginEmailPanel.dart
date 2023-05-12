@@ -224,9 +224,9 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                       child: InkWell(onTap: () => _onTapShowPassword(), child:
                         Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
                           Row(mainAxisSize: MainAxisSize.min, children: [
-                            Image.asset(_isShowingPassword ? 'images/deselected-dark.png' : 'images/deselected.png', excludeFromSemantics: true,),
+                            Styles().images?.getImage(_isShowingPassword ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                             Container(width: 6),
-                            Text(showPassword, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),),
+                            Text(showPassword, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),),
                           ],)
                         ),
                       ),
@@ -240,8 +240,8 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                           Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
                             //Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
                               (_state == Auth2EmailAccountState.unverified)  ?
-                                Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.settings.login.button.underline")) :
-                                Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.settings.login.button.underline")),
+                                Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline")) :
+                                Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline")),
                             //],)
                           ),
                         ),

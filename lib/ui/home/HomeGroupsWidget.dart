@@ -48,6 +48,7 @@ class HomeGroupsWidget extends StatefulWidget {
 
 class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements NotificationsListener{
   List<Group>? _groups;
+  Map<String, Key> _groupCardKeys = <String, Key>{};
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
@@ -85,6 +86,37 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     NotificationService().unsubscribe(this);
   }
 
+  @override
+  void onNotification(String name, param) {
+    if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if ((name == Groups.notifyGroupCreated) ||
+      (name == Groups.notifyGroupUpdated) ||
+      (name == Groups.notifyGroupDeleted) ||
+      (name == Groups.notifyUserMembershipUpdated) ||
+      (name == Auth2.notifyLoginChanged)) {
+        _loadGroups();
+    }
+    else if (name == Groups.notifyUserGroupsUpdated) {
+      _applyUserGroups();
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _updateGroups();
+        }
+      }
+    }
+  }
+
   void _loadGroups(){
     Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groupsList) {
       List<Group>? groups = ListUtils.from(groupsList);
@@ -92,6 +124,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       if (mounted) {
         setState(() {
           _groups = groups;
+          _groupCardKeys.clear();
         });
       }
     });
@@ -105,6 +138,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
         setState(() {
           _groups = groups;
           _pageViewKey = UniqueKey();
+          _groupCardKeys.clear();
           // _pageController = null;
           _pageController?.jumpToPage(0);
         });
@@ -119,6 +153,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       if (mounted) {
         setState(() {
           _groups = userGroups;
+          _groupCardKeys.clear();
         });
       }
     }
@@ -128,7 +163,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'groups',
       child: _haveGroups ? _buildContent() : _buildEmpty(),
     );
   }
@@ -139,10 +174,10 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     if(_groups?.isNotEmpty ?? false) {
       for (Group? group in _groups!) {
         if ((group != null) && group.isVisible) {
+          Key groupKey = (_groupCardKeys[group.id] ?? UniqueKey());
           pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
-            Semantics(
-              // excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),
-             child: GroupCard(group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+            Semantics(/* excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),*/ child:
+              GroupCard(key: groupKey, group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
           )));
         }
       }
@@ -204,37 +239,6 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
         break;
     }
     return HomeMessageCard(message: message,);
-  }
-
-  @override
-  void onNotification(String name, param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
-    }
-    else if ((name == Groups.notifyGroupCreated) ||
-      (name == Groups.notifyGroupUpdated) ||
-      (name == Groups.notifyGroupDeleted) ||
-      (name == Groups.notifyUserMembershipUpdated) ||
-      (name == Auth2.notifyLoginChanged)) {
-        _loadGroups();
-    }
-    else if (name == Groups.notifyUserGroupsUpdated) {
-      _applyUserGroups();
-    }
-  }
-
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateGroups();
-        }
-      }
-    }
   }
 
   bool get _haveGroups{

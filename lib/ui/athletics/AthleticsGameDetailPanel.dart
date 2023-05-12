@@ -139,8 +139,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                           Container(
                             height: 112,
                             width: double.infinity,
-                            child: Image.asset('images/slant-down-right.png',
-                              color: Styles().colors!.fillColorPrimary,
+                            child: Styles().images?.getImage('slant-dark',
                               fit: BoxFit.fill,
                               excludeFromSemantics: true,
                             ),
@@ -155,16 +154,12 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(right: 16),
-                                  child: Image.asset(
-                                    'images/icon-athletics-orange.png',
-                                    excludeFromSemantics: true,
-                                  ),
+                                  child: Styles().images?.getImage('athletics', excludeFromSemantics: true),
                                 ),
                                 Expanded(child:
                                   Text(
                                     Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + "$sportName",
-                                    style:
-                                    TextStyle(color: Colors.white, fontSize: 20),
+                                    style: Styles().textStyles?.getTextStyle("widget.heading.large"),
                                   )
                                 ),
                               ],
@@ -178,7 +173,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.schedule.title", "Schedule"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.schedule.hint", ""),
-                                      iconAsset: 'images/2.0x/schedule-orange.png',
+                                      iconAsset: 'calendar', //images/2.0x/schedule-orange.png
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onScheduleTap,
                                     ),
@@ -187,7 +182,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.news.title", "News"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.news.hint", ""),
-                                      iconAsset: 'images/2.0x/teal.png',
+                                      iconAsset: 'news', //images/2.0x/teal.png
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapNews,
                                     ),
@@ -210,7 +205,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.teams.title", "Teams"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.teams.hint", ""),
-                                      iconAsset: 'images/2.0x/navy.png',
+                                      iconAsset: 'images/2.0x/navy.png', // TODO - ICONS find an icon
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapTeams,
                                     ),
@@ -252,7 +247,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         child: Text(
           game!.newsTitle!,
           textAlign: TextAlign.left,
-          style: TextStyle(color: Styles().colors!.textBackground, fontSize: 20),
+          style: Styles().textStyles?.getTextStyle("widget.item.large")
         ),
       ));
     }
@@ -266,10 +261,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
               child: Text(
                 game!.newsContent!,
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.regular,
-                    color: Styles().colors!.textBackground,
-                    fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
               ),
             ),
             Visibility(
@@ -289,17 +281,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                       (_newsExpanded
                           ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")
                           : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")),
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.bold,
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 16),
+                      style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 8),
-                      child: Image.asset((_newsExpanded
-                          ? 'images/icon-up.png'
-                          : 'images/icon-down-orange.png'),
-                        excludeFromSemantics: true,),
+                      child: Styles().images?.getImage(_newsExpanded ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true,),
                     )
                   ],
                 ),
@@ -351,7 +337,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   /*void _showTicketsPanel() {
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(context, CupertinoPageRoute(
-        builder: (context) => WebPanel(url: Config().ticketsUrl)));
+        builder: (context) => WebPanel(
+          url: Config().ticketsUrl
+          analyticsName: "WebPanel(Tickets)",
+          analyticsSource: game?.analyticsAttributes,
+        )));
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.tickets', 'Tickets are not available while offline.'));

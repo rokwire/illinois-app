@@ -63,14 +63,14 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: Styles().textStyles?.getTextStyle("widget.title.extra_large"),
+              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat"),
             ),
           ),
           Container(height: 8,),
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
               child:RichText(
                 text: TextSpan(
-                  style:  Styles().textStyles?.getTextStyle("widget.info.regular"),
+                  style:  Styles().textStyles?.getTextStyle("widget.info.regular.thin"),
                   children: <TextSpan>[
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription1", "Are you a ")),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription2", "university student"),
@@ -94,7 +94,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
               child:RichText(
                 text: TextSpan(
-                  style:  Styles().textStyles?.getTextStyle("widget.info.regular"),
+                  style:  Styles().textStyles?.getTextStyle("widget.info.regular.thin"),
                   children: <TextSpan>[
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.phone_or_email.desription1", "Don’t have a NetID"),
                         style:  Styles().textStyles?.getTextStyle("widget.info.regular.fat")),

@@ -113,7 +113,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeDailyIlliniWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png'),
+      titleIconKey: 'news',
       child: _buildContent(),
     );
   }
@@ -331,7 +331,7 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                   Padding(
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                          style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14)))
+                          style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa")))
                 ]))));
   }
 
@@ -349,7 +349,7 @@ class _DailyIlliniItemWidget extends StatelessWidget {
   }
 
   Widget _defaultPlaceholderImage() {
-    return Row(children: [Expanded(child: Image.asset('images/daily-illini-placeholder.jpg', fit: BoxFit.fill))]);
+    return Row(children: [Expanded(child: Styles().images?.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
   }
 
   Widget _buildNavigationButton({required String navigationDirection, required String semanticsLabel, void Function()? onTap}) {
@@ -365,8 +365,8 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
                     child: Text(navigationDirection,
                         semanticsLabel: "",
-                        style:
-                            TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 26))))));
+                        style: Styles().textStyles?.getTextStyle("widget.button.title.extra_large")
+                    )))));
   }
 
   void _onTap() {

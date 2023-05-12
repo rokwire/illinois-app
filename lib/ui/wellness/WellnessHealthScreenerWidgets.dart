@@ -85,7 +85,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       children: [
         HomeSlantWidget(
           title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Screener'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          titleIconKey: 'health',
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: accessWidget ?? _buildHealthScreenerSectionWidget(),
         ),
@@ -134,7 +134,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   Widget _buildHistorySectionWidget() {
     return HomeSlantWidget(
       title: Localization().getStringEx('panel.wellness.sections.health_screener.label.history.title', 'History'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true),
+      titleIconKey: 'history',
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: Column(children: [
         _buildFiltersWidget(),
@@ -154,7 +154,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
           children: [
             Row(
               children: [
-                Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.timeframe.title", "Time:"), style: Styles().textStyles?.getTextStyle('widget.title.regular'),),
+                Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.timeframe.title", "Time:"), style: Styles().textStyles?.getTextStyle('widget.title.regular.fat'),),
                 Container(width: 8.0),
                 Expanded(
                   child: DropdownButton(value: _selectedTimeframe, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
@@ -169,7 +169,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
             ),
             // Row(
             //   children: [
-            //     Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular'),),
+            //     Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular.fat'),),
             //     Container(width: 8.0),
             //     Expanded(
             //       child: DropdownButton(value: _selectedSurveyType, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),

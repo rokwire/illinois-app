@@ -45,6 +45,7 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
 
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeDiningWidget.title;
+  @override String? get titleIconKey => 'dining';
   @override String? get emptyMessage => Localization().getStringEx("widget.home.dinings.text.empty.description", "Tap the \u2606 on items in Dinings so you can quickly find them here.");
 
   @override
@@ -52,7 +53,7 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
     if (code == 'dinings_all') {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.dinings.all.button.title', 'Residence Hall Dining'),
-        description: Localization().getStringEx('widget.home.dinings.all.button.description', 'Students, faculty, staff, and guests are welcome to eat at any residence hall dining location.'),
+        description: Localization().getStringEx('widget.home.dinings.all.button.description', 'Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapDiningsAll,
       );
@@ -72,11 +73,11 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
   
   void _onTapDiningsAll() {
     Analytics().logSelect(target: "Residence Hall Dining", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining) ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining) ));
   }
 
   void _onTapDiningsOpen() {
     Analytics().logSelect(target: "Residence Hall Dining Open Now", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
   }
 }

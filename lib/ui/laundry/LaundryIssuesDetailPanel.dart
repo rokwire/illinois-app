@@ -69,37 +69,32 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
                       Padding(
                           padding: EdgeInsets.only(right: 5),
                           child: Text(Localization().getStringEx('panel.laundry.issues_detail.machine_id.label', 'Machine ID:'),
-                              style: TextStyle(
-                                  fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular))),
+                              style: Styles().textStyles?.getTextStyle("widget.title.medium"))),
                       Text(StringUtils.ensureNotEmpty(widget.issues.machineId),
-                          style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold))
+                          style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"))
                     ])),
                 Row(children: [
                   Padding(
                       padding: EdgeInsets.only(right: 5),
                       child: Text(Localization().getStringEx('panel.laundry.issues_detail.machine_type.label', 'Machine Type:'),
-                          style: TextStyle(
-                              fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular))),
+                          style: Styles().textStyles?.getTextStyle("widget.title.medium"))),
                   Text(StringUtils.ensureNotEmpty(widget.issues.typeString),
-                      style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold))
+                      style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"))
                 ])
               ])
             ])));
   }
 
   Widget _buildMachineImageWidget() {
-    final double imageSize = 70;
-    Widget machineImagePlaceHolder;
+    Widget? machineImagePlaceHolder;
     switch (widget.issues.type) {
       case LaundryApplianceType.washer:
-        machineImagePlaceHolder = Image.asset('images/icon-washer-big.png', width: imageSize, height: imageSize, fit: BoxFit.fill);
+        machineImagePlaceHolder = Styles().images?.getImage('washer-large', excludeFromSemantics: true) ?? Container();
         break;
       case LaundryApplianceType.dryer:
-        machineImagePlaceHolder = Image.asset('images/icon-dryer-big.png', width: imageSize, height: imageSize, fit: BoxFit.fill);
+        machineImagePlaceHolder = Styles().images?.getImage('dryer-large', excludeFromSemantics: true) ?? Container();
         break;
       default:
-        machineImagePlaceHolder = Container(width: imageSize, height: imageSize, color: Styles().colors!.fillColorPrimaryTransparent015);
-        break;
     }
     return Padding(padding: EdgeInsets.only(right: 20), child: machineImagePlaceHolder);
   }
@@ -110,7 +105,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
             padding: EdgeInsets.symmetric(vertical: 26, horizontal: 20),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(Localization().getStringEx('panel.laundry.issues_detail.select_issue.label', 'Select the issue you wish to report:'),
-                  style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
+                  style: Styles().textStyles?.getTextStyle("widget.label.regular.fat")),
               Padding(
                   padding: EdgeInsets.only(top: 20, left: 10),
                   child: Column(children: [_buildIssuesWidget(), _buildCommentsSection(), _buildSubmitSection()]))
@@ -127,12 +122,11 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
             child: Padding(
                 padding: EdgeInsets.only(top: 15),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  Image.asset((selected ? 'images/icon-selected-checkbox.png' : 'images/icon-deselected-checkbox.png')),
+                  Styles().images?.getImage(selected ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true) ?? Container(),
                   Padding(
                       padding: EdgeInsets.only(left: 15),
                       child: Text(StringUtils.ensureNotEmpty(issueCode),
-                          style:
-                              TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)))
+                          style: Styles().textStyles?.getTextStyle("widget.detail.small.semi_fat")))
                 ]))));
       }
     }
@@ -146,7 +140,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
           Padding(
               padding: EdgeInsets.only(bottom: 10),
               child: Text(Localization().getStringEx('panel.laundry.issues_detail.comments.label', 'Additional Comments'),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.medium))),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.small.semi_fat"))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
@@ -154,12 +148,12 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
                   boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
               child: TextField(
                   maxLines: 8,
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.medium),
+                  style: Styles().textStyles?.getTextStyle("widget.text.medium"),
                   controller: _commentsController,
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: Localization().getStringEx('panel.laundry.issues_detail.comments.hint', 'Let us know what the issue is.'),
-                      hintStyle: TextStyle(color: Styles().colors!.mediumGray2, fontFamily: Styles().fontFamilies!.regular))))
+                      hintStyle: Styles().textStyles?.getTextStyle("widget.message.light.variant.small"))))
         ]));
   }
 
@@ -173,7 +167,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
             borderColor: Styles().colors!.fillColorPrimary,
             label: Localization().getStringEx('panel.laundry.issues_detail.continue.button', 'Continue'),
             onTap: _onTapContinue,
-            rightIcon: Image.asset('images/chevron-right-white.png')));
+            rightIcon: Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true)));
   }
 
   void _onTapIssueCode(String? issueCode) {

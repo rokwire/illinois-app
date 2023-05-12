@@ -21,10 +21,7 @@
 #import "AppDelegate.h"
 #import "GeneratedPluginRegistrant.h"
 #import "AppKeys.h"
-#import "MapView.h"
-#import "MapController.h"
-#import "MapDirectionsController.h"
-#import "MapLocationPickerController.h"
+#import "FlutterCompletion.h"
 
 #import "NSArray+InaTypedValue.h"
 #import "NSDictionary+InaTypedValue.h"
@@ -95,11 +92,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	// Initialize Flutter plugins
 	[GeneratedPluginRegistrant registerWithRegistry:self];
 
-	// Setup MapPlugin
-	NSObject<FlutterPluginRegistrar>*registrar = [self registrarForPlugin:@"MapPlugin"];
-	MapViewFactory *factory = [[MapViewFactory alloc] initWithMessenger:registrar.messenger];
-	[registrar registerViewFactory:factory withId:@"mapview"];
-	
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
 	_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];
@@ -224,15 +216,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	if ([call.method isEqualToString:@"init"]) {
 		[self handleInitWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"directions"]) {
-		[self handleDirectionsWithParameters:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"pickLocation"]) {
-		[self handlePickLocationWithParameters:parameters result:result];
-	}
-	else if ([call.method isEqualToString:@"map"]) {
-		[self handleMapWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"dismissLaunchScreen"]) {
 		[self handleDismissLaunchScreenWithParameters:parameters result:result];
 	}
@@ -263,27 +246,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 
 	result(@(YES));
-}
-
-- (void)handleDirectionsWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	MapDirectionsController *directionsController = [[MapDirectionsController alloc] initWithParameters:parameters completionHandler:^(id returnValue) {
-		result(returnValue);
-	}];
-	[self.navigationViewController pushViewController:directionsController animated:YES];
-}
-
-- (void)handlePickLocationWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	MapLocationPickerController *pickLocationController = [[MapLocationPickerController alloc] initWithParameters:parameters completionHandler:^(id returnValue) {
-		result(returnValue);
-	}];
-	[self.navigationViewController pushViewController:pickLocationController animated:YES];
-}
-
-- (void)handleMapWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	MapController *mapController = [[MapController alloc] initWithParameters:parameters completionHandler:^(id returnValue) {
-		result(returnValue);
-	}];
-	[self.navigationViewController pushViewController:mapController animated:YES];
 }
 
 - (void)handleDismissLaunchScreenWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -597,9 +559,10 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @implementation RootNavigationController
 
 - (void)setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible {
-	SEL selector = NSSelectorFromString(@"setNeedsUpdateOfSupportedInterfaceOrientations");
-	if ([self respondsToSelector:selector]) {
-		[self performSelector:selector withObject:nil afterDelay:0];
+	if ([self respondsToSelector:@selector(setNeedsUpdateOfSupportedInterfaceOrientations)]) {
+		if (@available(iOS 16.0, *)) {
+			[self setNeedsUpdateOfSupportedInterfaceOrientations];
+		}
 	}
 }
 

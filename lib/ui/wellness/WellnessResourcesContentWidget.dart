@@ -20,10 +20,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -86,7 +86,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
-      Assets.notifyChanged,
+      Wellness.notifyContentChanged,
     ]);
     _initContent();
     super.initState();
@@ -102,7 +102,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Assets.notifyChanged) {
+    if (name == Wellness.notifyContentChanged) {
       if (mounted) {
         setState(() {
           _initContent();
@@ -188,7 +188,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   }
 
   void _initContent() {
-    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${widget.wellnessCategory}']) ;
+    Map<String, dynamic>? content = Wellness().resources;
     _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
     WellnessResourcesContentWidget.ensureDefaultFavorites(_commands);
@@ -248,7 +248,7 @@ class WellnessLargeResourceButton extends StatelessWidget {
               ),
             ),
             hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
-              Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
+              Styles().images?.getImage('external-link', excludeFromSemantics: true)
             ) : Container(),
             FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
           ]),
@@ -284,10 +284,10 @@ class WellnessRegularResourceButton extends StatelessWidget {
           ),
         ),
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
-          Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
+          Styles().images?.getImage('external-link', excludeFromSemantics: true)
         ) : Container(),
         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
-          Image.asset('images/chevron-right.png')
+          Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)
         ),
       ]),
     );

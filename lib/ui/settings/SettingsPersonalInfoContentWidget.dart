@@ -311,7 +311,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           //borderRadius: BorderRadius.all(Radius.circular(5)),
           label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
           textColor: (Questionnaires().participateInResearch == true)? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          rightIconAsset: (Questionnaires().participateInResearch == true) ? 'images/chevron-right.png' : 'images/chevron-right-gray.png',
+          rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
           onTap: _onResearchQuestionnaireClicked
         ),
       ]),
@@ -376,7 +376,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               )
             ),
             Padding(padding: EdgeInsets.only(left: 5), child:
-              Image.asset(selected ? 'images/deselected-dark.png' : 'images/deselected.png')
+              Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
             )
           ])
         )
@@ -414,7 +414,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return await AppAlert.showCustomDialog(context: context,
       contentWidget:
         Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),
-          style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
+          style: Styles().textStyles?.getTextStyle("widget.message.regular"),
         ),
       actions: [
         TextButton(
@@ -546,7 +546,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               child: Text(
                 Localization().getStringEx("panel.profile_info.logout.message", promptEn),
                 textAlign: TextAlign.left,
-                style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium")
+                style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular")
               ),
             ),
             Row(
@@ -578,7 +578,13 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     if (_profilePicProcessing) {
       contentWidget = Center(child: CircularProgressIndicator());
     } else {
-      Image profileImage = _hasProfilePicture ? Image.memory(_profileImageBytes!) : Image.asset('images/missing-profile-photo-placeholder.png', excludeFromSemantics: true);
+      Image? profileImage = _hasProfilePicture? Image.memory(_profileImageBytes!) : null;
+      Widget? profilePicture = _hasProfilePicture ? ModalImageHolder(
+          image: profileImage?.image,
+          child: Container(decoration:
+            BoxDecoration(shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))
+          ),
+        ) : Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true);
       contentWidget = Column(children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Visibility(visible: _hasProfilePicture, child:
@@ -592,16 +598,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           ),
           Expanded(child:
             Container(width: 189, height: 189, child:
-              Semantics(image: true, label: "Profile", child:
-                ModalImageHolder(
-                  image: _hasProfilePicture? profileImage.image : null,
-                  child: Container(decoration:
-                    BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                      DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)
-                    )
-                  ),
-                )
-              )
+              Semantics(image: true, label: "Profile", child: profilePicture)
             ),
           ),
           Visibility(visible: _hasProfilePicture, child:
@@ -807,7 +804,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     AppAlert.showCustomDialog(context: context,
         contentWidget:
         Text(promptEn,
-          style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
+          style: Styles().textStyles?.getTextStyle("widget.message.regular"),
         ),
         actions: [
           TextButton(
@@ -850,7 +847,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Delete your account?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
-          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: Styles().textStyles?.getTextStyle("widget.text.fat")),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
           TextSpan(text: contributeInGroups?
           Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.") :

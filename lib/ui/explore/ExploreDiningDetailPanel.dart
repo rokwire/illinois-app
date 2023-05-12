@@ -17,8 +17,8 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
@@ -36,7 +36,6 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -64,11 +63,14 @@ class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAt
 
 class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements NotificationsListener {
 
-  Dining? dining;
-
-  _DiningDetailPanelState(this.dining);
-
+  Dining? _dining;
   bool _isDiningLoading = false;
+
+  DiningFeedback? _diningFeedback;
+  bool _isDiningFeedbackLoading = false;
+
+  _DiningDetailPanelState(Dining? dining) :
+    _dining = dining;
 
   //Maps
   Core.Position? _locationData;
@@ -89,10 +91,11 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     ]);
 
     _reloadDiningIfNeed();
+    _loadDiningFeedback();
 
     _addRecentItem();
     _locationData = widget.initialLocationData;
-    _loadCurrentLocation().then((_){
+    _loadCurrentLocation().then((_) {
       setState(() {});
     });
 
@@ -105,130 +108,82 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     super.dispose();
   }
 
-  void _reloadDiningIfNeed(){
-    if(!dining!.hasDiningSchedules){
-      _isDiningLoading = true;
-
-      Dinings().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings){
-        if(dinings != null){
-          Dining? foundDining = Dining.entryInList(dinings, id: dining!.id);
-          if(foundDining != null){
-            dining = foundDining;
-            _isDiningLoading = false;
-            setState(() {});
-          }
-        }
-      });
+  // NotificationsListener
+  
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == LocationServices.notifyStatusChanged) {
+      _updateCurrentLocation();
     }
-
-  }
-
-  Future<void> _loadCurrentLocation() async {
-    _locationData = FlexUI().isLocationServicesAvailable ? await LocationServices().location : null;
-  }
-
-  void _updateCurrentLocation() {
-    _loadCurrentLocation().then((_){
-      setState(() {});
-    });
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      setStateIfMounted(() {});
+      _updateCurrentLocation();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+      _updateCurrentLocation();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                child: CustomScrollView(
-                  scrollDirection: Axis.vertical,
-                  slivers: <Widget>[
-                    
-                    SliverToutHeaderBar(
-                      flexImageUrl: dining?.exploreImageUrl,
-                    ),
-                    SliverList(
-                      delegate: SliverChildListDelegate(
-                          [
-                        Stack(
-                          children: <Widget>[
-                            Container(
-                                color: Colors.white,
-                                child: Column(
-                                  children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Column(
-                                          children: <Widget>[
-                                            Padding(
-                                                padding:
-                                                EdgeInsets.only(right: 20, left: 20),
-                                                child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: <Widget>[
-                                                      _exploreTitle(),
-                                                      _exploreDetails(),
-                                                      _exploreSubTitle(),
-                                                      _exploreDescription(),
-                                                    ]
-                                                )),
-                                            _buildDiningDetail(),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )
-                            )
-                          ],
-                        )
-                      ],addSemanticIndexes:false),
-                    )
-                  ],
-                ),
-              ),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar(),
+      body: Column(children: <Widget>[
+        Expanded(child:
+          CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
+            SliverToutHeaderBar(
+              flexImageUrl: _dining?.exploreImageUrl,
             ),
-          ],
+            SliverList(delegate: SliverChildListDelegate([
+              Container(color: Colors.white, child:
+                Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Padding(padding: EdgeInsets.only(right: 20, left: 20), child:
+                    Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                      _exploreTitle(),
+                      _exploreDetails(),
+                      _exploreSubTitle(),
+                      _exploreDescription(),
+                      _buildDiningFeedback(),
+                    ])
+                  ),
+                  _buildDiningDetail(),
+                ],),
+              ),
+            ], addSemanticIndexes:false),),
+          ],),
         ),
-        backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: uiuc.TabBar(),
-      );
+      ],),
+    );
   }
 
   Widget _exploreTitle() {
     bool starVisible = Auth2().canFavorite;
-    bool isFavorite = Auth2().isFavorite(dining);
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                dining!.exploreTitle!,
-                style: TextStyle(
-                    fontSize: 24,
-                    color: Styles().colors!.fillColorPrimary,
-                    letterSpacing: 1),
-              ),
-            ),
-            Visibility(visible: starVisible,child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: (){
-                  Analytics().logSelect(target: "Favorite: ${dining?.title}");
-                  Auth2().prefs?.toggleFavorite(dining);},
-                child: Container( child: Semantics(
-                    label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                    hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                    button: true,
-                    child:Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child: Image.asset(isFavorite?'images/icon-star-orange.png':'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true))))
-            ),),
-          ],
-        ));
+    bool isFavorite = Auth2().isFavorite(_dining);
+    return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+      Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+        Expanded(child:
+          Text(_dining?.exploreTitle ?? '', style:
+            TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary, letterSpacing: 1),
+          ),
+        ),
+        Visibility(visible: starVisible, child:
+          GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onFavorite, child:
+            Semantics(button: true,
+              label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+              hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''), child:
+                Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+                  Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+                )
+            )
+          ),
+        ),
+      ],)
+    );
   }
 
   Widget _exploreDetails() {
@@ -254,85 +209,61 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       details.add(orderOnline);
     }
 
-    return (0 < details.length)
-        ? Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: details))
-        : Container();
+    return (0 < details.length) ? Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+      Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: details)) : Container();
   }
 
   Widget? _explorePaymentTypes() {
     List<Widget>? details;
-    List<PaymentType>? paymentTypes = dining?.paymentTypes;
+    List<PaymentType>? paymentTypes = _dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
       for (PaymentType? paymentType in paymentTypes) {
-        Image? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
+        Widget? image = PaymentTypeHelper.paymentTypeIcon(paymentType);
         if (image != null) {
-          details.add(Padding(padding: EdgeInsets.only(right: 6) ,child:
-            Row(
-              children: <Widget>[
-                image,
-                _diningPaymentTypesExpanded ? Container(width: 5,) : Container(),
-                _diningPaymentTypesExpanded ? Text(PaymentTypeHelper.paymentTypeToDisplayString(paymentType)!) : Container()
-              ],
-            )
-          ) );
+          details.add(Padding(padding: EdgeInsets.only(right: 6), child:
+            Row(children: <Widget>[
+              image,
+              _diningPaymentTypesExpanded ? Container(width: 5,) : Container(),
+              _diningPaymentTypesExpanded ? Text(PaymentTypeHelper.paymentTypeToDisplayString(paymentType)!) : Container()
+            ],)
+          ));
         }
       }
     }
     return ((details != null) && (0 < details.length)) ?
-        Semantics(
-          excludeSemantics: true,
-            label: Localization().getStringEx("panel.explore_detail.label.accepted_payments", "Accepted payments: ") + paymentsToString(paymentTypes),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _divider(),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted Payment"),
-                        style: TextStyle(
-                          color: Styles().colors!.textBackground
-                        ),
-                      ),
-                    ),
-                    FilterSelector(
-                      title: Localization().getStringEx("panel.explore_detail.label.accepted_payment_details","Details"),
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      active: _diningPaymentTypesExpanded,
-                      onTap: _onDiningPaymentTypeTapped,
-                    )
-                  ],
+        Semantics(excludeSemantics: true, label: Localization().getStringEx("panel.explore_detail.label.accepted_payments", "Accepted payments: ") + paymentsToString(paymentTypes), child:
+          Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            _divider(),
+            Row(children: <Widget>[
+              Expanded(child:
+                Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted Payment"), style:
+                  TextStyle(color: Styles().colors!.textBackground),
                 ),
-                _diningPaymentTypesExpanded
-                    ? GridView.count(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        childAspectRatio: 6,
-                        crossAxisCount: 2,
-                        children: details
-                      )
-                    : Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10,),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: details)
-                )
-
-              ]))
-
-        : Container();
+              ),
+              FilterSelector(
+                title: Localization().getStringEx("panel.explore_detail.label.accepted_payment_details","Details"),
+                padding: EdgeInsets.symmetric(vertical: 5),
+                active: _diningPaymentTypesExpanded,
+                onTap: _onDiningPaymentTypeTapped,
+              )
+            ],),
+            _diningPaymentTypesExpanded ? GridView.count(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              childAspectRatio: 6,
+              crossAxisCount: 2,
+              children: details
+            )
+            : Padding(padding: EdgeInsets.symmetric(vertical: 10,), child:
+              Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: details)
+            )
+          ])
+        ) : Container();
   }
 
   Widget? _exploreOrderOnline() {
-    Map<String, dynamic>? onlineOrder = dining?.onlineOrder;
+    Map<String, dynamic>? onlineOrder = _dining?.onlineOrder;
     if (onlineOrder == null) {
       return null;
     }
@@ -348,9 +279,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (StringUtils.isEmpty(onlineOrderPlatformDetails['deep_link'])) {
       return null;
     }
-    return Align(
-      alignment: Alignment.centerRight,
-      child: RoundedButton(
+    return Align(alignment: Alignment.centerRight, child:
+      RoundedButton(
         label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
         backgroundColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
@@ -360,7 +290,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     );
   }
 
-  String paymentsToString(List<PaymentType>? payments){
+  String paymentsToString(List<PaymentType>? payments) {
     String result = "";
     final String paymentTypePrefix = "PaymentType.";
     if(CollectionUtils.isNotEmpty(payments)) {
@@ -376,41 +306,28 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return result;
   }
 
-  Widget _divider(){
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 0),
-      child: Container(
-        height: 1,
-        color: Styles().colors!.fillColorPrimaryTransparent015,
-      ),
+  Widget _divider() {
+    return Padding(padding: EdgeInsets.symmetric(vertical: 0), child:
+      Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
     );
   }
 
   Widget? _exploreLocationDetail() {
-    String? locationText = dining?.getLongDisplayLocation(_locationData);
+    String? locationText = _dining?.getLongDisplayLocation(_locationData);
+    String? locationHint = Localization().getStringEx('panel.explore_detail.button.directions.hint', '');
     if ((locationText != null) && locationText.isNotEmpty) {
-      return GestureDetector(
-        onTap: _onLoacationDetailTapped,
-        child: Semantics(
-          label: locationText,
-          hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
-          button: true,
-          excludeSemantics: true,
-          child:Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-location.png', excludeFromSemantics: true),
-                ),
-                Expanded(child: Text(locationText,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground))),
-              ],
+      return GestureDetector(onTap: _onLoacationDetailTapped, child:
+        Semantics(label: locationText, hint: locationHint, button: true, excludeSemantics: true, child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 10), child:
+                Styles().images?.getImage('location', excludeFromSemantics: true),
+              ),
+              Expanded(child:
+                Text(locationText, style:
+                  TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)
+                )
+              ),],
             ),
           )
         ),
@@ -421,44 +338,34 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Widget? _exploreWorktimeDetail() {
-    bool hasAdditionalInformation = dining?.diningSchedules != null && (dining?.diningSchedules?.isNotEmpty ?? false) && (dining?.firstOpeningDateSchedules.isNotEmpty?? false);
-    String? displayTime = dining?.displayWorkTime;
+    bool hasAdditionalInformation = _dining?.diningSchedules != null && (_dining?.diningSchedules?.isNotEmpty ?? false) && (_dining?.firstOpeningDateSchedules.isNotEmpty?? false);
+    String? displayTime = _dining?.displayWorkTime;
+    String displayHint = hasAdditionalInformation ? Localization().getStringEx("panel.explore_detail.button.wirking_detail.hint","activate to show more details") : "";
     if ((displayTime != null) && displayTime.isNotEmpty) {
-      return Padding(
-          padding: EdgeInsets.only(bottom: 11),
-          child:Semantics(
-            container: true,
-          child:Column(
-                children: <Widget>[
-              Semantics(
-              excludeSemantics: true,
-              label: displayTime,
-              button: hasAdditionalInformation? true : null,
-              hint: hasAdditionalInformation?Localization().getStringEx("panel.explore_detail.button.wirking_detail.hint","activate to show more details") : "",
-              child:
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 10),
-                        child:Image.asset('images/icon-time.png', excludeFromSemantics: true),),
-                      Expanded(child:
-                        FilterSelector(
-                          title: displayTime,
-                          padding: EdgeInsets.symmetric(vertical: 5),
-                          expanded: true,
-                          active: _diningWorktimeExpanded,
-                          onTap: _onDiningWorktimeTapped,
-                        )
-                      )
-                    ],
-                  )),
-                  Semantics(
-                    explicitChildNodes: true,
-                      child: _exploreWorktimeFullDetail(),
+      return Padding(padding: EdgeInsets.only(bottom: 11), child:
+        Semantics(container: true, child:
+          Column(children: <Widget>[
+            Semantics(excludeSemantics: true, label: displayTime, hint: displayHint, button: hasAdditionalInformation? true : null, child:
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+                Padding(padding: EdgeInsets.only(right: 10), child:
+                  Styles().images?.getImage('time', excludeFromSemantics: true)
+                ),
+                Expanded(child:
+                  FilterSelector(
+                    title: displayTime,
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    expanded: true,
+                    active: _diningWorktimeExpanded,
+                    onTap: _onDiningWorktimeTapped,
                   )
-                ],
-          )),
+                )
+              ],)
+            ),
+            Semantics(explicitChildNodes: true, child:
+              _exploreWorktimeFullDetail(),
+            )
+          ],)
+        ),
       );
     } else {
       return Container();
@@ -466,129 +373,203 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Widget _exploreWorktimeFullDetail() {
-    if(dining?.diningSchedules != null && dining!.diningSchedules!.isNotEmpty && _diningWorktimeExpanded){
+    if (_dining?.diningSchedules != null && _dining!.diningSchedules!.isNotEmpty && _diningWorktimeExpanded) {
 
       List<Widget> widgets = [];
-      List<DiningSchedule> schedules = dining!.firstOpeningDateSchedules;
-      if(schedules.isNotEmpty){
+      List<DiningSchedule> schedules = _dining!.firstOpeningDateSchedules;
+      if (schedules.isNotEmpty) {
 
-        for(DiningSchedule schedule in schedules){
+        for (DiningSchedule schedule in schedules) {
           String? meal = schedule.meal;
           String mealDisplayTime = schedule.displayWorkTime;
           String timeHint = "From: "+schedule.getDisplayTime(", to: ");
-          if(schedule.isOpen || schedule.isFuture) {
-            widgets.add(Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child:
-                Semantics(container:true, child:
-                  Row(
-                    children: <Widget>[
-                      Expanded(child:
-                      Text(meal!,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.regular,
-                            fontSize: 15,
-                            color: Styles().colors!.textBackground
-                        ),
-                      ),),
-                      Expanded(
-                        child: Semantics( excludeSemantics: true, label: timeHint,
-                          child: Text(mealDisplayTime,
-                          textAlign: TextAlign.end,
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.regular,
-                              fontSize: 15,
-                              color: Styles().colors!.textBackground
-                          ),
-                        ),
-                      ))
-                    ],
-                  ))
+          if (schedule.isOpen || schedule.isFuture) {
+            widgets.add(Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child:
+              Semantics(container:true, child:
+                Row(children: <Widget>[
+                  Expanded(child:
+                    Text(meal!, textAlign: TextAlign.start, style:
+                      TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 15, color: Styles().colors!.textBackground),
+                    ),
+                  ),
+                  Expanded(child:
+                    Semantics(excludeSemantics: true, label: timeHint, child:
+                      Text(mealDisplayTime, textAlign: TextAlign.end, style:
+                        TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 15, color: Styles().colors!.textBackground),
+                      ),
+                    )
+                  )
+                ],)
+              )
             ));
           }
         }
       }
 
-      return Padding(
-        padding: const EdgeInsets.only(left: 30),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            widgets.isNotEmpty ? Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: widgets
-            ) : Container(),
-          ],
-        ),
+      return Padding(padding: const EdgeInsets.only(left: 30), child:
+        Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          widgets.isNotEmpty ? Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: widgets) : Container(),
+        ],),
       );
     }
     return Container();
   }
 
   Widget _exploreSubTitle() {
-    String? subTitle = dining!.exploreSubTitle;
+    String? subTitle = _dining!.exploreSubTitle;
     if (StringUtils.isEmpty(subTitle)) {
       return Container();
     }
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          subTitle!,
-          style: TextStyle(
-              fontSize: 20,
-              color: Styles().colors!.textBackground),
-        ));
+    return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+      Text(subTitle ?? '', style:
+        TextStyle(fontSize: 20, color: Styles().colors!.textBackground),
+      )
+    );
   }
 
   Widget _exploreDescription() {
-    String? longDescription = dining!.exploreLongDescription;
+    String? longDescription = _dining!.exploreLongDescription;
     bool showDescription = StringUtils.isNotEmpty(longDescription);
-    if (!showDescription) {
+    return showDescription ? Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+      HtmlWidget(
+        StringUtils.ensureNotEmpty(_dining!.exploreLongDescription),
+        onTapUrl : (url) {_launchUrl(url, 'Description'); return true;},
+        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+      )
+    ) : Container();
+  }
+
+  Widget _buildDiningDetail() {
+    return _isDiningLoading ? Row(children: <Widget>[
+      Expanded(child:
+        Center(child:
+          Padding(padding: const EdgeInsets.all(16.0), child:
+            CircularProgressIndicator(),
+          )
+        )
+      )
+    ],) : _DiningDetail(dining: _dining);
+  }
+
+  Widget _buildDiningFeedback() {
+    if (_diningFeedback?.isNotEmpty ?? false) {
+      return Padding(padding: EdgeInsets.only(top: 10, bottom: 20), child:
+        Column(children: [
+          Text(Localization().getStringEx('panel.explore_detail.label.text_and_tell', 'Text and tell us about your dining experience!'), style:
+            TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 16)
+          ),
+          Container(height: 10,),
+          Row(children: [
+            Expanded(child:
+              StringUtils.isNotEmpty(_diningFeedback?.feedbackUrl) ? RoundedButton(
+                label: Localization().getStringEx('panel.explore_detail.button.text_feedback', 'Text Feedback'),
+                backgroundColor: Styles().colors?.white,
+                borderColor: Styles().colors!.fillColorSecondary,
+                textStyle: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                onTap: () => _onTapTextFeedback(),
+              ) : Container()
+            ),
+            Container(width: 10,),
+            Expanded(child:
+              StringUtils.isNotEmpty(_diningFeedback?.dieticianUrl) ? RoundedButton(
+                label: Localization().getStringEx('panel.explore_detail.button.ask_dietician', 'Ask a Dietician'),
+                backgroundColor: Styles().colors?.white,
+                borderColor: Styles().colors!.fillColorSecondary,
+                textStyle: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                onTap: () => _onTapAskDietician(),
+              ) : Container()
+            ),
+          ],)
+        ],)
+      );
+    }
+    else if (_isDiningFeedbackLoading) {
+      return Row(children: <Widget>[
+        Expanded(child:
+          Center(child:
+            Padding(padding: const EdgeInsets.symmetric(vertical: 24.0), child:
+              CircularProgressIndicator(),
+            )
+          )
+        )
+      ],);
+    }
+    else {
       return Container();
     }
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Html(
-          data: dining!.exploreLongDescription,
-          onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-          style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-        ));
   }
 
-  Widget _buildDiningDetail(){
-    return _isDiningLoading ? Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(),
-              )
-            ],
-          ) : _DiningDetail(dining: dining,);
+  void _reloadDiningIfNeed() {
+    if (_dining?.hasDiningSchedules != true) {
+      _isDiningLoading = true;
+
+      Dinings().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings) {
+        if (mounted && (dinings != null)) {
+          Dining? foundDining = Dining.entryInList(dinings, id: _dining?.id);
+          if (foundDining != null) {
+            setState(() {
+              _dining = foundDining;
+              _isDiningLoading = false;
+            });
+          }
+        }
+      });
+    }
   }
 
-  void _addRecentItem(){
-    RecentItems().addRecentItem(RecentItem.fromSource(dining));
+  void _loadDiningFeedback() {
+    if (_dining?.id != null) {
+      _isDiningFeedbackLoading = true;
+      Dinings().loadDiningFeedback(diningId: widget.dining?.id).then((DiningFeedback? diningFeedback) {
+        if (mounted) {
+          setState(() {
+            _diningFeedback = diningFeedback;
+            _isDiningFeedbackLoading = false;
+          });
+        }
+      });
+    }
   }
 
-  void _onDiningWorktimeTapped(){
+
+  Future<void> _loadCurrentLocation() async {
+    _locationData = FlexUI().isLocationServicesAvailable ? await LocationServices().location : null;
+  }
+
+  void _updateCurrentLocation() {
+    _loadCurrentLocation().then((_) {
+      setStateIfMounted(() {});
+    });
+  }
+
+  void _addRecentItem() {
+    RecentItems().addRecentItem(RecentItem.fromSource(_dining));
+  }
+
+  void _onFavorite() {
+    Analytics().logSelect(target: "Favorite: ${_dining?.title}");
+    Auth2().prefs?.toggleFavorite(_dining);
+  }
+
+  void _onDiningWorktimeTapped() {
     Analytics().logSelect(target: "Dining Work Time");
-    _diningWorktimeExpanded = !_diningWorktimeExpanded;
-    setState(() {});
+    setState(() {
+      _diningWorktimeExpanded = !_diningWorktimeExpanded;
+    });
   }
 
-  void _onDiningPaymentTypeTapped(){
+  void _onDiningPaymentTypeTapped() {
     Analytics().logSelect(target: "Dining Payment Type");
-    _diningPaymentTypesExpanded = !_diningPaymentTypesExpanded;
-    setState(() {});
+    setState(() {
+      _diningPaymentTypesExpanded = !_diningPaymentTypesExpanded;
+    });
   }
 
-  void _onLoacationDetailTapped(){
-    Analytics().logSelect(target: "Location Detail");
-    NativeCommunicator().launchExploreMapDirections(target: dining);
+  void _onLoacationDetailTapped() {
+    Analytics().logSelect(target: "Location Directions");
+    _dining?.launchDirections();
   }
 
   void _onTapOrderOnline(Map<String, dynamic>? orderOnlineDetails) async {
@@ -606,10 +587,58 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     }
   }
 
-  void _launchUrl(String? url, {BuildContext? context}) {
+  void _onTapTextFeedback() {
+    Analytics().logSelect(target: 'Text Feedback');
+    String? url = _diningFeedback?.feedbackUrl;
+    if (url != null) {
+      showDialog<String?>(context: context, builder: (BuildContext context) {
+        return _FeedbackBodyWidget(
+          analyticsTitle: 'Text Feedback',
+          title: Localization().getStringEx('panel.explore_detail.label.text_feedback', 'Text Feedback'),
+          message: Localization().getStringEx('panel.explore_detail.label.text_feedback_descr', 'Share your thoughts about your dining experience:'),
+        );
+      }).then((String? body) {
+        if (body != null) {
+          _sendFeedback(url, body);
+        }
+      });
+    }
+  }
+
+  void _onTapAskDietician() {
+    Analytics().logSelect(target: 'Ask a Dietician');
+    String? url = _diningFeedback?.dieticianUrl;
+    if (url != null) {
+      showDialog<String?>(context: context, builder: (BuildContext context) {
+        return _FeedbackBodyWidget(
+          analyticsTitle: 'Ask a Dietician',
+          title: Localization().getStringEx('panel.explore_detail.label.ask_dietician', 'Ask a Dietician'),
+          message: Localization().getStringEx('panel.explore_detail.label.ask_dietician_descr', 'Type your question to our dieticians:'),
+        );
+      }).then((String? body) {
+        if (body != null) {
+          _sendFeedback(url, body);
+        }
+      });
+    }
+  }
+
+  void _sendFeedback(String url, String body) {
+    url = url.replaceAll('{{body}}', Uri.encodeComponent(body));
+    Uri? uri = Uri.tryParse(url);
+    if (uri != null) {
+      url_launcher.launchUrl(uri);
+    }
+  }
+
+  void _launchUrl(String? url, String analyticsName) {
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+          url: url,
+          analyticsName: "WebPanel($analyticsName)",
+          analyticsSource: widget.dining?.analyticsAttributes,
+        )));
       } else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
@@ -619,32 +648,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     }
   }
 
-  // NotificationsListener
-  
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == LocationServices.notifyStatusChanged) {
-      _updateCurrentLocation();
-    }
-    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      setStateIfMounted(() {});
-      _updateCurrentLocation();
-    }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setStateIfMounted(() {});
-    }
-    else if (name == FlexUI.notifyChanged) {
-      setStateIfMounted(() {});
-      _updateCurrentLocation();
-    }
-  }
 }
 
 class _DiningDetail extends StatefulWidget {
 
   final Dining? dining;
 
-  _DiningDetail({required this.dining});
+  _DiningDetail({required this.dining });
 
   _DiningDetailState createState() => _DiningDetailState();
 }
@@ -661,7 +671,6 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   int _selectedDateFilterIndex = 0;
 
   List<DiningProductItem>? _productItems;
-  late Map<String,DiningProductItem> _productItemsMapping;
 
   bool _isLoading = false;
 
@@ -684,284 +693,119 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   @override
-  void dispose(){
+  void dispose() {
     NotificationService().unsubscribe(this);
     super.dispose();
   }
 
-  void _findTodayFilter(){
-    DateTime nowUtc = DateTime.now().toUtc();
-    if(_displayDates != null) {
-      for(String dateString in _displayDates!){
-        List<DiningSchedule> schedules = widget.dining!.displayDateScheduleMapping[dateString]!;
-        for(DiningSchedule schedule in schedules){
-          if(nowUtc.isBefore(schedule.endTimeUtc!)){
-            _selectedDateFilterIndex = _displayDates!.indexOf(dateString);
-            return;
-          }
-        }
-      }
-    }
-    _selectedDateFilterIndex = 0;
-  }
-
-  void _findCurrentSchedule(){
-    if(__schedules != null && __schedules!.isNotEmpty){
-      var nowUtc = DateTime.now().toUtc();
-      bool found = false;
-      for(int i = 0; i < __schedules!.length; i++){
-        DiningSchedule schedule = __schedules![i];
-        if(nowUtc.isBefore(schedule.startTimeUtc!) || nowUtc.isBefore(schedule.endTimeUtc!)){
-          _selectedScheduleIndex = i;
-          found = true;
-          break;
-        }
-      }
-
-      if(!found){
-        _selectedScheduleIndex = 0;
-      }
-    }
-    else{
-      _selectedScheduleIndex = -1;
-    }
-  }
-
-  bool get hasMenuData{
-    return _filterDates != null && _filterDates!.isNotEmpty && _schedules != null && _schedules!.isNotEmpty;
-  }
-
-  void _loadOffers(){
-    Dinings().loadDiningSpecials().then((List<DiningSpecial>? offers){
-      if(offers != null && offers.isNotEmpty){
-        _specials = offers.where((entry)=>entry.locationIds!.contains(widget.dining!.id)).toList();
-        setState((){});
-      }
-    });
-  }
-
-  void _loadProductItems(){
-    if(hasMenuData) {
-      _isLoading = true;
-      DateTime? filterDate = _filterDates![_selectedDateFilterIndex];
-      Dinings().loadMenuItemsForDate(widget.dining!.id, filterDate).then((
-          List<DiningProductItem>? items) {
-        _productItems = items;
-        _productItemsMapping = Map<String, DiningProductItem>();
-        _productItems!.forEach((DiningProductItem item) {
-          if (item.itemID != null) {
-            _productItemsMapping[item.itemID!] = item;
-          }
-        });
-
-        _isLoading = false;
-        if(mounted) {
-          setState(() {});
-        }
-      });
-    }
-  }
-
-  void _onTapTab(RoundedTab tab){
-    Analytics().logSelect(target: "Tab: ${tab.title}");
-    _selectedScheduleIndex = tab.tabIndex;
-    if(mounted) {
-      setState(() {});
-    }
-  }
-
-  void _onFoodFilersTapped(){
-    Analytics().logSelect(target: "Food filters");
-    SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
-  }
-
-
-  List<DiningSchedule>? get _schedules{
-    return __schedules;
-  }
-
-  set _schedules(List<DiningSchedule>? schedules){
-    __schedules = schedules;
-    _findCurrentSchedule();
-  }
-
-  void incrementDateFilter(){
-    Analytics().logSelect(target: "Increment Date filter");
-    if(_selectedDateFilterIndex < _filterDates!.length - 1) {
-      _selectedDateFilterIndex++;
-
-      String? displayDate = (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : null;
-      _schedules = widget.dining!.displayDateScheduleMapping[displayDate];
-
-      _loadProductItems();
-
-      if(mounted) {
+  // NotificationsListener
+  
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFoodChanged) {
+      if (mounted) {
         setState(() {});
       }
     }
   }
-
-  void decrementDateFilter(){
-    Analytics().logSelect(target: "Decrement Date filter");
-    if(_selectedDateFilterIndex > 0) {
-      _selectedDateFilterIndex--;
-
-      String? displayDate = (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : null;
-      _schedules = widget.dining!.displayDateScheduleMapping[displayDate];
-
-      _loadProductItems();
-      if(mounted) {
-        setState(() {});
-      }
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
     bool hasFoodFilterApplied = Auth2().prefs?.hasFoodFilters ?? false;
-    return hasMenuData ?
-    Container(
-        color: Styles().colors!.background,
-        child: Column(
-          children: <Widget>[
-            Container(
-              color: Styles().colors!.background,
-              height: 1,
+    
+    String filtersLabel = hasFoodFilterApplied
+      ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
+      : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters");
+    
+    String filtersHint = hasFoodFilterApplied
+      ? Localization().getStringEx("widget.food_detail.button.filters_applied.hint", "")
+      : Localization().getStringEx("widget.food_detail.button.filters_empty.hint", "");
+    
+    return hasMenuData ? Container(color: Styles().colors!.background, child:
+      Column(children: <Widget>[
+        Container(color: Styles().colors!.background, height: 1,),
+        HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
+        Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+          Row(children: <Widget>[
+            Expanded(flex: 2, child:
+              Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"), style:
+                TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary,),
+              ),
             ),
-            HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"),
-                      style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        fontSize: 16,
-                        color: Styles().colors!.fillColorPrimary,
-                      ),
+            Expanded(flex: 5, child:
+              Semantics(button: false, label: filtersLabel, hint: filtersHint, child:
+                GestureDetector(onTap: _onFoodFilersTapped, child:
+                  Row(children: <Widget>[
+                    Expanded(child:
+                      Text(filtersLabel, textAlign: TextAlign.right, style:
+                        TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                      )
                     ),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    child:
-                    Semantics(
-                      label: hasFoodFilterApplied
-                          ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
-                          : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters"),
-                      hint: hasFoodFilterApplied
-                          ? Localization().getStringEx("widget.food_detail.button.filters_applied.hint", "")
-                          : Localization().getStringEx("widget.food_detail.button.filters_empty.hint", ""),
-                      button: false,
-                      child: GestureDetector(
-                        onTap: _onFoodFilersTapped,
-                        child: Container(
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(child:
-                              Text(hasFoodFilterApplied
-                                  ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
-                                  : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters"),
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                    color: Styles().colors!.fillColorPrimary,
-                                    fontFamily: Styles().fontFamilies!.regular,
-                                    fontSize: 16
-                                ),
-                              )),
-                              Padding(
-                                padding: EdgeInsets.only(left: 4),
-                                child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                    Padding(padding: EdgeInsets.only(left: 4), child:
+                      Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                     )
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '',
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.extraBold,
-                          fontSize: 20,
-                          color: Styles().colors!.fillColorPrimary
-                      ),
-                    ),
-                  ),
-                  Semantics(
-                    label: Localization().getStringEx("widget.food_detail.button.prev_menu.title", "Previous dining date"),
-                    hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
-                    excludeSemantics: true,
-                    child: _CircularButton(
-                      image: Image.asset('images/chevron-left.png', excludeFromSemantics: true),
-                      onTap: decrementDateFilter,
-                    ),
-                  ),
-                  Container(width: 15,),
-                  Semantics(
-                    label: Localization().getStringEx("widget.food_detail.button.next_menu.title", "Next dining date"),
-                    hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
-                    excludeSemantics: true,
-                    child: _CircularButton(
-                      image: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
-                      onTap: incrementDateFilter,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(padding: EdgeInsets.all(16), child: 
-              SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-                Row(children: _buildScheduleTabs(),),
-              ),
-            ),
-            _buildScheduleWorkTime(),
-            _isLoading
-                ? Semantics(
-              label: Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data"),
-              hint: Localization().getStringEx("widget.food_detail.label.loading.hint", ""),
-              button: false,
-              child: Column(
-                children: <Widget>[
-                  CircularProgressIndicator(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Text(Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data")),
-                  )
-                ],
-              ),
-            )
-                : Stack(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(8)),
-                        child: Column(
-                          children: _buildStations(),
-                        ),
-                      ),
-                    ),
-                    Container(height: 20),
-                  ],
+                  ],),
                 ),
-              ],
+              )
+            )
+          ],),
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+          Row(children: <Widget>[
+            Expanded(child:
+              Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '', style:
+                TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary),
+              ),
             ),
-          ],
-        )) : Container(
+            Semantics(
+              label: Localization().getStringEx("widget.food_detail.button.prev_menu.title", "Previous dining date"),
+              hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
+              excludeSemantics: true,
+              child: _CircularButton(
+                image: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true),
+                onTap: decrementDateFilter,
+              ),
+            ),
+            Container(width: 15,),
+            Semantics(
+              label: Localization().getStringEx("widget.food_detail.button.next_menu.title", "Next dining date"),
+              hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
+              excludeSemantics: true,
+              child: _CircularButton(
+                image: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
+                onTap: incrementDateFilter,
+              ),
+            ),
+          ],),
+        ),
+        Padding(padding: EdgeInsets.all(16), child: 
+          SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+            Row(children: _buildScheduleTabs(),),
+          ),
+        ),
+        _buildScheduleWorkTime(),
+        _isLoading ? Semantics(
+          label: Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data"),
+          hint: Localization().getStringEx("widget.food_detail.label.loading.hint", ""),
+          button: false,
+          child: Column(children: <Widget>[
+            CircularProgressIndicator(),
+            Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+              Text(Localization().getStringEx("widget.food_detail.label.loading.title", "Loading menu data")),
+            )
+          ],),
+        ) : Column(children: <Widget>[
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child:
+            ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+              Column(children:
+                _buildStations(),
+              ),
+            ),
+          ),
+          Container(height: 20),
+        ],),
+      ],)
+    ) : Container(
       child: Text('No menu data'),
     );
   }
@@ -977,7 +821,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     return tabs;
   }
 
-  List<Widget> _buildStations(){
+  List<Widget> _buildStations() {
     List<Widget> list = [];
     if(_productItems != null && _productItems!.isNotEmpty && _selectedScheduleIndex > -1) {
       List<DiningProductItem> mealProducts = DiningUtils.getProductsForScheduleId(
@@ -992,7 +836,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
       if (_productItems != null && _productItems!.isNotEmpty) {
         List<String> stations = productStationMapping.keys.toList();
 
-        for(String? stationName in stations){
+        for(String? stationName in stations) {
           List<DiningProductItem> products = productStationMapping[stationName]!;
 
           if (products.isNotEmpty) {
@@ -1013,7 +857,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
       }
     }
 
-    if(list.isEmpty){
+    if (list.isEmpty) {
       list.add(Semantics(
         label: Localization().getStringEx("widget.food_detail.label.no_entries_for_desired_filter.title", "There are no entries according to the current filter"),
         hint: Localization().getStringEx("widget.food_detail.label.no_entries_for_desired_filter.hint", ""),
@@ -1026,36 +870,149 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     return list;
   }
 
-  Widget _buildScheduleWorkTime(){
+  Widget _buildScheduleWorkTime() {
     String workTimeDisplayText = (_selectedScheduleIndex > -1 && __schedules != null && __schedules!.length >= _selectedScheduleIndex)
         ? (__schedules![_selectedScheduleIndex].displayWorkTime)
         : "";
-    return workTimeDisplayText.isNotEmpty ? Column(
-      children: <Widget>[
-        Center(
-          child: Text(workTimeDisplayText,
-            style: TextStyle(
-                fontFamily: Styles().fontFamilies!.regular,
-                color: Styles().colors!.fillColorPrimary,
-                fontSize: 14
-            ),
-          ),
+    return workTimeDisplayText.isNotEmpty ? Column(children: <Widget>[
+      Center(child:
+        Text(workTimeDisplayText, style:
+          TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.fillColorPrimary, fontSize: 14),
         ),
-        Container(height: 10,),
-      ],
-    ) : Container();
+      ),
+      Container(height: 10,),
+    ],) : Container();
   }
 
-  // NotificationsListener
-  
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Auth2UserPrefs.notifyFoodChanged) {
+  void _findTodayFilter() {
+    DateTime nowUtc = DateTime.now().toUtc();
+    if (_displayDates != null) {
+      for (String dateString in _displayDates!) {
+        List<DiningSchedule> schedules = widget.dining!.displayDateScheduleMapping[dateString]!;
+        for (DiningSchedule schedule in schedules) {
+          if (nowUtc.isBefore(schedule.endTimeUtc!)) {
+            _selectedDateFilterIndex = _displayDates!.indexOf(dateString);
+            return;
+          }
+        }
+      }
+    }
+    _selectedDateFilterIndex = 0;
+  }
+
+  void _findCurrentSchedule() {
+    if(__schedules != null && __schedules!.isNotEmpty) {
+      var nowUtc = DateTime.now().toUtc();
+      bool found = false;
+      for(int i = 0; i < __schedules!.length; i++) {
+        DiningSchedule schedule = __schedules![i];
+        if(nowUtc.isBefore(schedule.startTimeUtc!) || nowUtc.isBefore(schedule.endTimeUtc!)) {
+          _selectedScheduleIndex = i;
+          found = true;
+          break;
+        }
+      }
+
+      if(!found) {
+        _selectedScheduleIndex = 0;
+      }
+    }
+    else{
+      _selectedScheduleIndex = -1;
+    }
+  }
+
+  bool get hasMenuData{
+    return _filterDates != null && _filterDates!.isNotEmpty && _schedules != null && _schedules!.isNotEmpty;
+  }
+
+  void _loadOffers() {
+    Dinings().loadDiningSpecials().then((List<DiningSpecial>? offers) {
+      if (mounted && offers != null && offers.isNotEmpty) {
+        setState(() {
+          _specials = offers.where((entry)=>entry.locationIds!.contains(widget.dining!.id)).toList();
+        });
+      }
+    });
+  }
+
+  void _loadProductItems() {
+    if (hasMenuData) {
+      _isLoading = true;
+      DateTime? filterDate = _filterDates![_selectedDateFilterIndex];
+      Dinings().loadMenuItemsForDate(widget.dining!.id, filterDate).then((List<DiningProductItem>? items) {
+        Map<String, DiningProductItem> itemsMapping = <String, DiningProductItem>{};
+        items!.forEach((DiningProductItem item) {
+          if (item.itemID != null) {
+            itemsMapping[item.itemID!] = item;
+          }
+        });
+
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _productItems = items;
+          });
+        }
+      });
+    }
+  }
+
+  void _onTapTab(RoundedTab tab) {
+    Analytics().logSelect(target: "Tab: ${tab.title}");
+    if (mounted) {
+      setState(() {
+        _selectedScheduleIndex = tab.tabIndex;
+      });
+    }
+  }
+
+  void _onFoodFilersTapped() {
+    Analytics().logSelect(target: "Food filters");
+    SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
+  }
+
+
+  List<DiningSchedule>? get _schedules{
+    return __schedules;
+  }
+
+  set _schedules(List<DiningSchedule>? schedules) {
+    __schedules = schedules;
+    _findCurrentSchedule();
+  }
+
+  void incrementDateFilter() {
+    Analytics().logSelect(target: "Increment Date filter");
+    if(_selectedDateFilterIndex < _filterDates!.length - 1) {
+      _selectedDateFilterIndex++;
+
+      String? displayDate = (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : null;
+      _schedules = widget.dining!.displayDateScheduleMapping[displayDate];
+
+      _loadProductItems();
+
       if (mounted) {
         setState(() {});
       }
     }
   }
+
+  void decrementDateFilter() {
+    Analytics().logSelect(target: "Decrement Date filter");
+    if(_selectedDateFilterIndex > 0) {
+      _selectedDateFilterIndex--;
+
+      String? displayDate = (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : null;
+      _schedules = widget.dining!.displayDateScheduleMapping[displayDate];
+
+      _loadProductItems();
+      if(mounted) {
+        setState(() {});
+      }
+    }
+  }
+
 }
 
 class _StationItem extends StatefulWidget {
@@ -1074,77 +1031,64 @@ class _StationItem extends StatefulWidget {
 
 class _StationItemState extends State<_StationItem>{
 
-  bool? expanded;
+  bool expanded;
 
-  _StationItemState({this.expanded});
+  _StationItemState({this.expanded = false});
 
-  void onTap(){
+  void onTap() {
     Analytics().logSelect(target: "Station Item: ${widget.title}");
     if(mounted) {
       setState(() {
-        expanded = !expanded!;
+        expanded = !expanded;
       });
     }
   }
 
-  void _onProductItemTapped(DiningProductItem productItem){
+  void _onProductItemTapped(DiningProductItem productItem) {
     Analytics().logSelect(target: "Product Item: "+productItem.name!);
-    Navigator.push(context, CupertinoPageRoute(
-        builder: (context) => FoodDetailPanel(productItem: productItem,)
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => FoodDetailPanel(productItem: productItem,)
     ));
   }
 
   @override
-  Widget build(BuildContext context){
-    return Column(
-      children: <Widget>[
-        Semantics(
-          label: widget.title,
-          hint: expanded!
-              ? Localization().getStringEx("widget.food_detail.button.dining_station.expanded.hint","Double tap to collaps")
-              : Localization().getStringEx("widget.food_detail.button.dining_station.collapsed.hint","Double tap to expand"),
-          value: expanded!
-              ? Localization().getStringEx("widget.food_detail.button.dining_station.value.expanded","Expanded")
-              : Localization().getStringEx("widget.food_detail.button.dining_station.value.collapsed","Collapsed"),
-          button: true,
-          excludeSemantics: true,
-          child: GestureDetector(
-            onTap: onTap,
-            child: Container(
-              color: Styles().colors!.fillColorPrimary,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        widget.title!,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.bold,
-                            fontSize: 16,
-                            color: Colors.white
-                        ),
-                      ),
-                    ),
-                    expanded! ? Image.asset('images/chevron-down.png', excludeFromSemantics: true) : Image.asset('images/chevron-up.png', excludeFromSemantics: true)
-                  ],
+  Widget build(BuildContext context) {
+    return Column(children: <Widget>[
+      Semantics(
+        label: widget.title,
+        hint: expanded
+            ? Localization().getStringEx("widget.food_detail.button.dining_station.expanded.hint","Double tap to collaps")
+            : Localization().getStringEx("widget.food_detail.button.dining_station.collapsed.hint","Double tap to expand"),
+        value: expanded
+            ? Localization().getStringEx("widget.food_detail.button.dining_station.value.expanded","Expanded")
+            : Localization().getStringEx("widget.food_detail.button.dining_station.value.collapsed","Collapsed"),
+        button: true,
+        excludeSemantics: true,
+        child: GestureDetector(onTap: onTap, child:
+          Container(color: Styles().colors!.fillColorPrimary, child:
+            Padding(padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16), child:
+              Row(children: <Widget>[
+                Expanded(child:
+                  Text(widget.title!, style:
+                    TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Colors.white),
+                  ),
                 ),
-              ),
+                Styles().images?.getImage(expanded ? 'chevron-down' : 'chevron-up', excludeFromSemantics: true) ?? Container(),
+              ],),
             ),
           ),
         ),
-        _buildExpandedWidget(),
-      ],
-    );
+      ),
+      _buildExpandedWidget(),
+    ],);
   }
 
-  Widget _buildExpandedWidget(){
-    return (widget.productItems.isNotEmpty && expanded!) ?  Container(
+  Widget _buildExpandedWidget() {
+    return (widget.productItems.isNotEmpty && expanded) ?  Container(
         decoration: BoxDecoration(
-            border: Border(
-                left: BorderSide(color: Styles().colors!.surfaceAccent!),
-                right: BorderSide(color: Styles().colors!.surfaceAccent!)
-            )
+          border: Border(
+            left: BorderSide(color: Styles().colors!.surfaceAccent!),
+            right: BorderSide(color: Styles().colors!.surfaceAccent!)
+          )
         ),
         child: Column(
           children: _createExpandedItems(),
@@ -1152,14 +1096,11 @@ class _StationItemState extends State<_StationItem>{
     ) : Container();
   }
 
-  List<Widget> _createExpandedItems(){
+  List<Widget> _createExpandedItems() {
     List<Widget> list = [];
     list.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
-    for(DiningProductItem productItem in widget.productItems){
-      list.add(_ProductItem(
-        productItem: productItem,
-        onTap: (){_onProductItemTapped(productItem);},
-      ));
+    for(DiningProductItem productItem in widget.productItems) {
+      list.add(_ProductItem(productItem: productItem, onTap: () => _onProductItemTapped(productItem),));
       list.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
     }
     return list;
@@ -1171,35 +1112,20 @@ class _ProductItem extends StatelessWidget {
   final GestureTapCallback? onTap;
   _ProductItem({this.productItem, this.onTap});
 
-
-
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: productItem!.name,
-      button: true,
-      excludeSemantics: true,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    productItem!.name!,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        fontSize: 16,
-                        color: Styles().colors!.fillColorPrimary
-                    ),
-                  ),
+    return Semantics(label: productItem!.name, button: true, excludeSemantics: true, child:
+      GestureDetector(onTap: onTap, child:
+        Container(color: Colors.white, child:
+          Padding(padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16), child:
+            Row(children: <Widget>[
+              Expanded(child:
+                Text(productItem!.name!, style:
+                  TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
                 ),
-                Image.asset('images/chevron-right.png', excludeFromSemantics: true)
-              ],
-            ),
+              ),
+              Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
+            ],),
           ),
         ),
       ),
@@ -1208,24 +1134,130 @@ class _ProductItem extends StatelessWidget {
 }
 
 class _CircularButton extends StatelessWidget{
-  final Image image;
+  final Widget? image;
   final GestureTapCallback? onTap;
 
   _CircularButton({required this.image, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    return GestureDetector(onTap: onTap, child:
+      Container(width: 40, height: 40,
         decoration: BoxDecoration(
           border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        height: 40,
-        width: 40,
         child: image,
       ),
     );
+  }
+}
+
+class _FeedbackBodyWidget extends StatefulWidget {
+  final String? title;
+  final String? analyticsTitle;
+  final String? message;
+  
+  _FeedbackBodyWidget({Key? key, this.title, this.analyticsTitle, this.message}) : super(key: key);
+  
+  @override
+  State<StatefulWidget> createState() => _FeedbackBodyWidgetState();
+}
+
+class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
+  
+  FocusNode _focusNode = FocusNode();
+  TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+        SingleChildScrollView(child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(children: <Widget>[
+            Expanded(child:
+              Container(decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)),), child:
+                  Row(children: [
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+                        Text(widget.title ?? '', style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular.fat")),
+                      )
+                    ),
+                    Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
+                      InkWell(onTap: _onClose, child:
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2),), child:
+                            Center(child:
+                              Text('\u00D7', style: Styles().textStyles?.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
+                            ),
+                          ),
+                        )
+                      )
+                    ),
+                  ],),
+              ),
+            ),
+          ],),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Row(children: [
+                Expanded(child:
+                  Text(widget.message ?? '', style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),),
+                ),
+              ]),
+              Container(height: 4,),
+              TextField(
+                focusNode: _focusNode,
+                controller: _textController,
+                maxLines: 8,
+                decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+              ),
+              Container(height: 16,),
+              Row(children: [
+                Expanded(flex: 1, child: Container()),
+                Expanded(flex: 2, child:
+                  RoundedButton(
+                    label: Localization().getStringEx("dialog.send.title", "Send"),
+                    backgroundColor: Colors.transparent,
+                    textStyle: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 16),
+                    borderColor: Styles().colors!.fillColorSecondary,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    onTap: () => _onSend(),
+                  ),
+                ),
+                Expanded(flex: 1, child: Container()),
+              ]),
+            ],),
+          ),
+        ]),
+      ),
+    ));
+  }
+
+  void _onClose() {
+    Analytics().logAlert(text: widget.title, selection: "Close");
+    Navigator.of(context).pop(null);
+  }
+
+  void _onSend() {
+    Analytics().logAlert(text: "Text Message", selection: "Send");
+    Navigator.of(context).pop(_textController.text);
   }
 }

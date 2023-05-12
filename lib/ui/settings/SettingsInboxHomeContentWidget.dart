@@ -407,7 +407,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildOptionsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.options.title', 'Options'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
       Stack(children: [
-        IconButton(icon: Image.asset('images/groups-more-inactive.png', color: Styles().colors!.fillColorPrimary), onPressed: _onOptions),
+        IconButton(icon: Styles().images?.getImage('more') ?? Container(), onPressed: _onOptions),
         Visibility(visible: (_processingOption == true), child:
           Container(padding: EdgeInsets.all(13), child:
             SizedBox(width: 22, height: 22, child:
@@ -456,7 +456,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
           Row(children:<Widget>[Expanded(child:
-            Text(headingText, style: Styles().textStyles?.getTextStyle("widget.title.regular"),)
+            Text(headingText, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),)
           )]),
         ),
 
@@ -466,7 +466,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             Row(children:<Widget>[
               Padding(padding: EdgeInsets.only(right: 8), child:
-                Image.asset('images/icon-delete-group.png')
+                Styles().images?.getImage('trash')
               ),
               Expanded(child:
                 Text("Delete", style: Styles().textStyles?.getTextStyle("widget.button.title.regular"),)
@@ -481,7 +481,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             Row(children:<Widget>[
               Padding(padding: EdgeInsets.only(right: 8), child:
-                Image.asset('images/close-orange.png', width: 18, height: 18)
+                Styles().images?.getImage('close', excludeFromSemantics: true)
               ),
               Expanded(child:
                 Text("Cancel", style: Styles().textStyles?.getTextStyle("widget.button.title.regular"),)
@@ -934,7 +934,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                 Visibility(visible: (widget.selected != null), child:
                   Padding(padding: EdgeInsets.only(right: leftPadding), child:
                     Semantics(label:(widget.selected == true) ? Localization().getStringEx('widget.inbox_message_card.selected.hint', 'Selected') : Localization().getStringEx('widget.inbox_message_card.unselected.hint', 'Not Selected'), child:
-                      Image.asset((widget.selected == true) ? 'images/deselected-dark.png' : 'images/deselected.png', excludeFromSemantics: true,),
+                      Styles().images?.getImage((widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true,),
                     )
                   ),
                 ),
@@ -964,7 +964,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
 
                     Row(children: [
                       Expanded(child:
-                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small_variant"))
+                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small.regular"))
                     )]),
                   ])
                 ),

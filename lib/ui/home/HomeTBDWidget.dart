@@ -17,7 +17,7 @@ class HomeTBDWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: favoriteId,
       title: title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'campus-tools',
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
       child: Container(
         padding: EdgeInsets.all(16),
@@ -25,12 +25,12 @@ class HomeTBDWidget extends StatelessWidget {
         child: Column(children: <Widget>[
           Row(children: <Widget>[
             Expanded(child:
-              Text('TBD', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: "",)
+              Text('TBD', style: Styles().textStyles?.getTextStyle("widget.message.large.fat"), semanticsLabel: "",)
             )
           ]),
           Row(children: <Widget>[
             Expanded(child:
-              Text('Comming soon...', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), semanticsLabel: "",)
+              Text('Comming soon...', style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), semanticsLabel: "",)
             )
           ]),
         ]),

@@ -129,9 +129,10 @@ class RecentItem {
   }
 
   static RecentItem? fromGuideItem(Map<String, dynamic>? guideItem) {
-    return (guideItem != null) ? RecentItem(
+    String? guideId = Guide().entryId(guideItem);
+    return (guideId != null) ? RecentItem(
       type: RecentItemType.guide,
-      id: Guide().entryId(guideItem),
+      id: guideId,
       title: Guide().entryListTitle(guideItem, stripHtmlTags: true) ?? '',
       descripton: Guide().entryListDescription(guideItem, stripHtmlTags: true) ?? '',
       sourceJson: guideItem

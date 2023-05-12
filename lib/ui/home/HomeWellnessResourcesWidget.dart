@@ -20,10 +20,12 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -31,7 +33,6 @@ import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -77,7 +78,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
-      Assets.notifyChanged,
+      Wellness.notifyContentChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -101,7 +102,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == Assets.notifyChanged) ||
+    if ((name == Wellness.notifyContentChanged) ||
         (name == Auth2UserPrefs.notifyFavoritesChanged)) {
         _updateContent();
     }
@@ -111,7 +112,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessResourcesWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'wellness',
       child: _buildContent(),
     );
   }
@@ -128,13 +129,12 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
       Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         padding: EdgeInsets.all(16),
-        child: Html(data: message,
-          onLinkTap: (url, renderContext, attributes, element) => _handleLocalUrl(url),
-          style: {
-            "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-            "a": Style(color: Styles().colors?.fillColorSecondary),
-          },
-        ),
+        child: HtmlWidget(
+            message,
+            onTapUrl : (url) {_handleLocalUrl(url); return true;},
+            textStyle:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+        )
       ),
     );
   }
@@ -216,7 +216,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   }
 
   void _initContent() {
-    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${WellnessResourcesContentWidget.wellnessCategoryKey}']) ;
+    Map<String, dynamic>? content = Wellness().resources;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     WellnessResourcesContentWidget.ensureDefaultFavorites(commands);
@@ -230,7 +230,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   }
 
   void _updateContent() {
-    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${WellnessResourcesContentWidget.wellnessCategoryKey}']) ;
+    Map<String, dynamic>? content = Wellness().resources;
     Map<String, dynamic>? strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     WellnessResourcesContentWidget.ensureDefaultFavorites(commands);

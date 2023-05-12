@@ -9,6 +9,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -24,7 +25,28 @@ class HomeLoginWidget extends StatefulWidget {
   _HomeLoginWidgetState createState() => _HomeLoginWidgetState();
 }
 
-class _HomeLoginWidgetState extends State<HomeLoginWidget> {
+class _HomeLoginWidgetState extends State<HomeLoginWidget> implements NotificationsListener {
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+    ]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2.notifyLoginChanged) {
+      setStateIfMounted(() { });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +81,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
 
       return HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
-          titleIcon: Image.asset('images/icon-member.png', excludeFromSemantics: true,),
+          titleIconKey: 'person-circle',
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: content,),
       );
@@ -92,11 +114,11 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Padding(padding: EdgeInsets.zero, child:
           RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
-          TextSpan(style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16), children: <TextSpan>[
+          TextSpan(style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_3", " or ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID to access features connected to your university account.")),
           ],),
           )),
@@ -149,8 +171,8 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.zero, child:
             RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
-            TextSpan(style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16), children: <TextSpan>[
-              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+            TextSpan(style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
+              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
               TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2", "Verify your phone number or sign up/in by email.")),
             ],),
             )),

@@ -192,7 +192,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     return Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.find_event.header.title", "Find event"),
-        leadingAsset: 'images/icon-circle-close.png',
+        leadingIconKey: 'close-circle-white',
       ),
       body: Column(
         children: <Widget>[
@@ -275,11 +275,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
                 padding: EdgeInsets.all(12),
                 child: GestureDetector(
                   onTap: _onTapClear,
-                  child: Image.asset(
-                    'images/icon-x-orange.png',
-                    width: 25,
-                    height: 25,
-                  ),
+                  child: Styles().images?.getImage('close'),
                 ),
               )
           ),
@@ -292,12 +288,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
               padding: EdgeInsets.all(12),
               child: GestureDetector(
                 onTap: _onTapSearch,
-                child: Image.asset(
-                  'images/icon-search.png',
-                  color: Styles().colors!.fillColorSecondary,
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('search', excludeFromSemantics: true),
               ),
             ),
           ),
@@ -602,11 +593,11 @@ class _EventCardState extends State<_EventCard>{
     }
     return Semantics(label: displayTime, child: Row(
       children: <Widget>[
-        Image.asset('images/icon-calendar.png'),
+        Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
         Container(width: 7,),
         Flexible(child: Text(displayTime!, overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            style: Styles().textStyles?.getTextStyle('widget.card.detail.small_variant2')
+            style: Styles().textStyles?.getTextStyle('widget.card.detail.small.medium')
     ),)
       ],
     ));

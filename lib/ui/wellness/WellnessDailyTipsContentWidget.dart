@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -90,13 +90,12 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     Color? textColor = Styles().colors!.white;
     Color? backColor = _tipColor ?? Styles().colors?.accentColor3;
     return Container(color: backColor, padding: EdgeInsets.all(42), child:
-      Html(data: Wellness().dailyTip ?? '',
-        onLinkTap: (url, context, attributes, element) => _launchUrl(url),
-        style: {
-          "body": Style(color: textColor, fontFamily: Styles().fontFamilies?.extraBold, fontSize: FontSize(22), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-          "a": Style(color: textColor),
-        },
-      ),
+      HtmlWidget(
+        StringUtils.ensureNotEmpty(Wellness().dailyTip),
+          onTapUrl : (url) {_launchUrl(url); return true;},
+          textStyle:  Styles().textStyles?.getTextStyle("widget.title.light.medium_large.extra_fat"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(textColor ?? Colors.white)} : null
+      )
     );
   }
 
@@ -104,7 +103,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return Padding(padding: EdgeInsets.only(top: 16), child:
       Semantics(label: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), hint: Localization().getStringEx('panel.wellness.sections.dimensions.hint', 'Tap to see the 8 Dimensions of Wellness'), button: true, image: true, child:
         InkWell(onTap: _onTapEightDimensionsImage, child:
-          Image.asset('images/wellness-wheel-thumbnail.png', width: 45, height: 45, excludeFromSemantics: true,),
+          Styles().images?.getImage('wellness-wheel-small', excludeFromSemantics: true,),
         ),
       ),
     );
@@ -135,7 +134,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return RoundedButton(
         label: Localization().getStringEx('panel.wellness.sections.dimensions.button', 'Learn more about the 8 dimensions'),
         textStyle: Styles().textStyles?.getTextStyle("panel.wellness.tips.button.title.small"),
-        rightIcon: Image.asset('images/external-link.png'),
+        rightIcon: Styles().images?.getImage('external-link', excludeFromSemantics: true),
         rightIconPadding: EdgeInsets.only(left: 4, right: 6),
         onTap: onTapEightDimension);
   }
@@ -161,7 +160,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                   )),
                 ],),
                 Container(height: 16),
-                Image.asset('images/wellness-wheel-2019.png', semanticLabel: "Circular diagram with 8 dimensions title in center. Then a 2nd ring of icons representing different dimensions in the next ring of diagram. In the Third and final ring of diagram, there are names of dimensions: Environmental, Financial, Spiritual, Vocational, Emotional, Social, Physical, Mental.",), //TBD localize
+                Styles().images?.getImage('wellness-wheel', semanticLabel: "Circular diagram with 8 dimensions title in center. Then a 2nd ring of icons representing different dimensions in the next ring of diagram. In the Third and final ring of diagram, there are names of dimensions: Environmental, Financial, Spiritual, Vocational, Emotional, Social, Physical, Mental.") ?? Container(), //TBD localize
               ],),
             ),
             Column(mainAxisSize: MainAxisSize.min, children: [
@@ -170,7 +169,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                 Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
                   InkWell(onTap : () => _onClosePopup(context), child:
                     Padding(padding: EdgeInsets.all(18), child: 
-                      Image.asset('images/close-orange-small.png', semanticLabel: '',),
+                      Styles().images?.getImage('close', excludeFromSemantics: true),
                     ),
                   ),
                 ),

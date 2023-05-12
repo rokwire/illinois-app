@@ -1,6 +1,7 @@
 
 import 'package:flutter/foundation.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/ext/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -13,6 +14,8 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/model/event.dart' as ExploreEvent;
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/model/Canvas.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:device_calendar/device_calendar.dart';
 
@@ -99,6 +102,9 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     else if (data is Appointment) {
       return _DeviceCalendarEvent.fromAppointment(data);
     }
+    else if (data is CanvasCalendarEvent) {
+      return _DeviceCalendarEvent.fromCanvasCalendarEvent(data);
+    }
 
     return null;
   }
@@ -138,7 +144,7 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     if (appointment == null) {
       return null;
     }
-    DateTime? calendarEventStartDateTime = AppDateTime().getUniLocalTimeFromUtcTime(appointment.dateTimeUtc);
+    DateTime? calendarEventStartDateTime = AppDateTime().getUniLocalTimeFromUtcTime(appointment.startTimeUtc);
     DateTime? calendarEventEndDateTime = calendarEventStartDateTime?.add(Duration(hours: 1));
     return _DeviceCalendarEvent(
       title: appointment.title,
@@ -147,5 +153,16 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
       endDate: calendarEventEndDateTime,
       deepLinkUrl: "${Appointments().appointmentDetailUrl}?appointment_id=${appointment.id}"
     );
+  }
+
+  static _DeviceCalendarEvent? fromCanvasCalendarEvent(CanvasCalendarEvent? event) {
+    return (event != null)
+        ? _DeviceCalendarEvent(
+            title: event.title,
+            internalEventId: event.id?.toString(),
+            startDate: event.startAtLocal,
+            endDate: event.endAtLocal,
+            deepLinkUrl: "${Canvas().canvasEventDetailUrl}?event_id=${event.id}")
+        : null;
   }
 }

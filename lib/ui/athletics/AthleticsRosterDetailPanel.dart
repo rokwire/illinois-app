@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -27,7 +28,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
-import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsRosterDetailPanel extends StatefulWidget{
@@ -91,11 +91,11 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                     color: Styles().colors!.background,
                     child: Column(
                         children: <Widget>[
-                          Html(
-                            data: StringUtils.ensureNotEmpty(widget.roster.htmlBio),
-                            onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                            style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-                          ),
+                          HtmlWidget(
+                              StringUtils.ensureNotEmpty(widget.roster.htmlBio),
+                              onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+                              textStyle:  Styles().textStyles?.getTextStyle("widget.detail.regular"),
+                          )
                         ]
                     )
                 ))
@@ -194,16 +194,12 @@ class _RosterDetailHeading extends StatelessWidget{
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Image.asset(sport!.iconPath!, width: 16, height: 16,),
+                                Styles().images?.getImage(sport?.iconPath, excludeFromSemantics: true) ?? Container(),
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(StringUtils.ensureNotEmpty(sport?.name),
-                                      style: TextStyle(
-                                          color: Styles().colors!.surfaceAccent,
-                                          fontFamily: Styles().fontFamilies!.medium,
-                                          fontSize: 16
-                                      ),
+                                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                                     ),
                                   ),
                                 ),
@@ -216,19 +212,11 @@ class _RosterDetailHeading extends StatelessWidget{
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(StringUtils.ensureNotEmpty(roster?.name),
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: Styles().fontFamilies!.bold,
-                                          fontSize: 20
-                                      ),
+                                      style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")
                                     ),
                                   ),
                                   Text(StringUtils.ensureNotEmpty(roster?.numberString),
-                                    style: TextStyle(
-                                        color: Styles().colors!.whiteTransparent06,
-                                        fontFamily: Styles().fontFamilies!.medium,
-                                        fontSize: 20
-                                    ),
+                                    style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")
                                   ),
                                 ],
                               ),
@@ -287,19 +275,13 @@ class _LineEntryWidget extends StatelessWidget{
                 width: 120.0,
                 child: Text(
                   StringUtils.ensureNotEmpty(title),
-                  style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    fontSize: 16,
-                  ),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.medium")
                 ),
               ),
               Expanded(child:
               Text(
                 StringUtils.ensureNotEmpty(value),
-                style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 16,
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.detail.medium")
               ))
             ],
           ),

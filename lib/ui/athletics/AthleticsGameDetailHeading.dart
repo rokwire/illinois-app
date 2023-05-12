@@ -142,7 +142,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                     padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                                     child: Text(
                                       sportName?.toUpperCase() ?? '',
-                                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
+                                      style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced")
                                     ),
                                   )),
                               ),
@@ -158,7 +158,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   checked: isGameFavorite,
                                   child: GestureDetector(
                                       child: Container(padding: EdgeInsets.only(right: 24, left: 10, bottom: 20, top: 20),
-                                        child: Image.asset(isGameFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-thin.png',excludeFromSemantics: true
+                                        child: Styles().images?.getImage(isGameFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true
                                       )),
                                       onTap: _onTapSwitchFavorite),
                                 ),
@@ -169,7 +169,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             padding: EdgeInsets.only(top: 12),
                             child: Text(
                               widget.game?.title ?? '',
-                              style: TextStyle(fontSize: 32, color: Colors.white),
+                              style: Styles().textStyles?.getTextStyle("widget.heading.huge.extra_fat"),
                             ),
                           ),
                           (!StringUtils.isEmpty(widget.game?.longDescription)
@@ -178,7 +178,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   child: Text(
                                     widget.game?.longDescription ?? '',
                                     textAlign: TextAlign.left,
-                                    style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.whiteTransparent06, fontSize: 16),
+                                    style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.fat.variant")
                                   ),
                                 )
                               : Padding(
@@ -193,12 +193,12 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   padding: EdgeInsets.only(bottom: 10),
                                   child: Row(
                                     children: <Widget>[
-                                      Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
+                                      Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
                                       Padding(
                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Text(
                                           widget.game?.displayTime ?? '',
-                                          style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
+                                          style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")
                                         ),
                                       )
                                     ],
@@ -217,14 +217,14 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   children: <Widget>[
                                     Padding(
                                       padding: EdgeInsets.only(right: 10),
-                                      child: Image.asset('images/icon-location.png', excludeFromSemantics: true),
+                                      child: Styles().images?.getImage('location', excludeFromSemantics: true),
                                     ),
                                     Flexible(
                                         child: Text(
                                       widget.game?.location?.location ?? '',
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
-                                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
+                                      style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")
                                     ))
                                   ],
                                 ),
@@ -238,7 +238,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 ],
               ),
               Container(
-                child: Semantics(excludeSemantics: true, child: Image.asset('images/2.0x/slant-down-right-blue.png', color: Styles().colors!.fillColorPrimary,)),
+                child: Semantics(excludeSemantics: true, child: Styles().images?.getImage('slant-dark', excludeFromSemantics: true)),
               ),
               Container(
                 color: Styles().colors!.background,
@@ -258,7 +258,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(liveStatsUrl)
                     ? Container()
                     : _DetailRibbonButton(
-                        iconResource: 'images/icon-live-stats.png',
+                        iconKey: 'chart',
                         title: Localization().getStringEx('widget.game_detail_heading.button.live_stats.title', 'Live Stats'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.live_stats.hint', ''),
                         onTap: () {
@@ -274,7 +274,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(audioUrl)
                     ? Container()
                     : _DetailRibbonButton(
-                        iconResource: 'images/icon-listen.png',
+                        iconKey: 'sound',
                         title: Localization().getStringEx('widget.game_detail_heading.button.listen.title', 'Listen'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.listen.hint', ''),
                         subTitle: widget.game?.radio,
@@ -289,7 +289,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(videoUrl)
                     ? Container()
                     : _DetailRibbonButton(
-                        iconResource: 'images/icon-watch.png',
+                        iconKey: 'play-circle',
                         title: Localization().getStringEx('widget.game_detail_heading.button.watch.title', 'Watch'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.watch.hint', ''),
                         subTitle: widget.game?.tv,
@@ -500,13 +500,13 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 /// _DetailRibbonButton
 ///
 class _DetailRibbonButton extends StatelessWidget {
-  final String iconResource;
+  final String iconKey;
   final String? title;
   final String? subTitle;
   final String? hint;
   final GestureTapCallback? onTap;
 
-  _DetailRibbonButton({required this.iconResource, required this.title, this.subTitle = '', this.hint = '', this.onTap});
+  _DetailRibbonButton({required this.iconKey, required this.title, this.subTitle = '', this.hint = '', this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -524,17 +524,13 @@ class _DetailRibbonButton extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Image.asset(iconResource, excludeFromSemantics: true),
+                  Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
                       title!,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.bold,
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 16),
-                    ),
-                  ),
+                      style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+                  )),
                   Expanded(
                     child: Container(
                       color: Colors.transparent,
@@ -543,10 +539,7 @@ class _DetailRibbonButton extends StatelessWidget {
                   Visibility(
                       child: Text(
                         (!StringUtils.isEmpty(subTitle) ? subTitle! : ''),
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            color: Styles().colors!.textBackground,
-                            fontSize: 16),
+                        style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
                       ))
                 ],
               ),
@@ -622,7 +615,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _formatPeriod(_currentLiveGame!.period!) : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -632,7 +625,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
             ),
             Text(
               _currentLiveGame != null ? _formatClock(_currentLiveGame!.clockSeconds!) : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
+              style: Styles().textStyles?.getTextStyle("widget.item.regular")
             ),
           ],
         ),
@@ -723,7 +716,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
               ),
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.homeScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles?.getTextStyle("widget.title.huge"),
               ),
             ],
           ),
@@ -735,7 +728,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getHomeImage() {
     if (widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true) ?? Container();
+      return Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container();
     } else {
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
@@ -766,7 +759,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
             children: <Widget>[
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.visitingScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles?.getTextStyle("widget.title.huge")
               ),
               Expanded(
                 child: Container(
@@ -787,7 +780,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getAwayImage() {
     if (!widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true) ?? Container();
+      return Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container();
     } else {
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
@@ -897,7 +890,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget? _getHomeImageFrom(double width, double height) {
     if (widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Styles().images?.getImage('university-logo', fit: BoxFit.fitHeight);
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
@@ -908,7 +901,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget? _getVisitingImage(double width, double height) {
     if (!widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Styles().images?.getImage('university-logo', fit: BoxFit.fitHeight);
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
@@ -988,7 +981,7 @@ class _LiteContent extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _period,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")
               ),
             ),
             Expanded(
@@ -1034,7 +1027,7 @@ class _LiteContent extends StatelessWidget {
                   color: Colors.transparent,
                 ),
               ),
-              Text(_homeScore, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+              Text(_homeScore, style: Styles().textStyles?.getTextStyle("widget.title.huge")),
             ],
           ),
         ),
@@ -1058,7 +1051,7 @@ class _LiteContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(_visitingScore, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+              Text(_visitingScore, style: Styles().textStyles?.getTextStyle("widget.title.huge")),
               Expanded(
                 child: Container(
                   color: Colors.transparent,
@@ -1133,7 +1126,7 @@ class _RichContent extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _phaseLabel!,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -1196,7 +1189,7 @@ class _RichContent extends StatelessWidget {
         ? Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        Text(_hPoints!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+        Text(_hPoints!, style: Styles().textStyles?.getTextStyle("widget.title.huge")),
         SizedBox(width: 15),
         Padding(
           padding: EdgeInsets.only(bottom: 10),
@@ -1207,13 +1200,13 @@ class _RichContent extends StatelessWidget {
                 visible: serving,
                 child: _ServingControl(home: true),
               ),
-              Text(_hScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 23))
+              Text(_hScore!, style: Styles().textStyles?.getTextStyle("widget.title.extra_large"))
             ],
           ),
         ),
       ],
     )
-        : Text(_hScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32));
+        : Text(_hScore!, style: Styles().textStyles?.getTextStyle("widget.title.huge"));
   }
 
   Widget _buildVisitingSection(BuildContext context) {
@@ -1267,15 +1260,15 @@ class _RichContent extends StatelessWidget {
                 visible: serving,
                 child: _ServingControl(home: false),
               ),
-              Text(_vScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 23))
+              Text(_vScore!, style: Styles().textStyles?.getTextStyle("widget.title.extra_large"))
             ],
           ),
         ),
         SizedBox(width: 15),
-        Text(_vPoints!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+        Text(_vPoints!, style: Styles().textStyles?.getTextStyle("widget.title.huge")),
       ],
     )
-        : Text(_vScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32));
+        : Text(_vScore!, style: Styles().textStyles?.getTextStyle("widget.title.huge"));
   }
 }
 
@@ -1367,7 +1360,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _getPhase() : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -1377,7 +1370,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             ),
             Text(
               _currentLiveGame != null ? _getClock() : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
+              style: Styles().textStyles?.getTextStyle("widget.item.regular"),
             ),
           ],
         ),
@@ -1425,12 +1418,12 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
                 visible: isHomePossession,
                 child: Padding(
                   padding: EdgeInsets.only(right: 5),
-                  child: Image.asset('images/posession.png', height: 25, fit: BoxFit.fitHeight),
+                  child: Styles().images?.getImage('football', excludeFromSemantics: true),
                 ),
               ),
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.homeScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles?.getTextStyle("widget.title.huge"),
               ),
             ],
           ),
@@ -1458,13 +1451,13 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             children: <Widget>[
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.visitingScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles?.getTextStyle("widget.title.huge"),
               ),
               Visibility(
                 visible: isVisitingPossession,
                 child: Padding(
                   padding: EdgeInsets.only(left: 5),
-                  child: Image.asset('images/posession.png', height: 25, fit: BoxFit.fitHeight),
+                  child: Styles().images?.getImage('football', excludeFromSemantics: true),
                 ),
               ),
               Expanded(
@@ -1494,7 +1487,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s'), [lastPlay]), textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s'), [lastPlay]), textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular")),
         ))
         : Container();
   }
@@ -1605,7 +1598,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _getPhase() : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -1615,7 +1608,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
             ),
             Text(
               _currentLiveGame != null ? _getClock() : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
+              style: Styles().textStyles?.getTextStyle("widget.item.regular"),
             ),
           ],
         ),
@@ -1644,7 +1637,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text("Last Play: " + lastPlay!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text("Last Play: " + lastPlay!, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular")),
         ))
         : Container();
   }

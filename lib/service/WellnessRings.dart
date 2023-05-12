@@ -79,7 +79,7 @@ class WellnessRings with Service implements NotificationsListener{
     return _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
         _wellnessRingsRecords = WellnessRingDefinition.listFromJson(storedValues?["wellness_rings_data"]) ?? [];
         _wellnessRecords = WellnessRingRecord.listFromJson(storedValues?["wellness_ring_records"] ?? []);
-        Log.d("Wellness Rings Init from cache finished!");
+        //Log.d("Wellness Rings Init from cache finished!");
         return true;
       });
   }
@@ -110,19 +110,19 @@ class WellnessRings with Service implements NotificationsListener{
   }
 
   Future<void> _initFromNet() async{
-    Log.d("_initFromNet status = $status!");
+    //Log.d("_initFromNet status = $status!");
     if(status  == WellnessRingsStatus.initializing){
       return; //Wait for previous call
     }
 
     status = WellnessRingsStatus.initializing;
 
-    Log.d("_initFromNet Start Loading status = $status!");
+    //Log.d("_initFromNet Start Loading status = $status!");
     _loadFromNet().then((success) {
-      Log.d("Wellness Rings _loadFromNet().then((success) = $success");
+      //Log.d("Wellness Rings _loadFromNet().then((success) = $success");
       status = success ? WellnessRingsStatus.initialized : WellnessRingsStatus.failed;
       NotificationService().notify(notifyUserRingsUpdated);
-      Log.d("Wellness Rings _initRecords finished! status = $status");
+      //Log.d("Wellness Rings _initRecords finished! status = $status");
     }).onError((error, stackTrace){
       Log.d("loadFromNet().onError((error, = $error");
       status = WellnessRingsStatus.failed;
@@ -136,20 +136,20 @@ class WellnessRings with Service implements NotificationsListener{
     ]);
 
     _saveRingsDataToCache(); //Consider update
-    Log.d("Wellness Rings _loadFromNet finished!  status = $status, results: $results" );
+    //Log.d("Wellness Rings _loadFromNet finished!  status = $status, results: $results" );
 
     return results.isNotEmpty ? !results.contains(false) : false;
   }
 
   Future<void> initIfNeeded() async {
-    Log.d("initIfNeeded status = $status!");
+    //Log.d("initIfNeeded status = $status!");
     if(status == WellnessRingsStatus.failed || status == WellnessRingsStatus.unknown){
       await _waitForInitFromNet();
     }
   }
 
   Future<void> _reInit() async {
-    Log.d("_reInit status = $status!");
+    //Log.d("_reInit status = $status!");
     status = WellnessRingsStatus.unknown;
     _wellnessRecords = [];
     _wellnessRingsRecords = [];
@@ -169,7 +169,7 @@ class WellnessRings with Service implements NotificationsListener{
       _wellnessRingsRecords = definitionHistory;
     _updateActiveRingsData();
     // NotificationService().notify(notifyUserRingsUpdated);
-    Log.d("Wellness Rings _loadRingDefinitions finished! success: ${definitionHistory != null}");
+    //Log.d("Wellness Rings _loadRingDefinitions finished! success: ${definitionHistory != null}");
     return definitionHistory != null;
   }
 
@@ -179,7 +179,7 @@ class WellnessRings with Service implements NotificationsListener{
     if(recordsHistory != null)
       _wellnessRecords = recordsHistory;
     // NotificationService().notify(notifyUserRingsUpdated);
-    Log.d("Wellness Rings loadRingRecords finished! success: ${recordsHistory != null}");
+    //Log.d("Wellness Rings loadRingRecords finished! success: ${recordsHistory != null}");
     return recordsHistory != null;
   }
   /////
@@ -283,10 +283,10 @@ class WellnessRings with Service implements NotificationsListener{
     }
      //Do not allow performing action while we don't have actual data)
     if(!_canAddRingRecord(record)){
-      Log.d("addRecord not allowed${record.toJson()}");
+      //Log.d("addRecord not allowed${record.toJson()}");
       return false;
     }
-    Log.d("addRecord ${record.toJson()}");
+    //Log.d("addRecord ${record.toJson()}");
     bool success = await _requestAddRingRecord(record);
     if(success) {
       bool alreadyAccomplished = _isAccomplished(record.wellnessRingId);
@@ -605,7 +605,7 @@ class WellnessRings with Service implements NotificationsListener{
       List<dynamic>? history = JsonUtils.listValue(responseData?["history"]);
       return (history?.isNotEmpty ?? false) ? WellnessRingDefinition.fromJson(history!.last ): null;
     } else {
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to add wellness ring definition. Response:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -635,7 +635,7 @@ class WellnessRings with Service implements NotificationsListener{
         return []; //successful but empty
       }
     } else {
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to get ring definitions. Response:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -704,7 +704,7 @@ class WellnessRings with Service implements NotificationsListener{
       List<dynamic>? responseData = JsonUtils.decodeList(responseString);
       return (responseData?.isNotEmpty ?? false) ? WellnessRingRecord.listFromJson(responseData): [] /*successful but empty*/;
     } else {
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to get wellness ring record. Response:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -722,7 +722,7 @@ class WellnessRings with Service implements NotificationsListener{
       // List<dynamic>? responseData = JsonUtils.decodeList(responseString);
       return true;
     } else {
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to add wellness ring record. Response:\n$responseCode: $responseString');
       return false;
     }
   }
@@ -742,7 +742,7 @@ class WellnessRings with Service implements NotificationsListener{
       return true;
     } else {
       String? responseString = response?.body;
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to delete wellness ring. Response:\n$responseCode: $responseString');
       return false;
     }
   }

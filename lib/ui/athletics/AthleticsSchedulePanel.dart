@@ -62,13 +62,13 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
       body: _loading ? Center(child: CircularProgressIndicator()) : Column(children: <Widget>[
         Container(color:Styles().colors!.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
           Row(children: <Widget>[
-            Image.asset(widget.sport!.iconPath!, excludeFromSemantics: true),
+            Styles().images?.getImage(widget.sport!.iconPath!, excludeFromSemantics: true) ?? Container(),
             Padding(padding: EdgeInsets.only(left: 8)),
-            Text(widget.sport!.name!, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.whiteTransparent06,)),
+            Text(widget.sport!.name!, style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")),
           ],),
           Padding(padding: EdgeInsets.only(top: 8)),
           Row(children: <Widget>[
-            Expanded(child: Text(scheduleLabel, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Colors.white ))),
+            Expanded(child: Text(scheduleLabel, style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")))
           ],)
         ],)
         ),),
@@ -222,11 +222,7 @@ class _ScheduleTabButton extends StatelessWidget {
             Expanded(child: Text(text!,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily:
-                        selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.fillColorPrimary))),
+                    style: Styles().textStyles?.getTextStyle("widget.detail.medium"))),
             ])
           )),
     );

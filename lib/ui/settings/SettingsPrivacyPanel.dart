@@ -219,7 +219,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
           Column(children: [
             Align(alignment: Alignment.centerRight, child:
               Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.button.back.title", "Back"), child:
-                IconButton(icon: Image.asset('images/close-white-large.png'), onPressed: () => Navigator.pop(context))
+                IconButton(icon: Styles().images?.getImage('close-circle-white') ?? Container(), onPressed: () => Navigator.pop(context))
               ),
             ),
             Padding(padding: EdgeInsets.all(8), child:
@@ -256,7 +256,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                     ),
                     child: Center(child:
                       Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.label.new_privacy", "Privacy Level: "), child:
-                        Text(_sliderIntValue?.toString() ?? "", style: Styles().textStyles?.getTextStyle("widget.title.extra_large")),
+                        Text(_sliderIntValue?.toString() ?? "", style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")),
                       )
                     ),
                   ),
@@ -413,7 +413,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               child: Center(
                   child: Text(
                     title,
-                    style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
+                    style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")
                   )),
             )));
 
@@ -506,7 +506,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   ),
                   child: Semantics( label:Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
                     child: Text(level.toString(),
-                      style: Styles().textStyles?.getTextStyle("widget.title.extra_large")),
+                      style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")),
                   ),
                 )),
                 Container(width: 20,),
@@ -728,8 +728,8 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
     String title = Localization().getString(data.titleKey, defaults: data.title)!;
     String? description = Localization().getString(data.descriptionKey, defaults: data.description)?.replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     String? dataUsageInfo = Localization().getString(data.dataUsageKey, defaults: data.dataUsage);
-    String iconRes = "images/" + data.iconRes!;
-    String iconResOff = "images/" + data.offIconRes!;
+    String iconKey = data.iconRes!;
+    String iconKeyOff = data.offIconRes!;
     int minLevel = data.minLevel!;
     //The additional data is needed for the Wallet section (personalization)
     String? additionalDescription = Localization().getString(data.additionalDescriptionKey, defaults: data.additionalDescription);
@@ -749,7 +749,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
           children: <Widget>[
             Container(
               padding: EdgeInsets.only(top: 4),
-              child: PrivacyIcon(enabledIcon: iconRes, disabledIcon: iconResOff, minPrivacyLevel: minLevel, currentPrivacyLevel: widget.currentPrivacyLevel,)),
+              child: PrivacyIcon(enabledIconKey: iconKey, disabledIconKey: iconKeyOff, minPrivacyLevel: minLevel, currentPrivacyLevel: widget.currentPrivacyLevel,)),
             Container(width: 10,),
             Expanded(
              child: Column(
@@ -807,7 +807,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                     Container(width: 9,),
                     Container(padding: EdgeInsets.only(right: 20), child: RotationTransition(
                         turns: _iconTurns,
-                        child: Image.asset(isEnabled? "images/arrow-down-orange.png": "images/arrow-down-orange-off.png", excludeFromSemantics: true))),
+                        child: Styles().images?.getImage(isEnabled? "chevron-down": "chevron-down-gray", excludeFromSemantics: true))),
                   ],
                 )))),
         !infoExpanded? Container():

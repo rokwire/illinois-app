@@ -20,7 +20,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
@@ -558,7 +558,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       ],
                     ),
                     Expanded(child: Container()),
-                    Image.asset('images/chevron-right.png')
+                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ])
                 ))));
           }
@@ -597,7 +597,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       ]
                     ),
                     Expanded(child: Container()),
-                    Image.asset('images/chevron-right.png')
+                    Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
                   ]),
                 ))));
           }
@@ -828,13 +828,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         )
       ),
       Padding(padding: EdgeInsets.only(top: 20), child:
-        Html(
-          data: StringUtils.ensureNotEmpty(descriptionHtml),
-          onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
-          style: {
-            "body": Style(fontFamily: Styles().fontFamilies!.regularIt, color: Styles().colors!.textBackground, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero)
-          }
-        ),
+      HtmlWidget(
+          StringUtils.ensureNotEmpty(descriptionHtml),
+          onTapUrl : (url) {_onTapHtmlLink(url); return true;},
+          textStyle:  Styles().textStyles?.getTextStyle("panel.settings.section_content.htm.title.regula")
+      )
       ),
     ]);
   }
@@ -873,7 +871,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {
-        launchUrl(uri);
+        UrlUtils.launchExternal(url);
       }
     }
   }
@@ -906,7 +904,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                 style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 children:[
                   TextSpan(text: versionLabel,),
-                  TextSpan(text:  " $_versionName", style : TextStyle(fontFamily: "ProximaNovaBold")),
+                  TextSpan(text:  " $_versionName", style : Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
                 ]
             ))
       );

@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -32,9 +33,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class ExploreSearchPanel extends StatefulWidget {
-  final Map<String, dynamic>? searchData;
+  final Group? browseGroup;
 
-  const ExploreSearchPanel({Key? key, this.searchData}) : super(key: key);
+  const ExploreSearchPanel({Key? key, this.browseGroup}) : super(key: key);
 
   @override
   _ExploreSearchPanelState createState() => _ExploreSearchPanelState();
@@ -112,12 +113,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                         padding: EdgeInsets.all(12),
                         child: GestureDetector(
                           onTap: _onTapClear,
-                          child: Image.asset(
-                            'images/icon-x-orange.png',
-                            width: 25,
-                            height: 25,
-                            excludeFromSemantics: true
-                          ),
+                          child: Styles().images?.getImage('close', excludeFromSemantics: true),
                         ),
                       )
                     ),
@@ -130,13 +126,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                         padding: EdgeInsets.all(12),
                         child: GestureDetector(
                           onTap: _onTapSearch,
-                          child: Image.asset(
-                            'images/icon-search.png',
-                            color: Styles().colors!.fillColorSecondary,
-                            width: 25,
-                            height: 25,
-                            excludeFromSemantics: true
-                          ),
+                          child: Styles().images?.getImage('search', excludeFromSemantics: true),
                         ),
                       ),
                     ),
@@ -233,9 +223,8 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
           AthleticsGameDetailPanel(gameId: event!.speaker, sportName: event.registrationLabel,)));
     }
     else {
-      String? groupId = JsonUtils.stringValue(widget.searchData!= null ? widget.searchData!["group_id"] : null);
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ExploreDetailPanel(explore: explore, browseGroupId: groupId,))).
+          ExploreDetailPanel(explore: explore, browseGroup: widget.browseGroup,))).
             then(
               (value){
                 if(value!=null && value == true){

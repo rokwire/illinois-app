@@ -57,20 +57,17 @@ class AthleticsSportItemWidget extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(right: 10),
-                    child: Image.asset(sport.iconPath!, excludeFromSemantics: true),
+                    child: Styles().images?.getImage(sport.iconPath, excludeFromSemantics: true),
                   ),
                   Expanded(child:
                   Text(
                     label!,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        color: Styles().colors!.fillColorPrimary,
-                        fontSize: 16),
+                    style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                   ),),
                   showChevron
                       ? Padding(
                           padding: EdgeInsets.symmetric(horizontal: 6),
-                          child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
+                          child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                         )
                       : Container(),
                   checkMarkVisibility ? GestureDetector(
@@ -79,10 +76,7 @@ class AthleticsSportItemWidget extends StatelessWidget {
                         child: Padding(
                       padding: EdgeInsets.only(
                           right: 10, top: 15, bottom: 15, left: 25),
-                      child: Image.asset(selected
-                          ? 'images/deselected-dark.png'
-                          : 'images/deselected.png',
-                          excludeFromSemantics: true),
+                      child: Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true),
                     )),
                   ) : Container(height: 54,),
                 ],

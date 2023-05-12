@@ -19,7 +19,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -30,7 +30,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -109,14 +108,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         appBar: AppBar(
             leading: HeaderBackButton(),
             title: Text(
-              Localization()
-                  .getStringEx('panel.group.detail.post.header.title', 'Post'),
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontFamily: Styles().fontFamilies!.extraBold,
-                  letterSpacing: 1),
-            ),
+              Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
+              style:  Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat"),),
             centerTitle: false),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar(),
@@ -142,8 +135,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               Row(children: [
                 Expanded(child:
                   Semantics(sortKey: OrdinalSortKey(1), container: true, child:
-                    Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis, style:
-                      TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 24, color: Styles().colors!.fillColorPrimary)
+                    Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
+                        style: Styles().textStyles?.getTextStyle("widget.detail.extra_large.fat"),
                     )
                   )
                 ),
@@ -157,8 +150,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       post: _post,
                       reaction: thumbsUpReaction,
                       accountIDs: _post?.reactions[thumbsUpReaction],
-                      selectedIconPath: 'images/icon-thumbs-up-solid.png',
-                      deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                      selectedIconKey: 'thumbs-up-filled',
+                      deselectedIconKey: 'thumbs-up-outline-gray',
                       // onTapEnabled: _canSendReaction,
                     ),
                   ),
@@ -170,7 +163,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
                         GestureDetector(onTap: _onTapEditMainPost, child:
                           Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                            Image.asset('images/icon-edit.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+                            Styles().images?.getImage('edit', excludeFromSemantics: true))))))),
 
                 Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
                   Semantics(container: true, sortKey: OrdinalSortKey(5), child:
@@ -178,19 +171,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
                         GestureDetector(onTap: _onTapDeletePost, child:
                             Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                              Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+                              Styles().images?.getImage('trash', excludeFromSemantics: true))))))),
 
                 Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
                     GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
                         Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                          Image.asset('images/icon-feedback.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+                          Styles().images?.getImage('feedback', excludeFromSemantics: true))))),
 
                 Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
                     GestureDetector(onTap: _onTapHeaderReply, child:
                         Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
-                          Image.asset('images/icon-group-post-reply.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+                          Styles().images?.getImage('reply', excludeFromSemantics: true))))),
 
               ]),
             ])
@@ -220,18 +213,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Visibility(visible: !_isEditMainPost,
                           child: Semantics(
                               container: true,
-                              child: Html(
-                                  data: StringUtils.ensureNotEmpty(_post?.body),
-                                  style: {
-                                    "body": Style(
-                                        color: Styles().colors!.fillColorPrimary,
-                                        fontFamily: Styles().fontFamilies!.regular,
-                                        fontSize: FontSize(20),
-                                        margin: EdgeInsets.zero,
-                                    ),
-                                  },
-                                  onLinkTap: (url, context, attributes, element) =>
-                                      _onTapPostLink(url)))),
+                              child:
+                              HtmlWidget(
+                                  StringUtils.ensureNotEmpty(_post?.body),
+                                  onTapUrl : (url) {_onTapPostLink(url); return true;},
+                                  textStyle:  Styles().textStyles?.getTextStyle("widget.detail.large"),
+                              )
+                          )),
                       Visibility(
                           visible: _isEditMainPost,
                           child: Column(
@@ -251,10 +239,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                 borderSide: BorderSide(
                                                     color: Styles().colors!.mediumGray!,
                                                     width: 0.0))),
-                                        style: TextStyle(
-                                            color: Styles().colors!.textBackground,
-                                            fontSize: 16,
-                                            fontFamily: Styles().fontFamilies!.regular))),
+                                        style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+                                       )),
                                 Row(children: [
                                   Flexible(
                                       flex: 1,
@@ -277,13 +263,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   StringUtils.ensureNotEmpty(
                                       _post?.member?.displayShortName ),
-                                  style: TextStyle(
-                                      fontFamily:
-                                      Styles().fontFamilies!.medium,
-                                      fontSize: 20,
-                                      color: Styles()
-                                          .colors!
-                                          .fillColorPrimary)))),
+                                  style: Styles().textStyles?.getTextStyle("widget.detail.large.thin"),
+                                  ))),
                       Semantics(
                           sortKey: OrdinalSortKey(3),
                           container: true,
@@ -293,13 +274,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                   StringUtils.ensureNotEmpty(
                                       _post?.displayDateTime),
                                   semanticsLabel:  sprintf(Localization().getStringEx("panel.group.detail.post.updated.ago.format", "Updated %s ago"),[widget.post?.displayDateTime ?? ""]),
-                                  style: TextStyle(
-                                      fontFamily:
-                                      Styles().fontFamilies!.medium,
-                                      fontSize: 16,
-                                      color: Styles()
-                                          .colors!
-                                          .fillColorPrimary)))),
+                                  style: Styles().textStyles?.getTextStyle("widget.detail.medium"),))),
                       Container(height: 6,),
                       GroupMembersSelectionWidget(
                         selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:(_isEditMainPost ? _mainPostUpdateData?.members : _post?.members), upToDateMembers: _allMembersAllowedToPost),
@@ -439,7 +414,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       String? optionsIconPath;
       void Function()? optionsFunctionTap;
       if (_isReplyVisible) {
-        optionsIconPath = 'images/icon-groups-options-orange.png';
+        optionsIconPath = 'more';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
       replyWidgetList.add(
@@ -489,10 +464,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
                 color: Styles().colors!.fillColorPrimary,
                 child: Text("Replies",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: Styles().fontFamilies!.medium,
-                        color: Styles().colors!.white)
+                    style: Styles().textStyles?.getTextStyle("widget.heading.medium"),
                 ),
               )
         )
@@ -589,12 +561,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
               )),
@@ -619,7 +591,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Visibility(visible: _isReplyVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-group-post-reply.png",
+                leftIconKey: "reply",
                 label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -627,7 +599,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 },
               )),
               Visibility(visible: _isEditVisible(reply), child: RibbonButton(
-                leftIconAsset: "images/icon-edit.png",
+                leftIconKey: "edit",
                 label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -635,7 +607,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 },
               )),
               Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
-                leftIconAsset: "images/trash.png",
+                leftIconKey: "trash",
                 label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
                 onTap: () {
                 Navigator.of(context).pop();
@@ -643,12 +615,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               },
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), post: reply),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: reply),
               )),
@@ -771,10 +743,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapPostLink(String? url) {
     Analytics().logSelect(target: 'link');
-    if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context,
-          CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    UrlUtils.launchExternal(url);
   }
 
   void _reloadPost() {

@@ -147,7 +147,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     return Padding(
         padding: EdgeInsets.only(top: 16),
         child: Text(Localization().getStringEx('panel.wellness.todo.item.add.label', 'Add an Item'),
-            style: Styles().textStyles?.getTextStyle("widget.title.regular")));
+            style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")));
   }
 
   Widget _buildItemName() {
@@ -177,8 +177,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                             style: Styles().textStyles?.getTextStyle("widget.title.small.fat")),
                         Padding(
                             padding: EdgeInsets.only(left: 8),
-                            child: Image.asset(_optionalFieldsVisible ? 'images/icon-up.png' : 'images/icon-down.png',
-                                color: Styles().colors!.fillColorPrimary))
+                            child: Styles().images?.getImage(_optionalFieldsVisible ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true))
                       ]))
                 ]))));
   }
@@ -205,7 +204,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                     Expanded(child: Container()),
                     Padding(
                         padding: EdgeInsets.only(left: 10),
-                        child: Image.asset(_categoriesDropDownVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'))
+                        child: Styles().images?.getImage(_categoriesDropDownVisible ? 'chevron-up' : 'chevron-down'))
                   ])))
         ]));
   }
@@ -243,7 +242,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(StringUtils.ensureNotEmpty(categoryName),
                   style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.item")),
-              Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
+              Styles().images?.getImage(isSelected ? 'radio-button-on' : 'radio-button-off') ?? Container()
             ])));
   }
 
@@ -264,7 +263,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                     Text(StringUtils.ensureNotEmpty(_formattedDueDate),
                         style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")),
                     Expanded(child: Container()),
-                    Image.asset('images/icon-calendar-grey.png')
+                    Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
                   ])))
         ]));
   }
@@ -313,7 +312,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                     Expanded(child: Container()),
                     Padding(
                         padding: EdgeInsets.only(left: 10),
-                        child: Image.asset(_reminderTypeDropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'))
+                        child: Styles().images?.getImage(_reminderTypeDropDownValuesVisible ? 'chevron-up' : 'chevron-down'))
                   ])))
         ]));
   }
@@ -358,7 +357,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(StringUtils.ensureNotEmpty(_getReminderTypeLabel(type)),
                   style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.item")),
-              Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
+              Styles().images?.getImage(isSelected ? 'radio-button-on' : 'radio-button-off', excludeFromSemantics: true) ?? Container()
             ])));
   }
 
@@ -410,7 +409,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                       color: Styles().colors!.lightGray,
                       child: Padding(
                           padding: EdgeInsets.only(left: 25, top: 7, right: 10, bottom: 7),
-                          child: Image.asset('images/icon-x-orange-small.png', color: Colors.black))))
+                          child: Styles().images?.getImage('close', excludeFromSemantics: true))))
             ])));
   }
 

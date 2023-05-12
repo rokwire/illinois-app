@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -35,7 +35,6 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:share/share.dart';
-import 'package:html/dom.dart' as dom;
 
 class AthleticsNewsArticlePanel extends StatefulWidget {
   final String? articleId;
@@ -140,7 +139,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                         color: Styles().colors!.fillColorPrimary,
                         child: Padding(padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                           child: Text(_article?.category?.toUpperCase() ?? '',
-                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
+                            style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced"),
                           ),
                         ),
                       ),
@@ -151,7 +150,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                           hint: Localization().getStringEx("panel.athletics_news_article.button.save_game.hint", "Tap to save"),
                           child: GestureDetector(onTap: _onTapSwitchFavorite, child:
                             Container(padding: EdgeInsets.all(24), child:
-                              Image.asset(isNewsFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png',excludeFromSemantics: true),
+                              Styles().images?.getImage(isNewsFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true),
                             ),
                           ),
                         ),
@@ -159,16 +158,14 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                     ],),
                   ),
                   Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 12, bottom: 24), child:
-                    Text(_article?.title ?? '', style:
-                      TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary),
+                    Text(_article?.title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.extra_large"),
                     ),
                   ),
                   Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 24), child:
                     Row(children: <Widget>[
-                      Image.asset('images/icon-news.png'),
+                      Styles().images?.getImage('news', excludeFromSemantics: true) ?? Container(),
                       Container(width: 5,),
-                      Text(_article?.displayTime ?? '', style:
-                        TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.medium),
+                      Text(_article?.displayTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"),
                       ),
                     ],),
                   ),
@@ -209,29 +206,27 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
     if (!StringUtils.isEmpty(_article?.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),
-        child: Html(
-          data:_article!.description!,
-          style: {
-            "body": Style(color: Styles().colors!.textBackground)
-          },
-        ),
+        child:
+        HtmlWidget(
+            StringUtils.ensureNotEmpty(_article!.description),
+          textStyle:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+        )
       ));
     }
     String? fullText = _article?.fillText;
     if (!StringUtils.isEmpty(fullText)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 24),
-        child: Html(
-          data:fullText,
-          onLinkTap: (String? url,
-              RenderContext context1,
-              Map<String, String> attributes,
-              dom.Element? element){
-            Navigator.push(context, CupertinoPageRoute(
-                builder: (context) => WebPanel(url: url,)
-            ));
-          },
-        ),
+        child:
+        HtmlWidget(
+            StringUtils.ensureNotEmpty(fullText),
+            onTapUrl : (url) {
+              Navigator.push(context, CupertinoPageRoute(
+                      builder: (context) => WebPanel(url: url,)
+              ));
+              return true;
+            },
+        )
       ));
     }
     return widgets;

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -15,7 +16,6 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -30,7 +30,7 @@ class StudentCourses with Service implements NotificationsListener {
   static const String notifyCachedCoursesChanged = 'edu.illinois.rokwire.student_courses.cache.changed';
 
   static const String _courseTermsName = "course.terms.json";
-  static const String _courseDebugContentName = "course.debug.content.json.json";
+  static const String _courseDebugContentName = "course.debug.content.json";
   static const String _requireAdaSetting = 'edu.illinois.rokwire.settings.student_course.require_ada';
 
   late Directory _appDocDir;
@@ -44,9 +44,6 @@ class StudentCourses with Service implements NotificationsListener {
   Set<Completer<List<StudentCourse>?>>? _loadCoursesCompleters;
   DateTime? _pausedDateTime;
 
-  ExploreJsonHandler _studentCourseExploreJsonHandler = StudentCourseExploreJsonHandler();
-  ExploreJsonHandler _buildingExploreJsonHandler = BuildingExploreJsonHandler();
-
   // Singleton Factory
 
   static final StudentCourses _instance = StudentCourses._internal();
@@ -56,8 +53,6 @@ class StudentCourses with Service implements NotificationsListener {
   // Service
 
   void createService() {
-    Explore.addJsonHandler(_studentCourseExploreJsonHandler);
-    Explore.addJsonHandler(_buildingExploreJsonHandler);
     NotificationService().subscribe(this,[
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
@@ -67,8 +62,6 @@ class StudentCourses with Service implements NotificationsListener {
 
   @override
   void destroyService() {
-    Explore.removeJsonHandler(_studentCourseExploreJsonHandler);
-    Explore.removeJsonHandler(_buildingExploreJsonHandler);
     NotificationService().unsubscribe(this);
     super.destroyService();
   }
@@ -79,15 +72,17 @@ class StudentCourses with Service implements NotificationsListener {
     _selectedTermId = Storage().selectedCourseTermId;
     
     // Init terms
-    _terms = await _loadTermsFromCache();
-    if (_terms != null) {
-      _updateTerms();
-    }
-    else {
-      String? termsJsonString = await _loadTermsStringFromNet();
-      _terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
+    if (_canLoadTerms) {
+      _terms = await _loadTermsFromCache();
       if (_terms != null) {
-        _saveTermsStringToCache(termsJsonString);
+        _updateTerms();
+      }
+      else {
+        String? termsJsonString = await _loadTermsStringFromNet();
+        _terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
+        if (_terms != null) {
+          _saveTermsStringToCache(termsJsonString);
+        }
       }
     }
 
@@ -99,7 +94,7 @@ class StudentCourses with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config()]);
+    return Set.from([Storage(), Config(), Auth2()]);
   }
 
   // NotificationsListener
@@ -107,13 +102,16 @@ class StudentCourses with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
-      if (StringUtils.isNotEmpty(Auth2().uin)) {
-        _courses.clear();
-      }
+      _onLoginChanged();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
+  }
+
+  void _onLoginChanged() {
+    _updateCourses();
+    _updateTerms();
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -124,7 +122,7 @@ class StudentCourses with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _courses.clear();
+          _updateCourses(true);
         }
       }
       _updateTermsIfNeeded();
@@ -150,36 +148,53 @@ class StudentCourses with Service implements NotificationsListener {
     return StudentCourseTerm.listFromJson(JsonUtils.decodeList(await _loadTermsStringFromCache()));
   }
 
+  bool get _canLoadTerms =>
+    StringUtils.isNotEmpty(Config().gatewayUrl) && (Gateway().externalAuthorizationHeaderValue != null);
+
   Future<String?> _loadTermsStringFromNet() async {
-    if (StringUtils.isNotEmpty(Config().gatewayUrl)) {
+    if (_canLoadTerms) {
       Response? response = await Network().get("${Config().gatewayUrl}/termsessions/listcurrent", auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
       return (response?.statusCode == 200) ? response?.body : null;
     }
     return null;
   }
 
-  Future<void> _updateTerms() async {
-    String? termsJsonString = await _loadTermsStringFromNet();
-    List<StudentCourseTerm>? terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
-    if ((terms != null) && !const DeepCollectionEquality().equals(_terms, terms)) {
-      _terms = terms;
-      _saveTermsStringToCache(termsJsonString);
-      NotificationService().notify(notifyTermsChanged);
-      _updateSelectedTermId();
+  Future<void> _updateTermsIfNeeded() async {
+    if (_canLoadTerms) {
+      DateTime? lastCheckMidnight = (0 < _lastTermsCheckTime) ? DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(_lastTermsCheckTime)) : null;
+
+      DateTime now = DateTime.now();
+      DateTime todayMidnight = DateTimeUtils.midnight(now)!;
+
+      // Do it one a week
+      if ((_terms == null) || (lastCheckMidnight == null) || (todayMidnight.difference(lastCheckMidnight).inDays >= 7)) {
+        _lastTermsCheckTime = now.millisecondsSinceEpoch;
+        await _updateTerms();
+      }
+    }
+    else if (terms != null) {
+      _applyTerms(null);
     }
   }
 
-  Future<void> _updateTermsIfNeeded() async {
-    DateTime? lastCheckMidnight = (0 < _lastTermsCheckTime) ? DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(_lastTermsCheckTime)) : null;
-
-    DateTime now = DateTime.now();
-    DateTime todayMidnight = DateTimeUtils.midnight(now)!;
-
-    // Do it one a week
-    if ((lastCheckMidnight == null) || (todayMidnight.difference(lastCheckMidnight).inDays >= 7)) {
-      _lastTermsCheckTime = now.millisecondsSinceEpoch;
-      await _updateTerms();
+  Future<void> _updateTerms() async {
+    if (_canLoadTerms) {
+      String? termsJsonString = await _loadTermsStringFromNet();
+      List<StudentCourseTerm>? terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
+      if ((terms != null) && !const DeepCollectionEquality().equals(_terms, terms)) {
+        _applyTerms(terms, termsJsonString);
+      }
     }
+    else if (_terms != null) {
+      _applyTerms(null);
+    }
+  }
+
+  void _applyTerms(List<StudentCourseTerm>? terms, [ String? termsJsonString ]) {
+    _terms = terms;
+    _saveTermsStringToCache(termsJsonString);
+    NotificationService().notify(notifyTermsChanged);
+    _updateSelectedTermId();
   }
 
   // Selected Term
@@ -217,18 +232,22 @@ class StudentCourses with Service implements NotificationsListener {
 
   // StudentCourses
 
+  bool get _canLoadCourses =>
+    StringUtils.isNotEmpty(Config().gatewayUrl) && (Gateway().externalAuthorizationHeaderValue != null) && StringUtils.isNotEmpty(Auth2().uin);
+
   Future<List<StudentCourse>?> loadCourses({required String termId, bool forceLoad = false}) async {
     if (_debugCourses != null) {
       return _debugCourses;
     }
-    else {
+    else if (_canLoadCourses) {
       bool coursesRefreshed = false;
       List<StudentCourse>? cachedCourses = _courses[termId];
-      if (((cachedCourses == null) || forceLoad) && StringUtils.isNotEmpty(Config().gatewayUrl) && StringUtils.isNotEmpty(termId) && StringUtils.isNotEmpty(Auth2().uin)) {
+      if (((cachedCourses == null) || forceLoad) && StringUtils.isNotEmpty(termId)) {
         if (_loadCoursesCompleters == null) {
           _loadCoursesCompleters = <Completer<List<StudentCourse>?>>{};
           
           String url = "${Config().gatewayUrl}/courses/studentcourses?id=${Auth2().uin}&termid=$termId";
+          String analyticsUrl = "${Config().gatewayUrl}/courses/studentcourses?id=${Analytics.LogAnonymousUin}&termid=$termId";
           Position? position = await _userLocation;
           if (position != null) {
             url += "&lat=${position.latitude}&long=${position.longitude}";
@@ -236,7 +255,7 @@ class StudentCourses with Service implements NotificationsListener {
               url += "&adaOnly=true";
             }
           }
-          Response? response = await Network().get(url, auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
+          Response? response = await Network().get(url, auth: Auth2(), headers: Gateway().externalAuthorizationHeader, analyticsUrl: analyticsUrl);
           String? responseString = (response?.statusCode == 200) ? response?.body : null;
           /* TMP String? responseString = '''[
             {"coursetitle":"Thesis Research","courseshortname":"TAM 599","coursenumber":"25667","instructionmethod":"IND","coursesection":{"days":"","meeting_dates_or_range":"08/22/2022 - 12/07/2022","room":"","buildingname":"","buildingid":"","instructiontype":"IND","instructor":"Johnson, Harley","start_time":"","endtime":"","building":{"ID":"","Name":"","Number":"","FullAddress":"","Address1":"","Address2":"","City":"","State":"","ZipCode":"","ImageURL":"","MailCode":"","Entrances":null,"Latitude":0,"Longitude":0}}},
@@ -268,6 +287,15 @@ class StudentCourses with Service implements NotificationsListener {
         NotificationService().notify(notifyCachedCoursesChanged, termId);
       }
       return cachedCourses;
+    }
+    else {
+      return null;
+    }
+  }
+
+  void _updateCourses([bool forceClear = false]) {
+    if (forceClear || (!_canLoadCourses && _courses.isNotEmpty)) {
+      _courses.clear();
     }
   }
   

@@ -85,13 +85,13 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
                 Text(Localization().getStringEx("widget.home.welcome.text.title", 'Welcome to {{app_title}} {{app_version}}').
                   replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')).
                   replaceAll('{{app_version}}', Config().appMasterVersion ?? ''),
-                  style: TextStyle(color: Styles().colors!.textColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
+                  style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")),
               ),
             ),
             Semantics(label: Localization().getStringEx('widget.home.welcome.button.close.label', 'Close'), button: true, excludeSemantics: true, child:
               InkWell(onTap : _onClose, child:
                 Padding(padding: EdgeInsets.all(16), child:
-                  Image.asset('images/close-white.png')
+                  Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
                 ),
               ),
             ),

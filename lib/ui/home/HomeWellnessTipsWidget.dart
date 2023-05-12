@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Transportation.dart';
@@ -104,7 +104,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessTipsWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'wellness',
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: _buildContent(),
     );
@@ -143,16 +143,16 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   }
 
   Widget _buildTip() {
-    Color? textColor = Styles().colors?.fillColorPrimary;
     Color? backColor = Styles().colors?.white; // _tipColor ?? Styles().colors?.accentColor3;
     return Container(color: backColor, child:
       Padding(padding: EdgeInsets.all(16), child:
         Row(children: <Widget>[
           Expanded(child:
-            Html(data: Wellness().dailyTip ?? '',
-              onLinkTap: (url, context, attributes, element) => _launchUrl(url),
-              style: { "body": Style(color: textColor, fontFamily: Styles().fontFamilies?.bold, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-            ),
+            HtmlWidget(
+                Wellness().dailyTip ?? '',
+                onTapUrl : (url) {_launchUrl(url); return true;},
+                textStyle:  Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),
+            )
           ),
         ]),
       ),

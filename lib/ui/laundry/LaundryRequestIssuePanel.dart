@@ -111,7 +111,7 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
               padding: EdgeInsets.only(bottom: 22),
               child: Text(Localization().getStringEx('panel.laundry.request_issue.machine_id.enter.label', 'Please enter the Machine ID'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 26, fontFamily: Styles().fontFamilies!.medium))),
+                  style: Styles().textStyles?.getTextStyle("widget.description.extra_large"))),
           Container(
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -160,7 +160,7 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
                 autocorrect: false,
                 enableSuggestions: false,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 26, color: Colors.black, fontFamily: Styles().fontFamilies!.medium),
+                style: Styles().textStyles?.getTextStyle("widget.input_field.enable.text.extra_large"),
                 decoration: InputDecoration(border: InputBorder.none))));
   }
 
@@ -175,7 +175,7 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
               borderColor: Styles().colors!.fillColorPrimary,
               label: Localization().getStringEx('panel.laundry.request_issue.button.submit.label', 'Submit'),
               onTap: _onTapSubmit,
-              rightIcon: Image.asset('images/chevron-right-white.png')),
+              rightIcon: Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true)),
           Visibility(visible: _isLoading, child: CircularProgressIndicator())
         ]));
   }
@@ -186,8 +186,8 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
           padding: EdgeInsets.only(bottom: 18),
           child: Text(Localization().getStringEx('panel.laundry.request_issue.machine_id.example.label', 'Machine ID Example'),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold))),
-      Image.asset('images/icon-laundry-machine-placeholder.png')
+              style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"))),
+      Styles().images?.getImage('laundry-placeholder') ?? Container(),
     ]);
   }
 

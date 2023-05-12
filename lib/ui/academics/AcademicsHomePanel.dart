@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
+import 'package:illinois/ui/academics/MedicineCoursesContentWidget.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
-import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
+import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -34,7 +40,13 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+enum AcademicsContent { events,
+  gies_checklist, uiuc_checklist,
+  canvas_courses, medicine_courses, student_courses,
+  skills_self_evaluation,
+  todo_list, due_date_catalog, my_illini, appointments
+}
 
 class AcademicsHomePanel extends StatefulWidget {
   final AcademicsContent? content;
@@ -54,6 +66,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   late AcademicsContent _selectedContent;
   List<AcademicsContent>? _contentValues;
   bool _contentValuesVisible = false;
+  UniqueKey _dueDateCatalogKey = UniqueKey();
 
   @override
   void initState() {
@@ -103,7 +116,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return Column(children: <Widget>[
       Container(
         color: _skillsSelfEvaluationSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
-        padding: EdgeInsets.only(left: 16, top: 16, right: 16), 
+        padding: EdgeInsets.only(left: 16, top: 16, right: 16),
         child: Semantics(
           hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
           container: true,
@@ -112,7 +125,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
             backgroundColor: Styles().colors!.white,
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-            rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+            rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
             label: _getContentLabel(_selectedContent),
             onTap: _onTapRibbonButton
           ),
@@ -165,7 +178,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         rightIcon: _buildContentItemRightIcon(contentItem),
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
@@ -175,8 +188,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     switch (contentItem) {
       case AcademicsContent.my_illini:
         return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Image.asset('images/icon-login-grey.png'),
-          Padding(padding: EdgeInsets.only(left: 6), child: Image.asset('images/icon-external-link-grey.png'))
+          Styles().images?.getImage('key', excludeFromSemantics: true) ?? Container(),
+          Padding(padding: EdgeInsets.only(left: 6), child: Styles().images?.getImage('external-link', excludeFromSemantics: true))
         ]);
       default:
         return null;
@@ -225,16 +238,22 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.uiuc_checklist;
     } else if (code == 'canvas_courses') {
       return AcademicsContent.canvas_courses;
+    } else if (code == 'medicine_courses') {
+      return AcademicsContent.medicine_courses;
     } else if (code == 'student_courses') {
       return AcademicsContent.student_courses;
     } else if (code == 'academics_events') {
       return AcademicsContent.events;
+    } else if (code == 'skills_self_evaluation') {
+      return AcademicsContent.skills_self_evaluation;
+    } else if (code == 'todo_list') {
+      return AcademicsContent.todo_list;
     } else if (code == 'due_date_catalog') {
       return AcademicsContent.due_date_catalog;
     } else if (code == 'my_illini') {
       return AcademicsContent.my_illini;
-    } else if (code == 'skills_self_evaluation') {
-      return AcademicsContent.skills_self_evaluation;
+    } else if (code == 'appointments') {
+      return AcademicsContent.appointments;
     } else {
       return null;
     }
@@ -242,15 +261,25 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   void _onTapContentItem(AcademicsContent contentItem) {
     Analytics().logSelect(target: '$contentItem');
+    String? launchUrl;
     if (contentItem == AcademicsContent.my_illini) {
       // Open My Illini in an external browser
-      _onMyIlliniSelected();
+      //_onMyIlliniSelected();
+      launchUrl = Config().myIlliniUrl;
     } else if (contentItem == AcademicsContent.due_date_catalog) {
       // Open Due Date Catalog in an external browser
-      _onTapDueDateCatalog();
+      launchUrl = Config().dateCatalogUrl;
     } else {
       _selectedContent = _lastSelectedContent = contentItem;
     }
+
+    if ((launchUrl != null) && (Guide().detailIdFromUrl(launchUrl) == null)) {
+      _launchUrl(launchUrl);
+    }
+    else {
+      _selectedContent = _lastSelectedContent = contentItem;
+    }
+
     _changeSettingsContentValuesVisibility();
   }
 
@@ -266,7 +295,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     }
   }
 
-  void _onMyIlliniSelected() {
+  /*void _onMyIlliniSelected() {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context,
           Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
@@ -294,9 +323,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       //   Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
       // }
     }
-  }
+  }*/
 
-  void _onTapDueDateCatalog() {
+  /*void _onTapDueDateCatalog() {
     Analytics().logSelect(target: "Due Date Catalog");
     if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
       Uri? uri = Uri.tryParse(Config().dateCatalogUrl!);
@@ -304,10 +333,30 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         launchUrl(uri);
       }
     }
+  }*/
+
+  void _launchUrl(String? url, { bool launchInternal = false}) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (launchInternal && UrlUtils.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      }
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          UrlUtils.launchExternal(url);
+        }
+      }
+    }
   }
 
   Widget get _contentWidget {
-    return ((_selectedContent == AcademicsContent.gies_checklist) || (_selectedContent == AcademicsContent.uiuc_checklist) || (_selectedContent == AcademicsContent.student_courses)) ?
+    return ((_selectedContent == AcademicsContent.gies_checklist) ||
+            (_selectedContent == AcademicsContent.uiuc_checklist) ||
+            (_selectedContent == AcademicsContent.student_courses) ||
+            (_selectedContent == AcademicsContent.appointments)) ?
       _rawContentWidget :
       SingleChildScrollView(child:
         Padding(padding: EdgeInsets.only(bottom: 16), child:
@@ -317,7 +366,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 
   Widget get _rawContentWidget {
-    // There is no content for AcademicsContent.my_illini and AcademicsContent.due_date_catalog - it is a web url opened in an external browser
+    // There is no content for AcademicsContent.my_illini - it is a web url opened in an external browser
     switch (_selectedContent) {
       case AcademicsContent.events:
         return AcademicsEventsContentWidget();
@@ -327,10 +376,19 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
       case AcademicsContent.canvas_courses:
         return CanvasCoursesContentWidget();
+      case AcademicsContent.medicine_courses:
+        return MedicineCoursesContentWidget();
       case AcademicsContent.student_courses:
         return StudentCoursesContentWidget();
       case AcademicsContent.skills_self_evaluation:
         return SkillsSelfEvaluation();
+      case AcademicsContent.todo_list:
+        return WellnessToDoHomeContentWidget();
+      case AcademicsContent.due_date_catalog:
+        String? guideId = Guide().detailIdFromUrl(Config().dateCatalogUrl);
+        return (guideId != null) ? GuideDetailWidget(key: _dueDateCatalogKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
+      case AcademicsContent.appointments:
+        return AcademicsAppointmentsContentWidget();
       default:
         return Container();
     }
@@ -356,14 +414,20 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
       case AcademicsContent.canvas_courses:
         return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
+      case AcademicsContent.medicine_courses:
+        return Localization().getStringEx('panel.academics.section.medicine_courses.label', 'My College of Medicine Compliance');
       case AcademicsContent.student_courses:
         return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
+      case AcademicsContent.skills_self_evaluation:
+        return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation');
+      case AcademicsContent.todo_list:
+        return Localization().getStringEx('panel.academics.section.todo_list.label', 'To-Do List');
       case AcademicsContent.due_date_catalog:
         return Localization().getStringEx('panel.academics.section.due_date_catalog.label', 'Due Date Catalog');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
-      case AcademicsContent.skills_self_evaluation:
-        return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation');
+      case AcademicsContent.appointments:
+        return Localization().getStringEx('panel.academics.section.appointments.label', 'Appointments');
     }
   }
 
@@ -378,5 +442,3 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     }
   }
 }
-
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, due_date_catalog, my_illini, skills_self_evaluation }

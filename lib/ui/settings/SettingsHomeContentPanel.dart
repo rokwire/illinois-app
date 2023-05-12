@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
+import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/settings/SettingsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
@@ -111,21 +112,21 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
             Expanded(child:
               _DebugContainer(child:
                 Padding(padding: EdgeInsets.only(left: 16), child:
-                  Text(Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),)
+                  Text(Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), style: Styles().textStyles?.getTextStyle("widget.sheet.title.regular"))
                 )
               ),
             ),
             Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
               InkWell(onTap : _onTapDebug, child:
                 Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child: 
-                  Image.asset('images/icon-bug.png', semanticLabel: '', color: Styles().colors?.fillColorSecondary,),
+                  Styles().images?.getImage('bug', excludeFromSemantics: true),
                 ),
               ),
             ),
             Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
               InkWell(onTap : _onTapClose, child:
-                Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child: 
-                  Image.asset('images/close-orange.png', semanticLabel: '',),
+                Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
+                  Styles().images?.getImage('close', excludeFromSemantics: true),
                 ),
               ),
             ),
@@ -151,7 +152,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
                   backgroundColor: Styles().colors!.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                  rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                   label: _getContentLabel(_selectedContent),
                   onTap: _onTapContentDropdown
                 )
@@ -214,7 +215,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
   }
@@ -227,7 +228,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   void _onTapContentItem(SettingsContent contentItem) {
     Analytics().logSelect(target: "Content Item: ${contentItem.toString()}");
     if (contentItem == SettingsContent.favorites) {
-      NotificationService().notify(HomePanel.notifyCustomize);
+      HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     }
     else {
     _selectedContent = _lastSelectedContent = contentItem;

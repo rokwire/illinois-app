@@ -1,16 +1,10 @@
 
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;
@@ -29,7 +23,7 @@ class Onboarding2TitleWidget extends StatelessWidget{
           SafeArea(child:
             Column(children: [
               Container(height: 31,),
-              Image.asset("images/illinois-blockI-blue.png", excludeFromSemantics: true, width: 24, fit: BoxFit.fitWidth,),
+              Styles().images?.getImage("university-logo-dark", excludeFromSemantics: true) ?? Container(),
               Container(height: 17,),
               Row(children: <Widget>[
                 Container(width: 32,),
@@ -56,10 +50,10 @@ class Onboarding2TitleWidget extends StatelessWidget{
 class Onboarding2BackButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final GestureTapCallback? onTap;
-  final String image;
+  final String imageKey;
   final Color? color;
 
-  Onboarding2BackButton({this.padding, this.onTap, this.image = 'images/chevron-left.png', this.color});
+  Onboarding2BackButton({this.padding, this.onTap, this.imageKey = 'chevron-left-bold', this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -72,10 +66,7 @@ class Onboarding2BackButton extends StatelessWidget {
           behavior: HitTestBehavior.translucent,
           child: Padding(
             padding: padding!,
-            child: Container(
-                height: 32,
-                width: 32,
-                child: Image.asset(image, color: this.color ?? Styles().colors!.fillColorSecondary,)
+            child: Container(child: Styles().images?.getImage(imageKey, color: this.color, excludeFromSemantics: true)
             ),
           ),
         )
@@ -138,14 +129,14 @@ class Onboarding2ToggleButton extends StatelessWidget{
     return toggled!? toggledTitle : unToggledTitle;
   }
 
-  Widget get _image{
-    return Image.asset( toggled! ? 'images/toggle-yes.png' : 'images/toggle-no.png');
+  Widget? get _image{
+    return Styles().images?.getImage(toggled! ? 'toggle-on' : 'toggle-off', excludeFromSemantics: true);
   }
 }
 
 class Onboarding2InfoDialog extends StatelessWidget{
   static final TextStyle titleStyle = Styles().textStyles?.getTextStyle("widget.title.large.fat") ?? TextStyle(fontSize: 20.0, color: Styles().colors!.fillColorPrimary,fontFamily: Styles().fontFamilies!.bold);
-  static final TextStyle contentStyle = Styles().textStyles?.getTextStyle("widget.info.regular") ?? TextStyle(fontSize: 16.0, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular);
+  static final TextStyle contentStyle = Styles().textStyles?.getTextStyle("widget.info.regular.thin") ?? TextStyle(fontSize: 16.0, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular);
 
   final Widget? content;
   final BuildContext? context;
@@ -188,9 +179,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                             onTap: () {
                               Navigator.pop(context);
                             },
-                            child: Container(child: Image.asset(
-                              "images/close-orange.png",
-                              excludeFromSemantics: true,)),
+                            child: Container(child: Styles().images?.getImage("close", excludeFromSemantics: true)),
                           ))),
                         Container(height: 12,),
                         content ?? Container(),
@@ -221,7 +210,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                                       padding: EdgeInsets.only(bottom: 2),
                                       child: Container(
                                           padding: EdgeInsets.only(bottom: 4),
-                                          child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))),
+                                          child: Styles().images?.getImage("external-link", excludeFromSemantics: true,)))),
                                 ]
                             )
                         ),
@@ -238,17 +227,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
 
   void _openPrivacyPolicy(BuildContext context) {
     Analytics().logSelect(target: "Privacy Policy");
-    if (Config().privacyPolicyUrl != null) {
-      if (Platform.isIOS) {
-        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
-        if (privacyPolicyUri != null) {
-          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
-        }
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
-      }
-    }
+    AppPrivacyPolicy.launch(context);
   }
 }
 

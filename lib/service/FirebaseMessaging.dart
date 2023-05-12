@@ -54,6 +54,10 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifySettingUpdated                 = "edu.illinois.rokwire.firebase.messaging.setting.updated";
   static const String notifyGroupPostNotification          = "edu.illinois.rokwire.firebase.messaging.group.posts.updated";
   static const String notifyHomeNotification               = "edu.illinois.rokwire.firebase.messaging.home";
+  static const String notifyBrowseNotification             = "edu.illinois.rokwire.firebase.messaging.browse";
+  static const String notifyMapNotification                = "edu.illinois.rokwire.firebase.messaging.map";
+  static const String notifyAcademicsNotification          = "edu.illinois.rokwire.firebase.messaging.academics";
+  static const String notifyWellnessNotification           = "edu.illinois.rokwire.firebase.messaging.wellness";
   static const String notifyInboxNotification              = "edu.illinois.rokwire.firebase.messaging.inbox";
   static const String notifyCanvasAppDeepLinkNotification  = "edu.illinois.rokwire.firebase.messaging.app.canvas.deeplink";
   static const String notifyAppointmentNotification        = "edu.illinois.rokwire.firebase.messaging.appointment";
@@ -138,6 +142,10 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeAthleticsNewDetail = 'athletics_news_detail';
   static const String payloadTypeGroup = 'group';
   static const String payloadTypeHome = 'home';
+  static const String payloadTypeBrowse = 'browse';
+  static const String payloadTypeMap = 'map';
+  static const String payloadTypeAcademics = 'academics';
+  static const String payloadTypeWellness = 'wellness';
   static const String payloadTypeInbox = 'inbox';
   static const String payloadTypeCanvasAppDeepLink = 'canvas_app_deeplink';
   static const String payloadTypeAppointment = 'appointment';
@@ -286,6 +294,18 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeHome) {
       NotificationService().notify(notifyHomeNotification, data);
+    }
+    else if (type == payloadTypeBrowse) {
+      NotificationService().notify(notifyBrowseNotification, data);
+    }
+    else if (type == payloadTypeMap) {
+      NotificationService().notify(notifyMapNotification, data);
+    }
+    else if (type == payloadTypeAcademics) {
+      NotificationService().notify(notifyAcademicsNotification, data);
+    }
+    else if (type == payloadTypeWellness) {
+      NotificationService().notify(notifyWellnessNotification, data);
     }
     else if (type == payloadTypeInbox) {
       NotificationService().notify(notifyInboxNotification, data);

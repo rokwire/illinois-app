@@ -42,12 +42,11 @@ class Config extends rokwire.Config {
 
   Map<String, dynamic> get thirdPartyServices  => JsonUtils.mapValue(content['thirdPartyServices']) ?? {};
 
-  Map<String, dynamic> get secretShibboleth => JsonUtils.mapValue(secretKeys['shibboleth']) ?? {};
   Map<String, dynamic> get secretIlliniCash => JsonUtils.mapValue(secretKeys['illini_cash']) ?? {};
   Map<String, dynamic> get secretParkhub => JsonUtils.mapValue(secretKeys['parkhub']) ?? {};
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
-  Map<String, dynamic> get secretMTD => JsonUtils.mapValue(secretKeys['mtd']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
+  Map<String, dynamic> get secretCanvas => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
   
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
@@ -62,21 +61,21 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
-  // Getters: Secret Keys
+  Map<String, dynamic> get wellness => JsonUtils.mapValue(content['wellness']) ?? {};
 
-  String? get shibbolethClientId     => JsonUtils.stringValue(secretShibboleth['client_id']);
-  String? get shibbolethClientSecret => JsonUtils.stringValue(secretShibboleth['client_secret']);
+  // Getters: Secret Keys
 
   String? get illiniCashAppKey       => JsonUtils.stringValue(secretIlliniCash['app_key']);
   String? get illiniCashHmacKey      => JsonUtils.stringValue(secretIlliniCash['hmac_key']);
   String? get illiniCashSecretKey    => JsonUtils.stringValue(secretIlliniCash['secret_key']);
 
   String? get padaapiApiKey          => JsonUtils.stringValue(secretPadaapi['api_key']);
-  String? get mtdApiKey              => JsonUtils.stringValue(secretMTD['api_key']);
 
   String? get twitterToken           => JsonUtils.stringValue(secretTwitter['token']);
   String? get twitterTokenType       => JsonUtils.stringValue(secretTwitter['token_type']);
 
+  String? get canvasToken            => JsonUtils.stringValue(secretCanvas['token']);
+  String? get canvasTokenType        => JsonUtils.stringValue(secretCanvas['token_type']);
 
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);
@@ -97,8 +96,9 @@ class Config extends rokwire.Config {
   String? get feedbackUrl            => JsonUtils.stringValue(otherUniversityServices['feedback_url']);
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
+  String? get privacyPolicyGuideId   => JsonUtils.stringValue(otherUniversityServices['privacy_policy_guide_id']);
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
-  String? get mtdUrl                 => JsonUtils.stringValue(otherUniversityServices['mtd_url']);
+  String? get canvasUrl              => JsonUtils.stringValue(otherUniversityServices['canvas_url']);
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
@@ -164,6 +164,13 @@ class Config extends rokwire.Config {
 
   String? get canvasCourseDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['course_format']);
   String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
+  List<int>? get canvasMedicineCoursesAccountIds => JsonUtils.listIntsValue(canvas['medicine_courses_account_ids']);
+
+  // Getters: Wellness
+
+  String? get wellnessMentalHealthCcUrl => JsonUtils.stringValue(wellness['mental_health_cc_url']);
+  String? get wellnessMentalHealthThumbUrl => JsonUtils.stringValue(wellness['mental_health_thumb_url']);
+  String? get wellnessMentalHealthVideoUrl => JsonUtils.stringValue(wellness['mental_health_video_url']);
 
   // Getters: McKinley
 

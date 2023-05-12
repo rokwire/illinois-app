@@ -17,20 +17,23 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/groups.dart' as rokwire;
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -39,21 +42,16 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupsHomePanel extends StatefulWidget {
-  final GroupsContentType? contentType;
+  final rokwire.GroupsContentType? contentType;
   
   GroupsHomePanel({Key? key, this.contentType}) : super(key: key);
   
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
 }
 
-enum _FilterType { none, category, tags }
-enum _TagFilter { all, my }
-
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener {
-  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
   final Color _dimmedBackgroundColor = Color(0x99000000);
 
-  bool _isFilterLoading = false;
   int _groupsLoadingProgress = 0;
   Set<Completer<void>>? _reloadGroupsContentCompleters;
   bool _myGroupsBusy = false;
@@ -61,17 +59,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   String? _newGroupId;
   GlobalKey? _newGroupKey;
 
-  GroupsContentType? _selectedContentType;
+  rokwire.GroupsContentType? _selectedContentType;
   bool _contentTypesVisible = false;
 
   List<Group>? _allGroups;
   List<Group>? _userGroups;
 
-  String? _selectedCategory;
-  List<String>? _categories;
-
-  _TagFilter? _selectedTagFilter = _TagFilter.all;
-  _FilterType __activeFilterType = _FilterType.none;
+  Map<String, dynamic> _contentAttributesSelection = <String, dynamic>{};
 
   @override
   void initState() {
@@ -88,7 +82,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Connectivity.notifyStatusChanged,
     ]);
     _selectedContentType = widget.contentType;
-    _loadFilters();
     _reloadGroupsContent();
   }
 
@@ -153,18 +146,17 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Future<List<Group>?> _loadUserGroups() async =>
-    Groups().loadGroups(contentType: GroupsContentType.my);
+    Groups().loadGroups(contentType: rokwire.GroupsContentType.my);
 
   Future<List<Group>?> _loadAllGroups() async =>
     Groups().loadGroups(
-      contentType: GroupsContentType.all,
-      category: (_selectedCategory != _allCategoriesValue) ? _selectedCategory : null,
-      tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
+      contentType: rokwire.GroupsContentType.all,
+      attributes: _contentAttributesSelection,
     );
 
   void _checkGroupsContentLoaded() {
     if (!_isGroupsLoading) {
-      _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? GroupsContentType.my : GroupsContentType.all);
+      _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? rokwire.GroupsContentType.my : rokwire.GroupsContentType.all);
       _updateState();
     }
   }
@@ -172,35 +164,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _applyUserGroups() {
     _userGroups = Groups().userGroups;
     _updateState();
-  }
-
-  Future<void> _loadFilters() async{
-    setState(() {
-      _isFilterLoading = true;
-    });
-    List<String> categories = [];
-    categories.add(_allCategoriesValue);
-    List<String>? groupCategories = await Groups().loadCategories();
-    if (CollectionUtils.isNotEmpty(groupCategories)) {
-      categories.addAll(groupCategories!);
-    }
-    _categories = categories;
-    _selectedCategory = _allCategoriesValue;
-
-    setState(() {
-      _isFilterLoading = false;
-    });
-  }
-
-  static String? _tagFilterToDisplayString(_TagFilter? tagFilter) {
-    switch (tagFilter) {
-      case _TagFilter.all:
-        return Localization().getStringEx('panel.groups_home.filter.tag.all.label', 'All Tags');
-      case _TagFilter.my:
-        return Localization().getStringEx('panel.groups_home.filter.tag.my.label', 'My Tags');
-      default:
-        return null;
-    }
   }
 
   bool get _showMyGroups {
@@ -244,33 +207,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool get _isLoading {
-    return _isFilterLoading || _isGroupsLoading;
-  }
-
-  bool get _hasActiveFilter {
-    return _activeFilterType != _FilterType.none;
-  }
-
-  _FilterType get _activeFilterType {
-    return __activeFilterType;
-  }
-
-  set _activeFilterType(_FilterType value) {
-    if (__activeFilterType != value) {
-      __activeFilterType = value;
-      _updateState();
-    }
-  }
-
-  List<dynamic>? get _activeFilterList {
-    switch (_activeFilterType) {
-      case _FilterType.category:
-        return _categories;
-      case _FilterType.tags:
-        return _TagFilter.values;
-      default:
-        return null;
-    }
+    return _isGroupsLoading;
   }
 
   ///////////////////////////////////
@@ -285,18 +222,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             _buildFunctionalBar(),
             Expanded(child: _isLoading
               ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
-              : Stack(alignment: AlignmentDirectional.topCenter, children: <Widget>[
-                  Container(color: Styles().colors!.background, child:
-                    RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                      SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                        Column(children: <Widget>[ _buildGroupsContent(), ],),
-                      ),
+              : Container(color: Styles().colors!.background, child:
+                  RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                    SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                      Column(children: <Widget>[ _buildGroupsContent(), ],),
                     ),
                   ),
-                  Visibility(
-                    visible: _hasActiveFilter, child: _buildDimmedContainer()),
-                  _hasActiveFilter ? _buildFilterContent() : Container()
-                ],),
+                ),
             )
           ]),
           _buildContentTypesContainer()
@@ -314,7 +246,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildTypesValuesWidget() {
     List<Widget> typeWidgetList = <Widget>[];
     typeWidgetList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    for (GroupsContentType type in GroupsContentType.values) {
+    for (rokwire.GroupsContentType type in rokwire.GroupsContentType.values) {
       if ((_selectedContentType != type)) {
         typeWidgetList.add(_buildContentItem(type));
       }
@@ -322,181 +254,191 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: typeWidgetList)));
   }
 
-  Widget _buildContentItem(GroupsContentType contentType) {
+  Widget _buildContentItem(rokwire.GroupsContentType contentType) {
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: _getContentLabel(contentType),
         onTap: () => _onTapContentType(contentType));
   }
 
   Widget _buildGroupsContentSelection() {
-    return Padding(
-              padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-              child: RibbonButton(
-                  progress: _myGroupsBusy,
-                  textColor: Styles().colors!.fillColorSecondary,
-                  backgroundColor: Styles().colors!.white,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  rightIconAsset: (_contentTypesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                  label: _getContentLabel(_selectedContentType),
-                  onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null));
+    return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
+      progress: _myGroupsBusy,
+      textColor: Styles().colors!.fillColorSecondary,
+      backgroundColor: Styles().colors!.white,
+      borderRadius: BorderRadius.all(Radius.circular(5)),
+      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
+      label: _getContentLabel(_selectedContentType),
+      onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null
+    ));
   }
 
   Widget _buildFunctionalBar() {
-    return Container(
-        child: Padding(
-            padding: const EdgeInsets.only(left: 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                _buildFilterButtons(),
-                Expanded(child: Container()),
-                Visibility(visible: _canCreateGroup, child:
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10), child:
-                      InkWell(onTap: _onTapCreate, child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                        Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
-                        Padding(padding: EdgeInsets.only(left: 5), child: Image.asset('images/icon-add-more.png'))
-                      ])),
-                    ),
-                  ),
-                Semantics(label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
-                  IconButton(
-                    icon: Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
-                    onPressed: () {
-                      Analytics().logSelect(target: "Search");
-                      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
-                    },
-                  ),
-                )
-              ],
-            ),
-          ),
-      );
+    return Padding(padding: const EdgeInsets.only(left: 16), child:
+    Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+      Row(children: <Widget>[ Expanded(child:
+        Wrap(alignment: WrapAlignment.spaceBetween, runAlignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.start, children: <Widget>[
+          _buildFiltersBar(),
+          _buildGroupsCountBar(),
+          _buildCommandsBar(),
+        ],),
+      )]),
+      _buildContentAttributesDescription(),
+    ],)
+    );
+  }
+
+  Widget _buildFiltersBar() {
+    return (_selectedContentType == rokwire.GroupsContentType.my) ? SizedBox() : _buildFilterButtons();
   }
 
   Widget _buildFilterButtons() {
-    bool hasCategories = CollectionUtils.isNotEmpty(_categories);
-    return (_isFilterLoading || (_selectedContentType == GroupsContentType.my))
-      ? Container()
-      : Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Visibility(visible: hasCategories, child: FilterSelector(
-                  padding: EdgeInsets.only(left: 4, top: 10, right: 2, bottom: 10),
-                  title: _selectedCategory,
-                  active: (_activeFilterType == _FilterType.category),
-                  onTap: (){
-                    Analytics().logSelect(target: "GroupFilter - Category");
-                    setState(() {
-                      _activeFilterType = (_activeFilterType != _FilterType.category) ? _FilterType.category : _FilterType.none;
-                    });
-                  }
-                )),
-                Visibility(visible: hasCategories, child: Container(width: 8)),
-                FilterSelector(
-                  padding: EdgeInsets.only(left: 2, top: 10, right: 2, bottom: 10),
-                  title: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
-                  hint: "",
-                  active: (_activeFilterType == _FilterType.tags),
-                  onTap: (){
-                    Analytics().logSelect(target: "GroupFilter - Tags");
-                    setState(() {
-                      _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
-                    });
-                  }
+    String filtersTitle = Localization().getStringEx("panel.groups_home.filter.filter.label", "Filters");
+    
+    return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+      Visibility(visible: Groups().contentAttributes?.isNotEmpty ?? false, child:
+        Padding(padding: EdgeInsets.only(right: 6), child:
+          InkWell(onTap: _onFilterAttributes, child:
+            Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
+              Row(children: [
+                Text(filtersTitle, style: TextStyle(
+                  fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
+                ),),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 4), child:
+                  Styles().images?.getImage('chevron-right', width: 6, height: 10) ?? Container(),
                 )
-              ],
-            );
-  }
-
-  Widget _buildFilterContent() {
-    return _buildFilterContentEx(
-        itemCount: _activeFilterList!.length,
-        itemBuilder: (context, index) {
-          return  FilterListItem(
-            title: StringUtils.ensureNotEmpty(_getFilterItemLabel(index)),
-            selected: _isFilterItemSelected(index),
-            onTap: ()=> _onTapFilterEntry(_activeFilterList![index]),
-            iconAsset: "images/oval-orange.png",
-            selectedIconAsset: "images/checkbox-selected.png",
-          );
-        }
-    );
-  }
-
-  bool _isFilterItemSelected(int filterListIndex) {
-    if (CollectionUtils.isEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
-      return false;
-    }
-    switch (_activeFilterType) {
-      case _FilterType.category:
-        return (_selectedCategory == _activeFilterList![filterListIndex]);
-      case _FilterType.tags:
-        return (_selectedTagFilter == _activeFilterList![filterListIndex]);
-      default:
-        return false;
-    }
-  }
-
-  String? _getFilterItemLabel(int filterListIndex) {
-    if (CollectionUtils.isEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
-      return null;
-    }
-    switch (_activeFilterType) {
-      case _FilterType.category:
-        return _activeFilterList![filterListIndex];
-      case _FilterType.tags:
-        return _tagFilterToDisplayString(_activeFilterList![filterListIndex]);
-      default:
-        return null;
-    }
-  }
-
-  Widget _buildFilterContentEx({required int itemCount, required IndexedWidgetBuilder itemBuilder}){
-
-    return Semantics(child:Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 40),
-        child: Semantics(child:Container(
-          decoration: BoxDecoration(
-            color: Styles().colors!.fillColorSecondary,
-            borderRadius: BorderRadius.circular(5.0),
+              ],),
+              /*Container(
+                decoration: BoxDecoration(border:
+                  Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1.5, ))
+                ),
+                child: Text(filtersTitle, style: TextStyle(
+                  fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
+                ),),
+              ),*/
+              /*Text(filtersTitle, style: TextStyle(
+                fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
+                decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
+              ),)*/
+            )
           ),
-          child: Padding(
-            padding: EdgeInsets.only(top: 2),
-            child: Container(
-              color: Colors.white,
-              child: ListView.separated(
-                shrinkWrap: true,
-                separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
-                itemCount: itemCount,
-                itemBuilder: itemBuilder,
-              ),
+        ),
+      ),
+    ],);
+  }
+
+  Widget _buildContentAttributesDescription() {
+    if (_selectedContentType == rokwire.GroupsContentType.all) {
+      List<InlineSpan> attributesList = <InlineSpan>[];
+      ContentAttributes? contentAttributes = Groups().contentAttributes;
+      List<ContentAttribute>? attributes = contentAttributes?.attributes;
+      TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.fat");
+      TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+      if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+        for (ContentAttribute attribute in attributes) {
+          List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_contentAttributesSelection, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            displayAttributeValues = List.from(displayAttributeValues.map((String attribute) => "'$attribute'"));
+            if (attributesList.isNotEmpty) {
+              attributesList.add(TextSpan(text: " and " , style : regularStyle,));
+            }
+            attributesList.addAll(<InlineSpan>[
+              TextSpan(text: "${attribute.displayTitle}" , style : boldStyle,),
+              TextSpan(text: " is ${displayAttributeValues.join(' or ')}" , style : regularStyle,),
+            ]);
+          }
+        }
+      }
+
+      return attributesList.isNotEmpty ? 
+        Padding(padding: EdgeInsets.only(top: 0, bottom: 4, right: 12), child: 
+          Row(children: [ Expanded(child:
+            RichText(text: TextSpan(style: regularStyle, children: attributesList))
+          ),],)
+        ) : Container();
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _buildGroupsCountBar() {
+    if ((_selectedContentType != rokwire.GroupsContentType.all) || _isGroupsLoading) {
+      return SizedBox();
+    } else {
+      late int groupsCount;
+      switch (_selectedContentType) {
+        case rokwire.GroupsContentType.all:
+          groupsCount = _allGroups?.length ?? 0;
+          break;
+        case rokwire.GroupsContentType.my:
+          groupsCount = _userGroups?.length ?? 0;
+          break;
+        default:
+          groupsCount = 0;
+          break;
+      }
+      String groupsLabel = (groupsCount == 1)
+          ? Localization().getStringEx("panel.groups_home.groups.count.single.label", "group")
+          : Localization().getStringEx("panel.groups_home.groups.count.plural.label", "groups");
+      String countLabel = '$groupsCount $groupsLabel';
+      return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 7, vertical: 14),
+          child: Text(countLabel,
+              style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)));
+    }
+  }
+
+  Widget _buildCommandsBar() {
+    return Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        Visibility(visible: _canCreateGroup, child:
+          InkWell(onTap: _onTapCreate, child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+                Padding(padding: EdgeInsets.only(left: 4), child:
+                  Styles().images?.getImage('plus-circle', excludeFromSemantics: true)
+                )
+              ])
             ),
           ),
-        ))));
+        ),
+        Semantics(label: Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
+          IconButton(icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container(), onPressed: () {
+            Analytics().logSelect(target: "Search");
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+          },),
+        )
+    ],);
   }
 
-  Widget _buildDimmedContainer() {
-    return BlockSemantics(child:GestureDetector(
-      onTap: (){
-        setState(() {
-          _activeFilterType = _FilterType.none;
-        });
-      },
-        child: Container(color: _dimmedBackgroundColor))
-    );
+  void _onFilterAttributes() {
+    Analytics().logSelect(target: 'Filters');
+    if (Groups().contentAttributes != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('panel.group.attributes.filters.header.title', 'Group Filters'),
+        description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
+        contentAttributes: Groups().contentAttributes,
+        selection: _contentAttributesSelection,
+        filtersMode: true,
+      ))).then((selection) {
+        if ((selection != null) && mounted) {
+          setState(() {
+            _contentAttributesSelection = selection;
+          });
+          _reloadAllGroupsContent();
+        }
+      });
+    }
   }
 
   Widget _buildGroupsContent() {
-    if (_selectedContentType == GroupsContentType.my) {
+    if (_selectedContentType == rokwire.GroupsContentType.my) {
       return _buildMyGroupsContent();
     }
-    else if (_selectedContentType == GroupsContentType.all) {
+    else if (_selectedContentType == rokwire.GroupsContentType.all) {
       return _buildAllGroupsContent();
     }
     else {
@@ -509,9 +451,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
 
     if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
-      String text = Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet");
-      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
-        Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+      return Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+          child: RichText(
+              textAlign: TextAlign.left,
+              text: TextSpan(
+                  style: Styles().textStyles?.getTextStyle("widget.message.dark.regular"),
+                  children:[
+                    TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
+                    TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles?.getTextStyle("widget.link.button.title.regular"),
+                        recognizer: TapGestureRecognizer()..onTap = () {
+                          Analytics().logSelect(target: "All Groups");
+                          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
+                        }, ),
+                      TextSpan(text:"."),
+              ]
+              ))
       );
     }
     else {
@@ -527,9 +482,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if(CollectionUtils.isNotEmpty(myGroups)) {
       for (Group group in myGroups) {
         if (group.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
+          EdgeInsetsGeometry padding = widgets.isNotEmpty ? const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.only(top: 6, bottom: 8);
+          widgets.add(Padding(padding: padding, child:
+            GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
               onImageTap: (){ onTapImage(group);},
@@ -547,16 +502,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if(CollectionUtils.isNotEmpty(myPendingGroups)) {
       List<Widget> widgets = [];
       widgets.add(Container(height: 8));
-      widgets.add(Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      widgets.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),)
         )
       );
       widgets.add(Container(height: 8,));
       for (Group group in myPendingGroups) {
         if (group.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
+          widgets.add(Padding(padding: const EdgeInsets.symmetric(vertical: 8), child:
+            GroupCard(
               group: group,
               displayType: GroupCardDisplayType.myGroup,
               key: _getGroupKey(group),
@@ -564,8 +518,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           ));
         }
       }
-      return
-        Stack(children: [
+      return Stack(children: [
           Container(height: 112, color: Styles().colors!.backgroundVariant, child:
             Column(children: [
               Container(height: 80,),
@@ -577,7 +530,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               ),
             ],)
           ),
-          Column(crossAxisAlignment: CrossAxisAlignment.start,children: widgets,)
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets,)
         ],);
     }
     return Container();
@@ -588,9 +541,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       List<Widget> widgets = [];
       for(Group group in _allGroups!) {
         if (group.isVisible) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(
+          EdgeInsetsGeometry padding = widgets.isNotEmpty ? const EdgeInsets.symmetric(vertical: 8) : const EdgeInsets.only(top: 6, bottom: 8);
+          widgets.add(Padding(padding: padding, child:
+            GroupCard(
               group: group,
               key: _getGroupKey(group),
             ),
@@ -605,7 +558,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
       else if (_allGroups!.isEmpty) {
-        text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups created yet");
+        text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups matching your filters.");
       }
       else {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.filtered.empty", "No groups match the selected filter");
@@ -625,11 +578,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  String _getContentLabel(GroupsContentType? contentType) {
+  String _getContentLabel(rokwire.GroupsContentType? contentType) {
     switch (contentType) {
-      case GroupsContentType.all:
+      case rokwire.GroupsContentType.all:
         return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups');
-      case GroupsContentType.my:
+      case rokwire.GroupsContentType.my:
         return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups');
       default:
         return '';
@@ -641,50 +594,29 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _updateState();
   }
 
-  void _onTapContentType(GroupsContentType contentType) {
+  void _onTapContentType(rokwire.GroupsContentType contentType) {
     Analytics().logSelect(target: _getContentLabel(contentType));
-    if (contentType == GroupsContentType.all) {
+    if (contentType == rokwire.GroupsContentType.all) {
       _onSelectAllGroups();
     }
-    else if (contentType == GroupsContentType.my) {
+    else if (contentType == rokwire.GroupsContentType.my) {
       _onSelectMyGroups();
     }
     _changeContentTypesVisibility();
   }
 
-  void _onTapFilterEntry(dynamic entry) {
-    String? analyticsTarget;
-    switch (_activeFilterType) {
-      case _FilterType.category:
-        _selectedCategory = entry;
-        analyticsTarget = "CategoryFilter";
-        break;
-      case _FilterType.tags:
-        _selectedTagFilter = entry;
-        analyticsTarget = "TagFilter";
-        break;
-      default:
-        break;
-    }
-    Analytics().logSelect(target: "$analyticsTarget: $entry");
-    setState(() {
-      _activeFilterType = _FilterType.none;
-    });
-    _reloadAllGroupsContent();
-  }
-
   void _onSelectAllGroups(){
-    if(_selectedContentType != GroupsContentType.all){
+    if(_selectedContentType != rokwire.GroupsContentType.all){
       setState(() {
-        _selectedContentType = GroupsContentType.all;
+        _selectedContentType = rokwire.GroupsContentType.all;
       });
     }
   }
 
   void _onSelectMyGroups() {
-    if(_selectedContentType != GroupsContentType.my){
+    if(_selectedContentType != rokwire.GroupsContentType.my){
       if (Auth2().isOidcLoggedIn) {
-        setState(() { _selectedContentType = GroupsContentType.my; });
+        setState(() { _selectedContentType = rokwire.GroupsContentType.my; });
       }
       else {
         setState(() { _myGroupsBusy = true; });
@@ -694,7 +626,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             setState(() {
               _myGroupsBusy = false;
               if (result == Auth2OidcAuthenticateResult.succeeded) {
-                _selectedContentType = GroupsContentType.my;
+                _selectedContentType = rokwire.GroupsContentType.my;
               }
             });
           }

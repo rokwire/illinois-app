@@ -85,7 +85,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     return Scaffold(
         appBar: HeaderBar(
           title: Localization().getStringEx("panel.create_poll.header.title", "Create a Quick Poll"),
-          leadingAsset: 'images/close-white.png',
+          leadingIconKey: 'close-circle-white',
           onLeading: _onTapCancel,
         ),
         body: SafeArea(
@@ -234,7 +234,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
               ),
               Padding(padding: EdgeInsets.only(left: 5), child:
-                Image.asset('images/icon-add-14x14.png'),
+              Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
               ),
             ]),
           )
@@ -272,11 +272,11 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 Container(
                     child: Row(
                     children: <Widget>[
-                      Image.asset('images/icon-settings.png'),
+                      Styles().images?.getImage('settings', excludeFromSemantics: true) ?? Container(),
                       Expanded(child:
                         Padding(
                           padding: EdgeInsets.only(left: 10),
-                          child: Text(additionalSettingsText, style: Styles().textStyles?.getTextStyle("widget.title.regular"),
+                          child: Text(additionalSettingsText, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
                           ),
                         )
                       )
@@ -424,7 +424,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                     child: Text(
                       Localization().getStringEx("panel.create_poll.cancel_dialog.message", "Are you sure you want to cancel this Quick Poll?"),
                       textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium"),
+                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular"),
                     ),
                   ),
                   Row(
@@ -563,8 +563,7 @@ class _PollOptionViewState extends State<PollOptionView> {
                 Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
                   InkWell(onTap : widget.onClose, child:
                     Padding(padding: EdgeInsets.only(left: 12, right: 8, top: 8, bottom: 12), child:
-                        Text('X', style:
-                          TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),
+                        Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")
                         ),
                     ),
                   ),

@@ -57,7 +57,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       });
     }
 
-    _courses = Canvas().courses;
+    _courses = Canvas().giesCourses;
     super.initState();
   }
 
@@ -82,7 +82,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeCanvasCoursesWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'courses',
       child: _buildContent(),
     );
   }
@@ -145,7 +145,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   void _updateCourses() {
     setStateIfMounted(() {
-      _courses = Canvas().courses;
+      _courses = Canvas().giesCourses;
       _pageViewKey = UniqueKey();
       // _pageController = null;
       _pageController?.jumpToPage(0);

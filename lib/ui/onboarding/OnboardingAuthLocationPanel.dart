@@ -45,12 +45,12 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                   Column(mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Stack(children: <Widget>[
-                      Image.asset(
-                        'images/share-location-header.png',
+                      Styles().images?.getImage(
+                        'header-location',
                         fit: BoxFit.fitWidth,
                         width: MediaQuery.of(context).size.width,
                         excludeFromSemantics: true,
-                      ),
+                      ) ?? Container(),
                       OnboardingBackButton(
                         padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                         onTap:() {

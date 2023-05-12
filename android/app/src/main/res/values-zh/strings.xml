@@ -31,33 +31,8 @@
     <string name="buildings">建築物</string>
     <string name="student_courses">培訓班</string>
     <string name="appointments">約會</string>
-    <string name="mtd_stops">MTD Stops</string>
+    <string name="mtd_stops">Bus Stops</string>
     <string name="locations">Locations</string>
     <string name="location">Location</string>
     <string name="ok">好</string>
-
-    <!-- MapDirectionsActivity -->
-    <string name="directionsTitle">方向</string>
-    <string name="routeFailedMsg">Failed to find a route:\n%s</string>
-    <string name="locationFailedMsg">無法檢測到當前位置.</string>
-    <string name="start">開始</string>
-    <string name="finish">完</string>
-    <string name="routeLegStepFormat">腿 %1$d / 步 %2$d</string>
-    <string name="mile">英里</string>
-    <string name="miles">英里</string>
-    <string name="minute">分</string>
-
-    <!-- MapActivity -->
-    <string name="mapTitle">地圖</string>
-    <string name="room_label">%1$s室</string>
-
-    <!-- MapPickLocationActivity -->
-    <string name="pick_location">選擇地點</string>
-    <string name="custom">定制</string>
-    <string name="select_location_msg">請選擇一個位置</string>
-    <string name="location_label">位置: %1$s</string>
-    <string name="save">保存</string>
-
-    <!-- Navigation -->
-    <string name="invalid_server_response">服務器響應無效</string>
 </resources>

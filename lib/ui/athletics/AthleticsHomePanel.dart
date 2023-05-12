@@ -129,7 +129,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                           excludeSemantics: true,
                           child: SectionRibbonHeader(
                             title: Localization().getStringEx("panel.athletics.label.upcoming_events.title", "Upcoming Events"),
-                            titleIconAsset: 'images/icon-calendar.png',
+                            titleIconKey: 'calendar',
                           ),
                         ),
                         Padding(
@@ -201,8 +201,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
                                             style: Styles().textStyles?.getTextStyle('panel.athletics.home.detail.medium') ,
                                           ),
-                                          Image.asset(
-                                              'images/icon-check-example.png', excludeFromSemantics: true),
+                                          Styles().images?.getImage('check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                                           Expanded(
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
@@ -241,9 +240,8 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                           Container(
                                             height: 112,
                                             width: double.infinity,
-                                            child: Image.asset('images/slant-down-right-blue.png',
+                                            child: Styles().images?.getImage('slant-dark',
                                               fit:BoxFit.fill,
-                                              color: Styles().colors!.fillColorPrimaryVariant,
                                               excludeFromSemantics: true
                                             ),
                                           )
@@ -260,7 +258,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       right: 16),
-                                                  child: Image.asset('images/explore.png', excludeFromSemantics: true),
+                                                  child: Styles().images?.getImage('compass', excludeFromSemantics: true),
                                                 ),
                                                 Expanded(child:
                                                   Text(
@@ -351,12 +349,12 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderHomeButton() {
     return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-          IconButton(icon: Styles().images?.getImage('block-i-orange.png', excludeFromSemantics: true) ?? Container(), onPressed: _onTapHome,),);
+          IconButton(icon: Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: _onTapHome,),);
   }
 
   Widget _buildHeaderBackButton() {
     return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true), onPressed: _onTapBack,));
+      IconButton(icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapBack,));
   }
 
   Widget _buildHeaderTitle() {
@@ -376,7 +374,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderSettingsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
+      IconButton(icon: Styles().images?.getImage('settings-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapSettings));
   }
 
   Widget _buildHeaderActions() {
@@ -433,7 +431,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
       ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3});
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: initialFilter)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: initialFilter)));
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.see_more_events', 'See more events is not available while offline.'));
@@ -609,7 +607,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
             showImage ? Container(height: 72, color: Styles().colors!.fillColorSecondaryTransparent05,) : Container(height: 0)
           ],),
           showImage ? Container(height: 112, width: double.infinity, child:
-            Image.asset('images/slant-down-right.png', color: Styles().colors!.fillColorSecondary, fit: BoxFit.fill, excludeFromSemantics: true),
+            Styles().images?.getImage('slant', fit: BoxFit.fill, excludeFromSemantics: true),
           ) : Container(),
           showImage ? Container(height: 140, color: Styles().colors!.background,) : Container()
         ],),
@@ -625,7 +623,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                           Padding(padding: EdgeInsets.only(top:24), child:
                             Container(color: Styles().colors!.fillColorPrimary, child:
                               Padding(padding: EdgeInsets.all(5), child:
-                                Text(sportName.toUpperCase(), style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.accent'),),
+                                Text(sportName.toUpperCase(), style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.regular.accent'),),
                               ),
                             ),
                           ),
@@ -639,7 +637,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                             hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx( 'widget.card.button.favorite.on.hint', ''),
                             excludeSemantics: true, child:
                             Padding(padding: EdgeInsets.only(right: 24, top: 24, left: 24, bottom: 8), child:
-                              Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
+                              Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                             ),
                           ),
                         ),
@@ -664,7 +662,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                           Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
-                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny_variant2'),)
+                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.medium_fat'),)
                         ],),
                       )
                     ],),
@@ -750,7 +748,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
         padding: _detailPadding,
         child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
           children: <Widget>[
-            Image.asset('images/icon-time.png', excludeFromSemantics: true),
+            Styles().images?.getImage('time', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
@@ -772,7 +770,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
         child: Semantics(label:locationText, excludeSemantics: true ,child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-location.png', excludeFromSemantics: true),
+            Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),

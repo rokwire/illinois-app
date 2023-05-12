@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Dinings.dart';
@@ -27,6 +27,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class LocationsWithSpecialPanel extends StatefulWidget {
 
@@ -82,7 +83,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx("panel.food_special_offers.title.text", "Specials"),
+        title: Localization().getStringEx("panel.food_special_offers.title.text", "Dining News"),
         //textStyle: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16 ),
       ),
       body: Column(
@@ -122,12 +123,16 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(height: 16,),
-                Html(
-                  data: widget.special!.text ?? "",
-                  style: {
-                    "body": Style(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground,)
-                  },
+                HtmlWidget(
+                    StringUtils.ensureNotEmpty(widget.special!.text),
+                    textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
                 ),
+                // Html(
+                //   data: widget.special!.text ?? "",
+                //   style: {
+                //     "body": Style(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground,)
+                //   },
+                // ),
                 /*Text(
                   widget.special.text ?? "",
                   style: TextStyle(

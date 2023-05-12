@@ -41,7 +41,7 @@ class MTDStopCard extends StatelessWidget {
 
   Widget _buildHeading(BuildContext context) {
     String description = '';
-    TextStyle titleStyle;
+    TextStyle? titleStyle;
     EdgeInsetsGeometry titlePadding, favoritePadding;
     if (CollectionUtils.isNotEmpty(stop?.points)) {
 
@@ -68,12 +68,12 @@ class MTDStopCard extends StatelessWidget {
         description = pointsDescription;
       }
 
-      titleStyle = TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary);
+      titleStyle = Styles().textStyles?.getTextStyle("widget.title.large.extra_fat");
       titlePadding = EdgeInsets.only(top: 12);
       favoritePadding = EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8);
     }
     else {
-      titleStyle = TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary);
+      titleStyle = Styles().textStyles?.getTextStyle("widget.title.regular.fat");
       titlePadding = EdgeInsets.only(top: 16);
       favoritePadding = EdgeInsets.all(16);
     }
@@ -103,7 +103,7 @@ class MTDStopCard extends StatelessWidget {
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(child:
                   Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
-                    Text(description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), maxLines: 1, overflow: TextOverflow.ellipsis,)
+                    Text(description, style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"), maxLines: 1, overflow: TextOverflow.ellipsis,)
                   )
                 ),
                 Semantics(
@@ -115,16 +115,16 @@ class MTDStopCard extends StatelessWidget {
                         SizedBox(width: 18, height: 18, child:
                           Center(child:
                             _isExpanded ?
-                              Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
-                              Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
+                            Styles().images?.getImage('chevron-up', excludeFromSemantics: true) :
+                            Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
                           ),
                         )
                       ),
                     ),
                 ),
-              ],),
+              ]),
             ),
-          ],),
+          ]),
         ),
       ),
     );
@@ -264,12 +264,12 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
   @override
   Widget build(BuildContext context) {
     bool isFavorite = Auth2().isFavorite(widget.stop);
-    Image? favoriteStarIcon = widget.stop.favoriteStarIcon(selected: isFavorite);
+    Widget? favoriteStarIcon = widget.stop.favoriteStarIcon(selected: isFavorite);
     Color? headerColor = widget.stop.favoriteHeaderColor;
     String? title = widget.stop.favoriteTitle;
     String? cardDetailText = widget.stop.favoriteDetailText;
     Color? cardDetailTextColor = widget.stop.favoriteDetailTextColor ?? Styles().colors?.textBackground;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.stop.favoriteDetailIcon : null;
+    Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.stop.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: widget.onTap, child:
       Semantics(label: title, child:
@@ -282,7 +282,7 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.title.large")),
                       ),
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapFavoriteStar, child:
@@ -308,10 +308,10 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
                           Row(children: <Widget>[
                             Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                             Expanded(child:
-                              Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
+                              Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
                             )
                           ],) :
-                          Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
+                          Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.item.regular")?.copyWith(color: cardDetailTextColor)),
                       ),
                     ),
                   ),
@@ -484,20 +484,20 @@ class MTDDepartureCard extends StatelessWidget {
             border: Border.all(color: Styles().colors!.surfaceAccentTransparent15!, width: 1),
             shape: BoxShape.circle),
           child: Center(child:
-            Text(departure.route?.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 20, color: departure.route?.textColor,))
+            Text(departure.route?.shortName ?? '', overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.detail.large.thin")?.copyWith(color: departure.route?.textColor))
           )
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
             Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(departure.headsign ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: textSize, color: Styles().colors?.textBackground,),),
-                Text(desciption, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: textSize, color: Styles().colors?.textBackground,),)
+                Text(departure.headsign ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular")?.copyWith(fontSize: textSize)),
+                Text(desciption, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")?.copyWith(fontSize: textSize))
             ],)
           )
         ),
         Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(expectedTimeString1 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: timeSize1, color: Styles().colors?.fillColorPrimary,),),
-          Text(expectedTimeString2 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: timeSize2, color: Styles().colors?.textBackground,),),
+          Text(expectedTimeString1 ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.extra_large")?.copyWith(fontSize: timeSize1)),
+          Text(expectedTimeString2 ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")?.copyWith(fontSize: timeSize2)),
         ],)
       ],)
     ),));

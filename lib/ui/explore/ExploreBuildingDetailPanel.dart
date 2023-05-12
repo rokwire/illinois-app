@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -57,7 +57,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
-              Image.asset('images/icon-location.png'),
+              Styles().images?.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
               Text(building.fullAddress ?? '', style:
@@ -81,7 +81,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         InkWell(onTap: onTap, child:
           SizedBox(width: 48, height: 48, child:
             Center(child:
-              Image.asset('images/chevron-left-gray.png', excludeFromSemantics: true
+              Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true
             ),
           ),
         ),
@@ -90,8 +90,8 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   }
 
   void _onLocation() {
-    Analytics().logSelect(target: "Location Detail");
-    NativeCommunicator().launchMapDirections(jsonData: building.toJson());
+    Analytics().logSelect(target: "Location Directions");
+    building.launchDirections();
   }
 
   void _onBack(BuildContext context) {

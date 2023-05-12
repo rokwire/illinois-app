@@ -169,7 +169,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                 Expanded(
                     child: Text(Localization().getStringEx('panel.wellness.categories.manage.existing.label', 'Manage Existing Categories'),
                         overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles?.getTextStyle("widget.title.regular")))
+                        style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")))
               ])),
           Padding(
               padding: EdgeInsets.only(top: 8),
@@ -205,7 +205,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   child: Text(StringUtils.ensureNotEmpty(category.name),
                       style: Styles().textStyles?.getTextStyle("panel.wellness.todo.category.card.title.regular"))),
               Expanded(child: Container()),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Image.asset('images/edit-white.png'))
+              Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Styles().images?.getImage('edit-white'))
             ])));
   }
 

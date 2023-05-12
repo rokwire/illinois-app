@@ -25,7 +25,7 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: _title, leadingAsset: HeaderBar.defaultLeadingAsset),
+        appBar: HeaderBar(title: _title, leadingIconKey: HeaderBar.defaultLeadingIconKey),
         body: Column(children: <Widget>[
             Expanded(child:
               SingleChildScrollView(scrollDirection: Axis.vertical, child:

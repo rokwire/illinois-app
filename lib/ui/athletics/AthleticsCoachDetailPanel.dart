@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -28,7 +29,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 
-import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -71,9 +71,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                 Padding(
                   padding: EdgeInsets.all(16),
                   child: Text(widget.coach.title!,
-                    style: TextStyle(
-                        fontSize: 24
-                    ),
+                    style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.extra_large")
                   ),
                 ),
 
@@ -81,11 +79,11 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                     padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
                     color: Styles().colors!.background,
                     child: Visibility(visible: StringUtils.isNotEmpty(widget.coach.htmlBio), child: Container(
-                      child: Html(
-                        data: StringUtils.ensureNotEmpty(widget.coach.htmlBio),
-                        onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                        style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
-                      ),
+                      child: HtmlWidget(
+                          StringUtils.ensureNotEmpty(widget.coach.htmlBio),
+                          onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+                          textStyle:  Styles().textStyles?.getTextStyle("widget.detail.regular")
+                      )
                     ))
                 )
               ],
@@ -149,16 +147,12 @@ class _CoachDetailHeading extends StatelessWidget{
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Image.asset(sport!.iconPath!, width: 16, height: 16,),
+                                Styles().images?.getImage(sport!.iconPath!) ?? Container(),
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(sport!.name!,
-                                      style: TextStyle(
-                                          color: Styles().colors!.surfaceAccent,
-                                          fontFamily: Styles().fontFamilies!.medium,
-                                          fontSize: 16
-                                      ),
+                                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                                     ),
                                   ),
                                 )
@@ -171,11 +165,7 @@ class _CoachDetailHeading extends StatelessWidget{
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(coach!.name!,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: Styles().fontFamilies!.bold,
-                                          fontSize: 20
-                                      ),
+                                      style: Styles().textStyles?.getTextStyle("widget.heading.large.fat")
                                     ),
                                   ),
                                 ],

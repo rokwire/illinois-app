@@ -25,10 +25,10 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
             Container(height: 70,),
           ),
         ],),
-        Image.asset("images/questionnaire-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Styles().images?.getImage("header-questionnaire", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Padding(padding: EdgeInsets.only(top: 90), child:
           Align(alignment: Alignment.topCenter, child: 
-            Image.asset('images/questionnaire-icon.png'),
+            Styles().images?.getImage('questionnaire', excludeFromSemantics: true),
           ),
         ),
         Positioned.fill(child:
@@ -105,9 +105,7 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
           InkWell(onTap: () => _onNotRightNow(context), child:
             Semantics(button: true, label: notRightNow, hint: Localization().getStringEx('panel.onboarding.base.not_now.hint', ''), excludeSemantics: true, child:
               Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-                Text(notRightNow, style:
-                  TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid),
-                ),
+                Text(notRightNow, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")),
               ),
             ),
           ),

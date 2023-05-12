@@ -1,0 +1,20 @@
+{
+  "explore-poi": [
+		{
+			"featureType": "poi",
+			"elementType": "all",
+			"stylers": [{
+				"visibility": "off"
+			}]
+		}
+	],
+	"mtd-stop": [
+		{
+			"featureType": "transit.station.bus",
+			"elementType": "all",
+			"stylers": [{
+				"visibility": "off"
+			}]
+		}
+	]
+}

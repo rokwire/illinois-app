@@ -23,10 +23,10 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
             Container(height: 70,),
           ),
         ],),
-        Image.asset("images/questionnaire-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Styles().images?.getImage("header-questionnaire", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Padding(padding: EdgeInsets.only(top: 90), child:
           Align(alignment: Alignment.topCenter, child: 
-            Image.asset('images/questionnaire-icon.png'),
+            Styles().images?.getImage('questionnaire', excludeFromSemantics: true),
           ),
         ),
         Positioned.fill(child:
