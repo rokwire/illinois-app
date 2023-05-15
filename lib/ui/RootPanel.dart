@@ -106,6 +106,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyBrowseNotification,
       FirebaseMessaging.notifyMapNotification,
+      FirebaseMessaging.notifyMapEventsNotification,
+      FirebaseMessaging.notifyMapDiningNotification,
+      FirebaseMessaging.notifyMapBuildingsNotification,
+      FirebaseMessaging.notifyMapStudentCoursesNotification,
+      FirebaseMessaging.notifyMapAppointmentsNotification,
+      FirebaseMessaging.notifyMapMtdStopsNotification,
+      FirebaseMessaging.notifyMapMtdDestinationsNotification,
+      FirebaseMessaging.notifyMapMentalHealthNotification,
+      FirebaseMessaging.notifyMapStateFarmWayfindingNotification,
       FirebaseMessaging.notifyAcademicsNotification,
       FirebaseMessaging.notifyWellnessNotification,
       FirebaseMessaging.notifyInboxNotification,
@@ -259,6 +268,33 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyMapNotification) {
       _onFirebaseTabNotification(RootTab.Maps);
     }
+    else if (name == FirebaseMessaging.notifyMapEventsNotification) {
+      _onFirebaseMapNotification(ExploreMapType.Events);
+    }
+    else if (name == FirebaseMessaging.notifyMapDiningNotification) {
+      _onFirebaseMapNotification(ExploreMapType.Dining);
+    }
+    else if (name == FirebaseMessaging.notifyMapBuildingsNotification) {
+      _onFirebaseMapNotification(ExploreMapType.Buildings);
+    }
+    else if (name == FirebaseMessaging.notifyMapStudentCoursesNotification) {
+      _onFirebaseMapNotification(ExploreMapType.StudentCourse);
+    }
+    else if (name == FirebaseMessaging.notifyMapAppointmentsNotification) {
+      _onFirebaseMapNotification(ExploreMapType.Appointments);
+    }
+    else if (name == FirebaseMessaging.notifyMapMtdStopsNotification) {
+      _onFirebaseMapNotification(ExploreMapType.MTDStops);
+    }
+    else if (name == FirebaseMessaging.notifyMapMtdDestinationsNotification) {
+      _onFirebaseMapNotification(ExploreMapType.MTDDestinations);
+    }
+    else if (name == FirebaseMessaging.notifyMapMentalHealthNotification) {
+      _onFirebaseMapNotification(ExploreMapType.MentalHealth);
+    }
+    else if (name == FirebaseMessaging.notifyMapStateFarmWayfindingNotification) {
+      _onFirebaseMapNotification(ExploreMapType.StateFarmWayfinding);
+    }
     else if (name == FirebaseMessaging.notifyAcademicsNotification) {
       _onFirebaseTabNotification(RootTab.Academics);
     }
@@ -351,6 +387,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         mapsPanel?.params[ExploreMapPanel.mapTypeKey] = mapType;
       }
     }
+  }
+
+  void _onFirebaseMapNotification(ExploreMapType mapType) {
+    NotificationService().notify(ExploreMapPanel.notifySelect, mapType);
   }
 
   @override
