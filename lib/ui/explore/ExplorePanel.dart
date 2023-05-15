@@ -1163,8 +1163,7 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
                   Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
                   Padding(padding: EdgeInsets.only(top: 18), child:
                     Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
-                  ),
-                  Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small")),
+                  )
                 ]),
               ),
 
