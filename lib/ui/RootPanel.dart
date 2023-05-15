@@ -116,6 +116,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyMapMentalHealthNotification,
       FirebaseMessaging.notifyMapStateFarmWayfindingNotification,
       FirebaseMessaging.notifyAcademicsNotification,
+      FirebaseMessaging.notifyAcademicsAppointmentsNotification,
+      FirebaseMessaging.notifyAcademicsCanvasCoursesNotification,
+      FirebaseMessaging.notifyAcademicsDueDateCatalogNotification,
+      FirebaseMessaging.notifyAcademicsEventsNotification,
+      FirebaseMessaging.notifyAcademicsGiesChecklistNotification,
+      FirebaseMessaging.notifyAcademicsMedicineCoursesNotification,
+      FirebaseMessaging.notifyAcademicsMyIlliniNotification,
+      FirebaseMessaging.notifyAcademicsSkillsSelfEvaluationNotification,
+      FirebaseMessaging.notifyAcademicsStudentCoursesNotification,
+      FirebaseMessaging.notifyAcademicsToDoListNotification,
+      FirebaseMessaging.notifyAcademicsUiucChecklistNotification,
       FirebaseMessaging.notifyWellnessNotification,
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyPollNotification,
@@ -297,6 +308,39 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyAcademicsNotification) {
       _onFirebaseTabNotification(RootTab.Academics);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsAppointmentsNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.appointments);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsCanvasCoursesNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.canvas_courses);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsDueDateCatalogNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.due_date_catalog);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsEventsNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.events);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsGiesChecklistNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.gies_checklist);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsMedicineCoursesNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.medicine_courses);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsMyIlliniNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.my_illini);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsSkillsSelfEvaluationNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.skills_self_evaluation);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsStudentCoursesNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.student_courses);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsToDoListNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.todo_list);
+    }
+    else if (name == FirebaseMessaging.notifyAcademicsUiucChecklistNotification) {
+      _onFirebaseAcademicsNotification(AcademicsContent.uiuc_checklist);
     }
     else if (name == FirebaseMessaging.notifyWellnessNotification) {
       _onFirebaseTabNotification(RootTab.Wellness);
@@ -919,6 +963,21 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       HomeCustomizeFavoritesPanel.present(context).then((_) => NotificationService().notify(HomePanel.notifySelect));
     } else {
       SettingsHomeContentPanel.present(context, content: settingsContent);
+    }
+  }
+
+  void _onFirebaseAcademicsNotification(AcademicsContent content) {
+    int? academicsIndex = _getIndexByRootTab(RootTab.Academics);
+    if (academicsIndex != null) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      int? lastTabIndex = _currentTabIndex;
+      _selectTab(academicsIndex);
+      if ((lastTabIndex != academicsIndex) && !AcademicsHomePanel.hasState) {
+        Widget? academicsWidget = _panels[RootTab.Academics];
+        AcademicsHomePanel? academicsPanel = (academicsWidget is AcademicsHomePanel) ? academicsWidget : null;
+        academicsPanel?.params[AcademicsHomePanel.contentItemKey] = content;
+      }
+      NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
     }
   }
 }
