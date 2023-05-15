@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 <!-- The next build on `develop` should refer to version 5.0.0 -->
+### Changed
+- Load content attributes JSON from content service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
 
 ## [4.3.61] - 2023-05-12
 ### Fixed
