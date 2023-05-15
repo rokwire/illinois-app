@@ -987,7 +987,7 @@ packages:
       path: plugin
       relative: true
     source: path
-    version: "1.4.0"
+    version: "1.5.0"
   roundcheckbox:
     dependency: "direct main"
     description:

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [5.0.0] - 2023-05-15
+### Changed
+- Load content attributes JSON from content service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
+
 ## [4.3.61] - 2023-05-12
 ### Fixed
 - Fixed favourites card title textStyle [#3273](https://github.com/rokwire/illinois-app/issues/3273).
