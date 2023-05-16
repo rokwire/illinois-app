@@ -128,6 +128,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAcademicsToDoListNotification,
       FirebaseMessaging.notifyAcademicsUiucChecklistNotification,
       FirebaseMessaging.notifyWellnessNotification,
+      FirebaseMessaging.notifyWellnessAppointmentsNotification,
+      FirebaseMessaging.notifyWellnessDailyTipsNotification,
+      FirebaseMessaging.notifyWellnessHealthScreenerNotification,
+      FirebaseMessaging.notifyWellnessMentalHealthNotification,
+      FirebaseMessaging.notifyWellnessPodcastNotification,
+      FirebaseMessaging.notifyWellnessResourcesNotification,
+      FirebaseMessaging.notifyWellnessRingsNotification,
+      FirebaseMessaging.notifyWellnessStrugglingNotification,
+      FirebaseMessaging.notifyWellnessTodoListNotification,
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyPollNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
@@ -344,6 +353,33 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyWellnessNotification) {
       _onFirebaseTabNotification(RootTab.Wellness);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessAppointmentsNotification) {
+      _onFirebaseWellnessNotification(WellnessContent.appointments);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessDailyTipsNotification) {
+      _onFirebaseWellnessNotification(WellnessContent.dailyTips);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessHealthScreenerNotification) {
+      _onFirebaseWellnessNotification(WellnessContent.healthScreener);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessMentalHealthNotification) {
+      _onFirebaseWellnessNotification(WellnessContent.mentalHealth);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessPodcastNotification) {
+      _onFirebaseWellnessNotification(WellnessContent.podcast);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessResourcesNotification) {
+      _onFirebaseWellnessNotification(WellnessContent.resources);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessRingsNotification) {
+      _onFirebaseWellnessNotification(WellnessContent.rings);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessStrugglingNotification) {
+      _onFirebaseWellnessNotification(WellnessContent.struggling);
+    }
+    else if (name == FirebaseMessaging.notifyWellnessTodoListNotification) {
+      _onFirebaseWellnessNotification(WellnessContent.todo);
     }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
@@ -978,6 +1014,21 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         academicsPanel?.params[AcademicsHomePanel.contentItemKey] = content;
       }
       NotificationService().notify(AcademicsHomePanel.notifySelectContent, content);
+    }
+  }
+
+  void _onFirebaseWellnessNotification(WellnessContent content) {
+    int? wellnessIndex = _getIndexByRootTab(RootTab.Wellness);
+    if (wellnessIndex != null) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      int? lastTabIndex = _currentTabIndex;
+      _selectTab(wellnessIndex);
+      if ((lastTabIndex != wellnessIndex) && !WellnessHomePanel.hasState) {
+        Widget? wellnessWidget = _panels[RootTab.Wellness];
+        WellnessHomePanel? wellnessPanel = (wellnessWidget is WellnessHomePanel) ? wellnessWidget : null;
+        wellnessPanel?.params[WellnessHomePanel.contentItemKey] = content;
+      }
+      NotificationService().notify(WellnessHomePanel.notifySelectContent, content);
     }
   }
 }

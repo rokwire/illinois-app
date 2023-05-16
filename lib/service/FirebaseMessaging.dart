@@ -78,6 +78,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyAcademicsToDoListNotification              = "edu.illinois.rokwire.firebase.messaging.academics.todo_list";
   static const String notifyAcademicsUiucChecklistNotification         = "edu.illinois.rokwire.firebase.messaging.academics.uiuc_checklist";
   static const String notifyWellnessNotification           = "edu.illinois.rokwire.firebase.messaging.wellness";
+  static const String notifyWellnessDailyTipsNotification  = "edu.illinois.rokwire.firebase.messaging.wellness.daily_tips";
+  static const String notifyWellnessRingsNotification      = "edu.illinois.rokwire.firebase.messaging.wellness.rings";
+  static const String notifyWellnessTodoListNotification   = "edu.illinois.rokwire.firebase.messaging.wellness.todo_list";
+  static const String notifyWellnessAppointmentsNotification           = "edu.illinois.rokwire.firebase.messaging.wellness.appointments";
+  static const String notifyWellnessHealthScreenerNotification         = "edu.illinois.rokwire.firebase.messaging.wellness.health_screener";
+  static const String notifyWellnessPodcastNotification    = "edu.illinois.rokwire.firebase.messaging.wellness.podcast";
+  static const String notifyWellnessResourcesNotification  = "edu.illinois.rokwire.firebase.messaging.wellness.resources";
+  static const String notifyWellnessStrugglingNotification = "edu.illinois.rokwire.firebase.messaging.wellness.struggling";
+  static const String notifyWellnessMentalHealthNotification           = "edu.illinois.rokwire.firebase.messaging.wellness.mental_health";
   static const String notifyInboxNotification              = "edu.illinois.rokwire.firebase.messaging.inbox";
   static const String notifyCanvasAppDeepLinkNotification  = "edu.illinois.rokwire.firebase.messaging.app.canvas.deeplink";
   static const String notifyAppointmentNotification        = "edu.illinois.rokwire.firebase.messaging.appointment";
@@ -197,6 +206,15 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeAcademicsMyIllini = 'academics.my_illini';
   static const String payloadTypeAcademicsAppointments = 'academics.appointments';
   static const String payloadTypeWellness = 'wellness';
+  static const String payloadTypeWellnessDailyTips = 'wellness.daily_tips';
+  static const String payloadTypeWellnessRings = 'wellness.rings';
+  static const String payloadTypeWellnessTodoList = 'wellness.todo';
+  static const String payloadTypeWellnessAppointments = 'wellness.appointments';
+  static const String payloadTypeWellnessHealthScreener = 'wellness.health_screener';
+  static const String payloadTypeWellnessPodcast = 'wellness.podcast';
+  static const String payloadTypeWellnessResources = 'wellness.resources';
+  static const String payloadTypeWellnessStruggling = 'wellness.struggling';
+  static const String payloadTypeWellnessMentalHealth = 'wellness.mental_health';
   static const String payloadTypeInbox = 'inbox';
   static const String payloadTypeCanvasAppDeepLink = 'canvas_app_deeplink';
   static const String payloadTypeAppointment = 'appointment';
@@ -428,6 +446,33 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeWellness) {
       NotificationService().notify(notifyWellnessNotification, data);
+    }
+    else if (type == payloadTypeWellnessAppointments) {
+      NotificationService().notify(notifyWellnessAppointmentsNotification, data);
+    }
+    else if (type == payloadTypeWellnessDailyTips) {
+      NotificationService().notify(notifyWellnessDailyTipsNotification, data);
+    }
+    else if (type == payloadTypeWellnessHealthScreener) {
+      NotificationService().notify(notifyWellnessHealthScreenerNotification, data);
+    }
+    else if (type == payloadTypeWellnessMentalHealth) {
+      NotificationService().notify(notifyWellnessMentalHealthNotification, data);
+    }
+    else if (type == payloadTypeWellnessPodcast) {
+      NotificationService().notify(notifyWellnessPodcastNotification, data);
+    }
+    else if (type == payloadTypeWellnessResources) {
+      NotificationService().notify(notifyWellnessResourcesNotification, data);
+    }
+    else if (type == payloadTypeWellnessRings) {
+      NotificationService().notify(notifyWellnessRingsNotification, data);
+    }
+    else if (type == payloadTypeWellnessStruggling) {
+      NotificationService().notify(notifyWellnessStrugglingNotification, data);
+    }
+    else if (type == payloadTypeWellnessTodoList) {
+      NotificationService().notify(notifyWellnessTodoListNotification, data);
     }
     else if (type == payloadTypeInbox) {
       NotificationService().notify(notifyInboxNotification, data);
