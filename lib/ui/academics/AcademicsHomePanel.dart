@@ -90,6 +90,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     NotificationService().subscribe(this, [FlexUI.notifyChanged, Auth2.notifyLoginChanged, AcademicsHomePanel.notifySelectContent]);
     _buildContentValues();
     _initSelectedContentItem();
+    if (_initialContentItem == AcademicsContent.my_illini) {
+      _onContentItem(_initialContentItem!);
+    }
     super.initState();
   }
 
@@ -282,7 +285,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     NotificationService().notify(AcademicsHomePanel.notifySelectContent, contentItem);
   }
 
-  void _onContentItemChanged(AcademicsContent contentItem) {
+  void _onContentItem(AcademicsContent contentItem) {
     String? launchUrl;
     if (contentItem == AcademicsContent.my_illini) {
       // Open My Illini in an external browser
@@ -456,7 +459,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   AcademicsContent? _ensureContent(AcademicsContent? contentItem, {List<AcademicsContent>? contentItems}) {
     contentItems ??= _contentValues;
-    return ((contentItem != null) && contentItems!.contains(contentItem)) ? contentItem : null;
+    return ((contentItem != null) && (contentItem != AcademicsContent.my_illini) && contentItems!.contains(contentItem)) ? contentItem : null;
   }
 
   AcademicsContent? get _initialContentItem => widget.params[AcademicsHomePanel.contentItemKey];
@@ -472,7 +475,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     } else if (name == AcademicsHomePanel.notifySelectContent) {
       AcademicsContent? contentItem = (param is AcademicsContent) ? param : null;
       if (mounted && (contentItem != null) && (contentItem != _selectedContent)) {
-        _onContentItemChanged(contentItem);
+        _onContentItem(contentItem);
       }
     }
   }
