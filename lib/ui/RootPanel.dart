@@ -949,7 +949,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       if (StringUtils.isNotEmpty(todoItemId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(itemId: todoItemId, optionalFieldsExpanded: true)));
       } else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.todo_list)));
+        _onFirebaseAcademicsNotification(AcademicsContent.todo_list);
       }
     }
   }
