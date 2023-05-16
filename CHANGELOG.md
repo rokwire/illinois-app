@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [5.0.1] - 2023-05-16
+### Added
+- Handle deep links for main panel content [#3240](https://github.com/rokwire/illinois-app/issues/3240).
+
 ## [5.0.0] - 2023-05-15
 ### Changed
 - Load content attributes JSON from content service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
