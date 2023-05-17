@@ -119,6 +119,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     Localization(),
     Assets(),
     Styles(),
+    Content(),
     Analytics(),
     FirebaseMessaging(),
     LocalNotifications(),
@@ -129,7 +130,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     IlliniCash(),
     FlexUI(),
     Onboarding(),
-    Content(),
     Polls(),
     GeoFence(),
     Voter(),
@@ -150,9 +150,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     StudentCourses(),
     Appointments(),
     MTD(),
-
-    // These do not rely on Service initialization API so they are not registered as services.
-    // Content(),
   ]);
   
   ServiceError? serviceError = await illinois.Services().init();
