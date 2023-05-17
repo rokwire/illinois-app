@@ -444,7 +444,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
       items.add(DropdownMenuItem(
           value: currentCourse.id,
           child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
-              style: ((_selectedCourseId == currentCourse.id) ?Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular")))));
+              style: ((_selectedCourseId == currentCourse.id) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular")))));
     }
     items.add(DropdownMenuItem(
         value: null,
