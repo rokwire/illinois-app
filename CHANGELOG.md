@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- New video tutorial "Creating Polls" [#3285](https://github.com/rokwire/illinois-app/issues/3285).
 
 ## [5.0.1] - 2023-05-16
 ### Added
