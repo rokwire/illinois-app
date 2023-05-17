@@ -757,6 +757,12 @@
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_health_screener.mp4",
 				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_health_screener.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_health_screener.srt"
+			},
+			{
+				"id": "creating.polls.5.0",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_5_0_creating_polls.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_5_0_creating_polls.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_5_0_creating_polls.srt"
 			}
 		],
 		"onboarding": { "dev": "video.tutorial.4.0", "test": "video.tutorial.4.0", "production": "video.tutorial.4.0" },
@@ -769,7 +775,8 @@
 				"wellness.rings.overview.4.1": "Daily Wellness Rings",
 				"favorites.tutorial.4.2": "Favorites Tutorial",
 				"groups.create.new.4.2": "Creating a New Group",
-				"health.screener.4.2": "Illinois Health Screener"
+				"health.screener.4.2": "Illinois Health Screener",
+				"creating.polls.5.0": "Creating Polls"
 			},
 			"es": {
 				"video.tutorial.4.0": "Descripción general de la aplicación",
@@ -778,7 +785,8 @@
 				"wellness.rings.overview.4.1": "Anillos de bienestar diarios",
 				"favorites.tutorial.4.2": "Tutorial de Favoritos",
 				"groups.create.new.4.2": "Creación de un nuevo grupo",
-				"health.screener.4.2": "Evaluador de salud de Illinois"
+				"health.screener.4.2": "Evaluador de salud de Illinois",
+				"creating.polls.5.0": "Creación de encuestas"
 			},
 			"zh": {
 				"video.tutorial.4.0": "應用概述",
@@ -787,7 +795,8 @@
 				"wellness.rings.overview.4.1": "每日健康戒指",
 				"favorites.tutorial.4.2": "收藏教程",
 				"groups.create.new.4.2": "創建一個新組",
-				"health.screener.4.2": "伊利諾伊州健康篩查員"
+				"health.screener.4.2": "伊利諾伊州健康篩查員",
+				"creating.polls.5.0": "創建投票"
 			}
 		}
 	}
