@@ -15,8 +15,9 @@ class Gateway /* with Service */ {
   
   // External Authorization Header
 
-  static const String ExternalAuthorizationHeaderKey = "External-Authorization";
-  Map<String, String?> get externalAuthorizationHeader => { ExternalAuthorizationHeaderKey: Auth2().uiucToken?.accessToken };
+  final String externalAuthorizationHeaderKey = "External-Authorization";
+  String? get externalAuthorizationHeaderValue => Auth2().uiucToken?.accessToken;
+  Map<String, String?> get externalAuthorizationHeader => { externalAuthorizationHeaderKey: externalAuthorizationHeaderValue };
 
   // Wayfinding
 

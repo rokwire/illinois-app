@@ -41,11 +41,10 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
-import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
@@ -1349,9 +1348,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   void _onLinkTap(String? url) {
     Analytics().logSelect(target: url);
-    if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    UrlUtils.launchExternal(url);
   }
 
   int getVisibleRepliesCount() {
@@ -1531,9 +1528,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   void _onLinkTap(String? url) {
     Analytics().logSelect(target: url);
-    if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    UrlUtils.launchExternal(url);
   }
 
   void _onTapCard(){
@@ -1741,11 +1736,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                 padding: EdgeInsets.only(top: 8, bottom: 16),
                 child: TextField(
                     controller: _bodyController,
-                    onChanged: (String text){
-                      if (widget.onBodyChanged != null) {
-                        widget.onBodyChanged!(text);
-                      }
-                    },
+                    onChanged: _notifyChanged,
                     maxLines: 15,
                     minLines: 1,
                     textCapitalization: TextCapitalization.sentences,
@@ -1759,6 +1750,12 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
           ],
         )
     );
+  }
+
+  void _notifyChanged(String text) {
+    if (widget.onBodyChanged != null) {
+      widget.onBodyChanged!(text);
+    }
   }
 
   //HTML Body input Actions
@@ -1836,6 +1833,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
     _bodyController.text = result;
     _bodyController.selection = TextSelection.fromPosition(
         TextPosition(offset: (endPosition + firstValue.length)));
+    _notifyChanged(result);
   }
   
   //Dialog

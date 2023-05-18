@@ -43,7 +43,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
     NotificationService().subscribe(this, [
       Canvas.notifyCoursesUpdated,
     ]);
-    _courses = Canvas().courses;
+    _courses = Canvas().giesCourses;
     super.initState();
   }
 
@@ -126,7 +126,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   void _updateCourses() {
     setStateIfMounted(() {
-      _courses = Canvas().courses;
+      _courses = Canvas().giesCourses;
     });
   }
 }

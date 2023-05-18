@@ -107,7 +107,10 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
   Future<void> _removeMembership() async{
     bool success = await Groups().deleteMembership(_group, widget.memberId);
     if(!success){
-      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"), [_member?.displayShortName ?? ""]);
+      throw sprintf( _isResearchProject?
+          Localization().getStringEx("panel.member_detail.label.error.project.format", "Unable to remove %s from this project") :
+          Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"),
+        [_member?.displayShortName ?? ""]);
     }
   }
 
@@ -220,7 +223,9 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
 
   Widget _buildRemoveFromGroup() {
     return
-        RoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
+        RoundedButton(label: _isResearchProject?
+            Localization().getStringEx("panel.member_detail.button.remove.title.project", "Remove from Project") :
+            Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
           backgroundColor: Styles().colors!.white,
           textColor: Styles().colors!.fillColorPrimary,
           fontFamily: Styles().fontFamilies!.bold,
@@ -248,7 +253,10 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 26),
                   child: Text(
-                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),[_member?.displayName]),
+                    sprintf(_isResearchProject?
+                      Localization().getStringEx("panel.member_detail.label.confirm_remove.project.format", "Remove %s From this project?"):
+                      Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),
+                    [_member?.displayName]),
                     textAlign: TextAlign.left,
                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white),
                   ),
@@ -329,5 +337,9 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
 
   bool get _isLoading {
     return (_progressLoading > 0);
+  }
+
+  bool get _isResearchProject {
+    return _group?.isResearchProject ?? false;
   }
 }

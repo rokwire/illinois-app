@@ -21,6 +21,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
@@ -304,7 +305,7 @@ class _BrowseSection extends StatelessWidget {
                   Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
                 )
               ),
-              Opacity(opacity: _hasBrowseContent ? 1 : 0, child:
+              Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
                 Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
                   InkWell(onTap: () => _onTapSectionFavorite(context), child:
                     FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
@@ -378,6 +379,18 @@ class _BrowseSection extends StatelessWidget {
 
   bool get _hasBrowseContent => _browseEntriesCodes?.isNotEmpty ?? false;
 
+  bool get _hasFavoriteContent {
+    if (_browseEntriesCodes?.isNotEmpty ?? false) {
+      for (String code in _browseEntriesCodes!) {
+        HomeFavorite? entryFavorite = _favorite(code);
+        if (entryFavorite != null) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   bool? get _isSectionFavorite {
     int favCount = 0, unfavCount = 0, totalCount = 0;
     if (_browseEntriesCodes?.isNotEmpty ?? false) {
@@ -393,11 +406,13 @@ class _BrowseSection extends StatelessWidget {
           }
         }
       }
-      if ((favCount == totalCount)) {
-        return true;
-      }
-      else if (unfavCount == totalCount) {
-        return false;
+      if (0 < totalCount) {
+        if (favCount == totalCount) {
+          return true;
+        }
+        else if (unfavCount == totalCount) {
+          return false;
+        }
       }
     }
     return null;
@@ -517,11 +532,14 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
+      case "academics.appointments":          _onTapAcademicsAppointments(context); break;
 
       case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
       case "app_help.review":                _onTapReview(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
+
+      case "appointments.appointments":       _onTapAcademicsAppointments(context); break;
 
       case "athletics.my_game_day":          _onTapMyGameDay(context); break;
       case "athletics.sport_events":         _onTapSportEvents(context); break;
@@ -591,7 +609,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
       case "my.wellness_mental_health":      _onTapWellnessMentalHealth(context); break;
-      case "my.my_appointments":             _onTapMyAppointments(context); break;
+      case "my.my_appointments":             _onTapWellnessAppointments(context); break;
 
       case "inbox.all_notifications":        _onTapNotifications(context); break;
       case "inbox.unread_notifications":     _onTapNotifications(context, unread: true); break;
@@ -616,7 +634,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
       case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
       case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
-      case "wellness.my_appointments":          _onTapMyAppointments(context); break;
+      case "wellness.my_appointments":          _onTapWellnessAppointments(context); break;
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
     }
@@ -1044,9 +1062,14 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.mentalHealth,); } ));
   }
 
-  void _onTapMyAppointments(BuildContext context) {
-    Analytics().logSelect(target: "My Appointments");
+  void _onTapWellnessAppointments(BuildContext context) {
+    Analytics().logSelect(target: "MyMcKinley Appointments");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.appointments); } ));
+  }
+
+  void _onTapAcademicsAppointments(BuildContext context) {
+    Analytics().logSelect(target: "Appointments");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentsListPanel()));
   }
 
   void _onTapCreatePoll(BuildContext context) {

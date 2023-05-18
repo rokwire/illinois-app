@@ -1188,6 +1188,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
   Widget build(BuildContext context) {
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+        SingleChildScrollView(child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Row(children: <Widget>[
             Expanded(child:
@@ -1247,7 +1248,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
           ),
         ]),
       ),
-    );
+    ));
   }
 
   void _onClose() {

@@ -25,7 +25,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -518,6 +518,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   
   List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
+  List<String>? _systemCodes;
   StreamController<String> _updateController = StreamController.broadcast();
   Map<String, GlobalKey> _widgetKeys = <String, GlobalKey>{};
   GlobalKey _contentWrapperKey = GlobalKey();
@@ -530,6 +531,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     // because _buildFavoriteCodes may fire such.
     _favoriteCodes = _buildFavoriteCodes();
     _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
+    _systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
 
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
@@ -578,7 +580,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   List<Widget> _buildRegularContentList() {
     List<Widget> widgets = [];
-    widgets.addAll(_buildWidgetsFromCodes(JsonUtils.listStringsValue(FlexUI()['home.system'])));
+    widgets.addAll(_buildWidgetsFromCodes(_systemCodes));
     widgets.addAll(_buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes));
     return widgets;
   }
@@ -627,11 +629,21 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
 
-  void _updateAvailableCodes() {
+  void _updateSystemAndAvailableCodes() {
     Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
+    bool availableCodesChanged = (availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes);
+
+    List<String>? systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
+    bool systemCodesChanged = (systemCodes != null) && !DeepCollectionEquality().equals(_systemCodes, systemCodes);
+
+    if (mounted && (availableCodesChanged || systemCodesChanged)) {
       setState(() {
-        _availableCodes = availableCodes;
+        if (availableCodesChanged) {
+          _availableCodes = availableCodes;
+        }
+        if (systemCodesChanged) {
+          _systemCodes = systemCodes;
+        }
       });
     }
   }
@@ -712,7 +724,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      _updateAvailableCodes();
+      _updateSystemAndAvailableCodes();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _updateFavoriteCodes();

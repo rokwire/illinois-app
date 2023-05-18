@@ -28,7 +28,7 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupEventDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';

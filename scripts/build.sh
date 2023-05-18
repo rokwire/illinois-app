@@ -17,12 +17,14 @@ printUtputUrls() {
     echo "########################################################################"
     echo "Generated URLs for the report"
     if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "android" ]; then
-      echo "$BRAND $FLAVOR_ENV $TAG Android:"
+      #echo "$BRAND $VERSION $FLAVOR_ENV $TAG Android:"
+      echo "$BRAND_NAME $SHORT_VERSION_NAME $FLAVOR_ENV $TAG Android"
       echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.apk"
       echo ""
     fi
     if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
-    echo "$BRAND $FLAVOR_ENV $TAG iOS:"
+    #echo "$BRAND $VERSION $FLAVOR_ENV $TAG iOS:"
+    echo "$BRAND_NAME $SHORT_VERSION_NAME $FLAVOR_ENV $TAG iOS"
     echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.ipa"
     echo "itms-services://?action=download-manifest&url=https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.plist"
     echo "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Installs/$BUILD_OUTPUT_NAME.png"
@@ -72,6 +74,16 @@ then
       echo "The PLATFORM param is empty. Use default value: $PLATFORM"
 fi
 
+#Custom naming
+ENV_NAME="$ENV"
+if [ "$ENV" = "test" ]; then
+    ENV_NAME="tst"
+fi
+BRAND_NAME="$BRAND"
+if [ "$BRAND" = "Illinois" ]; then
+    BRAND_NAME="UIUC"
+fi
+
 cd ios
 BUNDLE_ID=$(xcodebuild -showBuildSettings | grep PRODUCT_BUNDLE_IDENTIFIER | awk -F ' = ' '{print $2}')
 cd ..
@@ -83,14 +95,11 @@ TEMPLATE_BUNDLE_ID="{{BUNDLE_ID}}"
 BUILD_DIR="${CURRENT_DIR}/build"
 OUTPUT_DIR="${BUILD_DIR}/_output"
 FLAVOR_ENV=$(tr '[:lower:]' '[:upper:]' <<<"${ENV:0:1}")${ENV:1} #Upper case the first letter
-ENV_NAME="$ENV"
-if [ "$ENV" = "test" ]; then
-    ENV_NAME="tst"
-fi
 FLAVOUR_ENV_NAME=$(tr '[:lower:]' '[:upper:]' <<<"${ENV_NAME:0:1}")${ENV_NAME:1} #Upper case the first letter
 APK_BUILD_PATH="${BUILD_DIR}/app/outputs/flutter-apk/app-illinois$ENV_NAME-release.apk"
 VERSION=$(grep "version:" pubspec.yaml | sed -e 's/.* //' | sed -e 's/+.*//')
-if [-z "$TAG"] || ["$TAG" = ""]
+SHORT_VERSION_NAME=${VERSION%.*}
+if [ -z "$TAG" ] || [ "$TAG" = "" ]
 then
     BUILD_OUTPUT_NAME="$BRAND-$VERSION-$ENV"
 else

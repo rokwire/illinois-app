@@ -111,6 +111,7 @@
     "widget.text.medium": { "font_family": "medium"},
 
     "widget.heading.huge": { "font_family": "regular", "size": 32.0, "color": "white"},
+    "widget.heading.huge.extra_fat": { "font_family": "extra_bold", "size": 32.0, "color": "white"},
     "widget.heading.extra_large": { "font_family": "regular", "size": 24.0, "color": "white"},
     "widget.heading.extra_large.fat": { "font_family": "bold", "size": 24.0, "color": "white"},
     "widget.heading.large": { "font_family": "regular", "size": 20.0, "color": "white"},
@@ -147,6 +148,7 @@
     "widget.message.light.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray"},
     "widget.message.light.regular": {"font_family": "regular", "size": 16.0, "color": "mediumGray"},
     "widget.message.light.variant.small": {"font_family": "regular", "size": 14.0, "color": "mediumGray2"},
+    "widget.message.dark.regular": {"font_family": "regular", "size": 16.0, "color": "textBackground"},
 
     "widget.title.extra_huge": {"font_family": "regular", "size": 36.0, "color": "fillColorPrimary"},
     "widget.title.extra_huge.fat": {"font_family": "bold", "size": 36.0, "color": "fillColorPrimary"},
@@ -257,6 +259,7 @@
     "widget.button.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.button.title.large.thin": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.button.title.regular": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
+    "widget.button.title.regular.underline": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.regular.thin": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.regular.thin.underline": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
@@ -270,6 +273,8 @@
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.description.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
     "widget.button.description.tiny": { "font_family": "regular", "size": 12.0, "color": "textSurface"},
+
+    "widget.link.button.title.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
     "widget.button.light.title.medium": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "textBackground"},
@@ -510,7 +515,6 @@
     "panel.settings.location.toggle_button.additional_info.disabled": {"font_family": "regular", "size": 12.0, "color": "textSurfaceTransparent15"},
 
     "panel.settings.login.validation.text": {"font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
-    "panel.settings.login.button.underline": {"font_family": "bold", "size": 16.0, "color": "blueShade900", "decoration": "underline"},
     "panel.settings.login.title.large": {"extends": "widget.title.extra_huge.fat"},
 
     "panel.settings.privacy_center.title.medium.fat": {"extends": "widget.info.regular.extra_fat"},
@@ -667,6 +671,7 @@
     "qr": {"src": "images/icon-qr-code.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "wrong size"},
     "notification": {"src": "images/notifications-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "color issue, size issue"},
     "phone": {"src": "images/icon-phone.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo":  "size"},
+    "mail": {"src": "images/icon-mail.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo":  "size"},
     "person": {"src": "images/identiy-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size"},
     "key": {"src": "images/icon-login-grey.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo":  "size"},
     "check": {"src": "images/icon-check-simple.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 12, "todo": "size issue"},
@@ -684,7 +689,7 @@
     "list-outline": {"src": "images/icon-list-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size issue"},
 
     "star-outline-gray": {"src": "images/icon-star-gray-frame-thin.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
-    "thumbs-up-outline-gray": {"src": "images/icon-thumbs-up-outline-gray.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
+    "thumbs-up-outline-gray": {"src": "images/icon-thumbs-up-outline.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
     "check-circle-outline-gray": {"src": "images/deselected.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "box-outline-gray": {"src": "images/deselected-checkbox.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "location-outline-gray": {"src": "images/tab-navigate.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "size"},
@@ -792,6 +797,9 @@
 
     "photo-online": {"src": "images/appointment-detail-online-tout.jpg", "type": "flutter.asset", "todo": "color, size"},
     "photo-building": {"src": "images/appointment-detail-inperson-tout.png", "type": "flutter.asset", "todo": "size"},
+
+    "photo-grainger-1": {"src": "images/appointment-unit-grainger-tout-1.jpg", "type": "flutter.asset", "todo": "color, size"},
+    "photo-grainger-2": {"src": "images/appointment-unit-grainger-tout-2.jpg", "type": "flutter.asset", "todo": "size"},
 
     "toggle-on": {"src": "images/switch-on.png", "type": "flutter.asset", "todo": "color issue, fuzzy"},
     "toggle-off": {"src": "images/switch-off.png", "type": "flutter.asset", "todo": "color issue, fuzzy"},

@@ -5,12 +5,196 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.2] - 2023-05-17
+### Added
+- New video tutorial "Creating Polls" [#3285](https://github.com/rokwire/illinois-app/issues/3285).
+
+## [5.0.1] - 2023-05-16
+### Added
+- Handle deep links for main panel content [#3240](https://github.com/rokwire/illinois-app/issues/3240).
+
+## [5.0.0] - 2023-05-15
+### Changed
+- Load content attributes JSON from content service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
+
+## [4.3.61] - 2023-05-12
+### Fixed
+- Fixed favourites card title textStyle [#3273](https://github.com/rokwire/illinois-app/issues/3273).
+
+## [4.3.60] - 2023-05-11
+### Fixed
+- Fixed WellnessRingWidget update mechanism that was causing infinite initialization loop when offline [#3270](https://github.com/rokwire/illinois-app/issues/3270).
+
+## [4.3.59] - 2023-05-10
+### Changed
+- Changed texts for Appointments scheduling [#3266](https://github.com/rokwire/illinois-app/issues/3266).
+- Change empty student courses message [#3263](https://github.com/rokwire/illinois-app/issues/3263).
+### Fixed
+- Remove duplicated message for Maps pop up dialog [#3260](https://github.com/rokwire/illinois-app/issues/3260).
+
+## [4.3.58] - 2023-05-09
+### Changed
+- Athletics entries in Browse [#3258](https://github.com/rokwire/illinois-app/issues/3258).
+
+## [4.3.57] - 2023-05-06
+### Changed
+- Hide unknown next available appointment [#3252](https://github.com/rokwire/illinois-app/issues/3252).
+- Update static sample appointments data [#3254](https://github.com/rokwire/illinois-app/issues/3252).
+- Display person's name in appointment schedule time panel [#3256](https://github.com/rokwire/illinois-app/issues/3256).
+
+## [4.3.56] - 2023-05-05
+### Changed
+- Switch Telehealth/Online depending on provider [#3241](https://github.com/rokwire/illinois-app/issues/3241).
+- Show person's name in Appointments card, clean up card's layout [#3241](https://github.com/rokwire/illinois-app/issues/3241).
+- Do not show safer McKinley link in Detail panel for other providers [#3244](https://github.com/rokwire/illinois-app/issues/3244).
+- Updated number of advisors text [#3246](https://github.com/rokwire/illinois-app/issues/3246).
+- Rename "time slot" to "available appointment" [#3248](https://github.com/rokwire/illinois-app/issues/3248).
+
+## [4.3.55] - 2023-05-04
+### Changed
+- "My College of Medicine Compliance" label [#3231](https://github.com/rokwire/illinois-app/issues/3231).
+- Acknowledged new fields for appointment unit and person [#3230](https://github.com/rokwire/illinois-app/issues/3230).
+- Load appointments in a standalone panel when invoked from Browse [#3234](https://github.com/rokwire/illinois-app/issues/3234).
+- Updates in Groups Home Panel [#3236](https://github.com/rokwire/illinois-app/issues/3236).
+- Updated logic in AppointmentTimeSchedule panel [#3238](https://github.com/rokwire/illinois-app/issues/3238).
+
+## [4.3.54] - 2023-05-03
+### Changed
+- Appointments UI updates [#3225](https://github.com/rokwire/illinois-app/issues/3225).
+### Fixed
+- Fixed athletics games event title style [#3210](https://github.com/rokwire/illinois-app/issues/3210).
+
+## [4.3.53] - 2023-05-02
+### Changed
+- Cleanup and polish Appointments UI [#3222](https://github.com/rokwire/illinois-app/issues/3222).
+
+## [4.3.52] - 2023-05-01
+### Changed
+- Pass time slot id to update appointment API [#3213](https://github.com/rokwire/illinois-app/issues/3213).
+- Update Appointments to work in University time [#3215](https://github.com/rokwire/illinois-app/issues/3215).
+- Removed notifications UI from Saved panel [#2903](https://github.com/rokwire/illinois-app/issues/2903).
+### Fixed
+- Fixed "Forgot Password" link text color [#3211](https://github.com/rokwire/illinois-app/issues/3211).
+- Fixed principle investigator typo [#3212](https://github.com/rokwire/illinois-app/issues/3212).
+
+## [4.3.51] - 2023-04-28
+### Fixed
+- Cleanup data caching in StudentCourses service [#3200](https://github.com/rokwire/illinois-app/issues/3200).
+- Cleanup Accessibility for MentalHealthResources and Appointments Scheduling [#3182](https://github.com/rokwire/illinois-app/issues/3182).
+### Changed
+- Pass time slot id to create appointment API [#3202](https://github.com/rokwire/illinois-app/issues/3202).
+- Added nextAvailable to appointment person and unit [#3206](https://github.com/rokwire/illinois-app/issues/3206).
+### Added
+- Added Appointments section in Browse [#3204](https://github.com/rokwire/illinois-app/issues/3204).
+
+## [4.3.50] - 2023-04-27
+### Changed
+- Rename Map > Mental Health Resources to Map > Find a Therapist [#3194](https://github.com/rokwire/illinois-app/issues/3194).
+- Rename "Specials" to "Dining News" in Residence Hall Dining [#3187](https://github.com/rokwire/illinois-app/issues/3187).
+- Handled Appointmnts service APIs updates [#3198](https://github.com/rokwire/illinois-app/issues/3198).
+- Cleanuped UI and logic using real data feed [#3198](https://github.com/rokwire/illinois-app/issues/3198).
+### Fixed
+- Cleaned up directions / url launching in Event detail panel [#3193](https://github.com/rokwire/illinois-app/issues/3193).
+
+## [4.3.49] - 2023-04-26
+### Changed
+- Handle appointments when user is not logged in [#3167](https://github.com/rokwire/illinois-app/issues/3167).
+- Updated advanced settings defaults for new research projects [#3177](https://github.com/rokwire/illinois-app/issues/3177).
+### Fixed
+- Fixed passing group or project when browsing for events for them [#3175](https://github.com/rokwire/illinois-app/issues/3175).
+
+## [4.3.48] - 2023-04-25
+### Changed
+- New applointments UI moved from Wellness to Academics [#3179](https://github.com/rokwire/illinois-app/issues/3179).
+- Acknowledge appointment provider flags [#3181](https://github.com/rokwire/illinois-app/issues/3181).
+- Pass ExternalAuthorization header to new Appointments network calls [#3167](https://github.com/rokwire/illinois-app/issues/3167).
+- Acknowledged new v2/appointments API [#3167](https://github.com/rokwire/illinois-app/issues/3167).
+### Fixed
+- Do not display location link for student course when location is not available [#3100](https://github.com/rokwire/illinois-app/issues/3100).
+
+## [4.3.47] - 2023-04-24
+### Changed
+- Display video thumb in "Mental Health Resources". Play the video in another panel with subtitles [#3164](https://github.com/rokwire/illinois-app/issues/3164).
+- Hook up appointments APIs [#3167](https://github.com/rokwire/illinois-app/issues/3167).
+- Launch privacy policy content when offline [#3052](https://github.com/rokwire/illinois-app/issues/3052).
+### Fixed
+- Fix MyCalendarSettings toggle buttons [#3083](https://github.com/rokwire/illinois-app/issues/3083).
+- Improve Accessibility for HomeToutWidget [#3026](https://github.com/rokwire/illinois-app/issues/3026).
+- Athletics events filter [#3077](https://github.com/rokwire/illinois-app/issues/3077).
+### Added
+- Show user's profile picture in Wellness Rings [#3081](https://github.com/rokwire/illinois-app/issues/3081).
+
+## [4.3.46] - 2023-04-21
+### Changed
+- Appointments model synked with backend [#3149](https://github.com/rokwire/illinois-app/issues/3149).
+- My Groups empty message change [#3066](https://github.com/rokwire/illinois-app/issues/3066).
+### Fixed
+- Fixed system widgets update in Home panel [#3111](https://github.com/rokwire/illinois-app/issues/3111).
+- Handling tap action in inbox notifications [#3159](https://github.com/rokwire/illinois-app/issues/3159).
+- Fixed buildings target location evaluation for maps directions [#3100](https://github.com/rokwire/illinois-app/issues/3100).
+
+## [4.3.45] - 2023-04-20
+### Added
+- Added title parameters to SliverToutHeaderBar [#3149](https://github.com/rokwire/illinois-app/issues/3149).
+- Embed video in Mental Health panel [#3148](https://github.com/rokwire/illinois-app/issues/3148).
+### Changed
+- Schedule appointments updates [#3149](https://github.com/rokwire/illinois-app/issues/3149).
+### Added
+- Fixed Mental Health Resources title [#3154](https://github.com/rokwire/illinois-app/issues/3154).
+
+## [4.3.44] - 2023-04-19
+### Added
+- Created appointment schedule host and questions UI preview [#3136](https://github.com/rokwire/illinois-app/issues/3136).
+### Changed
+- GroupDetail: moved group sync/update message to GroupMembersPanel [#3135](https://github.com/rokwire/illinois-app/issues/3135).
+- Some links are open in external browser [#3088](https://github.com/rokwire/illinois-app/issues/3088).
+- Reworked Mental Health Resources [#3142](https://github.com/rokwire/illinois-app/issues/3142).
+### Deleted
+- Removed Explore.toJson definition, not used any more [#3070](https://github.com/rokwire/illinois-app/issues/3070).
+### Fixed
+- Fix Dining feedback dialog [#3087](https://github.com/rokwire/illinois-app/issues/3087).
+- Fix HomeToDoWidget item checkmark [#3080](https://github.com/rokwire/illinois-app/issues/3080).
+
+## [4.3.43] - 2023-04-18
+### Changed
+- Updated Dining description [#3110](https://github.com/rokwire/illinois-app/issues/3110).
+- Increase padding for notifications badge [#2919](https://github.com/rokwire/illinois-app/issues/2919).
+### Added
+- Created appointment schedule host and questions UI, in progress [#3136](https://github.com/rokwire/illinois-app/issues/3136).
+
+## [4.3.42] - 2023-04-13
+### Changed
+- UI updates in AppointmentTimeSlotPanel [#3125](https://github.com/rokwire/illinois-app/issues/3125).
+- Removed tappable items from Appointment Unit card [#3127](https://github.com/rokwire/illinois-app/issues/3127).
+- Open group post urls in an external browser [#3129](https://github.com/rokwire/illinois-app/issues/3129).
+- Load mental health buildings mapping from content service [#3131](https://github.com/rokwire/illinois-app/issues/3131).
+- Updated colleges and departments in content attributes [#3133](https://github.com/rokwire/illinois-app/issues/3133).
+
+## [4.3.41] - 2023-04-12
+### Added
+- My College of Medicine Courses [#3118](https://github.com/rokwire/illinois-app/issues/3118).
+### Changed
+- Updated Mental Health Resource buildings [#3120](https://github.com/rokwire/illinois-app/issues/3120).
+- In Android, open an external browser for the Optional Web Link when we see it as More Info  (like in about) [#3122](https://github.com/rokwire/illinois-app/issues/3122).
+
+## [4.3.40] - 2023-04-11
+### Changed
+- Updated Research Project tweaks [#3112](https://github.com/rokwire/illinois-app/issues/3112).
+### Fixed
+- Fixed map type selection in ExploeMapPanel.notifySelect notification [#3060](https://github.com/rokwire/illinois-app/issues/3060).
+### Added
+- Auto fill Guide Highlights favorites [#3032](https://github.com/rokwire/illinois-app/issues/3032).
+
+## [4.3.39] - 2023-04-10
 ### Deleted
 - "My College of Medicine Courses" in Academics panel and all related stuff [#3105](https://github.com/rokwire/illinois-app/issues/3105).
-### Addes
+### Added
 - Added reschedule appointment preview [#3074](https://github.com/rokwire/illinois-app/issues/3074).
 ### Changed
 - Hooked up appointments provicers API [#3074](https://github.com/rokwire/illinois-app/issues/3074).
+### Fixed
+- Do not display empty compund widgets in Home/Customize [#3078](https://github.com/rokwire/illinois-app/issues/3078).
 
 ## [4.3.38] - 2023-04-07
 ### Deleted

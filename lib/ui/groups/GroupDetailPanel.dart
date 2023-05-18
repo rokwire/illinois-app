@@ -56,7 +56,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
@@ -240,6 +239,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (mounted) {
       if (group != null) {
         _group = group;
+        if (_isResearchProject && _isMember) {
+          _currentTab = _DetailTab.About;
+        }
         _redirectToPostIfExists();
         _loadGroupAdmins();
         _loadInitialPosts();
@@ -585,7 +587,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildGroupContent() {
     List<Widget> content = [
       _buildImageHeader(),
-      _buildDateUpdatedFields(),
       _buildGroupInfo()
     ];
     if (_isMemberOrAdmin) {
@@ -635,22 +636,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ],
       ),
     ) : Container();
-  }
-
-  Widget _buildDateUpdatedFields() {
-    if (!_isAdmin) {
-      return Container();
-    }
-    return Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(top: 10, left: 16, right: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Managed Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-        Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-      ]),
-      Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Membership Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-        Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-      ]))
-    ])));
   }
 
   Widget _buildGroupInfo() {
@@ -1210,7 +1195,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
     content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
 
-    String headingText = _isResearchProject ? 'Principle Investigator(s)' : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
+    String headingText = _isResearchProject ? Localization().getStringEx('panel.group_detail.label.project.admins', 'Principal Investigator(s)') : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
 
     return Stack(children: [
       Container(
@@ -1556,13 +1541,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onWebsite() {
     Analytics().logSelect(target: 'Group url', attributes: _group?.analyticsAttributes);
-    String? url = _group?.webURL;
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
-    }
+    UrlUtils.launchExternal(_group?.webURL);
   }
 
   void _onPolicy () {
@@ -1799,7 +1778,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroup: _group, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
   }
 
   void _onTapCreatePost() {

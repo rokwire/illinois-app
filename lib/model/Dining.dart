@@ -101,7 +101,6 @@ class Dining with Explore implements Favorite {
     );
   }
 
-  @override
   Map<String, dynamic> toJson() {
     return {
       // Explore

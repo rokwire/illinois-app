@@ -16,31 +16,27 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
-import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ext/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentSchedulePanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentScheduleTimePanel.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePersonPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentSchedulePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 //import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class AppointmentScheduleUnitPanel extends StatefulWidget {
 
+  final List<AppointmentProvider>? providers;
   final AppointmentScheduleParam? scheduleParam;
   final void Function(BuildContext context, Appointment? appointment)? onFinish;
 
-  AppointmentScheduleUnitPanel({Key? key, this.scheduleParam, this.onFinish}) : super(key: key);
+  AppointmentScheduleUnitPanel({Key? key, this.providers, this.scheduleParam, this.onFinish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppointmentScheduleUnitPanelState();
@@ -82,13 +78,20 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
       return _buildLoadingContent();
     }
     else if (_providers == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.failed', 'Failed to load providers'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.failed', 'Failed to load providers.'));
     }
     else if (_providers?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.providers.empty', 'No providers available'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.providers.empty', 'No providers available.'));
     }
     else if (_providers?.length == 1) {
-      return _buildUnitsContent();
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.fat'))
+        ),
+        Expanded(child:
+          _buildUnitsContent(),
+        ),
+      ]);
     }
     else {
       return Column(children: [
@@ -189,16 +192,16 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
 
   Widget _buildUnitsContent() {
     if (_selectedProvider == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.provider.empty', 'No selected provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.provider.empty', 'No selected provider.'));
     }
     else if (_isLoadingUnits) {
       return _buildLoadingContent();
     }
     else if (_units == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.units.failed', 'Failed to load units for provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.failed', 'Failed to load locations for provider.'));
     }
     else if (_units?.length == 0) {
-      return _buildMessageContent(Localization().getStringEx('panel.wellness.appointments2.home.message.units.empty', 'No units available for selected provider'));
+      return _buildMessageContent(Localization().getStringEx('panel.academics.appointments.home.message.units.empty', 'No locations available for selected provider.'));
     }
     else  {
       return _buildUnitsList();
@@ -223,11 +226,9 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   }
 
   void _onUnit(AppointmentUnit unit) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentScheduleTimePanel(
-      scheduleParam: AppointmentScheduleParam(
-        providers: _providers,
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentSchedulePersonPanel(
+      scheduleParam: AppointmentScheduleParam.fromOther(widget.scheduleParam,
         provider: _selectedProvider,
-        units: _units,
         unit: unit
       ),
       onFinish: widget.onFinish,
@@ -251,21 +252,21 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
   }
 
   void _initProviders() {
-    if (CollectionUtils.isNotEmpty(widget.scheduleParam?.providers)) {
-      _providers = widget.scheduleParam?.providers;
+    if (CollectionUtils.isNotEmpty(widget.providers)) {
+      _providers = AppointmentProvider.subList(widget.providers, supportsSchedule: true);
       _selectedProvider = widget.scheduleParam?.provider ??
         AppointmentProvider.findInList(_providers, id: Storage().selectedAppointmentProviderId) ??
-        (((_providers != null) && _providers!.isNotEmpty) ? _providers!.first : null);
+        ((_providers?.isNotEmpty == true) ? _providers?.first : null);
       _loadUnits();
     }
     else {
       _isLoadingProviders = true;
       Appointments().loadProviders().then((List<AppointmentProvider>? result) {
         setStateIfMounted(() {
-          _providers = result;
+          _providers = AppointmentProvider.subList(result);
           _selectedProvider = AppointmentProvider.findInList(result, id: widget.scheduleParam?.provider?.id) ??
             AppointmentProvider.findInList(result, id: Storage().selectedAppointmentProviderId) ??
-            (((_providers != null) && _providers!.isNotEmpty) ? _providers!.first : null);
+            ((_providers?.isNotEmpty == true) ? _providers?.first : null);
           _isLoadingProviders = false;
         });
         _loadUnits();
@@ -280,16 +281,28 @@ class _AppointmentScheduleUnitPanelState extends State<AppointmentScheduleUnitPa
         _isLoadingUnits = true;
       });
       Appointments().loadUnits(providerId: providerId).then((List<AppointmentUnit>? result) {
-        setStateIfMounted(() {
-          _units = result;
-          _isLoadingUnits = false;
-        });
+        if (mounted && (providerId == _selectedProvider?.id)) {
+          _initUnitKeys(result, provider: _selectedProvider);
+          setState(() {
+            _units = result;
+            _isLoadingUnits = false;
+          });
+        }
      });
     }
     else {
       setStateIfMounted(() {
         _units = null;
       });
+    }
+  }
+
+  void _initUnitKeys(List<AppointmentUnit>? units, { AppointmentProvider? provider }) {
+    if (units != null) {
+      int index = 0;
+      for (AppointmentUnit unit in units) {
+        unit.imageKey(provider: provider, index: index++);
+      }
     }
   }
 }
@@ -305,110 +318,109 @@ class _AppointmentUnitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double imageSize = 64;
-    const String imageKey = 'photo-building';
+    String? unitAddress = unit.address;
+    String? unitHours = unit.hoursOfOperation;
+    String? unitPersons = unit.displayNumberOfPersons;
+    String? unitDesription = unit.notes;
+    String? nextAvailableTime = unit.displayNextAvailableTime;
+
     return InkWell(onTap: onTap, child:
       ClipRRect(borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)), child:
         Stack(children: [
           Container(decoration: BoxDecoration(color: Styles().colors!.surface, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                
-                Row(children: [
+                Text(provider?.name?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
-                    Text(provider?.name?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle('widget.item.small.semi_fat'),)
-                  ),
-                ]),
-                
-                
-                Padding(padding: EdgeInsets.only(top: 6), child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Expanded(child:
-                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Padding(padding: EdgeInsets.only(bottom: 2), child:
-                          Text(unit.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
-                        ),
-                        
-                        InkWell(onTap: () => _onLocation(), child:
-                          Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 4), child:
-                                Styles().images?.getImage('location', excludeFromSemantics: true),
-                              ),
-                              Expanded(child:
-                                Text(unit.location?.address ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline"))
-                              ),
-                            ],),
-                          ),
-                        ),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-                        InkWell(onTap: () => _onHoursOfOperation(context), child:
-                          Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
-                            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child:
-                                Styles().images?.getImage('calendar', excludeFromSemantics: true),
-                              ),
-                              Expanded(child:
-                                Text(unit.hoursOfOperation ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline"))
-                              ),
-                            ],),
-                          ),
-                        ),
-                      ],)
-                    ),
-                    
-                    Padding(padding: EdgeInsets.only(left: 16), child:
-                      Semantics(button: true, label: "appointment image", hint: "Double tap to expand image", child:
-                        SizedBox(width: imageSize, height: imageSize, child:
-                          InkWell(onTap: () => _onCardImage(context, imageKey), child:
-                            Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
-                          )
+                      Padding(padding: EdgeInsets.only(top: 6, bottom: 2), child:
+                        Text(unit.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
+                      ),
+                      
+                      Visibility(visible: StringUtils.isNotEmpty(unitAddress), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 4), child:
+                              Styles().images?.getImage('location', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(unitAddress ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                            ),
+                          ],),
                         ),
                       ),
-                    )
-                  ]),
-                ),
 
-                Padding(padding: EdgeInsets.only(top: 4), child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Expanded(child:
-                      Text(unit.details ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                      Visibility(visible: StringUtils.isNotEmpty(unitHours), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 6), child:
+                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(unitHours ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                            ),
+                          ],),
+                        ),
+                      ),
+
+                      Visibility(visible: StringUtils.isNotEmpty(unitPersons), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 6), child:
+                              Styles().images?.getImage('person', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Text(unitPersons ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium"))
+                            ),
+                          ],),
+                        ),
+                      ),
+
+                      Visibility(visible: StringUtils.isNotEmpty(nextAvailableTime), child:
+                        Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(right: 6), child:
+                              Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                            ),
+                            Expanded(child:
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Text(Localization().getStringEx('panel.appointment.schedule.next_available_appointment.label', 'Next Available Appointment:'), style: Styles().textStyles?.getTextStyle("widget.item.regular")),
+                                Text(nextAvailableTime ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")),
+                              ],)
+                            ),
+                          ],),
+                        ),
+                      ),
+
+                    ]),
+                  ),
+                  Padding(padding: EdgeInsets.only(left: 16), child:
+                    Semantics(button: true, label: "appointment image", hint: "Double tap to expand image", child:
+                      SizedBox(width: 72, height: 72, child:
+                        StringUtils.isNotEmpty(unit.imageUrl) ?
+                          Image.network(unit.imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.cover,) :
+                          Styles().images?.getImage(unit.imageKey(provider: provider), excludeFromSemantics: true, fit: BoxFit.fill)
+                      ),
                     ),
-                  ],),
+                  ),
+                ]),
+                Visibility(visible: StringUtils.isNotEmpty(unitDesription), child:
+                  Padding(padding: EdgeInsets.only(top: 4), child:
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Expanded(child:
+                        Text(unitDesription ?? '', style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                      ),
+                    ],),
+                  ),
                 ),
-              ])
-            )
+              ]),
+            ),
           ),
           Container(color: Styles().colors?.fillColorSecondary, height: 4,)
         ],)
       )
     );
   }
-
-  void _onCardImage(BuildContext context,String? imageKey) {
-    Analytics().logSelect(target: 'Appointment Unit Image');
-    Navigator.push(context, PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) =>
-      ModalImagePanel(imageKey: imageKey, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image'))
-    ));
-  }
-
-  void _onLocation() {
-    //TBD: Maps2 panel with marker
-    dynamic destination = ((unit.location?.latitude != null) && (unit.location?.longitude != null)) ? LatLng(unit.location!.latitude!, unit.location!.longitude!) : unit.location?.address;
-    if (destination != null) {
-      GeoMapUtils.launchDirections(destination: destination, travelMode: GeoMapUtils.traveModeWalking);
-    }
-  }
-
-  void _onHoursOfOperation(BuildContext context) {
-    showDialog(context: context, builder: (_) => InfoPopup(
-      backColor: Styles().colors?.surface,
-      padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
-      alignment: Alignment.center,
-      infoText: "${provider?.name?.toUpperCase()}\n${unit.name}\n${unit.hoursOfOperation}",
-      infoTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
-      closeIcon: Styles().images?.getImage('close'),
-    ),);
-  }
-
 }

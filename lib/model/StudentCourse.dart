@@ -33,7 +33,7 @@ class StudentCourse with Explore {
     'coursesection': section?.toJson(),
   };
 
-  bool get hasLocation => section?.building?.hasLocation ?? false;
+  bool get hasValidLocation => section?.building?.hasValidLocation ?? false;
   
   @override
   bool operator==(dynamic other) =>
@@ -55,7 +55,7 @@ class StudentCourse with Explore {
   // Explore implementation
 
   @override String? get exploreId => number;
-  @override String get exploreTitle => title ?? '';
+  @override String? get exploreTitle => title ?? '';
   @override String? get exploreSubTitle => '$shortName ($number) $instructionMethod';
   @override String? get exploreShortDescription => null;
   @override String? get exploreLongDescription => null;
@@ -278,7 +278,7 @@ class Building with Explore {
     'entrances': BuildingEntrance.listToJson(entrances),
   };
 
-  bool get hasLocation => (latitude != null) && (longitude != null);
+  bool get hasValidLocation => (latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0);
 
   @override
   bool operator==(dynamic other) =>
@@ -333,7 +333,7 @@ class Building with Explore {
   // Explore implementation
 
   @override String? get exploreId => id;
-  @override String get exploreTitle => name ?? '';
+  @override String? get exploreTitle => name;
   @override String? get exploreSubTitle => address1;
   @override String? get exploreShortDescription => null;
   @override String? get exploreLongDescription => null;
@@ -373,6 +373,17 @@ class Building with Explore {
       }
     }
     return jsonList;
+  }
+
+  static Building? findInList(List<Building>? values, {String? id}) {
+    if (values != null) {
+      for (Building value in values) {
+        if ((id != null) && (value.id == id)) {
+          return value;
+        }
+      }
+    }
+    return null;
   }
 }
 

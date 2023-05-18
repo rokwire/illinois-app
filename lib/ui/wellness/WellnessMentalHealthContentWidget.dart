@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
+import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -37,12 +42,15 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
   Map<String, List<Map<String, dynamic>>> _sectionLists = <String, List<Map<String, dynamic>>>{};
   List<String> _sections = <String>[];
 
+  Video? _video;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       Guide.notifyChanged,
     ]);
+    _loadVideo();
     _buildContentData();
     super.initState();
   }
@@ -78,6 +86,10 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
 
   Widget _buildContentUi() {
     List<Widget> widgetList = <Widget>[];
+
+    if (_video != null) {
+      widgetList.add(_buildContentVideo());
+    }
 
     for (String section in _sections) {
       List<Map<String, dynamic>>? sectionList = _sectionLists[section];
@@ -173,6 +185,57 @@ class _WellnessMentalHealthContentWidgetState extends State<WellnessMentalHealth
       if (uri != null) {
         launchUrl(uri, mode: LaunchMode.externalApplication);
       }
+    }
+  }
+
+  Widget _buildContentVideo() {
+    if (_video == null) {
+      return Container();
+    }
+    String? imageUrl = _video!.thumbUrl;
+    bool hasImage = StringUtils.isNotEmpty(imageUrl);
+    final Widget emptyImagePlaceholder = Container(height: 102);
+    return Container(
+        decoration: BoxDecoration(
+            color: Styles().colors?.white,
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
+        child: Stack(children: [
+          Semantics(button: true,
+              label: "${_video?.title ?? ""} video",
+              child: GestureDetector(
+                onTap: _onTapVideo,
+                child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Stack(alignment: Alignment.center, children: [
+                        hasImage
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: Image.network(imageUrl!,
+                                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                  return (loadingProgress == null) ? child : emptyImagePlaceholder;
+                                }))
+                            : emptyImagePlaceholder,
+                        VideoPlayButton()
+                      ])))),
+          Container(color: Styles().colors?.accentColor3, height: 4)
+        ]));
+  }
+
+  void _loadVideo() {
+    String? videoUrl = Config().wellnessMentalHealthVideoUrl;
+    if (StringUtils.isNotEmpty(videoUrl)) {
+      String title = Localization().getStringEx('panel.wellness.sections.mental_health.video.title', 'Mental Health');
+      _video = Video(
+          videoUrl: videoUrl, ccUrl: Config().wellnessMentalHealthCcUrl, thumbUrl: Config().wellnessMentalHealthThumbUrl, title: title);
+    }
+  }
+
+  void _onTapVideo() {
+    if (_video != null) {
+      Analytics().logSelect(
+          target: 'Mental Health Video', source: widget.runtimeType.toString(), attributes: _video!.analyticsAttributes);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: _video!)));
     }
   }
 }

@@ -6,10 +6,9 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
-import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/StudentCourses.dart';
-import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
@@ -17,9 +16,10 @@ import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -40,7 +40,6 @@ import 'package:geolocator/geolocator.dart' as Core;
 import 'dart:math' as math;
 
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 extension ExploreExt on Explore {
 
@@ -124,31 +123,31 @@ extension ExploreExt on Explore {
       return Localization().getStringEx('panel.explore.item.events.name', 'Events');
     }
     else if (exploresType == "dining") {
-      return Localization().getStringEx('panel.explore.item.dinings.name', 'Dinings');
+      return Localization().getStringEx('panel.explore.item.dinings.name', 'Dining Locations');
     }
     else if (exploresType == "laundryroom") {
-      return Localization().getStringEx('panel.explore.item.laundry.name', 'Laundry');
+      return Localization().getStringEx('panel.explore.item.laundry.name', 'Laundry Rooms');
     }
     else if (exploresType == "game") {
-      return Localization().getStringEx('panel.explore.item.games.name', 'Games');
-    }
-    else if (exploresType == "place") {
-      return Localization().getStringEx('panel.explore.item.places.name', 'Places');
+      return Localization().getStringEx('panel.explore.item.games.name', 'Game Locations');
     }
     else if (exploresType == "building") {
       return Localization().getStringEx('panel.explore.item.buildings.name', 'Buildings');
+    }
+    else if (exploresType == "wellnessbuilding") {
+      return Localization().getStringEx('panel.explore.item.wellnessbuildings.name', 'Therapist Locations');
     }
     else if (exploresType == "mtdstop") {
       return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'Bus Stops');
     }
     else if (exploresType == "studentcourse") {
-      return Localization().getStringEx('panel.explore.item.courses.name', 'Courses');
+      return Localization().getStringEx('panel.explore.item.courses.name', 'Course Locations');
     }
     else if (exploresType == "appointment") {
-      return Localization().getStringEx('panel.explore.item.appointments.name', 'Appointments');
+      return Localization().getStringEx('panel.explore.item.appointments.name', 'Appointment Locations');
     }
     else if (exploresType == "explorepoi") {
-      return Localization().getStringEx('panel.explore.item.pois.name', 'POIs');
+      return Localization().getStringEx('panel.explore.item.pois.name', 'MTD Destinations');
     }
     else {
       return Localization().getStringEx('panel.explore.item.unknown.name', 'Explores');
@@ -234,6 +233,7 @@ extension ExploreExt on Explore {
       return (this as ExplorePOI).uiColor;
     }
     //else if (this is Building) {}
+    //else if (this is WellnessBuilding) {}
     //else if (this is Appointment) {}
     else {
       return Styles().colors?.accentColor2;
@@ -244,7 +244,6 @@ extension ExploreExt on Explore {
 
   void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData }) {
     Route? route;
-    String? url;
     if (this is Event) {
       if ((this as Event).isGameEvent) {
         route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: (this as Event).speaker, sportName: (this as Event).registrationLabel,),);
@@ -266,10 +265,10 @@ extension ExploreExt on Explore {
       route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: this as Game),);
     }
     else if (this is Building) {
-      url = Wellness().mentalHealthBuildingUrl(buildingId: (this as Building).id);
-      if (url == null) {
-        route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building),);
-      }
+      route = CupertinoPageRoute(builder: (context) => ExploreBuildingDetailPanel(building: this as Building),);
+    }
+    else if (this is WellnessBuilding) {
+      route = CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as WellnessBuilding).guideId),);
     }
     else if (this is MTDStop) {
       route = CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: this as MTDStop,),);
@@ -287,17 +286,6 @@ extension ExploreExt on Explore {
       route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: this, initialLocationData: initialLocationData,),);
     }
 
-    if (url != null) {
-      if (DeepLink().isAppUrl(url)) {
-        DeepLink().launchUrl(url);
-      }
-      else {
-        Uri? uri = Uri.tryParse(url);
-        if (uri != null) {
-          launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      }
-    }
     if (route != null) {
       Navigator.push(context, route);
     }
@@ -305,35 +293,6 @@ extension ExploreExt on Explore {
 }
 
 extension ExploreMap on Explore {
-
-  String? get mapMarkerAssetName {
-    if (this is Event) {
-      return 'images/map-marker-group-event.png';
-    }
-    else if (this is Dining) {
-      return 'images/map-marker-group-dining.png';
-    }
-    else if (this is LaundryRoom) {
-      return 'images/map-marker-group-laundry.png';
-    }
-    else if (this is Game) {
-      return 'images/map-marker-group-game.png';
-    }
-    else if (this is MTDStop) {
-      return 'images/map-marker-group-mtd-stop.png';
-    }
-    else if (this is StudentCourse) {
-      return 'images/map-marker-group-event.png';
-    }
-    else if (this is ExplorePOI) {
-      return 'images/map-marker-group-poi.png';
-    }
-    //else if (this is Building) {}
-    //else if (this is Appointment) {}
-    else {
-      return 'images/map-marker-group-laundry.png';
-    }
-  }
 
   Color? get mapMarkerColor => uiColor ?? unknownMarkerColor;
   static Color? get unknownMarkerColor => Styles().colors?.accentColor2;
@@ -371,10 +330,13 @@ extension ExploreMap on Explore {
       return exploreLocationDescription;
     }
     else if (this is Building) {
-      return (this as Building).address1;
+      return exploreSubTitle;
+    }
+    else if (this is WellnessBuilding) {
+      return exploreSubTitle;
     }
     else if (this is Appointment) {
-      return (this as Appointment).location?.title;
+      return exploreSubTitle;
     }
     else {
       return null;
@@ -383,34 +345,37 @@ extension ExploreMap on Explore {
 
   String? getMapGroupMarkerTitle(int count) {
     if (this is Event) {
-      return sprintf('%s Events', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.events.count', '%s Events'), [count]);
     }
     else if (this is Dining) {
-      return sprintf('%s Dining Locations', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.dinings.count', '%s Dining Locations'), [count]);
     }
     else if (this is LaundryRoom) {
-      return sprintf('%s Laundry Rooms', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.laundry.count', '%s Laundry Rooms'), [count]);
     }
     else if (this is Game) {
-      return sprintf('%s Games', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.games.count', '%s Game Locations'), [count]);
     }
     else if (this is MTDStop) {
-      return sprintf('%s MTD Stops', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.mtd_stops.count', '%s MTD Stops'), [count]);
     }
     else if (this is StudentCourse) {
-      return sprintf('%s Courses', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.courses.count', '%s Course Locations'), [count]);
     }
     else if (this is ExplorePOI) {
-      return sprintf('%s MTD Destinations', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.pois.count', '%s MTD Destinations'), [count]);
     }
     else if (this is Building) {
-      return sprintf('%s Buildings', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.buildings.count', '%s Buildings'), [count]);
+    }
+    else if (this is WellnessBuilding) {
+      return sprintf(Localization().getStringEx('panel.explore.item.wellnessbuildings.count', '%s Therapist Locations'), [count]);
     }
     else if (this is Appointment) {
-      return sprintf('%s Appointments', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.appointments.count', '%s Appointment Locations'), [count]);
     }
     else {
-      return sprintf('%s Explores', [count]);
+      return sprintf(Localization().getStringEx('panel.explore.item.explores.count', '%s Explores'), [count]);
     }
   }
 
@@ -427,21 +392,25 @@ extension ExploreMap on Explore {
     if (this is Building) {
       building = this as Building;
     }
+    else if (this is WellnessBuilding) {
+      building = (this as WellnessBuilding).building;
+    }
     else if (this is StudentCourse) {
       building = (this as StudentCourse).section?.building;
     }
 
     if (building != null) {
       Position? userLocation = await LocationServices().location;
-      BuildingEntrance? buildingEntrance = (this as Building).nearstEntrance(userLocation, requireAda: StudentCourses().requireAda);
+      BuildingEntrance? buildingEntrance = building.nearstEntrance(userLocation, requireAda: StudentCourses().requireAda);
       if ((buildingEntrance != null) && buildingEntrance.hasValidLocation) {
         return LatLng(buildingEntrance.latitude!, buildingEntrance.longitude!);
       }
     }
 
-    return (exploreLocation?.isLocationCoordinateValid ?? false) ? LatLng(
-      exploreLocation?.latitude?.toDouble() ?? 0,
-      exploreLocation?.longitude?.toDouble() ?? 0
+    ExploreLocation? location = exploreLocation;
+    return (location?.isLocationCoordinateValid ?? false) ? LatLng(
+      location?.latitude?.toDouble() ?? 0,
+      location?.longitude?.toDouble() ?? 0
     ) : null;
   }
 

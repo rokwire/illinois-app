@@ -142,7 +142,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   }
 
   Widget _buildToDoItemWidget(ToDoItem item) {
-    Widget? completedWidget = Styles().images?.getImage(item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', excludeFromSemantics: true);
+    Widget? completedWidget = Styles().images?.getImage(item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', color: Styles().colors?.fillColorSecondary , excludeFromSemantics: true);
     return GestureDetector(onTap: () => _onTapToDoItem(item), child: Padding(padding: EdgeInsets.only(top: 10), child: Container(color: Colors.transparent, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(right: 10), child: completedWidget),
       Expanded(child: Text(StringUtils.ensureNotEmpty(item.name), maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.start, style: Styles().textStyles?.getTextStyle("widget.info.small")))

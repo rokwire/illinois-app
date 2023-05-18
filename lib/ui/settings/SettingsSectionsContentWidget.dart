@@ -871,7 +871,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {
-        launchUrl(uri);
+        UrlUtils.launchExternal(url);
       }
     }
   }
