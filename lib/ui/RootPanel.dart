@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/AssistantPanel.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
@@ -69,7 +70,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum RootTab { Favorites, Browse, Maps, Academics, Wellness }
+enum RootTab { Favorites, Browse, Maps, Assistant, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -886,6 +887,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (rootTab == RootTab.Maps) {
       return ExploreMapPanel();
     }
+    else if (rootTab == RootTab.Assistant) {
+      return AssistantPanel();
+    }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);
     }
@@ -1043,6 +1047,9 @@ RootTab? rootTabFromString(String? value) {
     }
     else if (value == 'maps') {
       return RootTab.Maps;
+    }
+    else if (value == 'assistant') {
+      return RootTab.Assistant;
     }
     else if (value == 'academics') {
       return RootTab.Academics;

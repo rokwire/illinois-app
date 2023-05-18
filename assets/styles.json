@@ -690,6 +690,7 @@
     "box-outline-gray": {"src": "images/deselected-checkbox.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "location-outline-gray": {"src": "images/tab-navigate.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "size"},
     "campus-tools-outline-gray": {"src": "images/tab-browse.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "size"},
+    "search-outline-gray": {"src": "images/icon-search.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
 
     "box-inside-gray": {"src": "images/disabled-checkbox.png", "type": "flutter.asset", "color": "mediumGray2", "size": 24},
     "box-inside-light-gray": {"src": "images/partial-selected-checkbox.png", "type": "flutter.asset", "color": "mediumGray2", "size": 24},
