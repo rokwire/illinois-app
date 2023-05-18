@@ -204,7 +204,7 @@ class Guide with Service implements NotificationsListener {
       contentMap = LinkedHashMap<String, Map<String, dynamic>?>();
       for (dynamic contentEntry in contentList) {
         Map<String, dynamic>? mapEntry = JsonUtils.mapValue(contentEntry);
-        String? id = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['_id']) : null;
+        String? id = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['content_id']) : null;
         if (id != null) {
           contentMap[id] = mapEntry;
         }
@@ -243,7 +243,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   String? entryId(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, '_id'));
+    return JsonUtils.stringValue(entryValue(entry, 'content_id'));
   }
 
   String? entryGuide(Map<String, dynamic>? entry) {
@@ -671,7 +671,7 @@ class Guide with Service implements NotificationsListener {
     // ID
     dynamic sourceValue = sourceEntry['id'];
     if (sourceValue != null) {
-      contentEntry['_id'] = sourceValue;
+      contentEntry['content_id'] = sourceValue;
     }
 
     // Shared Fields
