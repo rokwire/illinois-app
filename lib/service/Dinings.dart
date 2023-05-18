@@ -19,6 +19,7 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -40,8 +41,6 @@ class Dinings with Service {
 
   String? _diningSpecialsResponse;
   DateTime? _lastDiningSpecialsRequestTime;
-
-  Map<String, DiningFeedback>? _feedbacks;
 
   static final Dinings _instance = Dinings._internal();
 
@@ -237,7 +236,11 @@ class Dinings with Service {
   }
 
   Future<DiningFeedback?> loadDiningFeedback({String? diningId}) async {
-    return (_feedbacks ??= DiningFeedback.mapFromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/dining.feedbacks.json'))) ?? <String, DiningFeedback>{})[diningId];
+    //return (_feedbacks ??= DiningFeedback.mapFromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/dining.feedbacks.json'))) ?? <String, DiningFeedback>{})[diningId];
+    const String diningFeedbackContentCategory = 'dining_feedbacks';
+    Map<String, dynamic>? contentItems = await Content().loadContentItems([diningFeedbackContentCategory]);
+    Map<String, DiningFeedback>? feedbacksMap = (contentItems != null) ? DiningFeedback.mapFromJson(JsonUtils.mapValue(contentItems[diningFeedbackContentCategory])) : null;
+    return (feedbacksMap != null) ? feedbacksMap[diningId] : null;
   }
 
   // Helpers
