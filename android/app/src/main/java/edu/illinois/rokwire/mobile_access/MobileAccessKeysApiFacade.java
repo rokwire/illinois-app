@@ -82,6 +82,8 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     private final Activity activity;
     private AudioManager audioManager;
 
+    private boolean isAllowedToScan = false;
+
     public MobileAccessKeysApiFacade(Activity activity, OrigoKeysApiFactory apiFactory) {
         this.activity = activity;
         this.mobileKeysApiFactory = apiFactory;
@@ -105,16 +107,11 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     }
 
     public void onActivityResume() {
-        //TBD: DD - check when to start / stop scanning based on the user selection
-        if (canScan()) {
-            startScanning();
-        }
+
     }
 
     public void onActivityPause() {
-        if (canScan()) {
-            stopScanning();
-        }
+
     }
 
     public void onActivityDestroy() {
@@ -302,6 +299,15 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         return true;
     }
 
+    public void allowScanning(boolean allow) {
+        this.isAllowedToScan = allow;
+        if (canScan()) {
+            startScanning();
+        } else {
+            stopScanning();
+        }
+    }
+
     //endregion
 
     //region OrigoKeysApiFacade implementation
@@ -486,19 +492,21 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     //region Reader Scanning
 
     private boolean canScan() {
-        boolean hasKeys = false;
-        if (isEndpointSetUpComplete()) {
-            if (getMobileKeys() != null) {
-                try {
-                    List<OrigoMobileKey> keys = getMobileKeys().listMobileKeys();
-                    hasKeys = (keys != null) && !keys.isEmpty();
-                } catch (OrigoMobileKeysException e) {
-                    Log.e(TAG, "canStartScanning: listMobileKeys threw exception.");
-                    e.printStackTrace();
+        boolean canScan = false;
+        if (isAllowedToScan && isEndpointSetUpComplete()) {
+            if (isEndpointSetUpComplete()) {
+                if (getMobileKeys() != null) {
+                    try {
+                        List<OrigoMobileKey> keys = getMobileKeys().listMobileKeys();
+                        canScan = (keys != null) && !keys.isEmpty();
+                    } catch (OrigoMobileKeysException e) {
+                        Log.e(TAG, "canStartScanning: listMobileKeys threw exception.");
+                        e.printStackTrace();
+                    }
                 }
             }
         }
-        return hasKeys;
+        return canScan;
     }
 
     private void startScanning() {
@@ -567,7 +575,9 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     @Override
     public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION_PERMISSION_CODE) {
-            startScanning();
+            if (canScan()) {
+                startScanning();
+            }
             return true;
         }
         return false;

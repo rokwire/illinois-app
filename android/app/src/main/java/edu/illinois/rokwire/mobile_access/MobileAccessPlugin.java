@@ -142,6 +142,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
                     boolean isUnlockSoundEnabled = handleIsUnlockSoundEnabled();
                     result.success(isUnlockSoundEnabled);
                     break;
+                case Constants.MOBILE_ACCESS_ALLOW_SCANNING_KEY:
+                    handleAllowScanning(call.arguments);
+                    result.success(true);
+                    break;
                 default:
                     result.notImplemented();
                     break;
@@ -274,6 +278,14 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     private boolean handleIsUnlockSoundEnabled() {
         return apiFacade.isUnlockSoundEnabled();
+    }
+
+    private void handleAllowScanning(Object arguments) {
+        boolean allow = false;
+        if (arguments instanceof Boolean) {
+            allow = (Boolean) arguments;
+        }
+        apiFacade.allowScanning(allow);
     }
 
     //endregion

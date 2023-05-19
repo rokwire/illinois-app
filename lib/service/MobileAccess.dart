@@ -16,14 +16,20 @@
 
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 
-class MobileAccess with Service {
+class MobileAccess with Service implements NotificationsListener {
   static const String notifyDeviceRegistrationFinished  = "edu.illinois.rokwire.mobile_access.device.registration.finished";
 
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/mobile_access');
+
+  bool _isAllowedToScan = false;
 
   // Singleton
   static final MobileAccess _instance = MobileAccess._internal();
@@ -38,7 +44,21 @@ class MobileAccess with Service {
 
   @override
   void createService() {
+    super.createService();
     _methodChannel.setMethodCallHandler(_handleMethodCall);
+    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged, Auth2.notifyLoginChanged, FlexUI.notifyChanged]);
+  }
+
+  @override
+  Future<void> initService() async {
+    _checkAllowedScanning();
+    await super.initService();
+  }
+
+  @override
+  void destroyService() {
+    super.destroyService();
+    NotificationService().unsubscribe(this);
   }
 
   // APIs
@@ -173,6 +193,21 @@ class MobileAccess with Service {
     return result;
   }
 
+  Future<bool> _allowScanning(bool allow) async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('allowScanning', allow);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
+  void _checkAllowedScanning() {
+    _isAllowedToScan = Auth2().isLoggedIn && FlexUI().isIcardMobileAvailable;
+    _allowScanning(_isAllowedToScan);
+  }
+
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case "endpoint.register.finished":
@@ -213,6 +248,24 @@ class MobileAccess with Service {
         return MobileAccessBleRssiSensitivity.low;
       default:
         return null;
+    }
+  }
+  
+  // NotificationsListener
+  
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2.notifyLoginChanged) {
+      _checkAllowedScanning();
+    } else if (name == FlexUI.notifyChanged) {
+      _checkAllowedScanning();
+    } else if (name == AppLivecycle.notifyStateChanged) {
+      AppLifecycleState? state = (param is AppLifecycleState) ? param : null;
+      if (state == AppLifecycleState.resumed) {
+        _checkAllowedScanning();
+      } else {
+        _allowScanning(false);
+      }
     }
   }
 }

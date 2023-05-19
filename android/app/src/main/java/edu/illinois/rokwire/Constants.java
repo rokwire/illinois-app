@@ -41,6 +41,7 @@ public class Constants {
     public static final String MOBILE_ACCESS_IS_UNLOCK_VIBRATION_ENABLED_KEY = "isUnlockVibrationEnabled";
     public static final String MOBILE_ACCESS_ENABLE_UNLOCK_SOUND_KEY = "enableUnlockSound";
     public static final String MOBILE_ACCESS_IS_UNLOCK_SOUND_ENABLED_KEY = "isUnlockSoundEnabled";
+    public static final String MOBILE_ACCESS_ALLOW_SCANNING_KEY = "allowScanning";
     public static final String MOBILE_ACCESS_LOCK_SERVICE_CODES_DELIMITER = ",";
     public static final String MOBILE_ACCESS_LOCK_SERVICE_CODES_PREFS_KEY = "mobile_access_lock_service_codes";
     public static final String MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY = "mobile_access_twist_n_go_enabled";

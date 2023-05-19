@@ -140,6 +140,10 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
         //TBD: implement
         result([NSNumber numberWithBool:false]);
     }
+    else if ([call.method isEqualToString:@"allowScanning"]) {
+        //TBD: implement
+        result([NSNumber numberWithBool:false]);
+    }
 }
 
 // Implementation
