@@ -118,7 +118,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                         autofocus: true,
                         cursorColor: Styles().colors!.fillColorSecondary,
                         keyboardType: TextInputType.text,
-                        style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                        style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
@@ -162,7 +162,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                   children: <TextSpan>[
                     TextSpan(
                         text: _searchLabel,
-                        style: Styles().textStyles?.getTextStyle("widget.title.large.semi_fat"),
+                        style: Styles().textStyles?.getTextStyle("widget.title.large.semi_fat"),)
                   ],
                 ),
               )),

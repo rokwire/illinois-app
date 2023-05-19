@@ -94,7 +94,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                           autofocus: true,
                           cursorColor: Styles().colors!.fillColorSecondary,
                           keyboardType: TextInputType.text,
-                          style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                          style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                           decoration: InputDecoration(
                             border: InputBorder.none,
                           ),

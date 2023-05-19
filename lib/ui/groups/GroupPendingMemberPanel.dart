@@ -203,7 +203,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                     TextField(
                       controller: _reasonController,
                       decoration: InputDecoration(border: InputBorder.none),
-                      style: Styles().textStyles?.getTextStyle("widget.title.regular")
+                      style: Styles().textStyles?.getTextStyle("widget.title.regular"),
                       onChanged: (text){setState(() {});},
                       minLines: 4,
                       maxLines: 999,

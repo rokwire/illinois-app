@@ -261,7 +261,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                       onSubmitted: (_) => () {},
                       cursorColor: Styles().colors!.fillColorSecondary,
                       keyboardType: TextInputType.text,
-                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                       decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)))
                     )),
               ),

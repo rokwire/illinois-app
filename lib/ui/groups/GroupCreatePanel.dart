@@ -425,7 +425,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           hintText:  Localization().getStringEx("panel.groups_settings.link.hint", "Add URL"),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                       onChanged: (link){ _group!.webURL = link; setStateIfMounted(() {});},
                       maxLines: 1,
                     ),
@@ -482,7 +482,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       controller: _researchConsentDetailsController,
                       maxLines: 15,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                       onChanged: (text){ _group?.researchConsentDetails = text; setStateIfMounted(() { });},
                   )
                 ),

@@ -759,7 +759,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         controller: _researchConsentDetailsController,
                         maxLines: 15,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                        style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                        style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                         onChanged: (text){ _group?.researchConsentDetails = text; setStateIfMounted(() { });},
                     )
                   ),
@@ -882,7 +882,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         Expanded( child:
                         Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this a managed membership group?"),
-                            style: Styles().textStyles?.getTextStyle("widget.message.regular.fat.accent")))),
+                            style: Styles().textStyles?.getTextStyle("widget.message.regular.fat.accent"))),
                         GestureDetector(
                             onTap: _onTapAuthMan,
                             child: Padding(

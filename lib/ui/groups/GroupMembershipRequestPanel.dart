@@ -107,7 +107,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       Localization().getStringEx("panel.membership_request.label.group.description", 'This group asks you to answer the following question(s) for membership consideration.') :
       Localization().getStringEx("panel.membership_request.label.project.description", 'This Research Project wants you to answer the following question(s) for participation consideration.');
     return Padding(padding: EdgeInsets.only(left: outerPadding, right: outerPadding, top: outerPadding), child:
-      Text(headingText, style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin"))),
+      Text(headingText, style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin"))
     );
   }
 
