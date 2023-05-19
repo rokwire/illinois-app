@@ -152,7 +152,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
               Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin"))),
+              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin")),
             ),
           ]),
       ),
