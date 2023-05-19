@@ -60,7 +60,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -539,7 +538,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
-      Assets.notifyChanged,
       HomeSaferWidget.notifyNeedsVisiblity,
     ]);
     super.initState();
@@ -735,7 +733,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     else if (((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged) ||
-        (name == Assets.notifyChanged) ||
         (name == Storage.offsetDateKey) ||
         (name == Storage.useDeviceLocalTimeZoneKey))
     {
