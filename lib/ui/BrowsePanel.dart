@@ -66,6 +66,7 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -1191,6 +1192,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   void initState() {
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
+      Content.notifyContentImagesChanged,
     ]);
 
     widget.updateController?.stream.listen((String command) {
@@ -1261,7 +1263,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   }
 
   void _updateImage() {
-    Storage().browseToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.browse.tout');
+    Storage().browseToutImageUrl = _imageUrl = Content().randomImageUrl('browse.tout');
     Storage().browseToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
   }
 
@@ -1270,6 +1272,9 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   @override
   void onNotification(String name, dynamic param) {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+      _update();
+    }
+    else if (name == Content.notifyContentImagesChanged) {
       _update();
     }
   }

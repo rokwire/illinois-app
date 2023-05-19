@@ -1,0 +1,338 @@
+{
+	"rules": [
+		{
+			"date_start": null,
+			"date_end": "2020/02/05",
+			"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+			"NRV_text": "widget.voter.nrv_text.register_online.text",
+			"NRV_options": [
+				{
+					"label": "widget.voter.option.yes",
+					"value": "rv_yes"
+				},
+				{
+					"label": "widget.voter.option.register_now",
+					"value": "nrv_place"
+				}
+			],
+			"NRV_place_title": "widget.voter.nrv_place_title.place_to_vote.question",
+			"NRV_place_options": [
+				{
+					"label": "widget.voter.option.champaign_county",
+					"value": "https://ova.elections.il.gov/"
+				},
+				{
+					"label": "widget.voter.option.elsewhere",
+					"value": "https://illinois.turbovote.org/"
+				}
+			],
+			"NRV_alert": "widget.voter.nrv_alert.text",
+			"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+			"RV_place_options": [
+				{
+					"label": "widget.voter.option.champaign_county",
+					"value": "champaign"
+				},
+				{
+					"label": "widget.voter.option.elsewhere",
+					"value": "elsewhere"
+				}
+			],
+			"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+			"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+			"RV_options": [
+				{
+					"label": "widget.voter.option.yes",
+					"value": "vbm_yes"
+				},
+				{
+					"label": "widget.voter.option.vote_by_mail",
+					"value": "rv_url"
+				},
+				{
+					"label": "widget.voter.option.no_thanks",
+					"value": "vbm_no"
+				}
+			],
+			"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside"
+		},
+		{
+			"date_start": "2020/02/06",
+			"date_end": "2020/02/18",
+			"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+			"NRV_text": "widget.voter.nrv_text.register_online.text",
+			"NRV_options": [
+				{
+					"label": "widget.voter.option.yes",
+					"value": "rv_yes"
+				},
+				{
+					"label": "widget.voter.option.register_now",
+					"value": "nrv_place"
+				}
+			],
+			"NRV_place_title": "widget.voter.nrv_place_title.place_to_vote.question",
+			"NRV_place_options": [
+				{
+					"label": "widget.voter.option.champaign_county",
+					"value": "https://ova.elections.il.gov/"
+				},
+				{
+					"label": "widget.voter.option.elsewhere",
+					"value": "https://illinois.turbovote.org/"
+				}
+			],
+			"NRV_alert": "widget.voter.nrv_alert.text",
+			"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+			"RV_place_options": [
+				{
+					"label": "widget.voter.option.champaign_county",
+					"value": "champaign"
+				},
+				{
+					"label": "widget.voter.option.elsewhere",
+					"value": "elsewhere"
+				}
+			],
+			"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+			"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+			"RV_options": [
+				{
+					"label": "widget.voter.option.yes",
+					"value": "vbm_yes"
+				},
+				{
+					"label": "widget.voter.option.vote_by_mail",
+					"value": "rv_url"
+				},
+				{
+					"label": "widget.voter.option.no_thanks",
+					"value": "vbm_no"
+				}
+			],
+			"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside",
+			"RV_alert": "widget.voter.rv_alert.vote_early.text",
+			"VBM_text": "widget.voter.vbm_text.early_voting_clerk.text",
+			"VBM_button": "widget.voter.option.more_info",
+			"VBM_url": "https://www.champaigncountyclerk.com/elections/early-voting"
+		},
+		{
+			"date_start": "2020/02/19",
+			"date_end": "2020/03/01",
+			"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+			"NRV_text": "widget.voter.nrv_text.register_vote_today.text",
+			"NRV_options": [
+				{
+					"label": "widget.voter.option.yes",
+					"value": "rv_yes"
+				}
+			],
+			"NRV_alert": "widget.voter.nrv_alert.text",
+			"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+			"RV_place_options": [
+				{
+					"label": "widget.voter.option.champaign_county",
+					"value": "champaign"
+				},
+				{
+					"label": "widget.voter.option.elsewhere",
+					"value": "elsewhere"
+				}
+			],
+			"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+			"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+			"RV_options": [
+				{
+					"label": "widget.voter.option.yes",
+					"value": "vbm_yes"
+				},
+				{
+					"label": "widget.voter.option.vote_by_mail",
+					"value": "rv_url"
+				},
+				{
+					"label": "widget.voter.option.no_thanks",
+					"value": "vbm_no"
+				}
+			],
+			"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside",
+			"RV_alert": "widget.voter.rv_alert.vote_early.text",
+			"VBM_text": "widget.voter.vbm_text.early_voting_clerk.text",
+			"VBM_button": "widget.voter.option.more_info",
+			"VBM_url": "https://www.champaigncountyclerk.com/elections/early-voting"
+		},
+		{
+			"date_start": "2020/03/02",
+			"date_end": "2020/03/11",
+			"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+			"NRV_text": "widget.voter.nrv_text.register_vote_today.text",
+			"NRV_options": [
+				{
+					"label": "widget.voter.option.yes",
+					"value": "rv_yes"
+				}
+			],
+			"NRV_alert": "widget.voter.nrv_alert.text",
+			"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+			"RV_place_options": [
+				{
+					"label": "widget.voter.option.champaign_county",
+					"value": "champaign"
+				},
+				{
+					"label": "widget.voter.option.elsewhere",
+					"value": "elsewhere"
+				}
+			],
+			"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+			"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+			"RV_options": [
+				{
+					"label": "widget.voter.option.yes",
+					"value": "vbm_yes"
+				},
+				{
+					"label": "widget.voter.option.vote_by_mail",
+					"value": "rv_url"
+				},
+				{
+					"label": "widget.voter.option.no_thanks",
+					"value": "vbm_no"
+				}
+			],
+			"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside",
+			"RV_alert": "widget.voter.rv_alert.vote_early.text",
+			"VBM_text": "widget.voter.vbm_text.no_need_to_wait.text",
+			"VBM_button": "widget.voter.option.more_info",
+			"VBM_url": "https://www.champaigncountyclerk.com/elections/early-voting"
+		},
+		{
+			"date_start": "2020/03/12",
+			"date_end": "2020/03/16",
+			"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+			"NRV_text": "widget.voter.nrv_text.grace_period_open.text",
+			"NRV_options": [
+				{
+					"label": "widget.voter.option.yes",
+					"value": "rv_yes"
+				}
+			],
+			"NRV_alert": "widget.voter.nrv_alert.text",
+			"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+			"RV_place_options": [
+				{
+					"label": "widget.voter.option.champaign_county",
+					"value": "champaign"
+				},
+				{
+					"label": "widget.voter.option.elsewhere",
+					"value": "elsewhere"
+				}
+			],
+			"RV_title": "widget.voter.rv_title.early_voting.text",
+			"RV_text": "widget.voter.rv_text.vote_now.text",
+			"RV_options": [
+				{
+					"label": "widget.voter.option.more_info",
+					"value": "rv_url"
+				}
+			],
+			"RV_url": "https://www.champaigncountyclerk.com/elections/early-voting",
+			"RV_alert": "widget.voter.rv_alert.vote_early.text",
+			"hide_for_period": true
+		},
+		{
+			"date_start": "2020/05/18"
+		}
+	],
+	"strings": {
+		"en": {
+			"widget.voter.button.close.label": "Close",
+			"widget.voter.option.yes": "Yes",
+			"widget.voter.option.register_now": "Register Now",
+			"widget.voter.option.champaign_county": "Champaign County",
+			"widget.voter.option.elsewhere": "Elsewhere",
+			"widget.voter.option.vote_by_mail": "Vote by Mail",
+			"widget.voter.option.no_thanks": "No Thanks",
+			"widget.voter.option.descr.vote_in_person": "I want to vote in person",
+			"widget.voter.option.more_info": "More Info",
+			"widget.voter.nrv_title.registered_to_vote.question": "Are you registered to vote?",
+			"widget.voter.nrv_text.register_online.text": "Register online to vote for the 2020 General Primary Election on Tuesday, March 17th!",
+			"widget.voter.nrv_place_title.place_to_vote.question": "Where do you want to vote?",
+			"widget.voter.rv_place_title.place_to_vote.question": "Where are you registered to vote?",
+			"widget.voter.rv_title.signed_to_vote_by_mail.question": "Are you signed up to vote by mail?",
+			"widget.voter.rv_text.vote_by_mail_ballot.text": "Did you know you qualify for a vote by mail ballot? You can fill out your ballot at home, drop it in the mail (postage is paid!), and you've done your civic duty from the comfort of your couch!",
+			"widget.voter.vbm_text.early_voting_clerk.text": "Early Voting is open at the Clerk's office at this time.",
+			"widget.voter.nrv_text.register_vote_today.text": "In Champaign, you can register and vote today! Bring a U of I or IL state id and proof of address, any digital bill or shipping label on your phone works, and you can register and vote right now. Grace period voting is open at the Champaign County Clerk's office now or at the Illini Union and ARC starting 3/2/20.",
+			"widget.voter.vbm_text.no_need_to_wait.text": "No need to wait for Election Day, you can vote on campus starting March 6th. Early voting locations will be open every day at the Illini Union and the ARC. Click here for times and directions.",
+			"widget.voter.nrv_text.grace_period_open.text": "In Champaign, you can register and vote today! Bring a U of I or IL state id and proof of address, any digital bill or shipping label on your phone works, and you can register and vote right now. Grace period voting is open at the Illini Union and ARC every day.",
+			"widget.voter.rv_title.early_voting.text": "Early Voting",
+			"widget.voter.rv_text.vote_now.text": "No need to wait for Election Day - vote right now! Early voting locations are open at the Illini Union and the ARC every day. Click here for times and directions.",
+			"widget.voter.nrv_text.not_too_late.text": "It's not too late to register and vote in the election! Go to the Illini Union or the ACR with a U of I or IL state id and proof of address, any digital bill or shipping label on your phone works, and you can register and vote right now.",
+			"widget.voter.rv_title.election_day.text": "It's Election Day! Have you Voted?",
+			"widget.voter.rv_text.polls_open.text": "Polls are open at the Illini Union and ARC until 7PM tonight. Click here to check your voter registration status, find your home polling location, and see your ballot.",
+			"widget.voter.nrv_alert.text": "You are at the %s and can register now",
+			"widget.voter.rv_alert.vote_early.text": "You are at the %s and can vote early",
+			"widget.voter.rv_alert.vote_now.text": "You are at the %s and can vote now"
+		},
+		"es": {
+			"widget.voter.button.close.label": "Cerca",
+			"widget.voter.option.yes": "si",
+			"widget.voter.option.register_now": "Regístrate ahora",
+			"widget.voter.option.champaign_county": "Champaign County",
+			"widget.voter.option.elsewhere": "En otra parte",
+			"widget.voter.option.vote_by_mail": "Votar por correo",
+			"widget.voter.option.no_thanks": "No, gracias",
+			"widget.voter.option.descr.vote_in_person": "Quiero votar en persona",
+			"widget.voter.option.more_info": "Más información",
+			"widget.voter.nrv_title.registered_to_vote.question": "Estás registrado para votar?",
+			"widget.voter.nrv_text.register_online.text": "¡Regístrese en línea para votar por las elecciones primarias generales de 2020 el martes 17 de marzo!",
+			"widget.voter.nrv_place_title.place_to_vote.question": "¿Dónde quieres votar?",
+			"widget.voter.rv_place_title.place_to_vote.question": "¿Dónde estás registrado para votar?",
+			"widget.voter.rv_title.signed_to_vote_by_mail.question": "¿Estás registrado para votar por correo?",
+			"widget.voter.rv_text.vote_by_mail_ballot.text": "¿Sabía que califica para una boleta de votación por correo? Puede completar su boleta en casa, enviarla por correo (¡se paga el franqueo!) Y ha cumplido con su deber cívico desde la comodidad de su sofá.",
+			"widget.voter.vbm_text.early_voting_clerk.text": "La votación anticipada está abierta en la oficina del secretario en este momento.",
+			"widget.voter.nrv_text.register_vote_today.text": "¡En Champaign, puede registrarse y votar hoy! Traiga una identificación de estado de U o IL y comprobante de domicilio, cualquier factura digital o etiqueta de envío en su teléfono funciona, y puede registrarse y votar ahora mismo. La votación del período de gracia está abierta en la oficina del secretario del condado de Champaign ahora o en la Unión Illini y ARC a partir del 20/03/20.",
+			"widget.voter.vbm_text.no_need_to_wait.text": "No es necesario esperar al día de las elecciones, puede votar en el campus a partir del 6 de marzo. Los lugares de votación temprana estarán abiertos todos los días en Illini Union y ARC. Haga clic aquí para horarios y direcciones.",
+			"widget.voter.nrv_text.grace_period_open.text": "¡En Champaign, puede registrarse y votar hoy! Traiga una identificación de estado de U o IL y comprobante de domicilio, cualquier factura digital o etiqueta de envío en su teléfono funciona, y puede registrarse y votar ahora mismo. La votación del período de gracia está abierta en Illini Union y ARC todos los días.",
+			"widget.voter.rv_title.early_voting.text": "Votación Temprana",
+			"widget.voter.rv_text.vote_now.text": "No es necesario esperar al día de las elecciones: ¡vote ahora mismo! Los lugares de votación temprana están abiertos en Illini Union y ARC todos los días. Haga clic aquí para horarios y direcciones.",
+			"widget.voter.nrv_text.not_too_late.text": "¡No es demasiado tarde para registrarse y votar en las elecciones! Vaya a Illini Union o ACR con una identificación de estado U o I y IL y comprobante de domicilio, cualquier factura digital o etiqueta de envío en su teléfono funciona, y puede registrarse y votar ahora mismo.",
+			"widget.voter.rv_title.election_day.text": "¡Es el día de las elecciones! ¿Has votado?",
+			"widget.voter.rv_text.polls_open.text": "Las urnas están abiertas en Illini Union y ARC hasta las 7 p.m. de esta noche. Haga clic aquí para verificar su estado de registro de votante, encontrar el lugar de votación de su hogar y ver su boleta.",
+			"widget.voter.nrv_alert.text": "Estás en %s y puedes registrarte ahora",
+			"widget.voter.rv_alert.vote_early.text": "Estás en el %s y puedes votar temprano",
+			"widget.voter.rv_alert.vote_now.text": "Estás en el %s y puedes votar ahora."
+		},
+		"zh": {
+			"widget.voter.button.close.label": "關",
+			"widget.voter.option.yes": "是",
+			"widget.voter.option.register_now": "現在註冊",
+			"widget.voter.option.champaign_county": "尚佩恩县",
+			"widget.voter.option.elsewhere": "別處",
+			"widget.voter.option.vote_by_mail": "郵寄投票",
+			"widget.voter.option.no_thanks": "不用了，謝謝",
+			"widget.voter.option.descr.vote_in_person": "我想親自投票",
+			"widget.voter.option.more_info": "更多信息",
+			"widget.voter.nrv_title.registered_to_vote.question": "您是否已註冊投票？",
+			"widget.voter.nrv_text.register_online.text": "在線註冊，以便在3月17日星期二為2020年大選投票！",
+			"widget.voter.nrv_place_title.place_to_vote.question": "您想在哪裡投票？",
+			"widget.voter.rv_place_title.place_to_vote.question": "您在哪裡註冊投票？",
+			"widget.voter.rv_title.signed_to_vote_by_mail.question": "您是否已註冊通過郵寄投票？",
+			"widget.voter.rv_text.vote_by_mail_ballot.text": "您知道您有資格通過郵件投票進行投票嗎？ 您可以在家中填寫選票，將其放入郵件中（郵資已付！），您便可以在沙發上舒適地完成公民職責！",
+			"widget.voter.vbm_text.early_voting_clerk.text": "早期投票在秘書辦公室開放。",
+			"widget.voter.nrv_text.register_vote_today.text": "在尚佩恩，您可以立即註冊並投票！帶上我的U of I或IL州ID和地址證明，電話上的任何數字賬單或運輸標籤都可以使用，您可以立即註冊並投票。 寬限期投票現在在尚佩恩縣書記員辦公室開放，或者從20/2/3開始在Illini Union和ARC進行。",
+			"widget.voter.vbm_text.no_need_to_wait.text": "無需等待選舉日，您可以從3月6日開始在校園投票。 提早投票的地點每天在Illini Union和ARC開放。 單擊此處了解時間和路線。",
+			"widget.voter.nrv_text.grace_period_open.text": "在尚佩恩，您可以立即註冊並投票！帶上我的U of I或IL州ID和地址證明，電話上的任何數字賬單或運輸標籤都可以使用，您可以立即註冊並投票。 寬限期投票每天在Illini Union和ARC開放。",
+			"widget.voter.rv_title.early_voting.text": "早期投票",
+			"widget.voter.rv_text.vote_now.text": "無需等待選舉日-立即投票！ 每天在Illini Union和ARC開放早期投票地點。 單擊此處了解時間和路線。",
+			"widget.voter.nrv_text.not_too_late.text": "在選舉中註冊並投票還為時不晚！ 轉到帶有U of I或IL州ID和地址證明的Illini Union或ACR，電話上的任何數字賬單或運輸標籤都可以使用，您可以立即註冊並投票。",
+			"widget.voter.rv_title.election_day.text": "今天是選舉日！ 你投票了嗎？",
+			"widget.voter.rv_text.polls_open.text": "投票將在伊利尼聯盟（Illini Union）和ARC進行，直到今天晚上7點。 單擊此處查看您的選民註冊狀態，找到您的家庭投票地點，並查看您的投票。",
+			"widget.voter.nrv_alert.text": "您正在 %s 並可以立即註冊",
+			"widget.voter.rv_alert.vote_early.text": "您在 %s，可以提前投票",
+			"widget.voter.rv_alert.vote_now.text": "您正在 %s 上，現在可以投票"
+		}
+	}
+}
+
