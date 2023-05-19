@@ -15,6 +15,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart' as uiuc;
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
@@ -706,7 +707,7 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  int get _videoTutorialsCount => Content().videos?.length ?? 0;
+  int get _videoTutorialsCount => uiuc.Content().videos?.length ?? 0;
 
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
@@ -730,7 +731,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   List<Video>? _getVideoTutorials() {
-    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
+    Map<String, dynamic>? videoTutorials = uiuc.Content().videoTutorials;
     if (videoTutorials == null) {
       return null;
     }
