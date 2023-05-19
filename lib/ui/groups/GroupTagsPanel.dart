@@ -162,7 +162,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
                   onSubmitted: (_) => () {},
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                  style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
