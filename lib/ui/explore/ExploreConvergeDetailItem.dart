@@ -78,10 +78,7 @@ class ExploreConvergeDetailItem extends StatelessWidget{
     return Text(
         eventConvergeScore.toString() + "% ",
 //           + Localization().getString("widget.card.label.converge"),
-        style: TextStyle(
-            fontFamily: Styles().fontFamilies!.medium,
-            fontSize: 14,
-            color: Styles().colors!.mediumGray)
+        style: Styles().textStyles?.getTextStyle("widget.message.light.small.semi_fat")
     );
   }
 

@@ -327,7 +327,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   onChanged: (text) => setState((){_group?.title = text;}) ,
                   maxLines: 1,
                   decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                  style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                  style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 )),
           ),
         ],
@@ -375,7 +375,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       controller: _groupDescriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
                     )),
             )],)
           ),
@@ -408,10 +408,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   padding: EdgeInsets.only(bottom: 8, top:24),
                   child: Text(
                     labelTitle,
-                    style: TextStyle(
-                        color: Styles().colors!.fillColorPrimary,
-                        fontSize: 12,
-                        fontFamily: Styles().fontFamilies!.bold,),
+                    style: Styles().textStyles?.getTextStyle("widget.title.tiny")
                   ),
                 ),
                 Padding(
@@ -428,10 +425,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           hintText:  Localization().getStringEx("panel.groups_settings.link.hint", "Add URL"),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
-                      style: TextStyle(
-                          color: Styles().colors!.textBackground,
-                          fontSize: 16,
-                          fontFamily: Styles().fontFamilies!.regular),
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                       onChanged: (link){ _group!.webURL = link; setStateIfMounted(() {});},
                       maxLines: 1,
                     ),
@@ -446,14 +440,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             onTap: _onTapConfirmLinkUrl,
             child: Text(
               Localization().getStringEx("panel.groups_settings.link.button.confirm.link.title",'Confirm URL'),
-              style: TextStyle(
-                  color: Styles().colors!.fillColorPrimary,
-                  fontSize: 16,
-                  fontFamily: Styles().fontFamilies!.medium,
-                  decoration: TextDecoration.underline,
-                  decorationThickness: 1,
-                  decorationColor:
-                  Styles().colors!.fillColorSecondary),
+              style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")
             ),
           )
       ),
@@ -495,7 +482,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       controller: _researchConsentDetailsController,
                       maxLines: 15,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                       onChanged: (text){ _group?.researchConsentDetails = text; setStateIfMounted(() { });},
                   )
                 ),
@@ -666,7 +653,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Semantics(container: true, child:
           Container(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 12),
             child:Text(longDescription ?? '',
-              style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular, letterSpacing: 1),
+              style: Styles().textStyles?.getTextStyle("widget.item.small.thin.spaced")
             ),)),
         Container(height: _isPrivateGroup ? 5 : 40)
       ],);
@@ -701,11 +688,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       child: Text(
                           Localization()
                               .getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
-                          style: TextStyle(
-                              color: Styles().colors!.textBackground,
-                              fontSize: 14,
-                              fontFamily: Styles().fontFamilies!.regular,
-                              letterSpacing: 1))))
+                          style: Styles().textStyles?.getTextStyle("widget.item.small.thin.spaced"))))
             ])));
   }
 
@@ -753,7 +736,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 Expanded(
                     child: Text(
                   title,
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+                  style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                 )),
                 Padding(
                   padding: EdgeInsets.only(left: 5),
@@ -764,7 +747,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   padding: EdgeInsets.only(right: 42, top: 4),
                   child: Text(
                     description,
-                    style: TextStyle(color: Styles().colors!.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                    style: Styles().textStyles?.getTextStyle("widget.detail.light.regular")
                   ))
             ])));
   }
@@ -884,7 +867,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       controller: _authManGroupNameController,
                       maxLines: 5,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
                     ))
               ]))
         ]));
@@ -1089,7 +1072,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
           Expanded(child:
             Container(padding: EdgeInsets.only(left: 14, right: 4), child:
-              Text(title, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold,),)
+              Text(title, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),)
             ),
           ),
         ]),
@@ -1110,7 +1093,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Expanded(child:
-              Text(title ?? "", semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),)
+              Text(title ?? "", semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"))
             ),
             GestureDetector(
               onTap: ((onTap != null)) ?() {

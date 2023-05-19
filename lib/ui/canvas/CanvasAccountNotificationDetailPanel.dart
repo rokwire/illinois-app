@@ -60,15 +60,15 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
                     child: Text(StringUtils.ensureNotEmpty(widget.notification.subject),
                         maxLines: 5,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant)))
+                        style:  Styles().textStyles?.getTextStyle("panel.canvas.text.medium")))
               ]),
               Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Row(children: [
                     Expanded(
                         child: Text(StringUtils.ensureNotEmpty(widget.notification.startAtDisplayDate),
-                            style:
-                                TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)))
+                            style:  Styles().textStyles?.getTextStyle("widget.info.small") 
+                          ))
                   ])),
               Visibility(
                   visible: StringUtils.isNotEmpty(widget.notification.message),

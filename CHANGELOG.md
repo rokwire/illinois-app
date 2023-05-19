@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use "content_id" as guide article identifier [#3287](https://github.com/rokwire/illinois-app/issues/3287).
+- Use Styles().textStyles everywhere [#2932](https://github.com/rokwire/illinois-app/issues/2932.)
 
 ## [5.0.2] - 2023-05-17
 ### Added

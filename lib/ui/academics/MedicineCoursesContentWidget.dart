@@ -94,7 +94,7 @@ class _MedicineCoursesContentWidgetState extends State<MedicineCoursesContentWid
     return _buildCenterWidget(
         widget: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Text(message, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            child: Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildCoursesContent() {
