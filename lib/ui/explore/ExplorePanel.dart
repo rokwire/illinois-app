@@ -887,7 +887,7 @@ class ExplorePanelState extends State<ExplorePanel>
       Center(child:
         Column(children: <Widget>[
           Container(height: MediaQuery.of(context).size.height / 5),
-          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: TextStyle(fontSize: 16),),
+          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles?.getTextStyle("widget.message.regular")),
           Container(height: 8),
           Text(message),
           Container(height: MediaQuery.of(context).size.height / 5 * 3),
@@ -1148,7 +1148,7 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
     showInstructionsPopup = (widget.showPopupStorageKey != null) ? Storage().getBoolWithName(widget.showPopupStorageKey!) : null;
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     String dontShow = Localization().getStringEx("panel.explore.instructions.mtd.dont_show.msg", "Don't show me this again.");

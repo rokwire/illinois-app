@@ -93,11 +93,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         title: Text(
           Localization()
               .getStringEx('panel.image_edit.header.title', 'Select Image'),
-          style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1),
+          style: Styles().textStyles?.getTextStyle("widget.title.light.regular.extra_fat.spaced")
         ),
         centerTitle: false);
   }
@@ -169,7 +165,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               padding: EdgeInsets.all(15.0),
               child: Text(
                 "Image Source",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary),
+                style: Styles().textStyles?.getTextStyle("widget.title.small"),
               ),
             ),
             Padding(
@@ -354,7 +350,7 @@ class AppDialogButtonState extends State<AppDialogButton> {
       onPressed: widget.onPressed,
       child: Text(
         widget.buttonTitle,
-        style: TextStyle(color: Styles().colors!.fillColorPrimary!, fontSize: 18.0),
+        style: Styles().textStyles?.getTextStyle("widget.button.title.regular.thin")
       ),
     );
   }

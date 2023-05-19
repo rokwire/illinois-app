@@ -149,10 +149,10 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           children:<Widget>[
             Row(children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 4), child: Styles().images?.getImage('campus-tools', excludeFromSemantics: true)),
-              Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+              Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
+              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin"))),
             ),
           ]),
       ),
@@ -179,7 +179,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   Widget _buildStep({required int index}) {
     List<Widget> stepContent = [
       Padding(padding: EdgeInsets.only(bottom: 4),
-        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.tiny")),
       ),
       Stack(children: <Widget>[
         Container(color: Styles().colors!.white,
@@ -188,14 +188,14 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
             controller: _controllers![index],
             focusNode: _focusNodes![index],
             decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-            style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground,),
+            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
           ),
         ),
         Align(alignment: Alignment.topRight,
           child: GestureDetector(onTap: () { _removeStep(index: index); },
             child: Container(width: 36, height: 36,
               child: Align(alignment: Alignment.center,
-                child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                child: Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")),
               ),
             ),
           ),
@@ -345,11 +345,11 @@ class _EventCard extends StatelessWidget {
           Padding(padding: EdgeInsets.all(16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(bottom: 8), child: 
-                Text(event!.title!,  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary),),
+                Text(event!.title!,  style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 8), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
-                Text(event?.timeDisplayString ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),),
+                Text(event?.timeDisplayString ?? '',  style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
               ],)),
             ],)
           ),
@@ -357,7 +357,7 @@ class _EventCard extends StatelessWidget {
             child: GestureDetector(onTap: () { onTapRemove!(); },
               child: Container(width: 36, height: 36,
                 child: Align(alignment: Alignment.center,
-                  child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                  child: Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")),
                 ),
               ),
             ),

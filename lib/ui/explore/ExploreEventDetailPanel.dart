@@ -199,11 +199,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         Expanded(child:
           Text(
             (category != null) ? category.toUpperCase() : "",
-            style: TextStyle(
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 14,
-                color: Styles().colors!.fillColorPrimary,
-                letterSpacing: 1),
+            style: Styles().textStyles?.getTextStyle("widget.title.small.fat.spaced")
           ),
         ),
         Visibility(visible: starVisible, child: Container(child: Padding(padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
@@ -238,9 +234,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Expanded(
               child: Text(
                 widget.event!.exploreTitle!,
-                style: TextStyle(
-                    fontSize: 24,
-                    color: Styles().colors!.fillColorPrimary),
+                style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
               ),
             ),
           ],
@@ -259,10 +253,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Expanded(
               child: Text(
                 eventSponsorText,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Styles().colors!.textBackground,
-                    fontFamily: Styles().fontFamilies!.bold),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")
               ),
             ),
           ],
@@ -349,10 +340,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   child: Styles().images?.getImage('calendar', excludeFromSemantics: true),
                 ),
                 Expanded(child: Text(displayTime,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground))),
+                    style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
               ],
             ),
           )
@@ -369,9 +357,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     String locationText = widget.event?.getLongDisplayLocation(_locationData) ?? "";
     bool canHandleLocation = (widget.event?.location?.isLocationCoordinateValid == true);
-    TextStyle locationTextStyle = canHandleLocation ?
-      TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary, decoration: TextDecoration.underline, decorationThickness: 1, decorationColor: Styles().colors!.fillColorSecondary) :
-      TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary);
+    TextStyle? locationTextStyle = canHandleLocation ? Styles().textStyles?.getTextStyle("widget.button.title.small.semi_bold.underline") : Styles().textStyles?.getTextStyle("widget.button.title.small.semi_bold");
     String semanticsLabel = "$eventType, $locationText";
     String semanticsHint = Localization().getStringEx('panel.explore_detail.button.directions.hint', '');
     
@@ -383,7 +369,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               Padding(padding: EdgeInsets.only(right: 10), child:
                 Styles().images?.getImage("location", excludeFromSemantics: true),
               ),
-              Text(eventType, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+              Text(eventType, style: Styles().textStyles?.getTextStyle("widget.item.regular")),
             ]),
             Container(height: 4,),
             Visibility(visible: StringUtils.isNotEmpty(locationText), child:
@@ -418,12 +404,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               Padding(padding: EdgeInsets.only(right: 10), child:
                 Styles().images?.getImage("laptop", excludeFromSemantics: true),
               ),
-              Text(eventType, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+              Text(eventType, style: Styles().textStyles?.getTextStyle("widget.item.regular")),
             ]),
             Container(height: 4,),
             Visibility(visible: canHandleLink, child:
               Container(padding: EdgeInsets.only(left: 30), child:
-                Text(linkUrl ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary, decoration: TextDecoration.underline, decorationThickness: 1, decorationColor: Styles().colors!.fillColorSecondary),)
+                Text(linkUrl ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_bold.underline"))
               ),
             ),
           ],),
@@ -446,7 +432,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Styles().images?.getImage('privacy', excludeFromSemantics: true)),
                 Expanded(
-                    child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                    child: Text(privacyText, style: Styles().textStyles?.getTextStyle("widget.item.regular")))
               ])
             ])));
   }
@@ -473,10 +459,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                       child: Styles().images?.getImage('cost', excludeFromSemantics: true),
                     ),
                       Expanded(child:Text(priceText,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            fontSize: 16,
-                            color: Styles().colors!.textBackground))),
+                        style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
 
                     ]),
                     !hasAdditionalDescription? Container():
@@ -484,10 +467,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                       padding: EdgeInsets.only(left: 28),
                       child: Row(children: [
                       Expanded(child:Text(additionalDescription!,
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.medium,
-                              fontSize: 16,
-                              color: Styles().colors!.textBackground))),
+                          style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
 
                     ])),
                   ],
@@ -513,11 +493,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true)),
-              Expanded(child: Text(widget.superEventTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium,
-                  fontSize: 16,
-                  color: Styles().colors!.fillColorPrimary,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Styles().colors!.fillColorSecondary))),
+              Expanded(child: Text(widget.superEventTitle ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline"))),
             ],
           ),
         )
@@ -544,9 +520,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 Container(width: 5,),
                 Expanded(
                   child: Text(capitalizedTags.join(', '),
-                    style: TextStyle(
-                      fontFamily: Styles().fontFamilies!.regular
-                    ),
+                    style: Styles().textStyles?.getTextStyle("widget.text.regular")
                   ),
                 )
               ],
@@ -567,9 +541,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Text(
           subTitle!,
-          style: TextStyle(
-              fontSize: 20,
-              color: Styles().colors!.textBackground),
+          style: Styles().textStyles?.getTextStyle("widget.item.large")
         ));
   }
 
@@ -606,7 +578,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         }
         contactDetails += contact.phone!;
       }
-      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: TextStyle(fontFamily: Styles().fontFamilies!.regular))));
+      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: Styles().textStyles?.getTextStyle("widget.text.regular"))));
     }
     return Padding(padding: EdgeInsets.only(left: 30), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contactList));
   }
@@ -624,7 +596,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         child: HtmlWidget(
             updatedDesc,
             onTapUrl : (url) { _onTapWebButton(url, 'Description'); return true; },
-            textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+            textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
         )
     );
   }
@@ -645,10 +617,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               padding: EdgeInsets.only(left: 12),
               child: Text(
                 Localization().getStringEx('panel.explore_detail.label.event_preview', 'Event Preview'),
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontFamily: Styles().fontFamilies!.extraBold),
+                style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat")
               ),
             )
           ],
