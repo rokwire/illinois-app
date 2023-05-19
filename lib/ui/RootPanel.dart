@@ -25,6 +25,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
@@ -162,6 +163,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Groups.notifyGroupDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
+      Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
       Localization.notifyStringsUpdated,
@@ -242,6 +244,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Appointments.notifyAppointmentDetail) {
       _onAppointmentDetail(param);
+    }
+    else if (name == Guide.notifyGuide) {
+      _onGuide();
     }
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
@@ -718,6 +723,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     String? appointmentId = (content != null) ? JsonUtils.stringValue(content['appointment_id']) : null;
     if (StringUtils.isNotEmpty(appointmentId)) {
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+    }
+  }
+
+  Future<void> _onGuide() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+          CampusGuidePanel()));
+    });
+    if (mounted) {
+      setState(() {}); // Force the postFrameCallback invokation.
     }
   }
 

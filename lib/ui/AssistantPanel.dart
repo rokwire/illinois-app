@@ -107,6 +107,16 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         "Hey there! I'm the Illinois Assistant. "
             "You can ask me anything about the University. "
             "Type a question below to get started.")));
+
+    _messages.add(Message(content: Localization().getStringEx('',
+        "Where can I find out more about the resources available on campus?"),
+        user: true));
+
+    _messages.add(Message(content: Localization().getStringEx('',
+        "There are many resources available for students on campus. "
+            "Try checking out the Campus Guide for more information."),
+        link: Link(name: "Campus Guide", link: '${DeepLink().appUrl}/guide',
+            iconKey: 'guide')));
     
     _contentCodes = buildContentCodes();
     super.initState();
@@ -172,7 +182,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
 
     for (Message message in _messages) {
       contentList.add(_buildChatBubble(message));
-      contentList.add(SizedBox(height: 8.0));
+      contentList.add(SizedBox(height: 16.0));
     }
 
     return contentList;
@@ -195,19 +205,103 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
 
   Widget _buildChatBubble(Message message) {
     EdgeInsets bubblePadding = message.user ? const EdgeInsets.only(left: 32.0) :
-      const EdgeInsets.only(right: 32.0);
+      const EdgeInsets.only(right: 0);
+    Link? link = message.link;
     return Align(
-      alignment: AlignmentDirectional.centerEnd,
-      child: Padding(
-        padding: bubblePadding,
-        child: Material(
-          color: message.user ? Styles().colors?.surface : Styles().colors?.fillColorPrimary,
-          borderRadius: BorderRadius.circular(16.0),
+      alignment: message.user ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: bubblePadding,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Material(
+                    color: message.user ? Styles().colors?.surface : Styles().colors?.fillColorPrimary,
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SelectableText(message.content,
+                        style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
+                          Styles().textStyles?.getTextStyle('widget.title.light.regular')),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: !message.user,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [// TODO: Handle material icons in styles images
+                      IconButton(onPressed: () {
+                        setState(() {
+                          if (message.feedback == MessageFeedback.good) {
+                            message.feedback = null;
+                          } else {
+                            message.feedback = MessageFeedback.good;
+                          }
+                        });
+                      },
+                        icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
+                            size: 24, color: Styles().colors?.fillColorPrimary),
+                        iconSize: 24,
+                        splashRadius: 24),
+                      IconButton(onPressed: () {
+                        setState(() {
+                          if (message.feedback == MessageFeedback.bad) {
+                            message.feedback = null;
+                          } else {
+                            message.feedback = MessageFeedback.bad;
+                          }
+                        });
+                      },
+                        icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down :Icons.thumb_down_outlined,
+                            size: 24, color: Styles().colors?.fillColorPrimary),
+                        iconSize: 24,
+                        splashRadius: 24),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Visibility(visible: link != null, child: Padding(
+            padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0),
+            child: _buildLinkWidget(link),
+          ))
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLinkWidget(Link? link) {
+    if (link == null) {
+      return Container();
+    }
+    EdgeInsets padding = const EdgeInsets.only(right: 32.0);
+    return Padding(
+      padding: padding,
+      child: Material(
+        color: Styles().colors?.fillColorPrimary,
+        borderRadius: BorderRadius.circular(8.0),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8.0),
+          onTap: () {
+            if (DeepLink().isAppUrl(link.link)) {
+              DeepLink().launchUrl(link.link);
+            }
+          },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(message.content,
-              style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
-                Styles().textStyles?.getTextStyle('widget.title.light.regular')),
+            child: Row(
+              children: [
+                Visibility(visible: link.iconKey != null, child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Styles().images?.getImage(link.iconKey ?? '') ?? Container(),
+                )),
+                Text(link.name, style: Styles().textStyles?.getTextStyle('widget.title.light.regular')),
+                Expanded(child: Container()),
+                Styles().images?.getImage('chevron-right-white') ?? Container(),
+              ],
+            ),
           ),
         ),
       ),
