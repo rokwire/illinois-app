@@ -134,7 +134,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
     else {
       return Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"))
         ,)
       );
     }
@@ -148,7 +148,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
       Semantics(hint: "Heading", child:
         Row(children: [
           Expanded(child:
-            Text(category, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),)
+            Text(category, style: Styles().textStyles?.getTextStyle("widget.title.large.fat"))
           ),
           ],),
         )
@@ -164,7 +164,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
             Semantics(button: true, child:
               Row(children: [
                 Expanded(child:
-                  Text(section.name ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+                  Text(section.name ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat"))
                 ),
                 Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true) ?? Container(),
             ],)),

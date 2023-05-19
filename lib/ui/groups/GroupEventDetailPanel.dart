@@ -183,18 +183,12 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         children: [
           Text(
             _event?.category?.toUpperCase() ?? "",
-            style: TextStyle(
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 14,
-                color: Styles().colors!.fillColorPrimary,
-                letterSpacing: 1),
+            style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced")
           ),
           Container(height: 8,),
           Text(
             _event!.exploreTitle!,
-            style: TextStyle(
-                fontSize: 24,
-                color: Styles().colors!.fillColorPrimary),
+            style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
           ),
         ],
       )
@@ -228,10 +222,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   child: Styles().images?.getImage('calendar'),
                 ),
                 Expanded(child: Text(displayTime!,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground))),
+                    style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
               ],
             ),
           )
@@ -274,10 +265,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
                         ),
                         Container(decoration: (null), padding: EdgeInsets.only(bottom: (0)), child: Text(eventType,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 16,
-                                color: Styles().colors!.textBackground)),),
+                            style: Styles().textStyles?.getTextStyle("widget.item.regular")),),
                       ]),
                   Container(height: 4,),
                   Visibility(visible: isValueVisible, child: Container(
@@ -287,10 +275,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           padding: EdgeInsets.only(bottom: 2),
                           child: Text(
                             value??"",
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 14,
-                                color: Styles().colors!.fillColorPrimary),
+                            style: Styles().textStyles?.getTextStyle("widget.title.small.semi_fat")
                           ))))
                 ],)
           )
@@ -337,10 +322,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
                         ),
                         Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 16,
-                                color: Styles().colors!.textBackground)),),
+                            style: Styles().textStyles?.getTextStyle("widget.item.regular")),),
                       ]),
                   Container(height: 4,),
                   Visibility(visible: isValueVisible, child: Container(
@@ -350,10 +332,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           padding: EdgeInsets.only(bottom: 2),
                           child: Text(
                             value,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.medium,
-                                fontSize: 14,
-                                color: Styles().colors!.fillColorPrimary),
+                            style: Styles().textStyles?.getTextStyle("widget.title.small.semi_fat")
                           ))))
                 ],)
           )
@@ -383,10 +362,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       child: Styles().images?.getImage("cost"),
                     ),
                     Expanded(child:Text(priceText,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            fontSize: 16,
-                            color: Styles().colors!.textBackground))),
+                        style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
 
                   ]),
               !hasAdditionalDescription? Container():
@@ -394,10 +370,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   padding: EdgeInsets.only(left: 28),
                   child: Row(children: [
                     Expanded(child:Text(additionalDescription??"",
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            fontSize: 16,
-                            color: Styles().colors!.textBackground))),
+                        style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
 
                   ])),
             ],
@@ -423,7 +396,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Styles().images?.getImage('privacy')),
                 Expanded(
-                    child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                    child: Text(privacyText, style: Styles().textStyles?.getTextStyle("widget.item.regular")))
               ])
             ])));
   }
@@ -461,7 +434,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         }
         contactDetails += contact.phone!;
       }
-      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: TextStyle(fontFamily: Styles().fontFamilies!.regular))));
+      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: Styles().textStyles?.getTextStyle("widget.text.regular"))));
     }
     return Padding(padding: EdgeInsets.only(left: 30), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contactList));
   }
@@ -477,7 +450,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         child: HtmlWidget(
             StringUtils.ensureNotEmpty(longDescription),
             onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-            textStyle:  TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+            textStyle: Styles().textStyles?.getTextStyle("widget.info.regular")
         ));
   }
 
@@ -688,17 +661,15 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           hint: title,
                           header: true,
                           excludeSemantics: true,
-                          child:
-                          Text(
-                            title,
-                            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
+                          child: Text(title,
+                            style: Styles().textStyles?.getTextStyle("widget.title.tiny")
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.only(top: 2),
                           child: Text(
                             description,
-                            style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
+                            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
                           ),
                         )
                       ],)

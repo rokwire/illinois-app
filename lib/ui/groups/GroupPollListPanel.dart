@@ -123,10 +123,10 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
           Container(height: 100),
           Text(message,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
+              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")),
           Container(height: 16),
           Text(description,
-              textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16))
+              textAlign: TextAlign.center, style:Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
         ]));
   }
 
@@ -141,10 +141,10 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
           Container(height: 46),
           Text(Localization().getStringEx('panel.group_polls.text.error', 'Error'),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
+              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")),
           Container(height: 16),
           Text(StringUtils.ensureNotEmpty(_pollsError),
-              textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16))
+              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
         ]));
   }
 

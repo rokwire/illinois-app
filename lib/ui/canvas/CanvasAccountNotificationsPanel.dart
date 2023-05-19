@@ -77,13 +77,13 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
   Widget _buildErrorContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_notifications.load.failed.error.msg', 'Failed to load account notifications. Please, try again later.'),
-            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_notifications.empty.msg', 'There are no account notifications.'),
-            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildNotificationsContent() {
@@ -117,10 +117,10 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child: Text(StringUtils.ensureNotEmpty(notification.subject), maxLines: 2, overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 14, color: Styles().colors!.fillColorPrimaryVariant, fontFamily: Styles().fontFamilies!.bold)))
+                        style:  Styles().textStyles?.getTextStyle("panel.canvas.text.small")))
                   ]),
                   Padding(padding: EdgeInsets.only(top: 5), child: Row(children: [Expanded(child: Text(StringUtils.ensureNotEmpty(notification.startAtDisplayDate),
-                        style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)))]))
+                        style:  Styles().textStyles?.getTextStyle("widget.info.small")))]))
                 ]))));
   }
 

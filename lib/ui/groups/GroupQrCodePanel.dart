@@ -112,7 +112,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
               children: [
                 Text(
                   Localization().getStringEx('panel.group_qr_code.description.label', 'Invite others to join this group by sharing a link or the QR code after saving it to your photo library.'),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                  style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 24),
