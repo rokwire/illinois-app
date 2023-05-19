@@ -50,7 +50,7 @@ class PrivacyData{
 
   //Util methods
   String? getLocalizedString(String? text) {
-    return Localization().getStringFromMapping(text, (jsonData != null) ? jsonData!['strings'] : Assets()['privacy.strings']);
+    return Localization().getStringFromMapping(text, (jsonData != null) ? jsonData!['strings'] : null);
   }
 }
 
