@@ -29,6 +29,7 @@ import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -105,8 +106,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   void _loadOnboardingVideoTutorial() {
-    Map<String, dynamic>? videoTutorials = Assets()['video_tutorials'];
-    List<dynamic>? videos = videoTutorials?['videos'];
+    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
+    List<dynamic>? videos = JsonUtils.listValue(videoTutorials?['videos']) ;
     if (CollectionUtils.isEmpty(videos)) {
       return null;
     }

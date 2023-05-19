@@ -30,7 +30,7 @@ import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -66,7 +66,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
   void initState() {
 
     NotificationService().subscribe(this, [
-      Assets.notifyChanged,
+      Content.notifyVideoTutorialsChanged,
       AppLivecycle.notifyStateChanged,
     ]);
 
@@ -93,7 +93,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Assets.notifyChanged) {
+    if (name == Content.notifyVideoTutorialsChanged) {
       _refresh();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
@@ -116,7 +116,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
   }
 
   void _load() {
-    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
     if (videoTutorials != null) {
       List<dynamic>? videoJsonList = JsonUtils.listValue(videoTutorials['videos']);
       if (CollectionUtils.isNotEmpty(videoJsonList)) {

@@ -707,10 +707,7 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  int get _videoTutorialsCount {
-    List<dynamic>? videos = JsonUtils.listValue(Assets()['video_tutorials.videos']);
-    return videos?.length ?? 0;
-  }
+  int get _videoTutorialsCount => Content().videos?.length ?? 0;
 
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
@@ -724,23 +721,17 @@ class _BrowseEntry extends StatelessWidget {
         Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
           Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
+          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
         Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-                settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
       }
     }
   }
 
   List<Video>? _getVideoTutorials() {
-    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
     if (videoTutorials == null) {
       return null;
     }
