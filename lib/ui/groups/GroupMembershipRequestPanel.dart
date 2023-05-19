@@ -107,7 +107,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       Localization().getStringEx("panel.membership_request.label.group.description", 'This group asks you to answer the following question(s) for membership consideration.') :
       Localization().getStringEx("panel.membership_request.label.project.description", 'This Research Project wants you to answer the following question(s) for participation consideration.');
     return Padding(padding: EdgeInsets.only(left: outerPadding, right: outerPadding, top: outerPadding), child:
-      Text(headingText, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
+      Text(headingText, style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin"))),
     );
   }
 
@@ -122,14 +122,14 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   Widget _buildQuestion({required String question, TextEditingController? controller, FocusNode? focusNode}) {
     return Padding(padding: EdgeInsets.symmetric(horizontal: outerPadding, vertical: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(question, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+        Text(question, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
         Padding(padding: EdgeInsets.only(top: 8),
           child: TextField(
             maxLines: 6,
             controller: controller,
             focusNode: focusNode,
             decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-            style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground,),
+            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
           ),
         ),
       ],)

@@ -101,18 +101,10 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(widget.member?.displayShortName ?? "",
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.extraBold,
-                        fontSize: 20,
-                        color: Styles().colors!.fillColorPrimary
-                    ),
+                    style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
                   ),
                   Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")+(AppDateTime().formatDateTime(widget.member?.dateCreatedUtc?.toLocal(), format: "MMM dd, yyyy")??""),
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.regular,
-                        fontSize: 14,
-                        color: Styles().colors!.textSurface
-                    ),
+                    style: Styles().textStyles?.getTextStyle("widget.info.small")
                   ),
                 ],
               ),
@@ -164,7 +156,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
           Styles().images?.getImage('user-check', excludeFromSemantics: true) ?? Container(),
           Container(width: 8,),
           Text(_isResearchProject ? "Participant Approval" : Localization().getStringEx("panel.pending_member_detail.label.approval", "Member Approval"), style:
-            TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+            Styles().textStyles?.getTextStyle("widget.title.light.regular.fat"),
           ),
         ],),
         Container(height: 21,),
@@ -200,7 +192,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
             ),
             Container(padding: EdgeInsets.symmetric(horizontal: 13), child:
               Text(Localization().getStringEx("panel.pending_member_detail.deny.description", "If you choose not to accept this person, please provide a reason."), style:
-                TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface),
+    Styles().textStyles?.getTextStyle("widget.info.small")
               )
             ),
             Container(height: 8,),
@@ -211,7 +203,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                     TextField(
                       controller: _reasonController,
                       decoration: InputDecoration(border: InputBorder.none),
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                      style: Styles().textStyles?.getTextStyle("widget.title.regular")
                       onChanged: (text){setState(() {});},
                       minLines: 4,
                       maxLines: 999,
@@ -312,11 +304,7 @@ class _MembershipAnswer extends StatelessWidget{
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(answer.question ?? '',
-          style: TextStyle(
-              fontFamily: Styles().fontFamilies!.bold,
-              fontSize: 14,
-              color: Styles().colors!.fillColorPrimary
-          ),
+          style: Styles().textStyles?.getTextStyle("widget.title.small.fat")
         ),
         Container(height: 9,),
         Container(
@@ -331,11 +319,7 @@ class _MembershipAnswer extends StatelessWidget{
               Row(children: [
                 Expanded(child:
                   Text(answer.answer ?? "",
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.regular,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground
-                    ),
+                    style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
                   ),
                 )
               ],),

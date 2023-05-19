@@ -201,7 +201,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               color: Colors.white,
               child: Text(Localization().getStringEx('panel.group_member_notifications.member.info.heading.msg', 'My global group notification preferences'), //TBD localize
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61)),
+                  style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline")),
             )
           )
         )
