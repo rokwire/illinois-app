@@ -1,11 +1,12 @@
 class Message {
   String content;
   bool user;
+  bool example;
   Link? link;
   MessageFeedback? feedback;
   String? feedbackExplanation;
 
-  Message({required this.content, this.user=false, this.link, this.feedback, this.feedbackExplanation});
+  Message({required this.content, required this.user, this.example = false, this.link, this.feedback, this.feedbackExplanation});
 }
 
 class Link {

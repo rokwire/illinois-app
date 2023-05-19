@@ -676,7 +676,6 @@
 
     "star-filled": {"src": "images/icon-star-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "thumbs-up-filled": {"src": "images/icon-thumbs-up-solid.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
-    "thumbs-down-filled": {"src": "images/icon-thumbs-down-solid.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "campus-tools-filled": {"src": "images/tab-browse-selected.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size"},
     "check-box-filled": {"src": "images/selected-checkbox.png", "type": "flutter.asset", "color-todo": "fillColorPrimary", "size": 24, "todo": "when to use box vs circle, color issue"},
     "check-circle-filled": {"src": "images/deselected-dark.png", "type": "flutter.asset", "color-todo": "fillColorPrimary", "size": 24, "todo": "color issue"},
@@ -687,7 +686,6 @@
 
     "star-outline-gray": {"src": "images/icon-star-gray-frame-thin.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
     "thumbs-up-outline-gray": {"src": "images/icon-thumbs-up-outline.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
-    "thumbs-down-outline-gray": {"src": "images/icon-thumbs-down-outline.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
     "check-circle-outline-gray": {"src": "images/deselected.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "box-outline-gray": {"src": "images/deselected-checkbox.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "location-outline-gray": {"src": "images/tab-navigate.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "size"},

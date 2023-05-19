@@ -106,17 +106,26 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     _messages.add(Message(content: Localization().getStringEx('',
         "Hey there! I'm the Illinois Assistant. "
             "You can ask me anything about the University. "
-            "Type a question below to get started.")));
+            "Type a question below to get started."),
+        user: false));
 
     _messages.add(Message(content: Localization().getStringEx('',
         "Where can I find out more about the resources available on campus?"),
-        user: true));
+        user: true,
+    ));
 
     _messages.add(Message(content: Localization().getStringEx('',
         "There are many resources available for students on campus. "
             "Try checking out the Campus Guide for more information."),
+        user: false,
         link: Link(name: "Campus Guide", link: '${DeepLink().appUrl}/guide',
             iconKey: 'guide')));
+
+    _messages.add(Message(content: Localization().getStringEx('',
+        "What's for dinner at my dining hall today?"),
+      user: true,
+      example: true
+    ));
     
     _contentCodes = buildContentCodes();
     super.initState();
@@ -213,17 +222,36 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         children: [
           Padding(
             padding: bubblePadding,
-            child: Row(
+            child: Row(mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: Material(
-                    color: message.user ? Styles().colors?.surface : Styles().colors?.fillColorPrimary,
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SelectableText(message.content,
-                        style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
-                          Styles().textStyles?.getTextStyle('widget.title.light.regular')),
+                Flexible(
+                  child: Opacity(
+                    opacity: message.example ? 0.5 : 1.0,
+                    child: Material(
+                      color: message.user ? message.example ? Styles().colors?.background : Styles().colors?.surface : Styles().colors?.fillColorPrimary,
+                      borderRadius: BorderRadius.circular(16.0),
+                      child: InkWell(
+                        onTap: message.example ? () {
+                          setState(() {
+                            _messages.remove(message);
+                            _messages.add(Message(content: message.content, user: true));
+                          });
+                        } : null,
+                        child: Container(
+                          decoration: message.example ? BoxDecoration(borderRadius: BorderRadius.circular(16.0),
+                              border: Border.all(color: Styles().colors?.fillColorPrimary ?? Colors.black)) : null,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: message.example ?
+                              Text(message.content,
+                                  style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
+                                  Styles().textStyles?.getTextStyle('widget.title.light.regular'))
+                              : SelectableText(message.content,
+                              style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
+                                Styles().textStyles?.getTextStyle('widget.title.light.regular')),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
