@@ -46,7 +46,6 @@ import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
@@ -132,7 +131,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     Onboarding(),
     Polls(),
     GeoFence(),
-    Voter(),
     Guide(),
     Inbox(),
     DeviceCalendar(),

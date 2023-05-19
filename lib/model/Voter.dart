@@ -96,6 +96,29 @@ class VoterRule {
     }
     return jsonList;
   }
+
+  static VoterRule? getVoterRuleForToday(List<VoterRule>? voterRules, DateTime? dateTime) {
+    //DateTime? uniLocalTime = AppDateTime().getUniLocalTimeFromUtcTime(AppDateTime().now.toUtc());
+    if (CollectionUtils.isNotEmpty(voterRules) && (dateTime != null)) {
+      for (VoterRule rule in voterRules!) {
+        bool afterStartDate = true;
+        bool beforeEndDate = true;
+        if (rule.startDate != null) {
+          bool isSameStartDay = (dateTime.year == rule.startDate?.year) && (dateTime.month == rule.startDate?.month) &&
+              (dateTime.day == rule.startDate?.day);
+          afterStartDate = (rule.startDate?.isBefore(dateTime) ?? false) || isSameStartDay;
+        }
+        if (rule.endDate != null) {
+          bool isSameEndDay = (dateTime.year == rule.endDate?.year) && (dateTime.month == rule.endDate?.month) && (dateTime.day == rule.endDate?.day);
+          beforeEndDate = (rule.endDate?.isAfter(dateTime) ?? false) || isSameEndDay;
+        }
+        if (afterStartDate && beforeEndDate) {
+          return rule;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 class RuleOption {
