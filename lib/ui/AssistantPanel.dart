@@ -243,7 +243,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: message.example ?
-                              Text(message.content,
+                              Text(Localization().getStringEx('', "eg. ") + message.content,
                                   style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
                                   Styles().textStyles?.getTextStyle('widget.title.light.regular'))
                               : SelectableText(message.content,
