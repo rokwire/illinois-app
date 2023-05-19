@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -77,7 +78,7 @@ class SettingsHomeContentPanel extends StatefulWidget {
   }
 }
 
-class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
+class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> implements NotificationsListener {
   static SettingsContent? _lastSelectedContent;
   late SettingsContent _selectedContent;
   bool _contentValuesVisible = false;
@@ -85,7 +86,14 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [FlexUI.notifyChanged]);
     _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.sections);
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -206,7 +214,10 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
     for (SettingsContent section in SettingsContent.values) {
       if ((_selectedContent != section)) {
-        sectionList.add(_buildContentItem(section));
+        // Add i_card content only if icard mobile is available
+        if ((section != SettingsContent.i_card) || (FlexUI().isIcardMobileAvailable)) {
+          sectionList.add(_buildContentItem(section));
+        }
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
@@ -302,6 +313,17 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
       case SettingsContent.i_card:
         return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'i-card');
+    }
+  }
+
+  // NotificationsListener
+  
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 }

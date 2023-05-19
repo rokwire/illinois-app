@@ -69,6 +69,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   late bool _loadingBuildingAccess;
   late AnimationController _animationController;
 
+  bool _isIcardMobileAvailable = false;
   List<dynamic>? _mobileAccessKeys;
   bool _mobileAccessKeysLoading = false;
   PageController? _mobileKeysPageController;
@@ -120,7 +121,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
         }
       });
 
-      _loadMobileAccessKey();
+      _checkIcarMobileAvailable();
 
     // Auth2().updateAuthCard();
   }
@@ -150,7 +151,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   }
 
   Future<void> _loadMobileAccessKey() async {
-    if (Auth2().isLoggedIn) {
+    if (_isIcardMobileAvailable) {
       _setMobileAccessKeysLoading(true);
       MobileAccess().getAvailableKeys().then((List<dynamic>? mobileAccessKeys) {
         _mobileAccessKeys = mobileAccessKeys;
@@ -177,18 +178,14 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyCardChanged) {
       _loadAsyncPhotoImage().then((MemoryImage? photoImage){
-        if (mounted) {
-          setState(() {
-            _photoImage = photoImage;
-          });
-        }
+        setStateIfMounted(() {
+          _photoImage = photoImage;
+        });
       });
     }
     else if (name == FlexUI.notifyChanged) {
-        if (mounted) {
-          setState(() {
-          });
-        }
+      _checkIcarMobileAvailable();
+      setStateIfMounted(() { });
     }
   }
   
@@ -357,17 +354,20 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   }
 
   Widget _buildMobileAccessContent() {
-    if (_mobileAccessKeysLoading) {
+    if (!_isIcardMobileAvailable) {
+      return Container();
+    } else if (_mobileAccessKeysLoading) {
       return Center(child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary));
-    }
-
-    return Padding(
+    } else {
+      return Padding(
         padding: EdgeInsets.only(bottom: 30),
         child: Column(children: [
           Container(color: Styles().colors!.dividerLine, height: 1),
           Padding(padding: EdgeInsets.only(top: 20), child: Styles().images?.getImage('mobile-access-logo', excludeFromSemantics: true)),
           (_hasMobileAccessKeys ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessExistsContent())
         ]));
+    }
+
   }
 
   Widget _buildExistingMobileAccessContent() {
@@ -592,6 +592,13 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   void _onTapMobileAccessPermissions() {
     Analytics().logSelect(target: 'Mobile Access Permissions');
     SettingsHomeContentPanel.present(context, content: SettingsContent.i_card);
+  }
+
+  void _checkIcarMobileAvailable() {
+    if (_isIcardMobileAvailable != FlexUI().isIcardMobileAvailable) {
+      _isIcardMobileAvailable = FlexUI().isIcardMobileAvailable;
+      _loadMobileAccessKey();
+    }
   }
 
   void _setMobileAccessKeysLoading(bool loading) {
