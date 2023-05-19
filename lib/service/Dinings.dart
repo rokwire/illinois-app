@@ -237,9 +237,8 @@ class Dinings with Service {
 
   Future<DiningFeedback?> loadDiningFeedback({String? diningId}) async {
     //return (_feedbacks ??= DiningFeedback.mapFromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/dining.feedbacks.json'))) ?? <String, DiningFeedback>{})[diningId];
-    const String diningFeedbackContentCategory = 'dining_feedbacks';
-    Map<String, dynamic>? contentItems = await Content().loadContentItems([diningFeedbackContentCategory]);
-    Map<String, DiningFeedback>? feedbacksMap = (contentItems != null) ? DiningFeedback.mapFromJson(JsonUtils.mapValue(contentItems[diningFeedbackContentCategory])) : null;
+    const String diningFeedbackCategory = 'dining_feedbacks';
+    Map<String, DiningFeedback>? feedbacksMap = DiningFeedback.mapFromJson(JsonUtils.mapValue(await Content().loadContentItem(diningFeedbackCategory)));
     return (feedbacksMap != null) ? feedbacksMap[diningId] : null;
   }
 
