@@ -74,7 +74,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/http_proxy.dart';
@@ -116,7 +115,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
     Auth2(),
     Localization(),
-    Assets(),
     Styles(),
     Content(),
     Analytics(),
