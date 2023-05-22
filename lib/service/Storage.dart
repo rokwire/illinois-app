@@ -183,6 +183,10 @@ class Storage extends rokwire.Storage {
   bool? get debugUseSampleAppointments => getBoolWithName(debugUseSampleAppointmentsKey);
   set debugUseSampleAppointments(bool? value) => setBoolWithName(debugUseSampleAppointmentsKey, value);
 
+  static const String debugUseIdentityBbKey  = 'debug_mobile_icard_use_identity_bb';
+  bool? get debugUseIdentityBb => getBoolWithName(debugUseIdentityBbKey);
+  set debugUseIdentityBb(bool? value) => setBoolWithName(debugUseIdentityBbKey, value);
+
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
