@@ -167,7 +167,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
                 ToggleRibbonButton(label: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
                 ToggleRibbonButton(label: 'Canvas LMS', toggled: (Storage().debugUseCanvasLms == true), onTap: _onUseCanvasLms),
-                ToggleRibbonButton(label: 'Sample Appintments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
+                ToggleRibbonButton(label: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
                     
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
                 Container(color: Colors.white, child:
