@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:illinois/model/Appointment.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
@@ -46,7 +46,7 @@ extension AppointmentExt on Appointment {
       return (unit?.imageKey(provider: provider) ?? provider?.randomImageKey ?? AppointmentProviderExt.defaultImageKey);
     }
     else {
-      return Assets().randomStringFromListWithKey('images.random.events.Other');
+      return Content().randomImageUrl('events.Other');
     }
   }
 }

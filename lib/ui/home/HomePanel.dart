@@ -60,7 +60,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -506,7 +505,7 @@ class HomePanel extends StatefulWidget {
       }
     }
     else {
-      return (handle || title) ? null : FlexContent.fromAssets(code, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
+      return (handle || title) ? null : FlexContent(contentKey: code, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
     }
   }
 
@@ -539,7 +538,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
-      Assets.notifyChanged,
       HomeSaferWidget.notifyNeedsVisiblity,
     ]);
     super.initState();
@@ -605,7 +603,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       return HomeToutWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, onEdit: _onEdit,);
     }
     else if (code == 'emergency') {
-      return FlexContent.fromAssets(code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
+      return FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
     }
     else if (code == 'voter_registration') {
       return HomeVoterRegistrationWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
@@ -623,7 +621,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         updateController: _updateController,
       );
       
-      return (data is Widget) ? data : FlexContent.fromAssets(code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
+      return (data is Widget) ? data : FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
     }
   }
 
@@ -735,7 +733,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     else if (((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged) ||
-        (name == Assets.notifyChanged) ||
         (name == Storage.offsetDateKey) ||
         (name == Storage.useDeviceLocalTimeZoneKey))
     {

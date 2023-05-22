@@ -32,6 +32,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
@@ -46,7 +47,6 @@ import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Rewards.dart';
 import 'package:illinois/service/Services.dart' as illinois;
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
@@ -63,7 +63,6 @@ import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
-import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -75,7 +74,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/http_proxy.dart';
@@ -117,8 +115,8 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
     Auth2(),
     Localization(),
-    Assets(),
     Styles(),
+    Content(),
     Analytics(),
     FirebaseMessaging(),
     LocalNotifications(),
@@ -129,10 +127,8 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     IlliniCash(),
     FlexUI(),
     Onboarding(),
-    Content(),
     Polls(),
     GeoFence(),
-    Voter(),
     Guide(),
     Inbox(),
     DeviceCalendar(),
@@ -150,9 +146,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     StudentCourses(),
     Appointments(),
     MTD(),
-
-    // These do not rely on Service initialization API so they are not registered as services.
-    // Content(),
   ]);
   
   ServiceError? serviceError = await illinois.Services().init();
@@ -373,27 +366,23 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
   void _presentLaunchPopup() {
     BuildContext? launchContext = App.instance?.currentContext;
     if ((_launchPopup == null) && (launchContext != null)) {
-      dynamic launch = FlexUI()['launch'];
-      List<dynamic>? launchList = (launch is List) ? launch : null;
+      List<String>? launchList = JsonUtils.stringListValue(FlexUI()['launch']);
       if (launchList != null) {
         for (dynamic launchEntry in launchList) {
-          Widget? launchPopup = FlexContent.fromAssets(launchEntry, onClose: (BuildContext context) {
+          _launchPopup = FlexContent(contentKey: launchEntry, onClose: (BuildContext context) {
             _launchPopup = null;
             Navigator.of(context).pop();
           },);
-          if (launchPopup != null) {
-            _launchPopup = launchPopup;
-            showDialog(context: launchContext, builder: (BuildContext context) {
-              return Dialog(child:
-                Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  launchPopup
-                ]),
-              );
-            }).then((_) {
-              _launchPopup = null;
-            });
-            break;
-          }
+          showDialog(context: launchContext, builder: (BuildContext context) {
+            return Dialog(child:
+              Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                _launchPopup ?? Container()
+              ]),
+            );
+          }).then((_) {
+            _launchPopup = null;
+          });
+          break;
         }
       }
     }

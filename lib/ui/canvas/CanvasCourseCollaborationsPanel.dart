@@ -86,13 +86,13 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
   Widget _buildErrorContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.load.failed.error.msg', 'Failed to load collaborations. Please, try again later.'),
-            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_collaborations.empty.msg', 'There are no collaborations.'),
-            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildCollaborationsContent() {
@@ -133,7 +133,7 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(
                     child: Text(StringUtils.ensureNotEmpty(label),
-                        style: TextStyle(fontSize: 18, color: Colors.black, fontFamily: Styles().fontFamilies!.bold)))
+                        style: Styles().textStyles?.getTextStyle("widget.description.dark.medium.fat")))
               ])
             ])));
   }
@@ -155,17 +155,16 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Text(StringUtils.ensureNotEmpty(collaboration.title),
-                        style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant)),
+                        style: Styles().textStyles?.getTextStyle("panel.canvas.text.medium")),
                     Text(StringUtils.ensureNotEmpty(collaboration.createdAtDisplayDate),
-                        style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))
+                        style:Styles().textStyles?.getTextStyle("widget.info.small"))
                   ]),
                   Visibility(
                       visible: StringUtils.isNotEmpty(collaboration.userName),
                       child: Padding(
                           padding: EdgeInsets.only(top: 5),
                           child: Text(StringUtils.ensureNotEmpty(collaboration.userName),
-                              style: TextStyle(
-                                  fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))))
+                              style: Styles().textStyles?.getTextStyle("widget.info.small"))))
                 ]))));
   }
 
@@ -185,7 +184,7 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
             padding: EdgeInsets.only(left: 10),
             child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                    style: Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat"),
                     items: _buildCourseDropDownItems,
                     value: _selectedCourseId,
                     itemHeight: null,
@@ -199,24 +198,16 @@ class _CanvasCourseCollaborationsPanelState extends State<CanvasCourseCollaborat
     }
     List<DropdownMenuItem<int>> items = [];
     CanvasCourse? currentCourse = _getCurrentCourse(courseId: widget.courseId);
-    Color textColor = Styles().colors!.textSurfaceAccent!;
-    double textFontSize = 16;
     if (currentCourse != null) {
       items.add(DropdownMenuItem(
           value: currentCourse.id,
           child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
-              style: TextStyle(
-                  color: textColor,
-                  fontSize: textFontSize,
-                  fontFamily: ((_selectedCourseId == currentCourse.id) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+              style: (_selectedCourseId == currentCourse.id) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular"))));
     }
     items.add(DropdownMenuItem(
         value: null,
         child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
-            style: TextStyle(
-                color: textColor,
-                fontSize: textFontSize,
-                fontFamily: ((_selectedCourseId == null) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+            style: (_selectedCourseId == null) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular"))));
     return items;
   }
 

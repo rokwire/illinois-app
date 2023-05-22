@@ -78,7 +78,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
-      Wellness.notifyContentChanged,
+      Wellness.notifyResourcesContentChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -102,7 +102,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == Wellness.notifyContentChanged) ||
+    if ((name == Wellness.notifyResourcesContentChanged) ||
         (name == Auth2UserPrefs.notifyFavoritesChanged)) {
         _updateContent();
     }
