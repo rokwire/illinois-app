@@ -18,8 +18,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Identity.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -29,7 +32,8 @@ class MobileAccess with Service implements NotificationsListener {
 
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/mobile_access');
 
-  bool _isAllowedToScan = false;
+  bool _canHaveMobileIcard = false;
+  static const String _tag = 'MobileAccess';
 
   // Singleton
   static final MobileAccess _instance = MobileAccess._internal();
@@ -46,12 +50,14 @@ class MobileAccess with Service implements NotificationsListener {
   void createService() {
     super.createService();
     _methodChannel.setMethodCallHandler(_handleMethodCall);
-    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged, Auth2.notifyLoginChanged, FlexUI.notifyChanged]);
+    NotificationService()
+        .subscribe(this, [AppLivecycle.notifyStateChanged, Auth2.notifyLoginChanged, FlexUI.notifyChanged, Storage.notifySettingChanged]);
   }
 
   @override
   Future<void> initService() async {
-    _checkAllowedScanning();
+    _checkCanHaveIcard();
+    _checkNeedsRegistration();
     await super.initService();
   }
 
@@ -203,9 +209,67 @@ class MobileAccess with Service implements NotificationsListener {
     return result;
   }
 
-  void _checkAllowedScanning() {
-    _isAllowedToScan = Auth2().isLoggedIn && FlexUI().isIcardMobileAvailable;
-    _allowScanning(_isAllowedToScan);
+  void _checkCanHaveIcard() {
+    _canHaveMobileIcard = Auth2().isLoggedIn && FlexUI().isIcardMobileAvailable;
+    _allowScanning(_canHaveMobileIcard);
+  }
+
+  ///
+  /// This method uses more prints for debug purposes.
+  ///
+  void _checkNeedsRegistration() {
+    // 1. Check if debug setting is on
+    if (Storage().debugUseIdentityBb != true) {
+      _print('Use mobile icard native sdk implementation for registration flow.');
+      return;
+    }
+    // 2. Check if user can have mobile card
+    if (!_canHaveMobileIcard) {
+      _print('User cannot have mobile icard, so do not try to register device.');
+      return;
+    }
+    // 3. Check if the device/endpoint is registered in the sdk
+    isEndpointRegistered().then((registered) {
+      // 4. Device/endpoint has already been registered - do nothing.
+      if (registered) {
+        _print('Device has already been registered - do not try to register it again.');
+        return;
+      }
+      // 5. Load mobile identity credential.
+      Identity().loadMobileCredential().then((mobileCredential) {
+        if (mobileCredential == null) {
+          _print('No mobile identity credential available.');
+          return;
+        }
+        UserInvitation? invitation = mobileCredential.invitation;
+        if (invitation == null) {
+          _print('No mobile identity invitation available.');
+          return;
+        }
+        String? invitationCode = invitation.invitationCode;
+        if (invitationCode == null) {
+          _print('There is no mobile identity invitation code.');
+          return;
+        }
+        DateTime? expirationDateUtc = invitation.expirationDateUtc;
+        // Allow registration if the expiration date is null or is after now
+        DateTime nowUtc = DateTime.now().toUtc();
+        if ((expirationDateUtc != null) && expirationDateUtc.isBefore(nowUtc)) {
+          _print('Mobile identity invitation has been expired.');
+          return;
+        }
+        // 6. Register endpoint / device
+        registerEndpoint(invitationCode).then((registrationInitiated) {
+          late String resultMsg;
+          if (registrationInitiated == true) {
+            resultMsg = 'Mobile identity registration initiated successfully.';
+          } else {
+            resultMsg = 'Failed to initiate mobile identity registration';
+          }
+          _print(resultMsg);
+        });
+      });
+    });
   }
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
@@ -256,17 +320,28 @@ class MobileAccess with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
-      _checkAllowedScanning();
+      _checkCanHaveIcard();
     } else if (name == FlexUI.notifyChanged) {
-      _checkAllowedScanning();
+      _checkCanHaveIcard();
     } else if (name == AppLivecycle.notifyStateChanged) {
       AppLifecycleState? state = (param is AppLifecycleState) ? param : null;
       if (state == AppLifecycleState.resumed) {
-        _checkAllowedScanning();
+        _checkCanHaveIcard();
+        _checkNeedsRegistration();
       } else {
         _allowScanning(false);
       }
+    } else if (name == Storage.notifySettingChanged) {
+      if (name == Storage.debugUseIdentityBbKey) {
+        _checkNeedsRegistration();
+      }
     }
+  }
+
+  // Utilities
+
+  void _print(String msg) {
+    debugPrint('$_tag: $msg');
   }
 }
 
