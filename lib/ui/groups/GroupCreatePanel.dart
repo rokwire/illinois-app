@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -112,24 +113,36 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   Future<void> _initResearchConsentDetails() async {
     if (_group?.researchProject == true) {
+      const String researchConsentCategory = 'research_consent';
+      List<String> contentCategories = <String>[researchConsentCategory];
+
       String? currentLocale = Localization().currentLocale?.languageCode;
+      String? currentLocaleCategory = StringUtils.isNotEmpty(currentLocale) ?
+        "${researchConsentCategory}_$currentLocale" : null;
+      if (currentLocaleCategory != null) {
+        contentCategories.add(currentLocaleCategory);
+      }
+
       String? defaultLocale = Localization().defaultLocale?.languageCode;
-      String? consentDetails;
-      if ((consentDetails == null) && (currentLocale != null)) {
-        consentDetails = await AppBundle.loadString('assets/research.consent.details.$currentLocale.txt');
+      String? defaultLocaleCategory = (StringUtils.isNotEmpty(defaultLocale) && (defaultLocale != currentLocale)) ?
+        "${researchConsentCategory}_$defaultLocale" : null;
+      if (defaultLocaleCategory != null) {
+        contentCategories.add(defaultLocaleCategory);
       }
-      if ((consentDetails == null) && (defaultLocale != null) && (defaultLocale != currentLocale)) {
-        consentDetails = await AppBundle.loadString('assets/research.consent.details.$defaultLocale.txt');
-      }
-      if (consentDetails == null) {
-        consentDetails = await AppBundle.loadString('assets/research.consent.details.txt');
-      }
+
+      Map<String, dynamic>? contentItems = await Content().loadContentItems(contentCategories);
+
+      String? consentDetails = (contentItems != null) ? (
+          JsonUtils.stringValue(contentItems[currentLocaleCategory]) ?? 
+          JsonUtils.stringValue(contentItems[defaultLocaleCategory]) ??
+          JsonUtils.stringValue(contentItems[researchConsentCategory])
+      ) : null;
+
       if (consentDetails != null) {
         _group?.researchConsentDetails = _researchConsentDetailsController.text = consentDetails;
       }
     }
   }
-
 
   //
 

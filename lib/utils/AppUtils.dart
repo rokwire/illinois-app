@@ -384,12 +384,8 @@ class AppPrivacyPolicy {
         return true;
       }
     }
-    else if ((Config().privacyPolicyGuideId != null) && (Guide().entryById(Config().privacyPolicyGuideId) != null)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: Config().privacyPolicyGuideId, showTabBar: false,)));
-      return true;
-    }
     else {
-      Map<String, dynamic>? privacyPolicyGuideEntry = JsonUtils.decodeMap(await AppBundle.loadString('assets/privacy.notice.json'));
+      Map<String, dynamic>? privacyPolicyGuideEntry = Guide().entryById(Config().privacyPolicyGuideId) ?? JsonUtils.decodeMap(await AppBundle.loadString('assets/privacy.notice.json'));
       if (privacyPolicyGuideEntry != null) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: privacyPolicyGuideEntry, showTabBar: false,)));
         return true;
