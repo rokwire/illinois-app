@@ -368,27 +368,23 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
   void _presentLaunchPopup() {
     BuildContext? launchContext = App.instance?.currentContext;
     if ((_launchPopup == null) && (launchContext != null)) {
-      dynamic launch = FlexUI()['launch'];
-      List<dynamic>? launchList = (launch is List) ? launch : null;
+      List<String>? launchList = JsonUtils.stringListValue(FlexUI()['launch']);
       if (launchList != null) {
         for (dynamic launchEntry in launchList) {
-          Widget? launchPopup = FlexContent.fromAssets(launchEntry, onClose: (BuildContext context) {
+          _launchPopup = FlexContent(contentKey: launchEntry, onClose: (BuildContext context) {
             _launchPopup = null;
             Navigator.of(context).pop();
           },);
-          if (launchPopup != null) {
-            _launchPopup = launchPopup;
-            showDialog(context: launchContext, builder: (BuildContext context) {
-              return Dialog(child:
-                Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  launchPopup
-                ]),
-              );
-            }).then((_) {
-              _launchPopup = null;
-            });
-            break;
-          }
+          showDialog(context: launchContext, builder: (BuildContext context) {
+            return Dialog(child:
+              Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                _launchPopup ?? Container()
+              ]),
+            );
+          }).then((_) {
+            _launchPopup = null;
+          });
+          break;
         }
       }
     }

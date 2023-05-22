@@ -505,7 +505,7 @@ class HomePanel extends StatefulWidget {
       }
     }
     else {
-      return (handle || title) ? null : FlexContent.fromAssets(code, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
+      return (handle || title) ? null : FlexContent(contentKey: code, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
     }
   }
 
@@ -603,7 +603,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       return HomeToutWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, onEdit: _onEdit,);
     }
     else if (code == 'emergency') {
-      return FlexContent.fromAssets(code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
+      return FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
     }
     else if (code == 'voter_registration') {
       return HomeVoterRegistrationWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
@@ -621,7 +621,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         updateController: _updateController,
       );
       
-      return (data is Widget) ? data : FlexContent.fromAssets(code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
+      return (data is Widget) ? data : FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
     }
   }
 
