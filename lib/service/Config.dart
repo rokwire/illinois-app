@@ -40,16 +40,6 @@ class Config extends rokwire.Config {
 
   // Getters: compound entries
 
-  String get host => 'http://10.1.10.189';
-  @override
-  String get coreUrl => '$host:80/core';
-  @override
-  String get groupsUrl => '$host:84/gr/api';
-  @override
-  String get surveysUrl => '$host:88/surveys/api';
-  // @override
-  // String get contentUrl => '$host:8080/content';
-
   Map<String, dynamic> get thirdPartyServices  => JsonUtils.mapValue(content['thirdPartyServices']) ?? {};
 
   Map<String, dynamic> get secretIlliniCash => JsonUtils.mapValue(secretKeys['illini_cash']) ?? {};
@@ -67,7 +57,6 @@ class Config extends rokwire.Config {
 
   Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
   Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
-
   Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
 
