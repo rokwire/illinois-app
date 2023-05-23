@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.0.4] - 2023-05-22
+### Changed
+- Load different JSON assets from content service [#3278](https://github.com/rokwire/app-flutter-plugin/issues/280).
+- Retire Assets service [#3278](https://github.com/rokwire/app-flutter-plugin/issues/280).
 
 ## [5.0.3] - 2023-05-19
 ### Changed

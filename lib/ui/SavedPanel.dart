@@ -32,7 +32,6 @@ import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
@@ -87,7 +86,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
-      Assets.notifyChanged,
       Guide.notifyChanged,
       Appointments.notifyUpcomingAppointmentsChanged,
     ]);
@@ -113,9 +111,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
     else if (name == Auth2.notifyLoginChanged) {
       _refreshFavorites(showProgress: false);
-    }
-    else if (name == Assets.notifyChanged) {
-      _refreshFavorites(favoriteCategories: {Dining.favoriteKeyName}, showProgress: false);
     }
     else if (name == Guide.notifyChanged) {
       _refreshFavorites(favoriteCategories: {GuideFavorite.favoriteKeyName}, showProgress: false);
