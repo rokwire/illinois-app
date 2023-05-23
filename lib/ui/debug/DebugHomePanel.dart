@@ -485,7 +485,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
       userSurveyEntries.add(Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Row(children: [
-          Expanded(flex: 2, child: Text(survey.title)), //style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),),
+          Expanded(flex: 2, child: Text(survey.title)),
           Expanded(child: RoundedButton(
             label: 'Edit',
             backgroundColor: Styles().colors!.background,
