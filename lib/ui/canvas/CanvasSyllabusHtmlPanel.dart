@@ -89,7 +89,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
                   fontFamily: Styles().fontFamilies!.bold,
                   fontSize: FontSize(18),
                   padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero)
+                  margin: Margins.zero)
             })));
   }
 

@@ -749,7 +749,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _copyToClipboard(String? textContent){
-    Clipboard.setData(ClipboardData(text: textContent)).then((_){
+    Clipboard.setData(ClipboardData(text: textContent ?? '')).then((_){
       AppToast.show("Text data has been copied to the clipboard!");
     });
   }
