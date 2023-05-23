@@ -168,7 +168,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   Future<List<dynamic>?> _loadContentJsonFromCache() async {
-    return JsonUtils.decodeList(await _loadContentStringFromCache());
+    return await JsonUtils.decodeListAsync(await _loadContentStringFromCache());
   }
 
   Future<String?> _loadContentStringFromNet() async {
@@ -186,8 +186,8 @@ class Guide with Service implements NotificationsListener {
   Future<void> _updateContentFromNet() async {
     if ((_contentSource == null) || (_contentSource == GuideContentSource.Net)) {
       String? contentString = await _loadContentStringFromNet();
-      List<dynamic>? contentList = JsonUtils.decodeList(contentString);
-      if ((contentList != null) && !DeepCollectionEquality().equals(_contentList, contentList)) {
+      List<dynamic>? contentList = await JsonUtils.decodeListAsync(contentString);
+      if ((contentList != null) && !await CollectionUtils.equalsAsync(_contentList, contentList)) {
         _contentList = contentList;
         _contentMap = _buildContentMap(_contentList);
         _contentSource = GuideContentSource.Net;

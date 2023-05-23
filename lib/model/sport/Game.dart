@@ -17,9 +17,9 @@
 import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -252,7 +252,7 @@ class Game with Explore implements Favorite {
 
   String? get _randomImageURL {
     if (randomImageURL == null) {
-      randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.${sport!.shortName}') ?? '';
+      randomImageURL = Content().randomImageUrl('sports.${sport!.shortName}');
     }
     return randomImageURL!.isNotEmpty ? randomImageURL : null;
   }

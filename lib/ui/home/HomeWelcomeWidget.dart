@@ -4,14 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -30,24 +32,40 @@ class HomeWelcomeWidget extends StatefulWidget {
   State<HomeWelcomeWidget> createState() => _HomeWelcomeWidgetState();
 }
 
-class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
+class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements NotificationsListener {
   Video? _video;
   bool? _visible;
 
   @override
   void initState() {
-    super.initState();
+    NotificationService().subscribe(this, [
+      Content.notifyVideoTutorialsChanged,
+    ]);
+
     _visible = Storage().homeWelcomeVisible;
-    _loadVideo();
+    _video = _loadVideo();
+    super.initState();
   }
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
   }
 
-  void _loadVideo() {
-    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Content.notifyVideoTutorialsChanged) {
+      setStateIfMounted(() {
+        _video ??= _loadVideo();
+      });
+    }
+  }
+
+  Video? _loadVideo() {
+    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
     if (videoTutorials != null) {
       String? welcomeVideoId;
       Map<String, dynamic>? welcomeMap = videoTutorials['welcome'];
@@ -64,13 +82,13 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
               Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
               String? videoTitle = Localization().getContentString(strings, videoId);
               video['title'] = videoTitle;
-              _video = Video.fromJson(video);
-              break;
+              return Video.fromJson(video);
             }
           }
         }
       }
     }
+    return null;
   }
 
   @override

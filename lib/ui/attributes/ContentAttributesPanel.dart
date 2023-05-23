@@ -73,9 +73,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     if (StringUtils.isNotEmpty(widget.description)) {
       conentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-        Text(widget.description ?? '', style:
-          TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary, )
-        ),
+        Text(widget.description ?? '', style: Styles().textStyles?.getTextStyle("widget.description.regular")),
       ));
     }
 

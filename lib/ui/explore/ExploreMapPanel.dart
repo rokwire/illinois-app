@@ -527,14 +527,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 10), child:
-                Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, )),
+                Text(title ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
               ),
               (descriptionWidget != null) ?
                 Row(children: <Widget>[
-                  Text(description ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+                  Text(description ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.event_schedule.map.description")),
                   descriptionWidget
                 ]) :
-                Text(description ?? "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+                Text(description ?? "", overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.event_schedule.map.description")),
               Container(height: 8,),
               Row(children: <Widget>[
                 SizedBox(width: buttonWidth, child:
@@ -680,7 +680,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
             Padding(padding: EdgeInsets.only(left: routeWidgets.isNotEmpty ? 6 : 0), child:
               Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
-                  Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, color: route.textColor,)),
+                  Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.item.tiny.extra_fat")?.copyWith(color: route.textColor)),
                 )
               )
             )
@@ -2035,12 +2035,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       backColor: backColor,
       strokeColor: borderColor,
       text: count?.toString(),
-      textStyle: TextStyle(
-        fontFamily: Styles().fontFamilies?.bold,
+      textStyle: Styles().textStyles?.getTextStyle("widget.text.fat")?.copyWith(
         fontSize: 12 * MediaQuery.of(context).devicePixelRatio,
         color: textColor,
-        overflow: TextOverflow.visible,
-      )
+        overflow: TextOverflow.visible //defined in code to be sure it is set
+      ),
     );
     if (markerImageBytes != null) {
       return BitmapDescriptor.fromBytes(markerImageBytes);
