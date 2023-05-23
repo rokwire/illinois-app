@@ -56,7 +56,7 @@ class MobileAccess with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _checkCanHaveIcard();
+    _shouldStartScan();
     _checkNeedsRegistration();
     await super.initService();
   }
@@ -209,7 +209,7 @@ class MobileAccess with Service implements NotificationsListener {
     return result;
   }
 
-  void _checkCanHaveIcard() {
+  void _shouldStartScan() {
     _canHaveMobileIcard = Auth2().isLoggedIn && FlexUI().isIcardMobileAvailable;
     _allowScanning(_canHaveMobileIcard);
   }
@@ -263,6 +263,7 @@ class MobileAccess with Service implements NotificationsListener {
           late String resultMsg;
           if (registrationInitiated == true) {
             resultMsg = 'Mobile identity registration initiated successfully.';
+            _shouldStartScan();
           } else {
             resultMsg = 'Failed to initiate mobile identity registration';
           }
@@ -275,7 +276,7 @@ class MobileAccess with Service implements NotificationsListener {
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case "endpoint.register.finished":
-        _notifyEndpointRegistrationFinished(call.arguments);
+        _onEndpointRegistrationFinished(call.arguments);
         break;
       default:
         break;
@@ -283,7 +284,11 @@ class MobileAccess with Service implements NotificationsListener {
     return null;
   }
 
-  void _notifyEndpointRegistrationFinished(dynamic arguments) {
+  void _onEndpointRegistrationFinished(dynamic arguments) {
+    bool? success = (arguments is bool) ? arguments : null;
+    if (success == true) {
+      _shouldStartScan();
+    }
     NotificationService().notify(notifyDeviceRegistrationFinished, arguments);
   }
 
@@ -320,13 +325,15 @@ class MobileAccess with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
-      _checkCanHaveIcard();
+      _shouldStartScan();
+      _checkNeedsRegistration();
     } else if (name == FlexUI.notifyChanged) {
-      _checkCanHaveIcard();
+      _shouldStartScan();
+      _checkNeedsRegistration();
     } else if (name == AppLivecycle.notifyStateChanged) {
       AppLifecycleState? state = (param is AppLifecycleState) ? param : null;
       if (state == AppLifecycleState.resumed) {
-        _checkCanHaveIcard();
+        _shouldStartScan();
         _checkNeedsRegistration();
       } else {
         _allowScanning(false);
