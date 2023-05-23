@@ -1174,7 +1174,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.1.0] - 2022-07-20
 ### Changed
 - Do not override default TabBar background color any more [#2067](https://github.com/rokwire/illinois-app/issues/2067).
-- Read group names from app config in FlexUI [#118](https://github.com/rokwire/app-flutter-plugin/issues/118).
+- Read group names from app config in FlexUI [#118](https://github.com/rokwire/illinois-app/issues/118).
 ### Fixed
 - Construct redirect url with deep link target for group promotion [#2065](https://github.com/rokwire/illinois-app/issues/2065).
 - Fixed adding/removing compound widgets from Favorites/Customize panel [#2073](https://github.com/rokwire/illinois-app/issues/2073).
@@ -1499,7 +1499,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HomeToutWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 ### Changed
 - Cleaned up Drag & Drop in Home panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
-- Removed Group polls hook methods [#1679](https://github.com/rokwire/app-flutter-plugin/issues/1679).
+- Removed Group polls hook methods [#1679](https://github.com/rokwire/illinois-app/issues/1679).
 
 ## [4.0.20] - 2022-06-01
 ### Added
