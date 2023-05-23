@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.0.5] - 2023-05-23
+- Created and acknowledged at different places async versions of JSON encode/decode and collection equality checks [#3292](https://github.com/rokwire/illinois-app/issues/3292).
+
 ## [5.0.4] - 2023-05-22
 ### Changed
-- Load different JSON assets from content service [#3278](https://github.com/rokwire/app-flutter-plugin/issues/280).
-- Retire Assets service [#3278](https://github.com/rokwire/app-flutter-plugin/issues/280).
+- Load different JSON assets from content service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
+- Retire Assets service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
 
 ## [5.0.3] - 2023-05-19
 ### Changed
@@ -250,8 +253,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.3.30] - 2023-03-27
 ### Changed
 - Refer to google_maps_flutter plugin located in rokwire's upstream fork [#3043](https://github.com/rokwire/illinois-app/issues/3043). 
-- Content attributes prepared for multiple scopes support [#3047](https://github.com/rokwire/app-flutter-plugin/issues/3047).
-- Hide StateFarm parking everywhere in the app [#3053](https://github.com/rokwire/app-flutter-plugin/issues/3053).
+- Content attributes prepared for multiple scopes support [#3047](https://github.com/rokwire/illinois-app/issues/3047).
+- Hide StateFarm parking everywhere in the app [#3053](https://github.com/rokwire/illinois-app/issues/3053).
 ### Fixed
 - Fixed hiding user details in analytics logs [#3049](https://github.com/rokwire/illinois-app/issues/3049).
 
@@ -1172,7 +1175,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.1.0] - 2022-07-20
 ### Changed
 - Do not override default TabBar background color any more [#2067](https://github.com/rokwire/illinois-app/issues/2067).
-- Read group names from app config in FlexUI [#118](https://github.com/rokwire/app-flutter-plugin/issues/118).
+- Read group names from app config in FlexUI [#118](https://github.com/rokwire/illinois-app/issues/118).
 ### Fixed
 - Construct redirect url with deep link target for group promotion [#2065](https://github.com/rokwire/illinois-app/issues/2065).
 - Fixed adding/removing compound widgets from Favorites/Customize panel [#2073](https://github.com/rokwire/illinois-app/issues/2073).
@@ -1497,7 +1500,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HomeToutWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 ### Changed
 - Cleaned up Drag & Drop in Home panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
-- Removed Group polls hook methods [#1679](https://github.com/rokwire/app-flutter-plugin/issues/1679).
+- Removed Group polls hook methods [#1679](https://github.com/rokwire/illinois-app/issues/1679).
 
 ## [4.0.20] - 2022-06-01
 ### Added
