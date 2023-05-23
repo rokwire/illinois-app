@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Created and acknowledged at different places async versions of JSON encode/decode and collection equality checks [#3292](https://github.com/rokwire/illinois-app/issues/3292).
+
 ## [5.0.4] - 2023-05-22
 ### Changed
-- Load different JSON assets from content service [#3278](https://github.com/rokwire/app-flutter-plugin/issues/280).
-- Retire Assets service [#3278](https://github.com/rokwire/app-flutter-plugin/issues/280).
+- Load different JSON assets from content service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
+- Retire Assets service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
 
 ## [5.0.3] - 2023-05-19
 ### Changed
@@ -250,8 +252,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.3.30] - 2023-03-27
 ### Changed
 - Refer to google_maps_flutter plugin located in rokwire's upstream fork [#3043](https://github.com/rokwire/illinois-app/issues/3043). 
-- Content attributes prepared for multiple scopes support [#3047](https://github.com/rokwire/app-flutter-plugin/issues/3047).
-- Hide StateFarm parking everywhere in the app [#3053](https://github.com/rokwire/app-flutter-plugin/issues/3053).
+- Content attributes prepared for multiple scopes support [#3047](https://github.com/rokwire/illinois-app/issues/3047).
+- Hide StateFarm parking everywhere in the app [#3053](https://github.com/rokwire/illinois-app/issues/3053).
 ### Fixed
 - Fixed hiding user details in analytics logs [#3049](https://github.com/rokwire/illinois-app/issues/3049).
 
