@@ -24,7 +24,6 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/model/survey.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -32,7 +31,6 @@ import 'package:rokwire_plugin/service/groups.dart' as rokwire;
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -40,8 +38,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
-import 'package:rokwire_plugin/ui/panels/survey_creation_panel.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -69,8 +65,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   List<Group>? _allGroups;
   List<Group>? _userGroups;
 
-  List<Survey>? _userSurveys;
-
   Map<String, dynamic> _contentAttributesSelection = <String, dynamic>{};
 
   @override
@@ -89,7 +83,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     ]);
     _selectedContentType = widget.contentType;
     _reloadGroupsContent();
-    _loadUserSurveys();
   }
 
   @override
@@ -160,16 +153,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       contentType: rokwire.GroupsContentType.all,
       attributes: _contentAttributesSelection,
     );
-
-  void _loadUserSurveys() async {
-    Surveys().loadCreatorSurveys().then((surveyList) {
-      if (mounted) {
-        setState(() {
-          _userSurveys = surveyList;
-        });
-      }
-    });
-  }
 
   void _checkGroupsContentLoaded() {
     if (!_isGroupsLoading) {
@@ -242,7 +225,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               : Container(color: Styles().colors!.background, child:
                   RefreshIndicator(onRefresh: _onPullToRefresh, child:
                     SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                      Column(children: <Widget>[ _buildGroupsContent(), _buildSurveyCreation()],),
+                      Column(children: <Widget>[ _buildGroupsContent(), ],),
                     ),
                   ),
                 ),
@@ -459,45 +442,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     else {
       return Container();
     }
-  }
-
-  Widget _buildSurveyCreation() {
-    List<Widget> userSurveyEntries = [];
-    for (Survey survey in _userSurveys ?? []) {
-      userSurveyEntries.add(Row(children: [
-        Expanded(flex: 2, child: Text(survey.title, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),),
-        Expanded(child: RoundedButton(
-          label: Localization().getStringEx("panel.group_detail.button.edit_survey.title",  'Edit'),
-          backgroundColor: Styles().colors!.white,
-          textColor: Styles().colors!.fillColorPrimary,
-          fontFamily: Styles().fontFamilies!.bold,
-          fontSize: 16,
-          padding: EdgeInsets.all(8),
-          borderColor: Styles().colors!.fillColorSecondary,
-          borderWidth: 2,
-          onTap: () => _onTapCreateSurvey(survey: survey),
-        )),
-      ],));
-    }
-    return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
-    Padding(padding: EdgeInsets.all(16), child: Column(children: [
-      ...userSurveyEntries,
-      Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
-        label: Localization().getStringEx("panel.group_detail.button.create_survey.title",  'Create Survey'),
-        backgroundColor: Styles().colors!.white,
-        textColor: Styles().colors!.fillColorPrimary,
-        fontFamily: Styles().fontFamilies!.bold,
-        fontSize: 16,
-        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-        borderColor: Styles().colors!.fillColorSecondary,
-        borderWidth: 2,
-        onTap: _onTapCreateSurvey,
-      )),
-    ])),);
-  }
-
-  void _onTapCreateSurvey({Survey? survey}) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyCreationPanel(survey: survey, tabBar: uiuc.TabBar())));
   }
 
   Widget _buildMyGroupsContent(){
