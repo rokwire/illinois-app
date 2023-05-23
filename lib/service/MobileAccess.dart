@@ -200,6 +200,7 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   Future<bool> _allowScanning(bool allow) async {
+    _print('Allow scan: $allow');
     bool result = false;
     try {
       result = await _methodChannel.invokeMethod('allowScanning', allow);
@@ -339,7 +340,7 @@ class MobileAccess with Service implements NotificationsListener {
         _allowScanning(false);
       }
     } else if (name == Storage.notifySettingChanged) {
-      if (name == Storage.debugUseIdentityBbKey) {
+      if (param == Storage.debugUseIdentityBbKey) {
         _checkNeedsRegistration();
       }
     }
