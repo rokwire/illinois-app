@@ -83,7 +83,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
         scrollDirection: Axis.vertical,
         child: Padding(
             padding: EdgeInsets.all(16),
-            child: Html(data: _syllabusBody, onLinkTap: (url, context, attributes, element) => _onTapLink(url), style: {
+            child: Html(data: _syllabusBody, onLinkTap: (url, context, element) => _onTapLink(url), style: {
               "body": Style(
                   color: Styles().colors!.fillColorPrimary,
                   fontFamily: Styles().fontFamilies!.bold,

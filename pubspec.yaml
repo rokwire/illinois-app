@@ -32,7 +32,7 @@ dependencies:
   flutter_widget_from_html: ^0.9.1
   geolocator: ^8.0.0
   url_launcher: ^6.0.10
-  xml: ^5.1.2
+  xml: ^6.3.0
   sprintf: ^6.0.0
   path: ^1.8.0
   collection: ^1.17.1
@@ -51,7 +51,7 @@ dependencies:
   package_info: ^2.0.2
   device_calendar: ^4.0.1
   image_cropping: ^0.0.11
-  dropdown_button2: ^1.2.2
+  dropdown_button2: ^2.1.3
   video_player: ^2.3.0
   just_audio: ^0.9.21
   flutter_barcode_scanner: ^2.0.0
