@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Illinois Assistant chatbot integration [#3220](https://github.com/rokwire/illinois-app/issues/3220)
 
+### Fixed
+- Upgrade dependencies for Flutter v3.10 [#3294](https://github.com/rokwire/illinois-app/issues/3294)
+
 ## [5.0.5] - 2023-05-23
 - Created and acknowledged at different places async versions of JSON encode/decode and collection equality checks [#3292](https://github.com/rokwire/illinois-app/issues/3292).
 
