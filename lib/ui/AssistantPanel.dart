@@ -1,80 +1,17 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Assistant.dart';
-import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/model/News.dart';
-import 'package:illinois/model/Video.dart';
-import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/CheckList.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
-import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
-import 'package:illinois/ui/academics/StudentCourses.dart';
-import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
-import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
-import 'package:illinois/ui/gies/CheckListPanel.dart';
-import 'package:illinois/ui/groups/GroupsHomePanel.dart';
-import 'package:illinois/ui/guide/CampusGuidePanel.dart';
-import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
-import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
-import 'package:illinois/ui/home/HomePanel.dart';
-import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
-import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
-import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
-import 'package:illinois/ui/home/HomeTwitterWidget.dart';
-import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
-import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
-import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
-import 'package:illinois/ui/polls/CreatePollPanel.dart';
-import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
-import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
-import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
-import 'package:illinois/ui/wallet/IDCardPanel.dart';
-import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
-import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/AppUtils.dart';
-import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
-import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AssistantPanel extends StatefulWidget {
 
@@ -92,6 +29,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   StreamController<String> _updateController = StreamController.broadcast();
   TextEditingController _inputController = TextEditingController();
 
+  bool _listening = false;
+
   List<Message> _messages = [];
 
   @override
@@ -101,6 +40,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       Auth2UserPrefs.notifyFavoritesChanged,
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
+      SpeechToText.notifyError,
     ]);
 
     _messages.add(Message(content: Localization().getStringEx('',
@@ -158,6 +98,11 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       if (mounted) {
         setState(() { });
       }
+    }
+    else if (name == SpeechToText.notifyError) {
+      setState(() {
+        _listening = false;
+      });
     }
   }
 
@@ -343,6 +288,20 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Row(mainAxisSize: MainAxisSize.max,
           children: [
+            Visibility(
+              visible: SpeechToText().isEnabled,
+              child: IconButton(//TODO: Enable support for material icons in styles images
+                splashRadius: 24,
+                icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors?.fillColorSecondary),
+                onPressed: () {
+                  if (_listening) {
+                    _stopListening();
+                  } else {
+                    _startListening();
+                  }
+                },
+              ),
+            ),
             Expanded(
               child: Material(
                 color: Styles().colors?.background,
@@ -355,6 +314,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                       minLines: 1,
                       maxLines: 3,
                       textCapitalization: TextCapitalization.sentences,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: _submitMessage,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: Localization().getStringEx('', 'Type your question here...'),
@@ -369,19 +330,45 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
               splashRadius: 24,
               icon: Icon(Icons.send, color: Styles().colors?.fillColorSecondary),
               onPressed: () {
-                setState(() {
-                  String message = _inputController.text;
-                  if (message.isNotEmpty) {
-                    _messages.add(Message(content: message, user: true));
-                  }
-                  _inputController.text = '';
-                });
+                _submitMessage(_inputController.text);
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _submitMessage(String message) {
+    setState(() {
+      if (message.isNotEmpty) {
+        _messages.add(Message(content: message, user: true));
+      }
+      _inputController.text = '';
+    });
+  }
+
+  void _startListening() {
+    SpeechToText().listen(onResult: _onSpeechResult);
+    setState(() {
+      _listening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await SpeechToText().stopListening();
+    setState(() {
+      _listening = false;
+    });
+  }
+
+  void _onSpeechResult(String result, bool finalResult) {
+    setState(() {
+      _inputController.text = result;
+      if (finalResult) {
+        _listening = false;
+      }
+    });
   }
 
   void _updateContentCodes() {
