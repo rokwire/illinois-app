@@ -72,7 +72,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
                   ])),
               Visibility(
                   visible: StringUtils.isNotEmpty(widget.notification.message),
-                  child: Html(data: widget.notification.message, onLinkTap: (url, context, attributes, element) => _onTapLink(url), style: {
+                  child: Html(data: widget.notification.message, onLinkTap: (url, context, element) => _onTapLink(url), style: {
                     "body": Style(
                         color: Styles().colors!.textSurfaceAccent,
                         fontFamily: Styles().fontFamilies!.bold,
