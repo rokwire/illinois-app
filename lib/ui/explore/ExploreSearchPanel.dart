@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -32,9 +33,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class ExploreSearchPanel extends StatefulWidget {
-  final Map<String, dynamic>? searchData;
+  final Group? browseGroup;
 
-  const ExploreSearchPanel({Key? key, this.searchData}) : super(key: key);
+  const ExploreSearchPanel({Key? key, this.browseGroup}) : super(key: key);
 
   @override
   _ExploreSearchPanelState createState() => _ExploreSearchPanelState();
@@ -93,10 +94,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                           autofocus: true,
                           cursorColor: Styles().colors!.fillColorSecondary,
                           keyboardType: TextInputType.text,
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: Styles().fontFamilies!.regular,
-                              color: Styles().colors!.textBackground),
+                          style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                           decoration: InputDecoration(
                             border: InputBorder.none,
                           ),
@@ -136,14 +134,11 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                   padding: EdgeInsets.all(16),
                   child: RichText(
                     text: TextSpan(
-                      style: TextStyle(
-                          fontSize: 20, color: Styles().colors!.fillColorPrimary),
+                      style: Styles().textStyles?.getTextStyle("widget.title.large"),
                       children: <TextSpan>[
                         TextSpan(
                             text: _searchLabel,
-                            style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.semiBold,
-                            )),
+                            style: Styles().textStyles?.getTextStyle("widget.text.semi_fat") ),
                       ],
                     ),
                   )),
@@ -152,10 +147,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
                   child: Text(getResultsInfoText()!,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: Styles().fontFamilies!.regular,
-                        color: Styles().colors!.textBackground),
+                    style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
                   ),
                 ),
               ),
@@ -222,9 +214,8 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
           AthleticsGameDetailPanel(gameId: event!.speaker, sportName: event.registrationLabel,)));
     }
     else {
-      String? groupId = JsonUtils.stringValue(widget.searchData!= null ? widget.searchData!["group_id"] : null);
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ExploreDetailPanel(explore: explore, browseGroupId: groupId,))).
+          ExploreDetailPanel(explore: explore, browseGroup: widget.browseGroup,))).
             then(
               (value){
                 if(value!=null && value == true){

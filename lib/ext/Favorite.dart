@@ -2,15 +2,15 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
@@ -18,6 +18,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
@@ -92,7 +93,7 @@ extension FavoriteExt on Favorite {
       return (this as ExplorePOI).exploreLocationDescription;
     }
     else if (this is Appointment) {
-      return (this as Appointment).displayDate;
+      return (this as Appointment).displayShortScheduleTime;
     }
     else {
       return null;
@@ -197,9 +198,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id,)));
     }
     else if (this is ExplorePOI) {
-      NativeCommunicator().launchExploreMapDirections(target: (this as ExplorePOI), options: {
-        'travelMode': 'transit'
-      });
+      (this as ExplorePOI).launchDirections();
     }
     else if (this is InboxMessage) {
       SettingsNotificationsContentPanel.launchMessageDetail(this as InboxMessage);
@@ -210,10 +209,10 @@ extension FavoriteExt on Favorite {
     // Work in lowercase as key can come from an URL
     String? lowerCaseKey = key?.toLowerCase();
     if (lowerCaseKey == Event.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
     }
     else if (lowerCaseKey == Dining.favoriteKeyName.toLowerCase()) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
     }
     else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
@@ -228,7 +227,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all)));
     }
     else if (lowerCaseKey == ExplorePOI.favoriteKeyName.toLowerCase()) {
-      NotificationService().notify(ExplorePanel.notifySelectMap, ExploreItem.MTDDestinations);
+      NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.MTDDestinations);
     }
     else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));

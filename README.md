@@ -97,7 +97,12 @@ The Firebase configuration file for Android generated from Google Firebase conso
 ```
 $ sh ./scripts/prebuild_illinois.sh
 $ flutter build apk --no-tree-shake-icons --flavor IllinoisProd -t lib/mainProd.dart
+$ flutter build apk --no-tree-shake-icons --flavor IllinoisDev -t lib/mainDev.dart
+$ flutter build apk --no-tree-shake-icons --flavor IllinoisTst -t lib/mainTest.dart
+
 $ flutter build ios --no-tree-shake-icons --flavor IllinoisProd -t lib/mainProd.dart
+$ flutter build ios --no-tree-shake-icons --flavor IllinoisDev -t lib/mainDev.dart
+$ flutter build ios --no-tree-shake-icons --flavor IllinoisTst -t lib/mainTest.dart
 ```
 NB: Product environments: Prod/Dev/Test
 ```

@@ -563,8 +563,7 @@ class _PollOptionViewState extends State<PollOptionView> {
                 Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
                   InkWell(onTap : widget.onClose, child:
                     Padding(padding: EdgeInsets.only(left: 12, right: 8, top: 8, bottom: 12), child:
-                        Text('X', style:
-                          TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),
+                        Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")
                         ),
                     ),
                   ),

@@ -179,6 +179,10 @@ class Storage extends rokwire.Storage {
   bool? get debugUseCanvasLms => getBoolWithName(debugUseCanvasLmsKey);
   set debugUseCanvasLms(bool? value) => setBoolWithName(debugUseCanvasLmsKey, value);
 
+  static const String debugUseSampleAppointmentsKey  = 'debug_use_sample_appontments';
+  bool? get debugUseSampleAppointments => getBoolWithName(debugUseSampleAppointmentsKey);
+  set debugUseSampleAppointments(bool? value) => setBoolWithName(debugUseSampleAppointmentsKey, value);
+
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
@@ -371,18 +375,18 @@ class Storage extends rokwire.Storage {
   set selectedCourseTermId(String? value) => setStringWithName(selectedCourseTermIdKey, value);
 
   // Explore
-  String get selectedListExploreItemKey => 'edu.illinois.rokwire.explore.list.selected.item';
-  String? get selectedListExploreItem => getStringWithName(selectedListExploreItemKey);
-  set selectedListExploreItem(String? value) => setStringWithName(selectedListExploreItemKey, value);
-
-  String get selectedMapExploreItemKey => 'edu.illinois.rokwire.explore.map.selected.item';
-  String? get selectedMapExploreItem => getStringWithName(selectedMapExploreItemKey);
-  set selectedMapExploreItem(String? value) => setStringWithName(selectedMapExploreItemKey, value);
+  String get selectedMapExploreTypeKey => 'edu.illinois.rokwire.explore.map.selected.type';
+  String? get selectedMapExploreType => getStringWithName(selectedMapExploreTypeKey);
+  set selectedMapExploreType(String? value) => setStringWithName(selectedMapExploreTypeKey, value);
 
   // Appointments
   String get appointmentsDisplayEnabledKey => 'edu.illinois.rokwire.appointments.display_enabled';
   bool? get appointmentsCanDisplay => getBoolWithName(appointmentsDisplayEnabledKey, defaultValue: true);
   set appointmentsCanDisplay(bool? value) => setBoolWithName(appointmentsDisplayEnabledKey, value);
+
+  String get selectedAppointmentProviderIdKey => 'edu.illinois.rokwire.appointments.selected.provider_id';
+  String? get selectedAppointmentProviderId => getStringWithName(selectedAppointmentProviderIdKey);
+  set selectedAppointmentProviderId(String? value) => setStringWithName(selectedAppointmentProviderIdKey, value);
 
   // MTD Map instructions
   String get showMtdStopsMapInstructionsKey => 'edu.illinois.rokwire.explore.map.mtd_stops.show_instructions';

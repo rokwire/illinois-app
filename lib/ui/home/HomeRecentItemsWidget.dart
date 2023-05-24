@@ -366,7 +366,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(right: 24), child:
-                        Text(widget.recentItem.title ?? '', style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold, color: Styles().colors!.fillColorPrimary,),)
+                        Text(widget.recentItem.title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.regular.extra_fat"))
                       ),
                     ),
                   ]),
@@ -421,7 +421,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
         Row(children: <Widget>[
           Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.only(right: 5),),
-          Text(displayDate, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: Styles().colors!.textBackground)),
+          Text(displayDate, style: Styles().textStyles?.getTextStyle("widget.card.detail.tiny.medium_fat")),
         ],),
       );
     } else {
@@ -436,7 +436,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
         Row(children: <Widget>[
           Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 5),),
-            Text(displayTime, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: Styles().colors!.textBackground)),
+            Text(displayTime, style: Styles().textStyles?.getTextStyle("widget.card.detail.tiny.medium_fat")),
         ],),
       );
     } else {
@@ -446,7 +446,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
 
   Widget _descriptionDetail() {
     return Semantics(label: widget.recentItem.descripton ?? '', excludeSemantics: true, child:
-      Text(widget.recentItem.descripton ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground)),
+      Text(widget.recentItem.descripton ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small.medium")),
     );
   }
 

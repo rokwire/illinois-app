@@ -107,7 +107,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
                 autofocus: true,
                 cursorColor: Styles().colors!.fillColorSecondary,
                 keyboardType: TextInputType.text,
-                style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+                style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                 ),
@@ -138,14 +138,13 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(padding: EdgeInsets.all(16), child:
             RichText(text:
-              TextSpan(style: TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary), children: <TextSpan>[
-                TextSpan(text: _searchLabel, style: TextStyle(fontFamily: Styles().fontFamilies!.semiBold,)),
+              TextSpan(style: Styles().textStyles?.getTextStyle("widget.button.title.large.thin"), children: <TextSpan>[
+                TextSpan(text: _searchLabel, style: Styles().textStyles?.getTextStyle("widget.text.semi_fat")),
               ],),
             )
           ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-            Text(_resultsCountLabel, style:
-              TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+            Text(_resultsCountLabel, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
             ),
           ),
         ],),

@@ -77,14 +77,59 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       Inbox().readMessage(message.messageId);
     }
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
+      FirebaseMessaging.payloadTypeHome,
+      FirebaseMessaging.payloadTypeBrowse,
+      FirebaseMessaging.payloadTypeMap,
+      FirebaseMessaging.payloadTypeMapEvents,
+      FirebaseMessaging.payloadTypeMapDining,
+      FirebaseMessaging.payloadTypeMapBuildings,
+      FirebaseMessaging.payloadTypeMapStudentCourses,
+      FirebaseMessaging.payloadTypeMapAppointments,
+      FirebaseMessaging.payloadTypeMapMtdStops,
+      FirebaseMessaging.payloadTypeMapMtdDestinations,
+      FirebaseMessaging.payloadTypeMapMentalHealth,
+      FirebaseMessaging.payloadTypeMapStateFarmWayfinding,
+      FirebaseMessaging.payloadTypeAcademics,
+      FirebaseMessaging.payloadTypeAcademicsAppointments,
+      FirebaseMessaging.payloadTypeAcademicsCanvasCourses,
+      FirebaseMessaging.payloadTypeAcademicsDueDateCatalog,
+      FirebaseMessaging.payloadTypeAcademicsEvents,
+      FirebaseMessaging.payloadTypeAcademicsGiesCheckilst,
+      FirebaseMessaging.payloadTypeAcademicsMedicineCourses,
+      FirebaseMessaging.payloadTypeAcademicsMyIllini,
+      FirebaseMessaging.payloadTypeAcademicsSkillsSelfEvaluation,
+      FirebaseMessaging.payloadTypeAcademicsStudentCourses,
+      FirebaseMessaging.payloadTypeAcademicsToDoList,
+      FirebaseMessaging.payloadTypeAcademicsUiucCheckilst,
+      FirebaseMessaging.payloadTypeWellness,
+      FirebaseMessaging.payloadTypeWellnessAppointments,
+      FirebaseMessaging.payloadTypeWellnessDailyTips,
+      FirebaseMessaging.payloadTypeWellnessHealthScreener,
+      FirebaseMessaging.payloadTypeWellnessMentalHealth,
+      FirebaseMessaging.payloadTypeWellnessPodcast,
+      FirebaseMessaging.payloadTypeWellnessResources,
+      FirebaseMessaging.payloadTypeWellnessRings,
+      FirebaseMessaging.payloadTypeWellnessStruggling,
+      FirebaseMessaging.payloadTypeWellnessTodoList,
+      FirebaseMessaging.payloadTypeWellnessToDoItem,
       FirebaseMessaging.payloadTypeEventDetail,
       FirebaseMessaging.payloadTypeGameDetail,
       FirebaseMessaging.payloadTypeAthleticsGameStarted,
       FirebaseMessaging.payloadTypeAthleticsNewDetail,
       FirebaseMessaging.payloadTypeGroup,
-      FirebaseMessaging.payloadTypeWellnessToDoItem,
       FirebaseMessaging.payloadTypeAppointment,
-      FirebaseMessaging.payloadTypePoll
+      FirebaseMessaging.payloadTypePoll,
+      FirebaseMessaging.payloadTypeProfileMy,
+      FirebaseMessaging.payloadTypeProfileWhoAreYou,
+      FirebaseMessaging.payloadTypeProfilePrivacy,
+      FirebaseMessaging.payloadTypeSettingsSections,
+      FirebaseMessaging.payloadTypeSettingsInterests,
+      FirebaseMessaging.payloadTypeSettingsFoodFilters,
+      FirebaseMessaging.payloadTypeSettingsSports,
+      FirebaseMessaging.payloadTypeSettingsFavorites,
+      FirebaseMessaging.payloadTypeSettingsAssessments,
+      FirebaseMessaging.payloadTypeSettingsCalendar,
+      FirebaseMessaging.payloadTypeSettingsAppointments
     });
   }
 
@@ -146,7 +191,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
         Row(key: _sheetHeaderKey, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),)
+              Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style:  Styles().textStyles?.getTextStyle("widget.sheet.title.regular"),)
             )
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:

@@ -65,7 +65,7 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
     return Padding(
         padding: EdgeInsets.only(top: 40, bottom: 30),
         child: Text(Localization().getStringEx('panel.laundry.issues_contact_info.contact_info.label', 'Contact Information'),
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 30, fontFamily: Styles().fontFamilies!.medium)));
+            style: Styles().textStyles?.getTextStyle("widget.title.semi_huge")));
   }
 
   Widget _buildInputFieldsSection() {
@@ -94,12 +94,11 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
             child: TextField(
                 controller: controller,
                 cursorColor: Styles().colors!.mediumGray2!,
-                style: TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium),
+                style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.large"),
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: hintText,
-                    hintStyle:
-                        TextStyle(fontSize: 20, color: Styles().colors!.disabledTextColor, fontFamily: Styles().fontFamilies!.medium)))));
+                    hintStyle: Styles().textStyles?.getTextStyle("widget.input_field.disable.text.large")))));
   }
 
   Widget _buildCompleteSection() {

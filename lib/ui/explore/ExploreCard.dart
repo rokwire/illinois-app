@@ -21,8 +21,8 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -367,6 +367,10 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       locationText = explore.fullAddress;
       onLocationTap = _onTapExploreLocation;
     }
+    else if (explore is WellnessBuilding) {
+      locationText = explore.building.fullAddress;
+      onLocationTap = _onTapExploreLocation;
+    }
     else if (explore is StudentCourse) {
       locationText = explore.section?.displayLocation;
       onLocationTap = _onTapExploreLocation;
@@ -434,9 +438,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
           ],
         ),
       ));
-    } else {
-      return Container();
     }
+    return null;
   }
 
   Widget _explorePaymentTypes() {
@@ -545,8 +548,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   void _onTapExploreLocation() {
-    Analytics().logSelect(target: "Location Detail");
-    NativeCommunicator().launchMapDirections(jsonData: widget.explore?.toJson());
+    Analytics().logSelect(target: "Location Directions");
+    widget.explore?.launchDirections();
   }
 
   void _onTapSmallExploreCard({BuildContext? context, _EventCardType? cardType, Event? parentEvent, Event? subEvent}) {

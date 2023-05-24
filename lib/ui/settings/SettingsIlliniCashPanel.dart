@@ -248,7 +248,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               child: HtmlWidget(
                   StringUtils.ensureNotEmpty(contentHtml),
                   onTapUrl : (url) {_onTapLink(context, url); return true;},
-                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.message.small"),
                   customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
               )
             ),

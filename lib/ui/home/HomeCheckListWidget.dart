@@ -144,11 +144,8 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                     Semantics(
                       container: true,
                       child:
-                      Text(Localization().getStringEx(
-                          'widget.gies.message.finished', 'You’ve completed the checklist.'),
-                        style: TextStyle(color: Styles().colors!.fillColorPrimary,
-                          fontFamily: Styles().fontFamilies!.extraBold,
-                          fontSize: 32,),),)),
+                      Text(Localization().getStringEx('widget.gies.message.finished', 'You’ve completed the checklist.'),
+                        style: Styles().textStyles?.getTextStyle("widget.message.huge.extra_fat")))),
                 ],),
                 Container(height: 24,),
                 RoundedButton(
@@ -176,9 +173,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                     Semantics(
                       container: true,
                       child: Text(_progressText,
-                        style: TextStyle(color: Styles().colors!.fillColorPrimary,
-                          fontFamily: Styles().fontFamilies!.extraBold,
-                          fontSize: 24,),),)),
+                        style: Styles().textStyles?.getTextStyle("widget.message.extra_large.extra_fat")))),
                     ],),
                 Container(height: 24,),
                 RoundedButton(

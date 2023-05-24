@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -31,6 +32,7 @@ class Guide with Service implements NotificationsListener {
   static const String campusReminderContentType = "campus-reminder";
   static const String campusHighlightContentType = "campus-highlight";
   static const String campusSafetyResourceContentType = "campus-safety-resource";
+  static const String wellnessMentalHealthContentType = "mental-health";
 
   static const String _cacheFileName = "guide.json";
 
@@ -165,7 +167,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   Future<List<dynamic>?> _loadContentJsonFromCache() async {
-    return JsonUtils.decodeList(await _loadContentStringFromCache());
+    return await JsonUtils.decodeListAsync(await _loadContentStringFromCache());
   }
 
   Future<String?> _loadContentStringFromNet() async {
@@ -183,8 +185,8 @@ class Guide with Service implements NotificationsListener {
   Future<void> _updateContentFromNet() async {
     if ((_contentSource == null) || (_contentSource == GuideContentSource.Net)) {
       String? contentString = await _loadContentStringFromNet();
-      List<dynamic>? contentList = JsonUtils.decodeList(contentString);
-      if ((contentList != null) && !DeepCollectionEquality().equals(_contentList, contentList)) {
+      List<dynamic>? contentList = await JsonUtils.decodeListAsync(contentString);
+      if ((contentList != null) && !await CollectionUtils.equalsAsync(_contentList, contentList)) {
         _contentList = contentList;
         _contentMap = _buildContentMap(_contentList);
         _contentSource = GuideContentSource.Net;
@@ -202,7 +204,7 @@ class Guide with Service implements NotificationsListener {
       contentMap = LinkedHashMap<String, Map<String, dynamic>?>();
       for (dynamic contentEntry in contentList) {
         Map<String, dynamic>? mapEntry = JsonUtils.mapValue(contentEntry);
-        String? id = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['_id']) : null;
+        String? id = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['content_id']) : null;
         if (id != null) {
           contentMap[id] = mapEntry;
         }
@@ -226,7 +228,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   Map<String, dynamic>? entryById(String? id) {
-    return (_contentMap != null) ? _contentMap![id] : null;
+    return ((_contentMap != null) && (id != null)) ? _contentMap![id] : null;
   }
 
   dynamic entryValue(Map<String, dynamic>? entry, String key) {
@@ -241,7 +243,19 @@ class Guide with Service implements NotificationsListener {
   }
 
   String? entryId(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, '_id'));
+    return JsonUtils.stringValue(entryValue(entry, 'content_id'));
+  }
+
+  String? entryGuide(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'guide'));
+  }
+
+  String? entryCategory(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'category'));
+  }
+
+  String? entrySection(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'section'));
   }
 
   String? entryTitle(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
@@ -262,12 +276,24 @@ class Guide with Service implements NotificationsListener {
     // Bidi.stripHtmlIfNeeded(result);
   }
 
+  Map<String, dynamic>? entryAnalyticsAttributes(Map<String, dynamic>? entry) => (entry != null) ? {
+    Analytics.LogAttributeGuideId : entryId(entry),
+    Analytics.LogAttributeGuideTitle : Guide().entryTitle(entry, stripHtmlTags: true),
+    Analytics.LogAttributeGuide : Guide().entryGuide(entry),
+    Analytics.LogAttributeGuideCategory :  Guide().entryCategory(entry),
+    Analytics.LogAttributeGuideSection :  Guide().entrySection(entry),
+  } : null;
+
   bool isEntryReminder(Map<String, dynamic>? entry) {
     return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
   }
 
   bool isEntrySafetyResource(Map<String, dynamic>? entry) {
     return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusSafetyResourceContentType;
+  }
+
+  bool isEntryMentalHeatlh(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == wellnessMentalHealthContentType;
   }
 
   // Returns the date in:
@@ -293,8 +319,8 @@ class Guide with Service implements NotificationsListener {
       for (dynamic contentEntry in _contentList!) {
         Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
         if ((guideEntry != null) &&
-            ((guide == null) || (Guide().entryValue(guideEntry, 'guide') == guide)) &&
-            ((category == null) || (Guide().entryValue(guideEntry, 'category')) == category) &&
+            ((guide == null) || (Guide().entryGuide(guideEntry) == guide)) &&
+            ((category == null) || (Guide().entryCategory(guideEntry)) == category) &&
             ((section == null) || (GuideSection.fromGuideEntry(guideEntry) == section)))
         {
           guideList.add(guideEntry);
@@ -355,6 +381,26 @@ class Guide with Service implements NotificationsListener {
     return null;
   }
 
+  List<Map<String, dynamic>>? get mentalHealthList {
+    if (_contentList != null) {
+
+      List<Map<String, dynamic>> mentalHealthList = <Map<String, dynamic>>[];
+      for (dynamic entry in _contentList!) {
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(entry);
+        if (isEntryMentalHeatlh(guideEntry)) {
+          mentalHealthList.add(guideEntry!);
+        }
+      }
+
+      mentalHealthList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+        return SortUtils.compare(Guide().entryListTitle(entry1, stripHtmlTags: true), Guide().entryListTitle(entry2, stripHtmlTags: true));
+      });
+
+      return mentalHealthList;
+    }
+    return null;
+  }
+
   List<Map<String, dynamic>>? get promotedList {
     if (_contentList != null) {
       List<Map<String, dynamic>> promotedList = <Map<String, dynamic>>[];
@@ -376,6 +422,11 @@ class Guide with Service implements NotificationsListener {
       _checkPromotionRoles(promotion) &&
       _checkPromotionCard(promotion) :
     false;
+  }
+
+  bool _isEntryPromotion(Map<String, dynamic>? entry) {
+    Map<String, dynamic>? promotion = (entry != null) ? JsonUtils.mapValue(entryValue(entry, 'promotion')) : null;
+    return (promotion != null);
   }
 
   static bool _checkPromotionInterval(Map<String, dynamic>? promotion) {
@@ -428,29 +479,46 @@ class Guide with Service implements NotificationsListener {
   void _initDefaultFavorites() {
 
     if (_contentList != null) {
-      Map<String, List<String>> defaultFavorites = <String, List<String>>{};
+      Set<String> modifiedFavoriteKeys = <String>{};
+      Map<String, LinkedHashSet<String>> favorites = <String, LinkedHashSet<String>>{};
       for (dynamic contentEntry in _contentList!) {
         Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
         bool? isFavorite = JsonUtils.boolValue(entryValue(guideEntry, 'content_type_favorite'));
         if (isFavorite == true) {
           String? guideEntryId = entryId(guideEntry);
-          String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
-          if ((guideEntryId != null) && (guideEntryContentType != null)) {
-            String favoriteKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType);
-            List<String>? favoriteIds = defaultFavorites[favoriteKeyName];
-            if (favoriteIds != null) {
-              favoriteIds.add(guideEntryId);
+          if (guideEntryId != null) {
+            String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
+            if (guideEntryContentType != null) {
+              _processDefaultFavorites(guideEntryId: guideEntryId, guideEntryContentType: guideEntryContentType, favorites: favorites, modifiedFavoriteKeys: modifiedFavoriteKeys);
             }
-            else if (Auth2().prefs?.getFavorites(favoriteKeyName) == null) {
-              defaultFavorites[favoriteKeyName] = <String>[guideEntryId];
+            if (_isEntryPromotion(guideEntry)) {
+              _processDefaultFavorites(guideEntryId: guideEntryId, guideEntryContentType: campusHighlightContentType, favorites: favorites, modifiedFavoriteKeys: modifiedFavoriteKeys);
             }
           }
         }
       }
-      
-      defaultFavorites.forEach((String key, List<String> ids) {
-        Auth2().prefs?.setFavorites(key, LinkedHashSet<String>.from(ids.reversed));
-      });
+
+      for (String modifiedFavoriteKey in modifiedFavoriteKeys) {
+        Auth2().prefs?.setFavorites(modifiedFavoriteKey, favorites[modifiedFavoriteKey]);
+      }
+    }
+  }
+
+  void _processDefaultFavorites({
+    required String guideEntryId,
+    required String guideEntryContentType,
+    required Map<String, LinkedHashSet<String>> favorites,
+    required Set<String> modifiedFavoriteKeys
+  }) {
+    String processedKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType, processed: true);
+    LinkedHashSet<String> processedGuideEntryIds = (favorites[processedKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(processedKeyName)?? LinkedHashSet<String>()));
+    if (!processedGuideEntryIds.contains(guideEntryId)) {
+      String favoriteKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType);
+      LinkedHashSet<String> favoriteGuideEntryIds = (favorites[favoriteKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(favoriteKeyName) ?? LinkedHashSet<String>()));
+      favoriteGuideEntryIds.add(guideEntryId); // Mark guideEntryId as favorite
+      processedGuideEntryIds.add(guideEntryId); // Mark guideEntryId as processed
+      modifiedFavoriteKeys.add(favoriteKeyName);
+      modifiedFavoriteKeys.add(processedKeyName);
     }
   }
 
@@ -603,7 +671,7 @@ class Guide with Service implements NotificationsListener {
     // ID
     dynamic sourceValue = sourceEntry['id'];
     if (sourceValue != null) {
-      contentEntry['_id'] = sourceValue;
+      contentEntry['content_id'] = sourceValue;
     }
 
     // Shared Fields
@@ -790,7 +858,7 @@ class GuideSection {
 
   static GuideSection? fromGuideEntry(Map<String, dynamic>? guideEntry) {
     return (guideEntry != null) ? GuideSection(
-        name: JsonUtils.stringValue(Guide().entryValue(guideEntry, 'section')),
+        name: Guide().entrySection(guideEntry),
         date: Guide().isEntryReminder(guideEntry) ? Guide().reminderSectionDate(guideEntry) : null,
     ) : null;
   }
@@ -845,11 +913,11 @@ class GuideFavorite implements Favorite {
   int get hashCode => (id?.hashCode ?? 0);
 
   static const String favoriteKeyName = "studentGuideIds";
-  static String constructFavoriteKeyName({String? contentType}) => (contentType != null) ? "${_favoriteContentTypeKey(contentType)}GuideIds" : favoriteKeyName;
+  static String constructFavoriteKeyName({String? contentType, bool processed = false}) => (contentType != null) ? "${_favoriteContentTypeKey(contentType, processed)}GuideIds" : favoriteKeyName;
   @override String get favoriteKey => constructFavoriteKeyName(contentType: contentType);
   @override String? get favoriteId => id;
 
-  static String _favoriteContentTypeKey(String contentType) {
+  static String _favoriteContentTypeKey(String contentType, bool processed) {
     String favoriteKey = '';
     List<String> items = contentType.split('-');
     for (String item in items) {
@@ -859,6 +927,9 @@ class GuideFavorite implements Favorite {
       else {
         favoriteKey += StringUtils.capitalize(item);
       }
+    }
+    if (processed) {
+      favoriteKey += 'Processed';
     }
     return favoriteKey;
   }

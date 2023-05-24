@@ -20,17 +20,18 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
+import 'package:illinois/ui/wellness/WellnessMentalHealthContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
-import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeContentWidget.dart';
+import 'package:illinois/ui/wellness/WellnessAppointmentsContentWidget.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -40,16 +41,33 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling }
+enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling, mentalHealth }
 
 class WellnessHomePanel extends StatefulWidget {
+  static const String notifySelectContent = "edu.illinois.rokwire.wellness.content.select";
+  static const String contentItemKey = "content-item";
+
   final WellnessContent? content;
   final bool rootTabDisplay;
+
+  final Map<String, dynamic> params = <String, dynamic>{};
 
   WellnessHomePanel({this.content, this.rootTabDisplay = false});
 
   @override
   _WellnessHomePanelState createState() => _WellnessHomePanelState();
+
+  static bool get hasState {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(WellnessHomePanel.notifySelectContent);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _WellnessHomePanelState) && subscriber.mounted) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 class _WellnessHomePanelState extends State<WellnessHomePanel>
@@ -58,6 +76,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
 {
   static WellnessContent? _lastSelectedContent;
   late WellnessContent _selectedContent;
+  List<WellnessContent>? _contentValues;
   bool _contentValuesVisible = false;
 
   UniqueKey _podcastKey = UniqueKey();
@@ -67,8 +86,9 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [FlexUI.notifyChanged]);
-    _selectedContent = _selectableContent(widget.content) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
+    NotificationService().subscribe(this, [FlexUI.notifyChanged, WellnessHomePanel.notifySelectContent]);
+    _buildContentValues();
+    _selectedContent = _ensureContent(_initialContentItem) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
   }
 
   @override
@@ -82,7 +102,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      setStateIfMounted((){});
+      _buildContentValues();
+    } else if (name == WellnessHomePanel.notifySelectContent) {
+      WellnessContent? contentItem = (param is WellnessContent) ? param : null;
+      if (mounted && (contentItem != null) && (contentItem != _selectedContent)) {
+        _onContentItemChanged(contentItem);
+      }
     }
   }
 
@@ -154,12 +179,10 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
 
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['wellness']);
-    if (contentCodes != null) {
-      for (String contentCode in contentCodes) {
-        WellnessContent? section = _getContentValueFromCode(contentCode);
-        if ((section != null) && (_selectedContent != section)) {
-          sectionList.add(_buildContentItem(section));
+    if (CollectionUtils.isNotEmpty(_contentValues)) {
+      for (WellnessContent content in _contentValues!) {
+        if (_selectedContent != content) {
+          sectionList.add(_buildContentItem(content));
         }
       }
     }
@@ -175,14 +198,36 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         onTap: () => _onTapContentItem(contentItem));
   }
 
+  void _buildContentValues() {
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['wellness']);
+    List<WellnessContent>? contentValues;
+    if (contentCodes != null) {
+      contentValues = [];
+      for (String code in contentCodes) {
+        WellnessContent? value = _getContentValueFromCode(code);
+        if (value != null) {
+          contentValues.add(value);
+        }
+      }
+    }
+
+    _contentValues = contentValues;
+    setStateIfMounted(() { });
+  }
+
   void _onTapContentItem(WellnessContent contentItem) {
     Analytics().logSelect(target: _getContentLabel(contentItem));
+    _changeSettingsContentValuesVisibility();
+    NotificationService().notify(WellnessHomePanel.notifySelectContent, contentItem);
+  }
+
+  void _onContentItemChanged(WellnessContent contentItem) {
     String? launchUrl;
     if (contentItem == WellnessContent.podcast) {
-      launchUrl = _loadWellcomeResourceUrl('podcast');
+      launchUrl = Wellness().getResourceUrl(resourceId: 'podcast');
     }
     else if (contentItem == WellnessContent.struggling) {
-      launchUrl = _loadWellcomeResourceUrl('where_to_start');
+      launchUrl = Wellness().getResourceUrl(resourceId: 'where_to_start');
     }
     if ((launchUrl != null) && (Guide().detailIdFromUrl(launchUrl) == null)) {
       _launchUrl(launchUrl);
@@ -190,14 +235,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     else {
       _selectedContent = _lastSelectedContent = contentItem;
     }
-    _changeSettingsContentValuesVisibility();
+    setStateIfMounted(() { });
   }
 
   void _changeSettingsContentValuesVisibility() {
     _contentValuesVisible = !_contentValuesVisible;
-    if (mounted) {
-      setState(() {});
-    }
+    setStateIfMounted(() { });
   }
 
   WellnessContent? _getContentValueFromCode(String? code) {
@@ -215,6 +258,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       return WellnessContent.podcast;
     } else if (code == 'resources') {
       return WellnessContent.resources;
+    } else if (code == 'mental_health') {
+      return WellnessContent.mentalHealth;
     } else if (code == 'struggling') {
       return WellnessContent.struggling;
     } else {
@@ -235,8 +280,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     return widget.rootTabDisplay ? null : uiuc.TabBar();
   }
 
-  WellnessContent? _selectableContent(WellnessContent? content) =>
-     ((content != WellnessContent.podcast) && (content != WellnessContent.struggling)) ? content : null;
+  WellnessContent? _ensureContent(WellnessContent? contentItem, {List<WellnessContent>? contentItems}) {
+    contentItems ??= _contentValues;
+    return ((contentItem != null) && contentItems!.contains(contentItem)) ? contentItem : null;
+  }
+
+  WellnessContent? get _initialContentItem => widget.params[WellnessHomePanel.contentItemKey];
 
   Widget get _contentWidget {
     switch (_selectedContent) {
@@ -247,7 +296,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
       case WellnessContent.todo:
         return WellnessToDoHomeContentWidget();
       case WellnessContent.appointments:
-        return WellnessAppointmentsHomeContentWidget();
+        return WellnessAppointmentsContentWidget();
       case WellnessContent.healthScreener:
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.podcast:
@@ -255,6 +304,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return (guideId != null) ? GuideDetailWidget(key: _podcastKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
+      case WellnessContent.mentalHealth:
+        return WellnessMentalHealthContentWidget();
       case WellnessContent.struggling:
         String? guideId = _loadWellcomeResourceGuideId('where_to_start');
         return (guideId != null) ? GuideDetailWidget(key: _strugglingKey, guideEntryId: guideId, headingColor: Styles().colors?.background) : Container();
@@ -263,25 +314,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     }
   }
 
-  String? _loadWellcomeResourceUrl(String resourceId) {
-    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.resources']) ;
-    List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
-    if (commands != null) {
-      for (dynamic entry in commands) {
-        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
-        if (command != null) {
-          String? id = JsonUtils.stringValue(command['id']);
-          if (id == resourceId) {
-            return JsonUtils.stringValue(command['url']);
-          }
-        }
-      }
-    }
-    return null;
-  }
-
   String? _loadWellcomeResourceGuideId(String resourceId) =>
-    Guide().detailIdFromUrl(_loadWellcomeResourceUrl(resourceId));
+    Guide().detailIdFromUrl(Wellness().getResourceUrl(resourceId: resourceId));
 
   void _launchUrl(String? url) {
     if (StringUtils.isNotEmpty(url)) {
@@ -316,6 +350,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return _loadContentString('panel.wellness.section.screener.label', 'Illinois Health Screener');
       case WellnessContent.resources:
         return _loadContentString('panel.wellness.section.resources.label', 'Wellness Resources', language: language);
+      case WellnessContent.mentalHealth:
+        return _loadContentString('panel.wellness.section.mental_health.label', 'Mental Health Resources', language: language);
       case WellnessContent.podcast:
         return _loadContentString('panel.wellness.section.podcast.label', 'Healthy Illini Podcast', language: language);
       case WellnessContent.struggling:

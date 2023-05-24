@@ -103,27 +103,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".maps.MapPickLocationActivity"
-            android:exported="false"
-            android:theme="@style/DefaultTheme"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"
-
-        />
-        <activity
-            android:name=".maps.MapDirectionsActivity"
-            android:exported="false"
-            android:theme="@style/DefaultTheme"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"/>
-
-        <activity
-            android:name=".maps.MapActivity"
-            android:exported="false"
-            android:theme="@style/DefaultTheme"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden"/>
 
         <receiver android:name=".rokwire_plugin.GeofenceBroadcastReceiver" android:exported="false"/>
 

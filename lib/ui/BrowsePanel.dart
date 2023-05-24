@@ -15,13 +15,14 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart' as uiuc;
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/academics/AcademicsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
@@ -64,8 +65,8 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -163,15 +164,21 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     List<Widget> sectionsList = <Widget>[];
     if (_contentCodes != null) {
       for (String code in _contentCodes!) {
-        sectionsList.add((code == _BrowseCampusResourcesSection.contentCode) ?
-          _BrowseCampusResourcesSection(
-            expanded: _isExpanded(code),
-            onExpand: () => _toggleExpanded(code),) :
-          _BrowseSection(
-            sectionId: code,
-            expanded: _isExpanded(code),
-            onExpand: () => _toggleExpanded(code),)
-        );
+        List<String>? entryCodes = _BrowseSection.buildBrowseEntryCodes(sectionId: code);
+        if ((entryCodes != null) && entryCodes.isNotEmpty) {
+          sectionsList.add((code == 'campus_resources') ?
+            _BrowseCampusResourcesSection(
+              sectionId: code,
+              entryCodes: entryCodes,
+              expanded: _isExpanded(code),
+              onExpand: () => _toggleExpanded(code),) :
+            _BrowseSection(
+              sectionId: code,
+              entryCodes: entryCodes,
+              expanded: _isExpanded(code),
+              onExpand: () => _toggleExpanded(code),)
+          );
+        }
       }
     }
 
@@ -250,13 +257,13 @@ class _BrowseSection extends StatelessWidget {
   final Set<String>? _homeSectionEntriesCodes;
   final Set<String>? _homeRootEntriesCodes;
 
-  _BrowseSection({Key? key, required this.sectionId, this.expanded = false, this.onExpand}) :
-    _browseEntriesCodes = _buildBrowseEntryCodes(sectionId: sectionId),
+  _BrowseSection({Key? key, required this.sectionId, List<String>? entryCodes, this.expanded = false, this.onExpand}) :
+    _browseEntriesCodes = entryCodes ?? buildBrowseEntryCodes(sectionId: sectionId),
     _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home.$sectionId']),
     _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home']),
     super(key: key);
 
-  static List<String>? _buildBrowseEntryCodes({required String sectionId}) {
+  static List<String>? buildBrowseEntryCodes({required String sectionId}) {
     List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']);
     codes?.sort((String code1, String code2) {
       String title1 = _BrowseEntry.title(sectionId: sectionId, entryId: code1);
@@ -299,7 +306,7 @@ class _BrowseSection extends StatelessWidget {
                   Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
                 )
               ),
-              Opacity(opacity: _hasBrowseContent ? 1 : 0, child:
+              Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
                 Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
                   InkWell(onTap: () => _onTapSectionFavorite(context), child:
                     FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
@@ -373,6 +380,18 @@ class _BrowseSection extends StatelessWidget {
 
   bool get _hasBrowseContent => _browseEntriesCodes?.isNotEmpty ?? false;
 
+  bool get _hasFavoriteContent {
+    if (_browseEntriesCodes?.isNotEmpty ?? false) {
+      for (String code in _browseEntriesCodes!) {
+        HomeFavorite? entryFavorite = _favorite(code);
+        if (entryFavorite != null) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   bool? get _isSectionFavorite {
     int favCount = 0, unfavCount = 0, totalCount = 0;
     if (_browseEntriesCodes?.isNotEmpty ?? false) {
@@ -388,11 +407,13 @@ class _BrowseSection extends StatelessWidget {
           }
         }
       }
-      if ((favCount == totalCount)) {
-        return true;
-      }
-      else if (unfavCount == totalCount) {
-        return false;
+      if (0 < totalCount) {
+        if (favCount == totalCount) {
+          return true;
+        }
+        else if (unfavCount == totalCount) {
+          return false;
+        }
       }
     }
     return null;
@@ -512,11 +533,14 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.wellness_todo":         _onTapAcademicsToDo(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
+      case "academics.appointments":          _onTapAcademicsAppointments(context); break;
 
       case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
       case "app_help.review":                _onTapReview(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
+
+      case "appointments.appointments":       _onTapAcademicsAppointments(context); break;
 
       case "athletics.my_game_day":          _onTapMyGameDay(context); break;
       case "athletics.sport_events":         _onTapSportEvents(context); break;
@@ -585,7 +609,8 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
       case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
-      case "my.my_appointments":             _onTapMyAppointments(context); break;
+      case "my.wellness_mental_health":      _onTapWellnessMentalHealth(context); break;
+      case "my.my_appointments":             _onTapWellnessAppointments(context); break;
 
       case "inbox.all_notifications":        _onTapNotifications(context); break;
       case "inbox.unread_notifications":     _onTapNotifications(context, unread: true); break;
@@ -607,9 +632,10 @@ class _BrowseEntry extends StatelessWidget {
       case "wallet.library_card":            _onTapLibraryCard(context); break;
 
       case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
+      case "wellness.wellness_mental_health":   _onTapWellnessMentalHealth(context); break;
       case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
       case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
-      case "wellness.my_appointments":          _onTapMyAppointments(context); break;
+      case "wellness.my_appointments":          _onTapWellnessAppointments(context); break;
       case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
       case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
     }
@@ -681,10 +707,7 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  int get _videoTutorialsCount {
-    List<dynamic>? videos = JsonUtils.listValue(Assets()['video_tutorials.videos']);
-    return videos?.length ?? 0;
-  }
+  int get _videoTutorialsCount => uiuc.Content().videos?.length ?? 0;
 
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
@@ -698,23 +721,17 @@ class _BrowseEntry extends StatelessWidget {
         Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
           Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
+          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
         Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-                settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
       }
     }
   }
 
   List<Video>? _getVideoTutorials() {
-    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+    Map<String, dynamic>? videoTutorials = uiuc.Content().videoTutorials;
     if (videoTutorials == null) {
       return null;
     }
@@ -784,7 +801,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSportEvents(BuildContext context) {
     Analytics().logSelect(target: "Athletics Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
   }
 
   void _onTapSportNews(BuildContext context) {
@@ -860,22 +877,22 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapDiningsAll(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining) ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining) ));
   }
 
   void _onTapDiningsOpen(BuildContext context) {
     Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
   }
 
   void _onTapEvents(BuildContext context) {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
   }
     
   void _onTapDining(BuildContext context) {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
   }
 
   void _onTapAthletics(BuildContext context) {
@@ -944,7 +961,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSuggestedEvents(BuildContext context) {
     Analytics().logSelect(target: "Suggested Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
   }
 
   void _onTapTwitter(BuildContext context) {
@@ -1032,9 +1049,19 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.resources,); } ));
   }
 
-  void _onTapMyAppointments(BuildContext context) {
-    Analytics().logSelect(target: "My Appointments");
+  void _onTapWellnessMentalHealth(BuildContext context) {
+    Analytics().logSelect(target: "Wellness Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.mentalHealth,); } ));
+  }
+
+  void _onTapWellnessAppointments(BuildContext context) {
+    Analytics().logSelect(target: "MyMcKinley Appointments");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.appointments); } ));
+  }
+
+  void _onTapAcademicsAppointments(BuildContext context) {
+    Analytics().logSelect(target: "Appointments");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentsListPanel()));
   }
 
   void _onTapCreatePoll(BuildContext context) {
@@ -1059,11 +1086,11 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapStateFarmWayfinding(BuildContext context) {
     Analytics().logSelect(target: "State Farm Wayfinding");
-    NativeCommunicator().launchMap(target: {
+    /* TBD Map2 NativeCommunicator().launchMap(target: {
       'latitude': Config().stateFarmWayfinding['latitude'],
       'longitude': Config().stateFarmWayfinding['longitude'],
       'zoom': Config().stateFarmWayfinding['zoom'],
-    });
+    }); */
   }
 
   void _onTapCreateStadiumPoll(BuildContext context) {
@@ -1124,16 +1151,14 @@ class _BrowseEntry extends StatelessWidget {
 
 class _BrowseCampusResourcesSection extends _BrowseSection {
 
-  static const String contentCode = 'campus_resources';
-
-  _BrowseCampusResourcesSection({Key? key, bool expanded = false, void Function()? onExpand}) :
-    super(key: key, sectionId: contentCode, expanded: expanded, onExpand: onExpand);
+  _BrowseCampusResourcesSection({Key? key, required String sectionId, List<String>? entryCodes, bool expanded = false, void Function()? onExpand}) :
+    super(key: key, sectionId: sectionId, entryCodes: entryCodes, expanded: expanded, onExpand: onExpand);
 
   @override
   Widget _buildEntries(BuildContext context) {
     return (expanded && (_browseEntriesCodes?.isNotEmpty ?? false)) ?
       Padding(padding: EdgeInsets.only(left: 16, bottom: 4), child:
-        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _browseEntriesCodes!, promptFavorite: kReleaseMode,)
+        HomeCampusResourcesGridWidget(favoriteCategory: sectionId, contentCodes: _browseEntriesCodes!, promptFavorite: kReleaseMode,)
       ) :
       Container();
   }
@@ -1158,6 +1183,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   void initState() {
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
+      Content.notifyContentImagesChanged,
     ]);
 
     widget.updateController?.stream.listen((String command) {
@@ -1228,7 +1254,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   }
 
   void _updateImage() {
-    Storage().browseToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.browse.tout');
+    Storage().browseToutImageUrl = _imageUrl = Content().randomImageUrl('browse.tout');
     Storage().browseToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
   }
 
@@ -1237,6 +1263,9 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   @override
   void onNotification(String name, dynamic param) {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+      _update();
+    }
+    else if (name == Content.notifyContentImagesChanged) {
       _update();
     }
   }

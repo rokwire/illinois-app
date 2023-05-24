@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,16 +21,14 @@ import 'package:flutter/services.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupEventDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
@@ -147,7 +144,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 : SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
-
                         Semantics(label:_panelTitleText,
                         hint: Localization().getStringEx("panel.create_event.hint", ""), header: true, excludeSemantics: true, child:
                           Container(
@@ -163,10 +159,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Padding(
                                     padding: EdgeInsets.only(left: 12),
                                     child: Text(_panelTitleText!,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontFamily: Styles().fontFamilies!.extraBold),
+                                      style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat")
                                     ),
                                   )
                                 ],
@@ -226,11 +219,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                             padding: EdgeInsets.only(left: 3),
                                             child: Text(
                                               Localization().getStringEx("panel.create_event.date_time.title","Date and time"),
-                                              style: TextStyle(
-                                                  color:
-                                                      Styles().colors!.fillColorPrimary,
-                                                  fontSize: 16,
-                                                  fontFamily: Styles().fontFamilies!.bold),
+                                              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
                                             ),
                                           )
                                         ],
@@ -261,23 +250,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                      children: <Widget>[
                                                        Text(
                                                          Localization().getStringEx("panel.create_event.date_time.start_date.title","START DATE"),
-                                                         style: TextStyle(
-                                                             color: Styles().colors!.fillColorPrimary,
-                                                             fontSize: 14,
-                                                             fontFamily:
-                                                             Styles().fontFamilies!.bold,
-                                                             letterSpacing: 1),
+                                                         style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"),
                                                        ),
                                                        Padding(
                                                          padding: EdgeInsets.only(
                                                              left: 2),
                                                          child: Text(
                                                            '*',
-                                                           style: TextStyle(
-                                                               color: Styles().colors!.fillColorSecondary,
-                                                               fontSize: 14,
-                                                               fontFamily:
-                                                               Styles().fontFamilies!.bold),
+                                                           style: Styles().textStyles?.getTextStyle("widget.label.small.fat")
                                                          ),
                                                        )
                                                      ],
@@ -315,23 +295,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                       Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
                                                       maxLines: 1,
                                                       overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          color: Styles().colors!.fillColorPrimary,
-                                                          fontSize: 14,
-                                                          fontFamily:
-                                                          Styles().fontFamilies!.bold,
-                                                          letterSpacing: 1),
+                                                      style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                                                     ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
                                                           left: 2),
                                                       child: Text(
                                                         '*',
-                                                        style: TextStyle(
-                                                            color: Styles().colors!.fillColorSecondary,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                            Styles().fontFamilies!.bold),
+                                                        style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),
                                                       ),
                                                     )
                                                   ],
@@ -379,21 +350,13 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                       children: <Widget>[
                                                         Text(
                                                           Localization().getStringEx("panel.create_event.date_time.end_date.title",'END DATE'),
-                                                          style: TextStyle(
-                                                              color: Styles().colors!.fillColorPrimary,
-                                                              fontSize: 14,
-                                                              fontFamily:
-                                                              Styles().fontFamilies!.bold,
-                                                              letterSpacing: 1),
+                                                          style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"),
                                                         ),
                                                         Padding(
                                                           padding: EdgeInsets.only(left: 2),
                                                           child: Text(
                                                             '*',
-                                                            style: TextStyle(
-                                                                color: Styles().colors!.fillColorSecondary,
-                                                                fontSize: 14,
-                                                                fontFamily: Styles().fontFamilies!.bold),
+                                                            style: Styles().textStyles?.getTextStyle("widget.label.small.fat")
                                                           ),
                                                         )
                                                       ],
@@ -431,23 +394,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                             Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
                                                             maxLines: 1,
                                                             overflow: TextOverflow.ellipsis,
-                                                            style: TextStyle(
-                                                                color: Styles().colors!.fillColorPrimary,
-                                                                fontSize: 14,
-                                                                fontFamily:
-                                                                Styles().fontFamilies!.bold,
-                                                                letterSpacing: 1),
+                                                            style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                                                           ),
                                                           Padding(
                                                             padding: EdgeInsets.only(
                                                                 left: 2),
                                                             child: Text(
                                                               '*',
-                                                              style: TextStyle(
-                                                                  color: Styles().colors!.fillColorSecondary,
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                  Styles().fontFamilies!.bold),
+                                                              style: Styles().textStyles?.getTextStyle("widget.label.small.fat")
                                                             ),
                                                           )
                                                         ],
@@ -551,11 +505,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       _isPrivateEvent?
                                       Localization().getStringEx("panel.create_event.additional_info.group.description.private","This event will only show up on your group's page."):
                                       Localization().getStringEx("panel.create_event.additional_info.group.description.public","This event will show up on your group's page and also on the event's page."),
-                                      style: TextStyle(
-                                          color: Styles().colors!.textSurface,
-                                          fontSize: 16,
-                                          fontFamily: Styles().fontFamilies!.regular,
-                                      ),
+                                      style: Styles().textStyles?.getTextStyle("widget.info.regular.thin")
                                     ),
                                   ),
                                 Container(height: 8,),
@@ -566,11 +516,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   visible: widget.group!=null,
                                   child: Text(
                                     "Please select the group members who can also see this event",
-                                    style: TextStyle(
-                                      color: Styles().colors!.textSurface,
-                                      fontSize: 16,
-                                      fontFamily: Styles().fontFamilies!.regular,
-                                    ),),
+                                    style: Styles().textStyles?.getTextStyle("widget.info.regular.thin")),
                                 ),
                                 Visibility(
                                     visible: widget.group!=null,
@@ -657,20 +603,13 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         children: <Widget>[
                           Text(
                             Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY"),
-                            style: TextStyle(
-                                color: Styles().colors!.fillColorPrimary,
-                                fontSize: 14,
-                                fontFamily: Styles().fontFamilies!.bold,
-                                letterSpacing: 1),
+                            style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 2),
                             child: Text(
                               '*',
-                              style: TextStyle(
-                                  color: Styles().colors!.fillColorSecondary,
-                                  fontSize: 14,
-                                  fontFamily: Styles().fontFamilies!.bold),
+                              style: Styles().textStyles?.getTextStyle("widget.label.small.fat")
                             ),
                           )
                         ],
@@ -680,10 +619,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         child: Text(
                           Localization().getStringEx("panel.create_event.category.description",'Choose the category your event may be filtered by.'),
                           maxLines: 2,
-                          style: TextStyle(
-                              color: Styles().colors!.textBackground,
-                              fontSize: 14,
-                              fontFamily: Styles().fontFamilies!.regular),
+                          style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
                         ),
                       ),
                     ])),
@@ -703,11 +639,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       child: DropdownButton(
                           icon: Styles().images?.getImage('chevron-down'),
                           isExpanded: true,
-                          style: TextStyle(
-                              color: Styles().colors!.mediumGray,
-                              fontSize: 16,
-                              fontFamily:
-                              Styles().fontFamilies!.regular),
+                          style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                           hint: Text(
                             (_selectedCategory != null)
                                 ? _selectedCategory[
@@ -742,20 +674,13 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         children: <Widget>[
                           Text(
                             Localization().getStringEx("panel.create_event.title.title","EVENT TITLE"),
-                            style: TextStyle(
-                                color: Styles().colors!.fillColorPrimary,
-                                fontSize: 14,
-                                fontFamily: Styles().fontFamilies!.bold,
-                                letterSpacing: 1),
+                            style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 2),
                             child: Text(
                               '*',
-                              style: TextStyle(
-                                  color: Styles().colors!.fillColorSecondary,
-                                  fontSize: 14,
-                                  fontFamily: Styles().fontFamilies!.bold),
+                              style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),
                             ),
                           )
                         ],
@@ -782,10 +707,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         decoration: InputDecoration(border: InputBorder.none),
                         maxLines: null,
                         maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 20,
-                            fontFamily: Styles().fontFamilies!.medium),
+                        style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.large")
                       )
                   ),
                 )
@@ -809,11 +731,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                     children: <Widget>[
                       Text(
                         Localization().getStringEx("panel.create_event.additional_info.description.title","DESCRIPTION"),
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 14,
-                            fontFamily: Styles().fontFamilies!.bold,
-                            letterSpacing: 1),
+                        style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                       )
                     ],
                   ),
@@ -829,10 +747,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         child: Text(
                           Localization().getStringEx("panel.create_event.additional_info.event.description","Tell the campus what your event is about."),
                           maxLines: 2,
-                          style: TextStyle(
-                              color: Styles().colors!.textBackground,
-                              fontSize: 14,
-                              fontFamily: Styles().fontFamilies!.regular),
+                          style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
                         ),
                       ),
                       Padding(
@@ -854,15 +769,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: Localization().getStringEx("panel.create_event.additional_info.event.description.hint","Type something"),
-                                hintStyle: TextStyle(
-                                    color: Styles().colors!.textBackground,
-                                    fontSize: 16,
-                                    fontFamily:
-                                    Styles().fontFamilies!.regular)),
-                            style: TextStyle(
-                                color: Styles().colors!.fillColorPrimary,
-                                fontSize: 16,
-                                fontFamily: Styles().fontFamilies!.regular),
+                                hintStyle: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                            ),
+                            style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.regular.thin")
                           ),
                         ),
                       ),
@@ -892,12 +801,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                   Expanded(child:
                     Text(
                       Localization().getStringEx("panel.create_event.date_time.time_zone.title","TIME ZONE"),
-                      style: TextStyle(
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 14,
-                          fontFamily:
-                          Styles().fontFamilies!.bold,
-                          letterSpacing: 1),
+                      style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                   ))
                 ],
               ),
@@ -923,11 +827,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         child: DropdownButton(
                             icon: Styles().images?.getImage('chevron-down'),
                             isExpanded: true,
-                            style: TextStyle(
-                                color: Styles().colors!.mediumGray,
-                                fontSize: 16,
-                                fontFamily:
-                                Styles().fontFamilies!.regular),
+                            style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                             hint: Text(
                               (_selectedTimeZone) ?? Localization().getStringEx("panel.create_event.timeZone.default","Time Zone"),
                             ),
@@ -968,11 +868,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   padding: EdgeInsets.only(left: 3),
                                   child: Text(
                                     Localization().getStringEx("panel.create_event.location.button_title","Location"),
-                                    style: TextStyle(
-                                        color:
-                                        Styles().colors!.fillColorPrimary,
-                                        fontSize: 16,
-                                        fontFamily: Styles().fontFamilies!.bold),
+                                    style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                                   ),
                                 )
                               ],
@@ -987,11 +883,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               children: <Widget>[
                                 Text(
                                   Localization().getStringEx("panel.create_event.location.adress.title",'EVENT ADDRESS'),
-                                  style: TextStyle(
-                                      color: Styles().colors!.fillColorPrimary,
-                                      fontSize: 14,
-                                      fontFamily: Styles().fontFamilies!.bold,
-                                      letterSpacing: 1),
+                                  style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                                 )
                               ],
                             ),
@@ -1016,10 +908,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
                                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                                style: TextStyle(
-                                    color: Styles().colors!.fillColorPrimary,
-                                    fontSize: 20,
-                                    fontFamily: Styles().fontFamilies!.medium),
+                                style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.large")
                               ),
                             ),
                           )
@@ -1033,11 +922,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               children: <Widget>[
                                 Text(
                                   Localization().getStringEx("panel.create_event.location.lat.title",'EVENT LATITUDE'),
-                                  style: TextStyle(
-                                      color: Styles().colors!.fillColorPrimary,
-                                      fontSize: 14,
-                                      fontFamily: Styles().fontFamilies!.bold,
-                                      letterSpacing: 1),
+                                  style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                                 )
                               ],
                             ),
@@ -1062,10 +947,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
                                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                                style: TextStyle(
-                                    color: Styles().colors!.fillColorPrimary,
-                                    fontSize: 20,
-                                    fontFamily: Styles().fontFamilies!.medium),
+                                style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.large"),
                               ),
                             ),
                           )
@@ -1079,11 +961,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               children: <Widget>[
                                 Text(
                                   Localization().getStringEx("panel.create_event.location.long.title",'EVENT LONGITUDE'),
-                                  style: TextStyle(
-                                      color: Styles().colors!.fillColorPrimary,
-                                      fontSize: 14,
-                                      fontFamily: Styles().fontFamilies!.bold,
-                                      letterSpacing: 1),
+                                  style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                                 )
                               ],
                             ),
@@ -1108,10 +986,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
                                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                                style: TextStyle(
-                                    color: Styles().colors!.fillColorPrimary,
-                                    fontSize: 20,
-                                    fontFamily: Styles().fontFamilies!.medium),
+                                style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.large")
                               ),
                             ),
                           )
@@ -1142,11 +1017,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             padding: EdgeInsets.only(bottom: 8),
                             child: Text(
                               Localization().getStringEx("panel.create_event.additional_info.purchase_tickets.title","ADD LINK FOR REGISTRATION"),
-                              style: TextStyle(
-                                  color: Styles().colors!.fillColorPrimary,
-                                  fontSize: 14,
-                                  fontFamily: Styles().fontFamilies!.bold,
-                                  letterSpacing: 1),
+                              style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                             ),
                           ),
                           Padding(
@@ -1165,10 +1036,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 onChanged: _onTextChanged,
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
-                                style: TextStyle(
-                                    color: Styles().colors!.fillColorPrimary,
-                                    fontSize: 16,
-                                    fontFamily: Styles().fontFamilies!.regular),
+                                style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.regular.thin")
                               ),
                             ),
                           ),
@@ -1181,14 +1049,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       onTap: _onTapConfirmPurchaseUrl,
                       child: Text(
                         Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL'),
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 16,
-                            fontFamily: Styles().fontFamilies!.medium,
-                            decoration: TextDecoration.underline,
-                            decorationThickness: 1,
-                            decorationColor:
-                            Styles().colors!.fillColorSecondary),
+                        style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline"),
                       ),
                     ),
                   ),
@@ -1202,11 +1063,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             padding: EdgeInsets.only(bottom: 8),
                             child: Text(
                               Localization().getStringEx("panel.create_event.additional_info.website.title",'ADD EVENT WEBSITE LINK'),
-                              style: TextStyle(
-                                  color: Styles().colors!.fillColorPrimary,
-                                  fontSize: 14,
-                                  fontFamily: Styles().fontFamilies!.bold,
-                                  letterSpacing: 1),
+                              style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                             ),
                           ),
                           Padding(
@@ -1225,10 +1082,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 onChanged: _onTextChanged,
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
-                                style: TextStyle(
-                                    color: Styles().colors!.fillColorPrimary,
-                                    fontSize: 16,
-                                    fontFamily: Styles().fontFamilies!.regular),
+                                style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.regular.thin")
                               ),
                             ),
                           ),
@@ -1241,14 +1095,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       onTap: _onTapConfirmWebsiteUrl,
                       child: Text(
                         Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL'),
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 16,
-                            fontFamily: Styles().fontFamilies!.medium,
-                            decoration: TextDecoration.underline,
-                            decorationThickness: 1,
-                            decorationColor:
-                            Styles().colors!.fillColorSecondary),
+                        style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")
                       ),
                     )
                 ),
@@ -1268,11 +1115,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 padding: EdgeInsets.only(bottom: 8),
                                 child: Text(
                                   Localization().getStringEx("panel.create_event.additional_info.call_url.title","ADD ONLINE EVENT LINK"),
-                                  style: TextStyle(
-                                      color: Styles().colors!.fillColorPrimary,
-                                      fontSize: 14,
-                                      fontFamily: Styles().fontFamilies!.bold,
-                                      letterSpacing: 1),
+                                  style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                                 ),
                               ),
                               Padding(
@@ -1291,10 +1134,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     onChanged: _onTextChanged,
                                     decoration: InputDecoration(
                                         border: InputBorder.none),
-                                    style: TextStyle(
-                                        color: Styles().colors!.fillColorPrimary,
-                                        fontSize: 16,
-                                        fontFamily: Styles().fontFamilies!.regular),
+                                    style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.regular.thin")
                                   ),
                                 ),
                               ),
@@ -1307,14 +1147,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           onTap: _onTapConfirmCallUrl,
                           child: Text(
                             Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL'),
-                            style: TextStyle(
-                                color: Styles().colors!.fillColorPrimary,
-                                fontSize: 16,
-                                fontFamily: Styles().fontFamilies!.medium,
-                                decoration: TextDecoration.underline,
-                                decorationThickness: 1,
-                                decorationColor:
-                                Styles().colors!.fillColorSecondary),
+                            style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")
                           ),
                         ),
                       ),
@@ -1357,12 +1190,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                   Expanded(
                   child: Text(
                     Localization().getStringEx("panel.create_event.price.label.title","Cost Description (eg: \$10, Donation suggested)"),
-                    style: TextStyle(
-                        color: Styles().colors!.fillColorPrimary,
-                        fontSize: 14,
-                        fontFamily:
-                        Styles().fontFamilies!.bold,
-                        letterSpacing: 1),
+                    style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                   ))
                 ],
               ),
@@ -1390,10 +1218,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         decoration: InputDecoration(
                             border: InputBorder.none),
                         maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 20,
-                            fontFamily: Styles().fontFamilies!.medium),
+                        style: Styles().textStyles?.getTextStyle("widget.input_field.dark.text.large")
                       ),
                     ),
                   )
@@ -1424,12 +1249,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         Expanded(child:
                         Text(
                           Localization().getStringEx("panel.create_event.privacy.title","VISIBILITY"),
-                          style: TextStyle(
-                              color: Styles().colors!.fillColorPrimary,
-                              fontSize: 14,
-                              fontFamily:
-                              Styles().fontFamilies!.bold,
-                              letterSpacing: 1),
+                          style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")
                         ))
                       ],
                     ),
@@ -1456,11 +1276,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               child: DropdownButton(
                                   icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
                                   isExpanded: true,
-                                  style: TextStyle(
-                                      color: Styles().colors!.mediumGray,
-                                      fontSize: 16,
-                                      fontFamily:
-                                      Styles().fontFamilies!.regular),
+                                  style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                                   hint: Text(
                                     (_selectedPrivacy) ?? Localization().getStringEx("panel.create_event.privacy.default","Privacy"),
                                   ),
@@ -1632,15 +1448,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    String? imageUrl = await showDialog(
-        context: context,
-        builder: (_) => AddImageWidget()
-    );
-    if (StringUtils.isNotEmpty(imageUrl) && (_imageUrl != imageUrl)) {
-      setState(() {
-        _imageUrl = imageUrl;
-        _modified = true;
-      });
+    String? updateUrl = await  GroupAddImageWidget.show(context: context, updateUrl: _imageUrl);
+    if (StringUtils.isNotEmpty(updateUrl) && (_imageUrl != updateUrl)) {
+      if(mounted){
+        setState(() {
+          _imageUrl = updateUrl;
+          _modified = true;
+        });
+      }
     }
   }
 
@@ -1686,7 +1501,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   void _performSelectLocation() async {
     _setLoading(true);
 
-    String? location = await NativeCommunicator().launchSelectLocation(explore: _constructEventFromData());
+    /* TBD Map2 String? location = await NativeCommunicator().launchSelectLocation(explore: _constructEventFromData());
     _setLoading(false);
     if (location != null) {
       Map<String, dynamic>? locationSelectionResult = jsonDecode(location);
@@ -1700,10 +1515,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           setState(() {});
         }
       }
-    }
+    }*/
   }
 
-  void _populateLocationField() {
+  /* void _populateLocationField() {
     if (_location != null) {
       String? locationName;
       if ((_location!.name != null) && _location!.name!.isNotEmpty) {
@@ -1733,7 +1548,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         _eventLongitudeController.text = _location?.longitude?.toString() ?? '';
       }
     }
-  }
+  } */
 
   void _onTapConfirmPurchaseUrl() {
     Analytics().logSelect(target: "Confirm Purchase url");
@@ -2180,209 +1995,12 @@ class _EventDateDisplayView extends StatelessWidget {
           children: <Widget>[
             Text(
               StringUtils.ensureNotEmpty(label, defaultValue: '-'),
-              style: TextStyle(
-                  color: Styles().colors!.fillColorPrimary,
-                  fontSize: 16,
-                  fontFamily: Styles().fontFamilies!.regular),
+              style: Styles().textStyles?.getTextStyle("widget.title.regular"),
             ),
             Styles().images?.getImage('chevron-down') ?? Container()
           ],
         ),
       ),
     );
-  }
-}
-
-//TBD Separate because its used in GrousSettingsPanel
-class AddImageWidget extends StatefulWidget {
-
-  @override
-  _AddImageWidgetState createState() => _AddImageWidgetState();
-}
-
-class _AddImageWidgetState extends State<AddImageWidget> {
-  final String _eventImageStoragePath = 'event/tout';
-  final int _eventImageWidth = 1080;
-
-  var _imageUrlController = TextEditingController();
-  bool _showUrlProgress = false;
-  bool _showGalleryProgress = false;
-
-  _AddImageWidgetState();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _imageUrlController.dispose();
-    super.dispose();
-  }
-
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              color: Styles().colors!.fillColorPrimary,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight:  Radius.circular(4)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 10, top: 10),
-                  child: Text(
-                    Localization().getStringEx("widget.add_image.heading", "Select Image"),
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 24),
-                  ),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTap: _onTapCloseImageSelection,
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 10, top: 10),
-                    child: Text(
-                      '\u00D7',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 50),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Column(
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.all(10),
-                            child: TextFormField(
-                                controller: _imageUrlController,
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image Url"),
-                                  labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image Url"),
-                                ))),
-                        Padding(
-                            padding: EdgeInsets.all(10),
-                            child: RoundedButton(
-                                label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
-                                borderColor: Styles().colors!.fillColorSecondary,
-                                backgroundColor: Styles().colors!.background,
-                                textColor: Styles().colors!.fillColorPrimary,
-                                progress: _showUrlProgress,
-                                onTap: _onTapUseUrl)),
-                            Padding(
-                                padding: EdgeInsets.all(10),
-                                child: RoundedButton(
-                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
-                                    borderColor: Styles().colors!.fillColorSecondary,
-                                    backgroundColor: Styles().colors!.background,
-                                    textColor: Styles().colors!.fillColorPrimary,
-                                    progress: _showGalleryProgress,
-                                    onTap: _onTapChooseFromDevice)),
-                      ]),
-
-                ],
-              ))
-        ],
-      ),
-    );
-  }
-
-  void _onTapCloseImageSelection() {
-    Analytics().logSelect(target: "Close image selection");
-    Navigator.pop(context, "");
-  }
-
-  void _onTapUseUrl() {
-    Analytics().logSelect(target: "Use Url");
-    String url = _imageUrlController.value.text;
-    if (url == "") {
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
-      return;
-    }
-
-    bool isReadyUrl = url.endsWith(".webp");
-    if (isReadyUrl) {
-      //ready
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-      Navigator.pop(context, url);
-    } else {
-      //we need to process it
-      setState(() {
-        _showUrlProgress = true;
-      });
-      Future<ImagesResult> result = Content().useUrl(storageDir: _eventImageStoragePath, width: _eventImageWidth, url: url);
-      result.then((logicResult) {
-        setState(() {
-          _showUrlProgress = false;
-        });
-
-        ImagesResultType? resultType = logicResult.resultType;
-        switch (resultType) {
-          case ImagesResultType.cancelled:
-          //do nothing
-            break;
-          case ImagesResultType.error:
-            AppToast.show(logicResult.errorMessage ?? '');
-            break;
-          case ImagesResultType.succeeded:
-          //ready
-            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-            Navigator.pop(context, logicResult.data);
-            break;
-          default:
-            break;
-        }
-      });
-    }
-  }
-
-  void _onTapChooseFromDevice() {
-    Analytics().logSelect(target: "Choose From Device");
-
-    setState(() {
-      _showGalleryProgress = true;
-    });
-
-    Future<ImagesResult?> result =
-    Content().selectImageFromDevice(storagePath: _eventImageStoragePath, width: _eventImageWidth);
-    result.then((logicResult) {
-      setState(() {
-        _showGalleryProgress = false;
-      });
-
-      ImagesResultType? resultType = logicResult!.resultType;
-      switch (resultType) {
-        case ImagesResultType.cancelled:
-        //do nothing
-          break;
-        case ImagesResultType.error:
-          AppToast.show(logicResult.errorMessage ?? '');
-          break;
-        case ImagesResultType.succeeded:
-        //ready
-          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-          Navigator.pop(context, logicResult.data);
-          break;
-        default:
-          break;
-      }
-    });
   }
 }

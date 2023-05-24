@@ -127,7 +127,7 @@ PODS:
     - Flutter
   - PromisesObjC (2.1.1)
   - Reachability (3.2)
-  - rokwire_plugin (1.4.0):
+  - rokwire_plugin (1.5.0):
     - Flutter
   - share (0.0.1):
     - Flutter
@@ -294,7 +294,7 @@ SPEC CHECKSUMS:
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
-  google_maps_flutter_ios: 66201f392bf62d500f07670a30488a247b9bb5b9
+  google_maps_flutter_ios: 3e0b99383a8003b8169d06e7e324170bd0424105
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleMaps: 65ce5426e2398bb81433c8076f2ab6419c2c5537
   GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
@@ -306,7 +306,7 @@ SPEC CHECKSUMS:
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  rokwire_plugin: dd7e5f7ff758d8a090bf35f6ba473dee30696f5d
+  rokwire_plugin: 5ad66246a9e292b6ffbe5dedca91550e1c89b007
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
@@ -318,6 +318,6 @@ SPEC CHECKSUMS:
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
   ZXingObjC: 512b34b9b6920e8ef0461a4159d0814c5e48c28a
 
-PODFILE CHECKSUM: f838ae666eddda2f72ca6f88b537b5a60bc0a193
+PODFILE CHECKSUM: 8002161bd4ea7e921c0696d7df9adea15672fdb8
 
 COCOAPODS: 1.11.3

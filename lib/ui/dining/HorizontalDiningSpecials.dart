@@ -36,33 +36,15 @@ class HorizontalDiningSpecials extends StatelessWidget {
     List<Widget> offerWidgets = _createOffers();
     bool hasOffers = offerWidgets.isNotEmpty;
 
-    return hasOffers
-        ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  height: 10,
-                ),
-                Text(
-                  Localization().getStringEx("panel.explore.label.spcial_offers.title", "Special Offers"),
-                  style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.extraBold,
-                    fontSize: 16,
-                    color: Styles().colors!.textBackground,
-                  ),
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: offerWidgets,
-                  ),
-                )
-              ],
-            ),
-          )
-        : Container();
+    return hasOffers ? Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Container(height: 10,),
+        Text(Localization().getStringEx("panel.explore.label.dining_news.title", "Dining News"), style: Styles().textStyles?.getTextStyle("widget.item.regular.extra_fat")),
+        SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+          Row(children: offerWidgets,),
+        )
+      ],),
+    ) : Container();
   }
 
   List<Widget> _createOffers() {
@@ -76,13 +58,9 @@ class HorizontalDiningSpecials extends StatelessWidget {
     if (CollectionUtils.isNotEmpty(limitedOffers)) {
       for (DiningSpecial offer in limitedOffers!) {
         if (offers.isNotEmpty) {
-          offers.add(Container(
-            width: 10,
-          ));
+          offers.add(Container(width: 10,));
         }
-        offers.add(_SpecialOffer(
-          special: offer,
-        ));
+        offers.add(_SpecialOffer(special: offer,));
       }
     }
     return offers;
@@ -133,40 +111,22 @@ class _SpecialOfferState extends State<_SpecialOffer> {
 
     HtmlWidget html = HtmlWidget(StringUtils.ensureNotEmpty(widget.special!.title), key:_keyHtml, );
 
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          child: Container(
-            width: width,
-            color: Styles().colors!.white,
-            child: Row(
-              //crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                _hasImage
-                    ? ModalImageHolder(
-                      child: Image.network(
-                        widget.special!.imageUrl!,
-                        excludeFromSemantics: true,
-                        width: imageWidth,
-                        height: _imageHeight,
-                        fit: BoxFit.cover,
-                    ))
-                    : Container(),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => _onOfferTap(context),
-                    child: Padding(
-                      padding: _textPadding,
-                      child: html,
-                    ),
-                  )
-                )
-              ],
-            ),
-          ),
+    return Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
+      ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
+        Container(width: width, color: Styles().colors!.white, child:
+          Row(/*crossAxisAlignment: CrossAxisAlignment.stretch,*/ children: <Widget>[
+            _hasImage ? ModalImageHolder(child:
+              Image.network(widget.special!.imageUrl!, excludeFromSemantics: true, width: imageWidth, height: _imageHeight, fit: BoxFit.cover,)
+            ) : Container(),
+            Expanded(child:
+              GestureDetector(onTap: _onOfferTap, child:
+                Padding(padding: _textPadding, child: html,),
+              )
+            )
+          ],),
         ),
-      );
+      ),
+    );
   }
 
   bool get _hasImage {
@@ -186,14 +146,8 @@ class _SpecialOfferState extends State<_SpecialOffer> {
     }
   }
 
-  void _onOfferTap(BuildContext context) {
+  void _onOfferTap() {
     Analytics().logSelect(target: "Special Offer: ${widget.special!.text}");
-
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => LocationsWithSpecialPanel(
-                  special: widget.special,
-                )));
+    Navigator.push(context, CupertinoPageRoute( builder: (context) => LocationsWithSpecialPanel(special: widget.special,)));
   }
 }

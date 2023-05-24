@@ -33,17 +33,7 @@ class StudentCourse with Explore {
     'coursesection': section?.toJson(),
   };
 
-  // ExploreJsonHandler
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      (json['coursetitle'] != null) &&
-      (json['courseshortname'] != null) &&
-      (json['coursenumber'] != null) &&
-      (json['coursesection'] != null);
-  }
-
-  bool get hasLocation => section?.building?.hasLocation ?? false;
+  bool get hasValidLocation => section?.building?.hasValidLocation ?? false;
   
   @override
   bool operator==(dynamic other) =>
@@ -65,7 +55,7 @@ class StudentCourse with Explore {
   // Explore implementation
 
   @override String? get exploreId => number;
-  @override String get exploreTitle => title ?? '';
+  @override String? get exploreTitle => title ?? '';
   @override String? get exploreSubTitle => '$shortName ($number) $instructionMethod';
   @override String? get exploreShortDescription => null;
   @override String? get exploreLongDescription => null;
@@ -97,11 +87,6 @@ class StudentCourse with Explore {
     }
     return jsonList;
   }
-}
-
-class StudentCourseExploreJsonHandler implements ExploreJsonHandler {
-  @override bool exploreCanJson(Map<String, dynamic>? json) => StudentCourse.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => StudentCourse.fromJson(json);
 }
 
 // StudentCourseSection
@@ -293,18 +278,7 @@ class Building with Explore {
     'entrances': BuildingEntrance.listToJson(entrances),
   };
 
-  // ExploreJsonHandler
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      (json['id'] != null) &&
-      (json['name'] != null) &&
-      (json['latitude'] != null) &&
-      (json['longitude'] != null) &&
-      (json['entrances'] != null);
-  }
-
-  bool get hasLocation => (latitude != null) && (longitude != null);
+  bool get hasValidLocation => (latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0);
 
   @override
   bool operator==(dynamic other) =>
@@ -359,7 +333,7 @@ class Building with Explore {
   // Explore implementation
 
   @override String? get exploreId => id;
-  @override String get exploreTitle => name ?? '';
+  @override String? get exploreTitle => name;
   @override String? get exploreSubTitle => address1;
   @override String? get exploreShortDescription => null;
   @override String? get exploreLongDescription => null;
@@ -400,11 +374,17 @@ class Building with Explore {
     }
     return jsonList;
   }
-}
 
-class BuildingExploreJsonHandler implements ExploreJsonHandler {
-  @override bool exploreCanJson(Map<String, dynamic>? json) => Building.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Building.fromJson(json);
+  static Building? findInList(List<Building>? values, {String? id}) {
+    if (values != null) {
+      for (Building value in values) {
+        if ((id != null) && (value.id == id)) {
+          return value;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 // BuildingEntrance

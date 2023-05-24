@@ -386,7 +386,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
   void _navigateToExploreEvents() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events)));
   }
 
   void _navigateToSettings() {
@@ -431,14 +431,14 @@ class _EventsRibbonHeader extends StatelessWidget {
           StringUtils.isNotEmpty(subTitle) ?
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Semantics(label: title, header: true, excludeSemantics: true, child:
-                Text(title ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat"))
               ),
               Semantics(label: subTitle, header: true, excludeSemantics: true, child:
-                Text(subTitle ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.regular, fontSize: 16 ),)
+                Text(subTitle ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular"))
               ),
             ],) :
             Semantics(label: title, header: true, excludeSemantics: true, child:
-              Text(title ?? '', style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat"))
             ),
         ),
       ),

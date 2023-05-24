@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -99,7 +101,6 @@ class Dining with Explore implements Favorite {
     );
   }
 
-  @override
   Map<String, dynamic> toJson() {
     return {
       // Explore
@@ -156,10 +157,6 @@ class Dining with Explore implements Favorite {
       (location?.hashCode ?? 0) ^
       (DeepCollectionEquality().hash(paymentTypes)) ^
       (DeepCollectionEquality().hash(diningSchedules));
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) && (json['DiningOptionID'] != null);
-  }
 
   // Explore
   @override String?   get exploreId               { return id; }
@@ -826,4 +823,42 @@ class DiningSpecial {
       "DiningOptionIDs": locationIds != null ? locationIds!.toList() : [],
     };
   }
+}
+
+//////////////////////////////
+/// DiningFeedback
+
+class DiningFeedback {
+  final String? feedbackUrl;
+  final String? dieticianUrl;
+  
+  DiningFeedback({this.feedbackUrl, this.dieticianUrl});
+
+  static DiningFeedback? fromJson(Map<String, dynamic>?json) {
+    return (json != null) ? DiningFeedback(
+      feedbackUrl: JsonUtils.stringValue(json['feedback_url~${Platform.operatingSystem}']) ?? JsonUtils.stringValue(json['feedback_url']),
+      dieticianUrl: JsonUtils.stringValue(json['dietician_url~${Platform.operatingSystem}']) ?? JsonUtils.stringValue(json['dietician_url']),
+    ) : null;
+  }
+
+  bool get isEmpty =>
+    StringUtils.isEmpty(feedbackUrl) &&
+    StringUtils.isEmpty(dieticianUrl);
+
+  bool get isNotEmpty => !isEmpty;
+
+  static Map<String, DiningFeedback>? mapFromJson(Map<String, dynamic>? jsonMap) {
+    Map<String, DiningFeedback>? result;
+    if (jsonMap != null) {
+      result = <String, DiningFeedback>{};
+      jsonMap.forEach((String key, dynamic value) {
+        DiningFeedback? feedback = DiningFeedback.fromJson(JsonUtils.mapValue(value));
+        if (feedback != null) {
+          result![key] = feedback;
+        }
+      });
+    }
+    return result;
+  }
+
 }

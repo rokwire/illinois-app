@@ -43,7 +43,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
     NotificationService().subscribe(this, [
       Canvas.notifyCoursesUpdated,
     ]);
-    _courses = Canvas().courses;
+    _courses = Canvas().giesCourses;
     super.initState();
   }
 
@@ -91,7 +91,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
         child: Text(
             message,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildCoursesContent() {
@@ -126,7 +126,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   void _updateCourses() {
     setStateIfMounted(() {
-      _courses = Canvas().courses;
+      _courses = Canvas().giesCourses;
     });
   }
 }

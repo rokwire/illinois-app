@@ -142,7 +142,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                     padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                                     child: Text(
                                       sportName?.toUpperCase() ?? '',
-                                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
+                                      style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced")
                                     ),
                                   )),
                               ),
@@ -169,7 +169,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             padding: EdgeInsets.only(top: 12),
                             child: Text(
                               widget.game?.title ?? '',
-                              style: TextStyle(fontSize: 32, color: Colors.white),
+                              style: Styles().textStyles?.getTextStyle("widget.heading.huge.extra_fat"),
                             ),
                           ),
                           (!StringUtils.isEmpty(widget.game?.longDescription)
@@ -178,7 +178,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   child: Text(
                                     widget.game?.longDescription ?? '',
                                     textAlign: TextAlign.left,
-                                    style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.whiteTransparent06, fontSize: 16),
+                                    style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.fat.variant")
                                   ),
                                 )
                               : Padding(
@@ -198,7 +198,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Text(
                                           widget.game?.displayTime ?? '',
-                                          style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
+                                          style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")
                                         ),
                                       )
                                     ],
@@ -224,7 +224,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                       widget.game?.location?.location ?? '',
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
-                                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
+                                      style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")
                                     ))
                                   ],
                                 ),
@@ -529,12 +529,8 @@ class _DetailRibbonButton extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
                       title!,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.bold,
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 16),
-                    ),
-                  ),
+                      style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+                  )),
                   Expanded(
                     child: Container(
                       color: Colors.transparent,
@@ -543,10 +539,7 @@ class _DetailRibbonButton extends StatelessWidget {
                   Visibility(
                       child: Text(
                         (!StringUtils.isEmpty(subTitle) ? subTitle! : ''),
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.medium,
-                            color: Styles().colors!.textBackground,
-                            fontSize: 16),
+                        style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
                       ))
                 ],
               ),
@@ -622,7 +615,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _formatPeriod(_currentLiveGame!.period!) : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -632,7 +625,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
             ),
             Text(
               _currentLiveGame != null ? _formatClock(_currentLiveGame!.clockSeconds!) : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
+              style: Styles().textStyles?.getTextStyle("widget.item.regular")
             ),
           ],
         ),
@@ -723,7 +716,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
               ),
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.homeScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles?.getTextStyle("widget.title.huge"),
               ),
             ],
           ),
@@ -766,7 +759,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
             children: <Widget>[
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.visitingScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles?.getTextStyle("widget.title.huge")
               ),
               Expanded(
                 child: Container(
@@ -988,7 +981,7 @@ class _LiteContent extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _period,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")
               ),
             ),
             Expanded(
@@ -1034,7 +1027,7 @@ class _LiteContent extends StatelessWidget {
                   color: Colors.transparent,
                 ),
               ),
-              Text(_homeScore, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+              Text(_homeScore, style: Styles().textStyles?.getTextStyle("widget.title.huge")),
             ],
           ),
         ),
@@ -1058,7 +1051,7 @@ class _LiteContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(_visitingScore, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+              Text(_visitingScore, style: Styles().textStyles?.getTextStyle("widget.title.huge")),
               Expanded(
                 child: Container(
                   color: Colors.transparent,
@@ -1133,7 +1126,7 @@ class _RichContent extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _phaseLabel!,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -1196,7 +1189,7 @@ class _RichContent extends StatelessWidget {
         ? Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        Text(_hPoints!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+        Text(_hPoints!, style: Styles().textStyles?.getTextStyle("widget.title.huge")),
         SizedBox(width: 15),
         Padding(
           padding: EdgeInsets.only(bottom: 10),
@@ -1207,13 +1200,13 @@ class _RichContent extends StatelessWidget {
                 visible: serving,
                 child: _ServingControl(home: true),
               ),
-              Text(_hScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 23))
+              Text(_hScore!, style: Styles().textStyles?.getTextStyle("widget.title.extra_large"))
             ],
           ),
         ),
       ],
     )
-        : Text(_hScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32));
+        : Text(_hScore!, style: Styles().textStyles?.getTextStyle("widget.title.huge"));
   }
 
   Widget _buildVisitingSection(BuildContext context) {
@@ -1267,15 +1260,15 @@ class _RichContent extends StatelessWidget {
                 visible: serving,
                 child: _ServingControl(home: false),
               ),
-              Text(_vScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 23))
+              Text(_vScore!, style: Styles().textStyles?.getTextStyle("widget.title.extra_large"))
             ],
           ),
         ),
         SizedBox(width: 15),
-        Text(_vPoints!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
+        Text(_vPoints!, style: Styles().textStyles?.getTextStyle("widget.title.huge")),
       ],
     )
-        : Text(_vScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32));
+        : Text(_vScore!, style: Styles().textStyles?.getTextStyle("widget.title.huge"));
   }
 }
 
@@ -1367,7 +1360,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _getPhase() : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -1377,7 +1370,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             ),
             Text(
               _currentLiveGame != null ? _getClock() : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
+              style: Styles().textStyles?.getTextStyle("widget.item.regular"),
             ),
           ],
         ),
@@ -1430,7 +1423,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
               ),
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.homeScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles?.getTextStyle("widget.title.huge"),
               ),
             ],
           ),
@@ -1458,7 +1451,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             children: <Widget>[
               Text(
                 _currentLiveGame != null ? _currentLiveGame!.visitingScore.toString() : "-",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                style: Styles().textStyles?.getTextStyle("widget.title.huge"),
               ),
               Visibility(
                 visible: isVisitingPossession,
@@ -1494,7 +1487,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s'), [lastPlay]), textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s'), [lastPlay]), textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular")),
         ))
         : Container();
   }
@@ -1605,7 +1598,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _getPhase() : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(
@@ -1615,7 +1608,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
             ),
             Text(
               _currentLiveGame != null ? _getClock() : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
+              style: Styles().textStyles?.getTextStyle("widget.item.regular"),
             ),
           ],
         ),
@@ -1644,7 +1637,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text("Last Play: " + lastPlay!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text("Last Play: " + lastPlay!, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular")),
         ))
         : Container();
   }

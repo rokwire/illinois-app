@@ -322,12 +322,12 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
   void _onTapEvents(BuildContext context) {
     Analytics().logSelect(target: "Events", source: runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
   }
     
   void _onTapDining(BuildContext context) {
     Analytics().logSelect(target: "Dining", source: runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));
   }
 
   void _onTapAthletics(BuildContext context) {
@@ -436,7 +436,7 @@ class CampusResourceButton extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
     if (title != null) {
-      contentList.add(Text(title!, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 20)));
+      contentList.add(Text(title!, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.button.title.large.fat")));
     } 
     if ((title != null) && (iconKey != null)) {
       contentList.add(Container(height: 26));
@@ -457,7 +457,7 @@ class CampusResourceButton extends StatelessWidget {
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
                     Padding(padding: EdgeInsets.only(top: 16), child: 
-                      Text(title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 20)),
+                      Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.large.fat")),
                     ),
                   ),
                   Opacity(opacity: _canFavorite ? 1 : 0, child:

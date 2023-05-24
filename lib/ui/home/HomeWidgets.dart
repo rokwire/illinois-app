@@ -108,7 +108,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
               Semantics(label: widget.title, header: true, excludeSemantics: true, child:
-                Text(widget.title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),)
+                Text(widget.title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),)
               )
             )
           ),
@@ -280,7 +280,7 @@ class HomeSlantWidget extends StatelessWidget {
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Semantics(label: title, header: true, excludeSemantics: true, child:
-                    Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                    Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat"))
                   )
                 )
               ),
@@ -345,10 +345,10 @@ class HomeFavoriteButton extends FavoriteButton {
 
   @override
   bool? get isFavorite {
-    List<String>? avalableSectionFavorites = ((favorite != null) && (favorite?.id != null) && (favorite?.category == null)) ? JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']) : null;
-    if (avalableSectionFavorites != null) {
+    List<String>? availableSectionFavorites = ((favorite != null) && (favorite?.id != null) && (favorite?.category == null)) ? JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']) : null;
+    if (availableSectionFavorites != null) {
       int favCount = 0, unfavCount = 0;
-      for (String code in avalableSectionFavorites) {
+      for (String code in availableSectionFavorites) {
         if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: favorite?.id)) ?? false) {
           favCount++;
         }
@@ -356,10 +356,10 @@ class HomeFavoriteButton extends FavoriteButton {
           unfavCount++;
         }
       }
-      if (favCount == avalableSectionFavorites.length) {
+      if (favCount == availableSectionFavorites.length) {
         return true;
       }
-      else if (unfavCount == avalableSectionFavorites.length) {
+      else if (unfavCount == availableSectionFavorites.length) {
         return false;
       }
       else {
@@ -399,10 +399,10 @@ class HomeFavoriteButton extends FavoriteButton {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
         // process toggle home panel widget
-        List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
-        if (avalableSectionFavorites != null) {
+        List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
+        if (availableSectionFavorites != null) {
           List<Favorite> favorites = <Favorite>[favorite!];
-          for(String sectionEntry in avalableSectionFavorites) {
+          for(String sectionEntry in availableSectionFavorites) {
             favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
           }
           Auth2().prefs?.setListFavorite(favorites, value);
@@ -433,9 +433,9 @@ class HomeFavoriteButton extends FavoriteButton {
         else {
           // turn off home widget entry
           int sectionFavoritesCount = 0;
-          List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
-          if (avalableSectionFavorites != null) {
-            for (String sectionEntry in avalableSectionFavorites) {
+          List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
+          if (availableSectionFavorites != null) {
+            for (String sectionEntry in availableSectionFavorites) {
               if (Auth2().prefs?.isFavorite(HomeFavorite(sectionEntry, category: favorite?.category)) ?? false) {
                 sectionFavoritesCount++;
               }
@@ -509,10 +509,10 @@ class HomeDragFeedback extends StatelessWidget {
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Styles().images?.getImage('drag-white', excludeFromSemantics: true),
           ),
-          
+
           Expanded(child:
             Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-              Text(title ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, decoration: TextDecoration.none, shadows: <Shadow>[
+              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")?.copyWith(decoration: TextDecoration.none, shadows: <Shadow>[
                 Shadow(color: Styles().colors!.fillColorPrimary!.withOpacity(0.5), offset: Offset(2, 2), blurRadius: 2, )
               ] ),),
             ),
@@ -563,7 +563,7 @@ class HomeCommandButton extends StatelessWidget {
             ],),
             StringUtils.isNotEmpty(description)
               ? Padding(padding: EdgeInsets.only(top: 5, right: 16), child:
-                  Text(description ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), semanticsLabel: "",),
+                  Text(description ?? '', style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"), semanticsLabel: "",),
                 )
               : Container(),
         ],),),),
@@ -596,13 +596,13 @@ class HomeMessageCard extends StatelessWidget {
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary))
+                Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"))
               ),
             )
           ]) : Container(),
           StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
             Expanded(child:
-              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground))
+              Text(message ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
             )
           ]) : Container(),
         ]),
@@ -640,7 +640,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
                 HtmlWidget(
                     StringUtils.ensureNotEmpty(title),
                     onTapUrl : (url) {_onTapLink(url); return true;},
-                    textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20),
+                    textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"),
                     customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
                 )
               ),
@@ -651,7 +651,7 @@ class HomeMessageHtmlCard extends StatelessWidget {
                 HtmlWidget(
                   StringUtils.ensureNotEmpty(message),
                   onTapUrl : (url) {_onTapLink(url); return true;},
-                  textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                  textStyle:  Styles().textStyles?.getTextStyle("widget.card.detail.regular"),
                   customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
                )
             )

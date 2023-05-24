@@ -315,22 +315,12 @@ class MTDStop with Explore implements Favorite {
     }
   }
 
-
-  // ExploreJsonHandler
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      (json['stop_id'] != null) &&
-      (json['stop_name'] != null) &&
-      (json['code'] != null);
-  }
-
   bool get hasLocation => (latitude != null) && (longitude != null);
 
   // Explore implementation
 
   @override String? get exploreId => id;
-  @override String get exploreTitle => name ?? '';
+  @override String? get exploreTitle => name ?? '';
   @override String? get exploreSubTitle => code ?? '';
   @override String? get exploreShortDescription => null;
   @override String? get exploreLongDescription => null;

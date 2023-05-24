@@ -6,8 +6,28 @@ ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
   'Debug' => :debug,
+  'Debug-Dev' => :debug,
+  'Debug-Prod' => :debug,
+  'Debug-Tst' => :debug,
+  'Debug-IllinoisDev' => :debug,
+  'Debug-IllinoisProd' => :debug,
+  'Debug-IllinoisTst' => :debug,
+
   'Profile' => :release,
+  'Profile-Dev' => :release,
+  'Profile-Prod' => :release,
+  'Profile-Tst' => :release,
+  'Profile-IllinoisDev' => :release,
+  'Profile-IllinoisProd' => :release,
+  'Profile-IllinoisTst' => :release,
+
   'Release' => :release,
+  'Release-Dev' => :release,
+  'Release-Prod' => :release,
+  'Release-Tst' => :release,
+  'Release-IllinoisDev' => :release,
+  'Release-IllinoisProd' => :release,
+  'Release-IllinoisTst' => :release,
 }
 
 def flutter_root
@@ -27,23 +47,22 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
+def applibs
+    pod 'GoogleMaps', '7.2.0'
+    pod 'ZXingObjC', '3.6.4'
+end
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-
-    pod 'GoogleMaps', '7.2.0'
-    pod 'ZXingObjC', '3.6.4'
-
+  applibs
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 target 'Illinois' do
   use_frameworks!
   use_modular_headers!
-
-    pod 'GoogleMaps', '7.2.0'
-    pod 'ZXingObjC', '3.6.4'
-
+  applibs
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 

@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -122,7 +122,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
     }
 
     String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow") + " ${widget.sport?.name}";
-    String randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.$sportShortName') ?? '';
+    String randomImageURL = Content().randomImageUrl('sports.$sportShortName') ?? '';
     return SingleChildScrollView(
       child: Container(
         color: Styles().colors!.background,
@@ -155,9 +155,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                         child: Text(
                           widget.sport!.name!,
                           maxLines: 2,
-
-                          style: TextStyle(
-                              color: Styles().colors!.fillColorPrimary, fontSize: 32),
+                          style: Styles().textStyles?.getTextStyle("widget.title.huge")
                         ),
                       ),
                       Container(width: 24,),
@@ -192,19 +190,13 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     Text(
                       Localization().getStringEx("panel.athletics_team.label.record.title", "Record"),
                       textAlign: TextAlign.left,
-                      style: TextStyle(
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900),
+                      style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
                     ),),
                     Expanded(
                       child: Text(
                         StringUtils.ensureNotEmpty(_record?.overallRecordUnformatted),
                         textAlign: TextAlign.right,
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 32,
-                            fontWeight: FontWeight.w900),
+                        style: Styles().textStyles?.getTextStyle("widget.title.huge.extra_fat"),
                       )
                     )
                   ],
@@ -294,8 +286,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                             ),
                             Text(
                               Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule'),
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 20),
+                              style: Styles().textStyles?.getTextStyle("widget.title.light.large"),
                             )
                           ],
                         ),
@@ -371,8 +362,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                               ),
                               Text(
                                 Localization().getStringEx("panel.athletics_team.button.news.title", 'News'),
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
+                                style: Styles().textStyles?.getTextStyle("widget.title.light.large")
                               )
                             ],
                           ),
@@ -431,8 +421,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
                         Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster'),
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary, fontSize: 20),
+                        style: Styles().textStyles?.getTextStyle("widget.title.large"),
                       ),
                     ),
                   ),
@@ -489,10 +478,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       padding: EdgeInsets.only(left: 16, top: 16),
                       child: Text(
                         Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff'),
-                        style: TextStyle(
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900),
+                        style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat"),
                       ),
                     ),
                   ),
@@ -540,7 +526,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               padding: EdgeInsets.only(bottom: 32),
               child: Text(
                 followLabel,
-                style: TextStyle(color: Styles().colors!.textBackground, fontSize: 20),
+                style: Styles().textStyles?.getTextStyle("widget.item.large"),
               ),
             ),
             Stack(
@@ -836,17 +822,13 @@ class _GameResult extends StatelessWidget {
             children: <Widget>[
               Text(
                 header!,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    color: Styles().colors!.fillColorPrimary,
-                    fontSize: 14),
+                style: Styles().textStyles?.getTextStyle("widget.title.small")
               ),
               Padding(
                 padding: EdgeInsets.only(top: 6),
                 child: Text(
                   result!,
-                  style:
-                      TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 24),
+                  style:Styles().textStyles?.getTextStyle("widget.title.extra_large"),
                 ),
               )
             ],
@@ -887,18 +869,11 @@ class _RosterItem extends StatelessWidget {
               Container(height: 12,),
               Text(
                 name!,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.bold,
-                    color: Styles().colors!.fillColorPrimary,
-                    fontSize: 16),
-              ),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
               Text(
                 StringUtils.ensureNotEmpty(position),
                 softWrap: true,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    color: Styles().colors!.textBackground,
-                    fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular"),
               ),
             ],
           ),

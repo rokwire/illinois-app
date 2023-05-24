@@ -17,9 +17,9 @@
 import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -100,10 +100,6 @@ class Game with Explore implements Favorite {
       results: GameResult.listFromJson(JsonUtils.listValue(json['results'])),
       jsonData: json,
     ) : null;
-  }
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) && (json['sport'] != null) && (json['id'] != null);
   }
 
   @override
@@ -256,7 +252,7 @@ class Game with Explore implements Favorite {
 
   String? get _randomImageURL {
     if (randomImageURL == null) {
-      randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.${sport!.shortName}') ?? '';
+      randomImageURL = Content().randomImageUrl('sports.${sport!.shortName}');
     }
     return randomImageURL!.isNotEmpty ? randomImageURL : null;
   }
@@ -272,7 +268,7 @@ class Game with Explore implements Favorite {
   // Explore implementation
 
   @override String? get exploreId => id;
-  @override String get exploreTitle => title;
+  @override String? get exploreTitle => title;
   @override String? get exploreSubTitle => null;
   @override String? get exploreShortDescription => shortDescription;
   @override String? get exploreLongDescription => longDescription;
@@ -288,7 +284,6 @@ class Game with Explore implements Favorite {
   @override String get favoriteKey => favoriteKeyName;
   @override String? get favoriteId => id;
   
-  @override
   Map<String, dynamic> toJson() {
     return {
       "id": id,

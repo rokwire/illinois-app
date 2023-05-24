@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/StudentCourse.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/StudentCourses.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -13,6 +13,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class StudentCoursesContentWidget extends StatefulWidget {
@@ -146,30 +147,32 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       Expanded(flex: 1, child: Container()),
       Padding(padding: EdgeInsets.symmetric(horizontal: 28), child:
         Center(child:
-          Text(message, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))
+          Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))
         ),
       ),
       Expanded(flex: 4, child: Container()),
     ]);
   }
 
-  TextStyle getTermDropDownItemStyle({bool selected = false}) => selected ?
-    TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary) :
-    TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary);
+  TextStyle? getTermDropDownItemStyle({bool selected = false}) => selected ?
+  Styles().textStyles?.getTextStyle("widget.message.regular") :
+  Styles().textStyles?.getTextStyle("widget.message.regular.semi_fat");
 
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
 
-    return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
-      DropdownButtonHideUnderline(child:
-        DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
-          isExpanded: false,
-          style: getTermDropDownItemStyle(selected: true),
-          //alignment: AlignmentDirectional.centerEnd,
-          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: getTermDropDownItemStyle(selected: true)) : null,
-          items: _buildTermDropDownItems(),
-          onChanged: _onTermDropDownValueChanged
+    return Visibility(visible: CollectionUtils.isNotEmpty(StudentCourses().terms), child:
+      Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton<String>(
+            icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
+            isExpanded: false,
+            style: getTermDropDownItemStyle(selected: true),
+            //alignment: AlignmentDirectional.centerEnd,
+            hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: getTermDropDownItemStyle(selected: true)) : null,
+            items: _buildTermDropDownItems(),
+            onChanged: _onTermDropDownValueChanged
+          ),
         ),
       ),
     );
@@ -241,18 +244,18 @@ class StudentCourseCard extends StatelessWidget {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   
                   Row(children: [Expanded(child:
-                    Text(course.title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 18),),
+                    Text(course.title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.regular.extra_fat")),
                   )]),
                   
                   Padding(padding: EdgeInsets.only(top: 6), child:
                     Row(children: [Expanded(child:
-                      Text(course.displayInfo, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
+                      Text(course.displayInfo, style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
                     )]),
                   ),
                   
                   Padding(padding: EdgeInsets.zero, child:
                     Row(children: [Expanded(child:
-                      Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course.section?.instructor ?? '']), style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),)
+                      Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course.section?.instructor ?? '']), style: Styles().textStyles?.getTextStyle("widget.card.detail.medium"),)
                     )]),
                   ),
                   
@@ -263,25 +266,24 @@ class StudentCourseCard extends StatelessWidget {
                           Styles().images?.getImage('calendar', excludeFromSemantics: true),
                         ),
                         Expanded(child:
-                          Text(courseSchedule, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
+                          Text(courseSchedule, style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
                         )
                         
                       ],),
                     ),
                   ),
                   
-                  Visibility(visible: courseLocation.isNotEmpty && course.hasLocation, child:
-                    InkWell(onTap: _onLocaltion, child:
+                  Visibility(visible: courseLocation.isNotEmpty, child:
+                    InkWell(onTap: course.hasValidLocation ? _onLocaltion : null, child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
                         Row(children: [
                           Padding(padding: EdgeInsets.only(right: 6), child:
                             Styles().images?.getImage('location', excludeFromSemantics: true),
                           ),
                           Expanded(child:
-                            Text(courseLocation, style:
-                              TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16,
-                                decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
-                              ),
+                            Text(courseLocation, style: course.hasValidLocation ?
+                              Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline") :
+                              Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
                             ),
                           )
                           
@@ -301,7 +303,7 @@ class StudentCourseCard extends StatelessWidget {
 
   void _onLocaltion() {
     Analytics().logSelect(target: "Location Detail");
-    NativeCommunicator().launchMapDirections(jsonData: course.toJson());
+    course.launchDirections();
   }
 
   void _onCard(BuildContext context) {
@@ -409,10 +411,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
             Expanded(
               child: Text(
                 course?.title ?? "",
-                style: TextStyle(
-                    fontSize: 24,
-                    color: Styles().colors!.fillColorPrimary,
-                    letterSpacing: 1),
+                style: Styles().textStyles?.getTextStyle("widget.student_courses.title.extra_large")
               ),
             ),
           ],
@@ -425,9 +424,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Text(
           course?.displayInfo ?? "",
-          style: TextStyle(
-              fontSize: 16,
-              color: Styles().colors!.textBackground),
+          style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
         )) :
     Container();
   }
@@ -436,7 +433,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(children: [Expanded(child:
-          Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course?.section?.instructor ?? '']), style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: 16),)
+          Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course?.section?.instructor ?? '']), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),)
         )]),
     );
   }
@@ -450,7 +447,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
             Styles().images?.getImage('calendar', excludeFromSemantics: true),
           ),
           Expanded(child:
-            Text(courseSchedule, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
+            Text(courseSchedule, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
           )
 
         ],),
@@ -460,18 +457,17 @@ class StudentCourseDetailPanel extends StatelessWidget {
 
   Widget _buildLocation(){
     String courseLocation = course?.section?.displayLocation ?? '';
-    return Visibility(visible: courseLocation.isNotEmpty && (course?.hasLocation ?? false), child:
-      InkWell(onTap: _onLocation, child:
+    return Visibility(visible: courseLocation.isNotEmpty, child:
+      InkWell(onTap: (course?.hasValidLocation ?? false) ? _onLocation : null, child:
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
               Styles().images?.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
-              Text(courseLocation, style:
-                TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16,
-                  decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
-                ),
+              Text(courseLocation, style: (course?.hasValidLocation ?? false) ?
+                Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline") :
+                Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
               ),
             )
           ],),
@@ -481,9 +477,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
   }
 
   void _onLocation() {
-    Analytics().logSelect(target: "Location Detail");
-    if(course?.toJson()!=null) {
-      NativeCommunicator().launchMapDirections(jsonData: course!.toJson());
-    }
+    Analytics().logSelect(target: "Location Directions");
+    course?.launchDirections();
   }
 }

@@ -9,7 +9,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -76,10 +76,10 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(_title1 ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),),
+                Text(_title1 ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.medium.fat")),
                 Visibility(visible: StringUtils.isNotEmpty(title2), child:
                   Row(children: [
-                    Text(title2 ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),),
+                    Text(title2 ?? '', style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")),
                     Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
                       InkWell(onTap: _onInfo, child:
                         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
@@ -95,8 +95,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
           GestureDetector(onTap: _onCustomize, child:
             Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
               Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18, 
-                decoration: TextDecoration.underline, decorationColor: Styles().colors?.textColorPrimary, decorationThickness: 1)))
+                style: Styles().textStyles?.getTextStyle("widget.home_tout.button.underline.title")))
           ),
         ],)
       )
@@ -107,7 +106,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   Widget _buildImageWidget(String imageUrl) {
     final double triangleHeight = 40;
     return Stack(children: [
-    ModalImageHolder(child: Image.network(imageUrl, semanticLabel: 'tout',
+    Semantics(label: "tout", image: true, excludeSemantics: true, child: ModalImageHolder(child: Image.network(imageUrl, semanticLabel: '',
           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
@@ -119,7 +118,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                 child: Center(
                     child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white))))
             : child;
-      })),
+      }))),
       Align(
           alignment: Alignment.topCenter,
           child: CustomPaint(
@@ -193,7 +192,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
 
   void _updateContent({DayPart? dayPart}) {
     _dayPart = dayPart ?? DateTimeUtils.getDayPart();
-    Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout.${dayPartToString(_dayPart)}');
+    Storage().homeToutImageUrl = _imageUrl = Content().randomImageUrl('home.tout.${dayPartToString(_dayPart)}');
     Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
   }
 
@@ -245,7 +244,7 @@ class _InfoDialog extends StatelessWidget {
                   HtmlWidget(
                       StringUtils.ensureNotEmpty(contentHtml),
                       onTapUrl : (url) {_onTapLink(context ,url); return true;},
-                      textStyle:  TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),
+                      textStyle:  Styles().textStyles?.getTextStyle("widget.dialog.message.medium.fat"),
                       customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.white ?? Colors.white)} : null
                   )
                     //Text('Illinois app uses your first name from Student Self-Service. You can change your preferred name under Personal Information and Preferred First Name',

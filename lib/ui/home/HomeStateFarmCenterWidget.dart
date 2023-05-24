@@ -18,8 +18,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
@@ -89,11 +87,11 @@ class _HomeStateFarmCenterWidgetState extends HomeCompoundWidgetState<HomeStateF
 
   void _onWayfinding() {
     Analytics().logSelect(target: "Wayfinding", source: widget.runtimeType.toString());
-    NativeCommunicator().launchMap(target: {
+    /* TBD Map2 NativeCommunicator().launchMap(target: {
       'latitude': Config().stateFarmWayfinding['latitude'],
       'longitude': Config().stateFarmWayfinding['longitude'],
       'zoom': Config().stateFarmWayfinding['zoom'],
-    });
+    });*/
   }
 
   void _onCreateStadiumPoll() {

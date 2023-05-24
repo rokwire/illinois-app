@@ -187,7 +187,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(widget.contentEmptyMessage ?? Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+              Text(widget.contentEmptyMessage ?? Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"))
             ,)
           ),
         ),
@@ -204,7 +204,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(hint: "Heading", child:
-              Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat"))
             )
           ),
         )
@@ -341,12 +341,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateDining() {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Dining)));
   }
 
   void _navigateEvents() {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events)));
   }
 
   void _navigateGroups() {
@@ -446,7 +446,7 @@ class _GuideFeatureButtonState extends State<GuideFeatureButton> {
               Container(height: 12),
               Row(children: [
                 Expanded(child:
-                  Text(widget.title!, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold)),
+                  Text(widget.title!, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.title.regular.semi_fat")),
                 ),
               ],)
 

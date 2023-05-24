@@ -21,9 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:path/path.dart';
@@ -40,7 +39,9 @@ class ImageEditPanel extends StatefulWidget {
   final int? width;
   final bool isUserPic;
 
-  const ImageEditPanel({Key? key, this.storagePath, this.width = 1080, this.isUserPic = false}) : super(key: key);
+  final String? preloadImageUrl;
+
+  const ImageEditPanel({Key? key, this.storagePath, this.width = 1080, this.isUserPic = false, this.preloadImageUrl}) : super(key: key);
 
   _ImageEditState createState() => _ImageEditState();
 }
@@ -54,11 +55,13 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if(_imageBytes == null){
-        showImagePickerDialog();
-      }
-    });
+   _preloadImageFromUrl().then((_){
+     WidgetsBinding.instance.addPostFrameCallback((_) async {
+       if(_imageBytes == null){
+         showImagePickerDialog();
+       }
+     });
+   });
   }
 
   @override
@@ -90,11 +93,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         title: Text(
           Localization()
               .getStringEx('panel.image_edit.header.title', 'Select Image'),
-          style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontFamily: Styles().fontFamilies!.extraBold,
-              letterSpacing: 1),
+          style: Styles().textStyles?.getTextStyle("widget.title.light.regular.extra_fat.spaced")
         ),
         centerTitle: false);
   }
@@ -110,13 +109,12 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
             Expanded(
               child: SingleChildScrollView(child: Column(children: [
               Container(height: 8,),
-              _imageBytes == null
-                  ? RoundedButton(label: "Choose Image", onTap: showImagePickerDialog)
-                  : InkWell(
-                      child: Image.memory(_imageBytes!),
-                      onTap: () {
-                        showImagePickerDialog();
-                      },),
+              _imageBytes == null ? Container():
+              InkWell(
+                    child: Image.memory(_imageBytes!),
+                    onTap: () {
+                      showImagePickerDialog();
+                    },),
               Container(height: 10,),
               Row(
                 children: [
@@ -131,6 +129,8 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                   )
                 ],
               ),
+              Container(height: 8,),
+              RoundedButton(label: "Choose Image", onTap: showImagePickerDialog),
               Container(height: 10,),
               _imageName!=null?
                 RoundedButton(label: "Edit", onTap: _onEdit)
@@ -165,7 +165,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               padding: EdgeInsets.all(15.0),
               child: Text(
                 "Image Source",
-                style: TextStyle(color: Styles().colors!.fillColorPrimary),
+                style: Styles().textStyles?.getTextStyle("widget.title.small"),
               ),
             ),
             Padding(
@@ -301,6 +301,31 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
       Navigator.pop(this.context,result);
     }
   }
+
+  Future<void> _preloadImageFromUrl() async {
+    _showLoader();
+    if(widget.preloadImageUrl != null){
+      _imageBytes = await readNetworkImage(widget.preloadImageUrl!);
+      if(_imageBytes != null) {
+        _imageName = basename(widget.preloadImageUrl!);
+        _contentType = mime(_imageName);
+      }
+    }
+    _hideLoader();
+  }
+
+  //Utils: TBD move to Utils file if we keeps it
+  // Reading bytes from a network image
+  static Future<Uint8List?> readNetworkImage(String imageUrl) async {
+    try {
+      final ByteData data = await NetworkAssetBundle(Uri.parse(imageUrl))
+          .load(imageUrl);
+      final Uint8List bytes = data.buffer.asUint8List();
+      return bytes;
+    } catch (e){
+      return null;
+    }
+  }
 }
 
 /// class for dialog button
@@ -325,7 +350,7 @@ class AppDialogButtonState extends State<AppDialogButton> {
       onPressed: widget.onPressed,
       child: Text(
         widget.buttonTitle,
-        style: TextStyle(color: Styles().colors!.fillColorPrimary!, fontSize: 18.0),
+        style: Styles().textStyles?.getTextStyle("widget.button.title.regular.thin")
       ),
     );
   }

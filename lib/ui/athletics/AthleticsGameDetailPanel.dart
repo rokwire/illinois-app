@@ -159,8 +159,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                 Expanded(child:
                                   Text(
                                     Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + "$sportName",
-                                    style:
-                                    TextStyle(color: Colors.white, fontSize: 20),
+                                    style: Styles().textStyles?.getTextStyle("widget.heading.large"),
                                   )
                                 ),
                               ],
@@ -248,7 +247,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         child: Text(
           game!.newsTitle!,
           textAlign: TextAlign.left,
-          style: TextStyle(color: Styles().colors!.textBackground, fontSize: 20),
+          style: Styles().textStyles?.getTextStyle("widget.item.large")
         ),
       ));
     }
@@ -262,10 +261,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
               child: Text(
                 game!.newsContent!,
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.regular,
-                    color: Styles().colors!.textBackground,
-                    fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
               ),
             ),
             Visibility(
@@ -285,10 +281,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                       (_newsExpanded
                           ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")
                           : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")),
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.bold,
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 16),
+                      style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 8),
@@ -344,7 +337,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   /*void _showTicketsPanel() {
     if (Connectivity().isNotOffline && (Config().ticketsUrl != null)) {
       Navigator.push(context, CupertinoPageRoute(
-        builder: (context) => WebPanel(url: Config().ticketsUrl)));
+        builder: (context) => WebPanel(
+          url: Config().ticketsUrl
+          analyticsName: "WebPanel(Tickets)",
+          analyticsSource: game?.analyticsAttributes,
+        )));
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.tickets', 'Tickets are not available while offline.'));

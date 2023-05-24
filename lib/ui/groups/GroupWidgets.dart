@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import 'dart:typed_data';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -42,11 +41,10 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
-import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
@@ -75,15 +73,15 @@ class GroupSectionTitle extends StatelessWidget {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: title, hint: description, header: true, excludeSemantics: true, child:
           RichText(text:
-            TextSpan(text: title, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
+            TextSpan(text: title, style: Styles().textStyles?.getTextStyle("widget.title.tiny"),
               children: [
-                TextSpan(text: (requiredMark == true) ?  " *" : "", style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 12, fontFamily: Styles().fontFamilies!.extraBold),
+                TextSpan(text: (requiredMark == true) ?  " *" : "", style: Styles().textStyles?.getTextStyle("widget.title.tiny.extra_fat"),
               )
             ],),
           ),
         ),
         (description != null) ? Container(padding: EdgeInsets.only(top: 2), child:
-          Text(description ?? "", semanticsLabel: "", style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+          Text(description ?? "", semanticsLabel: "", style:  Styles().textStyles?.getTextStyle("widget.item.small.thin"),),
         ) : Container(),
       ],)
     );
@@ -643,14 +641,28 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 // GroupAddImageWidget
 
 class GroupAddImageWidget extends StatefulWidget {
+  static String _groupImageStoragePath = 'group/tout';
+  static int _groupImageWidth = 1080;
+
   @override
   _GroupAddImageWidgetState createState() => _GroupAddImageWidgetState();
+
+  static Future<String?> show({required BuildContext context, String? updateUrl}) async {
+    ImagesResult? imageResult;
+
+    if(updateUrl == null){
+      Future<dynamic> result =  showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+      return result.then((url) => url);
+    } else {
+      imageResult = await Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+          ImageEditPanel(storagePath: _groupImageStoragePath, width: _groupImageWidth, preloadImageUrl: updateUrl,)));
+    }
+
+    return imageResult?.resultType == ImagesResultType.succeeded? imageResult?.data?.toString() : null;
+  }
 }
 
 class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
-  final String _groupImageStoragePath = 'group/tout';
-  final int _groupImageWidth = 1080;
-
   var _imageUrlController = TextEditingController();
   bool _showProgress = false;
 
@@ -761,7 +773,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
       });
 
       Future<ImagesResult> result =
-      Content().useUrl(storageDir: _groupImageStoragePath, width: _groupImageWidth, url: url);
+      Content().useUrl(storageDir: GroupAddImageWidget._groupImageStoragePath, width: GroupAddImageWidget._groupImageWidth, url: url);
       result.then((logicResult) {
         setState(() {
           _showProgress = false;
@@ -798,7 +810,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     // Future<ImagesResult?> result =
     // Content().selectImageFromDevice(storagePath: _groupImageStoragePath, width: _groupImageWidth);
     // result.then((logicResult) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(storagePath: _groupImageStoragePath, width: _groupImageWidth))).then((logicResult){
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ImageEditPanel(storagePath: GroupAddImageWidget._groupImageStoragePath, width: GroupAddImageWidget._groupImageWidth))).then((logicResult){
       setState(() {
         _showProgress = false;
       });
@@ -922,8 +934,8 @@ class _GroupCardState extends State<GroupCard> {
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().contentAttributes?.displayAttributesListFromSelection(widget.group?.attributes,
-      usage: ContentAttributesCategoryUsage.label);
+    List<String>? attributesList = Groups().contentAttributes?.displayAttributeValuesListFromSelection(widget.group?.attributes,
+      usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
         wrapContent.add(_buildHeadingWrapLabel(attribute));
@@ -1000,8 +1012,8 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().contentAttributes?.displayAttributesListFromSelection(widget.group?.attributes,
-      usage: ContentAttributesCategoryUsage.category);
+    List<String>? displayList = Groups().contentAttributes?.displayAttributeValuesListFromSelection(widget.group?.attributes,
+      usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
         Text(displayList?.join(', ') ?? '',
@@ -1017,13 +1029,13 @@ class _GroupCardState extends State<GroupCard> {
     List<Widget> propertiesList = <Widget>[];
     Map<String, dynamic>? groupAttributes = widget.group?.attributes;
     ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttributesCategory>? categories = contentAttributes?.categories;
-    if ((groupAttributes != null) && (contentAttributes != null) && (categories != null)) {
-      for (ContentAttributesCategory category in categories) {
-        if (category.usage == ContentAttributesCategoryUsage.property) {
-          List<String>? displayAttributes = category.displayAttributesListFromSelection(groupAttributes, contentAttributes: contentAttributes);
-          if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
-            propertiesList.add(_buildProperty("${contentAttributes.stringValue(category.title)}: ", displayAttributes.join(', ')));
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        if (attribute.usage == ContentAttributeUsage.property) {
+          List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(groupAttributes);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            propertiesList.add(_buildProperty("${attribute.displayTitle}: ", displayAttributeValues.join(', ')));
           }
         }
       }
@@ -1273,7 +1285,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             HtmlWidget(
                                 "<div style= text-overflow:ellipsis;max-lines:3> ${StringUtils.ensureNotEmpty(htmlBody)}</div>",
                                 onTapUrl : (url) {_onLinkTap(url); return true;},
-                                textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                                textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.small")
                             )
                             // Html(data: htmlBody, style: {
                             //   "body": Style(
@@ -1336,9 +1348,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   void _onLinkTap(String? url) {
     Analytics().logSelect(target: url);
-    if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    UrlUtils.launchExternal(url);
   }
 
   int getVisibleRepliesCount() {
@@ -1458,7 +1468,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                               HtmlWidget(
                                   StringUtils.ensureNotEmpty(bodyText),
                                   onTapUrl : (url) {_onLinkTap(url); return true;},
-                                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                                  textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.small"),
                                   customStylesBuilder: (element) => (element.localName == "span") ? {"color": ColorUtils.toHex(Styles().colors!.disabledTextColor ?? Colors.blue)}: null //Not able to use Transparent colour, it's not parsed correctly
                                   // customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.blackTransparent018 ?? Colors.blue)} : null
                               )
@@ -1518,9 +1528,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   void _onLinkTap(String? url) {
     Analytics().logSelect(target: url);
-    if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    UrlUtils.launchExternal(url);
   }
 
   void _onTapCard(){
@@ -1570,10 +1578,7 @@ class GroupPostReaction extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(accountIDs?.length.toString() ?? '',
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.regular,
-                                fontSize: 14,
-                                color: Styles().colors!.fillColorPrimary)),
+                            style: Styles().textStyles?.getTextStyle("widget.button.title.small")),
                       ))
                 ])));
   }
@@ -1607,10 +1612,7 @@ class GroupPostReaction extends StatelessWidget {
           children: [
             Styles().images?.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
             Container(width: 16),
-            Text(member.displayShortName, style: TextStyle(
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
-                color: Styles().colors!.fillColorPrimary)),
+            Text(member.displayShortName, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
           ],
         ),
       ));
@@ -1734,11 +1736,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                 padding: EdgeInsets.only(top: 8, bottom: 16),
                 child: TextField(
                     controller: _bodyController,
-                    onChanged: (String text){
-                      if (widget.onBodyChanged != null) {
-                        widget.onBodyChanged!(text);
-                      }
-                    },
+                    onChanged: _notifyChanged,
                     maxLines: 15,
                     minLines: 1,
                     textCapitalization: TextCapitalization.sentences,
@@ -1752,6 +1750,12 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
           ],
         )
     );
+  }
+
+  void _notifyChanged(String text) {
+    if (widget.onBodyChanged != null) {
+      widget.onBodyChanged!(text);
+    }
   }
 
   //HTML Body input Actions
@@ -1829,6 +1833,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
     _bodyController.text = result;
     _bodyController.selection = TextSelection.fromPosition(
         TextPosition(offset: (endPosition + firstValue.length)));
+    _notifyChanged(result);
   }
   
   //Dialog
@@ -2208,9 +2213,9 @@ class _ImageChooserState extends State<ImageChooserWidget>{
 
   void _onTapAddImage() async {
     Analytics().logSelect(target: "Add Image");
-    String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    String? imageUrl = await GroupAddImageWidget.show(context: context, updateUrl: _imageUrl);
     if (StringUtils.isNotEmpty(imageUrl) && (widget.onImageChanged != null)) {
-      widget.onImageChanged!(imageUrl);
+      widget.onImageChanged!(imageUrl!);
       if (mounted) {
         setState(() {
           _imageUrl = imageUrl;
@@ -2797,7 +2802,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
                 Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)
+                    style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.thin")
                 )
               )
             ),
@@ -2829,7 +2834,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                           color: Colors.white,
                           child: Text( 'Select All', //TBD localize
-                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61)),
+                            style:  Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline")),
                       )
                     )
                   ),
@@ -2845,7 +2850,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                           color: Colors.white,
                           child:Text('Deselect All', //TBD localize
                             textAlign: TextAlign.left,
-                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61))),
+                            style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline"))),
 
                       ))
                     ],
@@ -2903,7 +2908,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
             label: group.title,
             toggled: _selectedGroupIds.contains(group.id),
             onTap: () => _onTapGroup(group.id!),
-            textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)
+            textStyle:  Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
         ));
       }
 

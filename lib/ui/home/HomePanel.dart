@@ -25,7 +25,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -51,6 +51,7 @@ import 'package:illinois/ui/home/HomeVideoTutorialsWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
+import 'package:illinois/ui/home/HomeWellnessMentalHealthWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessToDoWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessRingsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessTipsWidget.dart';
@@ -59,7 +60,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -468,6 +468,15 @@ class HomePanel extends StatefulWidget {
         return HomeWellnessResourcesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
+    else if (code == 'wellness_mental_health') {
+      if (title) {
+        return HomeWellnessMentalHealthWidget.title;
+      } else if (handle) {
+        return HomeWellnessMentalHealthWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeWellnessMentalHealthWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
     else if (code == 'wellness_todo') {
       if (title) {
         return HomeWellnessToDoWidget.title;
@@ -496,7 +505,7 @@ class HomePanel extends StatefulWidget {
       }
     }
     else {
-      return (handle || title) ? null : FlexContent.fromAssets(code, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
+      return (handle || title) ? null : FlexContent(contentKey: code, key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
     }
   }
 
@@ -508,6 +517,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   
   List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
+  List<String>? _systemCodes;
   StreamController<String> _updateController = StreamController.broadcast();
   Map<String, GlobalKey> _widgetKeys = <String, GlobalKey>{};
   GlobalKey _contentWrapperKey = GlobalKey();
@@ -520,6 +530,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     // because _buildFavoriteCodes may fire such.
     _favoriteCodes = _buildFavoriteCodes();
     _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
+    _systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
 
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
@@ -527,7 +538,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
-      Assets.notifyChanged,
       HomeSaferWidget.notifyNeedsVisiblity,
     ]);
     super.initState();
@@ -568,7 +578,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   List<Widget> _buildRegularContentList() {
     List<Widget> widgets = [];
-    widgets.addAll(_buildWidgetsFromCodes(JsonUtils.listStringsValue(FlexUI()['home.system'])));
+    widgets.addAll(_buildWidgetsFromCodes(_systemCodes));
     widgets.addAll(_buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes));
     return widgets;
   }
@@ -593,7 +603,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       return HomeToutWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, onEdit: _onEdit,);
     }
     else if (code == 'emergency') {
-      return FlexContent.fromAssets(code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
+      return FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
     }
     else if (code == 'voter_registration') {
       return HomeVoterRegistrationWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
@@ -611,17 +621,27 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         updateController: _updateController,
       );
       
-      return (data is Widget) ? data : FlexContent.fromAssets(code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
+      return (data is Widget) ? data : FlexContent(contentKey: code, key: _widgetKey(code), favoriteId: code, updateController: _updateController);
     }
   }
 
   GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
 
-  void _updateAvailableCodes() {
+  void _updateSystemAndAvailableCodes() {
     Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
+    bool availableCodesChanged = (availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes);
+
+    List<String>? systemCodes = JsonUtils.listStringsValue(FlexUI()['home.system']);
+    bool systemCodesChanged = (systemCodes != null) && !DeepCollectionEquality().equals(_systemCodes, systemCodes);
+
+    if (mounted && (availableCodesChanged || systemCodesChanged)) {
       setState(() {
-        _availableCodes = availableCodes;
+        if (availableCodesChanged) {
+          _availableCodes = availableCodes;
+        }
+        if (systemCodesChanged) {
+          _systemCodes = systemCodes;
+        }
       });
     }
   }
@@ -702,7 +722,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      _updateAvailableCodes();
+      _updateSystemAndAvailableCodes();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _updateFavoriteCodes();
@@ -713,7 +733,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     else if (((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) ||
         (name == Localization.notifyStringsUpdated) ||
         (name == Styles.notifyChanged) ||
-        (name == Assets.notifyChanged) ||
         (name == Storage.offsetDateKey) ||
         (name == Storage.useDeviceLocalTimeZoneKey))
     {
