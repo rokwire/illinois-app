@@ -90,7 +90,7 @@
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "student", "netid_login"],
+				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "icard_mobile", "student", "netid_login"],
 			
 			"launch":["emergency"]
 			
