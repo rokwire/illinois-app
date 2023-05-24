@@ -124,7 +124,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
               Container(
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.white,)
+                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
                 ),
               ),
             ],)
@@ -192,7 +192,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear');
     TextStyle? textStyle = StringUtils.isNotEmpty(attributeValue.label) ?
       Styles().textStyles?.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
-      TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorSecondary);
+      Styles().textStyles?.getTextStyle("widget.label.regular.thin");
     
 
     return InkWell(onTap: () => _onTapAttributeValue(attributeValue), child:

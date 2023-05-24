@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:illinois/model/Appointment.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
@@ -46,7 +46,7 @@ extension AppointmentExt on Appointment {
       return (unit?.imageKey(provider: provider) ?? provider?.randomImageKey ?? AppointmentProviderExt.defaultImageKey);
     }
     else {
-      return Assets().randomStringFromListWithKey('images.random.events.Other');
+      return Content().randomImageUrl('events.Other');
     }
   }
 }
@@ -78,8 +78,7 @@ extension AppointmentProviderExt on AppointmentProvider {
 
 extension AppointmentUnitExt on AppointmentUnit {
   String? get displayNextAvailableTime => (nextAvailableTimeUtc != null) ?
-    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) :
-    Localization().getStringEx('panel.appointment.schedule.next_available_appointment.unknown.label', 'Unknown');
+    DateFormat('EEEE, MMMM d, yyyy hh:mm aaa').format(nextAvailableTimeUtc!.toUniOrLocal()) : null;
 
   String? get displayNumberOfPersons {
     int count = numberOfPersons ?? 0;
@@ -107,10 +106,10 @@ extension AppointmentPersonExt on AppointmentPerson {
 
   String? get displayNumberOfAvailableSlots {
     int count = numberOfAvailableSlots ?? 0;
-    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.slots_count.label', '%s Appointments available'), [count]) :
+    return (1 < count) ? sprintf(Localization().getStringEx('panel.appointment.schedule.slots_count.label', '%s Appointments Available'), [count]) :
           ((0 < count) ?
-            Localization().getStringEx('panel.appointment.schedule.slot1_count.label', '1 Appointment available') :
-            Localization().getStringEx('panel.appointment.schedule.slot0_count.label', 'No appointments available')
+            Localization().getStringEx('panel.appointment.schedule.slot1_count.label', '1 Appointment Available') :
+            Localization().getStringEx('panel.appointment.schedule.slot0_count.label', 'No Appointments Available')
           );
   }
 }

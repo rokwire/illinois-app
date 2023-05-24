@@ -80,13 +80,13 @@ class _CanvasFileSystemEntitiesListPanelState extends State<CanvasFileSystemEnti
   Widget _buildErrorContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_files.load.failed.error.msg', 'Failed to load files and folders. Please, try again later.'),
-            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_files.empty.msg', 'There are no files and folders.'),
-            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildFileSystemEntitiesContent() {
@@ -119,7 +119,7 @@ class _CanvasFileSystemEntitiesListPanelState extends State<CanvasFileSystemEnti
               Expanded(
                   child: Text(StringUtils.ensureNotEmpty(entity.entityName),
                       maxLines: 3,
-                      style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium))),
+                      style: Styles().textStyles?.getTextStyle("widget.title.medium.semi_fat"))),
             ]))));
   }
 

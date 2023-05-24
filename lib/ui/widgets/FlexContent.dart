@@ -18,7 +18,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -28,13 +27,9 @@ class FlexContent extends rokwire.FlexContent {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  FlexContent({Key? key, String? assetsKey, Map<String, dynamic>? jsonContent, void Function(BuildContext context)? onClose, this.favoriteId, this.updateController}) :
-    super(key: key, assetsKey: assetsKey, jsonContent: jsonContent, onClose: onClose);
-
-  static FlexContent? fromAssets(dynamic assetsKey, { Key? key, String? favoriteId, StreamController<String>? updateController, void Function(BuildContext context)? onClose }) {
-    Map<String, dynamic>? jsonContent = JsonUtils.mapValue(Assets()[assetsKey]);
-    return (jsonContent != null) ? FlexContent(key: key, assetsKey: assetsKey, jsonContent: jsonContent, onClose: onClose, favoriteId: favoriteId, updateController: updateController,) : null;
-  }
+  FlexContent({Key? key, String? contentKey, Map<String, dynamic>? contentJson, void Function(BuildContext context)? onClose,
+    this.favoriteId, this.updateController}) :
+    super(key: key, contentKey: contentKey, contentJson: contentJson, onClose: onClose);
 
   @override
   void onTapButton(BuildContext context, Map<String, dynamic> button) {

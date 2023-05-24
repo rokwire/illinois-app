@@ -75,9 +75,9 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
       Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign Up with Email') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign In with Email');
 
-    String? headingTitle; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add Your Email Address') : null;
+    // String? headingTitle; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add Your Email Address') : null;
 
-    String? heading; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) : null;
+    // String? heading; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) : null;
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
       (widget.link == true) ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :
@@ -112,15 +112,15 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
             Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
                 
-                (heading != null) ? 
-                  Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
-                      Text(heading, style:  Styles().textStyles?.getTextStyle("widget.title.medium"),)
-                  ),)],) : Container(),
+                // (heading != null) ?
+                //   Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
+                //       Text(heading, style:  Styles().textStyles?.getTextStyle("widget.title.medium"),)
+                //   ),)],) : Container(),
 
-                (headingTitle != null) ? 
-                  Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
-                    Text(headingTitle, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.settings.login.title.large"),)
-                  ),)],) : Container(),
+                // (headingTitle != null) ?
+                //   Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
+                //     Text(headingTitle, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.settings.login.title.large"),)
+                //   ),)],) : Container(),
 
                 Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
                   Text(description, style: Styles().textStyles?.getTextStyle("widget.title.medium"))

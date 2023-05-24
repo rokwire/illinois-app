@@ -14,7 +14,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -280,7 +279,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["bessi_results", "bessi_profile"]).then((content) {
+    SkillsSelfEvaluation.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _resultsContentItems.clear();
         _profileContentItems.clear();

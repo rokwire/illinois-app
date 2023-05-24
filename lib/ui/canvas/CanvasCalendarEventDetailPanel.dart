@@ -94,7 +94,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
                 Localization()
                     .getStringEx('panel.canvas_calendar_event.load.failed.error.msg', 'Failed to load event. Please, try again later.'),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+                style:  Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEventContent() {
@@ -111,10 +111,7 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
                       child: Text(StringUtils.ensureNotEmpty(_event?.title),
                           maxLines: 5,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 22,
-                              color: Styles().colors!.fillColorSecondaryTransparent05,
-                              fontFamily: Styles().fontFamilies!.medium)))
+                          style:  Styles().textStyles?.getTextStyle("panel.canvas.detail.large")))
                 ]),
                 Visibility(
                     visible: Auth2().canFavorite,
@@ -145,29 +142,27 @@ class _CanvasCalendarEventDetailPanelState extends State<CanvasCalendarEventDeta
                   padding: EdgeInsets.only(top: 10),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(Localization().getStringEx('panel.canvas_calendar_event.calendar.label', 'Calendar:'),
-                        style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
+                        style:  Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
                     Expanded(
                         child: Padding(
                             padding: EdgeInsets.only(left: 5),
                             child: Text(StringUtils.ensureNotEmpty(_event?.contextName),
                                 maxLines: 5,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))))
+                                style:  Styles().textStyles?.getTextStyle("widget.info.regular.thin"))))
                   ])),
               Padding(
                   padding: EdgeInsets.only(top: 20),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(Localization().getStringEx('panel.canvas_calendar_event.date_time.label', 'Date & Time:'),
-                        style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
+                        style:  Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
                     Expanded(
                         child: Padding(
                             padding: EdgeInsets.only(left: 5),
                             child: Text(StringUtils.ensureNotEmpty(_event?.displayDateTime),
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))))
+                                style:  Styles().textStyles?.getTextStyle("widget.info.regular.thin"))))
                   ]))
             ])));
   }

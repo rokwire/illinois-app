@@ -44,13 +44,30 @@ import 'package:url_launcher/url_launcher.dart';
 enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling, mentalHealth }
 
 class WellnessHomePanel extends StatefulWidget {
+  static const String notifySelectContent = "edu.illinois.rokwire.wellness.content.select";
+  static const String contentItemKey = "content-item";
+
   final WellnessContent? content;
   final bool rootTabDisplay;
+
+  final Map<String, dynamic> params = <String, dynamic>{};
 
   WellnessHomePanel({this.content, this.rootTabDisplay = false});
 
   @override
   _WellnessHomePanelState createState() => _WellnessHomePanelState();
+
+  static bool get hasState {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(WellnessHomePanel.notifySelectContent);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if ((subscriber is _WellnessHomePanelState) && subscriber.mounted) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 class _WellnessHomePanelState extends State<WellnessHomePanel>
@@ -59,6 +76,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
 {
   static WellnessContent? _lastSelectedContent;
   late WellnessContent _selectedContent;
+  List<WellnessContent>? _contentValues;
   bool _contentValuesVisible = false;
 
   UniqueKey _podcastKey = UniqueKey();
@@ -68,8 +86,9 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [FlexUI.notifyChanged]);
-    _selectedContent = _selectableContent(widget.content) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
+    NotificationService().subscribe(this, [FlexUI.notifyChanged, WellnessHomePanel.notifySelectContent]);
+    _buildContentValues();
+    _selectedContent = _ensureContent(_initialContentItem) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
   }
 
   @override
@@ -83,7 +102,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      setStateIfMounted((){});
+      _buildContentValues();
+    } else if (name == WellnessHomePanel.notifySelectContent) {
+      WellnessContent? contentItem = (param is WellnessContent) ? param : null;
+      if (mounted && (contentItem != null) && (contentItem != _selectedContent)) {
+        _onContentItemChanged(contentItem);
+      }
     }
   }
 
@@ -155,12 +179,10 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
 
-    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['wellness']);
-    if (contentCodes != null) {
-      for (String contentCode in contentCodes) {
-        WellnessContent? section = _getContentValueFromCode(contentCode);
-        if ((section != null) && (_selectedContent != section)) {
-          sectionList.add(_buildContentItem(section));
+    if (CollectionUtils.isNotEmpty(_contentValues)) {
+      for (WellnessContent content in _contentValues!) {
+        if (_selectedContent != content) {
+          sectionList.add(_buildContentItem(content));
         }
       }
     }
@@ -176,8 +198,30 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         onTap: () => _onTapContentItem(contentItem));
   }
 
+  void _buildContentValues() {
+    List<String>? contentCodes = JsonUtils.listStringsValue(FlexUI()['wellness']);
+    List<WellnessContent>? contentValues;
+    if (contentCodes != null) {
+      contentValues = [];
+      for (String code in contentCodes) {
+        WellnessContent? value = _getContentValueFromCode(code);
+        if (value != null) {
+          contentValues.add(value);
+        }
+      }
+    }
+
+    _contentValues = contentValues;
+    setStateIfMounted(() { });
+  }
+
   void _onTapContentItem(WellnessContent contentItem) {
     Analytics().logSelect(target: _getContentLabel(contentItem));
+    _changeSettingsContentValuesVisibility();
+    NotificationService().notify(WellnessHomePanel.notifySelectContent, contentItem);
+  }
+
+  void _onContentItemChanged(WellnessContent contentItem) {
     String? launchUrl;
     if (contentItem == WellnessContent.podcast) {
       launchUrl = Wellness().getResourceUrl(resourceId: 'podcast');
@@ -191,14 +235,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     else {
       _selectedContent = _lastSelectedContent = contentItem;
     }
-    _changeSettingsContentValuesVisibility();
+    setStateIfMounted(() { });
   }
 
   void _changeSettingsContentValuesVisibility() {
     _contentValuesVisible = !_contentValuesVisible;
-    if (mounted) {
-      setState(() {});
-    }
+    setStateIfMounted(() { });
   }
 
   WellnessContent? _getContentValueFromCode(String? code) {
@@ -238,8 +280,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     return widget.rootTabDisplay ? null : uiuc.TabBar();
   }
 
-  WellnessContent? _selectableContent(WellnessContent? content) =>
-     ((content != WellnessContent.podcast) && (content != WellnessContent.struggling)) ? content : null;
+  WellnessContent? _ensureContent(WellnessContent? contentItem, {List<WellnessContent>? contentItems}) {
+    contentItems ??= _contentValues;
+    return ((contentItem != null) && contentItems!.contains(contentItem)) ? contentItem : null;
+  }
+
+  WellnessContent? get _initialContentItem => widget.params[WellnessHomePanel.contentItemKey];
 
   Widget get _contentWidget {
     switch (_selectedContent) {

@@ -164,12 +164,11 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(_member?.displayShortName ?? "",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
               ),
               Container(height: 6,),
               Text(dateDescriptionMsg,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),
+                style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
               )
             ],
           ),
@@ -206,11 +205,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
               ),
               Container(height: 8,),
               Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events."),
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.regular,
-                    fontSize: 16,
-                    color: Styles().colors!.textBackground
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
               ),
             ]
           ),
@@ -258,7 +253,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                       Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),
                     [_member?.displayName]),
                     textAlign: TextAlign.left,
-                    style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white),
+                    style: Styles().textStyles?.getTextStyle("widget.dialog.message.medium")
                   ),
                 ),
                 Row(

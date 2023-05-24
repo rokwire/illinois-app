@@ -20,8 +20,8 @@ import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -41,16 +41,24 @@ class SettingsPrivacyCenterContentWidget extends StatefulWidget{
 
 class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCenterContentWidget> implements NotificationsListener {
   PrivacyData? _privacyData;
+  bool _loadingPrivacyData = false;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
       Auth2.notifyLoginChanged,
-      Assets.notifyChanged,
       Localization.notifyLocaleChanged
     ]);
-    _loadPrivacyData();
+    
+    _loadingPrivacyData = true;
+    Content().loadContentItem('privacy').then((dynamic value) {
+      setStateIfMounted(() {
+        _privacyData = PrivacyData.fromJson(JsonUtils.mapValue(value));
+        _loadingPrivacyData = false;
+      });
+    });
+    
     super.initState();
   }
 
@@ -60,14 +68,9 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
     super.dispose();
   }
 
-  void _loadPrivacyData() async {
-    dynamic privacyJson = Assets()["privacy"];
-    _privacyData = PrivacyData.fromJson(privacyJson);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return _buildContent();
+    return _loadingPrivacyData ? _buildLoading() : _buildContent();
   }
 
   Widget _buildContent(){
@@ -342,10 +345,6 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
     else if (name == FlexUI.notifyChanged) {
       _updateState();
     }
-    else if (name == Assets.notifyChanged) {
-      _loadPrivacyData();
-      _updateState();
-    } 
     else if (name == Localization.notifyLocaleChanged) {
       _privacyData?.reload();
       _updateState();
@@ -357,4 +356,13 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
       setState(() {});
     }
   }
+
+  Widget _buildLoading() => Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 64), child:
+    Center(child:
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+      ),
+    ),
+  );
+
 }

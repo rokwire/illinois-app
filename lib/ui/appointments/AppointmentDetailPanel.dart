@@ -360,11 +360,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       if (StringUtils.isNotEmpty(longDisplayLocation)) {
         locationTextValue = longDisplayLocation;
       } else if (StringUtils.isNotEmpty(locationTitle)) {
-        if (locationTextValue != null) {
-          locationTextValue += ', $locationTitle';
-        } else {
-          locationTextValue = locationTitle;
-        }
+        locationTextValue = locationTitle;
       }
       return InkWell(onTap: canLocation ? _onLocationDetailTapped : null, child:
         Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:

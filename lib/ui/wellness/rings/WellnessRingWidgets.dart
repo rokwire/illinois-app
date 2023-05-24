@@ -245,14 +245,15 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   @override
   void onNotification(String name, param) {
     if(name == WellnessRings.notifyUserRingsUpdated){
-      WellnessRings().loadWellnessRings().then((value){
-        _ringsData = value;
+      // WellnessRings().loadWellnessRings().then((value){  //This approach was causing bad loop when no internet connection. Check if it was workaround for other issue and remove if no other issues are caused
+      //   _ringsData = value;
+      _ringsData = WellnessRings().wellnessRings;
         if(mounted) {
           try { //Unhandled Exception: 'package:flutter/src/widgets/framework.dart': Failed assertion: line 4234 pos 12: '_lifecycleState != _ElementLifecycle.defunct': is not true.
             setState(() {});
           } catch (e) {print(e);}
         }
-      });
+      // });
     } else if( name == WellnessRings.notifyUserRingsAccomplished){
       if (widget.accomplishmentDialogEnabled && param != null && param is String) {
         WellnessRingDefinition? data = WellnessRings().wellnessRings

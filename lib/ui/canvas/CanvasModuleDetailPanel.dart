@@ -84,7 +84,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
                 Localization().getStringEx(
                     'panel.canvas_module_detail.load.failed.error.msg', 'Failed to load module items. Please, try again later.'),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+                style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
@@ -92,7 +92,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(Localization().getStringEx('panel.canvas_module_detail.empty.msg', 'There are no module items.'),
-                textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+                textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildItemsContent() {
@@ -131,8 +131,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
                     child: Text(StringUtils.ensureNotEmpty(item.title),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: 18, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimaryVariant)))
+                        style: Styles().textStyles?.getTextStyle("panel.canvas.text.medium.fat")))
               ])
             ])));
   }

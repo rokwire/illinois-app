@@ -22,12 +22,12 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -105,8 +105,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   void _loadOnboardingVideoTutorial() {
-    Map<String, dynamic>? videoTutorials = Assets()['video_tutorials'];
-    List<dynamic>? videos = videoTutorials?['videos'];
+    Map<String, dynamic>? videoTutorials = Content().videoTutorials;
+    List<dynamic>? videos = JsonUtils.listValue(videoTutorials?['videos']) ;
     if (CollectionUtils.isEmpty(videos)) {
       return null;
     }

@@ -15,6 +15,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart' as uiuc;
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
@@ -64,8 +65,8 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -706,10 +707,7 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  int get _videoTutorialsCount {
-    List<dynamic>? videos = JsonUtils.listValue(Assets()['video_tutorials.videos']);
-    return videos?.length ?? 0;
-  }
+  int get _videoTutorialsCount => uiuc.Content().videos?.length ?? 0;
 
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
@@ -723,23 +721,17 @@ class _BrowseEntry extends StatelessWidget {
         Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
           Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
+          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
         Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-                settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
       }
     }
   }
 
   List<Video>? _getVideoTutorials() {
-    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+    Map<String, dynamic>? videoTutorials = uiuc.Content().videoTutorials;
     if (videoTutorials == null) {
       return null;
     }
@@ -1191,6 +1183,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   void initState() {
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
+      Content.notifyContentImagesChanged,
     ]);
 
     widget.updateController?.stream.listen((String command) {
@@ -1261,7 +1254,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   }
 
   void _updateImage() {
-    Storage().browseToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.browse.tout');
+    Storage().browseToutImageUrl = _imageUrl = Content().randomImageUrl('browse.tout');
     Storage().browseToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
   }
 
@@ -1270,6 +1263,9 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   @override
   void onNotification(String name, dynamic param) {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+      _update();
+    }
+    else if (name == Content.notifyContentImagesChanged) {
       _update();
     }
   }

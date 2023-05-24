@@ -167,7 +167,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   Future<List<dynamic>?> _loadContentJsonFromCache() async {
-    return JsonUtils.decodeList(await _loadContentStringFromCache());
+    return await JsonUtils.decodeListAsync(await _loadContentStringFromCache());
   }
 
   Future<String?> _loadContentStringFromNet() async {
@@ -185,8 +185,8 @@ class Guide with Service implements NotificationsListener {
   Future<void> _updateContentFromNet() async {
     if ((_contentSource == null) || (_contentSource == GuideContentSource.Net)) {
       String? contentString = await _loadContentStringFromNet();
-      List<dynamic>? contentList = JsonUtils.decodeList(contentString);
-      if ((contentList != null) && !DeepCollectionEquality().equals(_contentList, contentList)) {
+      List<dynamic>? contentList = await JsonUtils.decodeListAsync(contentString);
+      if ((contentList != null) && !await CollectionUtils.equalsAsync(_contentList, contentList)) {
         _contentList = contentList;
         _contentMap = _buildContentMap(_contentList);
         _contentSource = GuideContentSource.Net;
@@ -204,7 +204,7 @@ class Guide with Service implements NotificationsListener {
       contentMap = LinkedHashMap<String, Map<String, dynamic>?>();
       for (dynamic contentEntry in contentList) {
         Map<String, dynamic>? mapEntry = JsonUtils.mapValue(contentEntry);
-        String? id = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['_id']) : null;
+        String? id = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['content_id']) : null;
         if (id != null) {
           contentMap[id] = mapEntry;
         }
@@ -243,7 +243,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   String? entryId(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, '_id'));
+    return JsonUtils.stringValue(entryValue(entry, 'content_id'));
   }
 
   String? entryGuide(Map<String, dynamic>? entry) {
@@ -671,7 +671,7 @@ class Guide with Service implements NotificationsListener {
     // ID
     dynamic sourceValue = sourceEntry['id'];
     if (sourceValue != null) {
-      contentEntry['_id'] = sourceValue;
+      contentEntry['content_id'] = sourceValue;
     }
 
     // Shared Fields

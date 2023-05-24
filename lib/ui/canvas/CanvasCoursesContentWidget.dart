@@ -91,7 +91,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
         child: Text(
             message,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildCoursesContent() {

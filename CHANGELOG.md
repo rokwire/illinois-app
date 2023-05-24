@@ -5,6 +5,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Upgrade dependencies for Flutter v3.10 [#3294](https://github.com/rokwire/illinois-app/issues/3294)
+
+## [5.0.5] - 2023-05-23
+- Created and acknowledged at different places async versions of JSON encode/decode and collection equality checks [#3292](https://github.com/rokwire/illinois-app/issues/3292).
+
+## [5.0.4] - 2023-05-22
+### Changed
+- Load different JSON assets from content service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
+- Retire Assets service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
+
+## [5.0.3] - 2023-05-19
+### Changed
+- Use "content_id" as guide article identifier [#3287](https://github.com/rokwire/illinois-app/issues/3287).
+- Use Styles().textStyles everywhere [#2932](https://github.com/rokwire/illinois-app/issues/2932.)
+
+## [5.0.2] - 2023-05-17
+### Added
+- New video tutorial "Creating Polls" [#3285](https://github.com/rokwire/illinois-app/issues/3285).
+
+## [5.0.1] - 2023-05-16
+### Added
+- Handle deep links for main panel content [#3240](https://github.com/rokwire/illinois-app/issues/3240).
+
+## [5.0.0] - 2023-05-15
+### Changed
+- Load content attributes JSON from content service [#3278](https://github.com/rokwire/illinois-app/issues/3278).
+
+## [4.3.61] - 2023-05-12
+### Fixed
+- Fixed favourites card title textStyle [#3273](https://github.com/rokwire/illinois-app/issues/3273).
+
+## [4.3.60] - 2023-05-11
+### Fixed
+- Fixed WellnessRingWidget update mechanism that was causing infinite initialization loop when offline [#3270](https://github.com/rokwire/illinois-app/issues/3270).
+
+## [4.3.59] - 2023-05-10
+### Changed
+- Changed texts for Appointments scheduling [#3266](https://github.com/rokwire/illinois-app/issues/3266).
+- Change empty student courses message [#3263](https://github.com/rokwire/illinois-app/issues/3263).
+### Fixed
+- Remove duplicated message for Maps pop up dialog [#3260](https://github.com/rokwire/illinois-app/issues/3260).
+
+## [4.3.58] - 2023-05-09
+### Changed
+- Athletics entries in Browse [#3258](https://github.com/rokwire/illinois-app/issues/3258).
+
+## [4.3.57] - 2023-05-06
+### Changed
+- Hide unknown next available appointment [#3252](https://github.com/rokwire/illinois-app/issues/3252).
+- Update static sample appointments data [#3254](https://github.com/rokwire/illinois-app/issues/3252).
+- Display person's name in appointment schedule time panel [#3256](https://github.com/rokwire/illinois-app/issues/3256).
+
 ## [4.3.56] - 2023-05-05
 ### Changed
 - Switch Telehealth/Online depending on provider [#3241](https://github.com/rokwire/illinois-app/issues/3241).
@@ -203,8 +256,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.3.30] - 2023-03-27
 ### Changed
 - Refer to google_maps_flutter plugin located in rokwire's upstream fork [#3043](https://github.com/rokwire/illinois-app/issues/3043). 
-- Content attributes prepared for multiple scopes support [#3047](https://github.com/rokwire/app-flutter-plugin/issues/3047).
-- Hide StateFarm parking everywhere in the app [#3053](https://github.com/rokwire/app-flutter-plugin/issues/3053).
+- Content attributes prepared for multiple scopes support [#3047](https://github.com/rokwire/illinois-app/issues/3047).
+- Hide StateFarm parking everywhere in the app [#3053](https://github.com/rokwire/illinois-app/issues/3053).
 ### Fixed
 - Fixed hiding user details in analytics logs [#3049](https://github.com/rokwire/illinois-app/issues/3049).
 
@@ -1125,7 +1178,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.1.0] - 2022-07-20
 ### Changed
 - Do not override default TabBar background color any more [#2067](https://github.com/rokwire/illinois-app/issues/2067).
-- Read group names from app config in FlexUI [#118](https://github.com/rokwire/app-flutter-plugin/issues/118).
+- Read group names from app config in FlexUI [#118](https://github.com/rokwire/illinois-app/issues/118).
 ### Fixed
 - Construct redirect url with deep link target for group promotion [#2065](https://github.com/rokwire/illinois-app/issues/2065).
 - Fixed adding/removing compound widgets from Favorites/Customize panel [#2073](https://github.com/rokwire/illinois-app/issues/2073).
@@ -1450,7 +1503,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HomeToutWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
 ### Changed
 - Cleaned up Drag & Drop in Home panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
-- Removed Group polls hook methods [#1679](https://github.com/rokwire/app-flutter-plugin/issues/1679).
+- Removed Group polls hook methods [#1679](https://github.com/rokwire/illinois-app/issues/1679).
 
 ## [4.0.20] - 2022-06-01
 ### Added

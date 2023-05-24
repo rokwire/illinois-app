@@ -144,7 +144,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     else {
       return Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.guide_detail.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+          Text(Localization().getStringEx('panel.guide_detail.label.content.empty', 'Empty guide content'), style: Styles().textStyles?.getTextStyle("widget.message.regular.fat")),
         ),
       );
     }
@@ -165,7 +165,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     String? category = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'category'));
     contentList.add(
       Padding(padding: EdgeInsets.only(bottom: 8), child:
-        Semantics(hint: "Heading", child:Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)),
+        Semantics(hint: "Heading", child:Text(category?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"))),
     ),);
 
     String? titleHtml = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'detail_title')) ?? JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'title'));
@@ -175,7 +175,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         HtmlWidget(
           titleHtml ?? "",
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 36),
+          textStyle: Styles().textStyles?.getTextStyle("widget.title.extra_huge.extra_fat"),
         )
           // Html(data: titleHtml,
           //   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
@@ -189,7 +189,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
       contentList.add(
         Padding(padding: EdgeInsets.zero, child:
           Text(dateString ?? '',
-            style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),),
+            style: Styles().textStyles?.getTextStyle("widget.item.regular")),
       ),);
     }
 
@@ -200,7 +200,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         HtmlWidget(
           descriptionHtml ?? "",
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+          textStyle: Styles().textStyles?.getTextStyle("widget.item.large"),
         )
       ),);
     }
@@ -225,13 +225,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
           bool hasLocation = (locationGps != null);
 
           if (text != null) {
-            TextDecoration? linkTextDecoration;
-            Color? linkTextDecorationColor;
-            if (hasUri || hasLocation) {
-              linkTextDecoration = TextDecoration.underline;
-              linkTextDecorationColor = Styles().colors!.fillColorSecondary;
-            }
-            
+            bool underline = hasUri || hasLocation;
             contentList.add(Semantics(button: true, child:
               GestureDetector(onTap: () => (locationGps != null) ? _onTapLocation(locationGps) : (hasUri ? _onTapLink(url, useInternalBrowser: useInternalBrowser) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -239,7 +233,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                     (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(left: 8), child:
-                        Text(text, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.regular, decoration: linkTextDecoration, decorationColor: linkTextDecorationColor))
+                        Text(text, style: underline ? Styles().textStyles?.getTextStyle("widget.button.title.regular.thin.underline") :  Styles().textStyles?.getTextStyle("widget.button.title.regular.thin"))
                       ),
                     ),
                   ],)
@@ -301,7 +295,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     if (StringUtils.isNotEmpty(title)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-          Text(title ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 36, fontFamily: Styles().fontFamilies!.bold),),
+          Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.extra_huge.fat")),
       ),);
     }
 
@@ -312,7 +306,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         HtmlWidget(
           descriptionHtml ?? "",
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+          textStyle:  Styles().textStyles?.getTextStyle("widget.item.large"),
         )
       ),);
     }
@@ -328,7 +322,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                 HtmlWidget(
                   sectionHtml ?? "",
                   onTapUrl : (url) {_onTapLink(url); return true;},
-                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.title.large.fat"),
                 )
             ),);
           }
@@ -344,7 +338,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                       HtmlWidget(
                         headingHtml ?? "",
                         onTapUrl : (url) {_onTapLink(url); return true;},
-                        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.item.large")
                       )
                     ),);
                 }
@@ -374,12 +368,12 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                         Padding(padding: EdgeInsets.only(top: numberTopPadding, bottom: numberBottomPadding), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(left: numberLeftPadding, right: numberRightPadding), child:
-                              Text(sprintf(numberTextFormat, [numberIndex + 1]), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),),
+                              Text(sprintf(numberTextFormat, [numberIndex + 1]), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),), //Custom TextStyle
                             Expanded(child:
                               HtmlWidget(
                                 numberHtml,
                                 onTapUrl : (url) {_onTapLink(url); return true;},
-                                textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                                textStyle: Styles().textStyles?.getTextStyle("widget.item.large")
                               )
                             ),
                           ],)
@@ -412,12 +406,12 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                         Padding(padding: EdgeInsets.only(top: bulletTopPadding, bottom: bulletBottomPadding), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(left: bulletLeftPadding, right: bulletRightPadding), child:
-                              Text(bulletText, style: TextStyle(color: bulletColor, fontSize: bulletFontSize, fontFamily: bulletFontFamily),),),
+                              Text(bulletText, style: TextStyle(color: bulletColor, fontSize: bulletFontSize, fontFamily: bulletFontFamily),),),//Custom TextStyle
                             Expanded(child:
                               HtmlWidget(
                                 bulletHtml,
                                 onTapUrl : (url) {_onTapLink(url); return true;},
-                                textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                                textStyle: Styles().textStyles?.getTextStyle("widget.item.large")
                               )
                             ),
                           ],)

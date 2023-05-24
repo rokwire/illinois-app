@@ -308,7 +308,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.title.medium")),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat")),
                       ),
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _onTapFavoriteStar(item), child:

@@ -1,15 +1,10 @@
-import 'dart:io';
-
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -17,9 +12,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'Config.dart';
-
-abstract class CheckList with Service implements NotificationsListener{
+abstract class CheckList with Service implements NotificationsListener, ContentItemCategoryClient {
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
@@ -45,8 +38,6 @@ abstract class CheckList with Service implements NotificationsListener{
 
   final String _contentName;
 
-  File? _cacheFile;
-
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
 
@@ -57,8 +48,6 @@ abstract class CheckList with Service implements NotificationsListener{
   Set<String> _pagesRequireVerification = <String> {};
   List<int>? _progressSteps;
 
-  DateTime? _pausedDateTime;
-
   // String checklistName();
 
   // Service
@@ -66,12 +55,10 @@ abstract class CheckList with Service implements NotificationsListener{
   void createService() {
     super.createService();
     NotificationService().subscribe(this, [
+      Content.notifyContentItemsChanged,
       Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupUpdated,
-      Groups.notifyGroupCreated,
       Groups.notifyUserGroupsUpdated,
-      AppLivecycle.notifyStateChanged,
-      Auth2.notifyLoginSucceeded
     ]);
     super.createService();
   }
@@ -86,22 +73,12 @@ abstract class CheckList with Service implements NotificationsListener{
   Future<void> initService() async {
     _navigationPages = Storage().getCheckListNavPages(_contentName) ?? [];
     _completedPages = Storage().getChecklistCompletedPages(_contentName) ?? Set<String>();
-    _cacheFile = await _getCacheFile();
-    _pages = await _loadContentJsonFromCache();
-    if (_pages != null) {
-      _updateContentFromNet();
-    }
-    else {
-      String? contentString = await _loadContentStringFromNet();
-      _pages = JsonUtils.decodeList(contentString);
-      if (_pages != null) {
-        _saveContentStringToCache(contentString);
-      }
-    }
 
+    _pages = Content().contentListItem(_contentCategory);
     _buildProgressSteps();
     _loadPageVerification();
     _ensureNavigationPages();
+
     if (_pages != null) {
       await super.initService();
     }
@@ -117,80 +94,47 @@ abstract class CheckList with Service implements NotificationsListener{
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config(), Groups()]);
+    return {Storage(), Content(), Groups()};
   }
   
   @override
   String get debugDisplayName => "CheckList('$_contentName')";
 
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Content.notifyContentItemsChanged) {
+      _onContentItemsChanged(param);
+    }
+    else if (name == Groups.notifyUserMembershipUpdated ||
+        name == Groups.notifyGroupUpdated ||
+        name == Groups.notifyUserGroupsUpdated) {
+      _loadPageVerification(notify: true);
+    }
+  }
+
+  void _onContentItemsChanged(Set<String>? categoriesDiff) {
+    if (categoriesDiff?.contains(_contentCategory) == true) {
+      _onContentChanged();
+    }
+  }
+
+  // ContentItemCategoryClient
+
+  @override
+  List<String> get contentItemCategory => <String>[_contentCategory];
+
   // Implementation
 
-  Future<File> _getCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, _cacheFileName);
-    return File(cacheFilePath);
-  }
+  String get _contentCategory => '${_contentName}_checklists';
 
-  Future<String?> _loadContentStringFromCache() async {
-    return (await _cacheFile?.exists() == true) ? await _cacheFile?.readAsString() : null;
-  }
-
-  Future<void> _saveContentStringToCache(String? value) async {
-    try {
-      if (value != null) {
-        await _cacheFile?.writeAsString(value, flush: true);
-      }
-      else {
-        await _cacheFile?.delete();
-      }
-    }
-    catch(e) { print(e.toString()); }
-  }
-
-  Future<List<dynamic>?> _loadContentJsonFromCache() async {
-    return JsonUtils.decodeList(await _loadContentStringFromCache());
-  }
-
-  Future<String?> _loadContentStringFromNet() async {
-    //TMP: load from app assets
-    // if(_contentName == CheckList.uiucOnboarding){
-    //   return AppBundle.loadString('assets/newStudent.json');
-    // } else {
-    //   return AppBundle.loadString('assets/gies.json');
-    // }
-
-    try {
-      List<dynamic> result;
-      String contentItemCategory = _contentName + '_checklists';
-      Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [contentItemCategory]}), auth: Auth2());
-      List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
-      if (responseList != null) {
-        result = [];
-        for (dynamic responseEntry in responseList) {
-          Map<String, dynamic>? responseMap = JsonUtils.mapValue(responseEntry);
-          List<dynamic>? responseData = (responseMap != null) ? JsonUtils.listValue(responseMap['data']) : null;
-          if (responseData != null) {
-            result.addAll(responseData);
-          }
-        }
-        return JsonUtils.encode(result);
-      }
-    }
-    catch (e) { print(e.toString()); }
-    return null;
-  }
-
-  Future<void> _updateContentFromNet() async {
-    String? contentString = await _loadContentStringFromNet();
-    List<dynamic>? contentList = JsonUtils.decodeList(contentString);
-    if ((contentList != null) && !DeepCollectionEquality().equals(_pages, contentList)) {
-      _pages = contentList;
-      _buildProgressSteps();
-      _loadPageVerification();
-      _ensureNavigationPages();
-      _saveContentStringToCache(contentString);
+  void _onContentChanged() {
+    _pages = Content().contentListItem(_contentCategory);
+    _buildProgressSteps();
+    _loadPageVerification();
+    _ensureNavigationPages();
       NotificationService().notify(notifyContentChanged, {_contentName: ""});
-    }
   }
 
   Future<dynamic> loadUserInfo() async {
@@ -213,8 +157,6 @@ abstract class CheckList with Service implements NotificationsListener{
       dynamic jsonResponse = JsonUtils.decode(responseString);
       return jsonResponse;
     } else {
-      //TBD remove
-      // return JsonUtils.decode(_mocContactInfoResponse);
       Log.e('Failed to load Contact Info. Response code: $responseCode, Response:\n$responseString');
       return null;
     }
@@ -573,7 +515,6 @@ abstract class CheckList with Service implements NotificationsListener{
     return false;
   }
 
-  String get _cacheFileName => "$_contentName.json";
   //Utils
   bool _pageCanComplete(Map? page) {
     if(StringUtils.isNotEmpty(JsonUtils.stringValue(page?["group_name"]))){
@@ -605,96 +546,6 @@ abstract class CheckList with Service implements NotificationsListener{
 
   int? getPageProgress(Map<String, dynamic>? page) {
     return (page != null) ? (JsonUtils.intValue(page['progress']) ?? JsonUtils.intValue(page['progress-possition'])) : null;
-  }
-
-  //TBD remove
-  // ignore: unused_element
-  String get _mocContactInfoResponse{
-    return "{\r\n   "
-        "\"uin\":\"657427043\",\r\n   "
-        "\"firstName\":\"Clint\",\r\n   "
-        "\"lastName\":\"Stearns\",\r\n   "
-        "\"preferred\":\"\",\r\n  "
-        " \"mailingAddress\":{\r\n      "
-          "\"Type\":\"MA\",\r\n      "
-          "\"Street1\":\"207EMichiganAve\",\r\n      "
-          "\"City\":\"Urbana\",\r\n     "
-          "\"StateAbbr\":\"IL\",\r\n      "
-          "\"StateName\":\"Illinois\",\r\n      "
-          "\"ZipCode\":\"61801-5028\",\r\n      "
-          "\"County\":\"Champaign\",\r\n     "
-          " \"Phone\":{\r\n         "
-            "\"AreaCode\":\"217\",\r\n         "
-            "\"Number\":\"3676260\"\r\n      "
-          "}\r\n   "
-        "},\r\n   "
-        "\"permanentAddress\":{\r\n     "
-          "\"Type\":\"PR\",\r\n      "
-          "\"Street1\":\"207EMichiganAve\",\r\n      "
-          "\"City\":\"Urbana\",\r\n      "
-          "\"StateAbbr\":\"IL\",\r\n      "
-          "\"StateName\":\"Illinois\",\r\n      "
-          "\"ZipCode\":\"61801-5028\",\r\n      "
-          "\"County\":\"Champaign\",\r\n      "
-          "\"Phone\":{\r\n         "
-            "\"AreaCode\":\"217\",\r\n         "
-            "\"Number\":\"3676260\"\r\n      "
-          "}\r\n   "
-        "},\r\n   "
-        "\"emergencycontacts\":[\r\n      "
-          "{\r\n         "
-            "\"Priority\":\"1\",\r\n        "
-            "\"RelationShip\":{\r\n            "
-              "\"Code\":\"I\",\r\n            "
-              "\"Name\":\"Spouse\"\r\n         "
-            "},\r\n         "
-            "\"FirstName\":\"Michelle\",\r\n         "
-            "\"LastName\":\"Stearns\",\r\n         "
-            "\"Address\":{\r\n           "
-              " \"Type\":\"ECA\",\r\n            "
-              "\"Street1\":\"207EMichiganAve\",\r\n            "
-              "\"City\":\"Urbana\",\r\n            "
-              "\"StateAbbr\":\"IL\",\r\n            "
-              "\"StateName\":\"Illinois\",\r\n            "
-              "\"ZipCode\":\"61801\",\r\n            "
-              "\"County\":\"\",\r\n           "
-              " \"Phone\":{\r\n               "
-                "\"AreaCode\":\"217\",\r\n               "
-                "\"Number\":\"3676260\"\r\n            "
-              "}\r\n         "
-            "}\r\n      "
-          "}\r\n   "
-        "]\r"
-        "\n}";
-  }
-
-  @override
-  void onNotification(String name, param) {
-    if (name == Groups.notifyUserMembershipUpdated ||
-        name == Groups.notifyGroupUpdated ||
-        // name == Groups.notifyGroupCreated ||
-        name == Groups.notifyUserGroupsUpdated) {
-      _loadPageVerification(notify: true);
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
-      if (param == AppLifecycleState.resumed) {
-        //TMP: test
-      }
-     }
-  }
-
-  void onAppLivecycleStateChanged(AppLifecycleState? state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateContentFromNet();
-        }
-      }
-    }
   }
 }
 

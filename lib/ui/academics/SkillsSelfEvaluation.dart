@@ -15,7 +15,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
@@ -23,6 +22,7 @@ import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/storage.dart';
@@ -39,6 +39,47 @@ class SkillsSelfEvaluation extends StatefulWidget {
 
   @override
   _SkillsSelfEvaluationState createState() => _SkillsSelfEvaluationState();
+
+  static Future<Map<String, Map<String, dynamic>>?> loadContentItems(List<String> categories) async {
+    Map<String, Map<String, dynamic>>? result; 
+    Map<String, dynamic>? contentItems = await Content().loadContentItems(categories);
+    if (contentItems != null) {
+      result = <String, Map<String, dynamic>>{};
+      for (String category in contentItems.keys) {
+        Map<String, Map<String, dynamic>>? categoryResult = _buildContentItems(contentItems[category], category);
+        if (categoryResult != null) {
+          result.addAll(categoryResult);
+        }
+      }
+    }
+    return result;
+  }
+
+  static Map<String, Map<String, dynamic>>? _buildContentItems(dynamic contentItem, String category) {
+    if (contentItem is Iterable) {
+      Map<String, Map<String, dynamic>> result = <String, Map<String, dynamic>>{};
+      for (dynamic contentListEntry in contentItem) {
+        Map<String, Map<String, dynamic>>? entryResult = _buildContentItems(contentListEntry, category);
+        if (entryResult != null) {
+          result.addAll(entryResult);
+        }
+      }
+      return result;
+    }
+    else {
+      Map<String, dynamic>? contentEntry = JsonUtils.mapValue(contentItem);
+      if (contentEntry != null) {
+        String? key = JsonUtils.stringValue(contentEntry['key']);
+        if (key != null) {
+          contentEntry['category'] = category;
+          return <String, Map<String, dynamic>>{
+            key: contentEntry
+          };
+        }
+      }
+    }
+    return null;
+  }
 }
 
 class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements NotificationsListener {
@@ -139,7 +180,8 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["bessi_info"]).then((content) {
+    
+    SkillsSelfEvaluation.loadContentItems(["bessi_info"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _infoContentItems.clear();
         for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
@@ -403,3 +445,4 @@ class SkillsSelfEvaluationLink {
 
   bool get internal => params != null ? params!['internal'] ?? false : false;
 }
+

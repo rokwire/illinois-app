@@ -309,7 +309,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   Widget _buildScheduleButton() {
     return Visibility(visible: _canScheduleAppointment, child:
       LinkButton(
-        title: Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', 'Schedule an appointment'),
+        title: Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', 'Schedule an Appointment'),
         textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular.underline"),
         padding: EdgeInsets.only(top: 8, bottom: 16),
         onTap: _onScheduleAppointment,

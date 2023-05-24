@@ -86,7 +86,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
-      Wellness.notifyContentChanged,
+      Wellness.notifyResourcesContentChanged,
     ]);
     _initContent();
     super.initState();
@@ -102,7 +102,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Wellness.notifyContentChanged) {
+    if (name == Wellness.notifyResourcesContentChanged) {
       if (mounted) {
         setState(() {
           _initContent();

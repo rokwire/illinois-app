@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -122,7 +122,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
     }
 
     String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow") + " ${widget.sport?.name}";
-    String randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.$sportShortName') ?? '';
+    String randomImageURL = Content().randomImageUrl('sports.$sportShortName') ?? '';
     return SingleChildScrollView(
       child: Container(
         color: Styles().colors!.background,

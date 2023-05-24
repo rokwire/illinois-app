@@ -15,10 +15,10 @@
  */
 
 import 'dart:io';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -31,17 +31,17 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 
-class Dinings with Service {
+class Dinings with Service implements ContentItemCategoryClient{
 
   static final String _olddiningsFileName = 'dinings_schedules.json';
+
+  static const String _diningContentCategory = "dining";
 
   String? _diningLocationsResponse;
   DateTime? _lastDiningLocationsRequestTime;
 
   String? _diningSpecialsResponse;
   DateTime? _lastDiningSpecialsRequestTime;
-
-  Map<String, DiningFeedback>? _feedbacks;
 
   static final Dinings _instance = Dinings._internal();
 
@@ -57,9 +57,21 @@ class Dinings with Service {
   }
 
   @override
+  Future<void> initService() async {
+    super.initService();
+  }
+
+  @override
   void destroyService() {
     super.destroyService();
   }
+
+  // ContentItemCategoryClient
+
+  @override
+  List<String> get contentItemCategory => <String>[_diningContentCategory];
+
+  // Implementation
 
   Future<List<Dining>?> loadBackendDinings(bool onlyOpened, PaymentType? paymentType, Position? locationData) async {
     if(_enabled) {
@@ -224,20 +236,27 @@ class Dinings with Service {
     return null;
   }
 
+  Map<String, dynamic>? get _diningContentData {
+    return Content().contentItem(_diningContentCategory);
+  }
+
   List<String>? get foodTypes {
-    return _enabled ? Assets()['dining.food_types'].cast<String>() : null;
+    return _enabled ? JsonUtils.listStringsValue(MapUtils.get(_diningContentData, 'food_types')) : null;
   }
 
   List<String>? get foodIngredients {
-    return _enabled ? Assets()['dining.food_ingredients'].cast<String>() : null;
+    return _enabled ? JsonUtils.listStringsValue(MapUtils.get(_diningContentData, 'food_ingredients')) : null;
   }
 
   String? getLocalizedString(String? text) {
-    return _enabled ? Localization().getStringFromMapping(text, Assets()['dining.strings']) : null;
+    return _enabled ? Localization().getStringFromMapping(text,  JsonUtils.mapValue(MapUtils.get(_diningContentData, 'strings'))) : null;
   }
 
   Future<DiningFeedback?> loadDiningFeedback({String? diningId}) async {
-    return (_feedbacks ??= DiningFeedback.mapFromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/dining.feedbacks.json'))) ?? <String, DiningFeedback>{})[diningId];
+    //return (_feedbacks ??= DiningFeedback.mapFromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/dining.feedbacks.json'))) ?? <String, DiningFeedback>{})[diningId];
+    const String diningFeedbackCategory = 'dining_feedbacks';
+    Map<String, DiningFeedback>? feedbacksMap = DiningFeedback.mapFromJson(JsonUtils.mapValue(await Content().loadContentItem(diningFeedbackCategory)));
+    return (feedbacksMap != null) ? feedbacksMap[diningId] : null;
   }
 
   // Helpers

@@ -97,7 +97,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
                 Localization().getStringEx(
                     'panel.canvas_announcements.load.failed.error.msg', 'Failed to load announcements. Please, try again later.'),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+                style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
@@ -105,7 +105,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(Localization().getStringEx('panel.canvas_announcements.empty.msg', 'There are no announcements.'),
-                textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+                textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildAnnouncementsContent() {
@@ -146,7 +146,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(
                     child: Text(StringUtils.ensureNotEmpty(label),
-                        style: TextStyle(fontSize: 18, color: Colors.black, fontFamily: Styles().fontFamilies!.bold)))
+                        style: Styles().textStyles?.getTextStyle("widget.message.dark.semi_large.fat")))
               ])
             ])));
   }
@@ -171,20 +171,18 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
                         child: Text(StringUtils.ensureNotEmpty(announcement.title),
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant))),
+                            style: Styles().textStyles?.getTextStyle("panel.canvas.text.medium"))),
                     Padding(
                         padding: EdgeInsets.only(left: 5),
                         child: Text(StringUtils.ensureNotEmpty(announcement.postedAtDisplayDate),
-                            style:
-                                TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)))
+                            style: Styles().textStyles?.getTextStyle("widget.info.small")))
                   ]),
                   Visibility(
                       visible: StringUtils.isNotEmpty(announcement.author?.displayName),
                       child: Padding(
                           padding: EdgeInsets.only(top: 5),
                           child: Text(StringUtils.ensureNotEmpty(announcement.author?.displayName),
-                              style: TextStyle(
-                                  fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)))),
+                              style: Styles().textStyles?.getTextStyle("widget.info.small")))),
                   Visibility(
                       visible: StringUtils.isNotEmpty(announcement.message),
                       child: Html(data: announcement.message, style: {
@@ -195,7 +193,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
                             textOverflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             padding: EdgeInsets.zero,
-                            margin: EdgeInsets.zero)
+                            margin: Margins.zero)
                       }))
                 ]))));
   }
@@ -217,7 +215,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
             padding: EdgeInsets.only(left: 10),
             child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                    style: Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat"),
                     items: _buildCourseDropDownItems,
                     value: _selectedCourseId,
                     itemHeight: null,
@@ -231,24 +229,17 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
     }
     List<DropdownMenuItem<int>> items = [];
     CanvasCourse? currentCourse = _getCurrentCourse(courseId: widget.courseId);
-    Color textColor = Styles().colors!.textSurfaceAccent!;
-    double textFontSize = 16;
     if (currentCourse != null) {
       items.add(DropdownMenuItem(
           value: currentCourse.id,
           child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
-              style: TextStyle(
-                  color: textColor,
-                  fontSize: textFontSize,
-                  fontFamily: ((_selectedCourseId == currentCourse.id) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+              style: (_selectedCourseId == currentCourse.id) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular")
+          )));
     }
     items.add(DropdownMenuItem(
         value: null,
         child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
-            style: TextStyle(
-                color: textColor,
-                fontSize: textFontSize,
-                fontFamily: ((_selectedCourseId == null) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+            style:  (_selectedCourseId == null) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular"))));
     return items;
   }
 

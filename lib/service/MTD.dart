@@ -58,7 +58,7 @@ class MTD with Service implements NotificationsListener {
     }
     else {
       String? stopsJsonString = await _loadStopsStringFromNet();
-      _stops = MTDStops.fromJson(JsonUtils.decodeMap(stopsJsonString));
+      _stops = MTDStops.fromJson(await JsonUtils.decodeMapAsync(stopsJsonString));
       if (_stops != null) {
         _saveStopsStringToCache(stopsJsonString);
       }
@@ -128,7 +128,7 @@ class MTD with Service implements NotificationsListener {
   }
 
   Future<MTDStops?> _loadStopsFromCache() async {
-    return MTDStops.fromJson(JsonUtils.decodeMap(await _loadStopsStringFromCache()));
+    return MTDStops.fromJson(await JsonUtils.decodeMapAsync(await _loadStopsStringFromCache()));
   }
 
   Future<String?> _loadStopsStringFromNet({ String? changesetId}) async {
@@ -145,7 +145,7 @@ class MTD with Service implements NotificationsListener {
 
   Future<void> _updateStops() async {
     String? stopsJsonString = await _loadStopsStringFromNet(changesetId: _stops?.changesetId);
-    MTDStops? stops = MTDStops.fromJson(JsonUtils.decodeMap(stopsJsonString));
+    MTDStops? stops = MTDStops.fromJson(await JsonUtils.decodeMapAsync(stopsJsonString));
     if ((stops != null) && (stops.changesetId != _stops?.changesetId)) {
       _stops = stops;
       _saveStopsStringToCache(stopsJsonString);
@@ -161,7 +161,7 @@ class MTD with Service implements NotificationsListener {
         "$_mtdUrl/getroutesbystop?stop_id=$stopId" :
         "$_mtdUrl/getroutes}";
       Response? response = await Network().get(url, auth: Auth2());
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? await JsonUtils.decodeMapAsync(response?.body)  : null;
       return (responseJson != null) ? MTDRoute.listFromJson(JsonUtils.listValue(responseJson['routes'])) : null;
     }
     return null;
@@ -179,7 +179,7 @@ class MTD with Service implements NotificationsListener {
         url = "$_mtdUrl/getstoptimesbytrip?trip_id=$tripId";
       }
       Response? response = (url != null) ? await Network().get(url, auth: Auth2()) : null;
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? await JsonUtils.decodeMapAsync(response?.body)  : null;
       return (responseJson != null) ? MTDStopTime.listFromJson(JsonUtils.listValue(responseJson['stop_times'])) : null;
     }
     return null;
@@ -200,7 +200,7 @@ class MTD with Service implements NotificationsListener {
         url += "&count=$count";
       }
       Response? response = await Network().get(url, auth: Auth2());
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? await JsonUtils.decodeMapAsync(response?.body)  : null;
       return (responseJson != null) ? MTDDeparture.listFromJson(JsonUtils.listValue(responseJson['departures'])) : null;
     }
     return null;
@@ -218,7 +218,7 @@ class MTD with Service implements NotificationsListener {
         url = "$_mtdUrl/getshape?shape_id=$shapeId";
       }
       Response? response = await Network().get(url, auth: Auth2());
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? await JsonUtils.decodeMapAsync(response?.body)  : null;
       return (responseJson != null) ? MTDShape.listFromJson(JsonUtils.listValue(responseJson['shapes'])) : null;
     }
     return null;
@@ -239,7 +239,7 @@ class MTD with Service implements NotificationsListener {
         url = "$_mtdUrl/gettripsbyroute?route_id=$routeId";
       }
       Response? response = (url != null) ? await Network().get(url, auth: Auth2()) : null;
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? await JsonUtils.decodeMapAsync(response?.body)  : null;
       return (responseJson != null) ? MTDTrip.listFromJson(JsonUtils.listValue(responseJson['trips'])) : null;
     }
     return null;
@@ -260,7 +260,7 @@ class MTD with Service implements NotificationsListener {
         url = "$_mtdUrl/getvehicles";
       }
       Response? response = await Network().get(url, auth: Auth2());
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? await JsonUtils.decodeMapAsync(response?.body)  : null;
       return (responseJson != null) ? MTDVehicle.listFromJson(JsonUtils.listValue(responseJson['vehicles'])) : null;
     }
     return null;
@@ -272,7 +272,7 @@ class MTD with Service implements NotificationsListener {
     if (StringUtils.isNotEmpty(_mtdUrl)) {
       String url = "$_mtdUrl/getplannedtripsbylatlon?origin_lat=${origin.latitude}&origin_lon=${origin.longitude}&destination_lat=${destination.latitude}&destination_lon=${destination.longitude}";
       Response? response = await Network().get(url, auth: Auth2());
-      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? await JsonUtils.decodeMapAsync(response?.body)  : null;
       return (responseJson != null) ? MTDItinerary.listFromJson(JsonUtils.listValue(responseJson['itineraries'])) : null;
     }
     return null;
