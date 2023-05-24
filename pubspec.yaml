@@ -33,7 +33,6 @@ dependencies:
   geolocator: ^8.0.0
   url_launcher: ^6.0.10
   xml: ^5.1.2
-  sprintf: ^6.0.0
   path: ^1.8.0
   collection: ^1.15.0
   convert: ^3.0.1
