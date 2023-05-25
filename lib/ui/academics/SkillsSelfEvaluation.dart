@@ -289,9 +289,11 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel()));
   }
 
-  void _gotoResults(SurveyResponse? response) {
-    OccupationMatching().postResults(surveyResponse: response);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
+  void _gotoResults(dynamic response) {
+    if (response is SurveyResponse) {
+      OccupationMatching().postResults(surveyResponse: response);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
+    }
   }
 
   void _onTapShowInfo(String key) {

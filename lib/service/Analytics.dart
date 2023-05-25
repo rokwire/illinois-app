@@ -224,6 +224,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAuthLoginNetIdActionName        = "login_netid";
   static const String   LogAuthLoginPhoneActionName        = "login_phone";
   static const String   LogAuthLoginEmailActionName        = "login_email";
+  static const String   LogAuthLoginUsernameActionName     = "username";
   static const String   LogAuthLogoutActionName            = "logout";
   static const String   LogAuthResult                      = "result";
 
@@ -490,18 +491,19 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
 
-    if (state == AppLifecycleState.paused) {
-      logLivecycle(name: LogLivecycleEventBackground);
+    if (super.isInitialized) {
+      if (state == AppLifecycleState.paused) {
+        logLivecycle(name: LogLivecycleEventBackground);
+      }
+      else if (state == AppLifecycleState.resumed) {
+        _updateSessionUuid();
+        _updateNotificationServices();
+        logLivecycle(name: LogLivecycleEventForeground);
+      }
+      else if (state == AppLifecycleState.detached) {
+        logLivecycle(name: Analytics.LogLivecycleEventDestroy);
+      }
     }
-    else if (state == AppLifecycleState.resumed) {
-      _updateSessionUuid();
-      _updateNotificationServices();
-      logLivecycle(name: LogLivecycleEventForeground);
-    }
-    else if (state == AppLifecycleState.detached) {
-      logLivecycle(name: Analytics.LogLivecycleEventDestroy);
-    }
-
   }
 
   // App Naviagtion Service
@@ -944,6 +946,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         case Auth2LoginType.phone:
         case Auth2LoginType.phoneTwilio:  action = LogAuthLoginPhoneActionName; break;
         case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
+        case Auth2LoginType.username:     action = LogAuthLoginUsernameActionName; break;
         case Auth2LoginType.apiKey:
         case Auth2LoginType.anonymous:    break;
       }

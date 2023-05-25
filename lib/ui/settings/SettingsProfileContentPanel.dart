@@ -37,7 +37,7 @@ class SettingsProfileContentPanel extends StatefulWidget {
 
   static void present(BuildContext context, {SettingsProfileContent? content}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
-      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
       showModalBottomSheet(
         context: context,
