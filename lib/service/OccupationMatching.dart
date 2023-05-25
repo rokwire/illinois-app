@@ -17,54 +17,58 @@ class OccupationMatching with Service {
 
   OccupationMatching._internal();
 
-  static String? _bbBaseUrl = Config().skillsToJobsUrl;
-
   Future<List<OccupationMatch>?> getAllOccupationMatches() async {
-    int responseStart = 0;
-    int responseLimit = 10;
-    String url = '$_bbBaseUrl/user-match-results';
-    Response? response = await Network().get(url, auth: Auth2());
-    int responseCode = response?.statusCode ?? -1;
-    String? responseBody = response?.body;
-    if (responseCode == 200) {
-      Map<String, dynamic>? responseMap = JsonUtils.decodeMap(responseBody);
-      if (responseMap != null) {
-        List<OccupationMatch>? surveys = OccupationMatch.listFromJson(responseMap['matches'])?.sublist(
-          responseStart,
-          responseLimit,
-        );
-        return surveys;
+    if (enabled) {
+      int responseStart = 0;
+      int responseLimit = 50;
+      String url = '${Config().skillsToJobsUrl}/user-match-results';
+      Response? response = await Network().get(url, auth: Auth2());
+      int responseCode = response?.statusCode ?? -1;
+      String? responseBody = response?.body;
+      if (responseCode == 200) {
+        Map<String, dynamic>? responseMap = JsonUtils.decodeMap(responseBody);
+        if (responseMap != null) {
+          List<OccupationMatch>? surveys = OccupationMatch.listFromJson(responseMap['matches'])?.sublist(
+            responseStart,
+            responseLimit,
+          );
+          return surveys;
+        }
       }
     }
     return null;
   }
 
   Future<Occupation?> getOccupation({required String occupationCode}) async {
-    String url = '$_bbBaseUrl/occupation/$occupationCode';
-    Response? response = await Network().get(url, auth: Auth2());
-    int responseCode = response?.statusCode ?? -1;
-    String? responseBody = response?.body;
-    if (responseCode == 200) {
-      Map<String, dynamic>? responseMap = JsonUtils.decodeMap(responseBody);
-      if (responseMap != null) {
-        Occupation? occupation = Occupation.fromJson(responseMap);
-        return occupation;
+    if (enabled) {
+      String url = '${Config().skillsToJobsUrl}/occupation/$occupationCode';
+      Response? response = await Network().get(url, auth: Auth2());
+      int responseCode = response?.statusCode ?? -1;
+      String? responseBody = response?.body;
+      if (responseCode == 200) {
+        Map<String, dynamic>? responseMap = JsonUtils.decodeMap(responseBody);
+        if (responseMap != null) {
+          Occupation? occupation = Occupation.fromJson(responseMap);
+          return occupation;
+        }
       }
     }
     return null;
   }
 
   Future<void> postResults({required SurveyResponse? surveyResponse}) async {
-    Map<String, dynamic> surveyResult = {
-      "scores": surveyResponse?.survey.stats?.scores.entries
-          .map((mapEntry) => {
-                "workstyle": mapEntry.key,
-                "score": mapEntry.value,
-              })
-          .toList(),
-    };
-    String url = '$_bbBaseUrl/survey-data';
-    Network().post(url, auth: Auth2(), body: jsonEncode(surveyResult));
+    if (enabled) {
+      Map<String, dynamic> surveyResult = {
+        "scores": surveyResponse?.survey.stats?.scores.entries
+            .map((mapEntry) => {
+                  "workstyle": mapEntry.key,
+                  "score": mapEntry.value,
+                })
+            .toList(),
+      };
+      String url = '${Config().skillsToJobsUrl}/survey-data';
+      Network().post(url, auth: Auth2(), body: jsonEncode(surveyResult));
+    }
   }
 
   Future<List<OccupationMatch>?> getOccupationsByKeyword({required String keyword}) {
@@ -76,4 +80,9 @@ class OccupationMatching with Service {
     // TODO: implement getTop10Occupations
     throw UnimplementedError();
   }
+
+  /////////////////////////
+  // Enabled
+
+  bool get enabled => StringUtils.isNotEmpty(Config().skillsToJobsUrl);
 }

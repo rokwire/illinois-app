@@ -13,9 +13,10 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class OccupationDetails extends StatelessWidget {
-  OccupationDetails({Key? key, required this.occupationMatch}) : super(key: key);
+  OccupationDetails({Key? key, required this.occupationMatch, required this.percentages}) : super(key: key);
 
   final OccupationMatch occupationMatch;
+  final Map<String, num> percentages;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class OccupationDetails extends StatelessWidget {
         children: [
           SizedBox(height: 12),
           Text(
-            occupation.title!,
+            occupation.name!,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 25, color: Colors.white),
           ),
@@ -119,7 +120,7 @@ class OccupationDetails extends StatelessWidget {
                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                 ),
                 children: occupation.workStyles!
-                    .map((workstyle) => WorkStyleListTile(workstyle: workstyle))
+                    .map((workstyle) => WorkStyleListTile(workstyle: workstyle, percentages: percentages))
                     .cast<Widget>()
                     .toList()),
             ExpansionTile(
@@ -139,7 +140,7 @@ class OccupationDetails extends StatelessWidget {
                   title: Text('Learn More'),
                   onTap: () {
                     // TODO: Make sure launching URL works
-                    launchUrlString(occupation.onetLink ?? 'https://onetonline.org');
+                    launchUrlString(occupation.onetLink ?? 'https://onetonline.org/link/summary/${occupation.code}');
                   },
                 ),
               ],
@@ -166,15 +167,20 @@ class OccupationDetails extends StatelessWidget {
 }
 
 class WorkStyleListTile extends StatelessWidget {
-  const WorkStyleListTile({Key? key, required this.workstyle, this.mostRecentScore, this.comparisonScore})
+  const WorkStyleListTile({Key? key, required this.workstyle, required this.percentages, this.mostRecentScore, this.comparisonScore})
       : super(key: key);
 
   final WorkStyle workstyle;
+  final Map<String, num> percentages;
   final int? mostRecentScore;
   final int? comparisonScore;
 
   @override
   Widget build(BuildContext context) {
+    String? bessiPercent;
+    if (percentages[workstyle.bessiSection] != null) {
+      bessiPercent = (percentages[workstyle.bessiSection]! * 100).toStringAsFixed(0);
+    }
     return Column(
       children: [
         Padding(
@@ -189,25 +195,18 @@ class WorkStyleListTile extends StatelessWidget {
                     Flexible(
                         flex: 5,
                         fit: FlexFit.tight,
-                        child: Text(workstyle.name.toString(),
-                            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
+                        child: Text(workstyle.name ?? '', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))
+                    ),
                     Flexible(
                         flex: 3,
                         fit: FlexFit.tight,
-                        child: Text(
-                          // TODO: Add the actual scores here
-                          "S" ?? "--",
-                          style:
-                              Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'),
-                          textAlign: TextAlign.center,
-                        )),
+                        child: Text(bessiPercent ?? '--', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)
+                    ),
                     Flexible(
                         flex: 3,
                         fit: FlexFit.tight,
-                        // TODO: Add the comparison scores/ranks here
-                        child: Text("R" ?? "--",
-                            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.past'),
-                            textAlign: TextAlign.center)),
+                        child: Text(workstyle.value?.toStringAsFixed(0) ?? '--', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.past'), textAlign: TextAlign.center)
+                    ),
                   ],
                 ),
               ),
@@ -232,7 +231,7 @@ class TechnologySkillListTile extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              ' • ' + technologySkill.title.toString(),
+              ' • ' + technologySkill.name.toString(),
               textAlign: TextAlign.start,
               style: TextStyle(fontWeight: FontWeight.w100),
             ),

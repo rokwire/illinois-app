@@ -13,7 +13,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
 class OccupationList extends StatelessWidget {
-  OccupationList({Key? key}) : super(key: key);
+  OccupationList({Key? key, required this.percentages}) : super(key: key);
+
+  final Map<String, num> percentages;
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +148,7 @@ class OccupationList extends StatelessWidget {
                   .map(
                     (occupationMatch) => OccupationListTile(
                       occupationMatch: occupationMatch,
+                      percentages: percentages,
                     ),
                   )
                   .toList(),
@@ -156,9 +159,10 @@ class OccupationList extends StatelessWidget {
 }
 
 class OccupationListTile extends StatelessWidget {
-  const OccupationListTile({Key? key, required this.occupationMatch}) : super(key: key);
+  const OccupationListTile({Key? key, required this.occupationMatch, required this.percentages}) : super(key: key);
 
   final OccupationMatch occupationMatch;
+  final Map<String, num> percentages;
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +172,7 @@ class OccupationListTile extends StatelessWidget {
         child: InkWell(
           onTap: () {
             Navigator.push(
-                context, CupertinoPageRoute(builder: (context) => OccupationDetails(occupationMatch: occupationMatch)));
+                context, CupertinoPageRoute(builder: (context) => OccupationDetails(percentages: percentages, occupationMatch: occupationMatch)));
           },
           child: Padding(
             padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
@@ -178,7 +182,7 @@ class OccupationListTile extends StatelessWidget {
                   flex: 5,
                   fit: FlexFit.tight,
                   child: Text(
-                    occupationMatch.occupation?.title.toString() ?? "",
+                    occupationMatch.occupation?.name.toString() ?? "",
                     style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
                   ),
                 ),

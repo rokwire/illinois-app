@@ -3,19 +3,19 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class TechnologySkill {
   int? id;
-  String? title;
+  String? name;
   List<String?>? examples;
 
   TechnologySkill({
     this.id,
-    this.title,
+    this.name,
     this.examples,
   });
 
   factory TechnologySkill.fromJson(Map<String, dynamic> json) {
     return TechnologySkill(
       id: JsonUtils.intValue(json["id"]),
-      title: JsonUtils.stringValue(json["title"]) ?? "",
+      name: JsonUtils.stringValue(json["name"]) ?? "",
       examples: JsonUtils.listStringsValue(json["examples"]) ?? [],
     );
   }

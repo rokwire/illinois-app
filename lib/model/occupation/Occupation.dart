@@ -6,7 +6,7 @@ import 'TechnologySkill.dart';
 
 class Occupation {
   String? code;
-  String? title;
+  String? name;
   String? description;
   String? onetLink;
   List<WorkStyle>? workStyles;
@@ -14,7 +14,7 @@ class Occupation {
 
   Occupation({
     this.code,
-    this.title,
+    this.name,
     this.description,
     this.onetLink,
     this.workStyles,
@@ -24,7 +24,7 @@ class Occupation {
   factory Occupation.fromJson(Map<String, dynamic> json) {
     return Occupation(
       code: JsonUtils.stringValue(json["code"]) ?? "",
-      title: JsonUtils.stringValue(json["title"]) ?? "",
+      name: JsonUtils.stringValue(json["name"]) ?? "",
       description: JsonUtils.stringValue(json["description"]) ?? "",
       onetLink: JsonUtils.stringValue(json["onetLink"]) ?? "",
       workStyles: WorkStyle.listFromJson(json["work_styles"]) ?? [],
@@ -52,6 +52,6 @@ class Occupation {
 
   @override
   String toString() {
-    return 'Occupation(code: $code, title: $title, description: $description, onetLink: $onetLink, workStyles: $workStyles, technologySkills: $technologySkills)';
+    return 'Occupation(code: $code, name: $name, description: $description, onetLink: $onetLink, workStyles: $workStyles, technologySkills: $technologySkills)';
   }
 }

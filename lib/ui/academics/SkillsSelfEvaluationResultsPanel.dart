@@ -14,6 +14,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/OccupationMatching.dart';
 import 'package:illinois/ui/academics/OccupationList.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
@@ -105,7 +106,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           textColor: Styles().colors?.fillColorPrimaryVariant,
           backgroundColor: Styles().colors?.surface,
           onTap: () {
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => OccupationList()));
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => OccupationList(percentages: _latestResponse?.survey.stats?.percentages ?? {})));
                   }
         )),
         _buildScoresHeader(),
