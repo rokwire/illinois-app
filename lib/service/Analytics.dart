@@ -490,18 +490,19 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
 
-    if (state == AppLifecycleState.paused) {
-      logLivecycle(name: LogLivecycleEventBackground);
+    if (super.isInitialized) {
+      if (state == AppLifecycleState.paused) {
+        logLivecycle(name: LogLivecycleEventBackground);
+      }
+      else if (state == AppLifecycleState.resumed) {
+        _updateSessionUuid();
+        _updateNotificationServices();
+        logLivecycle(name: LogLivecycleEventForeground);
+      }
+      else if (state == AppLifecycleState.detached) {
+        logLivecycle(name: Analytics.LogLivecycleEventDestroy);
+      }
     }
-    else if (state == AppLifecycleState.resumed) {
-      _updateSessionUuid();
-      _updateNotificationServices();
-      logLivecycle(name: LogLivecycleEventForeground);
-    }
-    else if (state == AppLifecycleState.detached) {
-      logLivecycle(name: Analytics.LogLivecycleEventDestroy);
-    }
-
   }
 
   // App Naviagtion Service
