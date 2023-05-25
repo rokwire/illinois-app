@@ -349,7 +349,7 @@ class _IDCardPanelState extends State<IDCardPanel>
           Text(Auth2().authCard!.cardNumber ?? '', style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
           showQRCode ?
-            QrImage(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
+            QrImageView(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
             Container(width: qrCodeImageSize, height: qrCodeImageSize, color: Colors.transparent,),
         ],),),
 
