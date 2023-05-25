@@ -69,7 +69,7 @@ class SavedPanel extends StatefulWidget {
 
   final List<String> favoriteCategories;
 
-  SavedPanel({this.favoriteCategories : allFavoriteCategories});
+  SavedPanel({this.favoriteCategories = allFavoriteCategories});
 
   @override
   _SavedPanelState createState() => _SavedPanelState();

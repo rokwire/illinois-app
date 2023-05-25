@@ -153,9 +153,8 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
       List<Roster> clonedRosters = allRosters!.map((r) => r).toList();
       clonedRosters.sort((r1, r2) => r1.name!.compareTo(r2.name!));
       clonedRosters.forEach((roster) =>
-      {
         widgets.add(_RosterItem(roster, widget.sport, this, showTopGrey: false,))
-      });
+      );
     }
 
     return widgets;
@@ -195,9 +194,8 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
       List<Roster> clonedRosters = allRosters!.map((r) => r).toList();
       clonedRosters.sort((r1, r2) => r1.number >= r2.number ? 1 : -1);
       clonedRosters.forEach((roster) =>
-      {
         widgets.add(_RosterItem(roster, widget.sport, this, showTopGrey: false,))
-      });
+      );
     }
 
     return widgets;

@@ -64,9 +64,8 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
     List<Widget> widgets = [];
     if(widget.allCoaches != null) {
       widget.allCoaches!.forEach((coach) =>
-      {
         widgets.add(_CoachItem(coach,listener: this,))
-      });
+      );
     }
 
     return widgets;
