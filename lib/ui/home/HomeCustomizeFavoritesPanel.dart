@@ -30,7 +30,8 @@ class HomeCustomizeFavoritesPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeCustomizeFavoritesPanelState();
 
   static Future<void> present(BuildContext context) {
-    MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    //MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
     double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
     return showModalBottomSheet<void>(
       context: context,

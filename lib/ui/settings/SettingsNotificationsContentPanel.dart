@@ -46,7 +46,7 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       AppAlert.showMessage(context,Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else if (ModalRoute.of(context)?.settings.name != routeName) {
-      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
       showModalBottomSheet(
         context: context,
@@ -311,7 +311,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   void _evalContentWidgetHeight() {
     double takenHeight = 0;
     try {
-      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       takenHeight += mediaQuery.viewPadding.top + mediaQuery.viewInsets.top + 16;
 
       final RenderObject? contentDropDownRenderBox = _contentDropDownKey.currentContext?.findRenderObject();
