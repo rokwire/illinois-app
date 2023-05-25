@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Add survey creation tool [#3295](https://github.com/rokwire/illinois-app/issues/3295).
 ### Fixed
 - Upgrade dependencies for Flutter v3.10 [#3294](https://github.com/rokwire/illinois-app/issues/3294)
 
