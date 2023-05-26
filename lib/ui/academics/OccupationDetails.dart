@@ -22,9 +22,7 @@ class OccupationDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors?.background,
-      appBar: HeaderBar(
-        title: 'Occupation Details',
-      ),
+      appBar: HeaderBar(title: 'Occupation Details',),
       body: FutureBuilder(
           future: OccupationMatching().getOccupation(occupationCode: occupationMatch.occupation?.code ?? ""),
           builder: (context, snapshot) {
@@ -36,6 +34,7 @@ class OccupationDetails extends StatelessWidget {
                 child: Text(
                   'Failed to get occupation data. Please retry.',
                   textAlign: TextAlign.center,
+                  style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
                 ),
               );
             }
@@ -47,7 +46,8 @@ class OccupationDetails extends StatelessWidget {
                 slantPainterHeadingHeight: 0,
                 backgroundColor: Styles().colors?.background,
                 children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(occupation),
-                childrenPadding: EdgeInsets.zero,
+                childrenPadding: const EdgeInsets.only(top: 40, left: 24, right: 24, bottom: 24),
+                childrenAlignment: CrossAxisAlignment.start,
                 allowOverlap: !Connectivity().isOffline,
               ),
             );
@@ -57,7 +57,7 @@ class OccupationDetails extends StatelessWidget {
 
   Widget _buildHeader(Occupation occupation) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
       decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
@@ -66,38 +66,39 @@ class OccupationDetails extends StatelessWidget {
           ])),
       child: Column(
         children: [
-          SizedBox(height: 12),
-          Text(
-            occupation.name!,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 25, color: Colors.white),
-          ),
-          SizedBox(height: 12),
-          Text(
-            "Match Percentage: ${occupationMatch.matchPercent!.toInt()}%",
-            style: TextStyle(color: Colors.white),
-          ),
-          SizedBox(height: 12),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              child: LinearProgressIndicator(
-                backgroundColor: LinearProgressColorUtils.linearProgressIndicatorBackgroundColor(
-                  occupationMatch.matchPercent! / 100.0,
-                ),
-                color: LinearProgressColorUtils.linearProgressIndicatorColor(
-                  occupationMatch.matchPercent! / 100.0,
-                ),
-                minHeight: 20,
-                value: occupationMatch.matchPercent! / 100,
-              ),
+            padding: const EdgeInsets.only(top: 16.0),
+            child: Text(
+              occupation.name!,
+              textAlign: TextAlign.center,
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'),
             ),
           ),
-          SizedBox(height: 12),
-          Text(occupation.description!,
-              textAlign: TextAlign.center, style: TextStyle(fontFamily: "regular", fontSize: 16, color: Colors.white)),
-          SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Text(
+              "Match Percentage: ${occupationMatch.matchPercent!.toInt()}%",
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),
+            ),
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            child: LinearProgressIndicator(
+              backgroundColor: LinearProgressColorUtils.linearProgressIndicatorBackgroundColor(
+                occupationMatch.matchPercent! / 100.0,
+              ),
+              color: LinearProgressColorUtils.linearProgressIndicatorColor(
+                occupationMatch.matchPercent! / 100.0,
+              ),
+              minHeight: 20,
+              value: occupationMatch.matchPercent! / 100,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: Text(occupation.description!,
+                textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description')),
+          ),
         ],
       ),
     );
@@ -106,49 +107,62 @@ class OccupationDetails extends StatelessWidget {
   List<Widget> _buildContent(Occupation occupation) {
     return [
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 40, bottom: 10),
-              child: Text('Your Results'),
-            ),
-            ExpansionTile(
-                title: Text(
-                  "Work Styles",
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                ),
-                children: occupation.workStyles!
-                    .map((workstyle) => WorkStyleListTile(workstyle: workstyle, percentages: percentages))
-                    .cast<Widget>()
-                    .toList()),
-            ExpansionTile(
-              title: Text(
-                "Technology Skills",
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              children: occupation.technologySkills!.map((e) => TechnologySkillListTile(technologySkill: e)).toList(),
-            ),
-            ExpansionTile(
-              title: Text(
-                "Other Sections",
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              children: <Widget>[
-                ListTile(
-                  title: Text('Learn More'),
-                  onTap: () {
-                    // TODO: Make sure launching URL works
-                    launchUrlString(occupation.onetLink ?? 'https://onetonline.org/link/summary/${occupation.code}');
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Text('Your Results', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')),
       ),
+      ExpansionTile(
+          title: Text(
+            "Work Styles",
+            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+          ),
+          tilePadding: EdgeInsets.zero,
+          children: [_buildScoresHeader()] + occupation.workStyles!.map((workstyle) => WorkStyleListTile(workstyle: workstyle, percentages: percentages)).toList(),
+          iconColor: Styles().colors?.getColor('fillColorPrimary'),
+          collapsedIconColor: Styles().colors?.getColor('fillColorPrimary'),
+      ),
+      ExpansionTile(
+        title: Text(
+          "Technology Skills",
+          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+        ),
+        tilePadding: EdgeInsets.zero,
+        children: occupation.technologySkills!.map((e) => TechnologySkillListTile(technologySkill: e)).toList(),
+        iconColor: Styles().colors?.getColor('fillColorPrimary'),
+        collapsedIconColor: Styles().colors?.getColor('fillColorPrimary'),
+      ),
+      Padding(padding: const EdgeInsets.only(top: 16), child: InkWell(
+        child: Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: 'Learn More',
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link'),
+              ),
+              WidgetSpan(
+                child: Padding(padding: const EdgeInsets.only(left: 4.0), child: Styles().images?.getImage('external-link', excludeFromSemantics: true)),
+              ),
+            ],
+          ),
+        ),
+        onTap: () {
+          launchUrlString('https://onetonline.org/link/summary/${occupation.code}', mode: LaunchMode.externalApplication);
+        },
+      ),),
     ];
+  }
+
+  Widget _buildScoresHeader() {
+    return Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Divider(color: Styles().colors?.fillColorPrimary, thickness: 2),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Flexible(flex: 2, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.workstyles.title', 'NAME'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
+          Flexible(flex: 1, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.survey_scores.title', 'YOUR SCORE'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
+          Flexible(flex: 1, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.importance.title', 'IMPORTANCE'), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
+        ],)),
+      ],
+    ));
   }
 
   List<Widget> _buildOfflineMessage() {
@@ -231,9 +245,9 @@ class TechnologySkillListTile extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              ' • ' + technologySkill.name.toString(),
+              '\u2022 ' + technologySkill.name.toString(),
               textAlign: TextAlign.start,
-              style: TextStyle(fontWeight: FontWeight.w100),
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
             ),
           ),
         ],

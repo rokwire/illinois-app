@@ -101,13 +101,16 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         // TODO: Need to change the look and size of the button
-        Padding(padding: EdgeInsets.only(top: 20, left: 64, right: 80), child: RoundedButton(
-          label: Localization().getStringEx("panel.skills_self_evaluation.go_to_results.button.label", 'Career Explorer'),
-          textColor: Styles().colors?.fillColorPrimaryVariant,
-          backgroundColor: Styles().colors?.surface,
-          onTap: () {
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => OccupationList(percentages: _latestResponse?.survey.stats?.percentages ?? {})));
-                  }
+        Align(alignment: Alignment.center, child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 16),
+          child: RoundedButton(
+            label: Localization().getStringEx("panel.skills_self_evaluation.go_to_results.button.label", 'Career Explorer'),
+            textColor: Styles().colors?.fillColorPrimaryVariant,
+            backgroundColor: Styles().colors?.surface,
+            onTap: () {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => OccupationList(percentages: _latestResponse?.survey.stats?.percentages ?? {})));
+            }
+          ),
         )),
         _buildScoresHeader(),
       ]),

@@ -188,9 +188,12 @@ class OccupationListTile extends StatelessWidget {
                 ),
                 Spacer(),
                 Flexible(
-                  child: OccupationMatchCircle(
-                    matchPercentage: occupationMatch.matchPercent ?? 100.0,
-                  ),
+                  flex: 2,
+                  fit: FlexFit.tight,
+                  child: Text(occupationMatch.matchPercent?.toInt().toString() ?? '--', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)
+                  // child: OccupationMatchCircle(
+                  //   matchPercentage: occupationMatch.matchPercent ?? 100.0,
+                  // ),
                 ),
                 Flexible(
                     flex: 1,
@@ -207,35 +210,35 @@ class OccupationListTile extends StatelessWidget {
   }
 }
 
-class OccupationMatchCircle extends StatelessWidget {
-  const OccupationMatchCircle({Key? key, required this.matchPercentage}) : super(key: key);
-
-  final double matchPercentage;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: [
-          Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.rotationY(math.pi),
-            child: CircularProgressIndicator(
-              strokeWidth: 8.0,
-              backgroundColor: LinearProgressColorUtils.linearProgressIndicatorBackgroundColor(
-                matchPercentage / 100.0,
-              ),
-              color: LinearProgressColorUtils.linearProgressIndicatorColor(
-                matchPercentage / 100.0,
-              ),
-              value: matchPercentage / 100,
-            ),
-          ),
-          Positioned.fill(
-            child: Center(child: Text(matchPercentage.toInt().toString())),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class OccupationMatchCircle extends StatelessWidget {
+//   const OccupationMatchCircle({Key? key, required this.matchPercentage}) : super(key: key);
+//
+//   final double matchPercentage;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       child: Stack(
+//         children: [
+//           Transform(
+//             alignment: Alignment.center,
+//             transform: Matrix4.rotationY(math.pi),
+//             child: CircularProgressIndicator(
+//               strokeWidth: 8.0,
+//               backgroundColor: LinearProgressColorUtils.linearProgressIndicatorBackgroundColor(
+//                 matchPercentage / 100.0,
+//               ),
+//               color: LinearProgressColorUtils.linearProgressIndicatorColor(
+//                 matchPercentage / 100.0,
+//               ),
+//               value: matchPercentage / 100,
+//             ),
+//           ),
+//           Positioned.fill(
+//             child: Center(child: Text(matchPercentage.toInt().toString())),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

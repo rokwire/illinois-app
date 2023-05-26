@@ -596,6 +596,7 @@
     "panel.skills_self_evaluation.get_started.time.description":  {"font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
     "panel.skills_self_evaluation.results.header": {"font_family": "extra_bold", "size": 36.0, "color": "surface"},
     "panel.skills_self_evaluation.results.table.header": {"font_family": "regular", "size": 12.0, "color": "surface"},
+    "panel.skills_self_evaluation.results.table.header.dark": {"font_family": "regular", "size": 12.0, "color": "fillColorPrimaryVariant"},
     "panel.skills_self_evaluation.results.score.current": {"font_family": "bold", "size": 36.0, "color": "fillColorSecondary"},
     "panel.skills_self_evaluation.results.score.past": {"font_family": "bold", "size": 36.0, "color": "mediumGray"},
     "panel.skills_self_evaluation.header.description": {"font_family": "regular", "size": 16.0, "color": "surface"},
