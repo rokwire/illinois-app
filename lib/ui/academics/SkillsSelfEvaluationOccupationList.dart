@@ -17,7 +17,7 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: 'Results'),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_list.header.title', 'Skills Self-Evaluation')),
       body: SingleChildScrollView(
         child: SectionSlantHeader(
           headerWidget: _buildHeader(),
@@ -39,18 +39,8 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            Localization().getStringEx('panel.skills_self_evaluation.results.career_explorer.title', 'Career Explorer'),
-            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.header'),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'),
-            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'),
-            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),
+            Localization().getStringEx('panel.skills_self_evaluation.occupation_list.section.title', 'Career Explorer'),
+            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'),
             textAlign: TextAlign.center,
           ),
           _buildOccupationsHeader(),
@@ -83,18 +73,17 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Flexible(
-                    flex: 5,
-                    fit: FlexFit.tight,
-                    child: Text(
-                      Localization().getStringEx('panel.skills_self_evaluation.results.occupation.title', 'OCCUPATION'),
-                      style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
-                    )),
+                  flex: 5,
+                  fit: FlexFit.tight,
+                  child: Text(
+                    Localization().getStringEx('panel.skills_self_evaluation.occupation_list.occupation.title', 'OCCUPATION'),
+                    style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
+                  )),
                 Flexible(
                   flex: 3,
                   fit: FlexFit.tight,
                   child: Text(
-                    Localization()
-                        .getStringEx('panel.skills_self_evaluation.results.match_percentage.title', 'MATCH PERCENTAGE'),
+                    Localization().getStringEx('panel.skills_self_evaluation.occupation_list.match.title', 'MATCH PERCENTAGE'),
                     style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
                   ),
                 ),
@@ -112,8 +101,7 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
         padding: EdgeInsets.all(28),
         child: Center(
             child: Text(
-                Localization().getStringEx(
-                    'panel.skills_self_evaluation.results.offline.error.msg', 'Results not available while offline.'),
+                Localization().getStringEx('panel.skills_self_evaluation.occupation_list.offline.error.msg', 'Career Explorer not available while offline.'),
                 textAlign: TextAlign.center,
                 style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
       ),
@@ -133,7 +121,8 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.',
+                    Localization().getStringEx('panel.skills_self_evaluation.occupation_list.unavailable.message',
+                        'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.'),
                     textAlign: TextAlign.center,
                   ),
                 ),
