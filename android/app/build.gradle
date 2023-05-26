@@ -211,10 +211,10 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     // Origo and mobile keys SDK
-    debugImplementation name: 'origo-sdk-debug', version: '1.8.0', ext: 'aar'
-    releaseImplementation name: 'origo-sdk-release', version: '1.8.0', ext: 'aar'
-    debugImplementation name: 'mobilekeys-android-sdk-debug', version: '8.0.4', ext: 'aar'
-    releaseImplementation name: 'mobilekeys-android-sdk-release', version: '8.0.4', ext: 'aar'
+    debugImplementation name: 'origo-sdk-debug', version: '1.9.0', ext: 'aar'
+    releaseImplementation name: 'origo-sdk-release', version: '1.9.0', ext: 'aar'
+    debugImplementation name: 'mobilekeys-android-sdk-debug', version: '8.0.5', ext: 'aar'
+    releaseImplementation name: 'mobilekeys-android-sdk-release', version: '8.0.5', ext: 'aar'
 
     // Origo transitive dependencies
     implementation 'org.bouncycastle:bcprov-jdk15on:1.68'
