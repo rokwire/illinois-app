@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/model/occupation/Occupation.dart';
-import 'package:illinois/model/occupation/OccupationMatch.dart';
-import 'package:illinois/model/occupation/TechnologySkill.dart';
-import 'package:illinois/model/occupation/WorkStyles.dart';
+import 'package:illinois/model/Occupation.dart';
 import 'package:illinois/service/OccupationMatching.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -12,8 +9,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-class OccupationDetails extends StatelessWidget {
-  OccupationDetails({Key? key, required this.occupationMatch, required this.percentages}) : super(key: key);
+class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
+  SkillsSelfEvaluationOccupationDetails({Key? key, required this.occupationMatch, required this.percentages}) : super(key: key);
 
   final OccupationMatch occupationMatch;
   final Map<String, num> percentages;

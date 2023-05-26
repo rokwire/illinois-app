@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:illinois/model/occupation/Occupation.dart';
-import 'package:illinois/model/occupation/OccupationMatch.dart';
+import 'package:illinois/model/Occupation.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/auth2.dart';

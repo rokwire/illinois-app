@@ -1,19 +1,16 @@
-import 'dart:math' as math;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/occupation/OccupationMatch.dart';
+import 'package:illinois/model/Occupation.dart';
 import 'package:illinois/service/OccupationMatching.dart';
-import 'package:illinois/ui/academics/OccupationDetails.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationOccupationDetails.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
-class OccupationList extends StatelessWidget {
-  OccupationList({Key? key, required this.percentages}) : super(key: key);
+class SkillsSelfEvaluationOccupationList extends StatelessWidget {
+  SkillsSelfEvaluationOccupationList({Key? key, required this.percentages}) : super(key: key);
 
   final Map<String, num> percentages;
 
@@ -172,7 +169,7 @@ class OccupationListTile extends StatelessWidget {
         child: InkWell(
           onTap: () {
             Navigator.push(
-                context, CupertinoPageRoute(builder: (context) => OccupationDetails(percentages: percentages, occupationMatch: occupationMatch)));
+                context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationOccupationDetails(percentages: percentages, occupationMatch: occupationMatch)));
           },
           child: Padding(
             padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
@@ -191,9 +188,6 @@ class OccupationListTile extends StatelessWidget {
                   flex: 2,
                   fit: FlexFit.tight,
                   child: Text(occupationMatch.matchPercent?.toInt().toString() ?? '--', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)
-                  // child: OccupationMatchCircle(
-                  //   matchPercentage: occupationMatch.matchPercent ?? 100.0,
-                  // ),
                 ),
                 Flexible(
                     flex: 1,
@@ -210,35 +204,3 @@ class OccupationListTile extends StatelessWidget {
   }
 }
 
-// class OccupationMatchCircle extends StatelessWidget {
-//   const OccupationMatchCircle({Key? key, required this.matchPercentage}) : super(key: key);
-//
-//   final double matchPercentage;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       child: Stack(
-//         children: [
-//           Transform(
-//             alignment: Alignment.center,
-//             transform: Matrix4.rotationY(math.pi),
-//             child: CircularProgressIndicator(
-//               strokeWidth: 8.0,
-//               backgroundColor: LinearProgressColorUtils.linearProgressIndicatorBackgroundColor(
-//                 matchPercentage / 100.0,
-//               ),
-//               color: LinearProgressColorUtils.linearProgressIndicatorColor(
-//                 matchPercentage / 100.0,
-//               ),
-//               value: matchPercentage / 100,
-//             ),
-//           ),
-//           Positioned.fill(
-//             child: Center(child: Text(matchPercentage.toInt().toString())),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
