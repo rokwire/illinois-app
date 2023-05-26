@@ -27,12 +27,14 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -44,6 +46,7 @@ import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/panels/survey_creation_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
@@ -62,6 +65,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   rokwire.ConfigEnvironment? _selectedEnv;
   Set<String> _rangingRegionIds = Set();
   bool _preparingRatingApp = false;
+
+  List<Survey>? _userSurveys;
 
   final TextEditingController _mapThresholdDistanceController = TextEditingController();
   final TextEditingController _geoFenceRegionRadiusController = TextEditingController();
@@ -87,6 +92,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     _selectedEnv = Config().configEnvironment;
 
     _updateRangingRegions();
+    _loadUserSurveys();
     super.initState();
   }
 
@@ -221,6 +227,13 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       },
                     )
                   ],),
+                ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+
+                Visibility(
+                  visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                  child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child: _buildSurveyCreation()),
                 ),
                 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
@@ -481,6 +494,43 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     );
   }
 
+  Widget _buildSurveyCreation() {
+    List<Widget> userSurveyEntries = [];
+    for (Survey survey in _userSurveys ?? []) {
+      userSurveyEntries.add(Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Row(children: [
+          Expanded(flex: 2, child: Text(survey.title)),
+          Expanded(child: RoundedButton(
+            label: 'Edit',
+            backgroundColor: Styles().colors!.background,
+            textColor: Styles().colors!.fillColorPrimary,
+            fontFamily: Styles().fontFamilies!.bold,
+            fontSize: 16,
+            padding: EdgeInsets.all(8),
+            borderColor: Styles().colors!.fillColorPrimary,
+            borderWidth: 2,
+            onTap: () => _onTapCreateSurvey(survey: survey),
+          )),
+        ],),
+      ));
+    }
+    return Column(children: [
+      ...userSurveyEntries,
+      Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
+        label: 'Create New Survey',
+        backgroundColor: Styles().colors!.background,
+        textColor: Styles().colors!.fillColorPrimary,
+        fontFamily: Styles().fontFamilies!.bold,
+        fontSize: 16,
+        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+        borderColor: Styles().colors!.fillColorPrimary,
+        borderWidth: 2,
+        onTap: _onTapCreateSurvey,
+      )),
+    ]);
+  }
+
   // NotificationsListener
 
   @override
@@ -501,6 +551,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   // Helpers
+
+  void _loadUserSurveys() async {
+    if (Auth2().isLoggedIn) {
+      Surveys().loadCreatorSurveys().then((surveyList) {
+        if (mounted) {
+          setState(() {
+            _userSurveys = surveyList;
+          });
+        }
+      });
+    }
+  }
 
   String? _validateThresoldDistance(String? value) {
     return (int.tryParse(value!) == null) ? 'Please enter a number.' : null;
@@ -684,6 +746,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
   }
 
+  void _onTapCreateSurvey({Survey? survey}) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyCreationPanel(survey: survey, tabBar: uiuc.TabBar())));
+  }
+
   void _onCreateInboxMessageClicked() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugCreateInboxMessagePanel()));
   }
@@ -770,7 +836,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _copyToClipboard(String? textContent){
-    Clipboard.setData(ClipboardData(text: textContent)).then((_){
+    Clipboard.setData(ClipboardData(text: textContent ?? '')).then((_){
       AppToast.show("Text data has been copied to the clipboard!");
     });
   }
