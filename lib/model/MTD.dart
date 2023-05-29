@@ -331,7 +331,6 @@ class MTDStop with Explore implements Favorite {
     latitude : latitude,
     longitude : longitude,
   );
-  @override String? get exploreLocationDescription => code;
 
   // Favorite implementation
   static const String favoriteKeyName = "mtdBusStopIds";
