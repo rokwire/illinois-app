@@ -142,7 +142,7 @@ class Dining with Explore implements Favorite {
   @override String?   get exploreId               { return id; }
   @override String?   get exploreTitle            { return title; }
   @override String?   get exploreDescription      { return description; }
-  @override DateTime? get exploreStartDateUtc     { return null; }
+  @override DateTime? get exploreDateTimeUtc      { return null; }
   @override String?   get exploreImageURL         { return imageURL; }
   @override ExploreLocation? get exploreLocation  { return location; }
 

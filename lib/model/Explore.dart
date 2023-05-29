@@ -124,7 +124,7 @@ class ExplorePOI with Explore implements Favorite {
   @override String?   get exploreId               => toString();
   @override String?   get exploreTitle            => StringUtils.isNotEmpty(name) ? name : Localization().getStringEx("panel.explore.item.location.name", "Location");
   @override String?   get exploreDescription      => null;
-  @override DateTime? get exploreStartDateUtc     => null;
+  @override DateTime? get exploreDateTimeUtc      => null;
   @override String?   get exploreImageURL         => null;
   @override ExploreLocation? get exploreLocation  => location;
 
