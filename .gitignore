@@ -53,13 +53,6 @@ GoogleService-Info-Prod.plist
 google-services.json
 keys.properties
 
-# HID / Origo libs
-mobilekeys-android-sdk-debug-?.?.?.aar
-mobilekeys-android-sdk-release-?.?.?.aar
-origo-sdk-debug-?.?.?.aar
-origo-sdk-release-?.?.?.aar
-/ios/Libs/Origo/
-
 # App Branding
 /app/assets/
 /app/images/
