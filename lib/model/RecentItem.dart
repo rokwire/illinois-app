@@ -72,18 +72,18 @@ class RecentItem {
     if(item is Event) {
       return RecentItem(
           type: RecentItemType.event,
-          id: item.exploreId,
-          title: item.exploreTitle,
-          descripton: item.shortDescription,
+          id: item.id,
+          title: item.title,
+          descripton: item.description,
           time: item.isRecurring ? item.displayRecurringDates : item.displayDateTime,
           sourceJson: item.toJson()
       );
     } else if(item is Dining) {
       return RecentItem(
           type: RecentItemType.dining,
-          id: item.exploreId,
-          title: item.exploreTitle,
-          descripton: item.shortDescription,
+          id: item.id,
+          title: item.title,
+          descripton: item.description,
           time: item.displayWorkTime,
           sourceJson: item.toJson()
       );

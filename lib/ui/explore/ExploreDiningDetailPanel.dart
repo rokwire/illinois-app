@@ -405,11 +405,11 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Widget _exploreDescription() {
-    String? longDescription = _dining!.exploreLongDescription;
-    bool showDescription = StringUtils.isNotEmpty(longDescription);
+    String? description = _dining?.description;
+    bool showDescription = StringUtils.isNotEmpty(description);
     return showDescription ? Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       HtmlWidget(
-        StringUtils.ensureNotEmpty(_dining!.exploreLongDescription),
+        StringUtils.ensureNotEmpty(description),
         onTapUrl : (url) {_launchUrl(url, 'Description'); return true;},
         textStyle:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
       )

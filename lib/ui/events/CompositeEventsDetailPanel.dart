@@ -442,14 +442,14 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Widget _exploreDescription() {
-    String? longDescription = widget.parentEvent!.exploreLongDescription;
-    bool showDescription = StringUtils.isNotEmpty(longDescription);
+    String? description = widget.parentEvent!.description;
+    bool showDescription = StringUtils.isNotEmpty(description);
     if (!showDescription) {
       return Container();
     }
     return Container(padding: EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 24), color: Styles().colors!.background, child:
     HtmlWidget(
-      StringUtils.ensureNotEmpty(longDescription),
+      StringUtils.ensureNotEmpty(description),
         onTapUrl : (url) {_launchUrl(url, 'Description'); return true;},
         textStyle: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
     )

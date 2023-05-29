@@ -178,7 +178,6 @@ class Appointment with Explore, Favorite {
   // Explore
   @override String? get exploreId => id;
   @override String? get exploreTitle => "${provider?.name} Appointment";
-  @override String? get exploreShortDescription => null;
   @override String? get exploreLongDescription => null;
   @override DateTime? get exploreStartDateUtc => startTimeUtc;
   @override String? get exploreImageURL => null;

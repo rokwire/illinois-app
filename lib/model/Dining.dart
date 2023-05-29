@@ -36,8 +36,7 @@ class Dining with Explore implements Favorite {
   String? id;
   String? title;
   String? diningType;
-  String? shortDescription;
-  String? longDescription;
+  String? description;
   String? imageURL;
   Map<String, dynamic>? onlineOrder;
 
@@ -49,8 +48,7 @@ class Dining with Explore implements Favorite {
       {this.id,
       this.title,
       this.diningType,
-      this.shortDescription,
-      this.longDescription,
+      this.description,
       this.imageURL,
       this.onlineOrder,
       this.location,
@@ -83,8 +81,7 @@ class Dining with Explore implements Favorite {
         id: id,
         title: json['DiningOptionName'],
         diningType: json['Type'],
-        shortDescription: json['MoreInfo'],
-        longDescription: json['MoreInfo'],
+        description: json['MoreInfo'],
         imageURL: json['ImageUrl'],
         onlineOrder: json['OnLineOrder'],
         location: ExploreLocation(
@@ -100,18 +97,13 @@ class Dining with Explore implements Favorite {
   Map<String, dynamic> toJson() {
     return {
       // Explore
-      'id': id,
-      'title': title,
-      'shortDescription': shortDescription,
-      'longDescription': longDescription,
-      'imageURL': imageURL,
       'location': location?.toJson(),
 
       // Dining Location
       'DiningOptionID': id,
       'DiningOptionName': title,
       'Type': diningType,
-      'MoreInfo': shortDescription,
+      'MoreInfo': description,
       'ImageUrl': imageURL,
       'OnLineOrder': onlineOrder,
       'Address': location!.description,
@@ -127,8 +119,7 @@ class Dining with Explore implements Favorite {
       (other.id == id) &&
       (other.title == title) &&
       (other.diningType == diningType) &&
-      (other.shortDescription == shortDescription) &&
-      (other.longDescription == longDescription) &&
+      (other.description == description) &&
       (other.imageURL == imageURL) &&
       (DeepCollectionEquality().equals(other.onlineOrder, onlineOrder)) &&
       (other.location == location) &&
@@ -140,8 +131,7 @@ class Dining with Explore implements Favorite {
       (id?.hashCode ?? 0) ^
       (title?.hashCode ?? 0) ^
       (diningType?.hashCode ?? 0) ^
-      (shortDescription?.hashCode ?? 0) ^
-      (longDescription?.hashCode ?? 0) ^
+      (description?.hashCode ?? 0) ^
       (imageURL?.hashCode ?? 0) ^
       (DeepCollectionEquality().hash(onlineOrder)) ^
       (location?.hashCode ?? 0) ^
@@ -151,8 +141,7 @@ class Dining with Explore implements Favorite {
   // Explore
   @override String?   get exploreId               { return id; }
   @override String?   get exploreTitle            { return title; }
-  @override String?   get exploreShortDescription { return shortDescription; }
-  @override String?   get exploreLongDescription  { return longDescription; }
+  @override String?   get exploreLongDescription  { return description; }
   @override DateTime? get exploreStartDateUtc     { return null; }
   @override String?   get exploreImageURL         { return imageURL; }
   @override ExploreLocation? get exploreLocation  { return location; }
