@@ -148,7 +148,6 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                                                         _exploreTitle(),
                                                         _eventSponsor(),
                                                         _exploreDetails(),
-                                                        _exploreSubTitle(),
                                                         _buildUrlButtons()
                                                       ]
                                                   )
@@ -440,19 +439,6 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       );
     }
     return Container();
-  }
-
-  Widget _exploreSubTitle() {
-    String? subTitle = widget.parentEvent?.exploreSubTitle;
-    if (StringUtils.isEmpty(subTitle)) {
-      return Container();
-    }
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          subTitle!,
-          style: Styles().textStyles?.getTextStyle("widget.item.large")
-        ));
   }
 
   Widget _exploreDescription() {

@@ -146,7 +146,6 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                     Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                       _exploreTitle(),
                       _exploreDetails(),
-                      _exploreSubTitle(),
                       _exploreDescription(),
                       _buildDiningFeedback(),
                     ])
@@ -403,16 +402,6 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       );
     }
     return Container();
-  }
-
-  Widget _exploreSubTitle() {
-    String? subTitle = _dining!.exploreSubTitle;
-    if (StringUtils.isEmpty(subTitle)) {
-      return Container();
-    }
-    return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-      Text(subTitle ?? '', style: Styles().textStyles?.getTextStyle("widget.item.large"))
-    );
   }
 
   Widget _exploreDescription() {

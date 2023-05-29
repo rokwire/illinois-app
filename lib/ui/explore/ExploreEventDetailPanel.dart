@@ -153,7 +153,6 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                                                           _exploreTitle(),
                                                           _eventSponsor(),
                                                           _exploreDetails(),
-                                                          _exploreSubTitle(),
                                                           _exploreContacts()
                                                         ])),
                                                       Container(
@@ -530,19 +529,6 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       );
     }
     return null;
-  }
-
-  Widget _exploreSubTitle() {
-    String? subTitle = widget.event?.exploreSubTitle;
-    if (StringUtils.isEmpty(subTitle)) {
-      return Container();
-    }
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          subTitle!,
-          style: Styles().textStyles?.getTextStyle("widget.item.large")
-        ));
   }
 
   Widget _exploreContacts() {
