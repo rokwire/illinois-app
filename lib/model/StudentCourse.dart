@@ -62,7 +62,6 @@ class StudentCourse with Explore {
   @override String? get exploreLongDescription => null;
   @override DateTime? get exploreStartDateUtc => null;
   @override String? get exploreImageURL => null;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => section?.building?.exploreLocation;
 
   // List<StudentCourse>
@@ -339,7 +338,6 @@ class Building with Explore {
   @override String? get exploreLongDescription => null;
   @override DateTime? get exploreStartDateUtc => null;
   @override String? get exploreImageURL => null; //TMP: imageURL;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => ExploreLocation(
     building : name,
     description: fullAddress,

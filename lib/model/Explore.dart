@@ -127,9 +127,7 @@ class ExplorePOI with Explore implements Favorite {
   @override String?   get exploreLongDescription  => null;
   @override DateTime? get exploreStartDateUtc     => null;
   @override String?   get exploreImageURL         => null;
-  @override String?   get explorePlaceId          => null;
   @override ExploreLocation? get exploreLocation  => location;
-  @override String?   get exploreLocationDescription => location?.displayCoordinates;
 
   // Favorite
   static const String favoriteKeyName = "poiLocations";

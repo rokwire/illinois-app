@@ -126,7 +126,6 @@ class LaundryRoom with Explore implements Favorite {
   @override String?   get exploreLongDescription => null;
   @override DateTime? get exploreStartDateUtc => null;
   @override String?   get exploreImageURL => null;
-  @override String?   get explorePlaceId => null;
   ExploreLocation?    get exploreLocation => location;
 
   // Favorite

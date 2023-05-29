@@ -48,7 +48,6 @@ class WellnessBuilding with Explore {
   @override String? get exploreLongDescription => null;
   @override DateTime? get exploreStartDateUtc => null;
   @override String? get exploreImageURL => null; //TMP: imageURL;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => ExploreLocation(
     building : _guideMapTitle ?? building.name,
     description: _guideMapDescription ?? building.fullAddress,

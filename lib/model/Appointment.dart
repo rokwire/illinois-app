@@ -182,7 +182,6 @@ class Appointment with Explore, Favorite {
   @override String? get exploreLongDescription => null;
   @override DateTime? get exploreStartDateUtc => startTimeUtc;
   @override String? get exploreImageURL => null;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => ExploreLocation(locationId: location?.id, latitude: location?.latitude, longitude: location?.longitude, description: location?.title);
 //@override Map<String, dynamic> toJson();
 }
