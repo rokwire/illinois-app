@@ -40,7 +40,6 @@ class Dining with Explore implements Favorite {
   String? longDescription;
   String? imageURL;
   Map<String, dynamic>? onlineOrder;
-  String? placeID;
 
   ExploreLocation? location;
   List<PaymentType>? paymentTypes;
@@ -54,7 +53,6 @@ class Dining with Explore implements Favorite {
       this.longDescription,
       this.imageURL,
       this.onlineOrder,
-      this.placeID,
       this.location,
       this.paymentTypes,
       this.diningSchedules});
@@ -107,7 +105,6 @@ class Dining with Explore implements Favorite {
       'shortDescription': shortDescription,
       'longDescription': longDescription,
       'imageURL': imageURL,
-      'placeID': placeID,
       'location': location?.toJson(),
 
       // Dining Location
@@ -134,7 +131,6 @@ class Dining with Explore implements Favorite {
       (other.longDescription == longDescription) &&
       (other.imageURL == imageURL) &&
       (DeepCollectionEquality().equals(other.onlineOrder, onlineOrder)) &&
-      (other.placeID == placeID) &&
       (other.location == location) &&
       (DeepCollectionEquality().equals(other.paymentTypes, paymentTypes)) &&
       (DeepCollectionEquality().equals(other.diningSchedules, diningSchedules));
@@ -148,7 +144,6 @@ class Dining with Explore implements Favorite {
       (longDescription?.hashCode ?? 0) ^
       (imageURL?.hashCode ?? 0) ^
       (DeepCollectionEquality().hash(onlineOrder)) ^
-      (placeID?.hashCode ?? 0) ^
       (location?.hashCode ?? 0) ^
       (DeepCollectionEquality().hash(paymentTypes)) ^
       (DeepCollectionEquality().hash(diningSchedules));
