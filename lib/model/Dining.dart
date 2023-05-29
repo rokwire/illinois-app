@@ -35,7 +35,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Dining with Explore implements Favorite {
   String? id;
   String? title;
-  String? subTitle;
   String? diningType;
   String? shortDescription;
   String? longDescription;
@@ -50,7 +49,6 @@ class Dining with Explore implements Favorite {
   Dining(
       {this.id,
       this.title,
-      this.subTitle,
       this.diningType,
       this.shortDescription,
       this.longDescription,
@@ -115,7 +113,6 @@ class Dining with Explore implements Favorite {
       // Dining Location
       'DiningOptionID': id,
       'DiningOptionName': title,
-      'subTitle': subTitle,
       'Type': diningType,
       'MoreInfo': shortDescription,
       'ImageUrl': imageURL,
@@ -132,7 +129,6 @@ class Dining with Explore implements Favorite {
     (other is Dining) &&
       (other.id == id) &&
       (other.title == title) &&
-      (other.subTitle == subTitle) &&
       (other.diningType == diningType) &&
       (other.shortDescription == shortDescription) &&
       (other.longDescription == longDescription) &&
@@ -147,7 +143,6 @@ class Dining with Explore implements Favorite {
   int get hashCode =>
       (id?.hashCode ?? 0) ^
       (title?.hashCode ?? 0) ^
-      (subTitle?.hashCode ?? 0) ^
       (diningType?.hashCode ?? 0) ^
       (shortDescription?.hashCode ?? 0) ^
       (longDescription?.hashCode ?? 0) ^
@@ -161,7 +156,7 @@ class Dining with Explore implements Favorite {
   // Explore
   @override String?   get exploreId               { return id; }
   @override String?   get exploreTitle            { return title; }
-  @override String?   get exploreSubTitle         { return subTitle; }
+  @override String?   get exploreSubTitle         { return diningType; }
   @override String?   get exploreShortDescription { return shortDescription; }
   @override String?   get exploreLongDescription  { return longDescription; }
   @override DateTime? get exploreStartDateUtc     { return null; }
