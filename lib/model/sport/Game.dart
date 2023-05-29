@@ -261,7 +261,7 @@ class Game with Explore implements Favorite {
 
   @override String? get exploreId => id;
   @override String? get exploreTitle => title;
-  @override String? get exploreLongDescription => description;
+  @override String? get exploreDescription => description;
   @override DateTime? get exploreStartDateUtc => dateTimeUtc;
   @override String? get exploreImageURL => imageUrl;
   @override ExploreLocation? get exploreLocation => _exploreLocation;

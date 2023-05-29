@@ -141,7 +141,7 @@ class Dining with Explore implements Favorite {
   // Explore
   @override String?   get exploreId               { return id; }
   @override String?   get exploreTitle            { return title; }
-  @override String?   get exploreLongDescription  { return description; }
+  @override String?   get exploreDescription      { return description; }
   @override DateTime? get exploreStartDateUtc     { return null; }
   @override String?   get exploreImageURL         { return imageURL; }
   @override ExploreLocation? get exploreLocation  { return location; }
@@ -149,7 +149,7 @@ class Dining with Explore implements Favorite {
   // Favorite
   static const String favoriteKeyName = "diningPlaceIds";
   @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => exploreId;
+  @override String? get favoriteId => id;
 
   String? get displayWorkTime {
     if(diningSchedules != null && diningSchedules!.isNotEmpty) {

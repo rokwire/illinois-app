@@ -90,7 +90,7 @@ class RecentItem {
     } else if(item is Game) {
       return RecentItem(
           type: RecentItemType.game,
-          id: item.exploreId,
+          id: item.id,
           title: item.title,
           descripton: item.description,
           time: item.displayTime,

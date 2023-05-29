@@ -44,7 +44,7 @@ class WellnessBuilding with Explore {
 
   @override String? get exploreId => id;
   @override String? get exploreTitle => title;
-  @override String? get exploreLongDescription => null;
+  @override String? get exploreDescription => null;
   @override DateTime? get exploreStartDateUtc => null;
   @override String? get exploreImageURL => null; //TMP: imageURL;
   @override ExploreLocation? get exploreLocation => ExploreLocation(
