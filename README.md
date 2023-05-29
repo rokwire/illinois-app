@@ -26,6 +26,13 @@ cd illinois-app.git
 git clone https://github.com/rokwire/app-flutter-plugin.git plugin
 ```
 
+### Make sure libs repo persists
+Rokwire app libs directory is used by the Illinois app for private external libraries. It should be located in the `libs` subdirectory of the application's root project directory. If it does not exist you need to clone it manually.
+```
+cd illinois-app
+git clone https://github.com/rokwire/illinois-app-libs.git libs
+```
+
 ### Supply the following private configuration files:
 
 #### • .travis.yml
@@ -82,9 +89,15 @@ Alternatively, you can use AESCrypt.encode from /lib/utils/Crypt.dart to generat
 The Firebase configuration file for iOS generated from Google Firebase console.
 
 #### • android/app/src/illinois/keys.properties
-Contains GoogleMaps API key for the Illinois flavor.
+Contains:
+- GoogleMaps API key for the Illinois flavor.
+- Origo configuration specific keys and ids.
 ```
 googleMapsApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
+origoAppId=XXXXXXXXXXXXXXXXX
+origoLockServiceCode=X
+origoAidFilter1=XXXXXXXXXXXXXXXXXXXX
+origoAidFilter2=XXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 #### • android/app/src/illinois/dev/google-services.json
