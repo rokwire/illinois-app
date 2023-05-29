@@ -594,7 +594,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
     bool isFavorite = Auth2().isFavorite(widget.game);
     String? interestsLabelValue = _getInterestsLabelValue();
     bool showInterests = StringUtils.isNotEmpty(interestsLabelValue);
-    String? description = widget.game.shortDescription;
+    String? description = widget.game.description;
     bool showDescription = widget.showDescription && StringUtils.isNotEmpty(description);
 
     return GestureDetector(behavior: HitTestBehavior.translucent, onTap: widget.onTap, child:
