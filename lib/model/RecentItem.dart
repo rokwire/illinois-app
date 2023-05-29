@@ -92,7 +92,7 @@ class RecentItem {
           type: RecentItemType.game,
           id: item.exploreId,
           title: item.title,
-          descripton: item.shortDescription,
+          descripton: item.description,
           time: item.displayTime,
           sourceJson: item.jsonData
       );
