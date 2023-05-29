@@ -34,6 +34,8 @@ class StudentCourse with Explore {
   };
 
   bool get hasValidLocation => section?.building?.hasValidLocation ?? false;
+
+  String get detail => '$shortName ($number) $instructionMethod';
   
   @override
   bool operator==(dynamic other) =>
@@ -56,12 +58,9 @@ class StudentCourse with Explore {
 
   @override String? get exploreId => number;
   @override String? get exploreTitle => title ?? '';
-  @override String? get exploreSubTitle => '$shortName ($number) $instructionMethod';
-  @override String? get exploreShortDescription => null;
-  @override String? get exploreLongDescription => null;
-  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreDescription => null;
+  @override DateTime? get exploreDateTimeUtc => null;
   @override String? get exploreImageURL => null;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => section?.building?.exploreLocation;
 
   // List<StudentCourse>
@@ -334,12 +333,9 @@ class Building with Explore {
 
   @override String? get exploreId => id;
   @override String? get exploreTitle => name;
-  @override String? get exploreSubTitle => address1;
-  @override String? get exploreShortDescription => null;
-  @override String? get exploreLongDescription => null;
-  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreDescription => null;
+  @override DateTime? get exploreDateTimeUtc => null;
   @override String? get exploreImageURL => null; //TMP: imageURL;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => ExploreLocation(
     building : name,
     description: fullAddress,

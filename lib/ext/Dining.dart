@@ -7,8 +7,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 extension DiningExt on Dining {
   
   Map<String, dynamic>? get analyticsAttributes => {
-        Analytics.LogAttributeDiningId:   exploreId,
-        Analytics.LogAttributeDiningName: exploreTitle,
+        Analytics.LogAttributeDiningId:   id,
+        Analytics.LogAttributeDiningName: title,
         Analytics.LogAttributeLocation : location?.analyticsValue,
   };
 
