@@ -19,7 +19,7 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors?.background,
-      appBar: HeaderBar(title: 'Occupation Details',),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_details.header.title', 'Skills Self-Evaluation')),
       body: FutureBuilder(
           future: OccupationMatching().getOccupation(occupationCode: occupationMatch.occupation?.code ?? ""),
           builder: (context, snapshot) {
@@ -29,7 +29,7 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
             if (snapshot.data == null) {
               return Center(
                 child: Text(
-                  'Failed to get occupation data. Please retry.',
+                  Localization().getStringEx('panel.skills_self_evaluation.occupation_details.unavailable.message', 'Failed to get occupation data. Please retry.'),
                   textAlign: TextAlign.center,
                   style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
                 ),
@@ -42,7 +42,7 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
                 slantColor: Styles().colors?.gradientColorPrimary,
                 slantPainterHeadingHeight: 0,
                 backgroundColor: Styles().colors?.background,
-                children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(occupation),
+                children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(context, occupation),
                 childrenPadding: const EdgeInsets.only(top: 40, left: 24, right: 24, bottom: 24),
                 childrenAlignment: CrossAxisAlignment.start,
                 allowOverlap: !Connectivity().isOffline,
@@ -101,38 +101,41 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildContent(Occupation occupation) {
+  List<Widget> _buildContent(BuildContext context, Occupation occupation) {
     return [
       Padding(
         padding: const EdgeInsets.only(bottom: 16),
-        child: Text('Your Results', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')),
+        child: Text(
+          Localization().getStringEx('panel.skills_self_evaluation.occupation_details.section.title', 'Your Results'),
+          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
+        ),
       ),
-      ExpansionTile(
-          title: Text(
-            "Work Styles",
-            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
-          ),
-          tilePadding: EdgeInsets.zero,
-          children: [_buildScoresHeader()] + occupation.workStyles!.map((workstyle) => WorkStyleListTile(workstyle: workstyle, percentages: percentages)).toList(),
-          iconColor: Styles().colors?.getColor('fillColorPrimary'),
-          collapsedIconColor: Styles().colors?.getColor('fillColorPrimary'),
-      ),
-      ExpansionTile(
+      Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent), child: ExpansionTile(
         title: Text(
-          "Technology Skills",
+          Localization().getStringEx('panel.skills_self_evaluation.occupation_details.work_styles.title', 'Work Styles'),
+          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+        ),
+        tilePadding: EdgeInsets.zero,
+        children: [_buildScoresHeader()] + occupation.workStyles!.map((workstyle) => WorkStyleListTile(workstyle: workstyle, percentages: percentages)).toList(),
+        iconColor: Styles().colors?.getColor('fillColorPrimary'),
+        collapsedIconColor: Styles().colors?.getColor('fillColorPrimary'),
+      )),
+      Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent), child: ExpansionTile(
+        title: Text(
+          Localization().getStringEx('panel.skills_self_evaluation.occupation_details.tech_skills.title', 'Technology Skills'),
           style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
         ),
         tilePadding: EdgeInsets.zero,
         children: occupation.technologySkills!.map((e) => TechnologySkillListTile(technologySkill: e)).toList(),
         iconColor: Styles().colors?.getColor('fillColorPrimary'),
         collapsedIconColor: Styles().colors?.getColor('fillColorPrimary'),
-      ),
+      )),
       Padding(padding: const EdgeInsets.only(top: 16), child: InkWell(
         child: Text.rich(
           TextSpan(
             children: [
               TextSpan(
-                text: 'Learn More',
+                text: Localization().getStringEx('panel.skills_self_evaluation.occupation_details.learn_more.title', 'Learn More'),
                 style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link'),
               ),
               WidgetSpan(
@@ -154,7 +157,7 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
       children: [
         Divider(color: Styles().colors?.fillColorPrimary, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Flexible(flex: 2, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.workstyles.title', 'NAME'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
+          Flexible(flex: 2, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.work_style_name.title', 'NAME'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
           Flexible(flex: 1, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.survey_scores.title', 'YOUR SCORE'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
           Flexible(flex: 1, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.importance.title', 'IMPORTANCE'), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
         ],)),
@@ -169,7 +172,7 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
         child: Center(
             child: Text(
                 Localization().getStringEx(
-                    'panel.skills_self_evaluation.results.offline.error.msg', 'Results not available while offline.'),
+                    'panel.skills_self_evaluation.occupation_details.offline.error.msg', 'Results not available while offline.'),
                 textAlign: TextAlign.center,
                 style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
       ),
