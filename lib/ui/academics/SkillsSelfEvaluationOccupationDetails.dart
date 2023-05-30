@@ -152,17 +152,17 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
   }
 
   Widget _buildScoresHeader() {
-    return Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Divider(color: Styles().colors?.fillColorPrimary, thickness: 2),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Flexible(flex: 2, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.work_style_name.title', 'NAME'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
           Flexible(flex: 1, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.survey_scores.title', 'YOUR SCORE'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
           Flexible(flex: 1, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.occupation_details.importance.title', 'IMPORTANCE'), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header.dark'),)),
         ],)),
       ],
-    ));
+    );
   }
 
   List<Widget> _buildOfflineMessage() {
@@ -200,6 +200,7 @@ class WorkStyleListTile extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Card(
+            margin: const EdgeInsets.symmetric(vertical: 4),
             child: InkWell(
               onTap: () {},
               child: Padding(

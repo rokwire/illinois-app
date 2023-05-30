@@ -12,6 +12,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 class SkillsSelfEvaluationOccupationList extends StatelessWidget {
   SkillsSelfEvaluationOccupationList({Key? key, required this.percentages}) : super(key: key);
 
+  final ScrollController _scrollController = ScrollController();
   final Map<String, num> percentages;
 
   @override
@@ -19,6 +20,7 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_list.header.title', 'Skills Self-Evaluation')),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: SectionSlantHeader(
           headerWidget: _buildHeader(),
           slantColor: Styles().colors?.gradientColorPrimary,
@@ -111,35 +113,36 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
   List<Widget> _buildOccupationListView() {
     return [
       FutureBuilder(
-          future: OccupationMatching().getAllOccupationMatches(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.data == null) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    Localization().getStringEx('panel.skills_self_evaluation.occupation_list.unavailable.message',
-                        'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.'),
-                    textAlign: TextAlign.center,
-                  ),
+        future: OccupationMatching().getAllOccupationMatches(),
+        initialData: [],
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.data == null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  Localization().getStringEx('panel.skills_self_evaluation.occupation_list.unavailable.message',
+                      'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.'),
+                  textAlign: TextAlign.center,
                 ),
-              );
-            }
-            List<OccupationMatch> occupationMatches = (snapshot.data as List).cast<OccupationMatch>();
-            return Column(
-              children: occupationMatches
-                  .map(
-                    (occupationMatch) => OccupationListTile(
-                      occupationMatch: occupationMatch,
-                      percentages: percentages,
-                    ),
-                  )
-                  .toList(),
+              ),
             );
-          })
+          }
+          List<OccupationMatch> occupationMatches = (snapshot.data as List).cast<OccupationMatch>();
+          return ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _scrollController,
+            shrinkWrap: true,
+            itemCount: occupationMatches.length,
+            itemBuilder: (BuildContext context, int index) {
+              return OccupationListTile(occupationMatch: occupationMatches[index], percentages: percentages,);
+            }
+          );
+        }
+      )
     ];
   }
 }

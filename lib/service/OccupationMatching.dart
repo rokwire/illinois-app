@@ -18,8 +18,6 @@ class OccupationMatching with Service {
 
   Future<List<OccupationMatch>?> getAllOccupationMatches() async {
     if (enabled) {
-      int responseStart = 0;
-      int responseLimit = 50;
       String url = '${Config().skillsToJobsUrl}/user-match-results';
       Response? response = await Network().get(url, auth: Auth2());
       int responseCode = response?.statusCode ?? -1;
@@ -27,11 +25,7 @@ class OccupationMatching with Service {
       if (responseCode == 200) {
         Map<String, dynamic>? responseMap = JsonUtils.decodeMap(responseBody);
         if (responseMap != null) {
-          List<OccupationMatch>? surveys = OccupationMatch.listFromJson(responseMap['matches'])?.sublist(
-            responseStart,
-            responseLimit,
-          );
-          return surveys;
+          return OccupationMatch.listFromJson(responseMap['matches']);
         }
       }
     }
