@@ -128,7 +128,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
           label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
-          textColor: Styles().colors?.fillColorPrimaryVariant,
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat.variant"),
           backgroundColor: Styles().colors?.surface,
           onTap: _onTapStartEvaluation
         )),

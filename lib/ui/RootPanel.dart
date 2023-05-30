@@ -601,7 +601,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       },
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
-                      textColor: Styles().colors!.fillColorPrimary,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.yes.title", 'Yes')),
                   Container(height: 10,),
                   RoundedButton(
@@ -612,7 +612,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       },
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
-                      textColor: Styles().colors!.fillColorPrimary,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.no.title", 'No'))
                 ],
               ),

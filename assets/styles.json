@@ -277,8 +277,13 @@
     "widget.tab.selected": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
 
+    "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
+    "widget.button.disabled.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "surfaceAccent"},
+
     "widget.button.title.extra_large": { "font_family": "bold", "size": 26.0, "color": "fillColorPrimary"},
     "widget.button.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.button.title.large.fat.variant": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimaryVariant"},
     "widget.button.title.large.thin": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.button.title.regular": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.regular.underline": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
@@ -289,8 +294,7 @@
     "widget.button.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium.fat.underline": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary", "height":  1.61},
-    "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
-    "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
+
     "widget.button.title.small": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.small.semi_bold": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},

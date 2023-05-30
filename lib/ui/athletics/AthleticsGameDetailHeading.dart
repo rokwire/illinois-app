@@ -317,6 +317,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   label: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.title', 'Get Tickets'),
                                   hint: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.hint', ''),
                                   backgroundColor: Colors.white,
+                                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                                   fontSize: 16.0,
                                   textColor: Styles().colors!.fillColorPrimary,
                                   borderColor: Styles().colors!.fillColorSecondary,
