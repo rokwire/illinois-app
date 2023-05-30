@@ -1,5 +1,91 @@
 {
   "attributes": [{
+
+			"id": "category",
+			"title": "Event Category",
+			"description": "Choose the categories your event can be filtered by.",
+			"empty-hint": "Select an event category...",
+			"semantics-hint": "Double tap to show categories options.",
+			"usage": "category",
+			"widget": "dropdown",
+			"scope": ["events"],
+			"requirements" : {
+				"min-selected-count": 0,
+				"max-selected-count": null
+			},
+			"values": [
+				"Big 10 Athletics",
+				"Campus Visits",
+				"Career Development",
+				"Ceremonies & Services",
+				"Club Athletics",
+				"Conferences & Workshops",
+				"Exhibits",
+				"Festivals & Celebrations",
+				"Film Screenings",
+				"Performances",
+				"Receptions & Open House Events",
+				"Recreation, Health & Fitness",
+				"Social & Informal Events",
+				"Speakers & Seminars"
+			]
+	},{
+		"id": "sport",
+		"title": "Big 10 Athletics",
+		"description": "Choose the athletics your event can be filtered by.",
+		"empty-hint": "Select an athletics...",
+		"semantics-hint": "Double tap to show athletics options.",
+		"usage": "category",
+		"widget": "dropdown",
+		"scope": ["events"],
+		"requirements" : {
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
+		"values": [
+      { "label": "Baseball", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Men's Basketball", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Men's Cross Country", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Football", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Men's Golf", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Men's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Men's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Men's Track Field", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Wrestling", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Women's Basketball", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Women's Cross Country", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Women's Golf", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Women's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Women's Soccer", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Softball", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Swim Dive", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Women's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Women's Track Field", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Volleyball", "requirements": { "category" : "Big 10 Athletics" }}
+		]
+	},{
+		"id": "recreation-health-fitness",
+		"title": "Recreation, Health & Fitness",
+		"description": "Choose the recreation, health & fitness your event can be filtered by.",
+		"empty-hint": "Select a recreation, health & fitness...",
+		"semantics-hint": "Double tap to show recreation, health & fitness options.",
+		"usage": "category",
+		"widget": "dropdown",
+		"scope": ["events"],
+		"requirements" : {
+			"min-selected-count": 0,
+			"max-selected-count": 1
+		},
+		"values": [
+			"Group Fitness",
+			"Aquatics",
+			"Ice Skating",
+			"Personal Training",
+			"Student Wellness",
+			"Adventure Req",
+			"Summer Camp"
+		]
+	},{
 		"id": "category",
 		"title": "Category",
 		"description": "Choose the category your group can be filtered by.",
@@ -41,7 +127,6 @@
 		"widget": "dropdown",
 		"scope": ["groups"],
 		"requirements" : {
-			"mode": "exclusive",
 			"min-selected-count": 0,
 			"max-selected-count": 1
 		},
@@ -946,67 +1031,6 @@
 			{ "label": "Yes", "value": true },
 			{ "label": "No", "value" : false }
 		]
-	},{
-		"id": "category",
-		"title": "Event Category",
-		"description": "Choose the categories your event can be filtered by.",
-		"empty-hint": "Select an event category...",
-		"semantics-hint": "Double tap to show categories options.",
-		"usage": "category",
-		"widget": "dropdown",
-		"scope": ["events"],
-		"requirements" : {
-			"min-selected-count": 0,
-			"max-selected-count": null
-		},
-		"values": [
-			"Big 10 Athletics",
-			"Campus Visits",
-			"Career Development",
-			"Ceremonies & Services",
-			"Club Athletics",
-			"Conferences & Workshops",
-			"Exhibits",
-			"Festivals & Celebrations",
-			"Film Screenings",
-			"Performances",
-			"Receptions & Open House Events",
-			"Recreation, Health & Fitness",
-			"Social & Informal Events",
-			"Speakers & Seminars"
-		],
-		"sub-values": {
-			"Big 10 Athletics": [
-				"Baseball",
-				"Men's Basketball",
-				"Men's Cross Country",
-				"Football",
-				"Men's Golf",
-				"Men's Gymnastics",
-				"Men's Tennis",
-				"Men's Track Field",
-				"Wrestling",
-				"Women's Basketball",
-				"Women's Cross Country",
-				"Women's Golf",
-				"Women's Gymnastics",
-				"Women's Soccer",
-				"Softball",
-				"Swim Dive",
-				"Women's Tennis",
-				"Women's Track Field",
-				"Volleyball"
-			],
-			"Recreation, Health & Fitness": [
-				"Group Fitness",
-				"Aquatics",
-				"IceSkating",
-				"PersonalTraining",
-				"StudentWellness",
-				"Adventure Req",
-				"SummerCamp"
-			]
-		}
 	}],
 	"requirements": {
 		"min-selected-count": 1
