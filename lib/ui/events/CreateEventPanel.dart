@@ -1339,8 +1339,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _isInPerson = event.isInPerson ?? false;
       _isFree = event.isEventFree?? false;
       _location = event.location;
-      if (event.longDescription != null) {
-        _eventDescriptionController.text = event.longDescription!;
+      if (event.description != null) {
+        _eventDescriptionController.text = event.description!;
       }
       if (event.registrationUrl != null) {
         _eventPurchaseUrlController.text = event.registrationUrl!;
@@ -1786,7 +1786,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     }
     event.allDay = _allDay;
     event.location = _location;
-    event.longDescription = _eventDescriptionController.text;
+    event.description = _eventDescriptionController.text;
     event.registrationUrl = StringUtils.isNotEmpty(_eventPurchaseUrlController.text)?_eventPurchaseUrlController.text : null;
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;

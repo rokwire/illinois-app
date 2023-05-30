@@ -312,31 +312,31 @@ extension ExploreMap on Explore {
       return (this as Event).displayDate;
     }
     else if (this is Dining) {
-      return exploreShortDescription;
+      return (this as Dining).diningType;
     }
     else if (this is LaundryRoom) {
-      return exploreSubTitle;
+      return (this as LaundryRoom).displayStatus;
     }
     else if (this is Game) {
-      return exploreShortDescription;
+      return (this as Game).description;
     }
     else if (this is MTDStop) {
-      return exploreSubTitle;
+      return (this as MTDStop).code;
     }
     else if (this is StudentCourse) {
       return (this as StudentCourse).section?.displayLocation;
     }
     else if (this is ExplorePOI) {
-      return exploreLocationDescription;
+      return (this as ExplorePOI).location?.displayCoordinates;
     }
     else if (this is Building) {
-      return exploreSubTitle;
+      return (this as Building).address1;
     }
     else if (this is WellnessBuilding) {
-      return exploreSubTitle;
+      return (this as WellnessBuilding).detail;
     }
     else if (this is Appointment) {
-      return exploreSubTitle;
+      return (this as Appointment).location?.title;
     }
     else {
       return null;
