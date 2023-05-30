@@ -239,7 +239,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconKey = "location" ;
-    String? locationId = widget.event?.location?.locationId;
+    String? locationId = widget.event?.location?.id;
     String? locationText = _event?.getLongDisplayLocation(null); // if we need distance calculation - pass _locationData
     String? value = locationId ?? locationText;
     bool isValueVisible = StringUtils.isNotEmpty(value);
@@ -293,7 +293,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     String iconKey = "laptop";
     String? virtualUrl = widget.event?.virtualEventUrl;
     String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
-    String? locationId = widget.event?.location?.locationId;
+    String? locationId = widget.event?.location?.id;
     String? urlFromLocation = locationId ??  locationDescription;
     bool isLocationIdUrl = Uri.tryParse(urlFromLocation)?.isAbsolute ?? false;
     String value = virtualUrl ??

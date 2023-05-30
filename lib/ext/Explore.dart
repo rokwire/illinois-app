@@ -60,13 +60,13 @@ extension ExploreExt on Explore {
         }
       }
       else {
-        String displayName = location.getDisplayName();
-        if (displayName.isNotEmpty) {
+        String? displayName = location.displayName;
+        if ((displayName != null) && displayName.isNotEmpty) {
           return displayName;
         }
       }
-      String displayAddress = location.getDisplayAddress();
-      if (displayAddress.isNotEmpty) {
+      String? displayAddress = location.displayAddress;
+      if ((displayAddress != null) && displayAddress.isNotEmpty) {
         return displayAddress;
       }
     }
@@ -91,13 +91,13 @@ extension ExploreExt on Explore {
         }
       }
       else {
-        String displayName = location.getDisplayName();
-        if (displayName.isNotEmpty) {
+        String? displayName = location.displayName;
+        if ((displayName != null) && displayName.isNotEmpty) {
           return displayText += (displayText.isNotEmpty ? ", " : "")  + displayName;
         }
       }
-      String displayAddress = location.getDisplayAddress();
-      if ( displayAddress.isNotEmpty) {
+      String? displayAddress = location.displayAddress;
+      if ((displayAddress != null) && displayAddress.isNotEmpty) {
         return displayText += (displayText.isNotEmpty ? ", " : "")  + displayAddress;
       }
     }
@@ -496,6 +496,49 @@ extension ExploreMap on Explore {
     }
     return null;
   }
+}
+
+extension ExploreLocationExp on ExploreLocation {
+
+  String? get displayName {
+    if ((name != null) && name!.isNotEmpty) {
+      return name;
+    }
+    else if ((building != null) && building!.isNotEmpty) {
+      return building;
+    }
+    else {
+      return null;
+    }
+  }
+
+  String? get displayAddress {
+    String? displayText;
+    String delimiter = ", ";
+
+    if ((address != null) && address!.isNotEmpty) {
+      // ignore: unnecessary_null_comparison
+      displayText = (displayText != null) ? "$displayText$delimiter$address" : address;
+    }
+
+    if ((city != null) && city!.isNotEmpty) {
+      displayText = (displayText != null) ? "$displayText$delimiter$city" : city;
+    }
+
+    if ((state != null) && state!.isNotEmpty) {
+      displayText = (displayText != null) ? "$displayText$delimiter$state" : state;
+      delimiter = " ";
+    }
+
+    if ((zip != null) && zip!.isNotEmpty) {
+      displayText = (displayText != null) ? "$displayText$delimiter$zip" : city;
+    }
+
+    return displayText;
+  }
+
+  String? get displayCoordinates =>
+    isLocationCoordinateValid ? "[${latitude?.toStringAsFixed(6)}, ${longitude?.toStringAsFixed(6)}]" : null;
 }
 
 extension ExploreLocationMap on ExploreLocation {
