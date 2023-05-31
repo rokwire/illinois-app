@@ -68,7 +68,6 @@ class MobileAccess with Service implements NotificationsListener {
 
   @override
   void destroyService() {
-    _print('DESSSSSSTROUUUU');
     NotificationService().unsubscribe(this);
     super.destroyService();
   }
