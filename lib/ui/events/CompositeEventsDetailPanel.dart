@@ -485,9 +485,9 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     Visibility(visible: visitWebsiteVisible, child: RoundedButton(
       label: websiteLabel,
       hint: websiteHint,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
       backgroundColor: Colors.white,
       borderColor: Styles().colors!.fillColorSecondary,
-      textColor: Styles().colors!.fillColorPrimary,
       onTap: () => _onTapVisitWebsite(titleUrl),
     ),);
 
@@ -500,9 +500,9 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
         Visibility(visible: getTicketsVisible, child: RoundedButton(
           label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Get tickets'),
           hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
           backgroundColor: Colors.white,
           borderColor: Styles().colors!.fillColorSecondary,
-          textColor: Styles().colors!.fillColorPrimary,
           onTap: () => _onTapGetTickets(ticketsUrl),
         ),),
         Visibility(visible: getTicketsVisible, child: buttonsDivider)
@@ -585,9 +585,9 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
             hint: (widget.browseGroup?.researchProject == true) ?
               Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
               Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorPrimary,
-            textColor: Styles().colors!.fillColorPrimary,
             progress: _addToGroupInProgress,
             onTap: _onTapAddToGroup,
           ),

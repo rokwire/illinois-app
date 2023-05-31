@@ -161,10 +161,10 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                 child: RoundedButton(
                                   label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See More Events'),
                                   hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
+                                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                                   onTap: _onTapMoreUpcomingEvents,
                                   backgroundColor: Styles().colors!.background,
                                   borderColor: Styles().colors!.fillColorSecondary,
-                                  textColor: Styles().colors!.fillColorPrimary,
                                 ),
                               ),
                               Expanded(flex: 1, child: Container())
@@ -672,10 +672,9 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       RoundedButton(
                         label: Localization().getStringEx('widget.athletics_card.button.get_tickets.title', 'Get Tickets'),
                         hint: Localization().getStringEx('widget.athletics_card.button.get_tickets.hint', ''),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                         backgroundColor: Colors.white,
-                        fontSize: 16,
                         borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: _onTapGetTickets,
                       ),
                     ),

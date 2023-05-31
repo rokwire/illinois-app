@@ -306,7 +306,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       buttons.addAll(<Widget>[
         Expanded(child: RoundedButton(
           label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
-          textColor: canClear ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+          textStyle: canClear ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
           borderColor: canClear ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
           backgroundColor: Styles().colors?.white,
           enabled: canClear,
@@ -322,7 +322,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     buttons.add(Expanded(child:
       RoundedButton(
         label: applyTitle,
-        textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+        textStyle: canApply ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
         borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
         backgroundColor: Styles().colors?.white,
         enabled: canApply,

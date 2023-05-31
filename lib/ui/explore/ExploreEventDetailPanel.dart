@@ -629,10 +629,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
               borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
               rightIcon: Styles().images?.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
-              textColor: Styles().colors!.fillColorPrimary,
               onTap: () {
                 Analytics().logSelect(target: "Website");
                 _onTapWebButton(titleUrl, 'Website');
@@ -648,10 +648,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,
                 rightIcon: Styles().images?.getImage('external-link'),
-                textColor: Styles().colors!.fillColorPrimary,
                 onTap: () {
                 Analytics().logSelect(target: "Website");
                   _onTapGetTickets(registrationUrl);
@@ -689,9 +689,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               child: RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.modify.title', 'Modify'),
                 hint: Localization().getStringEx('panel.explore_detail.button.modify.hint', '') ,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorPrimary,
-                textColor: Styles().colors!.fillColorPrimary,
                 onTap: ()=>_onTapModify,
               )),
           Container(
@@ -701,9 +701,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               child: RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.publish.title', 'Publish'),
                 hint: Localization().getStringEx('panel.explore_detail.button.publish.hint', 'Publish'),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,
-                textColor: Styles().colors!.fillColorPrimary,
                 onTap: ()=>_onTapPublish,
               ))
         ],
@@ -723,9 +723,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 hint: (widget.browseGroup?.researchProject == true) ?
                   Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
                   Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorPrimary,
-                textColor: Styles().colors!.fillColorPrimary,
                 progress: _addToGroupInProgress,
                 onTap: _onTapAddToGroup,
               ),

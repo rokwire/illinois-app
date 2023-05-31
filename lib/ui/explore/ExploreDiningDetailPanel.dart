@@ -277,9 +277,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return Align(alignment: Alignment.centerRight, child:
       RoundedButton(
         label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
+        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
         backgroundColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
-        textColor: Styles().colors!.fillColorPrimary,
         onTap: () => _onTapOrderOnline(onlineOrderPlatformDetails),
       ),
     );

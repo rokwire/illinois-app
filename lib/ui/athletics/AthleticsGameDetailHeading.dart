@@ -316,10 +316,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 child: RoundedButton(
                                   label: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.title', 'Get Tickets'),
                                   hint: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.hint', ''),
-                                  backgroundColor: Colors.white,
                                   textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
-                                  fontSize: 16.0,
-                                  textColor: Styles().colors!.fillColorPrimary,
+                                  backgroundColor: Colors.white,
                                   borderColor: Styles().colors!.fillColorSecondary,
                                   onTap: _onTapGetTickets,
                                 ),
@@ -335,9 +333,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 child: RoundedButton(
                                     label: Localization().getStringEx('widget.game_detail_heading.button.parking.title', 'Parking'),
                                     hint: Localization().getStringEx('widget.game_detail_heading.button.parking.hint', ''),
+                                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                                     backgroundColor: Colors.white,
-                                    fontSize: 16.0,
-                                    textColor: Styles().colors!.fillColorPrimary,
                                     borderColor: Styles().colors!.fillColorSecondary,
                                     onTap: _onTapParking),
                               ),
@@ -354,9 +351,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         child: RoundedButton(
                           label: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.title', 'Game Day Guide'),
                           hint: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.hint', ''),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                           backgroundColor: Colors.white,
-                          fontSize: 16.0,
-                          textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
                           onTap: () {
                             _onTapGameDayGuide();
@@ -367,9 +363,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                       RoundedButton(
                         label: Localization().getStringEx('widget.game_detail_heading.button.roster.title', 'Roster'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.roster.hint', ''),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                         backgroundColor: Colors.white,
-                        fontSize: 16.0,
-                        textColor: Styles().colors!.fillColorPrimary,
                         borderColor: Styles().colors!.fillColorSecondary,
                         onTap: () {
                           Analytics().logSelect(target: "Roster");

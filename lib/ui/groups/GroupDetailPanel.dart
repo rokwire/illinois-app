@@ -852,10 +852,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       Widget tabWidget = RoundedButton(
           label: title,
+          textStyle: isSelected ? Styles().textStyles?.getTextStyle("widget.colourful_button.title.accent") : Styles().textStyles?.getTextStyle("widget.button.title.medium.thin"),
           backgroundColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.background,
-          textColor: (isSelected ? Colors.white : Styles().colors!.fillColorPrimary),
-          fontFamily: isSelected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
-          fontSize: 16,
           contentWeight: 0.0,
           borderColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
           borderWidth: 1,
@@ -894,10 +892,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:
         RoundedButton(
           label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
           backgroundColor: Styles().colors!.white,
-          textColor: Styles().colors!.fillColorPrimary,
-          fontFamily: Styles().fontFamilies!.bold,
-          fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           borderColor: Styles().colors!.fillColorSecondary,
           borderWidth: 2,
@@ -1000,10 +996,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             padding: EdgeInsets.only(top: 16),
             child: RoundedButton(
                 label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                 backgroundColor: Styles().colors!.white,
-                textColor: Styles().colors!.fillColorPrimary,
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                 borderColor: Styles().colors!.fillColorSecondary,
                 borderWidth: 2,
@@ -1222,10 +1216,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
             backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.bold,
-            fontSize: 16,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
@@ -1262,10 +1254,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             ),
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
               RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
+                textStyle: requestToJoinEnabled ?  Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
                 backgroundColor: Styles().colors!.white,
-                textColor: requestToJoinEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 borderColor: requestToJoinEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                 borderWidth: 2,
@@ -1292,10 +1282,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
             backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.bold,
-            fontSize: 16,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
@@ -1336,8 +1324,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   Expanded(flex: leftAreaFlex, child: Container()),
                   Expanded(flex: negativeButtonFlex, child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       fontFamily: "ProximaNovaRegular",
-                      textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.white,
                       backgroundColor: Styles().colors!.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
