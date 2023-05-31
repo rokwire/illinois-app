@@ -62,6 +62,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -131,6 +132,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Inbox(),
       DeviceCalendar(),
       Events(),
+      Events2(),
       Groups(),
       CheckList(CheckList.giesOnboarding),
       CheckList(CheckList.uiucOnboarding),
