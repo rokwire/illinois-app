@@ -64,6 +64,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
               title: Localization().getStringEx('panel.settings.icard.mobile_access.opened_app.title.label', 'App is open'),
               description: Localization()
                   .getStringEx('panel.settings.icard.mobile_access.opened_app.description.label', 'Open doors only when app is open.'),
+              selected: true,
               onTap: _onTapOpenedApp),
           _buildDividerWidget(),
           _buildRadioButtonEntry(
@@ -76,8 +77,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
               title: Localization().getStringEx('panel.settings.icard.mobile_access.always.title.label', 'Always'),
               description: Localization().getStringEx('panel.settings.icard.mobile_access.always.description.label',
                   'Open doors regardless of whether app is open or smartphone is unlocked.'),
-              onTap: _onTapAlways,
-              selected: true),
+              onTap: _onTapAlways),
           Visibility(
               visible: _isAndroid,
               child: Padding(

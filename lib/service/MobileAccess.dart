@@ -279,6 +279,9 @@ class MobileAccess with Service implements NotificationsListener {
       case "endpoint.register.finished":
         _onEndpointRegistrationFinished(call.arguments);
         break;
+      case "device.screen.unlocked":
+        _onScreenUnlocked(call.arguments);
+        break;
       default:
         break;
     }
@@ -291,6 +294,12 @@ class MobileAccess with Service implements NotificationsListener {
       _shouldStartScan();
     }
     NotificationService().notify(notifyDeviceRegistrationFinished, arguments);
+  }
+
+  void _onScreenUnlocked(dynamic arguments) {
+    bool? screenUnlocked = (arguments is bool) ? arguments : null;
+    //TBD: DD - implement
+    _print('screen unlocked: $screenUnlocked');
   }
 
   // BLE Rssi Sensitivity

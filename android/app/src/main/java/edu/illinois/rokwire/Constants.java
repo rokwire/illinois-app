@@ -47,5 +47,7 @@ public class Constants {
     public static final String MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY = "mobile_access_twist_n_go_enabled";
     public static final String MOBILE_ACCESS_UNLOCK_VIBRATION_ENABLED_PREFS_KEY = "mobile_access_unlock_vibration_enabled";
     public static final String MOBILE_ACCESS_UNLOCK_SOUND_ENABLED_PREFS_KEY = "mobile_access_unlock_sound_enabled";
+    public static final String MOBILE_ACCESS_ENDPOINT_REGISTER_FINISHED_KEY = "endpoint.register.finished";
+    public static final String MOBILE_ACCESS_DEVICE_SCREEN_UNLOCKED_KEY = "device.screen.unlocked";
 
 }
