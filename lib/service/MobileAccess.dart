@@ -36,7 +36,6 @@ class MobileAccess with Service implements NotificationsListener {
 
   late MobileAccessOpenType _selectedOpenType;
   bool _screenUnlocked = true; // When application is started up this means that the device is unlocked
-  late bool _isAppForeground;
 
   // Singleton
   static final MobileAccess _instance = MobileAccess._internal();
@@ -60,7 +59,6 @@ class MobileAccess with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _selectedOpenType = _openTypeFromString(Storage().mobileAccessOpenType) ?? MobileAccessOpenType.opened_app;
-    _onAppState(AppLivecycle().state);
     _shouldScan();
     _checkNeedsRegistration();
     await super.initService();
@@ -335,16 +333,12 @@ class MobileAccess with Service implements NotificationsListener {
   bool get _isAllowedToOpenDoors {
     switch (_selectedOpenType) {
       case MobileAccessOpenType.always:
-        return true;
+        return (AppLivecycle().state != AppLifecycleState.detached); // Do not allow scanning / opening doors when app is in detached state
       case MobileAccessOpenType.opened_app:
-        return _isAppForeground;
+        return (AppLivecycle().state == AppLifecycleState.resumed);
       case MobileAccessOpenType.unlocked_device:
         return _screenUnlocked;
     }
-  }
-
-  void _onAppState(AppLifecycleState? state) {
-    _isAppForeground = (state == AppLifecycleState.resumed);
   }
 
   static MobileAccessOpenType? _openTypeFromString(String? value) {
@@ -413,7 +407,6 @@ class MobileAccess with Service implements NotificationsListener {
       _checkNeedsRegistration();
     } else if (name == AppLivecycle.notifyStateChanged) {
       AppLifecycleState? state = (param is AppLifecycleState) ? param : null;
-      _onAppState(state);
       _shouldScan();
       if (state == AppLifecycleState.resumed) {
         _checkNeedsRegistration();

@@ -76,14 +76,6 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         apiFacade.onApplicationStartup();
     }
 
-    public void onActivityResume() {
-        apiFacade.onActivityResume();
-    }
-
-    public void onActivityPause() {
-        apiFacade.onActivityPause();
-    }
-
     public void onActivityDestroy() {
         apiFacade.onActivityDestroy();
         unregisterScreenBroadcastReceiver();

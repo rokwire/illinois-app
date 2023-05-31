@@ -83,6 +83,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     private AudioManager audioManager;
 
     private boolean isAllowedToScan = false;
+    private boolean isScanning = false;
 
     public MobileAccessKeysApiFacade(Activity activity, OrigoKeysApiFactory apiFactory) {
         this.activity = activity;
@@ -104,14 +105,6 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         hceReaderConnectionCallback.registerReceiver(hceReaderConnectionListener);
 
         audioManager = (AudioManager)activity.getSystemService(Context.AUDIO_SERVICE);
-    }
-
-    public void onActivityResume() {
-
-    }
-
-    public void onActivityPause() {
-
     }
 
     public void onActivityDestroy() {
@@ -510,21 +503,28 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     }
 
     private void startScanning() {
-        if (hasLocationPermissions()) {
-            Log.d(TAG, "Starting BLE service and enabling HCE");
-            OrigoReaderConnectionController controller = OrigoMobileKeysApi.getInstance().getOrigiReaderConnectionController();
-            controller.enableHce();
+        if (!isScanning) {
+            if (hasLocationPermissions()) {
+                Log.d(TAG, "Native: startScanning");
+                OrigoReaderConnectionController controller = OrigoMobileKeysApi.getInstance().getOrigiReaderConnectionController();
+                controller.enableHce();
 
-            Notification notification = MobileAccessUnlockNotification.create(activity);
-            controller.startForegroundScanning(notification);
-        } else {
-            requestLocationPermission();
+                Notification notification = MobileAccessUnlockNotification.create(activity);
+                controller.startForegroundScanning(notification);
+                isScanning = true;
+            } else {
+                requestLocationPermission();
+            }
         }
     }
 
     private void stopScanning() {
-        OrigoReaderConnectionController controller = OrigoMobileKeysApi.getInstance().getOrigiReaderConnectionController();
-        controller.stopScanning();
+        if (isScanning) {
+            Log.d(TAG, "Native: stopScanning");
+            OrigoReaderConnectionController controller = OrigoMobileKeysApi.getInstance().getOrigiReaderConnectionController();
+            controller.stopScanning();
+            isScanning = false;
+        }
     }
 
     //endregion

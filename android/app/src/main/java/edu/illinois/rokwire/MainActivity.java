@@ -83,22 +83,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (mobileAccessPlugin != null) {
-            mobileAccessPlugin.onActivityResume();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mobileAccessPlugin != null) {
-            mobileAccessPlugin.onActivityPause();
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
 
