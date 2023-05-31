@@ -179,7 +179,7 @@
 		"usage": "property",
 		"widget": "dropdown",
 		"semantics-hint": "Double tap to show college options.",
-		"scope": ["groups"],
+		"scope": ["groups", "events"],
 		"requirements" : {
 			"min-selected-count": 0,
 			"max-selected-count": 1
@@ -233,7 +233,7 @@
 		"semantics-hint": "Double tap to show department options.",
 		"usage": "property",
 		"widget": "dropdown",
-		"scope": ["groups"],
+		"scope": ["groups", "events"],
 		"requirements" : {
 			"mode": "inclusive",
 			"min-selected-count": 0,
