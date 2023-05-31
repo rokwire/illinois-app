@@ -411,4 +411,8 @@ class Storage extends rokwire.Storage {
   String? get mobileAccessBleRssiSensitivity => getStringWithName(mobileAccessBleRssiSensitivityKey);
   set mobileAccessBleRssiSensitivity(String? value) => setStringWithName(mobileAccessBleRssiSensitivityKey, value);
 
+  static const String mobileAccessOpenTypeKey = 'mobile_access_open_type';
+  String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
+  set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
+
 }

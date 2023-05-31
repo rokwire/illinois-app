@@ -32,8 +32,11 @@ class MobileAccess with Service implements NotificationsListener {
 
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/mobile_access');
 
-  bool _canHaveMobileIcard = false;
   static const String _tag = 'MobileAccess';
+
+  late MobileAccessOpenType _selectedOpenType;
+  bool _screenUnlocked = true; // When application is started up this means that the device is unlocked
+  late bool _isAppForeground;
 
   // Singleton
   static final MobileAccess _instance = MobileAccess._internal();
@@ -56,15 +59,23 @@ class MobileAccess with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _shouldStartScan();
+    _selectedOpenType = _openTypeFromString(Storage().mobileAccessOpenType) ?? MobileAccessOpenType.opened_app;
+    _onAppState(AppLivecycle().state);
+    _shouldScan();
     _checkNeedsRegistration();
     await super.initService();
   }
 
   @override
   void destroyService() {
-    super.destroyService();
+    _print('DESSSSSSTROUUUU');
     NotificationService().unsubscribe(this);
+    super.destroyService();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([Auth2(), FlexUI(), Storage(), AppLivecycle()]);
   }
 
   // APIs
@@ -210,9 +221,9 @@ class MobileAccess with Service implements NotificationsListener {
     return result;
   }
 
-  void _shouldStartScan() {
-    _canHaveMobileIcard = Auth2().isLoggedIn && FlexUI().isIcardMobileAvailable;
-    _allowScanning(_canHaveMobileIcard);
+  void _shouldScan() {
+    bool allowScan = _canHaveMobileIcard && _isAllowedToOpenDoors;
+    _allowScanning(allowScan);
   }
 
   ///
@@ -264,7 +275,7 @@ class MobileAccess with Service implements NotificationsListener {
           late String resultMsg;
           if (registrationInitiated == true) {
             resultMsg = 'Mobile identity registration initiated successfully.';
-            _shouldStartScan();
+            _shouldScan();
           } else {
             resultMsg = 'Failed to initiate mobile identity registration';
           }
@@ -291,15 +302,76 @@ class MobileAccess with Service implements NotificationsListener {
   void _onEndpointRegistrationFinished(dynamic arguments) {
     bool? success = (arguments is bool) ? arguments : null;
     if (success == true) {
-      _shouldStartScan();
+      _shouldScan();
     }
     NotificationService().notify(notifyDeviceRegistrationFinished, arguments);
   }
 
   void _onScreenUnlocked(dynamic arguments) {
-    bool? screenUnlocked = (arguments is bool) ? arguments : null;
-    //TBD: DD - implement
-    _print('screen unlocked: $screenUnlocked');
+    bool screenUnlocked = (arguments is bool) ? arguments : false;
+    if (screenUnlocked != _screenUnlocked) {
+      _screenUnlocked = screenUnlocked;
+      _shouldScan();
+    }
+  }
+
+  // Open Type
+
+  MobileAccessOpenType get selectedOpenType {
+    return _selectedOpenType;
+  }
+
+  set selectedOpenType(MobileAccessOpenType openType) {
+    if (_selectedOpenType != openType) {
+      _selectedOpenType = openType;
+      Storage().mobileAccessOpenType = _openTypeToString(_selectedOpenType);
+      _shouldScan();
+    }
+  }
+
+  bool get _canHaveMobileIcard {
+    return Auth2().isLoggedIn && FlexUI().isIcardMobileAvailable;
+  }
+
+  bool get _isAllowedToOpenDoors {
+    switch (_selectedOpenType) {
+      case MobileAccessOpenType.always:
+        return true;
+      case MobileAccessOpenType.opened_app:
+        return _isAppForeground;
+      case MobileAccessOpenType.unlocked_device:
+        return _screenUnlocked;
+    }
+  }
+
+  void _onAppState(AppLifecycleState? state) {
+    _isAppForeground = (state == AppLifecycleState.resumed);
+  }
+
+  static MobileAccessOpenType? _openTypeFromString(String? value) {
+    switch (value) {
+      case 'opened_app':
+        return MobileAccessOpenType.opened_app;
+      case 'unlocked_device':
+        return MobileAccessOpenType.unlocked_device;
+      case 'always':
+        return MobileAccessOpenType.always;
+      default:
+        return null;
+    }
+  }
+
+  static String? _openTypeToString(MobileAccessOpenType? type) {
+    switch (type) {
+      case MobileAccessOpenType.opened_app:
+        return 'opened_app';
+      case MobileAccessOpenType.unlocked_device:
+        return 'unlocked_device';
+      case MobileAccessOpenType.always:
+        return 'always';
+      default:
+        return null;
+    }
   }
 
   // BLE Rssi Sensitivity
@@ -335,18 +407,17 @@ class MobileAccess with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
-      _shouldStartScan();
+      _shouldScan();
       _checkNeedsRegistration();
     } else if (name == FlexUI.notifyChanged) {
-      _shouldStartScan();
+      _shouldScan();
       _checkNeedsRegistration();
     } else if (name == AppLivecycle.notifyStateChanged) {
       AppLifecycleState? state = (param is AppLifecycleState) ? param : null;
+      _onAppState(state);
+      _shouldScan();
       if (state == AppLifecycleState.resumed) {
-        _shouldStartScan();
         _checkNeedsRegistration();
-      } else {
-        _allowScanning(false);
       }
     } else if (name == Storage.notifySettingChanged) {
       if (param == Storage.debugUseIdentityBbKey) {
@@ -363,3 +434,5 @@ class MobileAccess with Service implements NotificationsListener {
 }
 
 enum MobileAccessBleRssiSensitivity { high, normal, low }
+
+enum MobileAccessOpenType { opened_app, unlocked_device, always }

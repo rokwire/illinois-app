@@ -64,20 +64,22 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
               title: Localization().getStringEx('panel.settings.icard.mobile_access.opened_app.title.label', 'App is open'),
               description: Localization()
                   .getStringEx('panel.settings.icard.mobile_access.opened_app.description.label', 'Open doors only when app is open.'),
-              selected: true,
-              onTap: _onTapOpenedApp),
+              selected: (MobileAccess().selectedOpenType == MobileAccessOpenType.opened_app),
+              onTap: () => _onTapMobileAccessType(MobileAccessOpenType.opened_app)),
           _buildDividerWidget(),
           _buildRadioButtonEntry(
               title: Localization().getStringEx('panel.settings.icard.mobile_access.unlocked_device.title.label', 'Device is unlocked'),
               description: Localization().getStringEx(
                   'panel.settings.icard.mobile_access.unlocked_device.description.label', 'Open doors only when smartphone is unlocked.'),
-              onTap: _onTapUnlockedDevice),
+              selected: (MobileAccess().selectedOpenType == MobileAccessOpenType.unlocked_device),
+              onTap: () => _onTapMobileAccessType(MobileAccessOpenType.unlocked_device)),
           _buildDividerWidget(),
           _buildRadioButtonEntry(
               title: Localization().getStringEx('panel.settings.icard.mobile_access.always.title.label', 'Always'),
               description: Localization().getStringEx('panel.settings.icard.mobile_access.always.description.label',
                   'Open doors regardless of whether app is open or smartphone is unlocked.'),
-              onTap: _onTapAlways),
+              selected: (MobileAccess().selectedOpenType == MobileAccessOpenType.always),
+              onTap: () => _onTapMobileAccessType(MobileAccessOpenType.always)),
           Visibility(
               visible: _isAndroid,
               child: Padding(
@@ -323,16 +325,10 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
     });
   }
 
-  void _onTapOpenedApp() {
-    //TBD: DD - implement
-  }
-
-  void _onTapUnlockedDevice() {
-    //TBD: DD - implement
-  }
-
-  void _onTapAlways() {
-    //TBD: DD - implement
+  void _onTapMobileAccessType(MobileAccessOpenType type) {
+    setStateIfMounted(() {
+      MobileAccess().selectedOpenType = type;
+    });
   }
 
   void _onTapBluetoothSensitivity(MobileAccessBleRssiSensitivity rssiSensitivity) {

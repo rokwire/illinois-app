@@ -371,7 +371,6 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
             screenBroadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    Log.d(TAG, "screenBroadcastReceiver.onReceive: " + intent.getAction());
                     if (Objects.equals(intent.getAction(), Intent.ACTION_SCREEN_OFF)) {
                         invokeFlutterMethod(Constants.MOBILE_ACCESS_DEVICE_SCREEN_UNLOCKED_KEY, false);
                     } else if (Objects.equals(intent.getAction(), Intent.ACTION_USER_PRESENT)) {
