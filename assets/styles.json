@@ -705,6 +705,8 @@
     "person": {"src": "images/identiy-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size"},
     "key": {"src": "images/icon-login-grey.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo":  "size"},
     "check": {"src": "images/icon-check-simple.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 12, "todo": "size issue"},
+    "filters": {"src": "images/icon-filters.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size, color"},
+    "sort": {"src": "images/icon-sort.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size, color"},
 
     "clock": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
 
