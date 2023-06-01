@@ -56,21 +56,20 @@ class _Events2ListPanelState extends State<Events2ListPanel> {
     return Container(decoration: _commandBarDecoration, child:
       Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
         Row(children: [
-          Expanded(flex: 6, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Event2FilterCommandButton(
               title: 'Filters',
               leftIconKey: 'filters',
               rightIconKey: 'chevron-right',
               onTap: _onFilters,
             ),
-            Container(width: 8,),
             Event2FilterCommandButton(
               title: 'Sort',
               leftIconKey: 'sort',
               onTap: _onSort,
             ),
           ])),
-          Expanded(flex: 4, child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+          Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
             LinkButton(
               title: 'Map View',
               hint: 'Tap to view map',
