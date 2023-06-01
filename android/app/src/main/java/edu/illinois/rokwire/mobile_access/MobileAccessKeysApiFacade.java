@@ -524,6 +524,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         if (isScanning) {
             Log.d(TAG, "Native: stopScanning");
             OrigoReaderConnectionController controller = OrigoMobileKeysApi.getInstance().getOrigiReaderConnectionController();
+            controller.disableHce();
             controller.stopScanning();
             onScanStateChanged(false);
         }
