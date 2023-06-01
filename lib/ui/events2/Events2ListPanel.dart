@@ -1,9 +1,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -21,8 +25,19 @@ class Events2ListPanel extends StatefulWidget {
 
 class _Events2ListPanelState extends State<Events2ListPanel> {
 
+  bool _loadingEvents = false;
+  List<Event2>? _events;
+  final int eventsPageLength = 12;
+
   @override
   void initState() {
+    _loadingEvents = true;
+    Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength)).then((List<Event2>? events) {
+      setStateIfMounted(() {
+        _events = (events != null) ? List<Event2>.from(events) : null;
+        _loadingEvents = false;
+      });
+    });
     super.initState();
   }
 
@@ -35,19 +50,17 @@ class _Events2ListPanelState extends State<Events2ListPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.events2_list.header.title", "Events"), leading: RootHeaderBarLeading.Back,),
-      body: _buildContent(),
+      body: _buildPanelContent(),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildPanelContent() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildCommandBar(),
       Expanded(child:
-        SingleChildScrollView(child:
-          _buildListView(),
-        )
+        _buildEventsContent(),
       )
     ],);
   }
@@ -100,8 +113,52 @@ class _Events2ListPanelState extends State<Events2ListPanel> {
     border: Border.all(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1)
   );
 
-  Widget _buildListView() {
-    return Container();
+  Widget _buildEventsContent() {
+    if (_loadingEvents) {
+      return _buildLoadingContent();
+    }
+    else if (_events == null) {
+      return _buildMessageContent('Failed to load events.');
+    }
+    else if (_events?.length == 0) {
+      return _buildMessageContent('There are no events matching the selected filters.');
+    }
+    else {
+      return _buildEventsList();
+    }
+  }
+
+  Widget _buildEventsList() {
+    List<Widget> cardsList = <Widget>[];
+    for (Event2 event in _events!) {
+      cardsList.add(Padding(padding: EdgeInsets.only(left: 16, right: 16, top: cardsList.isNotEmpty ? 8 : 0), child:
+        Event2Card(event),
+      ),);
+    }
+    return RefreshIndicator(onRefresh: _onRefresh, child:
+      SingleChildScrollView(child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Column(children:  cardsList,)
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessageContent(String message) {
+    return Center(child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
+        Text(message, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+      )
+    );
+  }
+
+  Widget _buildLoadingContent() => Center(child:
+    SizedBox(width: 32, height: 32, child:
+      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary,)
+    )
+  );
+
+  Future<void> _onRefresh() async {
   }
 
   void _onFilters() {
@@ -221,4 +278,70 @@ class Event2ImageCommandButton extends StatelessWidget {
         )
       ),
     );
+}
+
+class Event2Card extends StatefulWidget {
+  final Event2 event;
+  final void Function()? onTap;
+  
+  Event2Card(this.event, { Key? key, this.onTap}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _Event2CardState();
+}
+
+class _Event2CardState extends State<Event2Card> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(label: _semanticsLabel, hint: _semanticsHint, button: true, child:
+      InkWell(onTap: widget.onTap, child:
+        Container(decoration: _contentDecoration, child:
+          ClipRRect(borderRadius: _contentBorderRadius, child: 
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Visibility(visible: StringUtils.isNotEmpty(widget.event.imageUrl), child:
+                Container(decoration: _imageDecoration, child:
+                  AspectRatio(aspectRatio: 2.5, child:
+                    Image.network(widget.event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+                  ),
+                )
+              ),
+              Padding(padding: EdgeInsets.all(16), child:
+                Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,)
+                ]),
+              ),
+
+            ],),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String get _semanticsLabel => 'TODO Label';
+  String get _semanticsHint => 'TODO Hint';
+  
+  Decoration get _contentDecoration => BoxDecoration(
+    color: Styles().colors?.surface,
+    borderRadius: _contentBorderRadius,
+    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    boxShadow: [ BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
+  );
+
+  BorderRadiusGeometry get _contentBorderRadius => BorderRadius.all(Radius.circular(8));
+
+  Decoration get _imageDecoration => BoxDecoration(
+    border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1)),
+  );
 }
