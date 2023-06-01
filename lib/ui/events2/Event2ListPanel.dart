@@ -11,18 +11,18 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class Events2ListPanel extends StatefulWidget {
-  static final String routeName = 'Events2ListPanel';
+class Event2ListPanel extends StatefulWidget {
+  static final String routeName = 'Event2ListPanel';
 
   @override
-  State<StatefulWidget> createState() => _Events2ListPanelState();
+  State<StatefulWidget> createState() => _Event2ListPanelState();
 
   static void present(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Events2ListPanel.routeName), builder: (context) => Events2ListPanel()));
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2ListPanel.routeName), builder: (context) => Event2ListPanel()));
   }
 }
 
-class _Events2ListPanelState extends State<Events2ListPanel> {
+class _Event2ListPanelState extends State<Event2ListPanel> {
 
   bool _loadingEvents = false;
   List<Event2>? _events;

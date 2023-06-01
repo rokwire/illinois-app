@@ -28,7 +28,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
-import 'package:illinois/ui/events2/Events2ListPanel.dart';
+import 'package:illinois/ui/events2/Event2ListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
@@ -968,7 +968,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapEventFeed(BuildContext context) {
     Analytics().logSelect(target: "Event Feed");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return Events2ListPanel(); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return Event2ListPanel(); } ));
   }
 
   void _onTapTwitter(BuildContext context) {
