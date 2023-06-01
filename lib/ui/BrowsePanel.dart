@@ -28,6 +28,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
+import 'package:illinois/ui/events2/Events2ListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
@@ -583,6 +584,7 @@ class _BrowseEntry extends StatelessWidget {
       case "dinings.my_dining":              _onTapMyDinings(context); break;
 
       case "events.suggested_events":        _onTapSuggestedEvents(context); break;
+      case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
 
       case "feeds.twitter":                  _onTapTwitter(context); break;
@@ -962,6 +964,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapSuggestedEvents(BuildContext context) {
     Analytics().logSelect(target: "Suggested Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
+  }
+
+  void _onTapEventFeed(BuildContext context) {
+    Analytics().logSelect(target: "Event Feed");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return Events2ListPanel(); } ));
   }
 
   void _onTapTwitter(BuildContext context) {

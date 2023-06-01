@@ -364,6 +364,7 @@
     "panel.browse.entry.dinings.my_dining.title": "My Dining Locations",
 
     "panel.browse.entry.events.suggested_events.title": "Suggested Events",
+    "panel.browse.entry.events.event_feed.title": "Event Feed",
     "panel.browse.entry.events.my_events.title": "My Events",
 
     "panel.browse.entry.feeds.twitter.title": "Twitter",
@@ -1119,6 +1120,8 @@
     "panel.events_schedule.button.directions.hint": "",
     "panel.events_schedule.button.details.title": "Details",
     "panel.events_schedule.button.details.hint": "",
+
+    "panel.events2_list.header.title": "Events",
 
     "panel.settings.manage_interests.instructions.format": "Tap the {{check_mark_icon}} to follow the tags that interest you most",
     "panel.settings.manage_interests.list.following": "FOLLOWING",
@@ -2891,6 +2894,11 @@
     "widget.home.suggested_events.text.empty.description": "There are no suggested events available.",
     "widget.home.suggested_events.button.all.title":"View All",
     "widget.home.suggested_events.button.all.hint":"Tap to view all events",
+
+    "widget.home.event_feed.label.header.title":"Event Feed",
+    "widget.home.event_feed.text.empty.description": "There are no events available.",
+    "widget.home.event_feed.button.all.title": "View All",
+    "widget.home.event_feed.button.all.hint": "Tap to view all events",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.text.empty.description": "There are no recently viewed items available.",

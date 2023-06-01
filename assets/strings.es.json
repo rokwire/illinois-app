@@ -362,7 +362,8 @@
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Abierto ahora",
     "panel.browse.entry.dinings.my_dining.title": "Mis lugares para comer",
 
-    "panel.browse.entry.events.upcoming_events.title": "Eventos sugeridos",
+    "panel.browse.entry.events.suggested_events.title": "Eventos sugeridos",
+    "panel.browse.entry.events.event_feed.title": "Fuente de eventos",
     "panel.browse.entry.events.my_events.title": "Mis eventos",
 
     "panel.browse.entry.feeds.twitter.title": "Gorjeo",
@@ -1117,6 +1118,8 @@
     "panel.events_schedule.button.directions.hint": "",
     "panel.events_schedule.button.details.title": "Detalles",
     "panel.events_schedule.button.details.hint": "",
+
+    "panel.events2_list.header.title": "Events",
 
     "panel.settings.manage_interests.instructions.format": "Toca el {{check_mark_icon}} para seguir las etiquetas que más te interesen",
     "panel.settings.manage_interests.list.following":"SIGUIENTE",
@@ -2893,6 +2896,11 @@
     "widget.home.recent_items.text.empty.description": "No hay elementos vistos recientemente disponibles.",
     "widget.home.recent_items.button.all.title":"Ver todo",
     "widget.home.recent_items.button.all.hint":"Toca para ver todos los elementos",
+
+    "widget.home.event_feed.label.header.title":"Event Feed",
+    "widget.home.event_feed.text.empty.description": "There are no events available.",
+    "widget.home.event_feed.button.all.title":"View All",
+    "widget.home.event_feed.button.all.hint":"Tap to view all events",
 
     "widget.home.groups.my.label.header.title":"Mis grupos",
     "widget.home.groups.all.label.header.title":"Todos los grupos",
