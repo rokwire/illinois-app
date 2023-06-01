@@ -77,7 +77,7 @@ class ICardHomeContentPanel extends StatefulWidget {
   }
 
   static void _present(BuildContext context, {ICardContent? content}) {
-    MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
     double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
     showModalBottomSheet(
         context: context,
