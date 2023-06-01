@@ -49,5 +49,6 @@ public class Constants {
     public static final String MOBILE_ACCESS_UNLOCK_SOUND_ENABLED_PREFS_KEY = "mobile_access_unlock_sound_enabled";
     public static final String MOBILE_ACCESS_ENDPOINT_REGISTER_FINISHED_KEY = "endpoint.register.finished";
     public static final String MOBILE_ACCESS_DEVICE_SCREEN_UNLOCKED_KEY = "device.screen.unlocked";
+    public static final String MOBILE_ACCESS_DEVICE_SCANNING_KEY = "device.scanning";
 
 }

@@ -345,6 +345,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         invokeFlutterMethod(Constants.MOBILE_ACCESS_ENDPOINT_REGISTER_FINISHED_KEY, result);
     }
 
+    public static void invokeEndpointDeviceScanning(boolean scanning) {
+        invokeFlutterMethod(Constants.MOBILE_ACCESS_DEVICE_SCANNING_KEY, scanning);
+    }
+
     private static void invokeFlutterMethod(String methodName, Object arguments) {
         if ((methodChannel != null) && (methodName != null)) {
             methodChannel.invokeMethod(methodName, arguments);

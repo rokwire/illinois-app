@@ -36,6 +36,7 @@ class MobileAccess with Service implements NotificationsListener {
 
   late MobileAccessOpenType _selectedOpenType;
   bool _screenUnlocked = true; // When application is started up this means that the device is unlocked
+  bool _isScanning = false;
 
   // Singleton
   static final MobileAccess _instance = MobileAccess._internal();
@@ -220,7 +221,9 @@ class MobileAccess with Service implements NotificationsListener {
 
   void _shouldScan() {
     bool allowScan = _canHaveMobileIcard && _isAllowedToOpenDoors;
-    _allowScanning(allowScan);
+    if (_isScanning != allowScan) {
+      _allowScanning(allowScan);
+    }
   }
 
   ///
@@ -290,6 +293,9 @@ class MobileAccess with Service implements NotificationsListener {
       case "device.screen.unlocked":
         _onScreenUnlocked(call.arguments);
         break;
+      case "device.scanning":
+        _onScanning(call.arguments);
+        break;
       default:
         break;
     }
@@ -312,6 +318,13 @@ class MobileAccess with Service implements NotificationsListener {
     }
   }
 
+  void _onScanning(dynamic arguments) {
+    bool scanning = (arguments is bool) ? arguments : false;
+    if (_isScanning != scanning) {
+      _isScanning = scanning;
+    }
+  }
+
   // Open Type
 
   MobileAccessOpenType get selectedOpenType {
@@ -331,9 +344,13 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   bool get _isAllowedToOpenDoors {
+    if (AppLivecycle().state == AppLifecycleState.detached) {
+      // Do not allow scanning / opening doors when app is in detached state
+      return false;
+    }
     switch (_selectedOpenType) {
       case MobileAccessOpenType.always:
-        return (AppLivecycle().state != AppLifecycleState.detached); // Do not allow scanning / opening doors when app is in detached state
+        return true;
       case MobileAccessOpenType.opened_app:
         return (AppLivecycle().state == AppLifecycleState.resumed);
       case MobileAccessOpenType.unlocked_device:

@@ -108,6 +108,8 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
     }
 
     public void onActivityDestroy() {
+        // Manually stop scanning because native part does not receive method calls after flutter app being detached.
+        stopScanning();
         if (bleReaderConnectionCallback != null) {
             bleReaderConnectionCallback.unregisterReceiver();
             bleReaderConnectionCallback = null;
@@ -511,7 +513,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
                 Notification notification = MobileAccessUnlockNotification.create(activity);
                 controller.startForegroundScanning(notification);
-                isScanning = true;
+                onScanStateChanged(true);
             } else {
                 requestLocationPermission();
             }
@@ -523,7 +525,14 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
             Log.d(TAG, "Native: stopScanning");
             OrigoReaderConnectionController controller = OrigoMobileKeysApi.getInstance().getOrigiReaderConnectionController();
             controller.stopScanning();
-            isScanning = false;
+            onScanStateChanged(false);
+        }
+    }
+
+    private void onScanStateChanged(boolean scanning) {
+        if (isScanning != scanning) {
+            isScanning = scanning;
+            MobileAccessPlugin.invokeEndpointDeviceScanning(isScanning);
         }
     }
 
