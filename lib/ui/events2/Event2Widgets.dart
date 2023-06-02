@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:intl/intl.dart';
@@ -248,8 +249,12 @@ class _Event2CardState extends State<Event2Card> {
   List<Widget>? get _locationDetailWidget {
     if (widget.event.online != true) {
 
+      bool canLocation = widget.event.location?.isLocationCoordinateValid ?? false;
+      
       List<Widget> details = <Widget>[
-        _buildTextDetailWidget('In Person', 'location'),
+        InkWell(onTap: canLocation ? _onLocation : null, child:
+          _buildTextDetailWidget('In Person', 'location'),
+        ),
       ];
 
       String? locationText = (
@@ -258,7 +263,6 @@ class _Event2CardState extends State<Event2Card> {
         widget.event.location?.displayCoordinates
       );
       if (locationText != null) {
-        bool canLocation = widget.event.location?.isLocationCoordinateValid ?? false;
         Widget locationWidget = canLocation ?
           Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_bold.underline'),) :
           Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
@@ -309,7 +313,8 @@ class _Event2CardState extends State<Event2Card> {
   }
 
   void _onLocation() {
-
+    Analytics().logSelect(target: "Location Directions");
+    widget.event.launchDirections();
   }
 
   void _onFavorite() {
