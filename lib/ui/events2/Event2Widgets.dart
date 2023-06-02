@@ -5,11 +5,13 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
@@ -122,16 +124,31 @@ class Event2Card extends StatefulWidget {
   State<StatefulWidget> createState() => _Event2CardState();
 }
 
-class _Event2CardState extends State<Event2Card> {
+class _Event2CardState extends State<Event2Card>  implements NotificationsListener {
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoriteChanged,
+    ]);
     super.initState();
   }
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoriteChanged) {
+      if ((param is Favorite) && (param.favoriteKey == widget.event.favoriteKey) && (param.favoriteId == widget.event.favoriteId) && mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -313,11 +330,12 @@ class _Event2CardState extends State<Event2Card> {
   }
 
   void _onLocation() {
-    Analytics().logSelect(target: "Location Directions");
+    Analytics().logSelect(target: "Location Directions: ${widget.event.name}");
     widget.event.launchDirections();
   }
 
   void _onFavorite() {
-
+    Analytics().logSelect(target: "Favorite: ${widget.event.name}");
+    Auth2().prefs?.toggleFavorite(widget.event);
   }
 }

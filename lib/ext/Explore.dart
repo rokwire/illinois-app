@@ -513,6 +513,10 @@ extension ExploreLocationExp on ExploreLocation {
   }
 
   String? get displayAddress {
+    return fullAddress ?? buildDisplayAddress();
+  }
+
+  String? buildDisplayAddress() {
     String? displayText;
     String delimiter = ", ";
 
