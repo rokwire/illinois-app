@@ -1,9 +1,17 @@
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 
 class Event2FilterCommandButton extends StatelessWidget {
   final String? title;
@@ -132,16 +140,12 @@ class _Event2CardState extends State<Event2Card> {
         Container(decoration: _contentDecoration, child:
           ClipRRect(borderRadius: _contentBorderRadius, child: 
             Column(mainAxisSize: MainAxisSize.min, children: [
-              Visibility(visible: StringUtils.isNotEmpty(widget.event.imageUrl), child:
-                Container(decoration: _imageDecoration, child:
-                  AspectRatio(aspectRatio: 2.5, child:
-                    Image.network(widget.event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
-                  ),
-                )
-              ),
-              Padding(padding: EdgeInsets.all(16), child:
+              _imageWidget,
+              _categoriesWidget,
+              Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
                 Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,)
+                  _titleWidget,
+                  _detailsWidget,
                 ]),
               ),
 
@@ -154,7 +158,7 @@ class _Event2CardState extends State<Event2Card> {
 
   String get _semanticsLabel => 'TODO Label';
   String get _semanticsHint => 'TODO Hint';
-  
+
   Decoration get _contentDecoration => BoxDecoration(
     color: Styles().colors?.surface,
     borderRadius: _contentBorderRadius,
@@ -164,7 +168,151 @@ class _Event2CardState extends State<Event2Card> {
 
   BorderRadiusGeometry get _contentBorderRadius => BorderRadius.all(Radius.circular(8));
 
+  Widget get _imageWidget => Visibility(visible: StringUtils.isNotEmpty(widget.event.imageUrl), child:
+    Container(decoration: _imageDecoration, child:
+      AspectRatio(aspectRatio: 2.5, child:
+        Image.network(widget.event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+      ),
+    )
+  );
+
   Decoration get _imageDecoration => BoxDecoration(
     border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1)),
   );
+
+  Widget get _categoriesWidget => 
+    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 8), child:
+          Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
+        ),
+      ),
+      _favoriteButton
+    ]);
+
+  List<String>? get _displayCategories =>
+    Events2().contentAttributes?.displayAttributeValuesListFromSelection(widget.event.attributes, usage: ContentAttributeUsage.category);
+
+  Widget get _favoriteButton {
+    bool isFavorite = Auth2().isFavorite(widget.event);
+    return Opacity(opacity: Auth2().canFavorite ? 1 : 0, child:
+      Semantics(container: true,
+        child: Semantics(
+          label: isFavorite ?
+            Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') :
+            Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+          hint: isFavorite ?
+            Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
+            Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+          button: true,
+          child: InkWell(onTap: _onFavorite,
+            child: Padding(padding: EdgeInsets.all(16),
+              child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true,)
+            )
+          ),
+        ),
+      )
+    );
+  }
+
+  Widget get _titleWidget => Row(children: [
+    Expanded(child: 
+      Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,)
+    ),
+  ],);
+
+  Widget get _detailsWidget {
+    List<Widget> detailWidgets = <Widget>[
+      ...?_dateDetailWidget,
+      ...?_onlineDetailWidget,
+      ...?_locationDetailWidget,
+    ];
+
+    return detailWidgets.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 4), child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: detailWidgets,)
+    ) : Container();
+    
+  }
+
+  List<Widget>? get _dateDetailWidget {
+    TZDateTime? dateTimeUni = widget.event.startTimeUtc?.toUniOrLocal();
+    return (dateTimeUni != null) ? <Widget>[_buildTextDetailWidget(DateFormat('MMM d, ha').format(dateTimeUni), 'calendar')] : null;
+  }
+
+  List<Widget>? get _onlineDetailWidget {
+    return (widget.event.online == true) ? <Widget>[
+      _buildTextDetailWidget('Online', 'calendar')
+    ] : null;
+  }
+
+  List<Widget>? get _locationDetailWidget {
+    if (widget.event.online != true) {
+
+      List<Widget> details = <Widget>[
+        _buildTextDetailWidget('In Person', 'location'),
+      ];
+
+      String? locationText = (
+        widget.event.location?.displayName ??
+        widget.event.location?.displayAddress ??
+        widget.event.location?.displayCoordinates
+      );
+      if (locationText != null) {
+        bool canLocation = widget.event.location?.isLocationCoordinateValid ?? false;
+        Widget locationWidget = canLocation ?
+          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_bold.underline'),) :
+          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
+        details.add(
+          InkWell(onTap: canLocation ? _onLocation : null, child:
+            _buildDetailWidget(locationWidget, 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
+          )
+        );
+      }
+      return details;
+    }
+    return null;
+  }
+
+  Widget _buildTextDetailWidget(String text, String iconKey, {
+    EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
+    EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
+    bool iconVisible = true
+  }) =>
+    _buildDetailWidget(
+      Text(text, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),),
+      iconKey,
+      contentPadding: contentPadding,
+      iconPadding: iconPadding,
+      iconVisible: iconVisible
+    );
+
+  Widget _buildDetailWidget(Widget contentWidget, String iconKey, {
+    EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
+    EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
+    bool iconVisible = true
+  }) {
+    List<Widget> contentList = <Widget>[];
+    Widget? iconWidget = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
+    if (iconWidget != null) {
+      contentList.add(Padding(padding: iconPadding, child:
+        Opacity(opacity: iconVisible ? 1 : 0, child:
+          iconWidget,
+        )
+      ));
+    }
+    contentList.add(Expanded(child:
+      contentWidget
+    ),);
+    return Padding(padding: contentPadding, child:
+      Row(children: contentList)
+    );
+  }
+
+  void _onLocation() {
+
+  }
+
+  void _onFavorite() {
+
+  }
 }
