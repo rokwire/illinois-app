@@ -470,10 +470,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             RoundedButton(
               label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
               borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
               rightIcon: Styles().images?.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
-              textColor: Styles().colors!.fillColorPrimary,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: () {
                 Analytics().logSelect(target: 'Event website');
@@ -489,10 +489,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           RoundedButton(
             label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
             hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorSecondary,
             rightIcon: Styles().images?.getImage('external-link'),
-            textColor: Styles().colors!.fillColorPrimary,
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             onTap: () {
               _onTapRegistration(registrationUrl);
@@ -690,9 +690,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                 Container(height: 27,),
                 RoundedButton(
                   label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD "),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   backgroundColor: Colors.white,
                   borderColor: Styles().colors!.fillColorSecondary,
-                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: (){
                     Analytics().logSelect(target: 'Add');
                     setState(() {

@@ -607,10 +607,9 @@ class _PendingMemberCard extends StatelessWidget {
                       RoundedButton(
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review Request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                         borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
-                        fontSize: 16,
                         rightIcon: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){

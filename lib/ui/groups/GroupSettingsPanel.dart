@@ -227,8 +227,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   button: true, excludeSemantics: true, child:
                   RoundedButton(
                     label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add Cover Image"),
+                    textStyle: _canUpdate ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
                     borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                    textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                     contentWeight: 0.8,
                     onTap: _onTapAddImage,)
               ),
@@ -467,8 +467,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             RoundedButton(
               label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
               hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapAttributes,
@@ -948,9 +948,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Expanded(
               child: RoundedButton(
                 label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
+                textStyle: _canUpdate ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
                 backgroundColor: Colors.white,
                 borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                 progress: _updating,
                 enabled: _canUpdate,
                 onTap: _onUpdateTap,
@@ -962,9 +962,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 label: _isResearchProject ?
                   Localization().getStringEx("panel.project_settings.button.delete.title", "Delete this Project") : //TBD localize
                   Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this Group"),  //TBD localize
+                textStyle: _canUpdate ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
                 backgroundColor: Colors.white,
                 borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                 progress: _deleting,
                 enabled: _canUpdate,
                 onTap: _onDeleteTap,
@@ -1255,8 +1255,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Expanded(flex: leftAreaFlex, child: Container()),
                   Expanded(flex: negativeButtonFlex, child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
-                      fontFamily: "ProximaNovaRegular",
-                      textColor: Styles().colors!.fillColorPrimary,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.thin"),
                       borderColor: Styles().colors!.white,
                       backgroundColor: Styles().colors!.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -1267,8 +1266,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Container(width: 16),
                   Expanded(flex: positiveButtonFlex, child: RoundedButton(
                     label: positiveButtonLabel ?? '',
-                    fontFamily: "ProximaNovaBold",
-                    textColor: Styles().colors!.fillColorPrimary,
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                     borderColor: Styles().colors!.white,
                     backgroundColor: Styles().colors!.white,
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),

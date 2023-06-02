@@ -229,10 +229,9 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               RoundedButton(
                 label: _continueButtonText ?? '',
                 hint: Localization().getStringEx("panel.pending_member_detail.button.add.hint", ""),
+                textStyle: _canContinue ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
                 backgroundColor: Styles().colors!.white,
                 borderColor: _canContinue? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                textColor: _canContinue? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                fontFamily: Styles().fontFamilies!.bold,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                 progress: _updating,
                 onTap: () {

@@ -146,9 +146,9 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
             RoundedButton(
               label: Localization().getStringEx("panel.group.detail.post.report_abuse.button.send.label", "Send"),
               hint: Localization().getStringEx("panel.group.detail.post.report_abuse.button.send.hint", "Tap to send report"),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: Styles().colors?.white,
               borderColor: Styles().colors?.fillColorSecondary,
-              textColor: Styles().colors?.fillColorPrimary,
               progress:  _sending,
               onTap: _onSend,
             ),

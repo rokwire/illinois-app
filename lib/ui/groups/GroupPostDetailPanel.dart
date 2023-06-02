@@ -245,10 +245,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                   Flexible(
                                       flex: 1,
                                       child: RoundedButton(
-                                          label:
-                                          Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
+                                          label: Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
+                                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                                           borderColor: Styles().colors!.fillColorSecondary,
-                                          textColor: Styles().colors!.fillColorPrimary,
                                           backgroundColor: Styles().colors!.white,
                                           onTap: _onTapUpdateMainPost)),
                                 ])
@@ -347,8 +346,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: (_editingReply != null) ?
                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
                           Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
                         onTap: _onTapSend)),
                 Container(width: 20),
@@ -358,8 +357,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: Localization().getStringEx(
                             'panel.group.detail.post.create.button.cancel.title',
                             'Cancel'),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors!.textSurface,
-                        textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
                         onTap: _onTapCancel))
               ])

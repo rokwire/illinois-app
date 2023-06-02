@@ -1324,8 +1324,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   Expanded(flex: leftAreaFlex, child: Container()),
                   Expanded(flex: negativeButtonFlex, child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                      fontFamily: "ProximaNovaRegular",
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large"),
                       borderColor: Styles().colors!.white,
                       backgroundColor: Styles().colors!.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -1336,8 +1335,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   Container(width: 16),
                   Expanded(flex: positiveButtonFlex, child: RoundedButton(
                     label: positiveButtonLabel ?? '',
-                    fontFamily: "ProximaNovaBold",
-                    textColor: Styles().colors!.fillColorPrimary,
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                     borderColor: Styles().colors!.white,
                     backgroundColor: Styles().colors!.white,
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
