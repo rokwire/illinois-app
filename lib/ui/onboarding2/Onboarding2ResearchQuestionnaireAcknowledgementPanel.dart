@@ -58,11 +58,10 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
         Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
           RoundedButton(
             label: Localization().getStringEx('dialog.OK.title', 'OK'),
-            fontSize: 16,
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             backgroundColor: Styles().colors!.white,
             borderColor: Styles().colors!.fillColorSecondaryVariant,
-            textColor: Styles().colors!.fillColorPrimary,
             onTap: () => _onContinue(context),
           ),
         )
