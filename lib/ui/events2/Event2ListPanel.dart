@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -131,7 +132,7 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
     List<Widget> cardsList = <Widget>[];
     for (Event2 event in _events!) {
       cardsList.add(Padding(padding: EdgeInsets.only(left: 16, right: 16, top: cardsList.isNotEmpty ? 8 : 0), child:
-        Event2Card(event),
+        Event2Card(event, onTap: () => _onEvent(event),),
       ),);
     }
     return RefreshIndicator(onRefresh: _onRefresh, child:
@@ -178,5 +179,9 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
 
   void _onMapView() {
 
+  }
+
+  void _onEvent(Event2 event) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,)));
   }
 }

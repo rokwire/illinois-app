@@ -259,7 +259,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   List<Widget>? get _onlineDetailWidget {
     return (widget.event.online == true) ? <Widget>[
-      _buildTextDetailWidget('Online', 'calendar')
+      _buildTextDetailWidget('Online', 'laptop')
     ] : null;
   }
 

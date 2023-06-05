@@ -282,6 +282,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeEventId                = "event_id";
   static const String   LogAttributeEventName              = "event_name";
   static const String   LogAttributeEventCategory          = "event_category";
+  static const String   LogAttributeEventAttributes        = "event_attributes";
   static const String   LogAttributeRecurrenceId           = "recurrence_id";
   static const String   LogAttributeDiningId               = "dining_id";
   static const String   LogAttributeDiningName             = "dining_name";
