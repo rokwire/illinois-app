@@ -107,9 +107,9 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                       hint: Localization().getStringEx(
                           'panel.onboarding.location.button.allow.hint',
                           ''),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.background,
-                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: () => _requestLocation(context),
                     ),
                     GestureDetector(

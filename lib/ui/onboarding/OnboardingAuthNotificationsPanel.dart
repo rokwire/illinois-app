@@ -113,11 +113,10 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                       RoundedButton(
                         label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
                         hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
-                        fontSize: 16,
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.white,
-                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: () => _onReceiveNotifications(context),
                       ),
                       GestureDetector(

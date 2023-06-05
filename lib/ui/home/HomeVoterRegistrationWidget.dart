@@ -155,7 +155,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
               )),
               Row(children: <Widget>[RoundedButton(
                 label: vbmButtonTitle ?? '',
-                textColor: Styles().colors!.fillColorPrimary,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.white,
                 contentWeight: 0.0,
@@ -280,7 +280,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
           if (ruleOption.value == 'vbm_no') { // Special case for showing two widgets
             optionWidgets.add(Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[RoundedButton(
               label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
-              textColor: Styles().colors!.fillColorPrimary,
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
               contentWeight: 0.0,
@@ -293,7 +293,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
           } else {
             optionWidgets.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[RoundedButton(
               label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
-              textColor: Styles().colors!.fillColorPrimary,
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
               contentWeight: 0.0,

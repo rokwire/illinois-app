@@ -177,11 +177,10 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                     RoundedButton(
                       label: Localization().getStringEx('panel.onboarding2.improve.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.improve.button.continue.hint', ''),
-                      fontSize: 16,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       backgroundColor: Styles().colors!.white,
                       borderColor: Styles().colors!.fillColorSecondaryVariant,
-                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: () => _goNext(context),
                     )
                   ],

@@ -107,7 +107,7 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
         child: Stack(alignment: Alignment.center, children: [
           RoundedButton(
             backgroundColor: Styles().colors!.fillColorPrimary,
-            textColor: Styles().colors!.white,
+            textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
             contentWeight: 0.73,
             borderColor: Styles().colors!.fillColorPrimary,
             label: Localization().getStringEx('panel.laundry.issues_contact_info.complete.button', 'Complete Request'),

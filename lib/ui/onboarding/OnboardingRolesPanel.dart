@@ -86,13 +86,11 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
           RoundedButton(
             label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Explore Illinois'),
             hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
+            textStyle: _allowNext ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat.secondary") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat.variant"),
             enabled: _allowNext,
             backgroundColor: (Styles().colors!.background),
             borderColor: (_allowNext
                 ? Styles().colors!.fillColorSecondary
-                : Styles().colors!.fillColorPrimaryTransparent03),
-            textColor: (_allowNext
-                ? Styles().colors!.fillColorPrimary
                 : Styles().colors!.fillColorPrimaryTransparent03),
             progress: _updating,
             onTap: () => _onExploreClicked()),

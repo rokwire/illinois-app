@@ -122,9 +122,9 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                 Container(height: 24,),
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.begin', "Begin Checklist"),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
-                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: () => _onTapContinue(analyticsAction: 'Begin Checklist'),
                 ),
                 Container(height: 16,),
@@ -150,9 +150,9 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                 Container(height: 24,),
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.review', "Review Checklist"),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
-                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: () => _onTapContinue(analyticsAction: 'Review Checklist'),
                 ),
                 Container(height: 16,),
@@ -178,9 +178,9 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                 Container(height: 24,),
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.continue', "Continue"),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
-                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: () => _onTapContinue(analyticsAction: 'Continue'),
                 ),
                 Container(height: 16,),

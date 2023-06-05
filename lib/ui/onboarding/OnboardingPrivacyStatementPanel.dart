@@ -141,9 +141,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
                         hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         backgroundColor: Styles().colors!.background,
                         borderColor: Styles().colors!.fillColorSecondaryVariant,
-                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: () => _goNext(context),
                       ),),
                   ],

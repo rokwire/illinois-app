@@ -280,6 +280,8 @@
     "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
     "widget.button.disabled.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "surfaceAccent"},
+    "widget.button.disabled.title.large.fat.variant": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimaryTransparent03"},
+    "widget.button.disabled.title.medium.fat.variant": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimaryTransparent03"},
 
     "widget.button.title.extra_large": { "font_family": "bold", "size": 26.0, "color": "fillColorPrimary"},
     "widget.button.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
@@ -295,7 +297,6 @@
     "widget.button.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium.fat.underline": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary", "height":  1.61},
-
     "widget.button.title.small": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.small.semi_bold": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
@@ -311,6 +312,7 @@
     "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textBackground",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
+    "widget.colourful_button.title.large.accent": { "font_family": "bold", "size": 12.0, "color": "white"},
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
     "widget.colourful_button.title": { "font_family": "medium", "size": 16.0, "color": "white"},
