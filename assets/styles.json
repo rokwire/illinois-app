@@ -490,6 +490,8 @@
     "panel.wellness.resource.button.title.large": {"extends": "widget.button.title.regular"},
     "panel.wellness.resource.button.title.regular": {"extends": "widget.button.title.medium.fat"},
 
+    "panel.wellness.sections.health_screener.description": {"font_family": "regular", "size": 16.0, "color": "surface"},
+
     "panel.athletics.home.heading.regular": {"font_family": "regular", "size": 16.0, "color": "white",  "weight" :  "w900", "letter_spacing" :  1.0},
     "panel.athletics.home.title.large": {"font_family": "regular", "size": 20.0, "color": "fillColorPrimary",  "weight" :  "w900"},
     "panel.athletics.home.detail.medium": {"extends": "widget.item.regular"},

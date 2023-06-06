@@ -1456,6 +1456,9 @@
 
     "panel.settings.home.assessments.skills_self_evaluation.save_results.label": "Guardar mis resultados para compararlos con resultados futuros",
     "panel.settings.home.assessments.skills_self_evaluation.save_progress.description": "El progreso de una evaluación que haya iniciado se guardará automáticamente hasta que la cancele o la complete.",
+    "panel.settings.home.assessments.skills_self_evaluation.title": "Autoevaluación de habilidades",
+
+    "panel.settings.home.assessments.health_screener.title": "Evaluador de salud",
 
     "panel.settings.privacy_center.label.title":"Centro de privacidad",
     "panel.settings.privacy_center.label.description":"Personalice sus preferencias de privacidad y datos.",
@@ -1876,15 +1879,23 @@
     "panel.wellness.sections.dimensions.title": "8 dimensiones del bienestar",
     "panel.wellness.sections.dimensions.hint": "Toca para ver las 8 Dimensiones del Bienestar",
 
-    "panel.wellness.sections.health_screener.label.screener.details.title": "Not feeling well? Use the Illinois Health Screener to help you find the right resources",
-    "panel.wellness.sections.health_screener.label.screener.details.text": "Your screening results are confidential unless you choose to share them",
-    "panel.wellness.sections.health_screener.button.take_screener.title": "Take the Screener",
-    "panel.wellness.sections.health_screener.label.screener.missing.title": "The Illinois Health Screener is currently unavailable. Please check back later.",
-    "panel.wellness.sections.health_screener.label.screener.title": "Screener",
+    "panel.wellness.sections.health_screener.label.screener.details.title": "¿No sentirse bien? Use el Illinois Health Screener para ayudarlo a encontrar los recursos correctos",
+    "panel.wellness.sections.health_screener.label.screener.details.text": "Los resultados de su evaluación son confidenciales a menos que elija compartirlos",
+    "panel.wellness.sections.health_screener.button.take_screener.title": "Tome el filtro",
+    "panel.wellness.sections.health_screener.label.screener.missing.title": "El Illinois Health Screener no está disponible actualmente. Por favor, vuelva más tarde.",
+    "panel.wellness.sections.health_screener.label.screener.title": "¿No sentirse bien?",
     "panel.wellness.sections.health_screener.label.history.title": "History",
     "panel.wellness.sections.health_screener.dropdown.filter.timeframe.title": "Time:",
     "panel.wellness.sections.health_screener.dropdown.filter.type.title": "Type:",
     "panel.wellness.sections.health_screener.offline.error.msg": "Illinois Health Screener no está disponible sin conexión.",
+    "panel.wellness.sections.health_screener.description.title": "Use el Illinois Health Screener para ayudarlo a encontrar los recursos correctos",
+    "panel.wellness.sections.health_screener.body.save.description": "Sus resultados se guardarán para que pueda revisarlos o compararlos con resultados futuros.",
+    "panel.wellness.sections.health_screener.body.dont_save.description": "Sus resultados no se guardarán para que los compare con resultados futuros.",
+    "panel.wellness.sections.health_screener.body.dont_save.label": "No guardar mis resultados",
+    "panel.wellness.sections.health_screener.body.save.label": "Guardar mis resultados",
+    "panel.wellness.sections.health_screener.label.screener.subtitle": "Encuentre los recursos adecuados",
+    "panel.wellness.sections.health_screener.history.clear": "Limpiar todo",
+    "panel.wellness.sections.health_screener.history.clear.confirm": "¿Seguro que quieres borrar tu historial?",
 
     "panel.wellness.sections.mental_health.video.title": "Salud mental",
 

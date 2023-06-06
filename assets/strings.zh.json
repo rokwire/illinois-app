@@ -1457,6 +1457,9 @@
 
 	"panel.settings.home.assessments.skills_self_evaluation.save_results.label": "保存我的結果以與未來的結果進行比較",
     "panel.settings.home.assessments.skills_self_evaluation.save_progress.description": "您開始的評估的進度將自動保存，直到您取消或完成它。",
+	"panel.settings.home.assessments.skills_self_evaluation.title": "技能自我評價",
+
+	"panel.settings.home.assessments.health_screener.title": "健康檢查員",
 
     "panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",
@@ -1882,11 +1885,19 @@
 	"panel.wellness.sections.health_screener.label.screener.details.text": "Your screening results are confidential unless you choose to share them",
 	"panel.wellness.sections.health_screener.button.take_screener.title": "Take the Screener",
 	"panel.wellness.sections.health_screener.label.screener.missing.title": "The Illinois Health Screener is currently unavailable. Please check back later.",
-	"panel.wellness.sections.health_screener.label.screener.title": "Screener",
+	"panel.wellness.sections.health_screener.label.screener.title": "感覺不好?",
 	"panel.wellness.sections.health_screener.label.history.title": "History",
 	"panel.wellness.sections.health_screener.dropdown.filter.timeframe.title": "Time:",
 	"panel.wellness.sections.health_screener.dropdown.filter.type.title": "Type:",
     "panel.wellness.sections.health_screener.offline.error.msg": "Illinois Health Screener 在離線時不可用。",
+	"panel.wellness.sections.health_screener.description.title": "使用 Illinois Health Screener 幫助您找到合適的資源",
+	"panel.wellness.sections.health_screener.body.save.description": "您的結果將被保存，以便您重新訪問或與未來的結果進行比較。",
+	"panel.wellness.sections.health_screener.body.dont_save.description": "您的結果將不會被保存，以便您與未來的結果進行比較。",
+	"panel.wellness.sections.health_screener.body.dont_save.label": "不要保存我的結果",
+	"panel.wellness.sections.health_screener.body.save.label": "保存我的結果",
+	"panel.wellness.sections.health_screener.label.screener.subtitle": "找到合適的資源",
+	"panel.wellness.sections.health_screener.history.clear": "全部清除",
+	"panel.wellness.sections.health_screener.history.clear.confirm": "您確定要清除歷史記錄嗎？",
 
     "panel.wellness.sections.mental_health.video.title": "精神健康",
 

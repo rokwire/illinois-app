@@ -1458,6 +1458,9 @@
 
     "panel.settings.home.assessments.skills_self_evaluation.save_results.label": "Save my results to compare to future results",
     "panel.settings.home.assessments.skills_self_evaluation.save_progress.description": "Progress on an evaluation that you started will be saved automatically until you cancel or complete it.",
+    "panel.settings.home.assessments.skills_self_evaluation.title": "Skills Self Evaluation",
+
+    "panel.settings.home.assessments.health_screener.title": "Health Screener",
 
     "panel.settings.privacy_center.label.title":"Privacy Center",
     "panel.settings.privacy_center.label.description":"Personalize your privacy and data preferences.",
@@ -1882,11 +1885,19 @@
     "panel.wellness.sections.health_screener.label.screener.details.text": "Your screening results are confidential unless you choose to share them.",
     "panel.wellness.sections.health_screener.button.take_screener.title": "Take the Screener",
     "panel.wellness.sections.health_screener.label.screener.missing.title": "The Illinois Health Screener is currently unavailable. Please check back later.",
-    "panel.wellness.sections.health_screener.label.screener.title": "Screener",
-    "panel.wellness.sections.health_screener.label.history.title": "History",
+    "panel.wellness.sections.health_screener.label.screener.title": "Not feeling well?",
+    "panel.wellness.sections.health_screener.label.history.title": "My Screener History",
     "panel.wellness.sections.health_screener.dropdown.filter.timeframe.title": "Time:",
     "panel.wellness.sections.health_screener.dropdown.filter.type.title": "Type:",
     "panel.wellness.sections.health_screener.offline.error.msg": "Illinois Health Screener is not available while offline.",
+    "panel.wellness.sections.health_screener.description.title": "Use the Illinois Health Screener to help you find the right resources",
+    "panel.wellness.sections.health_screener.body.save.description": "Your results will be saved for you to revisit or compare to future results.",
+    "panel.wellness.sections.health_screener.body.dont_save.description": "Your results will not be saved for you to compare to future results.",
+    "panel.wellness.sections.health_screener.body.dont_save.label": "Don't Save My Results",
+    "panel.wellness.sections.health_screener.body.save.label": "Save My Results",
+    "panel.wellness.sections.health_screener.label.screener.subtitle": "Find the right resources",
+    "panel.wellness.sections.health_screener.history.clear": "Clear All",
+    "panel.wellness.sections.health_screener.history.clear.confirm": "Are you sure you want to clear your history?",
 
     "panel.wellness.sections.mental_health.video.title": "Mental Health",
 
