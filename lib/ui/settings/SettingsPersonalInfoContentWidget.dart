@@ -507,9 +507,8 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return RoundedButton(
       label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
       hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
       backgroundColor: Styles().colors!.background,
-      fontSize: 16.0,
-      textColor: Styles().colors!.fillColorPrimary,
       borderColor: Styles().colors!.fillColorSecondary,
       onTap: _onSignOutClicked,
     );
@@ -519,10 +518,9 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return RoundedButton(
       label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
       hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
+       textStyle: _canSave ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
       enabled: _canSave,
       backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
-      fontSize: 16.0,
-      textColor: _canSave? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
       borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
       progress: _isSaving,
       onTap: _onSaveChangesClicked,
@@ -827,11 +825,9 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     RoundedButton(
         backgroundColor: Styles().colors!.white,
         borderColor: Styles().colors!.white,
-        textColor: UiColors.fromHex("#f54400"),
-        fontSize: 16,
-        fontFamily: Styles().fontFamilies!.regular,
         label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Delete My Account"),
         hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
+        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.thin.secondary"),
         borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
         onTap: _onTapDeleteData
       )

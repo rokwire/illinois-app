@@ -363,7 +363,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   Widget _buildVoteDoneButton(void Function() handler) {
     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
-        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),?.copyWith(color: _textColor)
+        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled")?.copyWith(color: _textColor),
         backgroundColor: _backgroundColor,
         borderColor: _doneButtonColor,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),

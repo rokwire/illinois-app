@@ -130,22 +130,18 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               child: RoundedButton(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.fat"),
                   rightIconPadding: EdgeInsets.symmetric(horizontal: 12),
                   borderColor: Styles().colors!.fillColorSecondary,
-                  textColor: Styles().colors!.fillColorPrimary,
                   leftIcon: Styles().images?.getImage('plus-dark', excludeFromSemantics: true),
-                  fontSize: 14,
-                  fontFamily: Styles().fontFamilies!.bold,
                   onTap: _onTapAddItem)),
           Container(width: 15),
           Flexible(
               flex: 3,
               child: RoundedButton(
                   label: Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.fat"),
                   borderColor: Styles().colors!.fillColorPrimary,
-                  textColor: Styles().colors!.fillColorPrimary,
-                  fontSize: 14,
-                  fontFamily: Styles().fontFamilies!.bold,
                   onTap: _onTapManageCategories))
         ]));
   }
@@ -156,11 +152,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         child: Padding(
             padding: EdgeInsets.only(top: 40),
             child: RoundedButton(
+                label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular"),
                 borderColor: Styles().colors!.fillColorPrimary,
                 contentWeight: 0.75,
                 padding: EdgeInsets.symmetric(vertical: 8),
-                fontSize: 18,
-                label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
                 onTap: _onTapClearCompletedItems)));
   }
 

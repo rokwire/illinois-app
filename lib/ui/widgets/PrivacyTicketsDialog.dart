@@ -153,10 +153,9 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                         RoundedButton(
                           label: Localization().getStringEx("widget.privacy_tickets_modal.button.continue.label", "Continue to buy tickets"),
                           hint: Localization().getStringEx("widget.privacy_tickets_modal.button.continue.hint", ""),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                           backgroundColor: Colors.white,
-                          fontSize: 16,
                           borderColor: Styles().colors!.fillColorSecondary,
-                          textColor: Styles().colors!.fillColorPrimary,
                           onTap: () {
                             Analytics().logAlert(text: "Buy Tickets Privacy Alert", selection: "Continue");
                             _closeModal();
@@ -176,10 +175,9 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                         RoundedButton(
                           label: Localization().getStringEx("widget.privacy_tickets_modal.button.change_privacy.label", "Change my settings"),
                           hint: Localization().getStringEx("widget.privacy_tickets_modal.button.change_privacy.hint", ""),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                           backgroundColor: Colors.white,
-                          fontSize: 16,
                           borderColor: Styles().colors!.fillColorSecondary,
-                          textColor: Styles().colors!.fillColorPrimary,
                           onTap: () {
                             _onTapChangePrivacySettings();
                           },

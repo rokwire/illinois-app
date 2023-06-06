@@ -530,11 +530,11 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                 Container(height: 32),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                   Expanded(child:
-                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary, textColor: Styles().colors!.fillColorPrimary,),
+                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary,),
                   ),
                   Container(width: 8, ),
                   Expanded(child:
-                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant, textColor: Styles().colors!.surface, ),
+                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat.variant2"), backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant),
                   ),
                 ],)
               ],)

@@ -583,9 +583,8 @@ class _SettingsAddIlliniCashPanelState
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.cancel.hint',
                                               ''),
+                                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                                           backgroundColor: Styles().colors!.white,
-                                          fontSize: 16.0,
-                                          textColor: Styles().colors!.fillColorPrimary,
                                           borderColor: Styles().colors!.fillColorPrimary,
                                           onTap: () {
                                             Analytics().logSelect(target: "Cancel");
@@ -604,9 +603,8 @@ class _SettingsAddIlliniCashPanelState
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.submit.hint',
                                               ''),
+                                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                                           backgroundColor: Styles().colors!.white,
-                                          fontSize: 16.0,
-                                          textColor: Styles().colors!.fillColorPrimary,
                                           borderColor: Styles().colors!.fillColorSecondary,
                                           onTap: _onSubmitIlliniCash,
                                         ),

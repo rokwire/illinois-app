@@ -215,9 +215,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               RoundedButton(
                 label: Localization().getStringEx('panel.settings.illini_cash.button.log_in.title', 'Sign in to View'),
                 hint: Localization().getStringEx('panel.settings.illini_cash.button.log_in.hint', ''),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                 backgroundColor: Styles().colors!.white,
-                fontSize: 16.0,
-                textColor: Styles().colors!.fillColorPrimary,
                 textAlign: TextAlign.center,
                 borderColor: Styles().colors!.fillColorSecondary,
                 onTap: _onTapLogIn,
@@ -263,9 +262,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                           'Add Illini Cash'),
                       hint: Localization().getStringEx(
                           'panel.settings.illini_cash.button.add_cash.hint', ''),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                       backgroundColor: Styles().colors!.white,
-                      fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.fillColorSecondary,
                       onTap: _onAddIlliniCashTapped,
                     ),
@@ -360,13 +358,12 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
             Expanded(child: RoundedButton(
-              textColor: Styles().colors!.fillColorPrimary,
               label: Localization().getStringEx('panel.settings.illini_cash.button.view_history.title', 'View History'),
               hint: Localization().getStringEx('panel.settings.illini_cash.button.view_history.hint', ''),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
               borderColor: Styles().colors!.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              fontSize: 16,
               onTap: _onTapViewHistory,)),
           ],)
       ],),);

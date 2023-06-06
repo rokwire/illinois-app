@@ -280,9 +280,8 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           hint: Localization().getStringEx(
               'panel.settings.meal_plan.button.login_to_view_meal_plan.hint',
               ''),
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
           backgroundColor: Styles().colors!.white,
-          fontSize: 16.0,
-          textColor: Styles().colors!.fillColorPrimary,
           borderColor: Styles().colors!.fillColorSecondary,
           onTap: _onTapLogIn,
         ),
@@ -346,12 +345,11 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
             Expanded(child: RoundedButton(
-              textColor: Styles().colors!.fillColorPrimary,
               label: Localization().getStringEx('panel.settings.meal_plan.button.view_history.title', 'View History'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.view_history.hint', ''),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
               borderColor: Styles().colors!.fillColorSecondary,
-              fontSize: 16,
               onTap: _onTapViewHistory,)),
           ],)
         ],),);

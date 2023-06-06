@@ -93,9 +93,9 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
                 RoundedButton(
                   label:  Localization().getStringEx("panel.onboarding.confirm_phone.button.confirm.label", "Confirm phone number"),
                   hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.confirm.hint", ""),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapConfirm,
                   backgroundColor: Styles().colors?.white,
-                  textColor: Styles().colors?.fillColorPrimary,
                   borderColor: Styles().colors?.fillColorSecondary,
                   progress: _isConfirming,
                 ),
@@ -104,9 +104,9 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
                     RoundedButton(
                       label:  Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.label", "Cancel"),
                       hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       onTap: _onTapCancel,
                       backgroundColor: Styles().colors?.white,
-                      textColor: Styles().colors?.fillColorPrimary,
                       borderColor: Styles().colors?.fillColorSecondary,
                       progress: _isCanceling,
                     ),
