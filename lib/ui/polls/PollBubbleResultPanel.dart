@@ -191,10 +191,8 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
   Widget _buildResultsDoneButton() {
     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
         label: 'Done',
+        textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.accent"),
         backgroundColor: Styles().colors!.fillColorPrimary,
-//        height: 42,
-        fontSize: 16.0,
-        textColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
         padding: EdgeInsets.symmetric(horizontal: 24),
         onTap: () { _onResultsDone(); })       
@@ -217,10 +215,8 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
     return Padding(padding: EdgeInsets.only(top: 20, left: 50, right: 50), child:
       RoundedButton(
         label: Localization().getStringEx('panel.poll_prompt.button.view_poll_results.title', 'View poll results'),
+        textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.accent"),
         backgroundColor: Styles().colors!.fillColorPrimary,
-//        height: 42,
-        fontSize: 16.0,
-        textColor: Styles().colors!.white,
         borderColor: Styles().colors!.fillColorSecondary,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         onTap: () { _onViewResults(); }

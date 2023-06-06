@@ -375,9 +375,9 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                     child:
                       RoundedButton(
                         label: Localization().getStringEx("panel.create_stadium_poll.setting.button.save.title", "Save"),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorPrimary,
-                        textColor: Styles().colors!.fillColorPrimary,
                         progress: (_progressPollStatus == PollStatus.created),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.created);
@@ -391,9 +391,9 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                     child:
                       RoundedButton(
                         label: Localization().getStringEx("panel.create_stadium_poll.setting.start.preview.title", "Start poll!"),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         backgroundColor: Colors.white,
                         borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
                         progress: (_progressPollStatus == PollStatus.opened),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.opened);

@@ -312,7 +312,7 @@
     "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textBackground",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
-    "widget.colourful_button.title.large.accent": { "font_family": "bold", "size": 12.0, "color": "white"},
+    "widget.colourful_button.title.large.accent": { "font_family": "bold", "size": 20.0, "color": "white"},
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
     "widget.colourful_button.title": { "font_family": "medium", "size": 16.0, "color": "white"},
