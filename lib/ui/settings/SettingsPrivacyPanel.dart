@@ -630,8 +630,8 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
         decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
         padding: EdgeInsets.symmetric(horizontal: 0),
         child: Theme(data: ThemeData(/*accentColor: Styles().colors!.white,*/
+            /*backgroundColor: Styles().colors!.white,*/
             dividerColor: Colors.white,
-            backgroundColor: Styles().colors!.white,
             ),
             child: ExpansionTile(
               key: expansionTileKey,

@@ -72,27 +72,27 @@ class RecentItem {
     if(item is Event) {
       return RecentItem(
           type: RecentItemType.event,
-          id: item.exploreId,
-          title: item.exploreTitle,
-          descripton: item.shortDescription,
+          id: item.id,
+          title: item.title,
+          descripton: item.description,
           time: item.isRecurring ? item.displayRecurringDates : item.displayDateTime,
           sourceJson: item.toJson()
       );
     } else if(item is Dining) {
       return RecentItem(
           type: RecentItemType.dining,
-          id: item.exploreId,
-          title: item.exploreTitle,
-          descripton: item.shortDescription,
+          id: item.id,
+          title: item.title,
+          descripton: item.description,
           time: item.displayWorkTime,
           sourceJson: item.toJson()
       );
     } else if(item is Game) {
       return RecentItem(
           type: RecentItemType.game,
-          id: item.exploreId,
+          id: item.id,
           title: item.title,
-          descripton: item.shortDescription,
+          descripton: item.description,
           time: item.displayTime,
           sourceJson: item.jsonData
       );

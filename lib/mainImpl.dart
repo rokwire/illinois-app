@@ -62,7 +62,6 @@ import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
-import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -89,80 +88,78 @@ final AppExitListener appExitListener = AppExitListener();
 
 void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
-  // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
-  WidgetsFlutterBinding.ensureInitialized();
-
-  String? platformVersion = await RokwirePlugin.platformVersion;
-  Log.d("RokwirePlugin.platformVersion: $platformVersion");
-
-  NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
-
-  illinois.Services().create([
-    // Add highest priority services at top
-
-    FirebaseCore(),
-    FirebaseCrashlytics(),
-    AppLivecycle(),
-    Connectivity(),
-    LocationServices(),
-
-    Storage(),
-
-    Config(defaultEnvironment: configEnvironment),
-    AppDateTime(),
-    NativeCommunicator(),
-    DeepLink(),
-    HttpProxy(),
-
-    Auth2(),
-    Localization(),
-    Styles(),
-    Content(),
-    Analytics(),
-    FirebaseMessaging(),
-    LocalNotifications(),
-    Sports(),
-    LiveStats(),
-    RecentItems(),
-    Dinings(),
-    IlliniCash(),
-    FlexUI(),
-    Onboarding(),
-    Polls(),
-    GeoFence(),
-    Guide(),
-    Inbox(),
-    DeviceCalendar(),
-    Events(),
-    Groups(),
-    CheckList(CheckList.giesOnboarding),
-    CheckList(CheckList.uiucOnboarding),
-    Canvas(),
-    Rewards(),
-    OnCampus(),
-    Wellness(),
-    WellnessRings(),
-    WPGUFMRadio(),
-    AppReview(),
-    StudentCourses(),
-    Appointments(),
-    MTD(),
-    SpeechToText(),
-  ]);
-  
-  ServiceError? serviceError = await illinois.Services().init();
-
-  //_testSecretKeys();
-
-  // do not show the red error widget when release mode
-  if (kReleaseMode) {
-    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
-  }
-
-  // Log app create analytics event
-  Analytics().logLivecycle(name: Analytics.LogLivecycleEventCreate);
-
   runZonedGuarded(() async {
+
+    // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
+    WidgetsFlutterBinding.ensureInitialized();
+
+    NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
+
+    illinois.Services().create([
+      // Add highest priority services at top
+
+      FirebaseCore(),
+      FirebaseCrashlytics(),
+      AppLivecycle(),
+      Connectivity(),
+      LocationServices(),
+
+      Storage(),
+
+      Config(defaultEnvironment: configEnvironment),
+      AppDateTime(),
+      NativeCommunicator(),
+      DeepLink(),
+      HttpProxy(),
+
+      Auth2(),
+      Localization(),
+      Styles(),
+      Content(),
+      Analytics(),
+      FirebaseMessaging(),
+      LocalNotifications(),
+      Sports(),
+      LiveStats(),
+      RecentItems(),
+      Dinings(),
+      IlliniCash(),
+      FlexUI(),
+      Onboarding(),
+      Polls(),
+      GeoFence(),
+      Guide(),
+      Inbox(),
+      DeviceCalendar(),
+      Events(),
+      Groups(),
+      CheckList(CheckList.giesOnboarding),
+      CheckList(CheckList.uiucOnboarding),
+      Canvas(),
+      Rewards(),
+      OnCampus(),
+      Wellness(),
+      WellnessRings(),
+      WPGUFMRadio(),
+      AppReview(),
+      StudentCourses(),
+      Appointments(),
+      MTD(),
+      SpeechToText(),
+    ]);
+
+    ServiceError? serviceError = await illinois.Services().init();
+
+    //_testSecretKeys();
+
+    // do not show the red error widget when release mode
+    if (kReleaseMode) {
+      ErrorWidget.builder = (FlutterErrorDetails details) => Container();
+    }
+
+    // Log app create analytics event
+    Analytics().logLivecycle(name: Analytics.LogLivecycleEventCreate);
+
     runApp(App(initializeError: serviceError));
   }, FirebaseCrashlytics().handleZoneError);
 }

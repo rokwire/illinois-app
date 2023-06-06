@@ -30,13 +30,13 @@ class XmlUtils {
   static String? childText(XmlNode? xmlNode, String name, {String? namespace}) {
     XmlElement? childElement = child(xmlNode, name, namespace: namespace);
     XmlNode? childElementNode = (childElement?.children.length == 1) ? childElement?.children.first : null;
-    return (childElementNode?.nodeType == XmlNodeType.TEXT) ? childElementNode?.text : null;
+    return (childElementNode?.nodeType == XmlNodeType.TEXT) ? childElementNode?.innerText : null;
   }
 
   static String? childCdata(XmlNode? xmlNode, String name, {String? namespace}) {
     XmlElement? childElement = child(xmlNode, name, namespace: namespace);
     XmlNode? childElementNode = (childElement?.children.length == 1) ? childElement?.children.first : null;
-    return (childElementNode?.nodeType == XmlNodeType.CDATA) ? childElementNode?.text : null;
+    return (childElementNode?.nodeType == XmlNodeType.CDATA) ? childElementNode?.innerText : null;
   }
 }
 

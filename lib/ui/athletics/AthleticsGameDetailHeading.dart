@@ -172,11 +172,11 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                               style: Styles().textStyles?.getTextStyle("widget.heading.huge.extra_fat"),
                             ),
                           ),
-                          (!StringUtils.isEmpty(widget.game?.longDescription)
+                          (!StringUtils.isEmpty(widget.game?.description)
                               ? Padding(
                                   padding: EdgeInsets.symmetric(vertical: 16),
                                   child: Text(
-                                    widget.game?.longDescription ?? '',
+                                    widget.game?.description ?? '',
                                     textAlign: TextAlign.left,
                                     style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.fat.variant")
                                   ),

@@ -90,7 +90,7 @@ extension FavoriteExt on Favorite {
       return (this as InboxMessage).body;
     }
     else if (this is ExplorePOI) {
-      return (this as ExplorePOI).exploreLocationDescription;
+      return (this as ExplorePOI).location?.displayCoordinates;
     }
     else if (this is Appointment) {
       return (this as Appointment).displayShortScheduleTime;
