@@ -1122,6 +1122,8 @@
 
 	"panel.events2_list.header.title": "Events",
 
+	"panel.events2_filters.header.title": "Event Filters",
+
 	"panel.settings.manage_interests.instructions.format": "點按 {{check_mark_icon}} 以關注您最感興趣的標籤",
 	"panel.settings.manage_interests.list.following":"关注对象",
 	"panel.settings.manage_interests.list.all_tags":"所有标签",

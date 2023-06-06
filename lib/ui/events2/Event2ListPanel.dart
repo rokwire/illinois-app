@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2FiltersPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -14,6 +15,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class Event2ListPanel extends StatefulWidget {
   static final String routeName = 'Event2ListPanel';
+
+  final Map<String, dynamic>? attributes;
+  Event2ListPanel({Key? key, this.attributes}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2ListPanelState();
@@ -29,8 +33,12 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
   List<Event2>? _events;
   final int eventsPageLength = 12;
 
+  late Map<String, dynamic> _attributes ;
+
   @override
   void initState() {
+    _attributes = widget.attributes ?? <String, dynamic>{};
+
     _loadingEvents = true;
     Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength)).then((List<Event2>? events) {
       setStateIfMounted(() {
@@ -162,7 +170,7 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
   }
 
   void _onFilters() {
-    
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2FiltersPanel(_attributes)));
   }
 
   void _onSort() {

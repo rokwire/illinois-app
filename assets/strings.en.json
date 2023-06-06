@@ -1123,6 +1123,8 @@
 
     "panel.events2_list.header.title": "Events",
 
+    "panel.events2_filters.header.title": "Event Filters",
+
     "panel.settings.manage_interests.instructions.format": "Tap the {{check_mark_icon}} to follow the tags that interest you most",
     "panel.settings.manage_interests.list.following": "FOLLOWING",
     "panel.settings.manage_interests.list.all_tags":"ALL TAGS",

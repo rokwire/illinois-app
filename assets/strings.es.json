@@ -1121,6 +1121,8 @@
 
     "panel.events2_list.header.title": "Events",
 
+    "panel.events2_filters.header.title": "Event Filters",
+
     "panel.settings.manage_interests.instructions.format": "Toca el {{check_mark_icon}} para seguir las etiquetas que más te interesen",
     "panel.settings.manage_interests.list.following":"SIGUIENTE",
     "panel.settings.manage_interests.list.all_tags":"TODAS LAS ETIQUETAS",

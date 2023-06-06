@@ -76,7 +76,7 @@ class Event2FilterCommandButton extends StatelessWidget {
         Container(decoration: contentDecoration ?? defaultContentDecoration, child:
           Padding(padding: contentPadding, child:
             //Row(mainAxisSize: MainAxisSize.min, children: contentList,),
-            Wrap(children: contentList,)
+            Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: contentList,)
           ),
         ),
       ),
