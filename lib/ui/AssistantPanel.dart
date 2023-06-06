@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Assistant.dart';
+import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/SpeechToText.dart';
@@ -33,6 +34,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
 
   List<Message> _messages = [];
 
+  bool _loadingResponse = false;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -49,17 +52,17 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
             "Type a question below to get started."),
         user: false));
 
-    _messages.add(Message(content: Localization().getStringEx('',
-        "Where can I find out more about the resources available on campus?"),
-        user: true,
-    ));
+    // _messages.add(Message(content: Localization().getStringEx('',
+    //     "Where can I find out more about the resources available on campus?"),
+    //     user: true,
+    // ));
 
-    _messages.add(Message(content: Localization().getStringEx('',
-        "There are many resources available for students on campus. "
-            "Try checking out the Campus Guide for more information."),
-        user: false,
-        link: Link(name: "Campus Guide", link: '${DeepLink().appUrl}/guide',
-            iconKey: 'guide')));
+    // _messages.add(Message(content: Localization().getStringEx('',
+    //     "There are many resources available for students on campus. "
+    //         "Try checking out the Campus Guide for more information."),
+    //     user: false,
+    //     link: Link(name: "Campus Guide", link: '${DeepLink().appUrl}/guide',
+    //         iconKey: 'guide')));
 
     _messages.add(Message(content: Localization().getStringEx('',
         "What's for dinner at my dining hall today?"),
@@ -139,6 +142,11 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       contentList.add(SizedBox(height: 16.0));
     }
 
+    if (_loadingResponse) {
+      contentList.add(_buildChatBubble(Message(content: '...', user: false), hideFeedback: true));
+      contentList.add(SizedBox(height: 16.0));
+    }
+
     return contentList;
   }
 
@@ -157,10 +165,22 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildChatBubble(Message message) {
+  Widget _buildChatBubble(Message message, {bool hideFeedback = false}) {
     EdgeInsets bubblePadding = message.user ? const EdgeInsets.only(left: 32.0) :
       const EdgeInsets.only(right: 0);
     Link? link = message.link;
+
+    List<Widget> sourceLinks = [];
+    for (String source in message.sources) {
+      Uri? uri = Uri.tryParse(source);
+      if (uri != null) {
+        sourceLinks.add(Material(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Text(uri.host),
+        ));
+      }
+    }
+
     return Align(
       alignment: message.user ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +221,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                   ),
                 ),
                 Visibility(
-                  visible: !message.user,
+                  visible: !message.user && !hideFeedback,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.center,
                     children: [// TODO: Handle material icons in styles images
                       IconButton(onPressed: () {
@@ -339,13 +359,22 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     );
   }
 
-  void _submitMessage(String message) {
+  Future<void> _submitMessage(String message) async {
     setState(() {
       if (message.isNotEmpty) {
         _messages.add(Message(content: message, user: true));
       }
       _inputController.text = '';
+      _loadingResponse = true;
     });
+
+    Message? response = await Assistant().sendQuery(message);
+    if (response != null && mounted) {
+      setState(() {
+        _messages.add(response);
+        _loadingResponse = false;
+      });
+    }
   }
 
   void _startListening() {

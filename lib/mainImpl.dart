@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -146,6 +147,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Appointments(),
       MTD(),
       SpeechToText(),
+      Assistant(),
     ]);
 
     ServiceError? serviceError = await illinois.Services().init();

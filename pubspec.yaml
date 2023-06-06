@@ -58,7 +58,7 @@ dependencies:
   confetti: ^0.7.0
   flutter_colorpicker: ^1.0.3
   in_app_review: ^2.0.4
-# speech_to_text: ^6.1.1
+  speech_to_text: ^6.1.1
 # google_maps_flutter: ^2.2.5
 
   rokwire_plugin:
