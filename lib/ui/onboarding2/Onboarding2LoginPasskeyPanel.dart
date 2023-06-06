@@ -17,14 +17,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -40,11 +38,8 @@ class Onboarding2LoginPasskeyPanel extends StatefulWidget with OnboardingPanel {
 }
 
 class _Onboarding2LoginPasskeyPanelState extends State<Onboarding2LoginPasskeyPanel> implements Onboarding2ProgressableState {
-
-  static final Color _successColor = Colors.green.shade800;
   static final Color _errorColor = Colors.red.shade700;
-  static final Color? _messageColor = Styles().colors!.fillColorPrimary;
-  
+
   TextEditingController _usernameController = TextEditingController();
   FocusNode _usernameFocusNode = FocusNode();
   TextEditingController _nameController = TextEditingController();

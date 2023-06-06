@@ -224,6 +224,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAuthLoginNetIdActionName        = "login_netid";
   static const String   LogAuthLoginPhoneActionName        = "login_phone";
   static const String   LogAuthLoginEmailActionName        = "login_email";
+  static const String   LogAuthLoginPasskeyActionName      = "login_passkey";
   static const String   LogAuthLogoutActionName            = "logout";
   static const String   LogAuthResult                      = "result";
 
@@ -946,6 +947,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
         case Auth2LoginType.apiKey:
         case Auth2LoginType.anonymous:    break;
+        case Auth2LoginType.passkey:      action = LogAuthLoginPasskeyActionName; break;
       }
     }
 
