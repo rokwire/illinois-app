@@ -440,15 +440,15 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventDescription() {
-    String? longDescription = _event!.exploreLongDescription;
-    bool showDescription = StringUtils.isNotEmpty(longDescription);
+    String? description = _event!.description;
+    bool showDescription = StringUtils.isNotEmpty(description);
     if (!showDescription) {
       return Container();
     }
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
-            StringUtils.ensureNotEmpty(longDescription),
+            StringUtils.ensureNotEmpty(description),
             onTapUrl : (url) {_launchUrl(url, context: context); return true;},
             textStyle: Styles().textStyles?.getTextStyle("widget.info.regular")
         ));

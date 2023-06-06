@@ -39,8 +39,8 @@ extension EventExt on Event {
   }
 
   Map<String, dynamic>? get analyticsAttributes => {
-    Analytics.LogAttributeEventId: exploreId,
-    Analytics.LogAttributeEventName: exploreTitle,
+    Analytics.LogAttributeEventId: id,
+    Analytics.LogAttributeEventName: title,
     Analytics.LogAttributeEventCategory: category,
     Analytics.LogAttributeRecurrenceId: recurrenceId,
     Analytics.LogAttributeLocation : location?.analyticsValue,

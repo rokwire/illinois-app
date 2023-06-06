@@ -123,17 +123,13 @@ class ExplorePOI with Explore implements Favorite {
   // Explore
   @override String?   get exploreId               => toString();
   @override String?   get exploreTitle            => StringUtils.isNotEmpty(name) ? name : Localization().getStringEx("panel.explore.item.location.name", "Location");
-  @override String?   get exploreSubTitle         => null;
-  @override String?   get exploreShortDescription => null;
-  @override String?   get exploreLongDescription  => null;
-  @override DateTime? get exploreStartDateUtc     => null;
+  @override String?   get exploreDescription      => null;
+  @override DateTime? get exploreDateTimeUtc      => null;
   @override String?   get exploreImageURL         => null;
-  @override String?   get explorePlaceId          => null;
   @override ExploreLocation? get exploreLocation  => location;
-  @override String?   get exploreLocationDescription => location?.displayCoordinates;
 
   // Favorite
   static const String favoriteKeyName = "poiLocations";
   @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => exploreId;
+  @override String? get favoriteId => toString();
 }

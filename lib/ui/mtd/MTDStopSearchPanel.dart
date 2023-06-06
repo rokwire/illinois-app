@@ -244,7 +244,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
   }
 
   void _scrollListener() {
-    if (WidgetsBinding.instance.window.viewInsets.bottom > 0.0) {
+    if (View.of(context).viewInsets.bottom > 0.0) {
       FocusScope.of(context).requestFocus(FocusNode());
     }
   }

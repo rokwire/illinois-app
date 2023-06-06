@@ -153,7 +153,6 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                                                           _exploreTitle(),
                                                           _eventSponsor(),
                                                           _exploreDetails(),
-                                                          _exploreSubTitle(),
                                                           _exploreContacts()
                                                         ])),
                                                       Container(
@@ -532,19 +531,6 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     return null;
   }
 
-  Widget _exploreSubTitle() {
-    String? subTitle = widget.event?.exploreSubTitle;
-    if (StringUtils.isEmpty(subTitle)) {
-      return Container();
-    }
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          subTitle!,
-          style: Styles().textStyles?.getTextStyle("widget.item.large")
-        ));
-  }
-
   Widget _exploreContacts() {
     if (CollectionUtils.isEmpty(widget.event?.contacts)) {
       return Container();
@@ -584,13 +570,13 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _exploreDescription() {
-    String? longDescription = widget.event!.exploreLongDescription;
-    bool showDescription = StringUtils.isNotEmpty(longDescription);
+    String? description = widget.event!.description;
+    bool showDescription = StringUtils.isNotEmpty(description);
     if (!showDescription) {
       return Container();
     }
     // Html widget does not handle line breaks symbols \r\n. Replace them with <br/> so that they are properly shown in event description. #692
-    String updatedDesc = longDescription!.replaceAll('\r\n', '<br/>');
+    String updatedDesc = description!.replaceAll('\r\n', '<br/>');
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(

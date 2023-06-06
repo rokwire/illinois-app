@@ -58,13 +58,7 @@ class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWid
     if (CollectionUtils.isEmpty(explores)) {
       return;
     }
-    explores!.sort((Explore first, Explore second) {
-      if (first.exploreStartDateUtc == null || second.exploreStartDateUtc == null) {
-        return 0;
-      } else {
-        return (first.exploreStartDateUtc!.isBefore(second.exploreStartDateUtc!)) ? -1 : 1;
-      }
-    });
+    explores?.sort();
   }
 
   @override

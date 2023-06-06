@@ -36,16 +36,17 @@ class WellnessBuilding with Explore {
     return (resulHtml != null) ? StringUtils.stripHtmlTags(resulHtml) : null;
   }
 
+  String? get id => Guide().entryId(guideEntry);
+  String? get title => _guideMapTitle ?? building.name;
+  String? get detail => _guideMapDescription ?? building.address1;
+
   // Explore implementation
 
-  @override String? get exploreId => Guide().entryId(guideEntry);
-  @override String? get exploreTitle => _guideMapTitle ?? building.name;
-  @override String? get exploreSubTitle => _guideMapDescription ?? building.address1;
-  @override String? get exploreShortDescription => null;
-  @override String? get exploreLongDescription => null;
-  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreId => id;
+  @override String? get exploreTitle => title;
+  @override String? get exploreDescription => null;
+  @override DateTime? get exploreDateTimeUtc => null;
   @override String? get exploreImageURL => null; //TMP: imageURL;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => ExploreLocation(
     building : _guideMapTitle ?? building.name,
     description: _guideMapDescription ?? building.fullAddress,

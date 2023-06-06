@@ -225,14 +225,6 @@ class Game with Explore implements Favorite {
     }
   }
 
-  String? get shortDescription {
-    return description;
-  }
-
-  String? get longDescription {
-    return description;
-  }
-
   String? get newsTitle {
     return links?.preGame?.text;
   }
@@ -269,12 +261,9 @@ class Game with Explore implements Favorite {
 
   @override String? get exploreId => id;
   @override String? get exploreTitle => title;
-  @override String? get exploreSubTitle => null;
-  @override String? get exploreShortDescription => shortDescription;
-  @override String? get exploreLongDescription => longDescription;
-  @override DateTime? get exploreStartDateUtc => dateTimeUtc;
+  @override String? get exploreDescription => description;
+  @override DateTime? get exploreDateTimeUtc => dateTimeUtc;
   @override String? get exploreImageURL => imageUrl;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => _exploreLocation;
 
   ////////////////////////////

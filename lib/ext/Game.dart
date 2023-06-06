@@ -12,8 +12,8 @@ extension GameExt on Game {
   }
 
   Map<String, dynamic>? get analyticsAttributes => {
-    Analytics.LogAttributeGameId: exploreId,
-    Analytics.LogAttributeGameName: exploreTitle,
+    Analytics.LogAttributeGameId: id,
+    Analytics.LogAttributeGameName: title,
     Analytics.LogAttributeLocation : location?.location,
   };
 
