@@ -13,12 +13,19 @@ class Message {
     this.link, this.sources = const [], this.feedback, this.feedbackExplanation});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
+    List<String>? sources = JsonUtils.stringListValue(json['sources']);
+    if (sources == null) {
+      String? source = JsonUtils.stringValue(json['sources']);
+      if (source != null) {
+        sources = [source];
+      }
+    }
     return Message(
-      content: JsonUtils.stringValue(json['answer']) ?? '',
+      content: JsonUtils.stringValue(json['answer'])?.trim() ?? '',
       user: JsonUtils.boolValue(json['user']) ?? false,
       example: JsonUtils.boolValue(json['example']) ?? false,
       link: null,
-      sources: JsonUtils.stringListValue(json['sources']) ?? [],
+      sources: sources ?? [],
       feedback: null,
       feedbackExplanation: null,
     );

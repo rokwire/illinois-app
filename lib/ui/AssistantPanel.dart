@@ -8,6 +8,7 @@ import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -49,7 +50,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     _messages.add(Message(content: Localization().getStringEx('',
         "Hey there! I'm the Illinois Assistant. "
             "You can ask me anything about the University. "
-            "Type a question below to get started."),
+            "Type a question below to get started.",),
+        // sources: ["https://google.com", "https://illinois.edu", "https://grad.illinois.edu", "https://uillinois.edu"],
         user: false));
 
     // _messages.add(Message(content: Localization().getStringEx('',
@@ -65,7 +67,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     //         iconKey: 'guide')));
 
     _messages.add(Message(content: Localization().getStringEx('',
-        "What's for dinner at my dining hall today?"),
+        "How many students attend UIUC?"),
       user: true,
       example: true
     ));
@@ -143,7 +145,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     }
 
     if (_loadingResponse) {
-      contentList.add(_buildChatBubble(Message(content: '...', user: false), hideFeedback: true));
+      contentList.add(_buildTypingChatBubble());
       contentList.add(SizedBox(height: 16.0));
     }
 
@@ -155,19 +157,20 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       color: Styles().colors?.fillColorPrimary,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Flexible(child: Text(Localization().getStringEx('',
+        child: Text(Localization().getStringEx('',
             'This is an experimental feature which may present inaccurate results. '
                 'Please verify all information with official University sources. '
                 'Your input will be recorded to improve the quality of results.'),
           style: Styles().textStyles?.getTextStyle('widget.title.light.regular')
-        )),
+        ),
       ),
     );
   }
 
-  Widget _buildChatBubble(Message message, {bool hideFeedback = false}) {
+  Widget _buildChatBubble(Message message) {
     EdgeInsets bubblePadding = message.user ? const EdgeInsets.only(left: 32.0) :
       const EdgeInsets.only(right: 0);
+
     Link? link = message.link;
 
     List<Widget> sourceLinks = [];
@@ -175,92 +178,146 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       Uri? uri = Uri.tryParse(source);
       if (uri != null) {
         sourceLinks.add(Material(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Text(uri.host),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Styles().colors?.fillColorSecondary ?? Colors.white, width: 1),
+          ),
+          color: Styles().colors?.fillColorPrimaryVariant,
+          child: InkWell(
+            onTap: () => _onTapSourceLink(source),
+            borderRadius: BorderRadius.circular(16.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: Text(uri.host, style: Styles().textStyles?.getTextStyle('widget.title.light.small')),
+            )
+          ),
         ));
       }
     }
 
-    return Align(
-      alignment: message.user ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: bubblePadding,
-            child: Row(mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Opacity(
-                    opacity: message.example ? 0.5 : 1.0,
-                    child: Material(
-                      color: message.user ? message.example ? Styles().colors?.background : Styles().colors?.surface : Styles().colors?.fillColorPrimary,
-                      borderRadius: BorderRadius.circular(16.0),
-                      child: InkWell(
-                        onTap: message.example ? () {
-                          setState(() {
-                            _messages.remove(message);
-                            _messages.add(Message(content: message.content, user: true));
-                          });
-                        } : null,
-                        child: Container(
-                          decoration: message.example ? BoxDecoration(borderRadius: BorderRadius.circular(16.0),
-                              border: Border.all(color: Styles().colors?.fillColorPrimary ?? Colors.black)) : null,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: message.example ?
-                              Text(Localization().getStringEx('', "eg. ") + message.content,
+    return Column(crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: bubblePadding,
+          child: Row(mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: message.user ? MainAxisAlignment.end : MainAxisAlignment.start,
+            children: [
+              Flexible(
+                child: Opacity(
+                  opacity: message.example ? 0.5 : 1.0,
+                  child: Material(
+                    color: message.user ? message.example ? Styles().colors?.background : Styles().colors?.surface : Styles().colors?.fillColorPrimary,
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: InkWell(
+                      onTap: message.example ? () {
+                        _messages.remove(message);
+                        _submitMessage(message.content);
+                      } : null,
+                      child: Container(
+                        decoration: message.example ? BoxDecoration(borderRadius: BorderRadius.circular(16.0),
+                            border: Border.all(color: Styles().colors?.fillColorPrimary ?? Colors.black)) : null,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              message.example ?
+                                Text(Localization().getStringEx('', "eg. ") + message.content,
                                   style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
                                   Styles().textStyles?.getTextStyle('widget.title.light.regular'))
-                              : SelectableText(message.content,
-                              style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
-                                Styles().textStyles?.getTextStyle('widget.title.light.regular')),
+                                  : SelectableText(message.content,
+                                  style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
+                                  Styles().textStyles?.getTextStyle('widget.title.light.regular')),
+                              Visibility(
+                                visible: message.sources.isNotEmpty,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16.0),
+                                      child: Wrap(
+                                        alignment: WrapAlignment.start,
+                                        crossAxisAlignment: WrapCrossAlignment.center,
+                                        spacing: 8.0,
+                                        runSpacing: 8.0,
+                                        children: [
+                                          Text(Localization().getStringEx('', "Learn More: "),
+                                              style: Styles().textStyles?.getTextStyle('widget.title.light.small.fat')),
+                                          ...sourceLinks
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                Visibility(
-                  visible: !message.user && !hideFeedback,
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [// TODO: Handle material icons in styles images
-                      IconButton(onPressed: () {
-                        setState(() {
-                          if (message.feedback == MessageFeedback.good) {
-                            message.feedback = null;
-                          } else {
-                            message.feedback = MessageFeedback.good;
-                          }
-                        });
-                      },
-                        icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                            size: 24, color: Styles().colors?.fillColorPrimary),
-                        iconSize: 24,
-                        splashRadius: 24),
-                      IconButton(onPressed: () {
-                        setState(() {
-                          if (message.feedback == MessageFeedback.bad) {
-                            message.feedback = null;
-                          } else {
-                            message.feedback = MessageFeedback.bad;
-                          }
-                        });
-                      },
-                        icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down :Icons.thumb_down_outlined,
-                            size: 24, color: Styles().colors?.fillColorPrimary),
-                        iconSize: 24,
-                        splashRadius: 24),
-                    ],
-                  ),
-                )
-              ],
-            ),
+              ),
+              Visibility(
+                visible: !message.user,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [// TODO: Handle material icons in styles images
+                    IconButton(onPressed: () {
+                      setState(() {
+                        if (message.feedback == MessageFeedback.good) {
+                          message.feedback = null;
+                        } else {
+                          message.feedback = MessageFeedback.good;
+                        }
+                      });
+                    },
+                      icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
+                          size: 24, color: Styles().colors?.fillColorPrimary),
+                      iconSize: 24,
+                      splashRadius: 24),
+                    IconButton(onPressed: () {
+                      setState(() {
+                        if (message.feedback == MessageFeedback.bad) {
+                          message.feedback = null;
+                        } else {
+                          message.feedback = MessageFeedback.bad;
+                        }
+                      });
+                    },
+                      icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down :Icons.thumb_down_outlined,
+                          size: 24, color: Styles().colors?.fillColorPrimary),
+                      iconSize: 24,
+                      splashRadius: 24),
+                  ],
+                ),
+              )
+            ],
           ),
-          Visibility(visible: link != null, child: Padding(
-            padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0),
-            child: _buildLinkWidget(link),
-          ))
-        ],
+        ),
+        Visibility(visible: link != null, child: Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0),
+          child: _buildLinkWidget(link),
+        ))
+      ],
+    );
+  }
+
+  Widget _buildTypingChatBubble() {
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: SizedBox(
+        width: 100,
+        height: 50,
+        child: Material(
+          color: Styles().colors?.fillColorPrimary,
+          borderRadius: BorderRadius.circular(16.0),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TypingIndicator(
+              flashingCircleBrightColor: Styles().colors?.surface ?? Colors.white,
+              flashingCircleDarkColor: Styles().colors?.fillColorPrimary ?? Colors.black12),
+          ),
+        ),
       ),
     );
   }
@@ -328,20 +385,18 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                 borderRadius: BorderRadius.circular(16.0),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Expanded(
-                    child: TextField(
-                      controller: _inputController,
-                      minLines: 1,
-                      maxLines: 3,
-                      textCapitalization: TextCapitalization.sentences,
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: _submitMessage,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: Localization().getStringEx('', 'Type your question here...'),
-                      ),
-                      style: Styles().textStyles?.getTextStyle('widget.title.regular')
+                  child: TextField(
+                    controller: _inputController,
+                    minLines: 1,
+                    maxLines: 3,
+                    textCapitalization: TextCapitalization.sentences,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: _submitMessage,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: Localization().getStringEx('', 'Type your question here...'),
                     ),
+                    style: Styles().textStyles?.getTextStyle('widget.title.regular')
                   ),
                 ),
               ),
@@ -375,6 +430,10 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         _loadingResponse = false;
       });
     }
+  }
+
+  void _onTapSourceLink(String source) {
+    UrlUtils.launchExternal(source);
   }
 
   void _startListening() {
