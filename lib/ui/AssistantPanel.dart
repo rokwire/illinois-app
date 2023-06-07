@@ -30,6 +30,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   List<String>? _contentCodes;
   StreamController<String> _updateController = StreamController.broadcast();
   TextEditingController _inputController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
 
   bool _listening = false;
 
@@ -121,8 +122,10 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         Column(children: [
           _buildDisclaimer(),
           Expanded(child:
-            SingleChildScrollView(reverse: true, child:
-              Padding(
+            SingleChildScrollView(
+              controller: _scrollController,
+              reverse: true,
+              child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(children: _buildContentList(),),
               )
@@ -176,7 +179,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     List<Widget> sourceLinks = [];
     for (String source in message.sources) {
       Uri? uri = Uri.tryParse(source);
-      if (uri != null) {
+      if (uri != null && uri.host.isNotEmpty) {
         sourceLinks.add(Material(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -229,7 +232,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                                   style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
                                   Styles().textStyles?.getTextStyle('widget.title.light.regular')),
                               Visibility(
-                                visible: message.sources.isNotEmpty,
+                                visible: sourceLinks.isNotEmpty,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -422,6 +425,12 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       _inputController.text = '';
       _loadingResponse = true;
     });
+
+    _scrollController.animateTo(
+      _scrollController.position.minScrollExtent,
+      duration: Duration(seconds: 1),
+      curve: Curves.fastOutSlowIn,
+    );
 
     Message? response = await Assistant().sendQuery(message);
     if (response != null && mounted) {

@@ -17,7 +17,8 @@ class Message {
     if (sources == null) {
       String? source = JsonUtils.stringValue(json['sources']);
       if (source != null) {
-        sources = [source];
+        sources = source.split(',');
+        sources = sources.map((e) => e.trim()).toList();
       }
     }
     return Message(
