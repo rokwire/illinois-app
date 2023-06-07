@@ -419,7 +419,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                 Text(_appointment?.displayType ?? '', style: detailStyle),
 
               Visibility(visible: StringUtils.isNotEmpty(meetingUrl), child:
-                LinkButton(title: meetingUrl, hint: '', padding: EdgeInsets.only(top: _innerSpacingV), fontSize: 16, onTap: () => _launchUrl(meetingUrl),)
+                LinkButton(title: meetingUrl, hint: '', padding: EdgeInsets.only(top: _innerSpacingV), onTap: () => _launchUrl(meetingUrl),)
               ),
               
               Visibility(visible: StringUtils.isNotEmpty(meetingId), child:
