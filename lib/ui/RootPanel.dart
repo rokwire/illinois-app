@@ -183,6 +183,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _tabBarController = TabController(length: _tabs.length, vsync: this);
     _updatePanels(_tabs);
 
+    _setDefaultTab();
+
     Services().initUI();
     _showPresentPoll();
     _checkDidNotificationLaunch().then((action) {
@@ -843,6 +845,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       print(e.toString());
     }
     return null;
+  }
+
+  void _setDefaultTab() {
+    dynamic defaultTabCode = FlexUI()['tabbar.default'] ?? 'favorites';
+    if (defaultTabCode is String) {
+      RootTab? tab = rootTabFromString(defaultTabCode);
+      _currentTabIndex = (tab != null) ? (_getIndexByRootTab(tab) ?? 0) : 0;
+      _tabBarController?.index = _currentTabIndex;
+    }
   }
 
   void _updateContent() {
