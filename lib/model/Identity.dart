@@ -18,19 +18,56 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class MobileCredential {
   final List<String>? schemas;
-  final UserInvitation? invitation;
-  final Credential? credential;
+  final List<UserInvitation>? invitations;
+  final List<Credential>? credentials;
 
-  MobileCredential({this.schemas, this.invitation, this.credential});
+  MobileCredential({this.schemas, this.invitations, this.credentials});
 
   static MobileCredential? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return MobileCredential(
-        schemas: JsonUtils.stringListValue(json['schemas']),
-        invitation: UserInvitation.fromJson(JsonUtils.mapValue(json['user_invitation'])),
-        credential: Credential.fromJson(JsonUtils.mapValue(json['credential'])));
+    List<String>? schemas = JsonUtils.stringListValue(json['schemas']);
+    List<UserInvitation>? invitations;
+    List<Credential>? credentials;
+    if (CollectionUtils.isNotEmpty(schemas)) {
+      for (String schema in schemas!) {
+        List<dynamic>? jsonList = JsonUtils.listValue(json[schema]);
+        if (schema.endsWith('UserInvitation')) {
+          invitations = UserInvitation.fromJsonList(jsonList);
+        } else if (schema.endsWith('Credential')) {
+          credentials = Credential.fromJsonList(jsonList);
+        }
+      }
+    }
+
+    // Sort by expiration date
+    invitations?.sort((a, b) {
+      DateTime? expirationDateA = a.expirationDateUtc;
+      DateTime? expirationDateB = b.expirationDateUtc;
+      if ((expirationDateA == null) && (expirationDateB == null)) {
+        return 0;
+      } else if ((expirationDateA == null) && (expirationDateB != null)) {
+        return 1;
+      } else if ((expirationDateA != null) && (expirationDateB == null)) {
+        return -1;
+      } else {
+        return expirationDateB!.compareTo(expirationDateA!);
+      }
+    });
+
+    return MobileCredential(schemas: schemas, invitations: invitations, credentials: credentials);
+  }
+
+  UserInvitation? get lastPendingInvitation {
+    if (CollectionUtils.isNotEmpty(invitations)) {
+      for (UserInvitation invitation in invitations!) {
+        if (invitation.status == InvitationCodeStatus.pending) {
+          return invitation;
+        }
+      }
+    }
+    return null;
   }
 }
 
@@ -56,12 +93,23 @@ class Credential {
         credentialType: JsonUtils.stringValue(json['credentialType']),
         cardNumber: JsonUtils.stringValue(json['cardNumber']));
   }
+
+  static List<Credential>? fromJsonList(List<dynamic>? jsonList) {
+    List<Credential>? items;
+    if (jsonList != null) {
+      items = <Credential>[];
+      for (dynamic json in jsonList) {
+        ListUtils.add(items, Credential.fromJson(json));
+      }
+    }
+    return items;
+  }
 }
 
 class UserInvitation {
   final int? id;
   final String? invitationCode;
-  final String? status;
+  final InvitationCodeStatus? status;
   final DateTime? createdDateUtc;
   final DateTime? expirationDateUtc;
   final UserInvitationMeta? meta;
@@ -75,12 +123,38 @@ class UserInvitation {
     return UserInvitation(
         id: JsonUtils.intValue(json['id']),
         invitationCode: JsonUtils.stringValue(json['invitationCode']),
-        status: JsonUtils.stringValue(json['status']),
+        status: statusFromString(JsonUtils.stringValue(json['status'])),
         createdDateUtc:
             DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['createdDate']), format: _serverDateTimeFormat, isUtc: true),
         expirationDateUtc:
             DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['expirationDate']), format: _serverDateTimeFormat, isUtc: true),
         meta: UserInvitationMeta.fromJson(JsonUtils.mapValue(json['meta'])));
+  }
+
+  static List<UserInvitation>? fromJsonList(List<dynamic>? jsonList) {
+    List<UserInvitation>? items;
+    if (jsonList != null) {
+      items = <UserInvitation>[];
+      for (dynamic json in jsonList) {
+        ListUtils.add(items, UserInvitation.fromJson(json));
+      }
+    }
+    return items;
+  }
+
+  static InvitationCodeStatus? statusFromString(String? value) {
+    switch (value) {
+      case 'PENDING':
+        return InvitationCodeStatus.pending;
+      case 'ACKNOWLEDGED':
+        return InvitationCodeStatus.acknowledged;
+      case 'NOT_SUPPORTED':
+        return InvitationCodeStatus.not_supported;
+      case 'FAILED':
+        return InvitationCodeStatus.failed;
+      default:
+        return null;
+    }
   }
 }
 
@@ -102,5 +176,7 @@ class UserInvitationMeta {
         location: JsonUtils.stringValue(json['location']));
   }
 }
+
+enum InvitationCodeStatus { pending, acknowledged, not_supported, failed }
 
 final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';

@@ -253,7 +253,7 @@ class MobileAccess with Service implements NotificationsListener {
           _print('No mobile identity credential available.');
           return;
         }
-        UserInvitation? invitation = mobileCredential.invitation;
+        UserInvitation? invitation = mobileCredential.lastPendingInvitation;
         if (invitation == null) {
           _print('No mobile identity invitation available.');
           return;
