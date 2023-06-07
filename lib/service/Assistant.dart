@@ -1,27 +1,12 @@
 
-import 'dart:collection';
-
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
-import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Questionnaire.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
-import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-import 'Storage.dart';
 
 class Assistant with Service {
 
