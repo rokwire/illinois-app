@@ -418,6 +418,9 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   }
 
   Future<void> _submitMessage(String message) async {
+    if (_loadingResponse) {
+      return;
+    }
     setState(() {
       if (message.isNotEmpty) {
         _messages.add(Message(content: message, user: true));
