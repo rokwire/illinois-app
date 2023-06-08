@@ -31,6 +31,7 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -47,8 +48,11 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:rokwire_plugin/ui/panels/survey_creation_panel.dart';
+import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -2224,6 +2228,88 @@ class _ImageChooserState extends State<ImageChooserWidget>{
       }
     }
     Log.d("Image Url: $imageUrl");
+  }
+}
+
+//Surveys
+
+class GroupSurveyCard extends StatelessWidget{
+  final Survey survey;
+  final Group? group;
+  final int buttonSize = 18;
+
+  GroupSurveyCard({required this.survey, this.group});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Styles().colors!.white,
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+      ),
+      child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(survey.title.isNotEmpty ? survey.title : '(Untitled)', style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
+        ),
+        Row(children: <Widget>[
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RoundedButton(
+                label: Localization().getStringEx('panel.group_detail.button.take_survey.title', 'Take Survey'),
+                backgroundColor: Styles().colors!.white,
+                textColor: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.bold,
+                fontSize: 16,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                borderColor: Styles().colors!.fillColorSecondary,
+                borderWidth: 2,
+                contentWeight: 0.5,
+                onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey, tabBar: uiuc.TabBar())))
+              ),
+              Visibility(visible: group?.currentUserIsAdmin ?? false, child: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: RoundedButton(
+                  label: Localization().getStringEx('panel.group_detail.button.view_responses.title', 'View Responses'),
+                  backgroundColor: Styles().colors!.white,
+                  textColor: Styles().colors!.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies!.bold,
+                  fontSize: 16,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                  borderColor: Styles().colors!.fillColorSecondary,
+                  borderWidth: 2,
+                  contentWeight: 0.5,
+                  onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: survey, tabBar: uiuc.TabBar())))),
+              ),
+              ),
+            ],
+          )),
+          Visibility(visible: group?.currentUserIsAdmin ?? false, child: IconButton(
+            icon: Styles().images?.getImage('edit-white', color: Styles().colors?.getColor('fillColorPrimary'), size: 18) ?? const Icon(Icons.edit),
+            onPressed: () => _onTapEdit(context, survey),
+            padding: EdgeInsets.zero,
+            splashRadius: 18,
+          )),
+          Visibility(visible: group?.currentUserIsAdmin ?? false, child: IconButton(
+            icon: Styles().images?.getImage('clear', size: 18) ?? const Icon(Icons.remove),
+            onPressed: () => _onTapRemove(context, survey),
+            padding: EdgeInsets.zero,
+            splashRadius: 18,
+          )),
+        ]),
+      ],),
+      ),
+    );
+  }
+
+  void _onTapEdit(BuildContext context, Survey survey) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyCreationPanel(survey: survey, tabBar: uiuc.TabBar())));
+  }
+
+  void _onTapRemove(BuildContext context, Survey survey) {
+    //TODO: confirmation dialog, send delete request
   }
 }
 

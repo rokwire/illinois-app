@@ -27,6 +27,7 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -37,10 +38,12 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
+import 'package:illinois/ui/groups/GroupSurveyListPanel.dart';
 import 'package:illinois/ui/groups/GroupPollListPanel.dart';
 import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
@@ -54,6 +57,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
+import 'package:rokwire_plugin/ui/panels/survey_creation_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -104,6 +108,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool?               _shouldScrollToLastAfterRefresh;
 
   DateTime?           _pausedDateTime;
+
+  List<Survey>?      _groupSurveys;
+  bool               _surveysLoading = false;
 
   GlobalKey          _pollsKey = GlobalKey();
   List<Poll>?        _groupPolls;
@@ -175,6 +182,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
   }
 
+  bool get _canCreateSurvey => _isAdmin;
+
   bool get _canCreatePoll {
     return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
   }
@@ -207,6 +216,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
+      Surveys.notifySurveyCreated,
+      Surveys.notifySurveyDeleted,
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
@@ -245,6 +256,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         _redirectToPostIfExists();
         _loadGroupAdmins();
         _loadInitialPosts();
+        _loadSurveys();
         _loadPolls();
       }
       if (loadEvents) {
@@ -390,12 +402,30 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
+  Future<void> _loadSurveys() async {
+    String? groupId = _group?.id;
+    if (StringUtils.isNotEmpty(groupId) && _group!.currentUserIsMemberOrAdmin) {
+      _setSurveysLoading(true);
+      Surveys().loadSurveys(groupIds: [groupId!]).then((result) {
+        _groupSurveys = result;
+        _setSurveysLoading(false);
+      });
+    }
+  }
+
   void _refreshPolls() {
     _loadPolls();
   }
 
   void _setPollsLoading(bool loading) {
     _pollsLoading = loading;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _setSurveysLoading(bool loading) {
+    _surveysLoading = loading;
     if (mounted) {
       setState(() {});
     }
@@ -478,6 +508,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     String? barTitle = (_isResearchProject && !_isMemberOrAdmin) ? 'Your Invitation To Participate' : null;
+    //TODO: add option to create survey?
     List<Widget>? barActions = (_canLeaveGroup || _canDeleteGroup || _canCreatePost) ? <Widget>[
       Semantics(label: Localization().getStringEx("panel.group_detail.label.options", 'Options'), button: true, excludeSemantics: true, child:
         IconButton(icon: Styles().images?.getImage('more-white',) ?? Container(), onPressed: _onGroupOptionsTap,)
@@ -515,7 +546,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     } 
     else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
       _refreshPolls();
-    } 
+    }
+    else if ((name == Surveys.notifySurveyCreated) || (name == Surveys.notifySurveyDeleted)) {
+      _loadSurveys();
+    }
     else if (name == Polls.notifyVoteChanged
             || name == Polls.notifyResultsChanged 
             || name == Polls.notifyStatusChanged) {
@@ -594,6 +628,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_currentTab != _DetailTab.About) {
         content.add(_buildEvents());
         content.add(_buildPosts());
+        content.add(_buildSurveys());
         content.add(_buildPolls());
       }
       else if (_currentTab == _DetailTab.About) {
@@ -981,6 +1016,53 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
           rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
           children: postsContent)
+    ]);
+  }
+
+  Widget _buildSurveys() {
+    List<Widget> surveyContent = [];
+
+    if (CollectionUtils.isNotEmpty(_groupSurveys)) {
+      for (Survey survey in _groupSurveys!) {
+        surveyContent.add(Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: GroupSurveyCard(survey: survey, group: _group),
+        ));
+      }
+
+      if (_groupSurveys!.length >= 5) {
+        surveyContent.add(Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: RoundedButton(
+                label: Localization().getStringEx('panel.group_detail.button.all_surveys.title', 'See all surveys'),
+                backgroundColor: Styles().colors!.white,
+                textColor: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.bold,
+                fontSize: 16,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                borderColor: Styles().colors!.fillColorSecondary,
+                borderWidth: 2,
+                contentWeight: 0.5,
+                onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSurveyListPanel(surveys: _groupSurveys!, group: _group!))))));
+      }
+    }
+
+    return Stack(children: [
+      Column(children: <Widget>[
+        SectionSlantHeader(
+            title: Localization().getStringEx('panel.group_detail.label.surveys', 'Surveys'),
+            titleIconKey: 'todo',
+            rightIconKey: _canCreateSurvey ? 'plus-circle' : null,
+            rightIconAction: _canCreateSurvey ? _onTapCreateSurvey : null,
+            rightIconLabel: _canCreateSurvey ? Localization().getStringEx('panel.group_detail.button.create_survey.title', 'Create Survey') : null,
+            children: surveyContent)
+      ]),
+      _surveysLoading
+          ? Center(
+          child: Container(
+              padding: EdgeInsets.symmetric(vertical: 50),
+              child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary))))
+          : Container()
     ]);
   }
 
@@ -1793,6 +1875,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         }
       });
     }
+  }
+
+  void _onTapCreateSurvey() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyCreationPanel(tabBar: uiuc.TabBar(),)));
   }
 
   void _onTapCreatePoll() {
