@@ -3,6 +3,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -21,6 +22,12 @@ class Assistant with Service {
   Assistant get instance {
     return _instance;
   }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return {DeepLink()};
+  }
+
 
   Future<Message?> sendQuery(String? query) async {
     if (!isEnabled) {

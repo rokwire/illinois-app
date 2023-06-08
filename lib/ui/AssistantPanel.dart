@@ -338,9 +338,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         child: InkWell(
           borderRadius: BorderRadius.circular(8.0),
           onTap: () {
-            if (DeepLink().isAppUrl(link.link)) {
-              DeepLink().launchUrl(link.link);
-            }
+            NotificationService().notify(link.link);
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
