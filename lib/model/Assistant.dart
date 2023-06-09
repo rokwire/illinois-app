@@ -64,10 +64,11 @@ class Message {
   final bool example;
   final Link? link;
   final List<String> sources;
+  final bool acceptsFeedback;
   MessageFeedback? feedback;
   String? feedbackExplanation;
 
-  Message({required this.content, required this.user, this.example = false,
+  Message({required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
     this.link, this.sources = const [], this.feedback, this.feedbackExplanation});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
@@ -75,7 +76,7 @@ class Message {
     if (sources == null) {
       String? source = JsonUtils.stringValue(json['sources']);
       if (source != null) {
-        sources = source.split(',');
+        sources = source.split((RegExp(r'[,\n]')));
         sources = sources.map((e) => e.trim()).toList();
       }
     }
@@ -84,6 +85,7 @@ class Message {
       content: JsonUtils.stringValue(json['answer'])?.trim() ?? '',
       user: JsonUtils.boolValue(json['user']) ?? false,
       example: JsonUtils.boolValue(json['example']) ?? false,
+      acceptsFeedback: JsonUtils.boolValue(json['accepts_feedback']) ?? true,
       link: deeplink != null ?
         Link(name: deeplinks[deeplink] ?? deeplink.split('.|_').join(' '),
           link: 'edu.illinois.rokwire.firebase.messaging.$deeplink') : null, //TODO: handle link base better

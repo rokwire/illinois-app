@@ -262,7 +262,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                 ),
               ),
               Visibility(
-                visible: !message.user,
+                visible: message.acceptsFeedback,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.center,
                   children: [// TODO: Handle material icons in styles images
                     IconButton(onPressed: () {
@@ -434,9 +434,14 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     );
 
     Message? response = await Assistant().sendQuery(message);
-    if (response != null && mounted) {
+    if (mounted) {
       setState(() {
-        _messages.add(response);
+        if (response != null){
+          _messages.add(response);
+        } else {
+          _messages.add(Message(content: Localization().getStringEx('', 'Sorry something went wrong! Please try asking your question again.'), user: false));
+          _inputController.text = message;
+        }
         _loadingResponse = false;
       });
     }

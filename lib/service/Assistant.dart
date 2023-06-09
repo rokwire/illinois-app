@@ -50,7 +50,7 @@ class Assistant with Service {
     };
 
     String? json = JsonUtils.encode(body);
-    Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json);
+    Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json, timeout: 30);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
