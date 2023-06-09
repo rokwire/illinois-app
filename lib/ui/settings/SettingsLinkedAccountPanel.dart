@@ -172,8 +172,8 @@ class LinkAccountContentWidget extends StatelessWidget{
           Container(
             color: Styles().colors!.white,
             child: RibbonButton(
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              textColor: Styles().colors!.textSurface,
               label: _buttonText,
               progress: isLoading,
               onTap: (){

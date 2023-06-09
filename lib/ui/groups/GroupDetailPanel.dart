@@ -1117,7 +1117,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildWebsiteLinkButton() {
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
-      textColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
       rightIconKey: 'external-link',
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),

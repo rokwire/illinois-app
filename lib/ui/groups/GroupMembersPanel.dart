@@ -281,7 +281,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
             RibbonButton(
-              textColor: Styles().colors!.fillColorSecondary,
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
               backgroundColor: Styles().colors!.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),

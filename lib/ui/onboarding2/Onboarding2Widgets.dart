@@ -235,7 +235,7 @@ class Onboarding2UnderlinedButton extends StatelessWidget{
   final Function? onTap;
   final String? title;
   final String? hint;
-  final double fontSize;
+  final double fontSize;//TBD textStyle instead og font size
   final EdgeInsets padding;
   final String? fontFamily;
 
