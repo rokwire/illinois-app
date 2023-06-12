@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Illinois Assistant chatbot integration [#3220](https://github.com/rokwire/illinois-app/issues/3220)
 
+## [5.0.7] - 2023-06-12
+### Added
+- Initial integration with HID / Origo sdk for mobile access [#2921](https://github.com/rokwire/illinois-app/issues/2921).
+- Health Screener looks and functions similar to skills assessment [#2988](https://github.com/rokwire/illinois-app/issues/2988).
+
 ## [5.0.6] - 2023-05-29
 ### Added
 - Add survey creation tool [#3295](https://github.com/rokwire/illinois-app/issues/3295).

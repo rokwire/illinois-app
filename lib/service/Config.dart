@@ -122,6 +122,7 @@ class Config extends rokwire.Config {
   String? get wellnessUrl            => JsonUtils.stringValue(platformBuildingBlocks["wellness_url"]);
   String? get appointmentsUrl        => JsonUtils.stringValue(platformBuildingBlocks["appointments_url"]);
   String? get assistantUrl           => JsonUtils.stringValue(platformBuildingBlocks["assistant_url"]);
+  String? get identityUrl            => JsonUtils.stringValue(platformBuildingBlocks["identity_url"]);
 
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);

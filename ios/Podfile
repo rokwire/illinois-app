@@ -50,6 +50,14 @@ flutter_ios_podfile_setup
 def applibs
     pod 'GoogleMaps', '7.2.0'
     pod 'ZXingObjC', '3.6.4'
+
+#   pod 'SeosMobileKeysSDK', :path => '../../libs/hid-origo/ios/Debug/SeosMobileKeysSDK.podspec'
+#   pod 'OrigoSDK', :path => '../../libs/hid-origo/ios/Debug/OrigoSDK.podspec'
+
+    pod 'SeosMobileKeysSDK-Debug', :configuration => ['Debug', 'Debug-Dev', 'Debug-IllinoisDev', 'Debug-Prod', 'Debug-IllinoisProd', 'Debug-Tst', 'Debug-IllinoisTst'], :path => '../libs/hid-origo/ios/Debug/SeosMobileKeysSDK-Debug.podspec'
+    pod 'SeosMobileKeysSDK-Release', :configuration => ['Release', 'Release-Dev', 'Release-IllinoisDev', 'Release-Prod', 'Release-IllinoisProd', 'Release-Tst', 'Release-IllinoisTst'], :path => '../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec'
+    pod 'OrigoSDK-Debug', :configuration => ['Debug', 'Debug-Dev', 'Debug-IllinoisDev', 'Debug-Prod', 'Debug-IllinoisProd', 'Debug-Tst', 'Debug-IllinoisTst'], :path => '../libs/hid-origo/ios/Debug/OrigoSDK-Debug.podspec'
+    pod 'OrigoSDK-Release', :configuration => ['Release', 'Release-Dev', 'Release-IllinoisDev', 'Release-Prod', 'Release-IllinoisProd', 'Release-Tst', 'Release-IllinoisTst'], :path => '../libs/hid-origo/ios/Release/OrigoSDK-Release.podspec'
 end
 
 target 'Runner' do
