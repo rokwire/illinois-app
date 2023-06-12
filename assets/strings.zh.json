@@ -3269,6 +3269,10 @@
     "widget.id_card.dialog.button.mobile_access.renew.cancel": "取消",
     "widget.id_card.dialog.button.mobile_access.renew_access": "更新訪問權限",
     "widget.id_card.dialog.text.renew_access.done": "如果您的 i-card+ 在 30 分鐘內無法使用，請致電 <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>，發送電子郵件至 <a href='mailto:{{mobile_access_email}} '>{{mobile_access_email}}</a>，或<a href='{{mobile_access_website_url}}'>訪問 i-card 網站</a> <img src='asset:{{external_link_icon}}' alt= ''/>",
+    "widget.id_card.label.identity_credential.label": "憑據",
+    "widget.id_card.label.identity_credential.id.label": "Id: %s",
+    "widget.id_card.label.identity_credentials.label": "身份憑證",
+    "widget.id_card.label.identity_credentials.not_available": "沒有可用的身份憑證。",
 
 	"widget.bus_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",

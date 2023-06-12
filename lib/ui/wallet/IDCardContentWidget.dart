@@ -20,10 +20,12 @@ import 'dart:typed_data';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -73,6 +75,10 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   List<dynamic>? _mobileAccessKeys;
   bool _mobileAccessKeysLoading = false;
   PageController? _mobileKeysPageController;
+
+  List<Credential>? _mobileIdentityCredentials;
+  bool _mobileIdentityCredentialsLoading = false;
+  PageController? _mobileIdentityCredentialsPageController;
 
   @override
   void initState() {
@@ -126,6 +132,15 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     // Auth2().updateAuthCard();
   }
 
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    _animationController.dispose();
+    _mobileKeysPageController?.dispose();
+    _mobileIdentityCredentialsPageController?.dispose();
+    super.dispose();
+  }
+
   Future<MemoryImage?> _loadAsyncPhotoImage() async{
     Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
     return CollectionUtils.isNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
@@ -164,12 +179,22 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     }
   }
 
-  @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    _animationController.dispose();
-    _mobileKeysPageController?.dispose();
-    super.dispose();
+  Future<void> _loadMobileIdentityCredentials() async {
+    if (_isIcardMobileAvailable) {
+      setStateIfMounted(() {
+        _mobileIdentityCredentialsLoading = true;
+      });
+      Identity().loadMobileCredential().then((mobileCredential) {
+        setStateIfMounted(() {
+          _mobileIdentityCredentials = mobileCredential?.credentials;
+          _mobileIdentityCredentialsLoading = false;
+        });
+      });
+    } else {
+      setStateIfMounted(() {
+        _mobileIdentityCredentials = null;
+      });
+    }
   }
 
   // NotificationsListener
@@ -331,7 +356,8 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       ),
       Text(cardExpiresText, style:  Styles().textStyles?.getTextStyle("panel.id_card.detail.title.tiny")),
       Container(height: 30,),
-      _buildMobileAccessContent()
+      _buildMobileAccessContent(),
+      _buildMobileIdentityCredentialsContent()
 
     ]);
   }
@@ -469,6 +495,81 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     ]);
   }
 
+  Widget _buildMobileIdentityCredentialsContent() {
+    if (!_isIcardMobileAvailable) {
+      return Container();
+    } else if (_mobileIdentityCredentialsLoading) {
+      return Center(child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary));
+    } else {
+      return Padding(
+          padding: EdgeInsets.only(bottom: 30),
+          child: Column(children: [
+            Container(color: Styles().colors!.dividerLine, height: 1),
+            Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: (_hasMobileIdentityCredentials
+                    ? _buildExistingIdentityCredentialsContent()
+                    : _buildMissingIdentityCredentialsContent()))
+          ]));
+    }
+  }
+
+  Widget _buildExistingIdentityCredentialsContent() {
+    if (!_hasMobileIdentityCredentials) {
+      return Container();
+    }
+    if (_mobileIdentityCredentialsPageController == null) {
+      _mobileIdentityCredentialsPageController = PageController();
+    }
+    int credentialsCount = _mobileIdentityCredentials!.length;
+    List<Widget> credentialWidgets = <Widget>[];
+    for (Credential credential in _mobileIdentityCredentials!) {
+      Widget keyWidget = _buildSingleIdentityCredentialContent(credential);
+      credentialWidgets.add(keyWidget);
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      ExpandablePageView(children: credentialWidgets, controller: _mobileIdentityCredentialsPageController),
+      AccessibleViewPagerNavigationButtons(controller: _mobileIdentityCredentialsPageController, pagesCount: () => credentialsCount)
+    ]);
+  }
+
+  Widget _buildSingleIdentityCredentialContent(Credential? credential) {
+    if (credential == null) {
+      return Container();
+    }
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Padding(
+          padding: EdgeInsets.only(left: 16, bottom: 2, right: 16),
+          child: Text(Localization().getStringEx('widget.id_card.label.identity_credential.label', 'Credential'),
+              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.large'))),
+      Padding(
+          padding: EdgeInsets.only(left: 16, bottom: 2, right: 16),
+          child: Text(sprintf(Localization().getStringEx('widget.id_card.label.identity_credential.id.label', 'Id: %s'), [credential.id]),
+              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.large'))),
+    ]);
+  }
+
+  Widget _buildMissingIdentityCredentialsContent() {
+    if (_hasMobileIdentityCredentials) {
+      return Container();
+    }
+
+    return Column(children: [
+      Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Text(Localization().getStringEx('widget.id_card.label.identity_credentials.label', 'Identity Credentials'),
+              style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.large'))),
+      Padding(
+          padding: EdgeInsets.symmetric(horizontal: 50),
+          child: Text(
+              Localization()
+                  .getStringEx('widget.id_card.label.identity_credentials.not_available', 'There are no identity credentials available.'),
+              textAlign: TextAlign.center,
+              style: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.italic')))
+    ]);
+  }
+
   Future<bool> _checkNetIdStatus() async {
     if (Auth2().authCard?.photoBase64?.isEmpty ?? true) {
       await AppAlert.showDialogResult(context, Localization().getStringEx('panel.covid19_passport.message.missing_id_info', 'No Illini ID information found. You may have an expired i-card. Please contact the ID Center.'));
@@ -598,6 +699,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     if (_isIcardMobileAvailable != FlexUI().isIcardMobileAvailable) {
       _isIcardMobileAvailable = FlexUI().isIcardMobileAvailable;
       _loadMobileAccessKey();
+      _loadMobileIdentityCredentials();
     }
   }
 
@@ -614,9 +716,9 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
 
   bool get _hasBuildingAccess => FlexUI().isSaferAvailable;
 
-  bool get _hasMobileAccessKeys {
-    return (_mobileAccessKeys != null) && _mobileAccessKeys!.isNotEmpty;
-  }
+  bool get _hasMobileAccessKeys => ((_mobileAccessKeys != null) && _mobileAccessKeys!.isNotEmpty);
+
+  bool get _hasMobileIdentityCredentials => CollectionUtils.isNotEmpty(_mobileIdentityCredentials);
 }
 
 
