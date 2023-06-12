@@ -1,3 +1,6 @@
 [submodule "plugin"]
 	path = plugin
 	url = https://github.com/rokwire/app-flutter-plugin.git
+[submodule "libs"]
+	path = libs
+	url = https://github.com/rokwire/illinois-app-libs.git
