@@ -36,8 +36,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/storage.dart';
 
-import '../settings/SettingsHomeContentPanel.dart';
-import '../widgets/InfoPopup.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/widgets/InfoPopup.dart';
 
 class WellnessHealthScreenerHomeWidget extends StatefulWidget {
   final ScrollController scrollController;
