@@ -452,6 +452,9 @@
 
     "widget.student_courses.title.extra_large": {"extends": "widget.title.extra_large", "letter_spacing": 1.0},
 
+    "widget.tab_bar.title.selected": {"font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
+    "widget.tab_bar.title.not_selected": {"font_family": "bold", "size": 12.0, "color": "mediumGray"},
+
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
     "panel.event_schedule.map.description": {"font_family": "medium", "size": 16.0, "color": "blackTransparent038"},
