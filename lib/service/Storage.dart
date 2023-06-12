@@ -183,6 +183,10 @@ class Storage extends rokwire.Storage {
   bool? get debugUseSampleAppointments => getBoolWithName(debugUseSampleAppointmentsKey);
   set debugUseSampleAppointments(bool? value) => setBoolWithName(debugUseSampleAppointmentsKey, value);
 
+  static const String debugUseIdentityBbKey  = 'debug_mobile_icard_use_identity_bb';
+  bool? get debugUseIdentityBb => getBoolWithName(debugUseIdentityBbKey);
+  set debugUseIdentityBb(bool? value) => setBoolWithName(debugUseIdentityBbKey, value);
+
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
@@ -401,5 +405,14 @@ class Storage extends rokwire.Storage {
   static const String participateInResearchPromptedKey  = 'participate_in_research_prompted';
   bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
   set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
+
+  // Mobile Access
+  static const String mobileAccessBleRssiSensitivityKey = 'mobile_access_ble_rssi_sensitivity';
+  String? get mobileAccessBleRssiSensitivity => getStringWithName(mobileAccessBleRssiSensitivityKey);
+  set mobileAccessBleRssiSensitivity(String? value) => setStringWithName(mobileAccessBleRssiSensitivityKey, value);
+
+  static const String mobileAccessOpenTypeKey = 'mobile_access_open_type';
+  String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
+  set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
 
 }
