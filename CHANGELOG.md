@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Health Screener looks and functions similar to skills assessment
+- Health Screener looks and functions similar to skills assessment [#2988](https://github.com/rokwire/illinois-app/issues/2988).
 
 ## [5.0.6] - 2023-05-29
 ### Added
