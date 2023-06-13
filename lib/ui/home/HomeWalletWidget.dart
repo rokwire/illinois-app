@@ -11,7 +11,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/wallet/IDCardPanel.dart';
+import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -502,7 +502,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                        Text(Localization().getStringEx('widget.home.wallet.illini_id.title', 'Illini ID'), style: Styles().textStyles?.getTextStyle("widget.title.large.fat"))
+                        Text(Localization().getStringEx('widget.home.wallet.illini_id.title', 'i-card+'), style: Styles().textStyles?.getTextStyle("widget.title.large.fat"))
                       ),
                     ),
                     HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true),
@@ -536,7 +536,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini ID', source: widget.runtimeType.toString());
-     IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
 }
 
@@ -680,4 +680,3 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
     }
   }
 }
-
