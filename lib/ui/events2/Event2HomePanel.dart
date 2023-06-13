@@ -17,21 +17,21 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/service/styles.dart';
 
-class Event2ListPanel extends StatefulWidget {
-  static final String routeName = 'Event2ListPanel';
+class Event2HomePanel extends StatefulWidget {
+  static final String routeName = 'Event2HomePanel';
 
   final Map<String, dynamic>? attributes;
-  Event2ListPanel({Key? key, this.attributes}) : super(key: key);
+  Event2HomePanel({Key? key, this.attributes}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _Event2ListPanelState();
+  State<StatefulWidget> createState() => _Event2HomePanelState();
 
   static void present(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2ListPanel.routeName), builder: (context) => Event2ListPanel()));
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel()));
   }
 }
 
-class _Event2ListPanelState extends State<Event2ListPanel> implements NotificationsListener {
+class _Event2HomePanelState extends State<Event2HomePanel> implements NotificationsListener {
 
   bool _loadingEvents = false;
   List<Event2>? _events;
@@ -152,7 +152,7 @@ class _Event2ListPanelState extends State<Event2ListPanel> implements Notificati
       return _buildMessageContent('Failed to load events.');
     }
     else if (_events?.length == 0) {
-      return _buildMessageContent('There are no events matching the selected filters.');
+      return _buildMessageContent(_attributes.isNotEmpty ? 'There are no events matching the selected filters.' : 'There are no events defined yet.');
     }
     else {
       return _buildEventsList();
@@ -237,19 +237,23 @@ class _Event2ListPanelState extends State<Event2ListPanel> implements Notificati
   }
 
   void _onSort() {
-    
+    Analytics().logSelect(target: 'Sort');
+    AppAlert.showDialogResult(context, 'TBD');
   }
 
   void _onSearch() {
-
+    Analytics().logSelect(target: 'Search');
+    AppAlert.showDialogResult(context, 'TBD');
   }
 
   void _onCreate() {
-
+    Analytics().logSelect(target: 'Create');
+    AppAlert.showDialogResult(context, 'TBD');
   }
 
   void _onMapView() {
-
+    Analytics().logSelect(target: 'Map View');
+    AppAlert.showDialogResult(context, 'TBD');
   }
 
   void _onEvent(Event2 event) {
