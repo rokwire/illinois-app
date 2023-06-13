@@ -10,6 +10,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -98,42 +99,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   Widget _buildCommandBar() {
     return Container(decoration: _commandBarDecoration, child:
-      Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 16), child:
-        Row(children: [
-          Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Event2FilterCommandButton(
-              title: 'Filters',
-              leftIconKey: 'filters',
-              rightIconKey: 'chevron-right',
-              onTap: _onFilters,
-            ),
-            Event2FilterCommandButton(
-              title: 'Sort',
-              leftIconKey: 'sort',
-              onTap: _onSort,
-            ),
-          ])),
-          Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
-            LinkButton(
-              title: 'Map View',
-              hint: 'Tap to view map',
-              onTap: _onMapView,
-              padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
-              textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
-            ),
-            Event2ImageCommandButton('plus-circle',
-              label: 'Create',
-              hint: 'Tap to create event',
-              contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
-              onTap: _onCreate
-            ),
-            Event2ImageCommandButton('search',
-              label: 'Search',
-              hint: 'Tap to search events',
-              contentPadding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
-              onTap: _onSearch
-            ),
-          ])),
+      Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
+        Column(children: [
+          _buildCommandButtons(),
+          _buildAttributesDescription(),
         ],)
       ),
     );
@@ -142,6 +111,85 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   Decoration get _commandBarDecoration => BoxDecoration(
     color: Styles().colors?.white,
     border: Border.all(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1)
+  );
+
+  Widget _buildCommandButtons() {
+    return Row(children: [
+      Padding(padding: EdgeInsets.only(left: 16)),
+      Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Event2FilterCommandButton(
+          title: 'Filters',
+          leftIconKey: 'filters',
+          rightIconKey: 'chevron-right',
+          onTap: _onFilters,
+        ),
+        Event2FilterCommandButton(
+          title: 'Sort',
+          leftIconKey: 'sort',
+          onTap: _onSort,
+        ),
+      ])),
+      Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
+        LinkButton(
+          title: 'Map View',
+          hint: 'Tap to view map',
+          onTap: _onMapView,
+          padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
+          textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
+        ),
+        Event2ImageCommandButton('plus-circle',
+          label: 'Create',
+          hint: 'Tap to create event',
+          contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
+          onTap: _onCreate
+        ),
+        Event2ImageCommandButton('search',
+          label: 'Search',
+          hint: 'Tap to search events',
+          contentPadding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+          onTap: _onSearch
+        ),
+      ])),
+    ],);
+  }
+
+  Widget _buildAttributesDescription() {
+    List<InlineSpan> filtersList = <InlineSpan>[];
+    ContentAttributes? contentAttributes = Events2().contentAttributes;
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    if (_attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_attributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+          for (String attributeValue in displayAttributeValues) {
+            if (filtersList.isNotEmpty) {
+              filtersList.add(TextSpan(text: ", " , style : regularStyle,));
+            }
+            filtersList.add(TextSpan(text: attributeValue, style : regularStyle,),);
+          }
+        }
+      }
+    }
+    if (filtersList.isNotEmpty) {
+      filtersList.insert(0, TextSpan(text: "Filter by: " , style : boldStyle,));
+
+      return Padding(padding: EdgeInsets.only(top: 12), child:
+        Container(decoration: _attributesDescriptionDecoration, padding: EdgeInsets.only(top: 12, left: 16, right: 16), child:
+          Row(children: [ Expanded(child:
+            RichText(text: TextSpan(style: regularStyle, children: filtersList))
+          ),],)
+      ));
+    }
+    else {
+      return Container();
+    }
+  }
+
+  Decoration get _attributesDescriptionDecoration => BoxDecoration(
+    color: Styles().colors?.white,
+    border: Border(top: BorderSide(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1))
   );
 
   Widget _buildEventsContent() {
