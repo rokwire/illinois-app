@@ -28,6 +28,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -145,9 +146,11 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       StudentCourses(),
       Appointments(),
       MTD(),
+      SpeechToText(),
+    //Assistant(),
       MobileAccess(),
     ]);
-    
+
     ServiceError? serviceError = await illinois.Services().init();
 
     //_testSecretKeys();

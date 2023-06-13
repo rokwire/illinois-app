@@ -168,10 +168,14 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - speech_to_text (0.0.1):
+    - Flutter
+    - Try
   - sqflite (0.0.3):
     - Flutter
     - FMDB (>= 2.7.5)
   - Toast (4.0.0)
+  - Try (2.1.1)
   - uni_links (0.0.1):
     - Flutter
   - url_launcher_ios (0.0.1):
@@ -217,6 +221,7 @@ DEPENDENCIES:
   - SeosMobileKeysSDK-Release (from `../libs/hid-origo/ios/Release/SeosMobileKeysSDK-Release.podspec`)
   - share (from `.symlinks/plugins/share/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - uni_links (from `.symlinks/plugins/uni_links/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
@@ -248,6 +253,7 @@ SPEC REPOS:
     - PromisesSwift
     - Reachability
     - Toast
+    - Try
     - ZXingObjC
 
 EXTERNAL SOURCES:
@@ -309,6 +315,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/share/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  speech_to_text:
+    :path: ".symlinks/plugins/speech_to_text/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
   uni_links:
@@ -372,8 +380,10 @@ SPEC CHECKSUMS:
   SeosMobileKeysSDK-Release: 97d1ac3775b62e770206d32d8fdb7463e92444fe
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
+  speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
+  Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
   video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126

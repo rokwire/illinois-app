@@ -16,7 +16,7 @@ version: 5.0.7+1807
 publish_to: none
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.17.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -58,7 +58,7 @@ dependencies:
   confetti: ^0.7.0
   flutter_colorpicker: ^1.0.3
   in_app_review: ^2.0.4
-# speech_to_text: ^6.1.1
+  speech_to_text: ^6.1.1
 # google_maps_flutter: ^2.2.5
 
   rokwire_plugin:

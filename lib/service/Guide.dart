@@ -25,6 +25,7 @@ enum GuideContentSource { Net, Debug }
 class Guide with Service implements NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
+  static const String notifyGuide = "edu.illinois.rokwire.guide";
   static const String notifyGuideDetail = "edu.illinois.rokwire.guide.detail";
   static const String notifyGuideList = "edu.illinois.rokwire.guide.list";
 
@@ -592,7 +593,15 @@ class Guide with Service implements NotificationsListener {
           (guideUri.authority == uri.authority))
       {
 
-        if (uri.path == '/guide_detail') {
+        if (uri.path == '/guide') {
+          if (_guideUriCache != null) {
+            _guideUriCache?.add(uri);
+          }
+          else {
+            NotificationService().notify(notifyGuide, null);
+          }
+        }
+        else if (uri.path == '/guide_detail') {
           if (_guideUriCache != null) {
             _guideUriCache?.add(uri);
           }
