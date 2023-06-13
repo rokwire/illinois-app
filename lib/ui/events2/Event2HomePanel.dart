@@ -60,6 +60,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   late Map<String, dynamic> _attributes;
   late EventSortType _sortType;
+  double? _sortDropdownWidth;
 
   @override
   void initState() {
@@ -173,16 +174,18 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   }
 
 
-  Widget get _sortButton => 
-    DropdownButtonHideUnderline(child:
+  Widget get _sortButton {
+    _sortDropdownWidth ??= _evaluateSortDropdownWidth();
+    return DropdownButtonHideUnderline(child:
       DropdownButton2<String>(
-        dropdownStyleData: DropdownStyleData(width: 120),
+        dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
         customButton: Event2FilterCommandButton(title: 'Sort', leftIconKey: 'sort'),
         isExpanded: false,
         items: _buildSortDropdownItems(),
         onChanged: _onSortType,
       ),
     );
+  }
 
   List<DropdownMenuItem<String>> _buildSortDropdownItems() {
     List<DropdownMenuItem<String>> items = <DropdownMenuItem<String>>[];
@@ -195,6 +198,24 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       )));
     }
     return items;
+  }
+
+  double _evaluateSortDropdownWidth() {
+    double width = 0;
+    for (EventSortType sortType in EventSortType.values) {
+      final Size sizeFull = (TextPainter(
+          text: TextSpan(
+            text: eventSortTypeToDisplayString(sortType) ?? '',
+            style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
+          ),
+          textScaleFactor: MediaQuery.of(context).textScaleFactor,
+          textDirection: TextDirection.ltr,
+        )..layout()).size;
+      if (width < sizeFull.width) {
+        width = sizeFull.width;
+      }
+    }
+    return min(width + 2 * 16, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
   Widget _buildAttributesDescription() {
