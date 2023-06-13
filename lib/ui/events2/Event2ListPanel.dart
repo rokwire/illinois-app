@@ -177,16 +177,18 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
   }
 
   Future<void> _onRefresh() async {
-    setState(() {
-      _loadingEvents = true;
-    });
-
-    Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes)).then((List<Event2>? events) {
-      setStateIfMounted(() {
-        _events = (events != null) ? List<Event2>.from(events) : null;
-        _loadingEvents = false;
+    if (_loadingEvents != true) {
+      setState(() {
+        _loadingEvents = true;
       });
-    });
+
+      Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes)).then((List<Event2>? events) {
+        setStateIfMounted(() {
+          _events = (events != null) ? List<Event2>.from(events) : null;
+          _loadingEvents = false;
+        });
+      });
+    }
   }
 
   void _onFilters() {
