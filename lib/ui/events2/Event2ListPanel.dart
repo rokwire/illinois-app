@@ -1,8 +1,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
-import 'package:illinois/ui/events2/Event2FiltersPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -33,14 +35,14 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
   List<Event2>? _events;
   final int eventsPageLength = 12;
 
-  late Map<String, dynamic> _attributes ;
+  late Map<String, dynamic> _attributes;
 
   @override
   void initState() {
-    _attributes = widget.attributes ?? <String, dynamic>{};
+    _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
 
     _loadingEvents = true;
-    Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength)).then((List<Event2>? events) {
+    Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes)).then((List<Event2>? events) {
       setStateIfMounted(() {
         _events = (events != null) ? List<Event2>.from(events) : null;
         _loadingEvents = false;
@@ -170,7 +172,31 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
   }
 
   void _onFilters() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2FiltersPanel(_attributes)));
+    Analytics().logSelect(target: 'Filters');
+    //Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2FiltersPanel(_attributes)));
+    if (Events2().contentAttributes != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('panel.events2_list.attributes.filters.header.title', 'Group Filters'),
+        description: Localization().getStringEx('panel.events2_list.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
+        contentAttributes: Events2().contentAttributes,
+        selection: _attributes,
+        filtersMode: true,
+      ))).then((selection) {
+        if ((selection != null) && mounted) {
+          setState(() {
+            _attributes = selection;
+            _loadingEvents = true;
+          });
+
+          Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes)).then((List<Event2>? events) {
+            setStateIfMounted(() {
+              _events = (events != null) ? List<Event2>.from(events) : null;
+              _loadingEvents = false;
+            });
+          });
+        }
+      });
+    }
   }
 
   void _onSort() {
@@ -190,6 +216,7 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
   }
 
   void _onEvent(Event2 event) {
+    Analytics().logSelect(target: 'Event: ${event.name}');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,)));
   }
 }

@@ -1122,6 +1122,8 @@
     "panel.events_schedule.button.details.hint": "",
 
     "panel.events2_list.header.title": "Events",
+	"panel.events2_list.attributes.filters.header.title": "Event Filters",
+	"panel.events2_list.attributes.filters.header.description": "Choose one or more attributes to filter the events",
 
     "panel.events2_filters.header.title": "Event Filters",
 
