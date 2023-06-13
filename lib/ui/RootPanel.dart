@@ -22,8 +22,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/AssistantPanel.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
@@ -69,7 +71,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum RootTab { Favorites, Browse, Maps, Academics, Wellness }
+enum RootTab { Favorites, Browse, Maps, Assistant, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -161,6 +163,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Groups.notifyGroupDetail,
       Appointments.notifyAppointmentDetail,
       Canvas.notifyCanvasEventDetail,
+      Guide.notifyGuide,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
       Localization.notifyStringsUpdated,
@@ -177,7 +180,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     ]);
 
     _tabs = _getTabs();
-    _tabBarController = TabController(length: _tabs.length, vsync: this);
+    _currentTabIndex = _defaultTabIndex ?? _getIndexByRootTab(RootTab.Favorites) ?? 0;
+    _tabBarController = TabController(initialIndex: _currentTabIndex, length: _tabs.length, vsync: this);
     _updatePanels(_tabs);
 
     Services().initUI();
@@ -241,6 +245,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Appointments.notifyAppointmentDetail) {
       _onAppointmentDetail(param);
+    }
+    else if (name == Guide.notifyGuide) {
+      _onGuide();
     }
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
@@ -720,6 +727,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  Future<void> _onGuide() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+          CampusGuidePanel()));
+    });
+    if (mounted) {
+      setState(() {}); // Force the postFrameCallback invokation.
+    }
+  }
+
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
     String? guideId = (content != null) ? JsonUtils.stringValue(content['guide_id']) : null;
     if (StringUtils.isNotEmpty(guideId)){
@@ -829,6 +846,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     return null;
   }
 
+  int? get _defaultTabIndex {
+    dynamic defaultTabCode = FlexUI()['tabbar.default'];
+    return (defaultTabCode is String) ? _getIndexByRootTab(rootTabFromString(defaultTabCode)) : null;
+  }
+
   void _updateContent() {
     List<RootTab> tabs = _getTabs();
     if (!DeepCollectionEquality().equals(_tabs, tabs)) {
@@ -885,6 +907,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (rootTab == RootTab.Maps) {
       return ExploreMapPanel();
+    }
+    else if (rootTab == RootTab.Assistant) {
+      return AssistantPanel();
     }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);
@@ -1043,6 +1068,9 @@ RootTab? rootTabFromString(String? value) {
     }
     else if (value == 'maps') {
       return RootTab.Maps;
+    }
+    else if (value == 'assistant') {
+      return RootTab.Assistant;
     }
     else if (value == 'academics') {
       return RootTab.Academics;

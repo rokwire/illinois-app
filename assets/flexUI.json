@@ -1,8 +1,9 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["favorites", "browse", "maps", "academics", "wellness"],
-	
+			"tabbar": ["assistant", "favorites", "browse", "maps", "academics", "wellness"],
+			"tabbar.default": "favorites",
+
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_mental_health", "wellness_todo", "wellness_rings", "wellness_tips",
 				"daily_illini", "wpgufm_radio", "twitter", "all_groups", "my_groups",
