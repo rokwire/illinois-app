@@ -3,15 +3,14 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeepLink.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
-import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Assistant with Service {
+class Assistant /* with Service */ {
 
   // Singleton Factory
+  
   Assistant._internal();
   static final Assistant _instance = Assistant._internal();
 
@@ -23,12 +22,8 @@ class Assistant with Service {
     return _instance;
   }
 
-  @override
-  Set<Service> get serviceDependsOn {
-    return {DeepLink()};
-  }
-
-
+  // Implementation
+  
   Future<Message?> sendQuery(String? query) async {
     if (!isEnabled) {
       Log.w('Failed to send assistant query. Missing assistant url.');
