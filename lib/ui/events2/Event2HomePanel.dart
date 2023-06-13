@@ -28,7 +28,7 @@ class Event2HomePanel extends StatefulWidget {
   State<StatefulWidget> createState() => _Event2HomePanelState();
 
   static void present(BuildContext context) {
-    if (Storage().events2Attributes?.isNotEmpty ?? false) {
+    if (Storage().events2Attributes != null) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel()));
     }
     else {
