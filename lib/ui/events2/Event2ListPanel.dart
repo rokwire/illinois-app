@@ -175,7 +175,7 @@ class _Event2ListPanelState extends State<Event2ListPanel> implements Notificati
     double screenHeight = MediaQuery.of(context).size.height;
     return Column(children: [
       Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: screenHeight / 4), child:
-        Text(message, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
       ),
       Container(height: screenHeight / 2,)
     ],);
