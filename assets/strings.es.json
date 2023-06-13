@@ -1119,9 +1119,13 @@
     "panel.events_schedule.button.details.title": "Detalles",
     "panel.events_schedule.button.details.hint": "",
 
-    "panel.events2_list.header.title": "Events",
-	"panel.events2_list.attributes.filters.header.title": "Event Filters",
-	"panel.events2_list.attributes.filters.header.description": "Choose one or more attributes to filter the events",
+    "panel.events2.home.header.title": "Events",
+	"panel.events2.home.attributes.filters.header.title": "Event Filters",
+	"panel.events2.home.attributes.filters.header.description": "Choose one or more attributes to filter the events",
+	"panel.events2.home.attributes.launch.header.title": "Events",
+	"panel.events2.home.attributes.launch.header.description": "Discover events across campus and around the world",
+	"panel.events2.home.attributes.launch.apply.title": "Explore",
+	"panel.events2.home.attributes.launch.continue.title": "Not right now",
 
     "panel.events2_filters.header.title": "Event Filters",
 

@@ -28,7 +28,23 @@ class Event2HomePanel extends StatefulWidget {
   State<StatefulWidget> createState() => _Event2HomePanelState();
 
   static void present(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel()));
+    if (Storage().events2Attributes?.isNotEmpty ?? false) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel()));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
+        description: Localization().getStringEx('panel.events2.home.attributes.launch.header.description', 'Discover events across campus and around the world'),
+        applyTitle: Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Explore'),
+        continueTitle:Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Not right now'),
+        contentAttributes: Events2().contentAttributes,
+        filtersMode: true,
+      ))).then((selection) {
+        if (selection != null) {
+          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(attributes: selection,)));
+        }
+      });
+    }
   }
 }
 
@@ -77,7 +93,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx("panel.events2_list.header.title", "Events"), leading: RootHeaderBarLeading.Back,),
+      appBar: RootHeaderBar(title: Localization().getStringEx("panel.events2.home.header.title", "Events"), leading: RootHeaderBarLeading.Back,),
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -261,8 +277,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2FiltersPanel(_attributes)));
     if (Events2().contentAttributes != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-        title: Localization().getStringEx('panel.events2_list.attributes.filters.header.title', 'Group Filters'),
-        description: Localization().getStringEx('panel.events2_list.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
+        title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
+        description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
         contentAttributes: Events2().contentAttributes,
         selection: _attributes,
         filtersMode: true,
@@ -272,6 +288,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
             _attributes = selection;
             _loadingEvents = true;
           });
+
+          Storage().events2Attributes = selection;
 
           Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes)).then((List<Event2>? events) {
             setStateIfMounted(() {
