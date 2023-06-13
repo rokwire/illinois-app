@@ -13,6 +13,8 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/service/styles.dart';
 
 class Event2ListPanel extends StatefulWidget {
@@ -29,7 +31,7 @@ class Event2ListPanel extends StatefulWidget {
   }
 }
 
-class _Event2ListPanelState extends State<Event2ListPanel> {
+class _Event2ListPanelState extends State<Event2ListPanel> implements NotificationsListener {
 
   bool _loadingEvents = false;
   List<Event2>? _events;
@@ -39,6 +41,10 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Storage.notifySettingChanged
+    ]);
+
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
 
     _loadingEvents = true;
@@ -53,7 +59,18 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, param) {
+    if (name == Storage.notifySettingChanged) {
+      if (param == rokwire.Storage.debugUseSampleEvents2Key) {
+        _onRefresh();
+      }
+    }
   }
 
   @override
