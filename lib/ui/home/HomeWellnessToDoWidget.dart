@@ -95,7 +95,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
                         LinkButton(
                           title: Localization().getStringEx('widget.home.wellness.todo.items.view_all.label', 'View All'),
                           hint: Localization().getStringEx('widget.home.wellness.todo.items.view_all.hint', 'Tap to view all To Do items'),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_bold.underline"),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline"),
                           onTap: _onTapViewAll,
                         ),
                       ]))

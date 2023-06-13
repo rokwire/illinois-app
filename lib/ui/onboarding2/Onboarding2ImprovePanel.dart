@@ -122,7 +122,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                           Container(height: 10,),
                           Onboarding2UnderlinedButton(
                             title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
-                            fontSize: 14,
+                            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline"),
                             onTap: _onTapLearnMore,
                           ),
                           Container(height: 18,),

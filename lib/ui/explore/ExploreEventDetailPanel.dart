@@ -356,7 +356,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     String locationText = widget.event?.getLongDisplayLocation(_locationData) ?? "";
     bool canHandleLocation = (widget.event?.location?.isLocationCoordinateValid == true);
-    TextStyle? locationTextStyle = canHandleLocation ? Styles().textStyles?.getTextStyle("widget.button.title.small.semi_bold.underline") : Styles().textStyles?.getTextStyle("widget.button.title.small.semi_bold");
+    TextStyle? locationTextStyle = canHandleLocation ? Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline") : Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat");
     String semanticsLabel = "$eventType, $locationText";
     String semanticsHint = Localization().getStringEx('panel.explore_detail.button.directions.hint', '');
     
@@ -408,7 +408,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             Container(height: 4,),
             Visibility(visible: canHandleLink, child:
               Container(padding: EdgeInsets.only(left: 30), child:
-                Text(linkUrl ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_bold.underline"))
+                Text(linkUrl ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline"))
               ),
             ),
           ],),
