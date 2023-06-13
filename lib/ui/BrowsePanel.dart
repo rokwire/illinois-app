@@ -968,7 +968,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapEventFeed(BuildContext context) {
     Analytics().logSelect(target: "Event Feed");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return Event2HomePanel(); } ));
+    Event2HomePanel.present(context);
   }
 
   void _onTapTwitter(BuildContext context) {
