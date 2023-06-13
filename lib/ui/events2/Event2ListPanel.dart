@@ -70,7 +70,11 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildCommandBar(),
       Expanded(child:
-        _buildEventsContent(),
+        RefreshIndicator(onRefresh: _onRefresh, child:
+          SingleChildScrollView(child:
+            _buildEventsContent(),
+          )
+        )
       )
     ],);
   }
@@ -145,30 +149,44 @@ class _Event2ListPanelState extends State<Event2ListPanel> {
         Event2Card(event, onTap: () => _onEvent(event),),
       ),);
     }
-    return RefreshIndicator(onRefresh: _onRefresh, child:
-      SingleChildScrollView(child:
-        Padding(padding: EdgeInsets.all(16), child:
-          Column(children:  cardsList,)
-        ),
-      ),
+    return Padding(padding: EdgeInsets.all(16), child:
+      Column(children:  cardsList,)
     );
   }
 
   Widget _buildMessageContent(String message) {
-    return Center(child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
+    double screenHeight = MediaQuery.of(context).size.height;
+    return Column(children: [
+      Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: screenHeight / 4), child:
         Text(message, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
-      )
-    );
+      ),
+      Container(height: screenHeight / 2,)
+    ],);
   }
 
-  Widget _buildLoadingContent() => Center(child:
-    SizedBox(width: 32, height: 32, child:
-      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary,)
-    )
-  );
+  Widget _buildLoadingContent() {
+    double screenHeight = MediaQuery.of(context).size.height;
+    return Column(children: [
+      Padding(padding: EdgeInsets.symmetric(vertical: screenHeight / 4), child:
+        SizedBox(width: 32, height: 32, child:
+          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary,)
+        )
+      ),
+      Container(height: screenHeight / 2,)
+    ],);
+  }
 
   Future<void> _onRefresh() async {
+    setState(() {
+      _loadingEvents = true;
+    });
+
+    Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes)).then((List<Event2>? events) {
+      setStateIfMounted(() {
+        _events = (events != null) ? List<Event2>.from(events) : null;
+        _loadingEvents = false;
+      });
+    });
   }
 
   void _onFilters() {
