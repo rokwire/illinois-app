@@ -83,7 +83,7 @@ class Event2FilterCommandButton extends StatelessWidget {
     );
   }
 
-  Decoration get defaultContentDecoration => BoxDecoration(
+  static BoxDecoration get defaultContentDecoration => BoxDecoration(
     color: Styles().colors?.white,
     border: Border.all(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1),
     borderRadius: BorderRadius.circular(16),

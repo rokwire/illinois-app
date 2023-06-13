@@ -74,3 +74,12 @@ extension Event2Ext on Event2 {
   };
 
 }
+
+String? eventSortTypeToDisplayString(EventSortType? value) {
+  switch (value) {
+    case EventSortType.dateTime: return 'Date & Time'; // TBD: Localization
+    case EventSortType.alphabetical: return 'Alphabetical'; // TBD: Localization
+    case EventSortType.proximity: return 'Proximity'; // TBD: Localization
+    default: return null;
+  }
+}

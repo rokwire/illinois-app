@@ -1,6 +1,10 @@
 
+import 'dart:math';
+
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -55,6 +59,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   final int eventsPageLength = 12;
 
   late Map<String, dynamic> _attributes;
+  late EventSortType _sortType;
 
   @override
   void initState() {
@@ -63,9 +68,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     ]);
 
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
+    _sortType = eventSortTypeFromString(Storage().events2Sort) ?? EventSortType.dateTime;
 
     _loadingEvents = true;
-    Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes)).then((List<Event2>? events) {
+    Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes, sortType: _sortType)).then((List<Event2>? events) {
       setStateIfMounted(() {
         _events = (events != null) ? List<Event2>.from(events) : null;
         _loadingEvents = false;
@@ -139,11 +145,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           rightIconKey: 'chevron-right',
           onTap: _onFilters,
         ),
-        Event2FilterCommandButton(
-          title: 'Sort',
-          leftIconKey: 'sort',
-          onTap: _onSort,
-        ),
+        _sortButton,
+
       ])),
       Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
         LinkButton(
@@ -167,6 +170,31 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         ),
       ])),
     ],);
+  }
+
+
+  Widget get _sortButton => 
+    DropdownButtonHideUnderline(child:
+      DropdownButton2<String>(
+        dropdownStyleData: DropdownStyleData(width: 120),
+        customButton: Event2FilterCommandButton(title: 'Sort', leftIconKey: 'sort'),
+        isExpanded: false,
+        items: _buildSortDropdownItems(),
+        onChanged: _onSortType,
+      ),
+    );
+
+  List<DropdownMenuItem<String>> _buildSortDropdownItems() {
+    List<DropdownMenuItem<String>> items = <DropdownMenuItem<String>>[];
+    for (EventSortType sortType in EventSortType.values) {
+      items.add(DropdownMenuItem<String>(
+        value: eventSortTypeToString(sortType),
+        child: Text(eventSortTypeToDisplayString(sortType) ?? '', overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
+          Styles().textStyles?.getTextStyle("widget.message.regular.fat") :
+          Styles().textStyles?.getTextStyle("widget.message.regular"),
+      )));
+    }
+    return items;
   }
 
   Widget _buildAttributesDescription() {
@@ -263,7 +291,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _loadingEvents = true;
       });
 
-      Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes)).then((List<Event2>? events) {
+      Events2().loadEvents(Events2Query(offset: 0, limit: max(_events?.length ?? 0, eventsPageLength), attributes: _attributes, sortType: _sortType)).then((List<Event2>? events) {
         setStateIfMounted(() {
           _events = (events != null) ? List<Event2>.from(events) : null;
           _loadingEvents = false;
@@ -291,7 +319,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
           Storage().events2Attributes = selection;
 
-          Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes)).then((List<Event2>? events) {
+          Events2().loadEvents(Events2Query(offset: 0, limit: eventsPageLength, attributes: _attributes, sortType: _sortType)).then((List<Event2>? events) {
             setStateIfMounted(() {
               _events = (events != null) ? List<Event2>.from(events) : null;
               _loadingEvents = false;
@@ -302,9 +330,24 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
   }
 
-  void _onSort() {
+  void _onSortType(String? value) {
     Analytics().logSelect(target: 'Sort');
-    AppAlert.showDialogResult(context, 'TBD');
+    EventSortType? sortType = eventSortTypeFromString(value);
+    if (sortType != null) {
+      setState(() {
+        _sortType = sortType;
+        _loadingEvents = true;
+      });
+
+      Storage().events2Sort = eventSortTypeToString(sortType);
+
+      Events2().loadEvents(Events2Query(offset: 0, limit: max(_events?.length ?? 0, eventsPageLength), attributes: _attributes, sortType: _sortType)).then((List<Event2>? events) {
+        setStateIfMounted(() {
+          _events = (events != null) ? List<Event2>.from(events) : null;
+          _loadingEvents = false;
+        });
+      });
+    }
   }
 
   void _onSearch() {
