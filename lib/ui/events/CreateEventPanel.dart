@@ -1758,14 +1758,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
   
   Event _populateEventWithData(Event event){
-    if(_location==null) {
-      _location = new ExploreLocation();
-    }
-    _location!.description =  (_eventLocationController.text.toString());
-    String? longitude = (_eventLongitudeController.text.toString()) ;
-    String? latitude = (_eventLatitudeController.text.toString());
-    _location!.latitude = num.tryParse(latitude);
-    _location!.longitude =  num.tryParse(longitude);
+
+    _location = ExploreLocation.fromOther(_location,
+      description: _eventLocationController.text,
+      latitude: double.tryParse(_eventLatitudeController.text),
+      longitude: double.tryParse(_eventLongitudeController.text),
+    );
 
     event.imageURL = _imageUrl;
     event.category = _selectedCategory != null ? _selectedCategory["category"] : "";

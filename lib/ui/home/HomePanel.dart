@@ -39,6 +39,7 @@ import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
+import 'package:illinois/ui/home/HomeEventFeedWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeInboxWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
@@ -149,6 +150,15 @@ class HomePanel extends StatefulWidget {
         return HomeSuggestedEventsWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeSuggestedEventsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'event_feed') {
+      if (title) {
+        return HomeEventFeedWidget.title;
+      } else if (handle) {
+        return HomeEventFeedWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeEventFeedWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'recent_items') {

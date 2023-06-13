@@ -17,11 +17,14 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class ContentAttributesPanel extends StatefulWidget {
   final String? title;
   final String? description;
+  final String? applyTitle;
+  final String? continueTitle;
   final bool filtersMode;
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
 
-  ContentAttributesPanel({Key? key, this.title, this.description, this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
+  ContentAttributesPanel({Key? key, this.title, this.description, this.applyTitle, this.continueTitle,
+    this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesPanelState();
@@ -47,7 +50,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: widget.title),
+      appBar: HeaderBar(title: widget.title, actions: _headerBarActions),
       backgroundColor: Styles().colors?.background,
       body: _buildContent(),
     );
@@ -282,6 +285,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return false;
   }
 
+  List<Widget>? get _headerBarActions => (widget.filtersMode && _isInitialSelectionNotEmpty) ? <Widget>[
+    _buildHeaderBarButton(
+      title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+      onTap: _onTapClear,
+    )
+  ] : null;
+
   bool get _isInitialSelectionNotEmpty {
 
     Iterable<dynamic>? selectionValues = widget.selection?.values;
@@ -298,40 +308,60 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return false;
   }
 
-  Widget _buildCommands() {
-    List<Widget> buttons = <Widget>[];
+  Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) =>
+    Semantics(label: title, button: true, excludeSemantics: true, child: 
+      InkWell(onTap: onTap, child:
+        Align(alignment: Alignment.center, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                child: Text(title ?? '',
+                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                ),
+              ),
+            ],)
+          ),
+        ),
+        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //),
+      ),
+    );
 
-    if (widget.filtersMode) {
-      bool canClear = _isInitialSelectionNotEmpty;
-      buttons.addAll(<Widget>[
-        Expanded(child: RoundedButton(
-          label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
-          textColor: canClear ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          borderColor: canClear ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
+  Widget _buildCommands() {
+    double bottomPadding = 16;
+    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
+    String applyTitle = widget.applyTitle ?? (widget.filtersMode ? 
+      Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter') :
+      Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes'));
+    List<Widget> commands = <Widget>[
+      Row(children: <Widget>[
+        Expanded(flex: 1, child: Container()),
+        Expanded(flex: 2, child: RoundedButton(
+          label: applyTitle,
+          textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+          borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
           backgroundColor: Styles().colors?.white,
-          enabled: canClear,
-          onTap: _onTapClear
+          enabled: canApply,
+          onTap: _onTapApply
+        )),
+        Expanded(flex: 1, child: Container()),
+      ],)
+    ];
+
+    if (widget.continueTitle != null) {
+      commands.add(InkWell(onTap: _onTapContinue, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+          Text(widget.continueTitle ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline'),)
         )
-      )]);
+      ,));
+
     }
 
-    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
-    String applyTitle = widget.filtersMode ? 
-      Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter') :
-      Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes');
-    buttons.add(Expanded(child:
-      RoundedButton(
-        label: applyTitle,
-        textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-        borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
-        backgroundColor: Styles().colors?.white,
-        enabled: canApply,
-        onTap: _onTapApply
-      )
-    ));
     return SafeArea(child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-        Row(children: buttons,)
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: bottomPadding), child:
+        Column(mainAxisSize: MainAxisSize.min, children: commands,)
       )
     );
   }
@@ -344,6 +374,11 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   void _onTapClear() {
     Analytics().logSelect(target: 'Clear');
     Navigator.of(context).pop(<String, dynamic>{});
+  }
+
+  void _onTapContinue() {
+    Analytics().logSelect(target: 'Continue');
+    Navigator.of(context).pop((widget.selection != null) ? Map<String, dynamic>.from(widget.selection!) : <String, dynamic>{});
   }
 }
 
