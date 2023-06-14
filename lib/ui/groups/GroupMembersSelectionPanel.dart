@@ -126,8 +126,9 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
               ),
               Padding(padding: EdgeInsets.only(top: 24, bottom: 24), child:
               RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   contentWeight: 0.5,
-                  textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary,
+                  borderColor: Styles().colors!.fillColorSecondary,
                   backgroundColor: Styles().colors!.white,
                   onTap: _onTapDone),
               ),

@@ -96,11 +96,11 @@ class _CanvasFeedbackPanelState extends State<CanvasFeedbackPanel> {
                   RoundedButton(
                       label: Localization().getStringEx('panel.canvas_feedback.submit.button', 'Submit'),
                       hint: Localization().getStringEx('panel.canvas_feedback.submit.hint', ''),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       onTap: _onTapSubmit,
                       contentWeight: 0.0,
                       backgroundColor: Styles().colors!.white,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      textColor: Styles().colors!.fillColorPrimary)
+                      borderColor: Styles().colors!.fillColorSecondary)
                 ]))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())

@@ -81,11 +81,10 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
             Expanded(child:
               RoundedButton(
                 label: Localization().getStringEx('dialog.yes.title', 'Yes'),
-                fontSize: 16,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 backgroundColor: Styles().colors!.white,
                 borderColor: Styles().colors!.fillColorSecondaryVariant,
-                textColor: Styles().colors!.fillColorPrimary,
                 onTap: () => _onYes(context),
               ),
             ),
@@ -93,11 +92,10 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
             Expanded(child:
               RoundedButton(
                 label: Localization().getStringEx('dialog.no.title', 'No'),
-                fontSize: 16,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 backgroundColor: Styles().colors!.white,
                 borderColor: Styles().colors!.fillColorSecondaryVariant,
-                textColor: Styles().colors!.fillColorPrimary,
                 onTap: () => _onNo(context),
               ),
             ),

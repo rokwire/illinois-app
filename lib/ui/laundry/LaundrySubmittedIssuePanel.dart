@@ -74,11 +74,11 @@ class _LaundrySubmittedIssuePanelState extends State<LaundrySubmittedIssuePanel>
 
   Widget _buildReturnWidget() {
     return RoundedButton(
+        label: Localization().getStringEx('panel.laundry.issues_submitted.return.button', 'Return'),
+        textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
         backgroundColor: Styles().colors!.fillColorPrimary,
-        textColor: Styles().colors!.white,
         contentWeight: 0.5,
         borderColor: Styles().colors!.fillColorPrimary,
-        label: Localization().getStringEx('panel.laundry.issues_submitted.return.button', 'Return'),
         onTap: _onTapBack,
         leftIcon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true));
   }

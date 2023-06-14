@@ -128,7 +128,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
           label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
-          textColor: Styles().colors?.fillColorPrimaryVariant,
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat.variant"),
           backgroundColor: Styles().colors?.surface,
           onTap: _onTapStartEvaluation
         )),
@@ -212,31 +212,31 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: _onTapResults,
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label", "Where do my results go?"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("where_results_go"),
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label", "How are my results determined?"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("how_results_determined"),
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label", "Why do these skills matter?"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("why_skills_matter"),
               ),
               RibbonButton(
                 rightIconKey: "chevron-right-bold",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label", "Who created this assessment?"),
-                textColor: Styles().colors?.fillColorPrimaryVariant,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.variant"),
                 onTap: () => _onTapShowInfo("who_created_assessment"),
               ),
             ]));

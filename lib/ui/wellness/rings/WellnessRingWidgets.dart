@@ -284,7 +284,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                                         padding: EdgeInsets.only(left: 50, bottom: 10),
                                         child: GestureDetector(
                                           onTap: () => Navigator.of(this.context).pop(),
-                                          child: Text("x", style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 22),),
+                                          child: Text("x", style : Styles().textStyles?.getTextStyle("widget.info.large")),
                                         )),
                                   ],
                                 ),

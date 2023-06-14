@@ -112,11 +112,10 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                     RoundedButton(
                       label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
                       hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
-                      fontSize: 16,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.white,
-                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: _onLoginTapped,
                     ),
                     Onboarding2UnderlinedButton(

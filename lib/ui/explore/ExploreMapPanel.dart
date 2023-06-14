@@ -541,10 +541,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
                   RoundedButton(
                     label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
                     hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
+                    textStyle: canDirections ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    fontSize: 16.0,
-                    textColor: canDirections ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                     borderColor: canDirections ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                     onTap: _onTapMapExploreDirections
                   ),
@@ -554,10 +553,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
                   RoundedButton(
                     label: detailsLabel,
                     hint: detailsHint,
+                    textStyle: canDirections ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    fontSize: 16.0,
-                    textColor: canDetail ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                     borderColor: canDetail ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                     onTap: onTapDetail,
                   ),
@@ -771,7 +769,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildExploreTypesDropDownButton() {
     return RibbonButton(
-      textColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -792,7 +790,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   Widget _buildEventsDisplayTypesDropDownButton() {
     return RibbonButton(
-      textColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),

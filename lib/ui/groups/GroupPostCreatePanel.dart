@@ -130,8 +130,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       flex: 1,
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
                         onTap: _onTapSend)),
                     Container(width: 20),
@@ -139,8 +139,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       flex: 1,
                       child: RoundedButton(
                         label: Localization().getStringEx('panel.group.detail.post.create.button.cancel.title', 'Cancel'),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors!.textSurface,
-                        textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
                         onTap: _onTapCancel))
                   ])

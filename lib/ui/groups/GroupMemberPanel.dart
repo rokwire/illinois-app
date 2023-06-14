@@ -221,10 +221,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
         RoundedButton(label: _isResearchProject?
             Localization().getStringEx("panel.member_detail.button.remove.title.project", "Remove from Project") :
             Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
           backgroundColor: Styles().colors!.white,
-          textColor: Styles().colors!.fillColorPrimary,
-          fontFamily: Styles().fontFamilies!.bold,
-          fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
           borderColor: Styles().colors!.fillColorPrimary,
           borderWidth: 2,
@@ -261,8 +259,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                   children: <Widget>[
                     RoundedButton(
                       label: Localization().getStringEx("panel.member_detail.button.back.title", "Back"),
-                      fontFamily: "ProximaNovaRegular",
-                      textColor: Styles().colors!.fillColorPrimary,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.thin"),
                       borderColor: Styles().colors!.white,
                       backgroundColor: Styles().colors!.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -275,8 +272,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                     Container(width: 16,),
                         RoundedButton(
                           label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
-                          fontFamily: "ProximaNovaBold",
-                          textColor: Styles().colors!.fillColorPrimary,
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                           borderColor: Styles().colors!.white,
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
