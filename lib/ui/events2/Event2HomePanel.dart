@@ -42,6 +42,7 @@ class Event2HomePanel extends StatefulWidget {
         applyTitle: Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Explore'),
         continueTitle:Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Not right now'),
         contentAttributes: Events2().contentAttributes,
+        sortType: ContentAttributesSortType.native,
         filtersMode: true,
       ))).then((selection) {
         if (selection != null) {
@@ -330,6 +331,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
         contentAttributes: Events2().contentAttributes,
         selection: _attributes,
+        sortType: ContentAttributesSortType.native,
         filtersMode: true,
       ))).then((selection) {
         if ((selection != null) && mounted) {

@@ -420,6 +420,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
         contentAttributes: Groups().contentAttributes,
         selection: _contentAttributesSelection,
+        sortType: ContentAttributesSortType.alphabetical,
         filtersMode: true,
       ))).then((selection) {
         if ((selection != null) && mounted) {

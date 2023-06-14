@@ -516,6 +516,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
+      sortType: ContentAttributesSortType.alphabetical,
     ))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {

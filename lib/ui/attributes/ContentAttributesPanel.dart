@@ -13,6 +13,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+enum ContentAttributesSortType { native, explicit, alphabetical, }
 
 class ContentAttributesPanel extends StatefulWidget {
   final String? title;
@@ -20,11 +21,15 @@ class ContentAttributesPanel extends StatefulWidget {
   final String? applyTitle;
   final String? continueTitle;
   final bool filtersMode;
+  final ContentAttributesSortType sortType;
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
 
   ContentAttributesPanel({Key? key, this.title, this.description, this.applyTitle, this.continueTitle,
-    this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
+    this.contentAttributes, this.selection,
+    this.sortType = ContentAttributesSortType.native,
+    this.filtersMode = false,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesPanelState();
@@ -82,11 +87,11 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     List<ContentAttribute>? attributes = ListUtils.from<ContentAttribute>(widget.contentAttributes?.attributes);
     if ((attributes != null) && attributes.isNotEmpty) {
-      attributes.sort((ContentAttribute attribute1, ContentAttribute attribute2) {
-        String attributeTitle1 = attribute1.displayTitle ?? '';
-        String attributeTitle2 = attribute2.displayTitle ?? '';
-        return attributeTitle1.compareTo(attributeTitle2);
-      });
+      switch(widget.sortType) {
+        case ContentAttributesSortType.alphabetical: attributes.sort((ContentAttribute attribute1, ContentAttribute attribute2) => attribute1.compareByTitle(attribute2)); break;
+        case ContentAttributesSortType.explicit: attributes.sort((ContentAttribute attribute1, ContentAttribute attribute2) => attribute1.compareBySortOrder(attribute2)); break;
+        case ContentAttributesSortType.native: break;
+      }
       for (ContentAttribute attribute in attributes) {
         Widget? attributeWidget;
         switch (attribute.widget) {
