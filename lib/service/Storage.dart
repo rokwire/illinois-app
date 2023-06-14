@@ -415,4 +415,12 @@ class Storage extends rokwire.Storage {
   String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
   set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
 
+  // Events2
+  static const String events2AttributesKey = 'events2_attributes';
+  Map<String, dynamic>? get events2Attributes => JsonUtils.decodeMap(getStringWithName(events2AttributesKey));
+  set events2Attributes(Map<String, dynamic>? value) => setStringWithName(events2AttributesKey, JsonUtils.encode(value));
+
+  static const String events2SortKey = 'events2_sort';
+  String? get events2Sort => getStringWithName(events2SortKey);
+  set events2Sort(String? value) => setStringWithName(events2SortKey, value);
 }
