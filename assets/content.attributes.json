@@ -77,13 +77,13 @@
 			"max-selected-count": 1
 		},
 		"values": [
-			"Group Fitness",
-			"Aquatics",
-			"Ice Skating",
-			"Personal Training",
-			"Student Wellness",
-			"Adventure Req",
-			"Summer Camp"
+			{ "label": "Group Fitness", "requirements": { "category" : "Recreation, Health & Fitness" }},
+			{ "label": "Aquatics", "requirements": { "category" : "Recreation, Health & Fitness" }},
+			{ "label": "Ice Skating", "requirements": { "category" : "Recreation, Health & Fitness" }},
+			{ "label": "Personal Training", "requirements": { "category" : "Recreation, Health & Fitness" }},
+			{ "label": "Student Wellness", "requirements": { "category" : "Recreation, Health & Fitness" }},
+			{ "label": "Adventure Req", "requirements": { "category" : "Recreation, Health & Fitness" }},
+			{ "label": "Summer Camp", "requirements": { "category" : "Recreation, Health & Fitness" }}
 		]
 	},{
 		"id": "category",
