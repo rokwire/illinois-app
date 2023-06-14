@@ -143,9 +143,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
         SliverHeaderBar(
           leadingIconKey: widget.scrollController == null ? 'chevron-left-white' : 'chevron-left-bold',
           title: Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
-          textColor: widget.scrollController == null
-              ? Styles().colors!.white
-              : Styles().colors!.fillColorPrimary,
+          textStyle:  widget.scrollController == null ? Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles?.getTextStyle("widget.title.regular.extra_fat"),
         ),
         SliverList(
           delegate: SliverChildListDelegate([

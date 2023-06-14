@@ -146,9 +146,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                   child: RoundedButton(
                     label: Localization().getStringEx('panel.group_qr_code.button.save.title', 'Save QR Code'),
                     hint: '',
-                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                    textStyle: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
                     backgroundColor: Styles().colors!.background,
-                    fontSize: 16.0,
                     borderColor: Styles().colors!.fillColorSecondary,
                     onTap: _onTapSave,
                   ),

@@ -668,7 +668,7 @@ class _EventsListState extends State<_EventsList>{
         title: Localization().getStringEx(titleKey, "Event Schedule"),
         slantImageKey: "slant-dark",
         slantColor: Styles().colors!.backgroundVariant,
-        titleTextColor: Styles().colors!.fillColorPrimary,
+        titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
         children: _buildListItems()
     );
   }

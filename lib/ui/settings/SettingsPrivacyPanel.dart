@@ -197,7 +197,6 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                       textStyle: _disabled ? Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat.variant_two") : Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
                       borderColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-                      textColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.white,
                       progress: _updating,
                       onTap: () => _onSaveClicked()),
                 )

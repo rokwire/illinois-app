@@ -139,7 +139,6 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
               backgroundColor: Styles().colors!.white,
-              textColor: submitEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
               onTap: () => _onSubmit(),
             ),
           ),

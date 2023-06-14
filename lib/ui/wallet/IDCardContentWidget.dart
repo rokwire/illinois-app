@@ -455,10 +455,9 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
           child: RoundedButton(
               label: Localization().getStringEx('widget.id_card.button.mobile_access.renew', 'Renew'),
               hint: Localization().getStringEx('widget.id_card.button.mobile_access.renew.hint', ''),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
-              fontSize: 16.0,
               contentWeight: 0.0,
-              textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               onTap: _onTapRenewMobileAccessButton)),
     ]);
@@ -479,10 +478,9 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
           child: RoundedButton(
               label: Localization().getStringEx('widget.id_card.button.mobile_access.request', 'Request'),
               hint: Localization().getStringEx('widget.id_card.button.mobile_access.request.hint', ''),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
-              fontSize: 16.0,
               contentWeight: 0.0,
-              textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               onTap: _onTapRequestMobileAccessButton)),
       Padding(
@@ -603,19 +601,17 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
                       RoundedButton(
                           label: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew.cancel', 'Cancel'),
                           hint: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew.cancel.hint', ''),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                           backgroundColor: Colors.white,
-                          fontSize: 16.0,
                           contentWeight: 0.0,
-                          textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
                           onTap: _onTapCancelRenew),
                       RoundedButton(
                           label: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew_access', 'Renew Access'),
                           hint: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew_access.hint', ''),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.accent"),
                           backgroundColor: Styles().colors!.fillColorSecondary,
-                          fontSize: 16.0,
                           contentWeight: 0.0,
-                          textColor: Styles().colors!.white,
                           borderColor: Styles().colors!.fillColorSecondary,
                           onTap: _onTapRenewAccess)
                     ])

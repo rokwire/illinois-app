@@ -485,7 +485,6 @@ class _CheckListPageWidget extends StatelessWidget{
                   child: RoundedButton(label: title ?? '',
                     textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                     backgroundColor: Styles().colors!.white,
-                    fontFamily: Styles().fontFamilies!.bold,
                     borderColor: Styles().colors!.fillColorSecondary,
                     borderWidth: 2,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

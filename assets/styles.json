@@ -176,6 +176,7 @@
     "widget.title.medium.extra_fat": {"font_family": "extra_bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.title.regular.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular.semi_fat": {"font_family": "semi_bold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.title.regular.extra_fat": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular.medium_fat": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
@@ -263,6 +264,7 @@
     "widget.label.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorSecondary"},
     "widget.label.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
 
+    "widget.info.large": { "font_family": "regular", "size": 22.0, "color": "textSurface"},
     "widget.info.medium": { "font_family": "regular", "size": 18.0, "color": "textSurface"},
     "widget.info.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textSurface"},
     "widget.info.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textSurface"},
@@ -297,6 +299,7 @@
     "widget.button.title.regular.thin.underline": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.medium.fat.variant": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "widget.button.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.thin.secondary": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary"},
     "widget.button.title.medium.fat.secondary": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
