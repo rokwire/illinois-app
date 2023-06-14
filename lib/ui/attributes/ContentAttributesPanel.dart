@@ -127,7 +127,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
           title: (attribute.displayLongTitle ?? attribute.displayTitle)?.toUpperCase(),
-          description: attribute.displayDescription,
+          description: !widget.filtersMode ? attribute.displayDescription : null,
           requiredMark: !widget.filtersMode && attribute.isRequired,
         ),
         _AttributeRibbonButton(
