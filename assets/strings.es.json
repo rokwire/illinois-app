@@ -1122,6 +1122,8 @@
     "panel.events2.home.header.title": "Events",
 	"panel.events2.home.attributes.filters.header.title": "Event Filters",
 	"panel.events2.home.attributes.filters.header.description": "Choose one or more attributes to filter the events",
+    "panel.events2.home.attributes.filters.label.title": "Filter by: ",
+	"panel.events2.home.attributes.sort.label.title": "Sort ",
 	"panel.events2.home.attributes.launch.header.title": "Events",
 	"panel.events2.home.attributes.launch.header.description": "Discover events across campus and around the world",
 	"panel.events2.home.attributes.launch.apply.title": "Explore",
@@ -3440,7 +3442,11 @@
 	"model.event2.sort_type.alphabetical": "Alphabetical",
 	"model.event2.sort_type.proximity": "Proximity",
 
-	"model.event2.event_type.free": "Free",
+	"model.event2.sort_type.status.date_time": "by Date & Time",
+	"model.event2.sort_type.status.alphabetical": "Alphabetically",
+	"model.event2.sort_type.status.proximity": "by Proximity",
+
+    "model.event2.event_type.free": "Free",
 	"model.event2.event_type.paid": "Paid",
 	"model.event2.event_type.in_person": "In-person",
 	"model.event2.event_type.online": "Online",

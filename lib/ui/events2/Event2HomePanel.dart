@@ -171,7 +171,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
         Column(children: [
           _buildCommandButtons(),
-          _buildAttributesDescription(),
+          _buildContentDescription(),
         ],)
       ),
     );
@@ -264,18 +264,18 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     return min(width + 2 * 16, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  Widget _buildAttributesDescription() {
-    List<InlineSpan> filtersList = <InlineSpan>[];
+  Widget _buildContentDescription() {
+    List<InlineSpan> descriptionList = <InlineSpan>[];
     ContentAttributes? contentAttributes = Events2().contentAttributes;
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
     TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
 
     for (EventTypeFilter type in _types) {
-      if (filtersList.isNotEmpty) {
-        filtersList.add(TextSpan(text: ", " , style : regularStyle,));
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ", " , style : regularStyle,));
       }
-      filtersList.add(TextSpan(text: eventTypeFilterToDisplayString(type), style : regularStyle,),);
+      descriptionList.add(TextSpan(text: eventTypeFilterToDisplayString(type), style : regularStyle,),);
     }
 
     if (_attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
@@ -283,22 +283,34 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_attributes, complete: true);
         if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           for (String attributeValue in displayAttributeValues) {
-            if (filtersList.isNotEmpty) {
-              filtersList.add(TextSpan(text: ", " , style : regularStyle,));
+            if (descriptionList.isNotEmpty) {
+              descriptionList.add(TextSpan(text: ", " , style : regularStyle,));
             }
-            filtersList.add(TextSpan(text: attributeValue, style : regularStyle,),);
+            descriptionList.add(TextSpan(text: attributeValue, style : regularStyle,),);
           }
         }
       }
     }
 
-    if (filtersList.isNotEmpty) {
-      filtersList.insert(0, TextSpan(text: "Filter by: " , style : boldStyle,));
+    if (descriptionList.isNotEmpty) {
+      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filters.label.title', 'Filter by: ') , style : boldStyle,));
+      descriptionList.add(TextSpan(text: '.', style : regularStyle,),);
+    }
 
+    if (1 < (_events?.length ?? 0)) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ' ', style : regularStyle,),);
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort ') , style : boldStyle,));
+      descriptionList.add(TextSpan(text: eventSortTypeToDisplayStatusString(_sortType), style : regularStyle,),);
+      descriptionList.add(TextSpan(text: '.', style : regularStyle,),);
+    }
+
+    if (descriptionList.isNotEmpty) {
       return Padding(padding: EdgeInsets.only(top: 12), child:
         Container(decoration: _attributesDescriptionDecoration, padding: EdgeInsets.only(top: 12, left: 16, right: 16), child:
           Row(children: [ Expanded(child:
-            RichText(text: TextSpan(style: regularStyle, children: filtersList))
+            RichText(text: TextSpan(style: regularStyle, children: descriptionList))
           ),],)
       ));
     }

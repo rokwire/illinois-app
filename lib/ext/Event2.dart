@@ -7,6 +7,8 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+// Event2
+
 extension Event2Ext on Event2 {
 
   Color? get uiColor => Styles().colors?.eventColor;
@@ -75,6 +77,8 @@ extension Event2Ext on Event2 {
   };
 }
 
+// EventSortType
+
 String? eventSortTypeToDisplayString(EventSortType? value) {
   switch (value) {
     case EventSortType.dateTime: return Localization().getStringEx('model.event2.sort_type.date_time', 'Date & Time');
@@ -83,6 +87,17 @@ String? eventSortTypeToDisplayString(EventSortType? value) {
     default: return null;
   }
 }
+
+String? eventSortTypeToDisplayStatusString(EventSortType? value) {
+  switch (value) {
+    case EventSortType.dateTime: return Localization().getStringEx('model.event2.sort_type.status.date_time', 'by Date & Time');
+    case EventSortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.status.alphabetical', 'Alphabetically');
+    case EventSortType.proximity: return Localization().getStringEx('model.event2.sort_type.status.proximity', 'by Proximity');
+    default: return null;
+  }
+}
+
+// EventTypeFilter
 
 String? eventTypeFilterToDisplayString(EventTypeFilter? value) {
   switch (value) {
