@@ -177,9 +177,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             padding: const EdgeInsets.symmetric(horizontal: 80),
             child: RoundedButton(
               label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll"),
+              textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
               onTap: ()=>_onFindPollTapped(),
               backgroundColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.white,
               borderColor: Styles().colors!.fillColorSecondary,
             ),
           ),
@@ -380,7 +380,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   Widget _buildCreatePollButton() {
     return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
       RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a Poll"),
-          textColor: Styles().colors!.fillColorPrimary,
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
           borderColor: Styles().colors!.fillColorSecondary,
           backgroundColor: Styles().colors!.white,
         onTap:_onCreatePollTapped

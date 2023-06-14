@@ -295,7 +295,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       excludeSemantics: true,
                       child: RoundedButton(
                           label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
-                          textColor: Styles().colors!.fillColorPrimary,
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                           onTap: _onTapAddImage,
                           contentWeight: 0.8,
                     ))))
@@ -574,8 +574,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             RoundedButton(
               label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
               hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapAttributes,
@@ -973,9 +973,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               label: (_group?.researchProject == true) ?
                 Localization().getStringEx("panel.groups_create.button.create.project.title", "Create Project") :
                 Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
+              textStyle: _canSave ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
               backgroundColor: Styles().colors!.white,
               borderColor: _canSave ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-              textColor: _canSave ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
               enabled: _canSave,
               progress:  _creating,
               onTap: _onTapCreate,

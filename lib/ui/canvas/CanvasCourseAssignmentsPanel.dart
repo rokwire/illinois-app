@@ -103,7 +103,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(Localization().getStringEx('panel.canvas_assignments.empty.msg', 'There are no assignments.'),
-                textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+                textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildAssignmentsContent() {

@@ -127,9 +127,9 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
           Semantics(explicitChildNodes: true, child: RoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Sign In with your NetID"),
             hint: '',
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.surface,
-            textColor: Styles().colors!.fillColorPrimary,
             progress: (_authLoading == true),
             onTap: ()=> _onTapConnectNetIdClicked(context),
           )),
@@ -183,9 +183,9 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
             Semantics(explicitChildNodes: true, child: RoundedButton(
               label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
               hint: '',
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.surface,
-              textColor: Styles().colors!.fillColorPrimary,
               onTap: ()=> _onTapPhoneOrEmailClicked(context),
             )),
             ),

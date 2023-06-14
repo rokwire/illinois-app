@@ -715,7 +715,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Widget _buildEventsDisplayTypesDropDownButton() {
     return RibbonButton(
-      textColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),

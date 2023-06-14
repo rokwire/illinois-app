@@ -84,7 +84,7 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
                   )),
                   Container(height: 10,),
                   RoundedButton(label: "Choose",
-                    textColor: Styles().colors!.white,
+                    textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
                     borderColor: Styles().colors!.fillColorPrimary,
                     backgroundColor: Styles().colors!.fillColorPrimary,
                     onTap: () {
@@ -95,7 +95,7 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
                   ),
                   Container(height: 10,),
                   RoundedButton(label: "Refresh",
-                    textColor: Styles().colors!.white,
+                    textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
                     borderColor: Styles().colors!.fillColorPrimary,
                     backgroundColor: Styles().colors!.fillColorPrimary,
                     onTap: () {

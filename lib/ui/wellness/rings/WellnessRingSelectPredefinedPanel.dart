@@ -83,7 +83,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
             child: SmallRoundedButton(label: 'Next', onTap: _openDetailPanel, backgroundColor: Colors.white, rightIconPadding: EdgeInsets.only(right: 16, left: 16, ), padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
               enabled: _nextButtonEnabled,
               borderColor: _nextButtonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColorTwo,
-              textColor: _nextButtonEnabled? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColorTwo,
+              textStyle: _nextButtonEnabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.medium.fat.variant_two"),
               rightIcon: Styles().images?.getImage(_nextButtonEnabled ? 'chevron-right-bold' : 'chevron-right-gray', excludeFromSemantics: true),
             ),
           ),

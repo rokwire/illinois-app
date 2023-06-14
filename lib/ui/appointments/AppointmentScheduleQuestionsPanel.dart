@@ -369,7 +369,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
           label: Localization().getStringEx("panel.appointment.schedule.time.button.continue.title", "Next"),
           hint: Localization().getStringEx("panel.appointment.schedule.time.button.continue.hint", ""),
           backgroundColor: Styles().colors!.surface,
-          textColor: canContinue ? Styles().colors!.fillColorPrimary : Styles().colors?.surfaceAccent,
+          textStyle: canContinue ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
           borderColor: canContinue ? Styles().colors!.fillColorSecondary : Styles().colors?.surfaceAccent,
           enabled: canContinue,
           onTap: ()=> _onContinue(),

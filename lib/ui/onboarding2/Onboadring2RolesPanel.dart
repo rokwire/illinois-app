@@ -109,16 +109,13 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
             RoundedButton(
                 label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
                 hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
-                fontSize: 16,
+                textStyle: _allowNext ? Styles().textStyles?.getTextStyle("widget.button.title.medium.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.medium.fat.variant"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 enabled: _allowNext,
                 progress: _updating,
                 backgroundColor: (Styles().colors!.white),
                 borderColor: (_allowNext
                     ? Styles().colors!.fillColorSecondary
-                    : Styles().colors!.fillColorPrimaryTransparent03),
-                textColor: (_allowNext
-                    ? Styles().colors!.fillColorPrimary
                     : Styles().colors!.fillColorPrimaryTransparent03),
                 onTap: () => _onGoNext()),
         )

@@ -186,9 +186,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     hint: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image.hint","") : Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
                                     RoundedButton(
                                       label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                                       onTap: _onTapAddImage,
                                       backgroundColor: Styles().colors!.white,
-                                      textColor: Styles().colors!.fillColorPrimary,
                                       borderColor: Styles().colors!.fillColorSecondary,
                                       contentWeight: 0.67,
                                     )
@@ -547,9 +547,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               Expanded(
                                   child: RoundedButton(
                                     label:  Localization().getStringEx("panel.create_event.additional_info.button.cancel.title","Cancel"),
+                                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                                     backgroundColor: Colors.white,
                                     borderColor: Styles().colors!.fillColorPrimary,
-                                    textColor: Styles().colors!.fillColorPrimary,
                                     onTap: _onTapCancel,
                                   )),
                               (widget.group!=null)? Container():
@@ -561,9 +561,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child: RoundedButton(
                                 label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
                                                 Localization().getStringEx("panel.create_event.additional_info.button.preview.title","Preview"),
+                                textStyle: isValid ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
                                 backgroundColor: Colors.white,
                                 borderColor: isValid ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                                textColor: isValid ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                                 onTap: isEdit? _onTapUpdate : _onTapPreview,
                               )),
                               (widget.group==null)? Container():
@@ -571,9 +571,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child: RoundedButton(
                                     label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
                                     Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event"),
+                                    textStyle: isValid ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
                                     backgroundColor: Colors.white,
                                     borderColor: isValid ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                                    textColor: isValid ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                                     onTap: isEdit? _onTapUpdate : _onTapCreate,
                                   ))
                             ],
@@ -997,12 +997,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             children: <Widget>[
                               Expanded(
                                   child: RoundedButton(
-                                    backgroundColor: Styles().colors!.white,
-                                    textColor: Styles().colors!.fillColorPrimary,
-                                    borderColor: Styles().colors!.fillColorSecondary,
-                                    fontSize: 16,
-                                    onTap: _onTapSelectLocation,
                                     label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
+                                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                                    backgroundColor: Styles().colors!.white,
+                                    borderColor: Styles().colors!.fillColorSecondary,
+                                    onTap: _onTapSelectLocation,
                                   ))
                             ],
                           )),

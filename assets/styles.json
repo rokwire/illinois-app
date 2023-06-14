@@ -176,6 +176,7 @@
     "widget.title.medium.extra_fat": {"font_family": "extra_bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.title.regular.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular.semi_fat": {"font_family": "semi_bold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.title.regular.extra_fat": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular.medium_fat": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
@@ -263,6 +264,7 @@
     "widget.label.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorSecondary"},
     "widget.label.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
 
+    "widget.info.large": { "font_family": "regular", "size": 22.0, "color": "textSurface"},
     "widget.info.medium": { "font_family": "regular", "size": 18.0, "color": "textSurface"},
     "widget.info.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textSurface"},
     "widget.info.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textSurface"},
@@ -277,8 +279,19 @@
     "widget.tab.selected": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
 
+    "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
+    "widget.button.disabled.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "surfaceAccent"},
+    "widget.button.disabled.title.large.fat.variant": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimaryTransparent03"},
+    "widget.button.disabled.title.large.fat.variant_two": { "font_family": "bold", "size": 20.0, "color": "disabledTextColorTwo"},
+    "widget.button.disabled.title.medium.fat.variant": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimaryTransparent03"},
+    "widget.button.disabled.title.medium.fat.variant_two": { "font_family": "bold", "size": 16.0, "color": "disabledTextColorTwo"},
+
     "widget.button.title.extra_large": { "font_family": "bold", "size": 26.0, "color": "fillColorPrimary"},
     "widget.button.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.button.title.large.fat.variant": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimaryVariant"},
+    "widget.button.title.large.fat.variant2": { "font_family": "bold", "size": 20.0, "color": "surface"},
+    "widget.button.title.large.fat.secondary": { "font_family": "bold", "size": 20.0, "color": "fillColorSecondary"},
     "widget.button.title.large.thin": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.button.title.regular": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.regular.underline": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
@@ -286,15 +299,19 @@
     "widget.button.title.regular.thin.underline": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.medium.fat.variant": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "widget.button.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.medium.thin.secondary": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary"},
+    "widget.button.title.medium.fat.secondary": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
     "widget.button.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium.fat.underline": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary", "height":  1.61},
-    "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
-    "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
     "widget.button.title.small": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.button.title.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
-    "widget.button.title.small.semi_bold": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.button.title.small.semi_bold.underline": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.button.title.small.semi_fat": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.button.title.small.semi_fat.underline": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+
+    "widget.button.description.medium": { "font_family": "bold", "size": 16.0, "color": "textSurface"},
     "widget.button.description.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
     "widget.button.description.tiny": { "font_family": "regular", "size": 12.0, "color": "textSurface"},
 
@@ -306,6 +323,7 @@
     "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textBackground",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
+    "widget.colourful_button.title.large.accent": { "font_family": "bold", "size": 20.0, "color": "white"},
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
     "widget.colourful_button.title": { "font_family": "medium", "size": 16.0, "color": "white"},
@@ -436,6 +454,9 @@
     "widget.home.link_button.regular.accent.underline": {"font_family": "regular", "size": 16.0, "color": "accentColor3", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "accentColor3"},
 
     "widget.student_courses.title.extra_large": {"extends": "widget.title.extra_large", "letter_spacing": 1.0},
+
+    "widget.tab_bar.title.selected": {"font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
+    "widget.tab_bar.title.not_selected": {"font_family": "bold", "size": 12.0, "color": "mediumGray"},
 
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
