@@ -96,3 +96,40 @@ String? eventTypeFilterToDisplayString(EventTypeFilter? value) {
     default: return null;
   }
 }
+
+EventTypeFilter? eventTypeFilterFromDisplayString(String? value) {
+  for (EventTypeFilter entry in EventTypeFilter.values) {
+    if (value == eventTypeFilterToDisplayString(entry)) {
+      return entry;
+    }
+  }
+  return null;
+}
+
+List<EventTypeFilter>? eventTypeFilterListFromDisplayList(List<String>? values) {
+  if (values != null) {
+    List<EventTypeFilter> list = <EventTypeFilter>[];
+    for (String value in values) {
+      EventTypeFilter? entry = eventTypeFilterFromDisplayString(value);
+      if (entry != null) {
+        list.add(entry);
+      }
+    }
+    return list;
+  }
+  return null;
+}
+
+List<String>? eventTypeFilterListToDisplayList(List<EventTypeFilter>? values) {
+  if (values != null) {
+    List<String> list = <String>[];
+    for (EventTypeFilter value in values) {
+      String? entry = eventTypeFilterToDisplayString(value);
+      if (entry != null) {
+        list.add(entry);
+      }
+    }
+    return list;
+  }
+  return null;
+}

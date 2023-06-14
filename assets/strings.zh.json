@@ -2,13 +2,13 @@
 	"app.title":"伊利诺伊",
 	"app.team_name":"伊利诺伊",
 	"app.univerity_name":"伊利諾伊大學",
-
+	
 	"generic.minutes": "minutes",
 	"generic.hours": "hours",
 	"generic.days": "days",
 	"generic.months": "months",
 	"generic.years": "years",
-
+	
 	"dialog.yes.title":"是的",
 	"dialog.yes.hint":"",
 	"dialog.no.title":"不",
@@ -27,7 +27,7 @@
 	"dialog.apply.hint":"",
 	"dialog.send.title":"發送",
 	"dialog.send.hint":"",
-
+	
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",
 	"tabbar.explore.title":"探索",
@@ -46,7 +46,7 @@
 	"tabbar.academics.hint":"學者頁面",
 	"tabbar.wellness.title":"健康",
 	"tabbar.wellness.hint":"健康頁面",
-
+	
 	"headerbar.home.title":"主页",
 	"headerbar.home.hint":"主页",
 	"headerbar.menu.title":"菜单",
@@ -86,13 +86,13 @@
 	"headerbar.debug.hint":"",
 	"headerbar.radio.title":"WPGU 107.1 調頻",
 	"headerbar.radio.hint":"",
-
+	
 	"toggle_button.status.checked":"选中",
 	"toggle_button.status.unchecked":"未选中",
 	"toggle_button.status.checkbox":"复选框",
-
+	
 	"dropdown.hint": "DropDown",
-
+	
 	"payment_type.text.classic_meal":"经典套餐",
 	"payment_type.text.dining_dollars":"Dining Dollars",
 	"payment_type.text.illini_cash":"Illini现金",
@@ -100,7 +100,7 @@
 	"payment_type.text.cash":"现金",
 	"payment_type.text.google_pay":"GooglePay",
 	"payment_type.text.apple_pay":"ApplePay",
-
+	
 	"panel.menu.button.events.title":"活动",
 	"panel.menu.button.events.hint":"",
 	"panel.menu.button.dining.title":"用餐",
@@ -127,7 +127,7 @@
 	"panel.menu.label.verified_as":"核实为",
 	"panel.menu.label.connected_netid":"连接NetID",
 	"panel.menu.label.confirm_sign_out":"您确定要退出吗?",
-
+	
 	"panel.home.header.title": "收藏夾",
 	"panel.home.header.editing.title": "定制",
 	"panel.home.connect.not_logged_in.netid.description.part_1": "Are you a ",
@@ -147,7 +147,7 @@
 	"panel.home.edit.unused.header.description": "點擊星號可將以下任何項目添加到收藏夾。",
 	"panel.home.edit.unused.star.link.button": "全明星",
 	"panel.label.offline.phone_or_email": "離線時功能不可用。",
-
+	
 	"panel.browse.label.title":"浏览",
 	"panel.browse.label.sections.title": "應用部分",
 	"panel.browse.button.events.title":"活动",
@@ -212,7 +212,7 @@
 	"panel.browse.button.date_cat.hint":"",
 	"panel.browse.button.video_tutorial.title": "視頻教程",
 	"panel.browse.button.video_tutorial.hint": "",
-
+	
 	"panel.browse.label.browse_all": "浏览全部",
 	"panel.browse.label.offline.sign_in":"离线时无法登录",
 	"panel.browse.label.offline.verify_phone":"离线时无法验证电话。",
@@ -227,7 +227,7 @@
 	"panel.browse.label.offline.date_cat": "截止日期目錄在離線時不可用。",
 	"panel.browse.label.offline.video_tutorial": "離線時無法使用視頻教程.",
 	"panel.browse.label.offline.inbox": "離線時通知不可用。",
-
+	
 	"panel.browse.label.logged_out.illini_cash": "您需要使用您的 NetID 登錄才能訪問 Illini Cash。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
 	"panel.browse.label.logged_out.illini_cash.short": "您需要使用您的 NetID 登錄才能訪問 Illini Cash。",
 	"panel.browse.label.logged_out.meal_plan": "您需要使用您的 NetID 登錄才能訪問大學住房膳食計劃。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
@@ -240,34 +240,34 @@
 	"panel.browse.label.logged_out.library_card.short": "您需要使用您的 NetID 登錄才能訪問借書證。",
 	"panel.browse.label.logged_out.create_stadium_poll": "您需要使用您的 NetID 登錄才能創建體育場投票。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
 	"panel.browse.label.logged_out.inbox": "您需要使用您的 NetID 登錄才能訪問通知。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
-
+	
 	"panel.browse.label.no_card.bus_pass": "您需要有效的 Illini 身份證才能使用 MTD Bus Pass。",
 	"panel.browse.label.no_card.library_card": "您需要有效的伊利尼身份證才能訪問借書證。",
 	"panel.browse.label.no_card.illini_id": "沒有伊利尼 ID 信息。 您沒有有效的 i-card。 請訪問 ID 中心。",
 	"panel.browse.label.expired_card.illini_id": "沒有伊利尼 ID 信息。 您的 i-card 已於 %s 過期。 請訪問 ID 中心。",
 	"panel.browse.label.expiring_card.illini_id":"您的 ID 將於 %s 過期。 請訪問 ID 中心。",
-
+	
 	"panel.browse.label.no_rights.create_stadium_poll": "您無權創建體育場投票。",
-
+	
 	"panel.browse.button.sign_in.title":"登录",
 	"panel.browse.button.sign_in.hint":"",
 	"panel.browse.button.verify_phone.title":"验证您的电话号码",
 	"panel.browse.button.verify_phone.hint":"",
-
+	
 	"panel.browse.section.status.expand.title": "擴張",
 	"panel.browse.section.status.expand.hint": "點按以展開部分內容",
 	"panel.browse.section.status.colapse.title": "折疊",
 	"panel.browse.section.status.colapse.hint": "點按以折疊部分內容",
-
+	
 	"panel.browse.web_panel.header.schedule_grades_more.title":"我的Illini",
-
+	
 	"panel.browse.alert.building_access.privacy_update.msg": "您的隱私級別為 {{privacy_level_icon}} ，您每次都必須登錄才能顯示您的建築物訪問狀態。 您想將您的隱私級別更改為 4 或 5，以便您只需登錄一次？",
 	"panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
 	"panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
-
+	
 	"panel.browse.prompt.add.all.favorites": "您確定要將所有項目添加到您的收藏夾嗎？",
 	"panel.browse.prompt.remove.all.favorites": "您確定要刪除收藏夾中的所有項目嗎？",
-
+	
 	"panel.browse.section.academics.title": "學者",
 	"panel.browse.section.academics.description": "在{{app_title}}管理您的學術生活的工具。",
 	"panel.browse.section.app_help.title": "應用幫助",
@@ -310,7 +310,7 @@
 	"panel.browse.section.wallet.description": "您的 Illini ID、MTD 巴士通行證、宿舍膳食計劃和 Illini Cash 餘額都集中在一處。",
 	"panel.browse.section.wellness.title": "健康",
 	"panel.browse.section.wellness.description": "幫助您保持和改善健康的資源和工具。",
-
+	
 	"panel.browse.entry.academics.gies_checklist.title": "iDegrees 新學生清單",
 	"panel.browse.entry.academics.new_student_checklist.title": "新學生清單",
 	"panel.browse.entry.academics.skills_self_evaluation.title": "技能自我評估",
@@ -321,30 +321,30 @@
 	"panel.browse.entry.academics.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.academics.due_date_catalog.title": "到期日目錄",
 	"panel.browse.entry.academics.appointments.title": "約會",
-
+	
 	"panel.browse.entry.app_help.video_tutorial.title": "視頻教程",
 	"panel.browse.entry.app_help.feedback.title": "反饋",
 	"panel.browse.entry.app_help.review.title": "審查",
 	"panel.browse.entry.app_help.faqs.title": "常見問題",
-
+	
 	"panel.browse.entry.appointments.appointments.title": "約會",
-
+	
 	"panel.browse.entry.athletics.my_game_day.title": "團隊",
 	"panel.browse.entry.athletics.upcoming_games.title": "接下來的活動",
 	"panel.browse.entry.athletics.my_athletics.title": "我的活動",
 	"panel.browse.entry.athletics.sport_news.title": "消息",
 	"panel.browse.entry.athletics.my_news.title": "我的消息",
-
+	
 	"panel.browse.entry.safer.building_access.title": "建築物訪問",
 	"panel.browse.entry.safer.test_locations.title": "測試地點",
 	"panel.browse.entry.safer.my_mckinley.title": "麥金利",
 	"panel.browse.entry.safer.wellness_answer_center.title": "解答中心",
-
+	
 	"panel.browse.entry.campus_guide.campus_highlights.title": "校園指南亮點",
 	"panel.browse.entry.campus_guide.campus_safety_resources.title": "校園安全資源",
 	"panel.browse.entry.campus_guide.campus_guide.title": "完整的校園指南",
 	"panel.browse.entry.campus_guide.my_campus_guide.title": "我的校園指南",
-
+	
 	"panel.browse.entry.campus_resources.events.title":"活動",
 	"panel.browse.entry.campus_resources.dining.title":"用餐",
 	"panel.browse.entry.campus_resources.athletics.title":"競技",
@@ -357,31 +357,31 @@
 	"panel.browse.entry.campus_resources.quick_polls.title": "快速投票",
 	"panel.browse.entry.campus_resources.campus_guide.title": "校園指南",
 	"panel.browse.entry.campus_resources.all_notifications.title": "通知",
-
+	
 	"panel.browse.entry.dinings.dinings_all.title": "宿舍餐廳",
 	"panel.browse.entry.dinings.dinings_open.title": "宿舍餐廳現在開放",
 	"panel.browse.entry.dinings.my_dining.title": "我的用餐地點",
-
+	
 	"panel.browse.entry.events.suggested_events.title": "建議的活動",
 	"panel.browse.entry.events.event_feed.title": "活動提要",
 	"panel.browse.entry.events.my_events.title": "我的活動",
-
+	
 	"panel.browse.entry.feeds.twitter.title": "推特",
 	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 調頻",
-
+	
 	"panel.browse.entry.groups.all_groups.title": "所有組",
 	"panel.browse.entry.groups.my_groups.title": "我的群組",
-
+	
 	"panel.browse.entry.research_projects.open_research_projects.title": "開放研究項目",
 	"panel.browse.entry.research_projects.my_research_projects.title": "我的研究參與",
-
+	
 	"panel.browse.entry.laundry.laundry.title": "洗衣店",
 	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣店",
-
+	
 	"panel.browse.entry.mtd.laundry.all_mtd_stops": "所有巴士站",
 	"panel.browse.entry.mtd.my_mtd_stops.title": "我的巴士站",
 	"panel.browse.entry.mtd.my_mtd_destinations.title": "我的目的地",
-
+	
 	"panel.browse.entry.my.my_groups.title": "我的群組",
 	"panel.browse.entry.my.canvas_courses.title": "我的 Gies 帆布課程",
 	"panel.browse.entry.my.student_courses.title": "我的課程",
@@ -398,26 +398,26 @@
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
 	"panel.browse.entry.my.wellness_mental_health.title": "我的心理健康資源",
 	"panel.browse.entry.my.my_appointments.title": "我的麥金利約會",
-
+	
 	"panel.browse.entry.inbox.all_notifications.title": "所有通知",
 	"panel.browse.entry.inbox.unread_notifications.title": "未讀通知",
-
+	
 	"panel.browse.entry.polls.create_poll.title": "創建投票",
 	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",
-
+	
 	"panel.browse.entry.recent.recent_items.title": "最近瀏覽過的",
-
+	
 	"panel.browse.entry.state_farm_center.parking.title": "停車處",
 	"panel.browse.entry.state_farm_center.wayfinding.title": "尋路",
 	"panel.browse.entry.state_farm_center.create_stadium_poll.title": "創建體育場投票",
-
+	
 	"panel.browse.entry.wallet.illini_cash_card.title": "伊利尼現金",
 	"panel.browse.entry.wallet.add_illini_cash.title": "添加伊利尼現金",
 	"panel.browse.entry.wallet.meal_plan_card.title": "進食計劃",
 	"panel.browse.entry.wallet.bus_pass_card.title": "巴士通票",
 	"panel.browse.entry.wallet.illini_id_card.title": "i-card+",
 	"panel.browse.entry.wallet.library_card.title": "借書卡",
-
+	
 	"panel.browse.entry.wellness.wellness_rings.title": "戒指",
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
 	"panel.browse.entry.wellness.my_appointments.title": "我的麥金利約會",
@@ -425,7 +425,7 @@
 	"panel.browse.entry.wellness.wellness_health_screener.title": "伊利諾伊州健康篩查員",
 	"panel.browse.entry.wellness.wellness_resources.title": "資源",
 	"panel.browse.entry.wellness.wellness_mental_health.title": "心理健康資源",
-
+	
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",
 	"panel.search.label.not_found":"未找到结果",
@@ -438,9 +438,9 @@
 	"panel.search.button.clear.hint":"清除输入",
 	"panel.search.field.search.title":"搜索",
 	"panel.search.field.search.hint":"输入搜索词",
-
+	
 	"panel.maps.header.title": "地圖",
-
+	
 	"panel.academics.header.title": "學者",
 	"panel.academics.section.events.label": "學術活動",
 	"panel.academics.section.gies_checklist.label": "iDegrees 新學生清單",
@@ -448,14 +448,14 @@
 	"panel.academics.section.canvas_courses.label": "我的 Gies 帆布課程",
 	"panel.academics.section.student_courses.label": "我的課程",
 	"panel.academics.section.medicine_courses.label": "我的醫學院合規",
-    "panel.academics.section.skills_self_evaluation.label": "技能自我評估",
-    "panel.academics.section.todo_list.label": "待辦事項清單",
+		"panel.academics.section.skills_self_evaluation.label": "技能自我評估",
+		"panel.academics.section.todo_list.label": "待辦事項清單",
 	"panel.academics.section.due_date_catalog.label": "到期日目錄",
 	"panel.academics.section.appointments.label": "約會",
 	"panel.academics.section.my_illini.label": "myIllini",
 	"panel.academics.section.events.offline.msg": "離線時沒有可用的學術活動.",
 	"panel.academics.section.events.empty.msg": "沒有學術活動.",
-
+	
 	"panel.athletics.header.title":"运动",
 	"panel.athletics.label.upcoming_events.title":"近期活动",
 	"panel.athletics.label.upcoming_events.hint":"",
@@ -479,15 +479,15 @@
 	"panel.athletics.button.tickets.hint":"查看门票",
 	"panel.athletics.button.game_day_guide.title":"游戏日指南",
 	"panel.athletics.button.game_day_guide.hint":"查看游戏日指南",
-
+	
 	"panel.athletics.label.offline.see_more_events":"离线时无法越来更多活动。",
 	"panel.athletics.label.offline.news":"离线时无法产看新闻。",
 	"panel.athletics.label.offline.tickets":"离线时无法购票。",
 	"panel.athletics.label.offline.game_day_guide":"离线时无法查看比赛日向导。",
 	"panel.athletics.label.offline.game":"离线时无法查看比赛细节。",
-
+	
 	"panel.athletics_teams.header.title":"队伍",
-
+	
 	"panel.athletics_team.header.title":"队伍",
 	"panel.athletics_team.button.favorite_team.title":"收藏团队",
 	"panel.athletics_team.button.favorite_team.hint":"",
@@ -526,14 +526,14 @@
 	"panel.athletics_team.button.youtube.hint":"在YouTube上观看",
 	"panel.athletics_team.button.instagram.title":"Instagram",
 	"panel.athletics_team.button.instagram.hint":"在Instagram上查看",
-
+	
 	"panel.athletics_schedule.header.title": "日程",
 	"panel.athletics_schedule.label.schedule.title":"日程",
 	"panel.athletics_schedule.button.upcoming.title":"近期",
 	"panel.athletics_schedule.button.upcoming.hint":"查看近期活动",
 	"panel.athletics_schedule.button.past.title":"往期",
 	"panel.athletics_schedule.button.past.hint":"查看往期活动",
-
+	
 	"panel.athletics_game_detail.label.title":"体育",
 	"panel.athletics_game_detail.label.more.title":"更多",
 	"panel.athletics_game_detail.label.see_more.title":"查看更多",
@@ -547,11 +547,11 @@
 	"panel.athletics_game_detail.button.teams.title":"团队",
 	"panel.athletics_game_detail.button.teams.hint":"查看球队",
 	"panel.athletics_game_detail.load.failed.msg": "加載遊戲失敗. 請再試一次.",
-
+	
 	"panel.athletics_news_article.load.failed.msg": "無法加載新聞文章. 請再試一次.",
 	"panel.athletics_news_article.button.save_game.title": "保存文章",
 	"panel.athletics_news_article.button.save_game.hint": "點按即可保存",
-
+	
 	"panel.athletics_roster_list.header.title":"名册",
 	"panel.athletics_roster_list.button.by_name.title":"按名称",
 	"panel.athletics_roster_list.button.by_position.title":"按位置",
@@ -562,13 +562,13 @@
 	"panel.athletics_roster_list.label.wt.title":"重",
 	"panel.athletics_roster_list.label.htwt.title":"高/重。",
 	"panel.athletics_roster_list.label.year.title":"年",
-
+	
 	"panel.athletics_coach_list.header.title": "Staff",
 	"panel.athletics_coach_list.label.heading.title": "2019-2020教练",
 	"panel.athletics_coach_list.label.position.title":"位置",
-
+	
 	"panel.athletics_coach_detail.header.title":"员工",
-
+	
 	"panel.athletics_roster_detail.header.title":"名册",
 	"panel.athletics_roster_detail.label.position.title":"位置",
 	"panel.athletics_roster_detail.label.ht.title":"高。",
@@ -580,30 +580,30 @@
 	"panel.athletics_roster_detail.label.year.title":"年",
 	"panel.athletics_roster_detail.label.hometown.title":"故乡",
 	"panel.athletics_roster_detail.label.highschool.title":"高中",
-
+	
 	"panel.athletics_news_list.header.title":"新闻",
 	"panel.athletics_news_list.title":"体育新闻",
 	"panel.athletics_news_list.label.all_news.title":"所有体育新闻",
 	"panel.athletics_news_list.label.my_teams.title":"我的团队",
 	"panel.athletics_news_list.label.filter_by":"筛选",
-
+	
 	"panel.athletics_news_article.header.title":"新闻",
-
+	
 	"panel.onboarding.button.continue.title":"继续",
 	"panel.onboarding.button.continue.hint":"",
-
+	
 	"panel.onboarding.get_started.image.welcome.title":"歡迎來到{{app_title}}",
 	"panel.onboarding.get_started.image.welcome.hint":"",
 	"panel.onboarding.get_started.label.personalized_recommendations":"您的官方陪同人员",
 	"panel.onboarding.get_started.button.get_started.title":"使用入门",
 	"panel.onboarding.get_started.button.get_started.hint":"",
-
+	
 	"panel.onboarding.privacy.label.title":"我们关心您的隐私",
 	"panel.onboarding.privacy.label.title.hint":"标题1",
 	"panel.onboarding.privacy.label.description":"我们只会在可用于改善您体验的情况下要求您提供个人信息。",
 	"panel.onboarding.privacy.button.continue.title":"继续",
 	"panel.onboarding.privacy.button.continue.hint":"",
-
+	
 	"panel.onboarding.location.label.title":"知道附近有什么",
 	"panel.onboarding.location.label.title.hint":"标题1",
 	"panel.onboarding.location.label.description":"在校園內分享您的位置以了解離您最近的位置。",
@@ -613,7 +613,7 @@
 	"panel.onboarding.location.button.dont_allow.hint":"跳过共享位置",
 	"panel.onboarding.location.label.access_granted":"您已经授予对此应用程序的访问权限。",
 	"panel.onboarding.location.label.access_denied":"您已经拒绝访问此应用程序。",
-
+	
 	"panel.onboarding.notifications.label.title":"需要时的活动信息",
 	"panel.onboarding.notifications.label.hint":"标题1",
 	"panel.onboarding.notifications.label.description":"获得有关您的“加注星标”活动的通知。",
@@ -623,7 +623,7 @@
 	"panel.onboarding.notifications.button.dont_allow.hint":"跳过接收通知",
 	"panel.onboarding.notifications.label.access_granted":"您已授予訪問此應用的權限。",
 	"panel.onboarding.notifications.label.access_denied":"您已拒絕訪問此應用程序。",
-
+	
 	"panel.onboarding.roles.label.title":"你是",
 	"panel.onboarding.roles.label.title.hint":"标题1",
 	"panel.onboarding.roles.label.description":"Please check all that apply to create a personalized experience for you",
@@ -644,7 +644,7 @@
 	"panel.onboarding.roles.button.gies.hint":"",
 	"panel.onboarding.roles.button.continue.title":"继续",
 	"panel.onboarding.roles.button.continue.hint":"",
-
+	
 	"panel.onboarding.sports.label.title":"",
 	"panel.onboarding.sports.label.description":"选择您喜欢的Illini运动",
 	"panel.onboarding.sports.label.description.hint":"标题1",
@@ -654,7 +654,7 @@
 	"panel.onboarding.sports.label.womens_sports.hint":"标题2",
 	"panel.onboarding.sports.button.continue.title":"继续",
 	"panel.onboarding.sports.button.continue.hint":"点击继续",
-
+	
 	"panel.onboarding.login.netid.label.title":"连接您的NetID",
 	"panel.onboarding.login.phone.label.title":"验证您的电话号码",
 	"panel.onboarding.login.netid.label.title.hint":"标题1",
@@ -669,7 +669,7 @@
 	"panel.onboarding.login.phone.button.dont_continue.title":"暂时不",
 	"panel.onboarding.login.netid.button.dont_continue.hint":"跳过验证",
 	"panel.onboarding.login.phone.button.dont_continue.hint":"跳过验证",
-
+	
 	"panel.onboarding.verify_phone.title":"验证您的电话号码",
 	"panel.onboarding.verify_phone.title.hint":"",
 	"panel.onboarding.verify_phone.description":"要验证您的电话号码，请选择您首选的联系渠道，我们将向您发送一次身份验证码。",
@@ -687,7 +687,7 @@
 	"panel.onboarding.verify_phone.validation.phone_number.text":"请输入您的电话号码",
 	"panel.onboarding.verify_phone.validation.channel_selection.text":"请选择验证方法",
 	"panel.onboarding.verify_phone.validation.server_error.text":"请输入有效的电话号码",
-
+	
 	"panel.onboarding.confirm_phone.title":"确认您的代码",
 	"panel.onboarding.confirm_phone.title.hint":"",
 	"panel.onboarding.confirm_phone.description.send":"一次性代碼已發送到％s。 在下面輸入您的代碼以繼續。",
@@ -706,7 +706,7 @@
 	"panel.onboarding.confirm_phone.validation.server_error.text":"无法验证代码",
 	"panel.onboarding.confirm_phone.validation.invalid.text": "Incorrect code.",
 	"panel.onboarding.confirm_phone.link.cancel.text": "Failed to remove phone number from your account.",
-
+	
 	"panel.onboarding.upgrade.required.label.title":"需要升级",
 	"panel.onboarding.upgrade.required.label.description":"%s版本号%s需要升级到%s或者更新的版本。",
 	"panel.onboarding.upgrade.available.label.title":"升级可用",
@@ -717,17 +717,17 @@
 	"panel.onboarding.upgrade.button.not_now.hint":"",
 	"panel.onboarding.upgrade.button.dont_show.title":"不再显示",
 	"panel.onboarding.upgrade.button.dont_show.hint":"",
-
+	
 	"panel.onboarding.error.button.try_again.title":"Try Again",
 	"panel.onboarding.error.button.try_again.hint":"",
-
+	
 	"panel.onboarding.base.not_now.hint":"",
 	"panel.onboarding.base.not_now.title":"暂时不",
-
+	
 	"panel.onboarding2.video.button.skip.title": "跳過",
 	"panel.onboarding2.video.button.continue.title": "繼續",
 	"panel.onboarding2.video.missing.msg": "缺少視頻",
-
+	
 	"panel.onboarding2.roles.label.title": "Who Are You?",
 	"panel.onboarding2.roles.label.title.hint": "Header 1",
 	"panel.onboarding2.roles.label.description": "Please check all that apply to create a personalized experience for you",
@@ -750,7 +750,7 @@
 	"panel.onboarding2.roles.button.gies.hint": "",
 	"panel.onboarding2.roles.button.continue.title": "Continue",
 	"panel.onboarding2.roles.button.continue.hint": "",
-
+	
 	"panel.onboarding2.explore_campus.button.title.learn_more": "Learn more",
 	"panel.onboarding2.explore_campus.button.continue.title": "Continue",
 	"panel.onboarding2.explore_campus.button.continue.hint": "",
@@ -761,14 +761,14 @@
 	"panel.onboarding2.explore_campus.label.description": "Easily find events on campus and connect to nearby users.",
 	"panel.onboarding2.explore_campus.button.toggle.title": "Enable location services.",
 	"panel.onboarding2.explore_campus.button.untoggle.title": "Don't enable location services.",
-
+	
 	"panel.onboarding2.get_started.title": "A Smart Campus\nIn Your Pocket",
 	"panel.onboarding2.get_started.description": "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to our campus ecosystem.",
 	"panel.onboarding2.get_started.button.continue.title": "Continue",
 	"panel.onboarding2.get_started.button.continue.hint": "",
 	"panel.onboarding2.get_started.button.returning_user.title": "Returning user?",
 	"panel.onboarding2.get_started.button.returning_user.hint": "",
-
+	
 	"panel.onboarding2.improve.button.title.learn_more": "Learn More",
 	"panel.onboarding2.improve.button.continue.title": "Continue",
 	"panel.onboarding2.improve.button.continue.hint": "",
@@ -780,7 +780,7 @@
 	"panel.onboarding2.improve.label.description": "The more you and others share, the more relevant info you get.",
 	"panel.onboarding2.improve.button.toggle.title": "Share my activity.",
 	"panel.onboarding2.improve.button.untoggle.title": "Don’t share my activity.",
-
+	
 	"panel.onboarding2.personalize.button.title.learn_more": "Learn more",
 	"panel.onboarding2.personalize.button.continue.title": "Continue",
 	"panel.onboarding2.personalize.button.continue.hint": "",
@@ -796,7 +796,7 @@
 	"panel.onboarding2.personalize.label.description": "This includes content you view, teams you follow, and sign-in information. ",
 	"panel.onboarding2.personalize.button.toggle.title": "Store my app activity and my preferences.",
 	"panel.onboarding2.personalize.button.untoggle.title": "Don't store my app activity or information.",
-
+	
 	"panel.onboarding2.privacy.button.privacy_policy.title": "Privacy Notice ",
 	"panel.onboarding2.privacy.button.privacy_policy.hint": "",
 	"panel.onboarding2.privacy.label.continue.description": "You can adjust what you store and share at any time in the Privacy Center.",
@@ -816,7 +816,7 @@
 	"panel.onboarding2.privacy.button.start_browsing.title": "Start browsing",
 	"panel.onboarding2.privacy.button.start_exploring.title": "Start exploring",
 	"panel.onboarding2.privacy.button.save_privacy.title": "Save Privacy Level",
-
+	
 	"panel.onboarding2.privacy_statement.label.title": "Control Your Data Privacy",
 	"panel.onboarding2.privacy_statement.label.title2": "",
 	"panel.onboarding2.privacy_statement.label.description": "Choose what information you want to store and share to get a recommended privacy level.",
@@ -825,11 +825,11 @@
 	"panel.onboarding2.privacy_statement.label.description3": ". Your continued use of the app assumes that you have read and agree with it.",
 	"panel.onboarding2.privacy_statement.button.continue.title": "Begin",
 	"panel.onboarding2.privacy_statement.button.continue.hint": "",
-
+	
 	"panel.onboarding2.dialog.learn_more.collected_information_disclosure": "All of this information is collected and used in accordance with our ",
 	"panel.onboarding2.dialog.learn_more.button.privacy_policy.title": "Privacy notice ",
 	"panel.onboarding2.panel.privacy_notice.heading.title": "Privacy notice",
-
+	
 	"panel.onboarding2.phone_or_email_statement.title.text": "Login by phone or email",
 	"panel.onboarding2.phone_or_email_statement.title.hint": "",
 	"panel.onboarding2.phone_or_email_statement.description": "This saves your preferences so you can have the same experience on more than one device.",
@@ -837,7 +837,7 @@
 	"panel.onboarding2.phone_or_email_statement.continue.hint": "",
 	"panel.onboarding2.phone_or_email_statement.dont_continue.title": "Not right now",
 	"panel.onboarding2.phone_or_email_statement.dont_continue.hint": "Skip verification",
-
+	
 	"panel.onboarding2.phone_or_email.title.text": "Sign In with Phone or Email",
 	"panel.onboarding2.phone_or_email.phone.title.text": "Add a phone number",
 	"panel.onboarding2.phone_or_email.email.title.text": "Add an email address",
@@ -861,7 +861,7 @@
 	"panel.onboarding2.phone_or_email.email.link.failed.exists": "An account is already using this email address.",
 	"panel.onboarding2.phone_or_email.email.link.failed.exists.details": "1. You will need to sign in to the other account with this email address.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login.",
 	"panel.onboarding2.phone_or_email.email.linked.text": "You have already added an email address to your account.",
-
+	
 	"panel.onboarding2.email.sign_in.title.text": "Sign In with Email",
 	"panel.onboarding2.email.sign_up.title.text": "Sign Up with Email",
 	"panel.onboarding2.email.link.title.text": "Add Your Email Address",
@@ -906,7 +906,7 @@
 	"panel.onboarding2.email.button.link.cancel.label": "Cancel",
 	"panel.onboarding2.email.button.link.cancel.hint": "",
 	"panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
-
+	
 	"panel.onboarding2.research.questionnaire.prompt.introduction": "Illinois is one of the world’s great research universities. As a member of the university, you can help scientists answer questions that lead to new discoveries.",
 	"panel.onboarding2.research.questionnaire.prompt.question": "Would you like to get invitations to become a research participant via the Illinois app?",
 	"panel.onboarding2.research.questionnaire.prompt.explanation": " Many studies offer incentives.",
@@ -919,7 +919,7 @@
 	"panel.onboarding2.research.questionnaire.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
 	"panel.onboarding2.research.questionnaire.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
 	"panel.onboarding2.research.questionnaire.error.load": "Failed to load research questionnaire.",
-
+	
 	"panel.explore.header.events.title":"活动",
 	"panel.explore.header.dining.title":"宿舍餐廳",
 	"panel.explore.header.laundry.title":"洗衣店",
@@ -959,38 +959,38 @@
 	"panel.explore.button.clear.title":"清除",
 	"panel.explore.button.clear.hint":"清除所選位置",
 	"panel.explore.label.dining_news.title":"餐飲資訊",
-
+	
 	"panel.explore.button.events.display_type.all.label": "所有活動",
 	"panel.explore.button.events.display_type.multiple.label": "Multi-day events",
 	"panel.explore.button.events.display_type.single.label": "Single day events",
-
+	
 	"panel.explore.filter.categories.hint":"按类别过滤",
 	"panel.explore.filter.categories.all":"所有类别",
 	"panel.explore.filter.categories.my":"我的类别",
-
+	
 	"panel.explore.filter.payment_types.hint":"按可用付款方式过滤",
 	"panel.explore.filter.payment_types.all":"所有付款类型",
-
+	
 	"panel.explore.filter.worktimes.hint":"按当前打开状态过滤",
 	"panel.explore.filter.worktimes.all":"所有位置",
 	"panel.explore.filter.worktimes.open_now":"立即打开",
-
+	
 	"panel.explore.filter.time.hint":"按时间过滤",
 	"panel.explore.filter.time.upcoming":"近期",
 	"panel.explore.filter.time.today":"今天",
 	"panel.explore.filter.time.next_7_days":"接下来的7天",
 	"panel.explore.filter.time.this_weekend":"本周末",
 	"panel.explore.filter.time.next_30_days":"接下来的30天",
-
+	
 	"panel.explore.filter.tags.hint":"按标签过滤",
 	"panel.explore.filter.tags.all":"所有标签",
 	"panel.explore.filter.tags.my":"我的标签",
-
+	
 	"panel.explore.state.loading.title":"正在载入",
 	"panel.explore.state.loading.hint":"请稍候",
-
+	
 	"panel.explore.filter.terms.hint":"按術語過濾",
-
+	
 	"panel.explore.state.online.empty.events":"没有即将发生的活动。",
 	"panel.explore.state.online.empty.dining":"目前尚无用餐场所",
 	"panel.explore.state.online.empty.laundry":"目前沒有洗衣店開放。",
@@ -1012,7 +1012,7 @@
 	"panel.explore.state.offline.empty.student_course":"離線時沒有可用的學生課程。",
 	"panel.explore.state.offline.empty.appointments":"離線時沒有可用的約會。",
 	"panel.explore.state.offline.empty.state_farm":"離線時無法使用 State Farm Wayfinding.",
-
+	
 	"panel.explore.state.failed.events":"無法加載即將發生的事件。",
 	"panel.explore.state.failed.dining":"無法加載就餐地點。",
 	"panel.explore.state.failed.laundry":"無法加載洗衣地點。",
@@ -1023,7 +1023,7 @@
 	"panel.explore.state.failed.student_course":"無法加載學生課程。",
 	"panel.explore.state.failed.appointments":"無法加載約會。",
 	"panel.explore.state.failed.state_farm":"無法加載 State Farm Wayfinding。",
-
+	
 	"panel.explore.item.events.name":"活动",
 	"panel.explore.item.dinings.name":"用餐地點",
 	"panel.explore.item.laundry.name":"洗衣房",
@@ -1037,7 +1037,7 @@
 	"panel.explore.item.location.name":"地點",
 	"panel.explore.item.unknown.name":"探索",
 	"panel.explore.map.popup.title.format":"%d %s",
-
+	
 	"panel.explore.item.events.count":"%s 事件",
 	"panel.explore.item.dinings.count":"%s 用餐地點",
 	"panel.explore.item.laundry.count":"%s 洗衣房",
@@ -1049,7 +1049,7 @@
 	"panel.explore.item.appointments.count":"%s 約會地點",
 	"panel.explore.item.pois.count":"%s MTD 目的地",
 	"panel.explore.item.explores.count":"%s 探索",
-
+	
 	"panel.explore.missing.appointments.msg":"您目前沒有在 {{app_title}} 應用中鏈接的即將到來的面對面約會。",
 	"panel.explore.hide.appointments.msg":"沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
 	"panel.explore.instructions.mtd_stops.msg":"請點擊地圖上的巴士站以獲取巴士時刻表。 點擊星標將巴士站保存為最愛。",
@@ -1059,9 +1059,9 @@
 	"panel.explore.directions.na.msg":"您需要啟用定位服務才能獲得導航方向。",
 	"panel.explore.directions.failed.msg":"未能啟動導航方向。",
 	"panel.explore.details.na.msg":"自定義興趣點的詳細信息不可用。",
-
+	
 	"panel.explore_list.header.title":"探索",
-
+	
 	"panel.explore_detail.button.get_tickets.title":"Register",
 	"panel.explore_detail.button.get_tickets.hint":"点击以获取门票。",
 	"panel.explore_detail.button.visit_website.title":"访问网站",
@@ -1100,7 +1100,7 @@
 	"panel.explore_detail.label.text_feedback_descr": "Share your thoughts about your dining experience:",
 	"panel.explore_detail.label.ask_dietician": "Ask a Dietician",
 	"panel.explore_detail.label.ask_dietician_descr": "Type your question to our dieticians:",
-
+	
 	"panel.events_schedule.header.title": "活動時間表",
 	"panel.events_schedule.tab.title.saved": "已保存",
 	"panel.events_schedule.empty.events": "没有活动",
@@ -1119,7 +1119,7 @@
 	"panel.events_schedule.button.directions.hint": "",
 	"panel.events_schedule.button.details.title": "细节",
 	"panel.events_schedule.button.details.hint": "",
-
+	
 	"panel.events2.home.header.title": "Events",
 	"panel.events2.home.attributes.filters.header.title": "Event Filters",
 	"panel.events2.home.attributes.filters.header.description": "Choose one or more attributes to filter the events",
@@ -1127,9 +1127,13 @@
 	"panel.events2.home.attributes.launch.header.description": "Discover events across campus and around the world",
 	"panel.events2.home.attributes.launch.apply.title": "Explore",
 	"panel.events2.home.attributes.launch.continue.title": "Not right now",
-
+	"panel.events2.home.attributes.event_type.title": "Event Type",
+	"panel.events2.home.attributes.event_type.hint": "Choose the event type your events can be filtered by.",
+	"panel.events2.home.attributes.event_type.hint.empty": "Select an event type...",
+	"panel.events2.home.attributes.event_type.hint.semantics": "Double type to show event options.",
+	
 	"panel.events2_filters.header.title": "Event Filters",
-
+	
 	"panel.settings.manage_interests.instructions.format": "點按 {{check_mark_icon}} 以關注您最感興趣的標籤",
 	"panel.settings.manage_interests.list.following":"关注对象",
 	"panel.settings.manage_interests.list.all_tags":"所有标签",
@@ -1143,7 +1147,7 @@
 	"panel.settings.manage_interests.search.search_button.hint":"过滤器标签",
 	"panel.settings.manage_interests.button.save.title": "保存更改",
 	"panel.settings.manage_interests.button.save.hint": "",
-
+	
 	"panel.settings.illini_cash.label.title":"Illini现金",
 	"panel.settings.illini_cash.label.history":"历史",
 	"panel.settings.illini_cash.label.buy_illini_cash":"购买Illini现金",
@@ -1175,7 +1179,7 @@
 	"panel.settings.illini_cash.transactions.message.no_transactions.text":"所选期间没有交易.",
 	"panel.settings.illini_cash.transactions.message.no_transactions.hint":"",
 	"panel.settings.illini_cash.label.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To view your balance, you must set your privacy level to 4 and sign in.",
-
+	
 	"panel.settings.add_illini_cash.header.title":"添加ILLINI现金",
 	"panel.settings.add_illini_cash.label.recipient_uin.text":"收件人的UIN",
 	"panel.settings.add_illini_cash.error.recipient_uin.text":"请输入接收人UIN",
@@ -1214,7 +1218,7 @@
 	"panel.settings.add_illini_cash.error.buy_illini_cash_elligible.text":"收件人没有资格购买Illini现金",
 	"panel.settings.add_illini_cash.message.buy_illini_cash_success.text":"交易已成功处理。",
 	"panel.settings.add_illini_cash.message.offline.text":"Add Illini Cash is are not available while offline.",
-
+	
 	"panel.settings.meal_plan.label.title":"大学住宿膳食计划",
 	"panel.settings.meal_plan.button.login_to_view_meal_plan.text":"登录以查看您的用餐计划",
 	"panel.settings.meal_plan.button.login_to_view_meal_plan.hint":"",
@@ -1243,17 +1247,17 @@
 	"panel.settings.meal_plan.button.end_date.title":"结束日期",
 	"panel.settings.meal_plan.button.end_date.hint":"点击以选择结束日期",
 	"panel.settings.meal_plan.label.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To view your mean plan, you must set your privacy level to 4 and sign in.",
-
+	
 	"panel.settings.sports.heading":"设置",
 	"panel.settings.categories.header.title":"你的分类",
 	"panel.settings.categories.heading":"您的类别",
 	"panel.settings.categories.description":"点击以遵循您最感兴趣的类别",
-
+	
 	"panel.settings.feedback.label.title":"提供反馈",
 	"panel.settings.faqs.label.title": "FAQs",
-
+	
 	"panel.settings.privacy_statement.label.title":"隐私声明",
-
+	
 	"panel.saved.header.label": "已保存",
 	"panel.saved.label.events": "My Events",
 	"panel.saved.label.athletics": "My Athletics Events",
@@ -1264,8 +1268,8 @@
 	"panel.saved.label.mtd_stops": "My Bus Stops",
 	"panel.saved.label.mtd_destinations": "My Destinations",
 	"panel.saved.label.campus_guide": "My Campus Guide",
-  "panel.saved.label.appointments": "MyMcKinley Appointments",
-
+	"panel.saved.label.appointments": "MyMcKinley Appointments",
+	
 	"panel.saved.button.all.title": "查看全部",
 	"panel.saved.button.all.hint": "點按即可查看所有項目",
 	"panel.saved.button.more.title": "顯示所有",
@@ -1276,7 +1280,7 @@
 	"panel.saved.button.dining_specials":"特价晚餐",
 	"panel.saved.message.no_items.description": "点击 \u2606 活动, 用餐地点和提醒, 您可以在这里快速找到它们.",
 	"panel.saved.message.offline":"离线时无法查看已保存项目。",
-
+	
 	"panel.food_details.label.nutrition_fatcts_not_available.title":"营养信息不可用",
 	"panel.food_details.label.nutrition_fatcts.title":"营养事实",
 	"panel.food_details.label.nutrition_fatcts.hint":"",
@@ -1286,7 +1290,7 @@
 	"panel.food_details.label.include_ingredients.hint":"",
 	"panel.food_details.label.dietary_preferences.title":"饮食习惯",
 	"panel.food_details.label.dietary_preferences.hint":"",
-
+	
 	"panel.food_filters.label.only_show_food_that_are.title":"只显示某类食物",
 	"panel.food_filters.label.only_show_food_that_are.hint":"按成分过滤食物",
 	"panel.food_filters.label.include_ingredients.title":"包括成分",
@@ -1297,11 +1301,11 @@
 	"panel.food_filters.value.off":"关",
 	"panel.food_filters.button.save.title": "Save Changes",
 	"panel.food_filters.button.save.hint": "",
-
+	
 	"panel.food_special_offers.title.text": "餐飲資訊",
 	"panel.food_special_offers.available.text": "在这些地点提供",
 	"panel.food_special_offers.not_available.text": " 没有可用的地点",
-
+	
 	"panel.laundry_home.heading.laundry":"洗衣",
 	"panel.laundry_home.content.empty":"无房间可用",
 	"panel.laundry_home.button.list.title":"清单",
@@ -1314,7 +1318,7 @@
 	"panel.laundry_home.button.directions.hint":"获取路线",
 	"panel.laundry_home.button.details.title":"详细信息",
 	"panel.laundry_home.button.details.hint":"查看详细信息",
-
+	
 	"panel.laundry_detail.header.title":"洗衣",
 	"panel.laundry_detail.button.view_on_map.title":"在地图上查看",
 	"panel.laundry_detail.button.report_issue.title":"報告問題",
@@ -1329,14 +1333,14 @@
 	"panel.laundry_detail.out_of_service.label": "中止服務",
 	"panel.laundry_detail.in_use.label": "正在使用",
 	"panel.laundry_detail.in_use.with_minutes.label": "正在使用中, 剩餘 %d 分鐘",
-
+	
 	"panel.laundry.request_issue.header.title": "洗衣店",
 	"panel.laundry.request_issue.machine_id.enter.label": "請輸入機器ID",
 	"panel.laundry.request_issue.button.submit.label": "提交",
 	"panel.laundry.request_issue.machine_id.example.label": "機器 ID 示例",
 	"panel.laundry.request_issue.validation.empty_field": "請填寫所有字段.",
 	"panel.laundry.request_issue.submit.failed": "無法加載機器詳細信息. 請輸入正確的機器 ID.",
-
+	
 	"panel.laundry.issues_detail.header.title": "洗衣店",
 	"panel.laundry.issues_detail.machine_id.label": "機器編號:",
 	"panel.laundry.issues_detail.machine_type.label": "機器類型:",
@@ -1345,7 +1349,7 @@
 	"panel.laundry.issues_detail.comments.hint": "讓我們知道問題是什麼.",
 	"panel.laundry.issues_detail.continue.button": "繼續",
 	"panel.laundry.issues_detail.missing_issue.err.msg": "請選擇一個問題.",
-
+	
 	"panel.laundry.issues_contact_info.header.title": "洗衣店",
 	"panel.laundry.issues_contact_info.contact_info.label": "聯繫信息",
 	"panel.laundry.issues_contact_info.first_name.hint": "名*",
@@ -1358,15 +1362,15 @@
 	"panel.laundry.issues_contact_info.missing.phone.msg": "請填寫有效的電話號碼.",
 	"panel.laundry.issues_contact_info.complete.button": "完成請求",
 	"panel.laundry.issues_contact_info.submit.failed.msg": "未能提交問題. 請再試一次.",
-
+	
 	"panel.laundry.issues_submitted.header.title": "洗衣店",
 	"panel.laundry.issues_submitted.success.header.label": "謝謝你! 您的服務請求已收到.",
 	"panel.laundry.issues_submitted.success.description.label": "我們的一名技術人員將在 3 個工作日內到達您的物業為機器提供服務. 對於您可能遇到的任何不便, 我們深表歉意.",
 	"panel.laundry.issues_submitted.return.button": "返回",
-
+	
 	"widget.laundry.room.status.online.text": "在線的",
 	"widget.laundry.room.status.offline.text": "離線",
-
+	
 	"panel.settings.home.header.settings.label": "設置",
 	"panel.settings.home.settings.sections.section.label": "登入/登出",
 	"panel.settings.home.settings.sections.interests.label": "我的興趣",
@@ -1375,9 +1379,9 @@
 	"panel.settings.home.settings.sections.calendar.label": "我的日曆設置",
 	"panel.settings.home.settings.sections.appointments.label": "我的麥金萊約會",
 	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
-    "panel.settings.home.settings.sections.assessments.label": "我的評估",
-    "panel.settings.home.settings.sections.i_card.label": "i卡",
-
+		"panel.settings.home.settings.sections.assessments.label": "我的評估",
+		"panel.settings.home.settings.sections.i_card.label": "i卡",
+	
 	"panel.settings.home.connect.not_logged_in.title":"登錄{{app_title}}",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_1": "你是不是一位",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_2": "大學生",
@@ -1438,17 +1442,17 @@
 	"panel.settings.home.version.info.label": "{{app_title}}應用版本：",
 	"panel.settings.home.feedback.app.description.format": "伊利諾伊州應用程序是伊利諾伊大學厄巴納-香檳分校的官方校園應用程序。 該應用程序基於 <a href='{{rokwire_platform_url}}'>Rokwire</a> 開源軟件平台構建。 Rokwire 項目和伊利諾伊州應用程序是伊利諾伊大學教務長辦公室<a href='{{shci_url}}'>智能、健康社區倡議</a> 的成果。",
 	"panel.settings.home.copyright.text": "版權所有 © {{COPYRIGHT_YEAR}} 伊利諾伊大學董事會",
-
+	
 	"panel.settings.profile.content.profile.label": "我的簡歷",
 	"panel.settings.profile.content.who_are_you.label": "你是誰",
 	"panel.settings.profile.content.privacy.label": "我的應用隱私設置",
 	"panel.settings.profile.header.profile.label": "輪廓",
-
+	
 	"panel.settings.notifications.content.notifications.all.label": "所有通知",
 	"panel.settings.notifications.content.notifications.unread.label": "未讀通知",
 	"panel.settings.notifications.content.preferences.label": "我的通知偏好",
 	"panel.settings.notifications.header.inbox.label": "通知",
-
+	
 	"panel.settings.home.calendar.settings.add_events.label": "將保存的事件添加到日曆",
 	"panel.settings.home.calendar.settings.prompt.label": "將事件保存到日曆時提示",
 	"panel.settings.home.calendar.on_campus.location_services.required.label": "需要定位服務",
@@ -1463,17 +1467,17 @@
 	"panel.settings.home.calendar.research.toggle.title": "參與研究",
 	"panel.settings.home.calendar.research.questionnaire.title": "研究興趣表",
 	"panel.settings.home.calendar.research.prompt.title": "請確認您希望不再參與伊利諾伊州的研究。 您在問卷中填寫的所有信息都將被刪除。",
-
-    "panel.settings.home.appointments.description.format": "在 {{app_title}} 應用程序中顯示約會：",
-    "panel.settings.home.appointments.mckinley.label": "我的麥金萊",
-
+	
+		"panel.settings.home.appointments.description.format": "在 {{app_title}} 應用程序中顯示約會：",
+		"panel.settings.home.appointments.mckinley.label": "我的麥金萊",
+	
 	"panel.settings.home.assessments.skills_self_evaluation.save_results.label": "保存我的結果以與未來的結果進行比較",
-    "panel.settings.home.assessments.skills_self_evaluation.save_progress.description": "您開始的評估的進度將自動保存，直到您取消或完成它。",
+		"panel.settings.home.assessments.skills_self_evaluation.save_progress.description": "您開始的評估的進度將自動保存，直到您取消或完成它。",
 	"panel.settings.home.assessments.skills_self_evaluation.title": "技能自我評價",
-
+	
 	"panel.settings.home.assessments.health_screener.title": "健康檢查員",
-
-    "panel.settings.privacy_center.label.title":"隐私中心",
+	
+		"panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",
 	"panel.settings.privacy_center.label.finish_setup":"完成安装",
 	"panel.settings.privacy_center.label.finish_setup_description":"使用您的 NetID 或電話號碼登錄以獲得完整的{{app_title}}體驗。",
@@ -1490,7 +1494,7 @@
 	"panel.settings.privacy_center.button.forget_info.title": "忘记我的信息",
 	"panel.settings.privacy_center.label.delete_message.description.groups": " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.",
 	"panel.settings.privacy_center.delete_account.contributions.delete.msg": "請刪除我所有的貢獻。",
-
+	
 	"panel.settings.verify_identity.label.title":"验证你的身份",
 	"panel.settings.verify_identity.label.description":"連接到{{app_title}}",
 	"panel.settings.verify_identity.label.connect_id.desription1":"你是",
@@ -1502,25 +1506,25 @@
 	"panel.settings.verify_identity.label.phone_or_email.desription1":"没有NETID",
 	"panel.settings.verify_identity.label.phone_or_email.desription2":"? 驗證您的電話號碼或通過電子郵件登錄以保存您的偏好並在多台設備上獲得相同的體驗.",
 	"panel.settings.verify_identity.button.phone_or_phone.title":"繼續",
-
+	
 	"panel.settings.netid.link.failed": "Failed to add {{app_title}} NetID.",
 	"panel.settings.netid.link.failed.exists": "An account is already using this NetID.",
 	"panel.settings.netid.link.failed.exists.details": "1. You will need to sign in to the other account with this NetID.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login.",
 	"panel.settings.label.offline.netid":"Feature not available when offline.",
-
+	
 	"panel.settings.label.offline.phone_ver":"确认您的电话号码在脱机时不可用.",
-
+	
 	"panel.settings.link.login_prompt.title": "Sign In Required",
 	"panel.settings.link.login_prompt.description": "For security, you must sign in again to confirm it's you before adding an alternate account.",
 	"panel.settings.link.login_prompt.confirm.title": "Sign In",
-
+	
 	"panel.settings.login.phone.label.title": "Sign In with Mobile",
 	"panel.settings.login.phone.label.description": "To sign in, please enter your email address and follow the steps to sign in by email.",
 	"panel.settings.login.phone.label.heading": "Mobile Phone Number:",
 	"panel.settings.login.phone.label.heading.hint": "",
 	"panel.settings.login.phone.button.proceed.title": "Proceed",
 	"panel.settings.login.phone.button.proceed.hint": "",
-
+	
 	"panel.settings.link.phone.label.title": "Add Mobile",
 	"panel.settings.link.phone.label.description": "You may sign in using your mobile phone number as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.",
 	"panel.settings.link.phone.label.heading": "ADD MY MOBILE PHONE NUMBER",
@@ -1532,14 +1536,14 @@
 	"panel.settings.link.phone.label.failed": "Failed to send phone verification code. An unexpected error has occurred.",
 	"panel.settings.link.phone.label.failed.exists": "An account is already using this phone number.",
 	"panel.settings.link.phone.label.failed.exists.detail": "1. You will need to sign in to the other account with this phone number.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login.",
-
+	
 	"panel.settings.login.email.label.title": "Sign In with Email",
 	"panel.settings.login.email.label.description": "To sign in, please enter your mobile phone number to receive a verification code via text message.",
 	"panel.settings.login.email.label.heading": "Email Address:",
 	"panel.settings.login.email.label.heading.hint": "",
 	"panel.settings.login.email.button.proceed.title": "Proceed",
 	"panel.settings.login.email.button.proceed.hint": "",
-
+	
 	"panel.settings.link.email.label.title": "Add Email",
 	"panel.settings.link.email.label.description": "You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.",
 	"panel.settings.link.email.label.heading": "ADD MY EMAIL ADDRESS",
@@ -1551,14 +1555,14 @@
 	"panel.settings.link.email.label.failed": "Failed to send verification email. An unexpected error has occurred.",
 	"panel.settings.link.email.label.failed.exists": "An account is already using this email address.",
 	"panel.settings.link.email.label.failed.exists.detail": "1. You will need to sign in to the other account with this email address.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login.",
-
+	
 	"panel.settings.login.both.label.title": "Sign In with Mobile or Email",
 	"panel.settings.login.both.label.description": "To sign in, please enter your mobile phone number to receive a verification code via text message. Or, enter your email address and follow the steps to sign in by email.",
 	"panel.settings.login.both.label.heading": "Mobile Phone Number or Email Address:",
 	"panel.settings.login.both.label.heading.hint": "",
 	"panel.settings.login.both.button.proceed.title": "Proceed",
 	"panel.settings.login.both.button.proceed.hint": "",
-
+	
 	"panel.settings.link.both.label.title": "Add Mobile or Email",
 	"panel.settings.link.both.label.description": "You may sign in using your email or mobile phone number as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.",
 	"panel.settings.link.both.label.heading": "ADD MY MOBILE PHONE NUMBER OR EMAIL ADDRESS",
@@ -1566,21 +1570,21 @@
 	"panel.settings.link.both.button.proceed.title": "Add Mobile or Email",
 	"panel.settings.link.both.button.proceed.hint": "",
 	"panel.settings.link.both.label.validation": "Please enter your phone number or email address.",
-
+	
 	"panel.settings.linked.phone.label.title": "Alternate Phone Number",
 	"panel.settings.linked.phone.label.description": "You may sign in using your phone number as an alternate way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.",
 	"panel.settings.linked.phone.label.failed": "Failed to disconnect phone",
 	"panel.settings.linked.phone.field.label.phone": "Phone",
 	"panel.settings.linked.phone.button.label.phone": "Remove this Phone Number",
-
+	
 	"panel.settings.linked.email.label.title": "Alternate Email",
 	"panel.settings.linked.email.label.description": "You may sign in using your email as an alternate way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.",
 	"panel.settings.linked.email.label.failed": "Failed to disconnect email",
 	"panel.settings.linked.email.field.label.email": "Email",
 	"panel.settings.linked.email.button.label.email": "Remove this Email Address",
-
+	
 	"widget.settings.dialog.button.cancel.title": "取消",
-
+	
 	"panel.settings.notifications.label.desctiption":"不要错过活动或校园更新.",
 	"panel.settings.notifications.label.notifications":"推送通知",
 	"panel.settings.notifications.label.info":"在设备设置中启用接收通知.",
@@ -1604,7 +1608,7 @@
 	"panel.settings.notifications.group_updates.invitations.label": "Group membership",
 	"panel.settings.notifications.group_updates.polls.label": "Polls",
 	"panel.settings.notifications.pause_notifications": "Pause all notifications",
-
+	
 	"panel.settings.privacy.privacy.label.title": "选择您的隐私级别",
 	"panel.settings.privacy.privacy.label.slider_help": "调整滑块以更改您的隐私级别",
 	"panel.settings.privacy.privacy.button.set_privacy.disabled.title": "滚动查看",
@@ -1633,39 +1637,39 @@
 	"panel.settings.privacy.privacy.button.set_privacy.slider.hint": "隐私级别",
 	"panel.settings.privacy.privacy.button.set_privacy.slider.increase": "增加到",
 	"panel.settings.privacy.privacy.button.set_privacy.slider.decrease": "减少到",
-
+	
 	"panel.settings.video_tutorials.header.title": "視頻教程",
 	"panel.settings.video_tutorials.empty.msg": "沒有視頻教程。",
-
+	
 	"panel.settings.video_tutorial.header.title": "視頻教程",
 	"panel.settings.video_tutorial.video.missing.msg": "缺少視頻",
-
-    "panel.settings.icard.mobile_access.label": "允許移動訪問時",
-    "panel.settings.icard.mobile_access.opened_app.title.label": "應用程序已打開",
-    "panel.settings.icard.mobile_access.opened_app.description.label": "僅當應用程序打開時才開門。",
-    "panel.settings.icard.mobile_access.unlocked_device.title.label": "設備已解鎖",
-    "panel.settings.icard.mobile_access.unlocked_device.description.label": "僅在智能手機解鎖時開門。",
-    "panel.settings.icard.mobile_access.always.title.label": "總是",
-    "panel.settings.icard.mobile_access.always.description.label": "無論應用程序是否打開或智能手機是否解鎖，都可以開門。",
-    "panel.settings.icard.bluetooth.sensitivity.label": "藍牙靈敏度",
-    "panel.settings.icard.bluetooth.sensitivity.high.label": "高的",
-    "panel.settings.icard.bluetooth.sensitivity.normal.label": "普通的",
-    "panel.settings.icard.bluetooth.sensitivity.low.label": "低的",
-    "panel.settings.icard.vibrate.button": "解鎖時振動",
-    "panel.settings.icard.twist_n_go.title.label": "扭轉和去",
-    "panel.settings.icard.twist_n_go.description.label": "將您的移動設備向右和向左旋轉 90\u00B0，就像轉動門把手一樣。",
-    "panel.settings.icard.twist_n_go.description2.label": "必須啟用門才能使 Twist and Go 工作。",
-    "panel.settings.icard.ios_settings.title.label": "打開系統設置",
-    "panel.settings.icard.ios_settings.description.label": "點擊頁面頂部的返回箭頭返回 {{app_title}} 應用程序。",
-    "panel.settings.icard.notification_drawer.title.label": "通知 ？？？",
-    "panel.settings.icard.notification_drawer.description.label": "從通知抽屜解鎖門。",
-    "panel.settings.icard.rssi.change.failed.msg": "無法更改藍牙靈敏度。",
-    "panel.settings.icard.twist_n_go.change.failed.msg": "%s Twist And Go 失敗。 請稍後再試。",
-    "panel.settings.icard.unlock.vibration.change.failed.msg": "解鎖時 %s 振動失敗。 請稍後再試。",
-    "panel.settings.icard.unlock.sound.change.failed.msg": "解鎖時無法發出 %s 聲音。 請稍後再試。",
-    "panel.settings.icard.enable.label": "使能夠",
-    "panel.settings.icard.disable.label": "禁用",
-
+	
+		"panel.settings.icard.mobile_access.label": "允許移動訪問時",
+		"panel.settings.icard.mobile_access.opened_app.title.label": "應用程序已打開",
+		"panel.settings.icard.mobile_access.opened_app.description.label": "僅當應用程序打開時才開門。",
+		"panel.settings.icard.mobile_access.unlocked_device.title.label": "設備已解鎖",
+		"panel.settings.icard.mobile_access.unlocked_device.description.label": "僅在智能手機解鎖時開門。",
+		"panel.settings.icard.mobile_access.always.title.label": "總是",
+		"panel.settings.icard.mobile_access.always.description.label": "無論應用程序是否打開或智能手機是否解鎖，都可以開門。",
+		"panel.settings.icard.bluetooth.sensitivity.label": "藍牙靈敏度",
+		"panel.settings.icard.bluetooth.sensitivity.high.label": "高的",
+		"panel.settings.icard.bluetooth.sensitivity.normal.label": "普通的",
+		"panel.settings.icard.bluetooth.sensitivity.low.label": "低的",
+		"panel.settings.icard.vibrate.button": "解鎖時振動",
+		"panel.settings.icard.twist_n_go.title.label": "扭轉和去",
+		"panel.settings.icard.twist_n_go.description.label": "將您的移動設備向右和向左旋轉 90\u00B0，就像轉動門把手一樣。",
+		"panel.settings.icard.twist_n_go.description2.label": "必須啟用門才能使 Twist and Go 工作。",
+		"panel.settings.icard.ios_settings.title.label": "打開系統設置",
+		"panel.settings.icard.ios_settings.description.label": "點擊頁面頂部的返回箭頭返回 {{app_title}} 應用程序。",
+		"panel.settings.icard.notification_drawer.title.label": "通知 ？？？",
+		"panel.settings.icard.notification_drawer.description.label": "從通知抽屜解鎖門。",
+		"panel.settings.icard.rssi.change.failed.msg": "無法更改藍牙靈敏度。",
+		"panel.settings.icard.twist_n_go.change.failed.msg": "%s Twist And Go 失敗。 請稍後再試。",
+		"panel.settings.icard.unlock.vibration.change.failed.msg": "解鎖時 %s 振動失敗。 請稍後再試。",
+		"panel.settings.icard.unlock.sound.change.failed.msg": "解鎖時無法發出 %s 聲音。 請稍後再試。",
+		"panel.settings.icard.enable.label": "使能夠",
+		"panel.settings.icard.disable.label": "禁用",
+	
 	"panel.create_event.header.title":"创建活动",
 	"panel.create_event.title":"创建活动",
 	"panel.create_event.category.title":"活动类别",
@@ -1727,7 +1731,7 @@
 	"panel.create_event.button.free.title":"Is this event free?",
 	"panel.create_event.price.label.title":"Cost Description (eg: $10, Donation suggested)",
 	"panel.create_event.button.attendance.title":"Attendance required",
-
+	
 	"panel.profile_info.header.title":"个人信息",
 	"panel.profile_info.net_id.title":"UIN",
 	"panel.profile_info.full_name.title":"全名",
@@ -1756,7 +1760,7 @@
 	"panel.profile_info.picture.upload.failed.msg":"上傳個人資料圖片失敗. 請稍後再試.",
 	"panel.profile_info.picture.delete.failed.msg":"無法刪除頭像. 請稍後再試.",
 	"panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
-
+	
 	"panel.create_poll.header.title": "创建快速投票",
 	"panel.create_poll.description": "人們可以通過{{app_title}}應用程序向您詢問 4 位投票號碼來投票。",
 	"panel.create_poll.text.wants_to_know": "想知道…",
@@ -1778,7 +1782,7 @@
 	"panel.create_poll.message.error.default": "創建投票失敗. 請填寫所有字段, 然後重試.",
 	"panel.create_poll.description.non_editable.text": "一旦開始, 您將無法再編輯投票.",
 	"panel.create_poll.message.logged_out.text": "您需要使用您的 NetID 登錄才能創建投票。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在“設置”下找到登錄提示。",
-
+	
 	"panel.create_stadium_poll.header.title": " 创建体育场投票 ",
 	"panel.create_stadium_poll.text.wants_to_know": "想知道…",
 	"panel.create_stadium_poll.text.question": "问题",
@@ -1802,7 +1806,7 @@
 	"panel.create_stadium_poll.not_valid.question.msg":"请填写问题的值'!",
 	"panel.create_stadium_poll.not_valid.geofence.msg":" 请为地理围栏选择值!",
 	"panel.create_stadium_poll.not_valid.option.msg":" 请提供每个选项的值 !",
-
+	
 	"panel.polls_home.text.header.title":"快速投票",
 	"panel.polls_home.text.loading":" 加载中。请稍等 ...",
 	"panel.polls_home.text.pin_description":"向民意調查的創建者詢問其四位數字.",
@@ -1841,7 +1845,7 @@
 	"panel.polls_home.card.button.message.delete_poll.success": "Poll deleted successfully",
 	"panel.polls_home.card.button.prompt.delete_poll": "Delete \"{PollTitle}\" poll?",
 	"panel.polls_home.text.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To create and share polls with people near you, you must set your privacy level to 4 and sign in.",
-
+	
 	"panel.poll_prompt.text.someone": "某人",
 	"panel.poll_prompt.text.wants_to_know": "%s 想知道",
 	"panel.poll_prompt.text.no_votes_yet": "还没有投票",
@@ -1865,7 +1869,7 @@
 	"panel.poll_prompt.hint.select_option":"双击以选择此选项",
 	"panel.poll_prompt.vote.status.announce.success": "Successfully Voted",
 	"panel.polls_prompt.card.text.pin":"4位投票 #: %s",
-
+	
 	"panel.poll_pin_bouble.label_description": "輸入四位數的投票號碼以查看投票.",
 	"panel.poll_pin_bouble.validation_description": "请输入正确的4位数投票 #",
 	"panel.poll_pin_bouble.error_load_poll_description": "无法加载民意调查",
@@ -1874,10 +1878,10 @@
 	"panel.poll_pin_bouble.unable_to_load_poll": "无法加载调查",
 	"panel.poll_pin_bouble.poll_not_opened": "投票还未开放",
 	"panel.poll_pin_bouble.poll_closed": "投票已结束",
-
-    "panel.poll.detail.header.title": "輪詢",
-    "panel.poll.detail.error.msg": "此民意調查已不存在。",
-
+	
+		"panel.poll.detail.header.title": "輪詢",
+		"panel.poll.detail.error.msg": "此民意調查已不存在。",
+	
 	"panel.parking_events.label.loading": "正在加載停車事件. 請耐心等待...",
 	"panel.parking_events.label.no_events": "Currently there is no parking information for any State Farm Center events.",
 	"panel.parking_events.label.heading": "州立農場中心停車場",
@@ -1886,21 +1890,21 @@
 	"panel.parking_events.label.from":"从: ",
 	"panel.parking_events.label.to":"到: ",
 	"panel.parking_events.label.status":"状态: ",
-
+	
 	"panel.parking_lots.label.loading": "正在加載停車場. 請耐心等待...",
 	"panel.parking_lots.button.directions.title": "方向",
 	"panel.parking_lots.button.directions.hint": "",
 	"panel.parking_lots.label.heading":"停车位",
 	"panel.parking_lots.label.empty":"本次活动无停车场",
 	"panel.parking_lots.label.available_spots":"可用停车位: ",
-
+	
 	"panel.bus_pass.header.title": "MTD 公交车票",
 	"panel.bus_pass.button.close.title": "关闭",
 	"panel.bus_pass.description.text": "上車時向巴士運營商展示此屏幕.",
 	"panel.bus_pass.error.disabled.text": "您沒有 MTD 巴士通行證。",
 	"panel.bus_pass.error.duplicate.text": "此MTD總線通行證已經顯示在另一台設備上。\n\n每個Illini ID僅一台設備可以顯示MTD總線通行證。",
 	"panel.bus_pass.error.default.text": "無法加載公交通行證",
-
+	
 	"panel.wellness.home.header.sections.title": "健康",
 	"panel.wellness.section.daily_tips.label": "今天的健康小貼士",
 	"panel.wellness.section.rings.label": "每日健康戒指",
@@ -1911,14 +1915,14 @@
 	"panel.wellness.section.mental_health.label": "心理健康資源",
 	"panel.wellness.section.podcast.label": "健康伊利尼播客",
 	"panel.wellness.section.struggling.label": "我正在掙扎",
-
+	
 	"panel.wellness.sections.description.footer.wellness.text": "健康 ",
 	"panel.wellness.sections.description.footer.description.text": "是一種以最大化個人潛力為導向的最佳幸福狀態。 這是一個終生的過程，旨在提高你的 ",
 	"panel.wellness.sections.description.footer.dimensions.text": "身體, 心理, 環境, 財務, 精神, 職業, 情感和社會健康.",
 	"panel.wellness.sections.dimensions.button": "了解有關 8 個維度的更多信息",
 	"panel.wellness.sections.dimensions.title": "健康的 8 個維度",
 	"panel.wellness.sections.dimensions.hint": "點擊查看健康的 8 個維度",
-
+	
 	"panel.wellness.sections.health_screener.label.screener.details.title": "Not feeling well? Use the Illinois Health Screener to help you find the right resources",
 	"panel.wellness.sections.health_screener.label.screener.details.text": "Your screening results are confidential unless you choose to share them",
 	"panel.wellness.sections.health_screener.button.take_screener.title": "Take the Screener",
@@ -1927,7 +1931,7 @@
 	"panel.wellness.sections.health_screener.label.history.title": "History",
 	"panel.wellness.sections.health_screener.dropdown.filter.timeframe.title": "Time:",
 	"panel.wellness.sections.health_screener.dropdown.filter.type.title": "Type:",
-    "panel.wellness.sections.health_screener.offline.error.msg": "Illinois Health Screener 在離線時不可用。",
+		"panel.wellness.sections.health_screener.offline.error.msg": "Illinois Health Screener 在離線時不可用。",
 	"panel.wellness.sections.health_screener.description.title": "使用 Illinois Health Screener 幫助您找到合適的資源",
 	"panel.wellness.sections.health_screener.body.save.description": "您的結果將被保存，以便您重新訪問或與未來的結果進行比較。",
 	"panel.wellness.sections.health_screener.body.dont_save.description": "您的結果將不會被保存，以便您與未來的結果進行比較。",
@@ -1936,9 +1940,9 @@
 	"panel.wellness.sections.health_screener.label.screener.subtitle": "找到合適的資源",
 	"panel.wellness.sections.health_screener.history.clear": "全部清除",
 	"panel.wellness.sections.health_screener.history.clear.confirm": "您確定要清除歷史記錄嗎？",
-
-    "panel.wellness.sections.mental_health.video.title": "精神健康",
-
+	
+		"panel.wellness.sections.mental_health.video.title": "精神健康",
+	
 	"panel.wellness.todo.tab.daily.label": "日常的",
 	"panel.wellness.todo.tab.category.label": "類別",
 	"panel.wellness.todo.tab.weekly.label": "每週",
@@ -1949,7 +1953,7 @@
 	"panel.wellness.todo.welcome.label": "歡迎來到你的待辦事項清單",
 	"panel.wellness.todo.welcome.description.label": "通過在此處記錄您的待辦事項來釋放您的大腦空間.",
 	"panel.wellness.todo.categories.manage.button": "管理類別",
-
+	
 	"panel.wellness.categories.manage.title": "管理類別",
 	"panel.wellness.categories.create.header.label": "創建類別",
 	"panel.wellness.categories.create.header.description": "示例：RSO 或俱樂部、特定班級或雜項任務類別.",
@@ -1968,7 +1972,7 @@
 	"panel.wellness.categories.manage.category.delete.confirmation.msg": "確定要刪除此類別?",
 	"panel.wellness.categories.manage.color.pick.cancel.button": "取消",
 	"panel.wellness.categories.manage.color.pick.select.button": "選擇",
-
+	
 	"panel.wellness.todo.item.add.label": "添加項目",
 	"panel.wellness.todo.item.name.field.label": "項目名",
 	"panel.wellness.todo.item.optional_fields.label": "可選字段",
@@ -1999,10 +2003,10 @@
 	"panel.wellness.todo.items.reminder.set.button": "設置提醒",
 	"panel.wellness.todo.items.reminder.set.failed.msg": "設置提醒失敗.",
 	"panel.wellness.todo.items.calendar.info.msg": "點擊一個點以設置提醒或編輯項目詳細信息.",
-
+	
 	"panel.wellness.resources.button.all.title": "查看全部",
 	"panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
-
+	
 	"panel.wellness.appointments.home.reschedule_appointment.label": "需要取消或重新安排？",
 	"panel.wellness.appointments.home.reschedule_appointment.alert.description": "<p>要取消預約，請前往<a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt='' /> 或在工作時間致電 <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}}</u>)</a>。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。</p><p>取消和預約更改最多可能需要 20 分鐘才能顯示在伊利諾伊州應用程序中。 兩小時取消費用將根據您通過<a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}取消的時間計算 ' alt=''/>.</p>",
 	"panel.wellness.appointments.home.schedule_appointment.label": "Schedule an Appointment",
@@ -2010,13 +2014,13 @@
 	"panel.wellness.appointments.home.past.list.empty.msg": "您沒有在伊利諾伊應用程序中鏈接最近的過去約會。",
 	"panel.wellness.appointments.home.past_appointments.header.label": "最近過去的約會",
 	"panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley url}}'>訪問 {{mckinley_url_label}} 以查看過去約會的完整歷史記錄。</a>&nbsp;<img src='asset:{{external_links icon}}' alt= ''/>",
-  "panel.wellness.appointments.home.display.nothing.msg": "沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
-  "panel.wellness.appointments.home.display.settings.on.label": "顯示我的約會",
-  "panel.wellness.appointments.home.display.settings.off.label": "不要顯示我的約會",
-
+	"panel.wellness.appointments.home.display.nothing.msg": "沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
+	"panel.wellness.appointments.home.display.settings.on.label": "顯示我的約會",
+	"panel.wellness.appointments.home.display.settings.off.label": "不要顯示我的約會",
+	
 	"panel.academics.appointments.home.header.title": "Appointments",
-  "panel.academics.appointments.home.message.providers.failed": "Failed to load providers.",
-  "panel.academics.appointments.home.message.providers.empty": "No providers available.",
+	"panel.academics.appointments.home.message.providers.failed": "Failed to load providers.",
+	"panel.academics.appointments.home.message.providers.empty": "No providers available.",
 	"panel.academics.appointments.home.message.provider.empty": "No selected provider.",
 	"panel.academics.appointments.home.message.unit.empty": "No selected location.",
 	"panel.academics.appointments.home.message.units.failed": "Failed to load locations for provider.",
@@ -2028,19 +2032,19 @@
 	"panel.academics.appointments.home.message.appointments.past.empty": "You don't have recent past appointments linked within the Illinois app.",
 	"panel.academics.appointments.home.heading.appointments.past": "Recent Past Appointments",
 	"panel.academics.appointments.home.label.providers.all": "All Providers",
-
+	
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
-
+	
 	"panel.debug.header.title":"调试",
-
+	
 	"panel.debug_messaging.header.title":"消息",
-
+	
 	"panel.web.offline.title": "網頁內容不可用",
 	"panel.web.offline.message": "您需要在線才能訪問網絡內容。 請檢查您的互聯網連接。",
 	"panel.web.tracking_disabled.title": "網頁內容被阻止",
 	"panel.web.tracking_disabled.message": "您已選擇拒絕使用此應用程序中的網絡內容的 cookie，因此我們已阻止訪問網站。 如果您改變主意，請在<a href='%s'>此處</a>更改您的偏好。您的手機設置可能還需要啟用隱私> 跟踪。",
-
+	
 	"panel.groups_create.label.group.heading": "Create a Group",
 	"panel.groups_create.label.project.heading": "Create Research Project",
 	"panel.groups_create.label.discoverability": "Discoverability",
@@ -2100,7 +2104,7 @@
 	"panel.groups_create.attendance_group.label": "Enable attendance checking",
 	"panel.groups_create.auto_join.enabled.label": "Group can be joined automatically?",
 	"panel.groups_create.only_admins_create_polls.enabled.label": "Only admins can create Polls",
-
+	
 	"panel.groups.common.privacy.title.private": "Private",
 	"panel.groups.common.privacy.title.public":  "Public",
 	"panel.groups.common.privacy.description.short.private": "Only members can see group events and posts, unless an event is marked public.",
@@ -2109,7 +2113,7 @@
 	"panel.groups.common.privacy.description.long.public":  "Anyone who uses the app will see this group. Only admins can see who is in the group.",
 	"panel.groups.common.private.search.hidden.label": "Make Group Hidden",
 	"panel.groups.common.private.search.hidden.description": "A hidden group is unsearchable.",
-
+	
 	"panel.group_detail.label.options": "Options",
 	"panel.group_detail.label.error_message": "Failed to load group data.",
 	"panel.group_detail.members.count.empty": "No Current Members",
@@ -2194,9 +2198,9 @@
 	"panel.group_detail.button.create_poll.title": "Create Poll",
 	"panel.group_detail.button.policy.hint": "Tap to ready policy statement",
 	"panel.group_detail.attendance.member.attended.msg.format": "Student with UIN \"%s\" already attended on \"%s\"",
-    "panel.group_detail.date.updated.managed.membership.label": "Last sync:",
-    "panel.group_detail.date.updated.membership.label": "Last updated:",
-
+		"panel.group_detail.date.updated.managed.membership.label": "Last sync:",
+		"panel.group_detail.date.updated.membership.label": "Last updated:",
+	
 	"panel.group_member_notifications.header.title": "Group Notifications",
 	"panel.group_member_notifications.save.button": "Save",
 	"panel.group_member_notifications.member.load.failed.msg": "Failed to load member data.",
@@ -2207,7 +2211,7 @@
 	"panel.group_member_notifications.polls.label": "Polls",
 	"panel.group_member_notifications.save.success.msg": "Notifications preferences were updated successfully.",
 	"panel.group_member_notifications.save.fail.msg": "Failed to update notification preferences.",
-
+	
 	"panel.group.members.header.title": "Members",
 	"panel.group.members.label.tap_to_follow_team.title": "Tap the checkmark to select members",
 	"panel.group.members.label.tap_to_follow_team.hint": "",
@@ -2226,7 +2230,7 @@
 	"panel.group.members.search.cancel.hint": "clear the search filter",
 	"panel.group.members.search.button.title": "Search",
 	"panel.group.members.search.button.hint": "filter Members",
-
+	
 	"panel.group_qr_code.alert.no_qr_code.msg": "There is no QR Code",
 	"panel.group_qr_code.alert.save.success.pictures": "Pictures",
 	"panel.group_qr_code.alert.save.success.gallery": "Gallery",
@@ -2238,7 +2242,7 @@
 	"panel.group_qr_code.primary.heading.title": "Group promotion Key",
 	"panel.group_qr_code.button.save.title": "Save QR Code",
 	"panel.group_qr_code.button.share.title": "Share Link",
-
+	
 	"panel.find_event.filter.tags.all": "All Tags",
 	"panel.find_event.filter.tags.my": "My Tags",
 	"panel.find_event.filter.time.upcoming": "Upcoming",
@@ -2257,7 +2261,7 @@
 	"panel.find_event.label.search_event_by_title": "Search event by title",
 	"panel.find_event.button.add_selected_events.title": "Add (#) event to group",
 	"panel.find_event.button.add_selected_events.hint": "",
-
+	
 	"panel.manage_members.header.admin.title": "管理成员",
 	"panel.manage_members.header.member.title": "成員",
 	"panel.manage_members.label.requests": "请求",
@@ -2292,7 +2296,7 @@
 	"panel.manage_members.status.rejected.empty.project.message": "沒有被拒絕的參與者。",
 	"panel.manage_members.status.all.empty.message": "沒有成員。",
 	"panel.manage_members.status.all.empty.project.message": "沒有待處理的成員。",
-
+	
 	"panel.pending_member_detail.button.add.title": "添加",
 	"panel.pending_member_detail.button.add.hint": "",
 	"panel.pending_member_detail.button.deny.title": "拒绝",
@@ -2312,7 +2316,7 @@
 	"panel.pending_member_detail.label.accept": " accept ",
 	"panel.pending_member_detail.label.reject": " reject ",
 	"panel.pending_member_detail.button.deny.text": "Deny",
-
+	
 	"panel.member_detail.label.status": "STATUS",
 	"panel.member_detail.label.officer_title": "OFFICER TITLE",
 	"panel.member_detail.label.empty": "Failed to update member",
@@ -2328,7 +2332,7 @@
 	"panel.member_detail.label.confirm_remove.project.format": "Remove %s From this project?",
 	"panel.member_detail.button.back.title": "Back",
 	"panel.member_detail.dialog.button.remove.title": "Remove",
-
+	
 	"panel.membership_questions.label.title": "Membership Questions",
 	"panel.membership_questions.label.edit": "Edit Questions",
 	"panel.membership_questions.label.description": "Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.",
@@ -2337,10 +2341,10 @@
 	"panel.membership_questions.button.clear.hint": "clear",
 	"panel.membership_questions.button.update_question.title": "Update Questions",
 	"panel.membership_questions.label.question.alert": "Please input question #",
-
+	
 	"panel.recruitment_questions.label.title": "Recruitment Questions",
 	"panel.recruitment_questions.label.description": "Learn more about people who want to participate to your research project by asking them some questions. Only the principal investigator(s) of your research project will see the answers.",
-
+	
 	"panel.membership_request.label.request.membership.title": "Membership Questions",
 	"panel.membership_request.label.request.participate.title": "Invitation Questions",
 	"panel.membership_request.label.answer_questions": "Answer questions",
@@ -2348,7 +2352,7 @@
 	"panel.membership_request.button.submit.title": "Submit request",
 	"panel.membership_request.label.alert":  "Please answer ",
 	"panel.membership_request.label.fail": "Failed to submit request",
-
+	
 	"panel.membership_request.label.title": "Membership Steps",
 	"panel.membership_request.label.group.description": "This group asks you to answer the following question(s) for membership consideration.",
 	"panel.membership_request.label.project.description": "This Research Project wants you to answer the following question(s) for participation consideration.",
@@ -2357,7 +2361,7 @@
 	"panel.membership_request.button.add_steps.title": "Add step",
 	"panel.membership_request.button.save.title": "Save steps",
 	"panel.membership_request.button.add_steps.alert": "Please input step #",
-
+	
 	"panel.groups_search.header.title": "Search",
 	"panel.groups_search.field.search.title": "Search",
 	"panel.groups_search.field.search.hint": "",
@@ -2370,7 +2374,7 @@
 	"panel.groups_search.label.found_single": "1 result found",
 	"panel.groups_search.label.found_multi": "%d results found",
 	"panel.groups_search.label.results_for": "Results for ",
-
+	
 	"panel.groups_home.label.all_categories": "All Categories",
 	"panel.groups_home.label.heading": "Groups",
 	"panel.groups_home.button.all_groups.title": "All Groups",
@@ -2388,9 +2392,9 @@
 	"panel.groups_home.label.all_groups.empty": "There are no groups matching your filters.",
 	"panel.groups_home.label.all_groups.failed": "Failed to load groups",
 	"panel.groups_home.label.all_groups.filtered.empty": "No groups match the selected filter",
-    "panel.groups_home.groups.count.single.label": "group",
-    "panel.groups_home.groups.count.plural.label": "groups",
-
+		"panel.groups_home.groups.count.single.label": "group",
+		"panel.groups_home.groups.count.plural.label": "groups",
+	
 	"panel.groups_settings.label.heading": "Group Settings",
 	"panel.groups_settings.label.project.heading": "Project Settings",
 	"panel.groups_settings.label.heading.general_info": "General group information",
@@ -2446,7 +2450,7 @@
 	"panel.groups_settings.tags.label.tag.format": "%s tag, ",
 	"panel.groups_settings.tags.label.tag.hint": "double tab to remove tag",
 	"panel.groups_settings.button.delete.title": "Delete this Group",
-
+	
 	"panel.project_settings.label.heading": "Project Settings",
 	"panel.project_settings.label.heading.general_info": "General project information",
 	"panel.project_settings.name.title": "PROJECT NAME",
@@ -2457,7 +2461,7 @@
 	"panel.project_settings.membership.button.question.title": "Recruitment Questions",
 	"panel.project_settings.button.delete.title": "Delete this Group",
 	"panel.project_detail.group.delete.failed.msg": "Failed to delete project.",
-
+	
 	"panel.group.tags.header.title": "Group Tags",
 	"panel.group.tags.button.done.title": "Done",
 	"panel.group.tags.list.search.label": "SEARCH",
@@ -2469,7 +2473,7 @@
 	"panel.group.tags.search.cancel.hint": "clear the search filter",
 	"panel.group.tags.search.button.title": "Search",
 	"panel.group.tags.search.button.hint": "filter tags",
-
+	
 	"panel.group.attributes.attributes.header.title": "Group Attributes",
 	"panel.group.attributes.attributes.header.description": "Choose one or more attributes that help describe this group.",
 	"panel.group.attributes.filters.header.title": "Group Filters",
@@ -2478,7 +2482,7 @@
 	"panel.project.attributes.attributes.header.description": "Choose one or more attributes that help describe this project.",
 	"panel.project.attributes.filters.header.title": "Project Filters",
 	"panel.project.attributes.filters.header.description": "Choose one or more attributes to filter the list of projects.",
-
+	
 	"panel.groups_event_detail.button.options.title": "Options",
 	"panel.groups_event_detail.label.online_event": "Online Event",
 	"panel.groups_event_detail.label.location.hint": "",
@@ -2496,7 +2500,7 @@
 	"panel.groups_event_detail.button.select_group.hint": "Double tap to show categories options",
 	"panel.groups_event_detail.button.add.title": "ADD ",
 	"panel.groups_event_detail.label.link_result":  "Event has been linked to",
-
+	
 	"panel.group.detail.post.header.title": "Post",
 	"panel.group.detail.post.delete.confirm.msg": "Are you sure that you want to delete this post?",
 	"panel.group.detail.post.delete.failed.msg": "Failed to delete post.",
@@ -2532,7 +2536,7 @@
 	"panel.group.detail.post.edit.hint": "Edit the post",
 	"panel.group.detail.post.updated.ago.format": "Updated %s ago",
 	"panel.group.detail.post.create.button.cancel.title": "Cancel",
-
+	
 	"panel.group.detail.post.report_abuse.header.title": "Report",
 	"panel.group.detail.post.report_abuse.students_dean.description.text": "Report violation of Student Code to Dean of Students",
 	"panel.group.detail.post.report_abuse.group_admins.description.text": "Report obscene, threatening, or harassing content to Group Administrators",
@@ -2544,18 +2548,18 @@
 	"panel.group.detail.post.report_abuse.button.senf.hint": "Tap to send report",
 	"panel.group.detail.post.report_abuse.succeeded.msg": "Post reported successfully.",
 	"panel.group.detail.post.report_abuse.failed.msg": "Failed to report post.",
-
+	
 	"panel.group_detail.button.policy.label": "Policy",
 	"panel.group.detail.button.policy.hint": "Tap to ready policy statement",
 	"panel.group.detail.policy.text": "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.",
-
+	
 	"panel.groups_all_events.label.heading": "Upcoming Events",
-
+	
 	"panel.group_polls.label.heading": "All Polls",
 	"panel.group_polls.empty.message": "There are no group polls.",
 	"panel.group_polls.empty.description": "You will see the polls for your group here.",
 	"panel.group_polls.text.error": "Error",
-
+	
 	"panel.research_projects.home.header_bar.title": "Research at Illinois",
 	"panel.research_projects.home.content_type.open.title": "Open Research Projects",
 	"panel.research_projects.home.content_type.my.title": "My Research Participation",
@@ -2567,13 +2571,13 @@
 	"panel.research_projects.home.status.error.my.text": "Failed to load your research projects.",
 	"panel.research_projects.home.status.empty.open.text": "There are no opened research projects at the moment.",
 	"panel.research_projects.home.status.empty.my.text": "You have not created and do not participate in any research projects.",
-
+	
 	"panel.content.attributes.button.apply.title": "Apply Attributes",
 	"panel.content.attributes.button.filter.title": "Filter",
 	"panel.content.attributes.button.clear.title": "Clear",
 	"panel.content.attributes.label.no_selection.title": "None",
 	"panel.content.attributes.label.no_selection.title.format": "No %s",
-
+	
 	"panel.mtd_stops.home.header_bar.title": "Bus Stops",
 	"panel.mtd_stops.home.content_type.all.title": "All Bus Stops",
 	"panel.mtd_stops.home.content_type.my.title": "My Bus Stops",
@@ -2582,7 +2586,7 @@
 	"panel.mtd_stops.home.status.error.my.text": "Failed to load saved bus stops.",
 	"panel.mtd_stops.home.status.empty.all.text": "There are no bus stops available.",
 	"panel.mtd_stops.home.status.empty.my.text": "You have no saved bus stops.",
-
+	
 	"panel.mtd_stops.search.header.title":"Search",
 	"panel.mtd_stops.search.search.field.title":"Search",
 	"panel.mtd_stops.search.search.field.hint":"",
@@ -2595,12 +2599,12 @@
 	"panel.mtd_stops.search.label.not_found":"No results found",
 	"panel.mtd_stops.search.label.found_single":"1 result found",
 	"panel.mtd_stops.search.label.found_multi":"%d results found",
-
+	
 	"panel.guide_categories.label.heading": "Campus Guide",
 	"panel.guide_categories.label.content.empty": "空的指南內容",
-
+	
 	"panel.inbox.label.content.empty": "沒有消息",
-    "panel.inbox.mark_all_read.label": "標記為已讀",
+		"panel.inbox.mark_all_read.label": "標記為已讀",
 	"panel.inbox.label.time.any": "任何時間",
 	"panel.inbox.label.time.today": "今天",
 	"panel.inbox.label.time.yesterday": "昨天",
@@ -2611,16 +2615,16 @@
 	"panel.inbox.label.muted.show": "顯示靜音",
 	"panel.inbox.label.muted.hide": "隱藏靜音",
 	"panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
-
+	
 	"widget.inbox_message_card.selected.hint": "已選",
 	"widget.inbox_message_card.unselected.hint": "未選中的",
 	"widget.inbox_message_card.status.muted": "靜音",
 	"widget.inbox_message_card.status.hint": "狀態：%s，用於：",
 	"widget.inbox_message_card.subject.hint": "主題：%s",
 	"widget.inbox_message_card.body.hint": "身體：%s",
-
+	
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
-
+	
 	"panel.guide_list.label.highlights.section": "校園亮點",
 	"panel.guide_list.label.highlights.empty": "沒有活躍的校園亮點。",
 	"panel.guide_list.label.campus_safety_resources.empty": "沒有有效的校園安全資源。",
@@ -2642,15 +2646,15 @@
 	"panel.guide_list.button.parking.title": "停車處",
 	"panel.guide_list.button.quick_polls.title": "快速投票",
 	"panel.guide_list.button.saved.title": "已保存",
-
+	
 	"panel.guide_detail.label.content.empty": "空的指南內容",
-
+	
 	"panel.home.safer.wellness_answer_center.header.title": "Answer Center",
 	"panel.home.safer.wellness_answer_center.contacts.title": "Contacts for Covid-19 Questions",
 	"panel.home.safer.wellness_answer_center.contacts.description": "Find the right department for your particular question regarding Covid-19 rules, testing, software, etc.",
 	"panel.home.safer.wellness_answer_center.faqs.title": "Building Access FAQs",
 	"panel.home.safer.wellness_answer_center.faqs.description": "See answers to common questions about building access.",
-
+	
 	"panel.home.safer.test_locations.header.title": "Test Locations",
 	"panel.home.safer.test_locations.label.contact.title": "Contact",
 	"panel.home.safer.test_locations.distance.text": "mi away",
@@ -2667,82 +2671,82 @@
 	"panel.home.safer.test_locations.wait_time.status.label.red": "Long wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
-
+	
 	"panel.canvas_courses.header.title": "我的 Gies 帆布課程",
 	"panel.canvas_courses.load.empty.error.msg": "You do not appear to be enrolled in any Gies Canvas courses.",
 	"panel.canvas_courses.load.failed.error.msg": "Unable to load courses.",
 	"panel.canvas_courses.load.offline.error.msg": "My Gies Canvas Courses not available while offline.",
 	"panel.canvas_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My Gies Canvas Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
-	    
-    "panel.medicine_courses.load.offline.error.msg": "My College of Medicine Compliance not available while offline.",
-    "panel.medicine_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My College of Medicine Compliance. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
-    "panel.medicine_courses.load.failed.error.msg": "Unable to load courses.",
-    "panel.medicine_courses.load.empty.error.msg": "You do not appear to be enrolled in any Medicine courses.",
-
+			
+		"panel.medicine_courses.load.offline.error.msg": "My College of Medicine Compliance not available while offline.",
+		"panel.medicine_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My College of Medicine Compliance. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
+		"panel.medicine_courses.load.failed.error.msg": "Unable to load courses.",
+		"panel.medicine_courses.load.empty.error.msg": "You do not appear to be enrolled in any Medicine courses.",
+	
 	"panel.student_courses.header.title": "我的課程",
 	"panel.student_courses.instructor.title": "Instructor: %s",
 	"panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
 	"panel.student_courses.load.failed.error.msg": "您似乎沒有註冊所選學期的任何課程。",
 	"panel.student_courses.load.offline.error.msg": "My Courses not available while offline.",
 	"panel.student_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
-
+	
 	"panel.skills_self_evaluation.get_started.section.title": "技能自我評估",
 	"panel.skills_self_evaluation.button.more.hint": "展示更多",
 	"panel.skills_self_evaluation.get_started.time.description": "5分鐘",
-    "panel.skills_self_evaluation.get_started.button.label": "開始",
-    "panel.skills_self_evaluation.get_started.description.title": "確定您在以下方面的優勢：",
-    "panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 自我管理\n\t\t\u2022 創新\n\t\t\u2022 合作\n\t\t\u2022 社會參與\n\t\t\u2022 情緒恢復力",
-    "panel.skills_self_evaluation.get_started.body.save.description": "您的結果將被保存，以便您與未來的結果進行比較。",
-    "panel.skills_self_evaluation.get_started.body.dont_save.description": "您的結果將不會被保存，以便您與未來的結果進行比較。",
-    "panel.skills_self_evaluation.get_started.body.save.dialog": "您的結果將被保存，以便您與未來的結果進行比較。\n\n此評估的任何數據都不會與其他人或系統共享，也不會存儲在您的伊利諾伊州應用程序帳戶之外。",
+		"panel.skills_self_evaluation.get_started.button.label": "開始",
+		"panel.skills_self_evaluation.get_started.description.title": "確定您在以下方面的優勢：",
+		"panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 自我管理\n\t\t\u2022 創新\n\t\t\u2022 合作\n\t\t\u2022 社會參與\n\t\t\u2022 情緒恢復力",
+		"panel.skills_self_evaluation.get_started.body.save.description": "您的結果將被保存，以便您與未來的結果進行比較。",
+		"panel.skills_self_evaluation.get_started.body.dont_save.description": "您的結果將不會被保存，以便您與未來的結果進行比較。",
+		"panel.skills_self_evaluation.get_started.body.save.dialog": "您的結果將被保存，以便您與未來的結果進行比較。\n\n此評估的任何數據都不會與其他人或系統共享，也不會存儲在您的伊利諾伊州應用程序帳戶之外。",
 	"panel.skills_self_evaluation.get_started.body.dont_save.label": "不要保存我的結果",
-    "panel.skills_self_evaluation.get_started.body.save.label": "保存我的結果",
-    "panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label": "查看過去的結果",
-    "panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label": "我的結果去哪兒了？",
-    "panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label": "我的結果是如何確定的？",
-    "panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label": "為什麼這些技能很重要？",
-    "panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label": "誰創建了這個評估？",
-    "panel.skills_self_evaluation.get_started.offline.error.msg": "技能自我評估在離線時不可用。",
-    "panel.skills_self_evaluation.info.header.title": "技能自我評估",
-    "panel.skills_self_evaluation.info.unavailable.error.msg": "信息內容不可用。",
-    "panel.skills_self_evaluation.results.header.title": "技能自我評估",
-    "panel.skills_self_evaluation.results.section.title": "結果",
-    "panel.skills_self_evaluation.results.score.description": "技能領域分數",
-    "panel.skills_self_evaluation.results.score.scale": "(0-100)",
-    "panel.skills_self_evaluation.results.skills.title": "技能",
-    "panel.skills_self_evaluation.results.offline.error.msg": "離線時無法獲得結果。",
-    "panel.skills_self_evaluation.results.unavailable.message": "結果內容當前不可用。請稍後再試。",
-    "panel.skills_self_evaluation.results.more_info.description": "*點擊記分卡了解更多信息",
-    "panel.skills_self_evaluation.results.clear_scores.label": "清除所有分數",
-    "panel.skills_self_evaluation.results.empty.message": "還沒有結果。",
-    "panel.skills_self_evaluation.results.delete_scores.message": "您確定要刪除所有分數嗎？",
-    "panel.skills_self_evaluation.results_detail.header.title": "技能自我評估",
-    "panel.skills_self_evaluation.results_detail.unavailable.message": "此技能的詳細結果內容目前不可用。",
-    "panel.skills_self_evaluation.auth_dialog.prefix": "您需要使用您的 NetID 登錄才能訪問評估。\n",
-    "panel.skills_self_evaluation.auth_dialog.privacy": "將您的隱私級別設置為 4 或 5。",
-    "panel.skills_self_evaluation.auth_dialog.suffix": " 然後，在“設置”下使用您的 NetID 登錄。",
-
+		"panel.skills_self_evaluation.get_started.body.save.label": "保存我的結果",
+		"panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label": "查看過去的結果",
+		"panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label": "我的結果去哪兒了？",
+		"panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label": "我的結果是如何確定的？",
+		"panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label": "為什麼這些技能很重要？",
+		"panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label": "誰創建了這個評估？",
+		"panel.skills_self_evaluation.get_started.offline.error.msg": "技能自我評估在離線時不可用。",
+		"panel.skills_self_evaluation.info.header.title": "技能自我評估",
+		"panel.skills_self_evaluation.info.unavailable.error.msg": "信息內容不可用。",
+		"panel.skills_self_evaluation.results.header.title": "技能自我評估",
+		"panel.skills_self_evaluation.results.section.title": "結果",
+		"panel.skills_self_evaluation.results.score.description": "技能領域分數",
+		"panel.skills_self_evaluation.results.score.scale": "(0-100)",
+		"panel.skills_self_evaluation.results.skills.title": "技能",
+		"panel.skills_self_evaluation.results.offline.error.msg": "離線時無法獲得結果。",
+		"panel.skills_self_evaluation.results.unavailable.message": "結果內容當前不可用。請稍後再試。",
+		"panel.skills_self_evaluation.results.more_info.description": "*點擊記分卡了解更多信息",
+		"panel.skills_self_evaluation.results.clear_scores.label": "清除所有分數",
+		"panel.skills_self_evaluation.results.empty.message": "還沒有結果。",
+		"panel.skills_self_evaluation.results.delete_scores.message": "您確定要刪除所有分數嗎？",
+		"panel.skills_self_evaluation.results_detail.header.title": "技能自我評估",
+		"panel.skills_self_evaluation.results_detail.unavailable.message": "此技能的詳細結果內容目前不可用。",
+		"panel.skills_self_evaluation.auth_dialog.prefix": "您需要使用您的 NetID 登錄才能訪問評估。\n",
+		"panel.skills_self_evaluation.auth_dialog.privacy": "將您的隱私級別設置為 4 或 5。",
+		"panel.skills_self_evaluation.auth_dialog.suffix": " 然後，在“設置”下使用您的 NetID 登錄。",
+	
 	"panel.home_canvas_course.header.title": "課程",
 	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
 	"panel.home_canvas_course.button.assignments.title": "作業",
 	"panel.home_canvas_course.button.launch.title": "啟動畫布",
-
+	
 	"panel.canvas.common.all_courses.label": "所有課程",
-
+	
 	"panel.canvas_announcements.header.title": "公告",
 	"panel.canvas_announcements.load.failed.error.msg": "未能加載公告. 請稍後再試.",
 	"panel.canvas_announcements.empty.msg": "沒有公告.",
-
+	
 	"panel.canvas_announcement.header.title": "公告",
-
+	
 	"panel.canvas_files.header.title": "文件",
 	"panel.canvas_files.load.failed.error.msg": "無法加載文件和文件夾. 請稍後再試.",
 	"panel.canvas_files.empty.msg": "沒有文件和文件夾.",
-
+	
 	"panel.canvas_collaborations.header.title": "合作",
 	"panel.canvas_collaborations.load.failed.error.msg": "未能加載協作. 請稍後再試.",
 	"panel.canvas_collaborations.empty.msg": "沒有合作.",
-
+	
 	"panel.canvas_calendar.header.title": "日曆",
 	"panel.canvas_calendar.all_types.label": "全部",
 	"panel.canvas_calendar.events.load.failed.error.msg": "未能加載事件. 請稍後再試.",
@@ -2751,25 +2755,25 @@
 	"panel.canvas_calendar.events.empty.msg": "今天沒有活動.",
 	"panel.canvas_calendar.assignments.empty.msg": "今天沒有作業.",
 	"panel.canvas_calendar.all.empty.msg": "今天沒有活動和任務.",
-
+	
 	"panel.canvas_notifications.header.title": "帳戶通知",
 	"panel.canvas_notifications.load.failed.error.msg": "未能加載帳戶通知. 請稍後再試.",
 	"panel.canvas_notifications.empty.msg": "沒有帳戶通知.",
-
+	
 	"panel.canvas_notification.header.title": "通知",
-
+	
 	"panel.canvas_calendar_event.header.title": "日曆事件",
 	"panel.canvas_calendar_event.calendar.label": "日曆:",
 	"panel.canvas_calendar_event.date_time.label": "約會時間:",
 	"panel.canvas_calendar_event.load.failed.error.msg": "未能加載事件. 請稍後再試.",
-
+	
 	"panel.canvas_modules.header.title": "模塊",
 	"panel.canvas_modules.load.failed.error.msg": "無法加載模塊. 請稍後再試.",
 	"panel.canvas_modules.empty.msg": "沒有模塊.",
-
+	
 	"panel.canvas_module_detail.load.failed.error.msg": "無法加載模塊項目. 請稍後再試.",
 	"panel.canvas_module_detail.empty.msg": "沒有模塊項目.",
-
+	
 	"panel.canvas_feedback.header.title": "回饋",
 	"panel.canvas_feedback.file_ticket.label": "提交工單以獲取我們支持團隊的個人回复.",
 	"panel.canvas_feedback.subject.label": "主題",
@@ -2778,15 +2782,15 @@
 	"panel.canvas_feedback.subject.empty.message": "請填寫主題.",
 	"panel.canvas_feedback.report.succeeded.message": "成功報了一張票.",
 	"panel.canvas_feedback.report.failed.message": "未能報告票證. 請稍後再試.",
-
+	
 	"panel.canvas_assignments.header.title": "作業",
 	"panel.canvas_assignments.load.failed.error.msg": "未能加載分配. 請稍後再試.",
 	"panel.canvas_assignments.empty.msg": "沒有任務.",
 	"panel.canvas_assignments.due.label": "到期的:",
-    "panel.canvas_assignments.submitted.label": "已提交:",
+		"panel.canvas_assignments.submitted.label": "已提交:",
 	"panel.canvas_assignments.upcoming.label": "即將到來的作業",
 	"panel.canvas_assignments.past.label": "過去的作業",
-
+	
 	"panel.checklist.text.page": "Page",
 	"panel.checklist.text.completed": "Completed",
 	"panel.checklist.text.current_page": "Current page",
@@ -2807,22 +2811,22 @@
 	"panel.checklist.text.course.number": "Number",
 	"panel.checklist.text.course.section": "Section",
 	"panel.checklist.text.course.term": "Term",
-
+	
 	"panel.appointment.detail.cancelled.label": "取消",
 	"panel.appointment.detail.meeting.id.label": "會議編號： %s",
 	"panel.appointment.detail.meeting.passcode.label": "密碼： %s",
-  "panel.appointment.detail.instructions.label": "需要準備",
+	"panel.appointment.detail.instructions.label": "需要準備",
 	"panel.appointment.detail.cancel.description": "<b>要取消預約</b>，前往<a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或在工作時間致電 <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}}</u>)</a>。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
 	"panel.appointment.detail.error.msg": "無法加載約會數據。",
 	"panel.appointment.detail.reschedule.button.title": "Reschedule",
 	"panel.appointment.detail.cancel.button.title": "Cancel",
 	"panel.appointment.detail.cancel.failed.message": "Failed to cancel appointment:",
 	"panel.appointment.detail.cancel.prompt.message": "Cancel this appointment?",
-
+	
 	"panel.icard.home.title.label": "i卡",
-    "panel.icard.home.content.icard.label": "i-card+",
-    "panel.icard.home.content.faqs.label": "常見問題",
-
+		"panel.icard.home.content.icard.label": "i-card+",
+		"panel.icard.home.content.faqs.label": "常見問題",
+	
 	"panel.appointment.schedule.header.title": "Schedule Appointment",
 	"panel.appointment.schedule.type.label": "APPOINTMENT TYPE",
 	"panel.appointment.schedule.type.hint": "Select a type",
@@ -2842,11 +2846,11 @@
 	"panel.appointment.schedule.slots_count.label": "%s Appointments Available",
 	"panel.appointment.schedule.slot1_count.label": "1 Appointment Available",
 	"panel.appointment.schedule.slot0_count.label": "No Appointments Available",
-
+	
 	"panel.appointment.reschedule.submit.button.title": "Reschedule",
 	"panel.appointment.reschedule.notes.submit.succeeded.message": "Your appointment was rescheduled successfully.",
 	"panel.appointment.reschedule.notes.submit.failed.message": "Failed to reschedule appointment:",
-
+	
 	"panel.appointment.schedule.time.header.title": "Schedule Appointment",
 	"panel.appointment.schedule.time.label.current.appointment": "Showing available appointments for %s:",
 	"panel.appointment.schedule.time.label.unavailable.appointment": "There are no available dates for appointments.",
@@ -2856,22 +2860,22 @@
 	"panel.appointment.schedule.time.button.continue.hint": "",
 	"panel.appointment.schedule.time.label.empty": "No appointments available for this date",
 	"panel.appointment.schedule.time.label.failed": "Failed to load available appointments",
-
+	
 	"panel.appointment.reschedule.time.header.title": "Reschedule Appointment",
 	"panel.appointment.reschedule.time.label.current.appointment": "Current appointment for %s:",
 	"panel.appointment.reschedule.time.label.new.appointment": "New appointment:",
 	"panel.appointment.reschedule.time.label.unknown": "Unknown",
-
+	
 	"panel.appointment.schedule.unit.header.title": "Schedule Appointment",
 	"panel.appointment.schedule.person.header.title": "Schedule Appointment",
-
+	
 	"panel.appointment.schedule.questions.label.heading": "Appointment Questions",
 	"panel.appointment.schedule.questions.header.title": "Schedule Appointment",
 	"panel.appointment.reschedule.questions.header.title": "Reschedule Appointment",
-
+	
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 	"widget.game_day.label.no_games":"今天沒有比賽。",
-
+	
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",
 	"widget.game_detail_heading.button.live_stats.hint":"点击以获取实时统计信息",
 	"widget.game_detail_heading.button.listen.title":"听",
@@ -2888,16 +2892,16 @@
 	"widget.game_detail_heading.button.game_day_guide.hint":"点击以查看比赛日指南",
 	"widget.game_detail_heading.button.roster.title":"名单",
 	"widget.game_detail_heading.button.roster.hint":"点击以查看名册",
-
+	
 	"widget.card.button.favorite.on.title":"添加到收藏夹",
 	"widget.card.button.favorite.on.hint":"",
 	"widget.card.button.favorite.off.title":"从收藏夹中删除",
 	"widget.card.button.favorite.off.hint":"",
 	"widget.card.label.interests":"由于您对以下内容感兴趣：",
 	"widget.card.label.converge":"比赛",
-
+	
 	"widget.reminder_item_card.text.reminder":"提醒",
-
+	
 	"widget.voter.button.close.label": "關",
 	"widget.voter.option.yes": "是",
 	"widget.voter.option.register_now": "現在註冊",
@@ -2925,40 +2929,40 @@
 	"widget.voter.nrv_alert.text": "您正在 %s 並可以立即註冊",
 	"widget.voter.rv_alert.vote_early.text": "您在 %s，可以提前投票",
 	"widget.voter.rv_alert.vote_now.text": "您正在 %s 上，現在可以投票",
-
+	
 	"widget.home.campus_reminders.label.campus_reminders":"校园提醒",
 	"widget.home.campus_reminders.text.empty.description": "沒有有效的校園提醒。",
 	"widget.home.campus_reminders.button.all.title": "查看全部",
 	"widget.home.campus_reminders.button.all.hint": "點按即可查看所有提醒",
-
+	
 	"widget.home.campus_safety_resources.label.campus_safety_resources": "校園安全資源",
 	"widget.home.campus_safety_resources.text.empty.description": "點按<a href='{{local_url}}'><b>校園安全資源</b></a>中項目上的 \u2606 可在此處快速訪問。",
 	"widget.home.campus_safety_resources.button.all.title": "查看全部",
 	"widget.home.campus_safety_resources.button.all.hint": "點擊查看所有安全資源",
-
+	
 	"widget.home.suggested_events.label.events_for_you":"建議的事件",
 	"widget.home.suggested_events.label.events_for_you.sub_title":"从您的兴趣出发",
 	"widget.home.suggested_events.text.empty.description": "沒有可用的建議事件。",
 	"widget.home.suggested_events.button.all.title":"查看全部",
 	"widget.home.suggested_events.button.all.hint":"點按即可查看所有活動",
-
+	
 	"widget.home.recent_items.label.header.title":"最近瀏覽過的",
 	"widget.home.recent_items.text.empty.description": "沒有最近查看的可用項目。",
 	"widget.home.recent_items.button.all.title":"查看全部",
 	"widget.home.recent_items.button.all.hint":"點擊查看所有項目",
-
+	
 	"widget.home.event_feed.label.header.title":"Event Feed",
 	"widget.home.event_feed.text.empty.description": "There are no events available.",
 	"widget.home.event_feed.button.all.title":"View All",
 	"widget.home.event_feed.button.all.hint":"Tap to view all events",
-
+	
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有組",
 	"widget.home.groups.my.text.empty.description": "您還沒有創建任何組。",
 	"widget.home.groups.all.text.empty.description": "未能加載組。",
 	"widget.home.groups.button.all.title":"查看全部",
 	"widget.home.groups.button.all.hint":"點按即可查看所有群組",
-
+	
 	"widget.home.research_projects.my.label.header.title":"我的研究項目",
 	"widget.home.research_projects.open.label.header.title":"開放研究項目",
 	"widget.home.research_projects.my.text.empty.admin.description": "您尚未創建任何研究項目。",
@@ -2968,7 +2972,7 @@
 	"widget.home.research_projects.message.logged_out":"您需要登錄才能訪問研究項目。",
 	"widget.home.research_projects.button.all.title": "查看全部",
 	"widget.home.research_projects.button.all.hint": "點擊查看所有研究項目",
-
+	
 	"widget.home.campus_resources.label.campus_tools":"校园资源",
 	"widget.home.campus_resources.button.events.title":"活动",
 	"widget.home.campus_resources.button.events.hint":"",
@@ -2995,7 +2999,7 @@
 	"widget.home.campus_resources.button.inbox.title": "Notifications",
 	"widget.home.campus_resources.button.inbox.hint": "",
 	"widget.home.campus_resources.header.my_illini.title":"我的ILLINI",
-
+	
 	"widget.home_create_poll.heading.title":"民意調查",
 	"widget.home_create_poll.button.close.label":"关闭",
 	"widget.home_create_poll.text.title":"快速创建和共享投票.",
@@ -3003,12 +3007,12 @@
 	"widget.home_create_poll.text.description.login":"您需要登錄才能創建並與您附近的人共享民意調查。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
 	"widget.home_create_poll.button.create_poll.label":"创建投票",
 	"widget.home_create_poll.button.login.label":"登录",
-
+	
 	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
 	"widget.home.campus_guide_highlights.text.empty.description": "點按<a href='{{local_url}}'><b>校園指南要點</b></a>中項目上的 \u2606 可在此處快速訪問。",
 	"widget.home.campus_guide_highlights.button.all.title": "查看全部",
 	"widget.home.campus_guide_highlights.button.all.hint": "點擊查看所有亮點",
-
+	
 	"widget.home.safer.label.title": "Building Access",
 	"widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access so you can quickly find them here.",
 	"widget.home.safer.button.building_access.title": "Building Access",
@@ -3020,29 +3024,29 @@
 	"widget.home.safer.button.wellness_answer_center.title": "Answer Center",
 	"widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
 	"widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
-
+	
 	"widget.home.wallet.label.title": "錢包",
 	"widget.home.wallet.text.empty.description": "在電子錢包中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
-
+	
 	"widget.home.wallet.illini_cash.title": "伊利尼現金",
 	"widget.home.wallet.illini_cash.label.current_balance": "當前伊利諾伊州現金餘額",
 	"widget.home.wallet.illini_cash.label.ineligible": "不合格",
 	"widget.home.wallet.illini_cash.label.ineligible_status": "您沒有資格獲得 Illini Cash",
 	"widget.home.wallet.illini_cash.button.add_illini_cash.title": "添加伊利尼現金",
-
+	
 	"widget.home.wallet.meal_plan.title": "進食計劃",
 	"widget.home.wallet.meal_plan.label.meals_remaining.text": "剩餘膳食",
 	"widget.home.wallet.meal_plan.label.dining_dollars.text": "餐飲美元",
 	"widget.home.wallet.meal_plan.label.ineligible": "不合格",
 	"widget.home.wallet.meal_plan.label.ineligible_status": "您沒有資格參加膳食計劃",
-
+	
 	"widget.home.wallet.bus_pass.title": "MTD 巴士通票",
 	"widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",
-
+	
 	"widget.home.wallet.illini_id.title": "i-card+",
-
+	
 	"widget.home.wallet.library_card.title": "借書卡",
-
+	
 	"widget.home.radio.title": "WPGU 107.1 調頻",
 	"widget.home.radio.disabled.message": "WPGU 107.1 FM 未啟用。",
 	"widget.home.radio.button.pause.title": "暫停",
@@ -3051,31 +3055,31 @@
 	"widget.home.radio.button.not_available.title": "無法使用",
 	"widget.home.radio.button.fail.title": "初始化失敗",
 	"widget.home.radio.button.add_radio.hint": "",
-
+	
 	"widget.home.prompt.add.favorite": "您確定要添加此收藏夾嗎？",
 	"widget.home.prompt.remove.favorite": "您確定要從收藏夾中刪除此項目嗎？",
-
+	
 	"widget.home.welcome.text.title": "“歡迎來到{{app_title}} {{app_version}}",
 	"widget.home.welcome.button.close.label": "關",
-
+	
 	"widget.home.athletics_news.text.title": "田徑新聞",
 	"widget.home.athletics_news.text.empty.description": "目前沒有田徑新聞。",
 	"widget.home.athletics_news.text.offline": "田徑新聞在離線時不可用。",
 	"widget.home.athletics_news.button.all.title": "查看全部",
 	"widget.home.athletics_news.button.all.hint": "點擊查看所有新聞",
-
+	
 	"widget.home.athletics_events.text.title": "田徑賽事",
 	"widget.home.athletics_events.text.empty.description": "目前沒有田徑賽事可用。",
 	"widget.home.athletics_events.text.offline": "田徑賽事在離線時不可用。",
 	"widget.home.athletics_events.button.all.title": "查看全部",
 	"widget.home.athletics_events.button.all.hint": "點按即可查看所有活動",
-
+	
 	"widget.home.recent_polls.text.title": "最近的民意調查",
 	"widget.home.recent_polls.text.empty.description": "目前沒有可用的最近民意調查。.",
 	"widget.home.recent_polls.text.offline": "最近的民意調查在離線時不可用。",
 	"widget.home.recent_polls.button.all.title": "查看全部",
 	"widget.home.recent_polls.button.all.hint": "點按即可查看所有民意調查",
-
+	
 	"widget.home.inbox.text.all.title": "所有通知",
 	"widget.home.inbox.text.unread.title": "未讀通知",
 	"widget.home.inbox.text.empty.all.description": "您還沒有任何通知。",
@@ -3085,18 +3089,18 @@
 	"widget.home.inbox.text.logged_out": "您需要登錄才能訪問通知。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
 	"widget.home.inbox.button.all.title": "查看全部",
 	"widget.home.inbox.button.all.hint": "點按即可查看所有通知",
-
+	
 	"widget.home.laundry.text.title": "洗衣店",
 	"widget.home.laundry.text.empty.description": "目前沒有洗衣店可用。",
 	"widget.home.laundry.text.offline": "離線時不提供洗衣服務。",
 	"widget.home.laundry.button.all.title": "查看全部",
 	"widget.home.laundry.button.all.hint": "點擊查看所有洗衣房",
-
+	
 	"widget.home.tout.customize.label": "定制",
 	"widget.home.tout.button.info.label": "信息",
 	"widget.home.tout.button.info.hint": "點擊了解更多信息",
 	"widget.home.tout.popup.info.content": "要在{{app_title}}應用中更改您的名字，請查看<a href='{{preferred_first_name_url}}'>首選名稱說明</a>。",
-
+	
 	"widget.home.wellness.todo.title": "我的待辦事項清單",
 	"widget.home.wellness.todo.items.today.label": "今天的項目",
 	"widget.home.wellness.todo.items.today.empty.msg": "你今天沒有待辦事項.",
@@ -3106,13 +3110,13 @@
 	"widget.home.wellness.todo.items.add.button": "添加項目",
 	"widget.home.wellness.todo.items.view_all.label": "查看全部",
 	"widget.home.wellness.todo.items.view_all.hint": "點按即可查看所有待辦事項",
-
+	
 	"widget.home.wellness.rings.title": "每日健康戒指",
 	"widget.home.wellness.rings.view_all.label": "查看全部",
 	"widget.home.wellness.rings.view_all.hint": "點按即可查看所有戒指",
-
+	
 	"widget.home.wellness.tips.title": "每日健康小貼士",
-
+	
 	"widget.home.favorites.title.events": "我的活動",
 	"widget.home.favorites.title.dining": "我的用餐地點",
 	"widget.home.favorites.title.athletics": "我的田徑活動",
@@ -3121,8 +3125,8 @@
 	"widget.home.favorites.title.mtd_stops": "我的巴士站",
 	"widget.home.favorites.title.mtd_destinations": "我的目的地",
 	"widget.home.favorites.title.campus_guide": "我的校園指南",
-    "widget.home.favorites.title.appointments": "我的麥金萊約會",
-
+		"widget.home.favorites.title.appointments": "我的麥金萊約會",
+	
 	"widget.home.favorites.message.offline.events": "我的活動在離線時不可用。",
 	"widget.home.favorites.message.offline.dining": "我的用餐地點在離線時不可用。",
 	"widget.home.favorites.message.offline.athletics": "我的田徑賽事在離線時不可用。",
@@ -3132,7 +3136,7 @@
 	"widget.home.favorites.message.offline.mtd_destinations": "我的目的地在離線時不可用。",
 	"widget.home.favorites.message.offline.campus_guide": "我的校園指南在離線時不可用。",
 	"widget.home.favorites.message.offline.appointments": "我的 McKinley 約會在離線時不可用。",
-
+	
 	"widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics Events</b></a> for quick access here.",
@@ -3141,9 +3145,9 @@
 	"widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Bus Stops</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.mtd_destinations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>My Destinations</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display as you have chosen not to display any past or future appointments.",
-
+		"widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here.",
+		"widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display as you have chosen not to display any past or future appointments.",
+	
 	"widget.home.favorites.all.title": "查看全部",
 	"widget.home.favorites.all.hint.events": "點按即可查看所有喜愛的活動",
 	"widget.home.favorites.all.hint.dining": "點按即可查看所有喜愛的餐飲",
@@ -3154,46 +3158,46 @@
 	"widget.home.favorites.all.hint.mtd_destinations": "點擊以查看所有喜愛的目的地",
 	"widget.home.favorites.all.hint.campus_guide": "點擊查看所有喜歡的校園指南文章",
 	"widget.home.favorites.all.hint.appointments": "點擊查看所有最喜歡的約會",
-
+	
 	"widget.home.wellness_resources.header.label": "我的健康資源",
 	"widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
 	"widget.home.wellness_resources.button.all.title": "查看全部",
 	"widget.home.wellness_resources.button.all.hint": "點擊查看所有健康資源",
-
+	
 	"widget.home.wellness_mental_health.header.label": "我的心理健康資源",
 	"widget.home.wellness_mental_health.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Mental Health Resources</b></a> so you can quickly find them here.",
 	"widget.home.wellness_mental_health.button.all.title": "View All",
 	"widget.home.wellness_mental_health.button.all.hint": "Tap to view all metnal heatlh resources",
-
+	
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",
-
+	
 	"widget.athletics_card.label.offline.sports":"离线时无法查看运动。",
-
+	
 	"widget.schedule_card.button.get_tickets.title":"获取门票",
 	"widget.schedule_card.button.get_tickets.hint":"",
 	"widget.schedule_card.button.free_admission.title":"免费入场",
 	"widget.schedule_card.button.free_admission.hint":"该比赛免费入场，不需要门票",
 	"widget.schedule_card.final_score":"最终成绩",
-
+	
 	"widget.game_detail_heading.button.save_game.title":"保存比赛",
 	"widget.game_detail_heading.button.save_game.hint":"点击以保存",
-
+	
 	"widget.score.period.quarter": "刻",
 	"widget.score.period.half": "半",
 	"widget.score.period.set": "組",
 	"widget.score.period.inning": "回合",
 	"widget.score.period.period": "期",
 	"widget.score.last_play": "最後进攻机会: %s",
-
+	
 	"widget.home_recent_item_card.label.date":"日期",
 	"widget.generic_cart.label.date":"日期",
-
+	
 	"widget.home.canvas_courses.header.label": "我的 Gies 帆布課程",
 	"widget.home.canvas_courses.text.empty.description": "您似乎沒有註冊任何 Gies Canvas 課程。",
 	"widget.home.canvas_courses.button.all.title": "查看全部",
 	"widget.home.canvas_courses.button.all.hint": "點擊查看所有課程",
-
+	
 	"widget.home.student_courses.header.label": "我的課程",
 	"widget.home.student_courses.text.empty.description": "您似乎沒有註冊所選學期的任何課程。",
 	"widget.home.student_courses.text.offline.description": "我的課程在離線時不可用。",
@@ -3201,19 +3205,19 @@
 	"widget.home.student_courses.text.failed.description": "您似乎沒有為所選學期註冊的課程。",
 	"widget.home.student_courses.button.all.title": "查看全部",
 	"widget.home.student_courses.button.all.hint": "點擊查看所有課程",
-
+	
 	"widget.home.twitter.header.label": "推特",
 	"widget.home.twitter.text.empty.description": "未能加載推文。",
 	"widget.home.twitter.button.all.title": "查看全部",
 	"widget.home.twitter.button.all.hint": "點擊查看所有推文",
-
+	
 	"widget.home.daily_illini.header.label": "伊利尼日報",
 	"widget.home.daily_illini.item.page.next.hint": "下一頁",
 	"widget.home.daily_illini.item.page.previous.hint": "上一頁",
 	"widget.home.daily_illini.button.all.title": "查看全部",
 	"widget.home.daily_illini.button.all.hint": "點擊查看每日伊利尼飼料",
 	"widget.home.daily_illini.text.empty.description": "無法加載每日 illini Feed。",
-
+	
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",
 	"widget.food_detail.button.filters_empty.title":"添加食物过滤器",
@@ -3228,10 +3232,10 @@
 	"widget.food_detail.button.next_menu.hint":"查看下一个日期",
 	"widget.food_detail.button.prev_menu.title":"上次用餐日期",
 	"widget.food_detail.button.prev_menu.hint":"查看以前的日期",
-
+	
 	"widget.flex_content.button.close.label": "關閉",
 	"widget.flex_content.button.close.hint": "",
-
+	
 	"widget.add_image.heading":"选择图像",
 	"widget.add_image.description":"选择图像类型",
 	"widget.add_image.field.image_url.label":"图片地址",
@@ -3241,7 +3245,7 @@
 	"widget.add_image.validation.url.label":"请输入一个网址",
 	"widget.add_image.validation.image_type.label":"请选择图像类型",
 	"widget.add_image.validation.success.label":"成功添加图像",
-
+	
 	"widget.privacy_tickets_modal.label.header":"购买门票",
 	"widget.privacy_tickets_modal.label.header.hint":"标题1",
 	"widget.privacy_tickets_modal.label.your_privacy":"您的隐私设置",
@@ -3253,31 +3257,31 @@
 	"widget.privacy_tickets_modal.button.change_privacy.label":"更改我的设置",
 	"widget.privacy_tickets_modal.button.change_privacy.hint":"",
 	"widget.privacy_tickets_modal.label.close":"关闭",
-
+	
 	"widget.section_list.button.view_more.label":"查看更多",
-
+	
 	"widget.athletics_teams.label.men_sports.title":"男子运动",
 	"widget.athletics_teams.label.men_sports.title.hint":"标题2",
 	"widget.athletics_teams.label.women_sports.title":"女子运动",
 	"widget.athletics_teams.label.women_sports.title.hint":"标题2",
 	"widget.athletics_teams.label.select_all": "全選",
 	"widget.athletics_teams.label.clear": "明確",
-
+	
 	"widget.athletics_teams.men_sports.title.checkmark":"点击以选择或取消选择所有男子运动",
 	"widget.athletics_teams.women_sports.title.checkmark":"点击以选择或取消选择所有女性运动",
-
+	
 	"widget.athletics_teams.label.offline.sports_events":"离线时无法查看运动活动。",
-
+	
 	"widget.privacy_level_slider.label.left.title":"最高隐私权",
 	"widget.privacy_level_slider.label.right.title":"大多数功能",
-
+	
 	"widget.explore_card.small.view_all.title": "查看所有活動",
-
+	
 	"widget.explore_display_type.header.list.title":"清单",
 	"widget.explore_display_type.header.list.hint":"查看列表",
 	"widget.explore_display_type.header.map.title":"地图",
 	"widget.explore_display_type.header.map.hint":"查看地图",
-
+	
 	"widget.id_card.label.update_i_card": "更新您的 i-card",
 	"widget.id_card.label.building_access": "建築通道",
 	"widget.id_card.label.building_access.granted": "的確",
@@ -3285,32 +3289,32 @@
 	"widget.id_card.label.building_access.loading": "裝載",
 	"widget.id_card.label.building_access.failed": "失敗的",
 	"widget.id_card.label.building_access.not_available": "無法使用",
-    "widget.id_card.label.mobile_access": "移動訪問",
-    "widget.id_card.label.mobile_access.my": "我的移動訪問：%s",
-    "widget.id_card.label.mobile_access.expires": "過期：%s",
-    "widget.id_card.button.mobile_access.request": "要求",
-    "widget.id_card.button.mobile_access.renew": "更新",
-    "widget.id_card.label.mobile_access.i_card.not_available": "使用您的 i-card+ 訪問校園內的各種服務和建築物。",
-    "widget.id_card.label.mobile_access.permissions": "設置移動訪問權限",
-    "widget.id_card.dialog.text.renew_access": "更新您的 i-card+ 訪問權限最多可能需要 30 分鐘才能完成。 續訂時，您的<b>建築物訪問權限將被暫時禁用</b>。 <p>您現在還想續訂嗎？</p>",
-    "widget.id_card.dialog.button.mobile_access.renew.cancel": "取消",
-    "widget.id_card.dialog.button.mobile_access.renew_access": "更新訪問權限",
-    "widget.id_card.dialog.text.renew_access.done": "如果您的 i-card+ 在 30 分鐘內無法使用，請致電 <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>，發送電子郵件至 <a href='mailto:{{mobile_access_email}} '>{{mobile_access_email}}</a>，或<a href='{{mobile_access_website_url}}'>訪問 i-card 網站</a> <img src='asset:{{external_link_icon}}' alt= ''/>",
-    "widget.id_card.label.identity_credential.label": "憑據",
-    "widget.id_card.label.identity_credential.id.label": "Id: %s",
-    "widget.id_card.label.identity_credentials.label": "身份憑證",
-    "widget.id_card.label.identity_credentials.not_available": "沒有可用的身份憑證。",
-
+		"widget.id_card.label.mobile_access": "移動訪問",
+		"widget.id_card.label.mobile_access.my": "我的移動訪問：%s",
+		"widget.id_card.label.mobile_access.expires": "過期：%s",
+		"widget.id_card.button.mobile_access.request": "要求",
+		"widget.id_card.button.mobile_access.renew": "更新",
+		"widget.id_card.label.mobile_access.i_card.not_available": "使用您的 i-card+ 訪問校園內的各種服務和建築物。",
+		"widget.id_card.label.mobile_access.permissions": "設置移動訪問權限",
+		"widget.id_card.dialog.text.renew_access": "更新您的 i-card+ 訪問權限最多可能需要 30 分鐘才能完成。 續訂時，您的<b>建築物訪問權限將被暫時禁用</b>。 <p>您現在還想續訂嗎？</p>",
+		"widget.id_card.dialog.button.mobile_access.renew.cancel": "取消",
+		"widget.id_card.dialog.button.mobile_access.renew_access": "更新訪問權限",
+		"widget.id_card.dialog.text.renew_access.done": "如果您的 i-card+ 在 30 分鐘內無法使用，請致電 <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>，發送電子郵件至 <a href='mailto:{{mobile_access_email}} '>{{mobile_access_email}}</a>，或<a href='{{mobile_access_website_url}}'>訪問 i-card 網站</a> <img src='asset:{{external_link_icon}}' alt= ''/>",
+		"widget.id_card.label.identity_credential.label": "憑據",
+		"widget.id_card.label.identity_credential.id.label": "Id: %s",
+		"widget.id_card.label.identity_credentials.label": "身份憑證",
+		"widget.id_card.label.identity_credentials.not_available": "沒有可用的身份憑證。",
+	
 	"widget.bus_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",
 	"widget.card.label.expires.title": "Expires",
-
+	
 	"widget.group_card.pending.label": "Pending: %s",
-
+	
 	"widget.group.card.reply.single.reply.label": "Reply",
 	"widget.group.card.reply.multiple.replies.label": "Replies",
 	"widget.group.card.reply.edited.reply.label": "edited",
-
+	
 	"widget.group_card.status.private": "Private",
 	"widget.group_card.status.public": "Public",
 	"widget.group_card.status.authman": "Managed",
@@ -3319,12 +3323,12 @@
 	"widget.group_card.member.label": "member",
 	"widget.group_card.members.label": "members",
 	"panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view existing groups.",
-
+	
 	"widget.group.member.card.attended.label": "ATTENDED",
-
+	
 	"widget.groups.selection.button.select.label": "選擇",
 	"widget.groups.selection.heading": "選擇組",
-
+	
 	"widget.gies.title": "iDegrees 新生清單",
 	"widget.gies.notes.title": "要記住的事情",
 	"widget.gies.button.notes": "筆記",
@@ -3343,7 +3347,7 @@
 	"widget.checklist.uiuc.offline": "離線時新學生清單不可用。",
 	"widget.checklist.gies.logged_out": "您需要使用您的 NetID 登錄才能訪問 iDegrees 新學生清單。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
 	"widget.checklist.uiuc.logged_out": "您需要使用您的 NetID 登錄才能訪問新學生清單。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
-
+	
 	"widget.home.app_help.header.title": "應用幫助",
 	"widget.home.app_help.text.empty.description": "點擊應用幫助中的項目上的 \u2606，以便您可以在此處快速找到它們。",
 	"widget.home.app_help.feedback.button.title": "提供反饋意見",
@@ -3355,12 +3359,12 @@
 	"widget.home.app_help.faqs.button.title": "常見問題",
 	"widget.home.app_help.faqs.button.description": "在常見問題中檢查您的問題。",
 	"widget.home.app_help.faqs.panel.title": "常見問題",
-
+	
 	"widget.home.video_tutorials.button.title": "視頻教程",
 	"widget.home.video_tutorials.text.empty.description": "目前還沒有視頻教程。",
 	"widget.home.video_tutorials.button.all.title": "查看全部",
 	"widget.home.video_tutorials.button.all.hint": "點擊查看所有視頻教程",
-
+	
 	"widget.home.state_farm_center.header.title": "州立農場中心",
 	"widget.home.state_farm_center.text.empty.description": "在 State Farm Center 中的項目上點擊 \u2606，以便您可以在這裡快速找到它們。",
 	"widget.home.state_farm_center.parking.button.title": "停車處",
@@ -3369,33 +3373,33 @@
 	"widget.home.state_farm_center.wayfinding.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 	"widget.home.state_farm_center.create_stadium_poll.button.title": "創建體育場投票",
 	"widget.home.state_farm_center.create_stadium_poll.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-
+	
 	"widget.home.dinings.header.title": "用餐",
 	"widget.home.dinings.text.empty.description": "在 Dinings 中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
 	"widget.home.dinings.all.button.title": "宿舍餐廳",
 	"widget.home.dinings.all.button.description": "Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.",
 	"widget.home.dinings.open.button.title": "宿舍餐廳現在開放",
 	"widget.home.dinings.open.button.description": "快速訪問當前打開的任何位置。",
-
-    "widget.appointment.card.cancelled.label": "取消",
-
+	
+		"widget.appointment.card.cancelled.label": "取消",
+	
 	"widget.access.academics.skills_self_evaluation.name": "技能自我評估",
-    "widget.access.polls.name": "快速投票",
-    "widget.access.wellness.appointments.name": "我的麥金利約會",
-    "widget.access.wellness.health_screener.name": "伊利諾伊州健康篩查員",
-    "widget.access.academics.appointments.name": "Academics Appointments",
-    "widget.access.roles.unsatisfied.title": "%s 不可用",
-    "widget.access.privacy.unsatisfied.title": "更新隱私級別以訪問 %s",
-    "widget.access.privacy.unsatisfied.message": "將您的隱私級別至少更新為 ",
-    "widget.access.privacy.unsatisfied.button.label": "更新隱私級別",
-    "widget.access.auth.unsatisfied.title": "登錄以訪問 %s",
-    "widget.access.auth.unsatisfied.button.label": "登入",
-    "widget.access.roles.features.student.unsatisfied.message": "%s 目前只提供給學生",
-    "widget.access.auth.features.login.unsatisfied.message": "登入",
-    "widget.access.auth.features.netid_login.unsatisfied.message": "使用您的 NetID 登錄",
-    "widget.access.auth.features.email_login.unsatisfied.message": "使用您的電子郵件登錄",
-    "widget.access.auth.features.phone_login.unsatisfied.message": "使用手機登錄",
-
+		"widget.access.polls.name": "快速投票",
+		"widget.access.wellness.appointments.name": "我的麥金利約會",
+		"widget.access.wellness.health_screener.name": "伊利諾伊州健康篩查員",
+		"widget.access.academics.appointments.name": "Academics Appointments",
+		"widget.access.roles.unsatisfied.title": "%s 不可用",
+		"widget.access.privacy.unsatisfied.title": "更新隱私級別以訪問 %s",
+		"widget.access.privacy.unsatisfied.message": "將您的隱私級別至少更新為 ",
+		"widget.access.privacy.unsatisfied.button.label": "更新隱私級別",
+		"widget.access.auth.unsatisfied.title": "登錄以訪問 %s",
+		"widget.access.auth.unsatisfied.button.label": "登入",
+		"widget.access.roles.features.student.unsatisfied.message": "%s 目前只提供給學生",
+		"widget.access.auth.features.login.unsatisfied.message": "登入",
+		"widget.access.auth.features.netid_login.unsatisfied.message": "使用您的 NetID 登錄",
+		"widget.access.auth.features.email_login.unsatisfied.message": "使用您的電子郵件登錄",
+		"widget.access.auth.features.phone_login.unsatisfied.message": "使用手機登錄",
+	
 	"model.group.updated.now": "Updated now",
 	"model.group.updated.minute": "Updated about a minute ago",
 	"model.group.updated.minutes": "Updated about %s minutes ago",
@@ -3406,7 +3410,7 @@
 	"model.group.updated.month": "Updated about a month ago",
 	"model.group.updated.months": "Updated about %s months ago",
 	"model.group.updated.date": "Updated on %s",
-
+	
 	"model.dining.schedule.label.closed_for_two_weeks":"接下来2周关闭",
 	"model.dining.schedule.label.open_at":"在开头",
 	"model.dining.schedule.label.open_on":"正在打开",
@@ -3414,28 +3418,28 @@
 	"model.dining.schedule.label.serving":"正在服务",
 	"model.dining.schedule.label.until":"直到",
 	"model.dining.schedule.label.from":"来自",
-
+	
 	"model.explore.time.today":"今天",
 	"model.explore.time.tomorrow":"明天",
 	"model.explore.time.at":"在",
 	"model.explore.time.all_day": "一整天",
-
+	
 	"model.groups.member.status.pending": "Pending",
 	"model.groups.member.status.member": "Member",
 	"model.groups.member.status.admin": "Admin",
 	"model.groups.member.status.rejected": "Denied",
 	"model.groups.member.status.unknown": "Unknown",
-
+	
 	"model.research_project.member.status.pending": "Pending",
 	"model.research_project.member.status.member": "Participant",
 	"model.research_project.member.status.admin": "Principal Investigator",
-  "model.research_project.member.status.rejected": "Denied",
+	"model.research_project.member.status.rejected": "Denied",
 	"model.research_project.member.status.unknown": "Unknown",
-
+	
 	"model.event2.sort_type.date_time": "Date & Time",
 	"model.event2.sort_type.alphabetical": "Alphabetical",
 	"model.event2.sort_type.proximity": "Proximity",
-
+	
 	"model.event2.event_type.free": "Free",
 	"model.event2.event_type.paid": "Paid",
 	"model.event2.event_type.in_person": "In-person",
@@ -3443,10 +3447,10 @@
 	"model.event2.event_type.public": "Public",
 	"model.event2.event_type.private": "Private",
 	"model.event2.event_type.nearby": "Nearby",
-
+	
 	"model.canvas.calendar.event.type.event.label": "事件",
 	"model.canvas.calendar.event.type.assignment.label": "任務",
-
+	
 	"model.student_course.location.room.format": "房間 {Room}",
 	"model.student_course.time.monday": "週一",
 	"model.student_course.time.tuesday": "週二",
@@ -3462,50 +3466,50 @@
 	"model.student_course.time.fri": "週五",
 	"model.student_course.time.sat": "星期六",
 	"model.student_course.time.sun": "太陽",
-
+	
 	"model.wellness.todo.category.reminder.type.none.label": "沒有任何",
 	"model.wellness.todo.category.reminder.type.morning_of.label": "上午 (上午 8:00)",
 	"model.wellness.todo.category.reminder.type.night_before.label": "前一天晚上 (晚上 9:00)",
 	"model.wellness.todo.category.reminder.type.specific_time.label": "特定的時間",
-
+	
 	"model.academics.appointment.type.in_person.label": "親自",
 	"model.academics.appointment.type.telehealth.label": "遠程醫療",
 	"model.academics.appointment.type.online.label": "在線的",
 	"model.academics.appointment.category.label.format": "%s 約會",
 	"model.academics.appointment.title.label.format": "%s 預約",
 	"model.academics.appointment.default.provider.label": "MyMcKinley",
-
+	
 	"model.academics.appointment2.type.in_person.label": "親自",
 	"model.academics.appointment2.type.online.label": "在線的",
-
+	
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
 	"logic.date_time.greeting.evening": "晚上好",
 	"logic.date_time.greeting.night": "晚安",
-
+	
 	"logic.calendar.create_event_failed": "創建活動失敗。",
 	"logic.calendar.permission_denied": "無法將事件保存到日曆。 未授予權限。",
-
+	
 	"logic.general.internal_error": "发生内部错误",
 	"logic.general.unknown_error": "發生未知錯誤",
 	"logic.general.invalid_response": "无效的服务器响应",
 	"logic.general.response_error": "响应错误",
 	"logic.general.login_failed": "無法登入。 請稍後再試。",
-
+	
 	"common.heading.hint":"标题",
 	"common.heading.one.hint":"标题1",
 	"common.heading.two.hint":"标题2",
 	"common.heading.three.hint":"标题3",
-
+	
 	"common.label.cancelled":"取消",
 	"common.label.other": "其他",
 	"common.label.county": "County",
 	"common.label.read_more": "Read more",
-
+	
 	"common.message.offline":"你还没联网",
 	"common.message.logged_out":"You are not logged in",
 	"common.message.exit_app":"确定要退出吗?",
-
+	
 	"privacy.features2.entry.disable_location_awareness":"禁用地点感知.",
 	"privacy.features2.entry.dont_store_location":"不存儲您的位置.",
 	"privacy.features2.entry.remove_preferences":"删除偏好设置.",
@@ -3513,7 +3517,7 @@
 	"privacy.features2.entry.disable_notifications":"关闭提示.",
 	"privacy.features2.entry.remove_credit_card":"删除信用卡信息.",
 	"privacy.features2.entry.dont_share_location":"不與他人共享您的數據。",
-
+	
 	"privacy.category.description.1": "您可能無法使用所有功能，但您是匿名的，我們不會要求您提供任何識別信息或存儲任何數據。 匿名數據將被收集並用於優化應用程序性能。",
 	"privacy.category.description.2": "看看你周圍發生了什麼。 我們使用 Wi-Fi 和藍牙定位服務來改善您的體驗，但我們從不存儲這些數據。",
 	"privacy.category.description.3": "您可以個性化和自定義應用程序。 Wi-Fi 和藍牙位置數據會隨著時間的推移而存儲，以提供建議並改善您的整體應用體驗。",
@@ -3532,7 +3536,7 @@
 	"privacy.entry.event_and_dining.notifications.title": "通知获取各种通知，并接收你在应用程序中的星级项目提醒",
 	"privacy.entry.event_and_dining.notifications.description": "獲取通知，包括有關您在應用程序中已加註星標的事件的提醒。",
 	"privacy.entry.event_and_dining.notifications.data_usage": "此功能利用位置服務、個人信息和您在應用程序中加註星標的地點發送通知。",
-
+	
 	"privacy.category.athletics.title": "运动",
 	"privacy.entry.athletics.view.only.title": "仅查看",
 	"privacy.entry.athletics.view.only.description": "看到所有即将到来的体育赛事时间表，实时得分，名册和体育新闻.",
@@ -3549,7 +3553,7 @@
 	"privacy.entry.athletics.sharing.title": "身份",
 	"privacy.entry.athletics.sharing.description": "可以存儲信用卡信息以購買體育賽事的門票。",
 	"privacy.entry.athletics.sharing.data_usage": "此功能使用位置服務、個人偏好、信用卡信息和加星標的項目。",
-
+	
 	"privacy.category.wallet.title": "钱包",
 	"privacy.entry.wallet.personalizations.title": "个性化",
 	"privacy.entry.wallet.personalizations.description": "檢查您的 Illini ID、MTD 巴士通票、Illini Cash、Meal Plan 餘額並查看過去的交易。",
@@ -3557,7 +3561,7 @@
 	"privacy.entry.wallet.sharing.title": "身份",
 	"privacy.entry.wallet.sharing.description": "檢查您的 Illini ID、MTD 巴士通票、Illini Cash、Meal Plan 餘額並查看過去的交易。",
 	"privacy.entry.wallet.sharing.data_usage": "這些功能使用您的個人大學證書。",
-
+	
 	"privacy.category.health.title": "卫生与健康",
 	"privacy.entry.health.view.only.title": "仅查看",
 	"privacy.entry.health.view.only.description": "找到并连接资源，以帮助您实现健康的八个维度.",
@@ -3568,7 +3572,7 @@
 	"privacy.entry.health.notifications.title":"通知",
 	"privacy.entry.health.notifications.description":"獲取即將到來的約會和您應該進行的額外篩查的通知。",
 	"privacy.entry.health.notifications.data_usage":"此功能會根據您即將到來的約會和放映發送通知。",
-
+	
 	"privacy.category.wayfinding.title": "尋路",
 	"privacy.entry.wayfinding.view.only.title": "只讀",
 	"privacy.entry.wayfinding.view.only.description": "查看包含名勝古蹟、MTD 公交車站和時刻表的校園地圖。",
@@ -3585,7 +3589,7 @@
 	"privacy.entry.wayfinding.sharing.title": "分享",
 	"privacy.entry.wayfinding.sharing.description": "可能與他人分享您的位置。",
 	"privacy.entry.wayfinding.sharing.data_usage": "此功能使用位置服務，並可能與他人共享您的位置。",
-
+	
 	"privacy.category.groups.title": "團體",
 	"privacy.entry.groups.view.only.title": "只讀",
 	"privacy.entry.groups.view.only.description": "查看現有組的列表。",
@@ -3602,7 +3606,7 @@
 	"privacy.entry.groups.sharing.title": "分享",
 	"privacy.entry.groups.sharing.description": "為您所屬的群組創建群組活動、帖子和投票。",
 	"privacy.entry.groups.sharing.data_usage": "這些功能共享您為組貢獻的信息。",
-
+	
 	"privacy.category.general.title": "一般的",
 	"privacy.entry.general.view.only.title": "只讀",
 	"privacy.entry.general.view.only.description": "查看您的建築物訪問權限、校園指南、危機幫助、校園提醒、截止日期目錄、{{app_title}} Twitter 提要等。",
