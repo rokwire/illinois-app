@@ -3432,6 +3432,18 @@
   "model.research_project.member.status.rejected": "Denied",
 	"model.research_project.member.status.unknown": "Unknown",
 
+	"model.event2.sort_type.date_time": "Date & Time",
+	"model.event2.sort_type.alphabetical": "Alphabetical",
+	"model.event2.sort_type.proximity": "Proximity",
+
+	"model.event2.event_type.free": "Free",
+	"model.event2.event_type.paid": "Paid",
+	"model.event2.event_type.in_person": "In-person",
+	"model.event2.event_type.online": "Online",
+	"model.event2.event_type.public": "Public",
+	"model.event2.event_type.private": "Private",
+	"model.event2.event_type.nearby": "Nearby",
+
 	"model.canvas.calendar.event.type.event.label": "事件",
 	"model.canvas.calendar.event.type.assignment.label": "任務",
 

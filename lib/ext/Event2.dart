@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -72,14 +73,26 @@ extension Event2Ext on Event2 {
     Analytics.LogAttributeEventAttributes: attributes,
     Analytics.LogAttributeLocation : location?.analyticsValue,
   };
-
 }
 
 String? eventSortTypeToDisplayString(EventSortType? value) {
   switch (value) {
-    case EventSortType.dateTime: return 'Date & Time'; // TBD: Localization
-    case EventSortType.alphabetical: return 'Alphabetical'; // TBD: Localization
-    case EventSortType.proximity: return 'Proximity'; // TBD: Localization
+    case EventSortType.dateTime: return Localization().getStringEx('model.event2.sort_type.date_time', 'Date & Time');
+    case EventSortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.alphabetical', 'Alphabetical');
+    case EventSortType.proximity: return Localization().getStringEx('model.event2.sort_type.proximity', 'Proximity');
+    default: return null;
+  }
+}
+
+String? eventTypeFilterToDisplayString(EventTypeFilter? value) {
+  switch (value) {
+    case EventTypeFilter.free: return Localization().getStringEx('model.event2.event_type.free', 'Free');
+    case EventTypeFilter.paid: return Localization().getStringEx('model.event2.event_type.paid', 'Paid');
+    case EventTypeFilter.inPerson: return Localization().getStringEx('model.event2.event_type.in_person', 'In-person');
+    case EventTypeFilter.online: return Localization().getStringEx('model.event2.event_type.online', 'Online');
+    case EventTypeFilter.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
+    case EventTypeFilter.private: return Localization().getStringEx('model.event2.event_type.private', 'Private');
+    case EventTypeFilter.nearby: return Localization().getStringEx('model.event2.event_type.nearby', 'Nearby');
     default: return null;
   }
 }
