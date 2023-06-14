@@ -51,7 +51,7 @@ class Event2HomePanel extends StatefulWidget {
         Map<String, dynamic>? selection = JsonUtils.mapValue(result);
         if (selection != null) {
           
-          List<EventTypeFilter>? typesList = eventTypeFilterListFromDisplayList(JsonUtils.listStringsValue(selection[eventTypeContentAttributeId]));
+          List<EventTypeFilter>? typesList = eventTypeFilterListFromDisplaySelection(selection[eventTypeContentAttributeId]);
           Storage().events2Types = eventTypeFilterListToList(typesList) ;
 
           Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
@@ -406,8 +406,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         Map<String, dynamic>? selection = JsonUtils.mapValue(result);
         if ((selection != null) && mounted) {
 
-          List<EventTypeFilter>? typesList = eventTypeFilterListFromDisplayList(JsonUtils.listStringsValue(selection[Event2HomePanel.eventTypeContentAttributeId]));
-          Storage().events2Types = eventTypeFilterListToList(typesList) ;
+          List<EventTypeFilter>? typesList = eventTypeFilterListFromDisplaySelection(selection[Event2HomePanel.eventTypeContentAttributeId]);
+          Storage().events2Types = eventTypeFilterListToList(typesList);
 
           Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
           attributes.remove(Event2HomePanel.eventTypeContentAttributeId);

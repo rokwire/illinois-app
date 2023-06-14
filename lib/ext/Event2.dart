@@ -148,3 +148,17 @@ List<String>? eventTypeFilterListToDisplayList(List<EventTypeFilter>? values) {
   }
   return null;
 }
+
+List<EventTypeFilter>? eventTypeFilterListFromDisplaySelection(dynamic selection) {
+  if (selection is List) {
+    return eventTypeFilterListFromDisplayList(JsonUtils.listStringsValue(selection));
+  }
+  else if (selection is String) {
+    EventTypeFilter? filter = eventTypeFilterFromDisplayString(selection);
+    return (filter != null) ? <EventTypeFilter>[filter] : null;
+  }
+  else {
+    return null;
+  }
+}
+
