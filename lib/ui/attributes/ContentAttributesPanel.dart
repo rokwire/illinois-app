@@ -37,12 +37,12 @@ class ContentAttributesPanel extends StatefulWidget {
 
 class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
-  Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
+  Map<String, LinkedHashSet<dynamic>> _selection = <String, LinkedHashSet<dynamic>>{};
 
   @override
   void initState() {
     if (widget.selection != null) {
-      _selection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<String>>();
+      _selection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<dynamic>>();
     }
     super.initState();
   }
@@ -109,10 +109,10 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   Widget _buildAttributeDropDown(ContentAttribute attribute) {
-    LinkedHashSet<String>? attributeLabels = _selection[attribute.id];
-    bool hasSelection = ((attributeLabels != null) && attributeLabels.isNotEmpty);
-    LinkedHashSet<String>? displayAttributeLabels = (CollectionUtils.isEmpty(attributeLabels) && (attribute.nullValue is String)) ?
-      LinkedHashSet<String>.from([attribute.nullValue]) : attributeLabels;
+    LinkedHashSet<dynamic>? attributeRawValues = _selection[attribute.id];
+    bool hasSelection = ((attributeRawValues != null) && attributeRawValues.isNotEmpty);
+    List<String>? displayAttributeLabels = (CollectionUtils.isEmpty(attributeRawValues) && (attribute.nullValue is String)) ?
+      List<String>.from([attribute.nullValue]) : attribute.displayLabelsFromRawValue(attributeRawValues);
 
     List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
     bool visible = (attributeValues?.isNotEmpty ?? false);
@@ -137,7 +137,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     );
   }
 
-  String? _constructAttributeDropdownTitle(ContentAttribute attribute, LinkedHashSet<String>? attributeLabels) {
+  String? _constructAttributeDropdownTitle(ContentAttribute attribute, List<String>? attributeLabels) {
     if ((attributeLabels == null) || attributeLabels.isEmpty) {
       return widget.filtersMode ? (attribute.displayEmptyFilterHint ?? attribute.displayEmptyHint) : attribute.displayEmptyHint;
     }
@@ -161,19 +161,18 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   void _onAttributeDropdownTap({ContentAttribute? attribute, List<ContentAttributeValue>? attributeValues}) {
     Analytics().logSelect(target: attribute?.title);
+
     String? attributeId = attribute?.id;
+    LinkedHashSet<dynamic>? attributeRawValues = _selection[attributeId];
 
-    LinkedHashSet<String>? attributeLabels = _selection[attribute?.id];
-    LinkedHashSet<String>? displayAttributeLabels = (CollectionUtils.isEmpty(attributeLabels) && (attribute?.nullValue is String)) ?
-      LinkedHashSet<String>.from([attribute?.nullValue]) : attributeLabels;
-
-    Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
+    Navigator.push<LinkedHashSet<dynamic>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
       attribute: attribute,
       attributeValues: attributeValues,
-      selection: displayAttributeLabels,
+      contentAttributes: widget.contentAttributes,
+      selection: attributeRawValues,
       multipleSelection: widget.filtersMode || (attribute?.isMultipleSelection ?? false),
       filtersMode: widget.filtersMode,
-    ),)).then(((LinkedHashSet<String>? selection) {
+    ),)).then(((LinkedHashSet<dynamic>? selection) {
       if ((selection != null) && (attributeId != null)) {
         if ((attribute?.nullValue is String) && selection.contains(attribute?.nullValue)) {
           selection.remove(attribute?.nullValue);
@@ -193,9 +192,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
 
-    LinkedHashSet<String>? attributeLabels = _selection[attribute.id];
-    ContentAttributeValue? selectedAttributeValue = ((attributeLabels != null) && attributeLabels.isNotEmpty) ?
-      attribute.findValue(label: attributeLabels.first) : null;
+    LinkedHashSet<dynamic>? attributeRawValues = _selection[attribute.id];
+    ContentAttributeValue? selectedAttributeValue = ((attributeRawValues != null) && attributeRawValues.isNotEmpty) ?
+      attribute.findValue(value: attributeRawValues.first) : null;
     dynamic displayValue = selectedAttributeValue?.value ?? attribute.nullValue;
 
     bool visible = (attributeValues?.isNotEmpty ?? false);
@@ -251,9 +250,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     String? attributeId = attribute.id;
     if (attributeId != null) {
       List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
-      LinkedHashSet<String> attributeLabels = _selection[attributeId] ??= LinkedHashSet<String>();
-      ContentAttributeValue? selectedAttributeValue = attributeLabels.isNotEmpty ?
-        ContentAttributeValue.findInList(attributeValues, label: attributeLabels.first) : null;
+      LinkedHashSet<dynamic> attributeRawValues = _selection[attributeId] ??= LinkedHashSet<dynamic>();
+      ContentAttributeValue? selectedAttributeValue = attributeRawValues.isNotEmpty ?
+        ContentAttributeValue.findInList(attributeValues, value: attributeRawValues.first) : null;
       
       dynamic selectedValue = selectedAttributeValue?.value;
       if (attribute.nullValue != null) {
@@ -268,21 +267,19 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       }
       selectedAttributeValue = (selectedValue != null) ? ContentAttributeValue.findInList(attributeValues, value: selectedValue) : null;
 
-      String? selectedLabel = selectedAttributeValue?.label;
+      dynamic selectedRawValue = selectedAttributeValue?.value;
       Analytics().logSelect(target: selectedAttributeValue?.label, source: attribute.title);
       setStateIfMounted(() {
-        attributeLabels.clear();
-        if (selectedLabel != null) {
-          attributeLabels.add(selectedLabel);
+        attributeRawValues.clear();
+        if (selectedRawValue != null) {
+          attributeRawValues.add(selectedRawValue);
         }
       });
     }
-
-
   }
 
   bool get _isSelectionNotEmpty {
-    for (LinkedHashSet<String> attributeLabels in _selection.values) {
+    for (LinkedHashSet<dynamic> attributeLabels in _selection.values) {
       if (attributeLabels.isNotEmpty) {
         return true;
       }

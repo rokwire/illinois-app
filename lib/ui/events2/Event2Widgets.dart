@@ -209,7 +209,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ]);
 
   List<String>? get _displayCategories =>
-    Events2().contentAttributes?.displayAttributeValuesListFromSelection(widget.event.attributes, usage: ContentAttributeUsage.category);
+    Events2().contentAttributes?.displayLabelsFromSelection(widget.event.attributes, usage: ContentAttributeUsage.category);
 
   Widget get _favoriteButton {
     bool isFavorite = Auth2().isFavorite(widget.event);

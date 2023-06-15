@@ -1096,7 +1096,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(groupAttributes, complete: true);
+        List<String>? displayAttributeValues = attribute.displayLabelsFromSelection(groupAttributes, complete: true);
         if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           attributesList.add(Row(children: [
             Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:

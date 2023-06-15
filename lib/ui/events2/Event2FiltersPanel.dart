@@ -23,12 +23,12 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
 
   ContentAttributes? _attributes;
   String? _expandedAttributeId;
-  late Map<String, LinkedHashSet<String>> _selection;
+  late Map<String, LinkedHashSet<dynamic>> _selection;
 
   @override
   void initState() {
     _attributes = Events2().contentAttributes;
-    _selection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? <String, LinkedHashSet<String>>{};
+    _selection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? <String, LinkedHashSet<dynamic>>{};
     super.initState();
   }
 
@@ -106,15 +106,15 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
     Analytics().logSelect(target: value.label, source: attribute.title);    
 
     String? attributeId = attribute.id;
-    String? valueLabel = value.label;
-    if ((attributeId != null) && (valueLabel != null)) {
+    String? attributeRawValue = value.value;
+    if ((attributeId != null) && (attributeRawValue != null)) {
       setStateIfMounted(() {
-        LinkedHashSet selection = (_selection[attributeId] ??= LinkedHashSet<String>());
-        if (selection.contains(valueLabel)) {
-          selection.remove(valueLabel);
+        LinkedHashSet<dynamic> selection = (_selection[attributeId] ??= LinkedHashSet<dynamic>());
+        if (selection.contains(attributeRawValue)) {
+          selection.remove(attributeRawValue);
         }
         else {
-          selection.add(valueLabel);
+          selection.add(attributeRawValue);
         }
       });
     }
@@ -127,7 +127,7 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
 
 class _Event2AttributeButton extends StatelessWidget {
   final ContentAttribute attribute;
-  final LinkedHashSet<String>? selection;
+  final LinkedHashSet<dynamic>? selection;
   final bool expanded;
   final Function() onTapAttribute;
   final Function(ContentAttributeValue value) onTapAttributeValue;
@@ -191,8 +191,8 @@ class _Event2AttributeButton extends StatelessWidget {
   }
 
   Widget _buildAttributeValueWidget(ContentAttributeValue attributeValue, int index, int count) {
-    bool isSelected = selection?.contains(attributeValue.label) ?? false;
-    String? imageAsset = StringUtils.isNotEmpty(attributeValue.label) ?
+    bool isSelected = selection?.contains(attributeValue.value) ?? false;
+    String? imageAsset = StringUtils.isNotEmpty(attributeValue.value) ?
       (isSelected ? "check-box-filled" : "box-outline-gray") : null;
     //(isSelected ? "check-circle-filled" : "circle-outline-gray") : null;
     String? title =  attribute.displayString(attributeValue.label);

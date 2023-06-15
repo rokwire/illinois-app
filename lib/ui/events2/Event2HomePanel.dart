@@ -51,8 +51,8 @@ class Event2HomePanel extends StatefulWidget {
         Map<String, dynamic>? selection = JsonUtils.mapValue(result);
         if (selection != null) {
           
-          List<EventTypeFilter>? typesList = eventTypeFilterListFromDisplaySelection(selection[eventTypeContentAttributeId]);
-          Storage().events2Types = eventTypeFilterListToList(typesList) ;
+          List<EventTypeFilter>? typesList = eventTypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
+          Storage().events2Types = eventTypeFilterListToStringList(typesList) ;
 
           Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
           attributes.remove(eventTypeContentAttributeId);
@@ -113,7 +113,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       Storage.notifySettingChanged
     ]);
 
-    _types = widget.types ?? LinkedHashSetUtils.from<EventTypeFilter>(eventTypeFilterListFromList(Storage().events2Types)) ?? LinkedHashSet<EventTypeFilter>();
+    _types = widget.types ?? LinkedHashSetUtils.from<EventTypeFilter>(eventTypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<EventTypeFilter>();
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
     _sortType = eventSortTypeFromString(Storage().events2Sort) ?? EventSortType.dateTime;
 
@@ -280,7 +280,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
     if (_attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_attributes, complete: true);
+        List<String>? displayAttributeValues = attribute.displayLabelsFromSelection(_attributes, complete: true);
         if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           for (String attributeValue in displayAttributeValues) {
             if (descriptionList.isNotEmpty) {
@@ -392,7 +392,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     Analytics().logSelect(target: 'Filters');
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2FiltersPanel(_attributes)));
     Map<String, dynamic> selection = Map<String, dynamic>.from(_attributes);
-    selection[Event2HomePanel.eventTypeContentAttributeId] = eventTypeFilterListToDisplayList(_types.toList());
+    selection[Event2HomePanel.eventTypeContentAttributeId] = _types.toList();
     
     if (Events2().contentAttributes != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
@@ -406,8 +406,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         Map<String, dynamic>? selection = JsonUtils.mapValue(result);
         if ((selection != null) && mounted) {
 
-          List<EventTypeFilter>? typesList = eventTypeFilterListFromDisplaySelection(selection[Event2HomePanel.eventTypeContentAttributeId]);
-          Storage().events2Types = eventTypeFilterListToList(typesList);
+          List<EventTypeFilter>? typesList = eventTypeFilterListFromSelection(selection[Event2HomePanel.eventTypeContentAttributeId]);
+          Storage().events2Types = eventTypeFilterListToStringList(typesList);
 
           Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
           attributes.remove(Event2HomePanel.eventTypeContentAttributeId);
