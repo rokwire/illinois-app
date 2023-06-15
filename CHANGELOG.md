@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.9] - 2023-06-15
 ### Changed
 - Export button text styles to styles.json [#2932](https://github.com/rokwire/illinois-app/issues/2932).
 - Added Event Types filter and related attribute updates [#3300](https://github.com/rokwire/illinois-app/issues/3300).
