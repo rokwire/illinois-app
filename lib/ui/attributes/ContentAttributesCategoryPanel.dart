@@ -229,8 +229,8 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       _selection.clear();
     }
 
-    if (!widget.filtersMode) {
-      widget.attribute?.requirements?.validateAttributeValuesSelection(_selection);
+    if (widget.attribute?.requirements?.hasScope(widget.filtersMode ? contentAttributeRequirementsScopeFilter : contentAttributeRequirementsScopeCreate) ?? false) {
+      widget.attribute?.validateAttributeValuesSelection(_selection);
     }
 
     if (widget.multipleSelection || widget.filtersMode) {

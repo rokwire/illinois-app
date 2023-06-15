@@ -81,7 +81,8 @@ class Event2HomePanel extends StatefulWidget {
     for (EventTypeFilter value in EventTypeFilter.values) {
       values.add(ContentAttributeValue(
         label: eventTypeFilterToDisplayString(value),
-        value: value
+        value: value,
+        group: eventTypeFilterGroups[value],
       ));
     }
     return ContentAttribute(
@@ -91,6 +92,7 @@ class Event2HomePanel extends StatefulWidget {
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.semantics', 'Double type to show event options.'),
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ internalContentAttributesScope },
+      requirements: ContentAttributeRequirements(maxSelectedCount: 1, scope: contentAttributeRequirementsScopeAll),
       values: values
     );
   }
