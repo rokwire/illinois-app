@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Export button text styles to styles.json [#2932](https://github.com/rokwire/illinois-app/issues/2932).
+- Added Event Types filter and related attribute updates [#3300](https://github.com/rokwire/illinois-app/issues/3300).
 
 ## [5.0.8] - 2023-06-12
 ### Added
