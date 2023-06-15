@@ -420,6 +420,10 @@ class Storage extends rokwire.Storage {
   Map<String, dynamic>? get events2Attributes => JsonUtils.decodeMap(getStringWithName(events2AttributesKey));
   set events2Attributes(Map<String, dynamic>? value) => setStringWithName(events2AttributesKey, JsonUtils.encode(value));
 
+  static const String events2TypesKey = 'events2_types';
+  List<String>? get events2Types => getStringListWithName(events2TypesKey);
+  set events2Types(List<String>? value) => setStringListWithName(events2TypesKey, value);
+
   static const String events2SortKey = 'events2_sort';
   String? get events2Sort => getStringWithName(events2SortKey);
   set events2Sort(String? value) => setStringWithName(events2SortKey, value);

@@ -14,12 +14,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class ContentAttributesCategoryPanel extends StatefulWidget {
 
   final ContentAttribute? attribute;
+  final ContentAttributes? contentAttributes;
   final List<ContentAttributeValue>? attributeValues;
-  final LinkedHashSet<String>? selection;
+  final LinkedHashSet<dynamic>? selection;
   final bool multipleSelection;
   final bool filtersMode;
 
-  ContentAttributesCategoryPanel({this.attribute, this.attributeValues, this.selection, this.multipleSelection = false, this.filtersMode = false});
+  ContentAttributesCategoryPanel({this.attribute, this.contentAttributes, this.attributeValues, this.selection, this.multipleSelection = false, this.filtersMode = false});
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
@@ -30,23 +31,25 @@ class ContentAttributesCategoryPanel extends StatefulWidget {
 class _ContentAttributesCategoryPanelState extends State<ContentAttributesCategoryPanel> {
 
   List<dynamic> _contentList = <dynamic>[];
-  LinkedHashSet<String> _selection = LinkedHashSet<String>();
+  LinkedHashSet<dynamic> _selection = LinkedHashSet<dynamic>();
 
   @override
   void initState() {
     super.initState();
 
     if (widget.selection != null) {
-      _selection = LinkedHashSet<String>.from(widget.selection!);
+      _selection = LinkedHashSet<dynamic>.from(widget.selection!);
     }
 
     if (widget.attributeValues != null) {
       LinkedHashMap<String, List<ContentAttributeValue>> contentMap = LinkedHashMap<String, List<ContentAttributeValue>>();
       for (ContentAttributeValue attributeValue in widget.attributeValues!) {
-        Iterable<dynamic>? requirementAttributes = attributeValue.requirements?.values;
-        dynamic requirementAttribute = (requirementAttributes?.isNotEmpty ?? false) ? requirementAttributes?.first : null;
-        String contentMapKey = (requirementAttribute is String) ? requirementAttribute : '';
-          (contentMap[contentMapKey] ??= <ContentAttributeValue>[]).add(attributeValue);
+        Map<String, dynamic>? attributeRequirements = attributeValue.requirements;
+        String? requirementAttributeId = ((attributeRequirements != null) && attributeRequirements.isNotEmpty) ? attributeRequirements.keys.first : null;
+        ContentAttribute? requirementAttribute = (requirementAttributeId != null) ? widget.contentAttributes?.findAttribute(id: requirementAttributeId) : null;
+        dynamic requirementAttributeRawValue = ((attributeRequirements != null) && (requirementAttributeId != null)) ? attributeRequirements[requirementAttributeId] : null;
+        String contentMapKey = requirementAttribute?.displayLabel(requirementAttributeRawValue) ?? '';
+        (contentMap[contentMapKey] ??= <ContentAttributeValue>[]).add(attributeValue);
       }
 
       _contentList.add(_ContentItem.spacing);
@@ -92,7 +95,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       ));
     }
 
-    if (widget.multipleSelection && !DeepCollectionEquality().equals(widget.selection ?? LinkedHashSet<String>(), _selection)) {
+    if (widget.multipleSelection && !DeepCollectionEquality().equals(widget.selection ?? LinkedHashSet<dynamic>(), _selection)) {
       actions.add(_buildHeaderBarButton(
         title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
         onTap: _onTapApply,
@@ -181,8 +184,8 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 
   Widget _buildAttributeValueWidget(ContentAttributeValue attributeValue) {
-    bool isSelected = _selection.contains(attributeValue.label);
-    String? imageAsset = StringUtils.isNotEmpty(attributeValue.label) ?
+    bool isSelected = _selection.contains(attributeValue.value);
+    String? imageAsset = (attributeValue.value != null) ?
       (widget.multipleSelection ?
         (isSelected ? "check-box-filled" : "box-outline-gray") :
         (isSelected ? "check-circle-filled" : "circle-outline-gray")
@@ -190,7 +193,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     String? title = StringUtils.isNotEmpty(attributeValue.label) ?
       widget.attribute?.displayString(attributeValue.label) :
       Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear');
-    TextStyle? textStyle = StringUtils.isNotEmpty(attributeValue.label) ?
+    TextStyle? textStyle = (attributeValue.value != null) ?
       Styles().textStyles?.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
       Styles().textStyles?.getTextStyle("widget.label.regular.thin");
     
@@ -213,21 +216,21 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   void _onTapAttributeValue(ContentAttributeValue attributeValue) {
     Analytics().logSelect(target: attributeValue.label, source: widget.attribute?.title);
 
-    String? attributeLabel = attributeValue.label;
-    if (attributeLabel != null) {
-      if (_selection.contains(attributeLabel)) {
-        _selection.remove(attributeLabel);
+    dynamic attributeRawValue = attributeValue.value;
+    if (attributeRawValue != null) {
+      if (_selection.contains(attributeRawValue)) {
+        _selection.remove(attributeRawValue);
       }
       else {
-        _selection.add(attributeLabel);
+        _selection.add(attributeRawValue);
       }
     }
     else {
       _selection.clear();
     }
 
-    if (!widget.filtersMode) {
-      widget.attribute?.requirements?.validateAttributeValuesSelection(_selection);
+    if (widget.attribute?.requirements?.hasScope(widget.filtersMode ? contentAttributeRequirementsScopeFilter : contentAttributeRequirementsScopeCreate) ?? false) {
+      widget.attribute?.validateAttributeValuesSelection(_selection);
     }
 
     if (widget.multipleSelection || widget.filtersMode) {
