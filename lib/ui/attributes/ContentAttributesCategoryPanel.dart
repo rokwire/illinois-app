@@ -190,9 +190,14 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         (isSelected ? "check-box-filled" : "box-outline-gray") :
         (isSelected ? "check-circle-filled" : "circle-outline-gray")
       ) : null;
+    
     String? title = StringUtils.isNotEmpty(attributeValue.label) ?
       widget.attribute?.displayString(attributeValue.label) :
       Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear');
+    
+    String? info = StringUtils.isNotEmpty(attributeValue.info) ?
+      widget.attribute?.displayString(attributeValue.info) : null;
+
     TextStyle? textStyle = (attributeValue.value != null) ?
       Styles().textStyles?.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
       Styles().textStyles?.getTextStyle("widget.label.regular.thin");
@@ -206,8 +211,16 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
               Text(title ?? attributeValue.label ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
             )
           ),
-          
-          Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
+
+          Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            Visibility(visible: StringUtils.isNotEmpty(info), child:
+              Padding(padding: const EdgeInsets.only(right: 8), child:
+                Text(info ?? attributeValue.info ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+              )
+            ),
+            
+            Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
+          ]),
         ]),
       )
     );
