@@ -20,10 +20,12 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
@@ -103,6 +105,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
+      FirebaseMessaging.notifyAthleticsTeamRoster,
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
@@ -285,6 +288,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyAthleticsNewsUpdated) {
       _onFirebaseAthleticsNewsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyAthleticsTeamRoster) {
+      _onFirebaseAthleticsTeamRosterNotification(param);
     }
     else if (name == FirebaseMessaging.notifyHomeNotification) {
       _onFirebaseHomeNotification();
@@ -950,6 +956,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? newsId = param["news_id"];
       if (StringUtils.isNotEmpty(newsId)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
+      }
+    }
+  }
+
+  void _onFirebaseAthleticsTeamRosterNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? sportName = JsonUtils.stringValue(param["sport"]);
+      if (StringUtils.isNotEmpty(sportName)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(Sports().getSportByShortName(sportName), null)));
       }
     }
   }

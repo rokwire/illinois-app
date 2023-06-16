@@ -51,6 +51,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyGameDetail                     = "edu.illinois.rokwire.firebase.messaging.game.detail";
   static const String notifyAthleticsGameStarted           = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
   static const String notifyAthleticsNewsUpdated           = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
+  static const String notifyAthleticsTeamRoster         = "edu.illinois.rokwire.firebase.messaging.athletics.team.roster";
   static const String notifySettingUpdated                 = "edu.illinois.rokwire.firebase.messaging.setting.updated";
   static const String notifyGroupPostNotification          = "edu.illinois.rokwire.firebase.messaging.group.posts.updated";
   static const String notifyHomeNotification               = "edu.illinois.rokwire.firebase.messaging.home";
@@ -180,6 +181,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeGameDetail = 'game_detail';
   static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
   static const String payloadTypeAthleticsNewDetail = 'athletics_news_detail';
+  static const String payloadTypeAthleticsTeamRoster = 'athletics.team.roster';
   static const String payloadTypeGroup = 'group';
   static const String payloadTypeHome = 'home';
   static const String payloadTypeBrowse = 'browse';
@@ -363,6 +365,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeAthleticsNewDetail) {
       NotificationService().notify(notifyAthleticsNewsUpdated, data);
+    }
+    else if (type == payloadTypeAthleticsTeamRoster) {
+      NotificationService().notify(notifyAthleticsTeamRoster, data);
     }
     else if (type == payloadTypeGroup) {
       String? groupPostId = JsonUtils.stringValue(data?['post_id']);
