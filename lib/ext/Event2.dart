@@ -2,10 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 
 // Event2
 
@@ -112,3 +116,45 @@ String? eventTypeFilterToDisplayString(EventTypeFilter? value) {
   }
 }
 
+// EventTimeFilter
+
+String? eventTimeFilterToDisplayString(EventTimeFilter? value) {
+  switch (value) {
+    case EventTimeFilter.upcoming: return Localization().getStringEx("model.event2.event_time.upcoming", "Upcoming");
+    case EventTimeFilter.today: return Localization().getStringEx("model.event2.event_time.today", "Today");
+    case EventTimeFilter.tomorrow: return Localization().getStringEx("model.event2.event_time.tomorrow", "Tomorrow");
+    case EventTimeFilter.thisWeek: return Localization().getStringEx("model.event2.event_time.this_week", "This week");
+    case EventTimeFilter.thisWeekend: return Localization().getStringEx("model.event2.event_time.this_weekend", "This weekend");
+    case EventTimeFilter.nextWeek: return Localization().getStringEx("model.event2.event_time.next_week", "Next week");
+    case EventTimeFilter.nextWeekend: return Localization().getStringEx("model.event2.event_time.next_weekend", "Next weekend");
+    case EventTimeFilter.thisMonth: return Localization().getStringEx("model.event2.event_time.this_month", "This month");
+    case EventTimeFilter.nextMonth: return Localization().getStringEx("model.event2.event_time.next_month", "Next month");
+    case EventTimeFilter.customRange: return Localization().getStringEx("model.event2.event_time.custom_range", "Choose");
+    default: return null;
+  }
+}
+
+String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { DateTime? customStartTimeUtc, DateTime? customEndTimeUtc }) {
+  final String dateFormat = 'MM/dd';
+  Map<String, dynamic> options = <String, dynamic>{};
+  Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTimeUtc, customEndTimeUtc: customEndTimeUtc);
+
+  int? startTimeEpoch = JsonUtils.intValue(options['end_time_after']);
+  TZDateTime? startTimeUni = (startTimeEpoch != null) ? DateTime.fromMillisecondsSinceEpoch(startTimeEpoch * 1000).toUniOrLocal() : null;
+
+  int? endTimeEpoch = JsonUtils.intValue(options['start_time_before']);
+  TZDateTime? endTimeUni = (endTimeEpoch != null) ? DateTime.fromMillisecondsSinceEpoch(endTimeEpoch * 1000).toUniOrLocal() : null;
+
+  if (value == EventTimeFilter.upcoming) {
+    return null;
+  }
+  else if ((value == EventTimeFilter.today) || (value == EventTimeFilter.tomorrow)) {
+    return (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
+  }
+  else {
+    String? displayStartTime = (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
+    String? displayEndTime = (endTimeUni != null) ? DateFormat(dateFormat).format(endTimeUni) : null;
+    return ((displayStartTime != null) && (displayEndTime != null)) ? '$displayStartTime - $displayEndTime' : null;
+  }
+
+}
