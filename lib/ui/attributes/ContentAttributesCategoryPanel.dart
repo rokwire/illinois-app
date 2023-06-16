@@ -24,7 +24,7 @@ class ContentAttributesCategoryPanel extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
 
-  LinkedHashSet<String> get emptySelection => (attribute?.nullValue != null) ? LinkedHashSet<String>.from([attribute?.nullValue]) : LinkedHashSet<String>();
+  LinkedHashSet<dynamic> get emptySelection => (attribute?.nullValue != null) ? LinkedHashSet<dynamic>.from([attribute?.nullValue]) : LinkedHashSet<dynamic>();
 }
 
 class _ContentAttributesCategoryPanelState extends State<ContentAttributesCategoryPanel> {
@@ -36,6 +36,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   bool get singleSelection => widget.attribute?.isSingleSelection(requirementsScope) ?? true;
   bool get multipleSelection => widget.attribute?.isMultipleSelection(requirementsScope) ?? false;
+  bool get multipleValueGroups => widget.attribute?.hasMultipleValueGroups ?? false;
 
   @override
   void initState() {
@@ -95,7 +96,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     List<Widget> actions = <Widget>[];
 
 
-    if (multipleSelection && !DeepCollectionEquality().equals(widget.selection ?? LinkedHashSet<dynamic>(), _selection)) {
+    if ((multipleSelection || multipleValueGroups) && !DeepCollectionEquality().equals(widget.selection ?? LinkedHashSet<dynamic>(), _selection)) {
       actions.add(_buildHeaderBarButton(
         title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
         onTap: _onTapApply,
@@ -252,7 +253,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       widget.attribute?.validateAttributeValuesSelection(_selection);
     }
 
-    if (multipleSelection) {
+    if (multipleSelection || multipleValueGroups) {
       setStateIfMounted(() { });
     }
     else {
@@ -266,8 +267,8 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 
   void _onTapClear() {
-    _selection = widget.emptySelection;
-    if (multipleSelection) {
+    _selection = LinkedHashSet<dynamic>.from(widget.emptySelection);
+    if (multipleSelection || multipleValueGroups) {
       setStateIfMounted(() {});
     }
     else {
