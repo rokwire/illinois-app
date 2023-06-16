@@ -406,7 +406,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   Widget _buildEventsList() {
     List<Widget> cardsList = <Widget>[];
     for (Event2 event in _events!) {
-      cardsList.add(Padding(padding: EdgeInsets.only(left: 16, right: 16, top: cardsList.isNotEmpty ? 8 : 0), child:
+      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
         Event2Card(event, onTap: () => _onEvent(event),),
       ),);
     }
