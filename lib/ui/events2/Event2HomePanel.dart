@@ -330,44 +330,55 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   Widget _buildContentDescription() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    ContentAttributes? contentAttributes = Events2().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
     TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
     TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
 
-    for (EventTypeFilter type in _types) {
+    String? timeDescription = (_timeFilter != EventTimeFilter.customRange) ?
+      eventTimeFilterToDisplayString(_timeFilter) :
+      eventTimeFilterDisplayInfo(EventTimeFilter.customRange, customStartTimeUtc: _customStartTimeUtc, customEndTimeUtc: _customEndTimeUtc);
+    
+    if (timeDescription != null) {
       if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style : regularStyle,));
+        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
       }
-      descriptionList.add(TextSpan(text: eventTypeFilterToDisplayString(type), style : regularStyle,),);
+      descriptionList.add(TextSpan(text: timeDescription, style: regularStyle,),);
     }
 
+    for (EventTypeFilter type in _types) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: eventTypeFilterToDisplayString(type), style: regularStyle,),);
+    }
+
+    ContentAttributes? contentAttributes = Events2().contentAttributes;
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if (_attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
         List<String>? displayAttributeValues = attribute.displayLabelsFromSelection(_attributes, complete: true);
         if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           for (String attributeValue in displayAttributeValues) {
             if (descriptionList.isNotEmpty) {
-              descriptionList.add(TextSpan(text: ", " , style : regularStyle,));
+              descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
             }
-            descriptionList.add(TextSpan(text: attributeValue, style : regularStyle,),);
+            descriptionList.add(TextSpan(text: attributeValue, style: regularStyle,),);
           }
         }
       }
     }
 
     if (descriptionList.isNotEmpty) {
-      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filters.label.title', 'Filter by: ') , style : boldStyle,));
-      descriptionList.add(TextSpan(text: '.', style : regularStyle,),);
+      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filters.label.title', 'Filter by: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
 
     if (1 < (_events?.length ?? 0)) {
       if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ' ', style : regularStyle,),);
+        descriptionList.add(TextSpan(text: ' ', style: regularStyle,),);
       }
-      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort ') , style : boldStyle,));
-      descriptionList.add(TextSpan(text: eventSortTypeToDisplayStatusString(_sortType), style : regularStyle,),);
-      descriptionList.add(TextSpan(text: '.', style : regularStyle,),);
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: eventSortTypeToDisplayStatusString(_sortType), style: regularStyle,),);
+      descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
 
     if (descriptionList.isNotEmpty) {
