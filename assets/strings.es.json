@@ -1132,6 +1132,10 @@
     "panel.events2.home.attributes.event_type.hint": "Choose the event type your events can be filtered by.",
     "panel.events2.home.attributes.event_type.hint.empty": "Select an event type...",
     "panel.events2.home.attributes.event_type.hint.semantics": "Double type to show event options.",
+	"panel.events2.home.attributes.event_time.title": "Date & Time",
+    "panel.events2.home.attributes.event_time.hint": "Choose the date & time your events can be filtered by.",
+    "panel.events2.home.attributes.event_time.hint.empty": "Select an date & time...",
+    "panel.events2.home.attributes.event_time.hint.semantics": "Double type to show date & time options.",
 
     "panel.events2_filters.header.title": "Event Filters",
 
@@ -3453,6 +3457,17 @@
 	"model.event2.event_type.public": "Public",
 	"model.event2.event_type.private": "Private",
 	"model.event2.event_type.nearby": "Nearby",
+
+    "model.event2.event_time.upcoming": "Upcoming",
+    "model.event2.event_time.today": "Today",
+    "model.event2.event_time.tomorrow": "Tomorrow",
+    "model.event2.event_time.this_week": "This week",
+    "model.event2.event_time.this_weekend": "This weekend",
+    "model.event2.event_time.next_week": "Next week",
+	"model.event2.event_time.next_weekend": "Next weekend",
+    "model.event2.event_time.this_month": "This month",
+    "model.event2.event_time.next_month": "Next month",
+    "model.event2.event_time.custom_range": "Choose",
 
     "model.canvas.calendar.event.type.event.label": "Evento",
     "model.canvas.calendar.event.type.assignment.label": "Asignación",

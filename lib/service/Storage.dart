@@ -424,6 +424,10 @@ class Storage extends rokwire.Storage {
   List<String>? get events2Types => getStringListWithName(events2TypesKey);
   set events2Types(List<String>? value) => setStringListWithName(events2TypesKey, value);
 
+  static const String events2TimeKey = 'events2_sort';
+  String? get events2Time => getStringWithName(events2TimeKey);
+  set events2Time(String? value) => setStringWithName(events2TimeKey, value);
+
   static const String events2SortKey = 'events2_sort';
   String? get events2Sort => getStringWithName(events2SortKey);
   set events2Sort(String? value) => setStringWithName(events2SortKey, value);

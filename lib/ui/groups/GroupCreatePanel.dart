@@ -566,7 +566,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               description: _isResearchProject?
                 Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
                 Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
+              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired(contentAttributeRequirementsScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
           Container(width: 8),
