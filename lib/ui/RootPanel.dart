@@ -20,10 +20,13 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
@@ -103,6 +106,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
+      FirebaseMessaging.notifyAthleticsTeam,
+      FirebaseMessaging.notifyAthleticsTeamRoster,
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
@@ -155,6 +160,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifySettingsAssessmentsNotification,
       FirebaseMessaging.notifySettingsCalendarNotification,
       FirebaseMessaging.notifySettingsAppointmentsNotification,
+      FirebaseMessaging.notifyGuideArticleDetailNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
       ActionBuilder.notifyShowPanel,
@@ -285,6 +291,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyAthleticsNewsUpdated) {
       _onFirebaseAthleticsNewsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyAthleticsTeam) {
+      _onFirebaseAthleticsTeamNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyAthleticsTeamRoster) {
+      _onFirebaseAthleticsTeamRosterNotification(param);
     }
     else if (name == FirebaseMessaging.notifyHomeNotification) {
       _onFirebaseHomeNotification();
@@ -435,6 +447,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.appointments);
+    }
+    else if (name == FirebaseMessaging.notifyGuideArticleDetailNotification) {
+      _onFirebaseGuideArticleNotification(param);
     }
     else if (name == HomePanel.notifySelect) {
       _onSelectHome();
@@ -954,6 +969,23 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onFirebaseAthleticsTeamNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? sportName = JsonUtils.stringValue(param["sport"]);
+      if (StringUtils.isNotEmpty(sportName)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(Sports().getSportByShortName(sportName))));
+      }
+    }
+  }
+  void _onFirebaseAthleticsTeamRosterNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? sportName = JsonUtils.stringValue(param["sport"]);
+      if (StringUtils.isNotEmpty(sportName)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(Sports().getSportByShortName(sportName), null)));
+      }
+    }
+  }
+
   void _onFirebaseHomeNotification() {
     // Pop to Home Panel and select the first tab
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -1013,6 +1045,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         _onFirebaseAcademicsNotification(AcademicsContent.todo_list);
       }
     }
+  }
+
+  void _onFirebaseGuideArticleNotification(dynamic param) async {
+    _onGuideDetail(param);
   }
 
   void _onFirebaseProfileNotification({required SettingsProfileContent profileContent}) {
