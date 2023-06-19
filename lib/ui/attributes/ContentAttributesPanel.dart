@@ -39,6 +39,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   Map<String, LinkedHashSet<dynamic>> _selection = <String, LinkedHashSet<dynamic>>{};
 
+  int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsScopeFilter : contentAttributeRequirementsScopeCreate;
+
   @override
   void initState() {
     if (widget.selection != null) {
@@ -128,7 +130,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         GroupSectionTitle(
           title: (attribute.displayLongTitle ?? attribute.displayTitle)?.toUpperCase(),
           description: !widget.filtersMode ? attribute.displayDescription : null,
-          requiredMark: !widget.filtersMode && attribute.isRequired,
+          requiredMark: !widget.filtersMode && attribute.isRequired(requirementsScope),
         ),
         _AttributeRibbonButton(
           title: title, hint: hint, textStyle: textStyle, onTap: onTap,
@@ -170,7 +172,6 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       attributeValues: attributeValues,
       contentAttributes: widget.contentAttributes,
       selection: attributeRawValues,
-      multipleSelection: widget.filtersMode || (attribute?.isMultipleSelection ?? false),
       filtersMode: widget.filtersMode,
     ),)).then(((LinkedHashSet<dynamic>? selection) {
       if ((selection != null) && (attributeId != null)) {
@@ -220,7 +221,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         GroupSectionTitle(
           title: (attribute.displayLongTitle ?? attribute.displayTitle)?.toUpperCase(),
           description: attribute.displayDescription,
-          requiredMark: !widget.filtersMode && attribute.isRequired,
+          requiredMark: !widget.filtersMode && attribute.isRequired(requirementsScope),
         ),
         Container (
           decoration: BoxDecoration(
