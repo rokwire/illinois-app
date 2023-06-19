@@ -158,6 +158,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifySettingsAssessmentsNotification,
       FirebaseMessaging.notifySettingsCalendarNotification,
       FirebaseMessaging.notifySettingsAppointmentsNotification,
+      FirebaseMessaging.notifyGuideArticleDetailNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
       ActionBuilder.notifyShowPanel,
@@ -441,6 +442,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.appointments);
+    }
+    else if (name == FirebaseMessaging.notifyGuideArticleDetailNotification) {
+      _onFirebaseGuideArticleNotification(param);
     }
     else if (name == HomePanel.notifySelect) {
       _onSelectHome();
@@ -1028,6 +1032,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         _onFirebaseAcademicsNotification(AcademicsContent.todo_list);
       }
     }
+  }
+
+  void _onFirebaseGuideArticleNotification(dynamic param) async {
+    _onGuideDetail(param);
   }
 
   void _onFirebaseProfileNotification({required SettingsProfileContent profileContent}) {
