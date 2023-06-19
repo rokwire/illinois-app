@@ -34,9 +34,6 @@ class SettingsICardContentWidget extends StatefulWidget {
 }
 
 class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget> {
-  bool _twistAndGoEnabled = false;
-  bool _twistAndGoLoading = false;
-
   bool _vibrationEnabled = false;
   bool _soundEnabled = false;
 
@@ -46,7 +43,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   @override
   void initState() {
     super.initState();
-    _loadTwistAndGoEnabled();
     _loadUnlockVibrationEnabled();
     _loadUnlockSoundEnabled();
     _rssiSensitivity = MobileAccess.bleRssiSensitivityFromString(Storage().mobileAccessBleRssiSensitivity);
@@ -103,7 +99,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                             borderRadius: BorderRadius.all(Radius.circular(4)),
                             onTap: _onTapVibrate)),
                   ]))),
-          Padding(padding: EdgeInsets.only(top: 16), child: _buildTwistAndGoWidget()),
           Visibility(visible: _isAndroid, child: Padding(padding: EdgeInsets.only(top: 16), child: _buildNotificationDrawerWidget())),
           Visibility(visible: _isIOS, child: Padding(padding: EdgeInsets.only(top: 16), child: _buildOpenIOSSystemSettingsWidget()))
         ]));
@@ -158,50 +153,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
 
   Widget _buildDividerWidget() {
     return Padding(padding: EdgeInsets.only(left: 16), child: Divider(color: Styles().colors?.mediumGray, height: 1));
-  }
-
-  Widget _buildTwistAndGoWidget() {
-    return Stack(alignment: Alignment.center, children: [
-      InkWell(
-          onTap: _onTapTwistAndGo,
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Expanded(
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Styles().colors?.white,
-                        border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-                        borderRadius: BorderRadius.all(Radius.circular(4))),
-                    child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                          Expanded(
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(Localization().getStringEx('panel.settings.icard.twist_n_go.title.label', 'Twist And Go'),
-                                style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.enabled')),
-                            Padding(
-                              padding: EdgeInsets.only(top: 5),
-                              child: Text(
-                                  Localization().getStringEx('panel.settings.icard.twist_n_go.description.label',
-                                      'Rotate your mobile device 90\u00B0 to the right and left, as if turning a door knob.'),
-                                  maxLines: 4,
-                                  style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.variant.enabled')),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10),
-                              child: Text(
-                                  Localization().getStringEx('panel.settings.icard.twist_n_go.description2.label',
-                                      'Doors must be enabled for Twist and Go to work.'),
-                                  maxLines: 4,
-                                  style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.variant.disabled')),
-                            )
-                          ])),
-                          Padding(
-                              padding: EdgeInsets.only(left: 16),
-                              child: Styles().images?.getImage(_twistAndGoEnabled ? 'toggle-on' : 'toggle-off'))
-                        ]))))
-          ])),
-      Visibility(visible: _twistAndGoLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary))
-    ]);
   }
 
   Widget _buildOpenIOSSystemSettingsWidget() {
@@ -270,43 +221,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                             child: Styles().images?.getImage(notificationDrawerSelected ? 'toggle-on' : 'toggle-off'))
                       ]))))
         ]));
-  }
-
-  void _loadTwistAndGoEnabled() {
-    setStateIfMounted(() {
-      _twistAndGoLoading = true;
-    });
-    MobileAccess().isTwistAndGoEnabled().then((enabled) {
-      setStateIfMounted(() {
-        _twistAndGoEnabled = enabled;
-        _twistAndGoLoading = false;
-      });
-    });
-  }
-
-  void _enableTwistAndGo(bool enable) {
-    if (_twistAndGoEnabled == enable) {
-      return;
-    }
-    setStateIfMounted(() {
-      _twistAndGoLoading = true;
-    });
-    MobileAccess().enableTwistAndGo(enable).then((success) {
-      setStateIfMounted(() {
-        _twistAndGoLoading = false;
-      });
-      if (!success) {
-        String msg = sprintf(
-            Localization()
-                .getStringEx('panel.settings.icard.twist_n_go.change.failed.msg', 'Failed to %s Twist And Go. Please, try again later.'),
-            enable
-                ? [Localization().getStringEx('panel.settings.icard.enable.label', 'enable')]
-                : [Localization().getStringEx('panel.settings.icard.disable.label', 'disable')]);
-        AppAlert.showDialogResult(context, msg);
-      } else {
-        _loadTwistAndGoEnabled();
-      }
-    });
   }
 
   void _loadUnlockVibrationEnabled() {
@@ -387,13 +301,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
         _loadUnlockVibrationEnabled();
       }
     });
-  }
-
-  void _onTapTwistAndGo() {
-    if (_twistAndGoLoading) {
-      return;
-    }
-    _enableTwistAndGo(!_twistAndGoEnabled);
   }
 
   void _onTapNotificationDrawer() {
