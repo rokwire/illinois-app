@@ -56,6 +56,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       setStateIfMounted(() { });
     }
   }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(body:

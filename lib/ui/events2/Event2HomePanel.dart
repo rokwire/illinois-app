@@ -10,6 +10,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -23,19 +24,20 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 
 class Event2HomePanel extends StatefulWidget {
   static final String routeName = 'Event2HomePanel';
 
   final EventTimeFilter? timeFilter;
-  final DateTime? customStartTimeUtc;
-  final DateTime? customEndTimeUtc;
+  final TZDateTime? customStartTime;
+  final TZDateTime? customEndTime;
 
   final LinkedHashSet<EventTypeFilter>? types;
   final Map<String, dynamic>? attributes;
 
   Event2HomePanel({Key? key,
-    this.timeFilter, this.customStartTimeUtc, this.customEndTimeUtc,
+    this.timeFilter, this.customStartTime, this.customEndTime,
     this.types, this.attributes
   }) : super(key: key);
 
@@ -106,13 +108,14 @@ class Event2HomePanel extends StatefulWidget {
     );
   }
 
-  static ContentAttribute eventTimeContentAttribute({ DateTime? customStartTimeUtc, DateTime? customEndTimeUtc }) {
+  static ContentAttribute eventTimeContentAttribute({ TZDateTime? customStartTime, TZDateTime? customEndTime }) {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
     for (EventTimeFilter value in EventTimeFilter.values) {
       values.add(ContentAttributeValue(
         label: eventTimeFilterToDisplayString(value),
-        info: eventTimeFilterDisplayInfo(value, customStartTimeUtc: customStartTimeUtc, customEndTimeUtc: customEndTimeUtc),
+        info: eventTimeFilterDisplayInfo(value, customStartTime: customStartTime, customEndTime: customEndTime),
         value: value,
+        customData: (value == EventTimeFilter.customRange) ? Event2TimeRangePanel.buldCustomData(customStartTime, customEndTime) : null,
       ));
     }
     return ContentAttribute(
@@ -123,9 +126,27 @@ class Event2HomePanel extends StatefulWidget {
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ internalContentAttributesScope },
       requirements: ContentAttributeRequirements(maxSelectedCount: 1, scope: contentAttributeRequirementsScopeFilter),
-      values: values
+      values: values,
     );
   }
+
+  Future<bool> handleAttributeValue({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
+    return ((attribute.id == eventTimeContentAttributeId) && (value.value == EventTimeFilter.customRange)) ?
+      handleCustomRangeTimeAttribute(context: context, attribute: attribute, value: value) : Future.value(false);
+  }
+
+  Future<bool> handleCustomRangeTimeAttribute({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
+    dynamic result = await Navigator.of(context).push(CupertinoPageRoute(builder: (context) => Event2TimeRangePanel(customData: value.customData,)));
+    Map<String, dynamic>? customData = JsonUtils.mapValue(result);
+    if (customData != null) {
+      value.customData = customData;
+      value.info = eventTimeFilterDisplayInfo(EventTimeFilter.customRange, customStartTime: Event2TimeRangePanel.getStartTime(customData), customEndTime: Event2TimeRangePanel.getEndTime(customData));
+      return true;
+    }
+    return false;
+  }
+
+
 }
 
 class _Event2HomePanelState extends State<Event2HomePanel> implements NotificationsListener {
@@ -135,8 +156,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   static const int eventsPageLength = 12;
 
   late EventTimeFilter _timeFilter;
-  DateTime? _customStartTimeUtc;
-  DateTime? _customEndTimeUtc;
+  TZDateTime? _customStartTime;
+  TZDateTime? _customEndTime;
   late LinkedHashSet<EventTypeFilter> _types;
   late Map<String, dynamic> _attributes;
   
@@ -151,9 +172,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
     _timeFilter = widget.timeFilter ?? eventTimeFilterFromString(Storage().events2Time) ?? EventTimeFilter.upcoming;
 
-    if ((_timeFilter == EventTimeFilter.customRange) && (widget.customStartTimeUtc != null) && (widget.customEndTimeUtc != null)) {
-      _customStartTimeUtc = widget.customStartTimeUtc;
-      _customEndTimeUtc = widget.customEndTimeUtc;
+    if ((_timeFilter == EventTimeFilter.customRange) && (widget.customStartTime != null) && (widget.customEndTime != null)) {
+      _customStartTime = widget.customStartTime;
+      _customEndTime = widget.customEndTime;
     }
     else {
       _timeFilter = EventTimeFilter.upcoming;
@@ -198,8 +219,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     offset: offset,
     limit: limit,
     timeFilter: _timeFilter,
-    customStartTimeUtc: _customStartTimeUtc,
-    customEndTimeUtc: _customEndTimeUtc,
+    customStartTimeUtc: _customStartTime?.toUtc(),
+    customEndTimeUtc: _customEndTime?.toUtc(),
     types: _types,
     attributes: _attributes,
     sortType: _sortType
@@ -335,7 +356,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
     String? timeDescription = (_timeFilter != EventTimeFilter.customRange) ?
       eventTimeFilterToDisplayString(_timeFilter) :
-      eventTimeFilterDisplayInfo(EventTimeFilter.customRange, customStartTimeUtc: _customStartTimeUtc, customEndTimeUtc: _customEndTimeUtc);
+      eventTimeFilterDisplayInfo(EventTimeFilter.customRange, customStartTime: _customStartTime, customEndTime: _customEndTime);
     
     if (timeDescription != null) {
       if (descriptionList.isNotEmpty) {
@@ -471,20 +492,27 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     selection[Event2HomePanel.eventTimeContentAttributeId] = <dynamic>[_timeFilter];
     
     if (Events2().contentAttributes != null) {
+      ContentAttributes? contentAttributes = contentAttributesExt;
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
         description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
-        contentAttributes: contentAttributesExt,
+        contentAttributes: contentAttributes,
         selection: selection,
         sortType: ContentAttributesSortType.native,
         filtersMode: true,
+        handleAttributeValue: widget.handleAttributeValue,
       ))).then((result) {
         Map<String, dynamic>? selection = JsonUtils.mapValue(result);
         if ((selection != null) && mounted) {
 
+          TZDateTime? customStartTime, customEndTime;
           EventTimeFilter timeFilter = eventTimeFilterListFromSelection(selection[Event2HomePanel.eventTimeContentAttributeId]) ?? _timeFilter;
           Storage().events2Time = eventTimeFilterToString(timeFilter);
-          //TBD: customStartTimeUtc & customEndTimeUtc
+          if (timeFilter == EventTimeFilter.customRange) {
+            Map<String, dynamic>? customData = contentAttributes?.findAttribute(id: Event2HomePanel.eventTimeContentAttributeId)?.findValue(value: EventTimeFilter.customRange)?.customData;
+            customStartTime = Event2TimeRangePanel.getStartTime(customData);
+            customEndTime = Event2TimeRangePanel.getEndTime(customData);
+          }
 
           List<EventTypeFilter>? typesList = eventTypeFilterListFromSelection(selection[Event2HomePanel.eventTypeContentAttributeId]);
           Storage().events2Types = eventTypeFilterListToStringList(typesList);
@@ -496,6 +524,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
           setState(() {
             _timeFilter = timeFilter;
+            _customStartTime = customStartTime;
+            _customEndTime = customEndTime;
             _types = (typesList != null) ? LinkedHashSet<EventTypeFilter>.from(typesList) : LinkedHashSet<EventTypeFilter>();
             _attributes = selection;
             _loadingEvents = true;
@@ -514,7 +544,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   ContentAttributes? get contentAttributesExt {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(Event2HomePanel.contentAttributesExt);
-    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTimeUtc: _customStartTimeUtc, customEndTimeUtc: _customEndTimeUtc));
+    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: _customStartTime, customEndTime: _customEndTime));
     return contentAttributes;
   }
 

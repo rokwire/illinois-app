@@ -13,18 +13,23 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class ContentAttributesCategoryPanel extends StatefulWidget {
 
-  final ContentAttribute? attribute;
+  final ContentAttribute attribute;
   final ContentAttributes? contentAttributes;
   final List<ContentAttributeValue>? attributeValues;
   final LinkedHashSet<dynamic>? selection;
   final bool filtersMode;
+  final Future<bool> Function({
+    required BuildContext context,
+    required ContentAttribute attribute,
+    required ContentAttributeValue value
+  })? handleAttributeValue;
 
-  ContentAttributesCategoryPanel({this.attribute, this.contentAttributes, this.attributeValues, this.selection, this.filtersMode = false});
+  ContentAttributesCategoryPanel({required this.attribute, this.contentAttributes, this.attributeValues, this.selection, this.filtersMode = false, this.handleAttributeValue });
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesCategoryPanelState();
 
-  LinkedHashSet<dynamic> get emptySelection => (attribute?.nullValue != null) ? LinkedHashSet<dynamic>.from([attribute?.nullValue]) : LinkedHashSet<dynamic>();
+  LinkedHashSet<dynamic> get emptySelection => (attribute.nullValue != null) ? LinkedHashSet<dynamic>.from([attribute.nullValue]) : LinkedHashSet<dynamic>();
 }
 
 class _ContentAttributesCategoryPanelState extends State<ContentAttributesCategoryPanel> {
@@ -34,9 +39,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsScopeFilter : contentAttributeRequirementsScopeCreate;
 
-  bool get singleSelection => widget.attribute?.isSingleSelection(requirementsScope) ?? true;
-  bool get multipleSelection => widget.attribute?.isMultipleSelection(requirementsScope) ?? false;
-  bool get multipleValueGroups => widget.attribute?.hasMultipleValueGroups ?? false;
+  bool get singleSelection => widget.attribute.isSingleSelection(requirementsScope);
+  bool get multipleSelection => widget.attribute.isMultipleSelection(requirementsScope);
+  bool get multipleValueGroups => widget.attribute.hasMultipleValueGroups;
 
   @override
   void initState() {
@@ -62,9 +67,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
         // section heading
         if (section.isEmpty) {
-          section = widget.attribute?.title ?? '';
+          section = widget.attribute.title ?? '';
         }
-        section = widget.attribute?.displayString(section) ?? section;
+        section = widget.attribute.displayString(section) ?? section;
         _contentList.add(section); 
 
         // section entries
@@ -91,7 +96,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   @override
   Widget build(BuildContext context) {
-    String? title = widget.attribute?.displayTitle;
+    String? title = widget.attribute.displayTitle;
 
     List<Widget> actions = <Widget>[];
 
@@ -199,11 +204,11 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       ) : null;
     
     String? title = StringUtils.isNotEmpty(attributeValue.label) ?
-      widget.attribute?.displayString(attributeValue.label) :
+      widget.attribute.displayString(attributeValue.label) :
       Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear');
     
     String? info = StringUtils.isNotEmpty(attributeValue.info) ?
-      widget.attribute?.displayString(attributeValue.info) : null;
+      widget.attribute.displayString(attributeValue.info) : null;
 
     TextStyle? textStyle = (attributeValue.value != null) ?
       Styles().textStyles?.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
@@ -234,8 +239,26 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 
   void _onTapAttributeValue(ContentAttributeValue attributeValue) {
-    Analytics().logSelect(target: attributeValue.label, source: widget.attribute?.title);
+    Analytics().logSelect(target: attributeValue.label, source: widget.attribute.title);
 
+    if (widget.handleAttributeValue != null) {
+      widget.handleAttributeValue!(
+        context: context,
+        attribute: widget.attribute,
+        value: attributeValue
+      ).then((dynamic result) {
+        if (result == true) {
+          _processAttribute(attributeValue);
+        }
+      });
+    }
+    else {
+      _processAttribute(attributeValue);
+    }
+
+  }
+
+  void _processAttribute(ContentAttributeValue attributeValue) {
     dynamic attributeRawValue = attributeValue.value;
     if (attributeRawValue != null) {
       if (_selection.contains(attributeRawValue)) {
@@ -249,8 +272,8 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       _selection.clear();
     }
 
-    if (widget.attribute?.requirements?.hasScope(requirementsScope) ?? false) {
-      widget.attribute?.validateAttributeValuesSelection(_selection);
+    if (widget.attribute.requirements?.hasScope(requirementsScope) ?? false) {
+      widget.attribute.validateAttributeValuesSelection(_selection);
     }
 
     if (multipleSelection || multipleValueGroups) {

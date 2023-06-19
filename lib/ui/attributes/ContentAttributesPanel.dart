@@ -20,15 +20,22 @@ class ContentAttributesPanel extends StatefulWidget {
   final String? description;
   final String? applyTitle;
   final String? continueTitle;
+  
   final bool filtersMode;
   final ContentAttributesSortType sortType;
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
 
+  final Future<bool> Function({
+    required BuildContext context,
+    required ContentAttribute attribute,
+    required ContentAttributeValue value
+  })? handleAttributeValue;
+
   ContentAttributesPanel({Key? key, this.title, this.description, this.applyTitle, this.continueTitle,
     this.contentAttributes, this.selection,
     this.sortType = ContentAttributesSortType.native,
-    this.filtersMode = false,
+    this.filtersMode = false, this.handleAttributeValue,
   }) : super(key: key);
 
   @override
@@ -161,10 +168,10 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     }
   }
 
-  void _onAttributeDropdownTap({ContentAttribute? attribute, List<ContentAttributeValue>? attributeValues}) {
-    Analytics().logSelect(target: attribute?.title);
+  void _onAttributeDropdownTap({required ContentAttribute attribute, List<ContentAttributeValue>? attributeValues}) {
+    Analytics().logSelect(target: attribute.title);
 
-    String? attributeId = attribute?.id;
+    String? attributeId = attribute.id;
     LinkedHashSet<dynamic>? attributeRawValues = _selection[attributeId];
 
     Navigator.push<LinkedHashSet<dynamic>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
@@ -173,10 +180,11 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       contentAttributes: widget.contentAttributes,
       selection: attributeRawValues,
       filtersMode: widget.filtersMode,
+      handleAttributeValue: widget.handleAttributeValue,
     ),)).then(((LinkedHashSet<dynamic>? selection) {
       if ((selection != null) && (attributeId != null)) {
-        if ((attribute?.nullValue is String) && selection.contains(attribute?.nullValue)) {
-          selection.remove(attribute?.nullValue);
+        if ((attribute.nullValue is String) && selection.contains(attribute.nullValue)) {
+          selection.remove(attribute.nullValue);
         }
         setStateIfMounted(() {
           _selection[attributeId] = selection;

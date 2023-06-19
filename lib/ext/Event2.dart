@@ -134,16 +134,16 @@ String? eventTimeFilterToDisplayString(EventTimeFilter? value) {
   }
 }
 
-String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { DateTime? customStartTimeUtc, DateTime? customEndTimeUtc }) {
+String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { TZDateTime? customStartTime, TZDateTime? customEndTime }) {
   final String dateFormat = 'MM/dd';
   Map<String, dynamic> options = <String, dynamic>{};
-  Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTimeUtc, customEndTimeUtc: customEndTimeUtc);
+  Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTime?.toUtc(), customEndTimeUtc: customEndTime?.toUtc());
 
   int? startTimeEpoch = JsonUtils.intValue(options['end_time_after']);
-  TZDateTime? startTimeUni = (startTimeEpoch != null) ? DateTime.fromMillisecondsSinceEpoch(startTimeEpoch * 1000).toUniOrLocal() : null;
+  TZDateTime? startTimeUni = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? DateTimeUni.timezoneUniOrLocal, startTimeEpoch * 1000) : null;
 
   int? endTimeEpoch = JsonUtils.intValue(options['start_time_before']);
-  TZDateTime? endTimeUni = (endTimeEpoch != null) ? DateTime.fromMillisecondsSinceEpoch(endTimeEpoch * 1000).toUniOrLocal() : null;
+  TZDateTime? endTimeUni = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? DateTimeUni.timezoneUniOrLocal, endTimeEpoch * 1000).toUniOrLocal() : null;
 
   if (value == EventTimeFilter.upcoming) {
     return null;
@@ -154,7 +154,12 @@ String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { DateTime? customSta
   else {
     String? displayStartTime = (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
     String? displayEndTime = (endTimeUni != null) ? DateFormat(dateFormat).format(endTimeUni) : null;
-    return ((displayStartTime != null) && (displayEndTime != null)) ? '$displayStartTime - $displayEndTime' : null;
+    if (displayStartTime != null) {
+      return (displayEndTime != null) ? '$displayStartTime - $displayEndTime' : '> $displayStartTime';  
+    }
+    else {
+      return (displayEndTime != null) ? '< $displayEndTime' : null;
+    }
   }
 
 }
