@@ -92,21 +92,29 @@ String? eventSortTypeToDisplayString(EventSortType? value) {
   }
 }
 
-String? eventSortTypeToDisplayStatusString(EventSortType? value) {
+String? eventSortTypeDisplayStatusString(EventSortType? value) {
   switch (value) {
-    case EventSortType.dateTime: return Localization().getStringEx('model.event2.sort_type.status.date_time', 'by Date & Time');
-    case EventSortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.status.alphabetical', 'Alphabetically');
-    case EventSortType.proximity: return Localization().getStringEx('model.event2.sort_type.status.proximity', 'by Proximity');
+    case EventSortType.dateTime: return Localization().getStringEx('model.event2.sort_type.status.date_time', '{{headning_start}}Sort by{{headning_end}} Date & Time {{sort_order}}');
+    case EventSortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.status.alphabetical', '{{headning_start}}Sort{{headning_end}} Alphabetically {{sort_order}}');
+    case EventSortType.proximity: return Localization().getStringEx('model.event2.sort_type.status.proximity', '{{headning_start}}Sort by{{headning_end}} Proximity {{sort_order}}');
     default: return null;
   }
 }
 
 // EventSortOrder
 
-String? eventSortOrderIndicatorToDisplayString(EventSortOrder? value) {
+String? eventSortOrderIndicatorDisplayString(EventSortOrder? value) {
   switch (value) {
     case EventSortOrder.ascending: return Localization().getStringEx('model.event2.sort_order.indicator.ascending', '⇩');
     case EventSortOrder.descending: return Localization().getStringEx('model.event2.sort_order.indicator.descending', '⇧');
+    default: return null;
+  }
+}
+
+String? eventSortOrderStatusDisplayString(EventSortOrder? value) {
+  switch (value) {
+    case EventSortOrder.ascending: return Localization().getStringEx('model.event2.sort_order.status.ascending', 'Asc');
+    case EventSortOrder.descending: return Localization().getStringEx('model.event2.sort_order.status.descending', 'Desc');
     default: return null;
   }
 }

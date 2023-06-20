@@ -3442,12 +3442,15 @@
 	"model.event2.sort_type.alphabetical": "Alphabetical",
 	"model.event2.sort_type.proximity": "Proximity",
 
-	"model.event2.sort_type.status.date_time": "by Date & Time",
-	"model.event2.sort_type.status.alphabetical": "Alphabetically",
-	"model.event2.sort_type.status.proximity": "by Proximity",
-
 	"model.event2.sort_order.indicator.ascending": "⇩",
 	"model.event2.sort_order.indicator.descending": "⇧",
+
+	"model.event2.sort_order.status.ascending": "Asc",
+	"model.event2.sort_order.status.descending": "Desc",
+
+    "model.event2.sort_type.status.date_time": "{{headning_start}}Sort by{{headning_end}} Date & Time {{sort_order}}",
+	"model.event2.sort_type.status.alphabetical": "{{headning_start}}Sort{{headning_end}} Alphabetically {{sort_order}}",
+	"model.event2.sort_type.status.proximity": "{{headning_start}}Sort by{{headning_end}} Proximity {{sort_order}}",
 
     "model.event2.event_type.free": "Free",
 	"model.event2.event_type.paid": "Paid",

@@ -364,7 +364,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   String _sortDropdownItemTitle(EventSortType sortType, { EventSortOrder? sortOrder}) {
     String? displaySortType = eventSortTypeToDisplayString(sortType);
     if ((displaySortType != null) && (sortOrder != null)) {
-      String? displaySortOrderIndicator = eventSortOrderIndicatorToDisplayString(sortOrder);
+      String? displaySortOrderIndicator = eventSortOrderIndicatorDisplayString(sortOrder);
       if (displaySortOrderIndicator != null) {
         displaySortType = "$displaySortType $displaySortOrderIndicator";
       }
@@ -416,12 +416,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
 
-    if (1 < (_events?.length ?? 0)) {
+    if ((1 < (_events?.length ?? 0)) || _loadingEvents) {
       if (descriptionList.isNotEmpty) {
         descriptionList.add(TextSpan(text: ' ', style: regularStyle,),);
       }
-      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort ') , style: boldStyle,));
-      descriptionList.add(TextSpan(text: eventSortTypeToDisplayStatusString(_sortType), style: regularStyle,),);
+
+      descriptionList.addAll(_buildSortDescription(regularStyle: regularStyle, boldStyle: boldStyle));
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
 
@@ -436,6 +436,80 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     else {
       return Container();
     }
+  }
+
+  List<InlineSpan> _buildSortDescription({TextStyle? regularStyle, TextStyle? boldStyle}) {
+    final String headingStartMarker = '{{headning_start}}';
+    final String headingEndMarker = '{{headning_end}}';
+    final String sortOrderMarker = '{{sort_order}}';
+
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+
+    String statusString = eventSortTypeDisplayStatusString(_sortType) ?? '';
+    int headingStartIndex = statusString.indexOf(headingStartMarker);
+    int headingEndIndex = statusString.indexOf(headingEndMarker);
+    bool hasHeading = (0 <= headingStartIndex) && (headingStartIndex < headingEndIndex);
+    int sortOrderIndex = statusString.indexOf(sortOrderMarker);
+    bool hasSortOrder = (0 <= sortOrderIndex);
+
+    if (hasHeading && hasSortOrder) {
+      if (headingEndIndex < sortOrderIndex) {
+        if (0 < headingStartIndex) {
+          descriptionList.add(TextSpan(text: statusString.substring(0, headingStartIndex), style: regularStyle,),);  
+        }
+
+        descriptionList.add(TextSpan(text: statusString.substring(headingStartIndex + headingStartMarker.length, headingEndIndex), style: boldStyle,),);  
+
+        descriptionList.add(TextSpan(text: statusString.substring(headingEndIndex + headingEndMarker.length, sortOrderIndex), style: regularStyle,),);  
+        
+        descriptionList.add(TextSpan(text: eventSortOrderStatusDisplayString(_sortOrder), style: regularStyle,),);
+        
+        if ((sortOrderIndex + sortOrderMarker.length) < statusString.length) {
+          descriptionList.add(TextSpan(text: statusString.substring(sortOrderIndex + sortOrderMarker.length + 1), style: regularStyle,),);    
+        }
+      }
+      else if (sortOrderIndex < headingStartIndex) {
+
+        if (0 < sortOrderIndex) {
+          descriptionList.add(TextSpan(text: statusString.substring(0, sortOrderIndex), style: regularStyle,),);  
+        }
+        
+        descriptionList.add(TextSpan(text: eventSortOrderStatusDisplayString(_sortOrder), style: regularStyle,),);
+
+        descriptionList.add(TextSpan(text: statusString.substring(sortOrderIndex + sortOrderMarker.length, headingStartIndex), style: regularStyle,),);  
+
+        descriptionList.add(TextSpan(text: statusString.substring(headingStartIndex + headingStartMarker.length, headingEndIndex), style: boldStyle,),);  
+
+        if ((headingEndIndex + headingEndMarker.length) < statusString.length) {
+          descriptionList.add(TextSpan(text: statusString.substring(headingEndIndex + headingEndMarker.length + 1), style: regularStyle,),);
+        }
+      }
+    }
+    else if (hasHeading) {
+      if (0 < headingStartIndex) {
+        descriptionList.add(TextSpan(text: statusString.substring(0, headingStartIndex), style: regularStyle,),);  
+      }
+
+      descriptionList.add(TextSpan(text: statusString.substring(headingStartIndex + headingStartMarker.length, headingEndIndex), style: boldStyle,),);  
+
+      if ((headingEndIndex + headingEndMarker.length) < statusString.length) {
+        descriptionList.add(TextSpan(text: statusString.substring(headingEndIndex + headingEndMarker.length + 1), style: regularStyle,),);
+      }
+    }
+    else if (hasSortOrder) {
+        if (0 < sortOrderIndex) {
+          descriptionList.add(TextSpan(text: statusString.substring(0, sortOrderIndex), style: regularStyle,),);  
+        }
+        
+        descriptionList.add(TextSpan(text: eventSortOrderStatusDisplayString(_sortOrder), style: regularStyle,),);
+
+        if ((sortOrderIndex + sortOrderMarker.length) < statusString.length) {
+          descriptionList.add(TextSpan(text: statusString.substring(sortOrderIndex + sortOrderMarker.length + 1), style: regularStyle,),);    
+        }
+    }
+
+
+    return descriptionList;
   }
 
   Decoration get _attributesDescriptionDecoration => BoxDecoration(
