@@ -129,7 +129,7 @@ String? eventTimeFilterToDisplayString(EventTimeFilter? value) {
     case EventTimeFilter.nextWeekend: return Localization().getStringEx("model.event2.event_time.next_weekend", "Next weekend");
     case EventTimeFilter.thisMonth: return Localization().getStringEx("model.event2.event_time.this_month", "This month");
     case EventTimeFilter.nextMonth: return Localization().getStringEx("model.event2.event_time.next_month", "Next month");
-    case EventTimeFilter.customRange: return Localization().getStringEx("model.event2.event_time.custom_range", "Choose");
+    case EventTimeFilter.customRange: return Localization().getStringEx("model.event2.event_time.custom_range.select", "Choose");
     default: return null;
   }
 }
@@ -155,10 +155,10 @@ String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { TZDateTime? customS
     String? displayStartTime = (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
     String? displayEndTime = (endTimeUni != null) ? DateFormat(dateFormat).format(endTimeUni) : null;
     if (displayStartTime != null) {
-      return (displayEndTime != null) ? '$displayStartTime - $displayEndTime' : '> $displayStartTime';  
+      return (displayEndTime != null) ? '$displayStartTime - $displayEndTime' : '$displayStartTime ⇧';  
     }
     else {
-      return (displayEndTime != null) ? '< $displayEndTime' : null;
+      return (displayEndTime != null) ? '$displayEndTime ⇩' : null;
     }
   }
 

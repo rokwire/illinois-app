@@ -932,7 +932,7 @@ class _GroupCardState extends State<GroupCard> {
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().contentAttributes?.displayLabelsFromSelection(widget.group?.attributes,
+    List<String>? attributesList = Groups().contentAttributes?.displaySelectedLabelsFromSelection(widget.group?.attributes,
       usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
@@ -1010,7 +1010,7 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().contentAttributes?.displayLabelsFromSelection(widget.group?.attributes,
+    List<String>? displayList = Groups().contentAttributes?.displaySelectedLabelsFromSelection(widget.group?.attributes,
       usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
@@ -1031,7 +1031,7 @@ class _GroupCardState extends State<GroupCard> {
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
         if (attribute.usage == ContentAttributeUsage.property) {
-          List<String>? displayAttributeValues = attribute.displayLabelsFromSelection(groupAttributes);
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             propertiesList.add(_buildProperty("${attribute.displayTitle}: ", displayAttributeValues.join(', ')));
           }

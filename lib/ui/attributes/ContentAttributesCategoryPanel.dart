@@ -18,7 +18,7 @@ class ContentAttributesCategoryPanel extends StatefulWidget {
   final List<ContentAttributeValue>? attributeValues;
   final LinkedHashSet<dynamic>? selection;
   final bool filtersMode;
-  final Future<bool> Function({
+  final Future<bool?> Function({
     required BuildContext context,
     required ContentAttribute attribute,
     required ContentAttributeValue value
@@ -58,7 +58,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         String? requirementAttributeId = ((attributeRequirements != null) && attributeRequirements.isNotEmpty) ? attributeRequirements.keys.first : null;
         ContentAttribute? requirementAttribute = (requirementAttributeId != null) ? widget.contentAttributes?.findAttribute(id: requirementAttributeId) : null;
         dynamic requirementAttributeRawValue = ((attributeRequirements != null) && (requirementAttributeId != null)) ? attributeRequirements[requirementAttributeId] : null;
-        String contentMapKey = requirementAttribute?.displayLabel(requirementAttributeRawValue) ?? '';
+        String contentMapKey = requirementAttribute?.displaySelectLabel(requirementAttributeRawValue) ?? '';
         (contentMap[contentMapKey] ??= <ContentAttributeValue>[]).add(attributeValue);
       }
 
@@ -197,14 +197,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
   Widget _buildAttributeValueWidget(ContentAttributeValue attributeValue) {
     bool isSelected = _selection.contains(attributeValue.value);
-    String? imageAsset = (attributeValue.value != null) ?
-      (multipleSelection ?
-        (isSelected ? "check-box-filled" : "box-outline-gray") :
-        (isSelected ? "check-circle-filled" : "circle-outline-gray")
-      ) : null;
     
-    String? title = StringUtils.isNotEmpty(attributeValue.label) ?
-      widget.attribute.displayString(attributeValue.label) :
+    String? title = StringUtils.isNotEmpty(attributeValue.selectLabel) ?
+      widget.attribute.displayString(attributeValue.selectLabel) :
       Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear');
     
     String? info = StringUtils.isNotEmpty(attributeValue.info) ?
@@ -214,13 +209,18 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       Styles().textStyles?.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
       Styles().textStyles?.getTextStyle("widget.label.regular.thin");
     
+    String? imageAsset = (attributeValue.value != null) ?
+      (multipleSelection ?
+        (isSelected ? "check-box-filled" : "box-outline-gray") :
+        (isSelected ? "check-circle-filled" : "circle-outline-gray")
+      ) : null;
 
     return InkWell(onTap: () => _onTapAttributeValue(attributeValue), child:
       Container(color: (Colors.white), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
         Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
           Flexible(child:
             Padding(padding: const EdgeInsets.only(right: 8), child:
-              Text(title ?? attributeValue.label ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+              Text(title ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
             )
           ),
 
@@ -239,7 +239,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 
   void _onTapAttributeValue(ContentAttributeValue attributeValue) {
-    Analytics().logSelect(target: attributeValue.label, source: widget.attribute.title);
+    Analytics().logSelect(target: attributeValue.selectLabel, source: widget.attribute.title);
 
     if (widget.handleAttributeValue != null) {
       widget.handleAttributeValue!(
@@ -247,22 +247,28 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         attribute: widget.attribute,
         value: attributeValue
       ).then((dynamic result) {
-        if (result == true) {
-          _processAttribute(attributeValue);
+        if (result != false) {
+          _processTapAttributeValue(attributeValue, forceProcessing: (result == true));
         }
       });
     }
     else {
-      _processAttribute(attributeValue);
+      _processTapAttributeValue(attributeValue);
     }
 
   }
 
-  void _processAttribute(ContentAttributeValue attributeValue) {
+  void _processTapAttributeValue(ContentAttributeValue attributeValue, { bool forceProcessing = false }) {
     dynamic attributeRawValue = attributeValue.value;
     if (attributeRawValue != null) {
       if (_selection.contains(attributeRawValue)) {
-        _selection.remove(attributeRawValue);
+        int minSelectedCount = widget.attribute.requirements?.minSelectedCount ?? 0;
+        if (minSelectedCount < _selection.length) {
+          _selection.remove(attributeRawValue);
+        }
+        else if (!forceProcessing) {
+          return;
+        }
       }
       else {
         _selection.add(attributeRawValue);

@@ -47,11 +47,13 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
   @override
   void initState() {
     _timeZone = widget.startTime?.location ?? widget.endTime?.location ?? DateTimeUni.timezoneUniOrLocal;
+    
     if (widget.startTime != null) {
       TZDateTime startDateTime = TZDateTimeUtils.max(TZDateTime.from(widget.startTime!, _timeZone), TZDateTime.now(_timeZone));
       _startDate = TZDateTimeUtils.dateOnly(startDateTime);
       _startTime = TimeOfDay.fromDateTime(startDateTime);
     }
+    
     if (widget.endTime != null) {
       TZDateTime endDateTime = TZDateTimeUtils.max(TZDateTime.from(widget.endTime!, _timeZone), TZDateTime.now(_timeZone));
       _endDate = TZDateTimeUtils.dateOnly(endDateTime);

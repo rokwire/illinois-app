@@ -3463,7 +3463,8 @@
 	"model.event2.event_time.next_weekend": "Next weekend",
     "model.event2.event_time.this_month": "This month",
     "model.event2.event_time.next_month": "Next month",
-    "model.event2.event_time.custom_range": "Choose",
+    "model.event2.event_time.custom_range.select": "Choose",
+    "model.event2.event_time.custom_range.selected": "Custom",
 
     "model.canvas.calendar.event.type.event.label": "Evento",
     "model.canvas.calendar.event.type.assignment.label": "Asignación",

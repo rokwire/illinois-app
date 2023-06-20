@@ -96,6 +96,7 @@ class Event2HomePanel extends StatefulWidget {
         group: eventTypeFilterGroups[value],
       ));
     }
+
     return ContentAttribute(
       id: eventTypeContentAttributeId,
       title: Localization().getStringEx('panel.events2.home.attributes.event_type.title', 'Event Type'),
@@ -111,13 +112,18 @@ class Event2HomePanel extends StatefulWidget {
   static ContentAttribute eventTimeContentAttribute({ TZDateTime? customStartTime, TZDateTime? customEndTime }) {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
     for (EventTimeFilter value in EventTimeFilter.values) {
-      values.add(ContentAttributeValue(
+      values.add((value != EventTimeFilter.customRange) ? ContentAttributeValue(
+        label: eventTimeFilterToDisplayString(value),
+        info: eventTimeFilterDisplayInfo(value),
+        value: value,
+      ) : _CustomRangeEventTimeAttributeValue(
         label: eventTimeFilterToDisplayString(value),
         info: eventTimeFilterDisplayInfo(value, customStartTime: customStartTime, customEndTime: customEndTime),
         value: value,
-        customData: (value == EventTimeFilter.customRange) ? Event2TimeRangePanel.buldCustomData(customStartTime, customEndTime) : null,
+        customData: Event2TimeRangePanel.buldCustomData(customStartTime, customEndTime),
       ));
     }
+
     return ContentAttribute(
       id: eventTimeContentAttributeId,
       title: Localization().getStringEx('panel.events2.home.attributes.event_time.title', 'Date & Time'),
@@ -125,14 +131,14 @@ class Event2HomePanel extends StatefulWidget {
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.semantics', 'Double type to show date & time options.'),
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ internalContentAttributesScope },
-      requirements: ContentAttributeRequirements(maxSelectedCount: 1, scope: contentAttributeRequirementsScopeFilter),
+      requirements: ContentAttributeRequirements(minSelectedCount: 1, maxSelectedCount: 1, scope: contentAttributeRequirementsScopeFilter),
       values: values,
     );
   }
 
-  Future<bool> handleAttributeValue({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
+  Future<bool?> handleAttributeValue({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
     return ((attribute.id == eventTimeContentAttributeId) && (value.value == EventTimeFilter.customRange)) ?
-      handleCustomRangeTimeAttribute(context: context, attribute: attribute, value: value) : Future.value(false);
+      handleCustomRangeTimeAttribute(context: context, attribute: attribute, value: value) : null;
   }
 
   Future<bool> handleCustomRangeTimeAttribute({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
@@ -143,7 +149,9 @@ class Event2HomePanel extends StatefulWidget {
       value.info = eventTimeFilterDisplayInfo(EventTimeFilter.customRange, customStartTime: Event2TimeRangePanel.getStartTime(customData), customEndTime: Event2TimeRangePanel.getEndTime(customData));
       return true;
     }
-    return false;
+    else {
+      return false;
+    }
   }
 
 
@@ -376,7 +384,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if (_attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displayLabelsFromSelection(_attributes, complete: true);
+        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_attributes, complete: true);
         if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           for (String attributeValue in displayAttributeValues) {
             if (descriptionList.isNotEmpty) {
@@ -586,5 +594,16 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   void _onEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,)));
+  }
+}
+
+class _CustomRangeEventTimeAttributeValue extends ContentAttributeValue {
+  _CustomRangeEventTimeAttributeValue({String? label, dynamic value, String? group, Map<String, dynamic>? requirements, String? info, Map<String, dynamic>? customData }) :
+    super (label: label, value: value, group: group, requirements: requirements, info: info, customData: customData);
+
+  @override
+  String? get selectedLabel {
+    String title = Localization().getStringEx("model.event2.event_time.custom_range.selected", "Custom");
+    return (StringUtils.isNotEmpty(info)) ? '$title $info' : title;
   }
 }

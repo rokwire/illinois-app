@@ -337,7 +337,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
       if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
         for (ContentAttribute attribute in attributes) {
-          List<String>? displayAttributeValues = attribute.displayLabelsFromSelection(_contentAttributesSelection, complete: true);
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_contentAttributesSelection, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             displayAttributeValues = List.from(displayAttributeValues.map((String attribute) => "'$attribute'"));
             if (attributesList.isNotEmpty) {

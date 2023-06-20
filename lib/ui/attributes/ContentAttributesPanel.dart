@@ -26,7 +26,7 @@ class ContentAttributesPanel extends StatefulWidget {
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
 
-  final Future<bool> Function({
+  final Future<bool?> Function({
     required BuildContext context,
     required ContentAttribute attribute,
     required ContentAttributeValue value
@@ -120,14 +120,12 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   Widget _buildAttributeDropDown(ContentAttribute attribute) {
     LinkedHashSet<dynamic>? attributeRawValues = _selection[attribute.id];
     bool hasSelection = ((attributeRawValues != null) && attributeRawValues.isNotEmpty);
-    List<String>? displayAttributeLabels = (CollectionUtils.isEmpty(attributeRawValues) && (attribute.nullValue is String)) ?
-      List<String>.from([attribute.nullValue]) : attribute.displayLabelsFromRawValue(attributeRawValues);
 
     List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
     bool visible = (attributeValues?.isNotEmpty ?? false);
     bool enabled = (attributeValues?.isNotEmpty ?? false) && (hasSelection || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
-    String? title = _constructAttributeDropdownTitle(attribute, displayAttributeLabels);
+    String? title = _constructAttributeDropdownTitle(attribute, attributeRawValues);
     String? hint = widget.filtersMode ? (attribute.displaySemanticsFilterHint ?? attribute.displaySemanticsHint) : attribute.displaySemanticsHint;
     TextStyle? textStyle = Styles().textStyles?.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
     void Function()? onTap = enabled ? () => _onAttributeDropdownTap(attribute: attribute, attributeValues: attributeValues) : null;
@@ -146,26 +144,35 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     );
   }
 
-  String? _constructAttributeDropdownTitle(ContentAttribute attribute, List<String>? attributeLabels) {
-    if ((attributeLabels == null) || attributeLabels.isEmpty) {
-      return widget.filtersMode ? (attribute.displayEmptyFilterHint ?? attribute.displayEmptyHint) : attribute.displayEmptyHint;
-    }
-    else if (attributeLabels.length == 1) {
-      return attribute.displayString(attributeLabels.first);
+  String? _constructAttributeDropdownTitle(ContentAttribute attribute, LinkedHashSet<dynamic>? attributeRawValues) {
+
+    if (CollectionUtils.isEmpty(attributeRawValues) && (attribute.nullValue is String)) {
+      return attribute.displayString(attribute.nullValue);
     }
     else {
-      String title = '';
-      for (String attributeLabel in attributeLabels) {
-        String attributeName = attribute.displayString(attributeLabel) ?? attributeLabel;
-        if (attributeName.isNotEmpty) {
-          if (title.isNotEmpty) {
-            title += ', ';
-          }
-          title += attributeName;
-        }
+      List<String>? attributeLabels = attribute.displaySelectedLabelsFromRawValue(attributeRawValues);
+
+      if ((attributeLabels == null) || attributeLabels.isEmpty) {
+        return widget.filtersMode ? (attribute.displayEmptyFilterHint ?? attribute.displayEmptyHint) : attribute.displayEmptyHint;
       }
-      return title;
+      else if (attributeLabels.length == 1) {
+        return attribute.displayString(attributeLabels.first);
+      }
+      else {
+        String title = '';
+        for (String attributeLabel in attributeLabels) {
+          String attributeName = attribute.displayString(attributeLabel) ?? attributeLabel;
+          if (attributeName.isNotEmpty) {
+            if (title.isNotEmpty) {
+              title += ', ';
+            }
+            title += attributeName;
+          }
+        }
+        return title;
+      }
     }
+
   }
 
   void _onAttributeDropdownTap({required ContentAttribute attribute, List<ContentAttributeValue>? attributeValues}) {
@@ -277,7 +284,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       selectedAttributeValue = (selectedValue != null) ? ContentAttributeValue.findInList(attributeValues, value: selectedValue) : null;
 
       dynamic selectedRawValue = selectedAttributeValue?.value;
-      Analytics().logSelect(target: selectedAttributeValue?.label, source: attribute.title);
+      Analytics().logSelect(target: selectedAttributeValue?.selectLabel, source: attribute.title);
       setStateIfMounted(() {
         attributeRawValues.clear();
         if (selectedRawValue != null) {

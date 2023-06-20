@@ -97,7 +97,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ]);
 
   List<String>? get _displayCategories =>
-    Events2().contentAttributes?.displayLabelsFromSelection(widget.event?.attributes, usage: ContentAttributeUsage.category);
+    Events2().contentAttributes?.displaySelectedLabelsFromSelection(widget.event?.attributes, usage: ContentAttributeUsage.category);
 
   Widget get _favoriteButton {
     bool isFavorite = Auth2().isFavorite(widget.event);
