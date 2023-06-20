@@ -310,11 +310,12 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   bool get _canApply {
     TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
+    bool sameStartTime = ((startTime == null) && (widget.startTime == null)) ||
+      ((startTime != null) && (widget.startTime != null) && (startTime == widget.startTime));
     TZDateTime? endTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
-    return (((startTime != null) || (endTime != null)) &&
-        ((startTime == null) || (widget.startTime == null) || (startTime != widget.startTime)) &&
-        ((endTime == null) || (widget.endTime == null) || (endTime != widget.endTime))
-    );
+    bool sameEndTime = ((endTime == null) && (widget.endTime == null)) ||
+      ((endTime != null) && (widget.endTime != null) && (endTime == widget.endTime));
+    return ((startTime != null) || (endTime != null)) && (!sameStartTime || !sameEndTime);
   }
 
   void _onTapApply() {
