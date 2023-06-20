@@ -594,7 +594,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributes = attribute.displayLabelsFromSelection(groupAttributes, complete: true);
+        List<String>? displayAttributes = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
         if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
           attributesList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:

@@ -103,7 +103,7 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
   }
 
   void _onAttributeValue(ContentAttribute attribute, ContentAttributeValue value) {
-    Analytics().logSelect(target: value.label, source: attribute.title);    
+    Analytics().logSelect(target: value.selectLabel, source: attribute.title);    
 
     String? attributeId = attribute.id;
     String? attributeRawValue = value.value;
@@ -195,7 +195,7 @@ class _Event2AttributeButton extends StatelessWidget {
     String? imageAsset = StringUtils.isNotEmpty(attributeValue.value) ?
       (isSelected ? "check-box-filled" : "box-outline-gray") : null;
     //(isSelected ? "check-circle-filled" : "circle-outline-gray") : null;
-    String? title =  attribute.displayString(attributeValue.label);
+    String? title =  attribute.displayString(attributeValue.selectedLabel);
     TextStyle? textStyle = Styles().textStyles?.getTextStyle(isSelected ? "widget.button.title.medium.fat" : "widget.button.title.medium");
     Decoration decoration =
       ((index + 2) < count) ? BoxDecoration(
@@ -223,7 +223,7 @@ class _Event2AttributeButton extends StatelessWidget {
         Row(children: <Widget>[
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 12, top: 18, bottom: 18), child:
-              Text(title ?? attributeValue.label ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+              Text(title ?? attributeValue.selectLabel ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
             )
           ),
           

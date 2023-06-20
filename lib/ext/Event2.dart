@@ -92,11 +92,29 @@ String? eventSortTypeToDisplayString(EventSortType? value) {
   }
 }
 
-String? eventSortTypeToDisplayStatusString(EventSortType? value) {
+String? eventSortTypeDisplayStatusString(EventSortType? value) {
   switch (value) {
-    case EventSortType.dateTime: return Localization().getStringEx('model.event2.sort_type.status.date_time', 'by Date & Time');
-    case EventSortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.status.alphabetical', 'Alphabetically');
-    case EventSortType.proximity: return Localization().getStringEx('model.event2.sort_type.status.proximity', 'by Proximity');
+    case EventSortType.dateTime: return Localization().getStringEx('model.event2.sort_type.status.date_time', '{{headning_start}}Sort by{{headning_end}} Date & Time {{sort_order}}');
+    case EventSortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.status.alphabetical', '{{headning_start}}Sort{{headning_end}} Alphabetically {{sort_order}}');
+    case EventSortType.proximity: return Localization().getStringEx('model.event2.sort_type.status.proximity', '{{headning_start}}Sort by{{headning_end}} Proximity {{sort_order}}');
+    default: return null;
+  }
+}
+
+// EventSortOrder
+
+String? eventSortOrderIndicatorDisplayString(EventSortOrder? value) {
+  switch (value) {
+    case EventSortOrder.ascending: return Localization().getStringEx('model.event2.sort_order.indicator.ascending', '⇩');
+    case EventSortOrder.descending: return Localization().getStringEx('model.event2.sort_order.indicator.descending', '⇧');
+    default: return null;
+  }
+}
+
+String? eventSortOrderStatusDisplayString(EventSortOrder? value) {
+  switch (value) {
+    case EventSortOrder.ascending: return Localization().getStringEx('model.event2.sort_order.status.ascending', 'Asc');
+    case EventSortOrder.descending: return Localization().getStringEx('model.event2.sort_order.status.descending', 'Desc');
     default: return null;
   }
 }
@@ -129,21 +147,21 @@ String? eventTimeFilterToDisplayString(EventTimeFilter? value) {
     case EventTimeFilter.nextWeekend: return Localization().getStringEx("model.event2.event_time.next_weekend", "Next weekend");
     case EventTimeFilter.thisMonth: return Localization().getStringEx("model.event2.event_time.this_month", "This month");
     case EventTimeFilter.nextMonth: return Localization().getStringEx("model.event2.event_time.next_month", "Next month");
-    case EventTimeFilter.customRange: return Localization().getStringEx("model.event2.event_time.custom_range", "Choose");
+    case EventTimeFilter.customRange: return Localization().getStringEx("model.event2.event_time.custom_range.select", "Choose");
     default: return null;
   }
 }
 
-String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { DateTime? customStartTimeUtc, DateTime? customEndTimeUtc }) {
+String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { TZDateTime? customStartTime, TZDateTime? customEndTime }) {
   final String dateFormat = 'MM/dd';
   Map<String, dynamic> options = <String, dynamic>{};
-  Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTimeUtc, customEndTimeUtc: customEndTimeUtc);
+  Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTime?.toUtc(), customEndTimeUtc: customEndTime?.toUtc());
 
   int? startTimeEpoch = JsonUtils.intValue(options['end_time_after']);
-  TZDateTime? startTimeUni = (startTimeEpoch != null) ? DateTime.fromMillisecondsSinceEpoch(startTimeEpoch * 1000).toUniOrLocal() : null;
+  TZDateTime? startTimeUni = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? DateTimeUni.timezoneUniOrLocal, startTimeEpoch * 1000) : null;
 
   int? endTimeEpoch = JsonUtils.intValue(options['start_time_before']);
-  TZDateTime? endTimeUni = (endTimeEpoch != null) ? DateTime.fromMillisecondsSinceEpoch(endTimeEpoch * 1000).toUniOrLocal() : null;
+  TZDateTime? endTimeUni = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? DateTimeUni.timezoneUniOrLocal, endTimeEpoch * 1000).toUniOrLocal() : null;
 
   if (value == EventTimeFilter.upcoming) {
     return null;
@@ -154,7 +172,12 @@ String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { DateTime? customSta
   else {
     String? displayStartTime = (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
     String? displayEndTime = (endTimeUni != null) ? DateFormat(dateFormat).format(endTimeUni) : null;
-    return ((displayStartTime != null) && (displayEndTime != null)) ? '$displayStartTime - $displayEndTime' : null;
+    if (displayStartTime != null) {
+      return (displayEndTime != null) ? '$displayStartTime - $displayEndTime' : '$displayStartTime ⇧';  
+    }
+    else {
+      return (displayEndTime != null) ? '$displayEndTime ⇩' : null;
+    }
   }
 
 }

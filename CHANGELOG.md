@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Handled custom range Event Time filter in Events2 home panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Added
+- Added sort type and sort order capabilitues in Events2 home panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
 ## [5.0.11] - 2023-06-19
 ### Added
 - Added fcm notification deep link support for: Athletics/Team, Athletics/Tam/Roster and Guide/Article/Detail [#3326](https://github.com/rokwire/illinois-app/issues/3326).
