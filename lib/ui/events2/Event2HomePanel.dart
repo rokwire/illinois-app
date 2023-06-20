@@ -170,6 +170,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   late Map<String, dynamic> _attributes;
   
   late EventSortType _sortType;
+  late EventSortOrder _sortOrder;
   double? _sortDropdownWidth;
 
   @override
@@ -190,7 +191,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
     _types = widget.types ?? LinkedHashSetUtils.from<EventTypeFilter>(eventTypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<EventTypeFilter>();
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
-    _sortType = eventSortTypeFromString(Storage().events2Sort) ?? EventSortType.dateTime;
+    _sortType = eventSortTypeFromString(Storage().events2SortType) ?? EventSortType.dateTime;
+    _sortOrder = eventSortOrderFromString(Storage().events2SortOrder) ?? EventSortOrder.ascending;
 
     _loadingEvents = true;
     Events2().loadEvents(queryParam).then((List<Event2>? events) {
@@ -231,7 +233,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     customEndTimeUtc: _customEndTime?.toUtc(),
     types: _types,
     attributes: _attributes,
-    sortType: _sortType
+    sortType: _sortType,
+    sortOrder: _sortOrder,
   );
 
   // Widget
@@ -316,7 +319,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   Widget get _sortButton {
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
     return DropdownButtonHideUnderline(child:
-      DropdownButton2<String>(
+      DropdownButton2<EventSortType>(
         dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
         customButton: Event2FilterCommandButton(title: 'Sort', leftIconKey: 'sort'),
         isExpanded: false,
@@ -326,12 +329,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     );
   }
 
-  List<DropdownMenuItem<String>> _buildSortDropdownItems() {
-    List<DropdownMenuItem<String>> items = <DropdownMenuItem<String>>[];
+  List<DropdownMenuItem<EventSortType>> _buildSortDropdownItems() {
+    List<DropdownMenuItem<EventSortType>> items = <DropdownMenuItem<EventSortType>>[];
     for (EventSortType sortType in EventSortType.values) {
-      items.add(DropdownMenuItem<String>(
-        value: eventSortTypeToString(sortType),
-        child: Text(eventSortTypeToDisplayString(sortType) ?? '', overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
+      String? displaySortType = _sortDropdownItemTitle(sortType, sortOrder: (_sortType == sortType) ? _sortOrder : null);
+      items.add(DropdownMenuItem<EventSortType>(
+        value: sortType,
+        child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
           Styles().textStyles?.getTextStyle("widget.message.regular.fat") :
           Styles().textStyles?.getTextStyle("widget.message.regular"),
       )));
@@ -344,7 +348,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     for (EventSortType sortType in EventSortType.values) {
       final Size sizeFull = (TextPainter(
           text: TextSpan(
-            text: eventSortTypeToDisplayString(sortType) ?? '',
+            text: _sortDropdownItemTitle(sortType, sortOrder: EventSortOrder.ascending),
             style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
           ),
           textScaleFactor: MediaQuery.of(context).textScaleFactor,
@@ -355,6 +359,17 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       }
     }
     return min(width + 2 * 16, MediaQuery.of(context).size.width / 2); // add horizontal padding
+  }
+
+  String _sortDropdownItemTitle(EventSortType sortType, { EventSortOrder? sortOrder}) {
+    String? displaySortType = eventSortTypeToDisplayString(sortType);
+    if ((displaySortType != null) && (sortOrder != null)) {
+      String? displaySortOrderIndicator = eventSortOrderIndicatorToDisplayString(sortOrder);
+      if (displaySortOrderIndicator != null) {
+        displaySortType = "$displaySortType $displaySortOrderIndicator";
+      }
+    }
+    return displaySortType ?? '';
   }
 
   Widget _buildContentDescription() {
@@ -556,16 +571,22 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     return contentAttributes;
   }
 
-  void _onSortType(String? value) {
+  void _onSortType(EventSortType? value) {
     Analytics().logSelect(target: 'Sort');
-    EventSortType? sortType = eventSortTypeFromString(value);
-    if (sortType != null) {
+    if (value != null) {
       setState(() {
-        _sortType = sortType;
+        if (_sortType != value) {
+          _sortType = value;
+          _sortOrder = EventSortOrder.ascending;
+        }
+        else {
+          _sortOrder = (_sortOrder == EventSortOrder.ascending) ? EventSortOrder.descending : EventSortOrder.ascending;
+        }
         _loadingEvents = true;
       });
 
-      Storage().events2Sort = eventSortTypeToString(sortType);
+      Storage().events2SortType = eventSortTypeToString(_sortType);
+      Storage().events2SortOrder = eventSortOrderToString(_sortOrder);
 
       Events2().loadEvents(Events2Query(offset: 0, limit: max(_events?.length ?? 0, eventsPageLength), attributes: _attributes, sortType: _sortType)).then((List<Event2>? events) {
         setStateIfMounted(() {

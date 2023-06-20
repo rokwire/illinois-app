@@ -3446,6 +3446,9 @@
 	"model.event2.sort_type.status.alphabetical": "Alphabetically",
 	"model.event2.sort_type.status.proximity": "by Proximity",
 
+	"model.event2.sort_order.indicator.ascending": "⇩",
+	"model.event2.sort_order.indicator.descending": "⇧",
+
 	"model.event2.event_type.free": "Free",
 	"model.event2.event_type.paid": "Paid",
 	"model.event2.event_type.in_person": "In-person",

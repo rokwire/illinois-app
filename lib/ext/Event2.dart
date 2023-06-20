@@ -101,6 +101,16 @@ String? eventSortTypeToDisplayStatusString(EventSortType? value) {
   }
 }
 
+// EventSortOrder
+
+String? eventSortOrderIndicatorToDisplayString(EventSortOrder? value) {
+  switch (value) {
+    case EventSortOrder.ascending: return Localization().getStringEx('model.event2.sort_order.indicator.ascending', '⇩');
+    case EventSortOrder.descending: return Localization().getStringEx('model.event2.sort_order.indicator.descending', '⇧');
+    default: return null;
+  }
+}
+
 // EventTypeFilter
 
 String? eventTypeFilterToDisplayString(EventTypeFilter? value) {
