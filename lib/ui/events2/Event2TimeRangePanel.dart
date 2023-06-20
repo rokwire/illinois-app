@@ -39,25 +39,25 @@ class Event2TimeRangePanel extends StatefulWidget {
 
 class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
   late Location _timeZone;
-  TZDateTime? _startDate;
+  DateTime? _startDate;
   TimeOfDay? _startTime;
-  TZDateTime? _endDate;
+  DateTime? _endDate;
   TimeOfDay? _endTime;
 
   @override
   void initState() {
     _timeZone = widget.startTime?.location ?? widget.endTime?.location ?? DateTimeUni.timezoneUniOrLocal;
     
+    DateTime now = DateTime.now();
     if (widget.startTime != null) {
-      TZDateTime startDateTime = TZDateTimeUtils.max(TZDateTime.from(widget.startTime!, _timeZone), TZDateTime.now(_timeZone));
-      _startDate = TZDateTimeUtils.dateOnly(startDateTime);
+      DateTime startDateTime = DateTimeUtils.max(widget.startTime!, now);
+      _startDate = DateUtils.dateOnly(startDateTime);
       _startTime = TimeOfDay.fromDateTime(startDateTime);
     }
     
-    if (widget.endTime != null) {
-      TZDateTime endDateTime = TZDateTimeUtils.max(TZDateTime.from(widget.endTime!, _timeZone), TZDateTime.now(_timeZone));
-      _endDate = TZDateTimeUtils.dateOnly(endDateTime);
-      _endTime = TimeOfDay.fromDateTime(endDateTime);
+    if ((widget.endTime != null) && now.isBefore(widget.endTime!)) {
+      _endDate = DateUtils.dateOnly(widget.endTime!);
+      _endTime = TimeOfDay.fromDateTime(widget.endTime!);
     }
     super.initState();
   }
@@ -69,16 +69,8 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> actions = <Widget>[];
-    if ((_startDate != null) || (_endDate != null)) {
-      actions.add(_buildHeaderBarButton(
-        title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
-        onTap: _onTapApply,
-      ));
-    }
-
     return Scaffold(
-      appBar: HeaderBar(title: 'Date & Time', actions: actions,),
+      appBar: HeaderBar(title: 'Date & Time', actions: _canApply ? <Widget>[_applyButton] : null,),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -160,7 +152,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
   }
 
   Widget _buildDateTime({
-    TZDateTime? date,
+    DateTime? date,
     TimeOfDay? time,
     void Function()? onDate,
     void Function()? onTime,
@@ -214,6 +206,11 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
+  Widget get _applyButton => _buildHeaderBarButton(
+    title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
+    onTap: _onTapApply,
+  );
+
   Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) {
     return Semantics(label: title, button: true, excludeSemantics: true, child: 
       InkWell(onTap: onTap, child:
@@ -236,12 +233,6 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     );
   }
 
-  TZDateTime _dateWithTimeOfDay(TimeOfDay time) =>
-    _dateTimeWithDateAndTimeOfDay(TZDateTime.now(_timeZone), time);
-
-  TZDateTime _dateTimeWithDateAndTimeOfDay(TZDateTime date, TimeOfDay? time, { bool inclusive = false}) =>
-    TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
-
   void _onTimeZoneChanged(Location? value) {
     Analytics().logSelect(target: "Time Zone selected: $value");
     if (value != null) {
@@ -253,19 +244,18 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onStartDate() {
     Analytics().logSelect(target: "Start Date");
-    TZDateTime now = TZDateTimeUtils.dateOnly(TZDateTime.now(_timeZone));
-    TZDateTime nextYear = now.add(Duration(days: 365));
-    TZDateTime minDate = now;
-    TZDateTime maxDate = (_endDate != null) ? TZDateTimeUtils.min(TZDateTimeUtils.dateOnly(_endDate!), nextYear) : nextYear;
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    DateTime minDate = now;
+    DateTime maxDate = ((_endDate != null) && now.isBefore(_endDate!)) ? _endDate! : now.add(Duration(days: 366));
     showDatePicker(context: context,
-      initialDate: (_startDate != null) ? TZDateTimeUtils.dateOnly(_startDate!) : minDate,
+      initialDate: _startDate ?? minDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
     ).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _startDate = TZDateTime(_timeZone, result.year, result.month, result.day);
+          _startDate = DateUtils.dateOnly(result);
         });
       }
     });
@@ -273,7 +263,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
-    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay.fromDateTime(TZDateTime.now(_timeZone))).then((TimeOfDay? result) {
+    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay.fromDateTime(DateTime.now())).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
@@ -284,19 +274,18 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onEndDate() {
     Analytics().logSelect(target: "End Date");
-    TZDateTime now = TZDateTimeUtils.dateOnly(TZDateTime.now(_timeZone));
-    TZDateTime nextYear = now.add(Duration(days: 365));
-    TZDateTime minDate = (_startDate != null) ? TZDateTimeUtils.max(now, _startDate!) : now;
-    TZDateTime maxDate = nextYear;
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    DateTime minDate = (_startDate != null) ? DateTimeUtils.max(_startDate!, now) : now;
+    DateTime maxDate = minDate.add(Duration(days: 366));
     showDatePicker(context: context,
-      initialDate: (_endDate != null) ? TZDateTimeUtils.dateOnly(_endDate!) : minDate,
+      initialDate: _endDate ?? minDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
     ).then((DateTime? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _endDate = TZDateTime(_timeZone, result.year, result.month, result.day);
+          _endDate = DateUtils.dateOnly(result);
         });
       }
     });
@@ -313,15 +302,30 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     });
   }
 
+  DateTime _dateWithTimeOfDay(TimeOfDay time) =>
+    _dateTimeWithDateAndTimeOfDay(DateTime.now(), time);
+
+  TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
+    TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
+
+  bool get _canApply {
+    TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
+    TZDateTime? endTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
+    return (((startTime != null) || (endTime != null)) &&
+        ((startTime == null) || (widget.startTime == null) || (startTime != widget.startTime)) &&
+        ((endTime == null) || (widget.endTime == null) || (endTime != widget.endTime))
+    );
+  }
+
   void _onTapApply() {
     Analytics().logSelect(target: 'Apply');
-    TZDateTime? startDateTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
-    TZDateTime? endDateTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
-    if ((startDateTime != null) && (endDateTime != null) && endDateTime.isBefore(startDateTime)) {
+    TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
+    TZDateTime? endTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
+    if ((startTime != null) && (endTime != null) && endTime.isBefore(startTime)) {
       AppAlert.showDialogResult(context, 'End time must be after start time.');
     }
-    else if ((startDateTime != null) || (endDateTime != null)) {
-      Navigator.of(context).pop(Event2TimeRangePanel.buldCustomData(startDateTime, endDateTime));
+    else if ((startTime != null) || (endTime != null)) {
+      Navigator.of(context).pop(Event2TimeRangePanel.buldCustomData(startTime, endTime));
     }
   }
 }
