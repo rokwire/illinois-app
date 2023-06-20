@@ -535,7 +535,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
             _customStartTime = customStartTime;
             _customEndTime = customEndTime;
             _types = (typesList != null) ? LinkedHashSet<EventTypeFilter>.from(typesList) : LinkedHashSet<EventTypeFilter>();
-            _attributes = selection;
+            _attributes = attributes;
             _loadingEvents = true;
           });
 
