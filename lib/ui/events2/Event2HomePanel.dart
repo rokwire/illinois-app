@@ -162,6 +162,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   List<Event2>? _events;
   bool? _hasMoreEvents;
   bool _loadingEvents = false;
+  bool _refreshingEvents = false;
   bool _extendingEvents = false;
   static const int eventsPageLength = 4;
 
@@ -236,8 +237,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     sortOrder: _sortOrder,
   );
 
-  Future<void> _load(int limit, void Function(List<Event2>? events) handler) async {
-    if (!_loadingEvents) {
+  Future<void> _reload({ int limit = eventsPageLength }) async {
+    if (!_loadingEvents && !_refreshingEvents) {
       setStateIfMounted(() {
         _loadingEvents = true;
         _extendingEvents = false;
@@ -246,38 +247,45 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       List<Event2>? events = await Events2().loadEvents(queryParam(limit: limit));
 
       setStateIfMounted(() {
-        handler(events);
+        _events = (events != null) ? List<Event2>.from(events) : null;
+        _hasMoreEvents = (_events != null) ? (_events!.length >= limit) : null;
         _loadingEvents = false;
       });
     }
   }
 
-  Future<void> _reload({ int limit = eventsPageLength }) =>
-    _load(limit, (List<Event2>? events) {
-      _events = (events != null) ? List<Event2>.from(events) : null;
-      _hasMoreEvents = (_events != null) ? (_events!.length >= limit) : null;
-    });
 
 
-  Future<void> _refresh() {
-    int limit = max(_events?.length ?? 0, eventsPageLength);
-    return _load(limit, (List<Event2>? events) {
-      if (events != null) {
-        _events = List<Event2>.from(events);
-        _hasMoreEvents = (events.length >= limit);
-      }
-    });
+  Future<void> _refresh() async {
+
+    if (!_loadingEvents && !_refreshingEvents) {
+      setStateIfMounted(() {
+        _refreshingEvents = true;
+        _extendingEvents = false;
+      });
+
+      int limit = max(_events?.length ?? 0, eventsPageLength);
+      List<Event2>? events = await Events2().loadEvents(queryParam(limit: limit));
+
+      setStateIfMounted(() {
+        if (events != null) {
+          _events = List<Event2>.from(events);
+          _hasMoreEvents = (events.length >= limit);
+        }
+        _refreshingEvents = false;
+      });
+    }
   }
 
   Future<void> _extend() async {
-    if (!_loadingEvents && !_extendingEvents) {
+    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents) {
       setStateIfMounted(() {
         _extendingEvents = true;
       });
 
       List<Event2>? events = await Events2().loadEvents(queryParam(offset: _events?.length ?? 0, limit: eventsPageLength));
 
-      if (mounted && _extendingEvents && !_loadingEvents) {
+      if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
         setState(() {
           if (events != null) {
             if (_events != null) {
@@ -578,6 +586,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   Widget _buildEventsContent() {
     if (_loadingEvents) {
       return _buildLoadingContent();
+    }
+    else if (_refreshingEvents) {
+      return Container();
     }
     else if (_events == null) {
       return _buildMessageContent('Failed to load events.');
