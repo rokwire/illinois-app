@@ -5,8 +5,10 @@ import 'dart:math';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
@@ -18,8 +20,10 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/service/styles.dart';
@@ -49,52 +53,59 @@ class Event2HomePanel extends StatefulWidget {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel()));
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-        title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
-        description: Localization().getStringEx('panel.events2.home.attributes.launch.header.description', 'Discover events across campus and around the world'),
-        applyTitle: Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Explore'),
-        continueTitle:Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Not right now'),
-        contentAttributes: contentAttributesExt,
-        sortType: ContentAttributesSortType.native,
-        filtersMode: true,
-      ))).then((result) {
-        Map<String, dynamic>? selection = JsonUtils.mapValue(result);
-        if (selection != null) {
-          
-          List<EventTypeFilter>? typesList = eventTypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
-          Storage().events2Types = eventTypeFilterListToStringList(typesList) ;
+      getLocationServicesStatus().then((LocationServicesStatus? status) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+          title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
+          description: Localization().getStringEx('panel.events2.home.attributes.launch.header.description', 'Discover events across campus and around the world'),
+          applyTitle: Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Explore'),
+          continueTitle:Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Not right now'),
+          contentAttributes: contentAttributesExt(status: status),
+          sortType: ContentAttributesSortType.native,
+          filtersMode: true,
+        ))).then((result) {
+          Map<String, dynamic>? selection = JsonUtils.mapValue(result);
+          if (selection != null) {
+            
+            List<EventTypeFilter>? typesList = eventTypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
+            Storage().events2Types = eventTypeFilterListToStringList(typesList) ;
 
-          Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
-          attributes.remove(eventTypeContentAttributeId);
-          Storage().events2Attributes = attributes;
+            Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
+            attributes.remove(eventTypeContentAttributeId);
+            Storage().events2Attributes = attributes;
 
-          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
-            types: (typesList != null) ? LinkedHashSet<EventTypeFilter>.from(typesList) : null,
-            attributes: attributes,
-          )));
-        }
+            Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
+              types: (typesList != null) ? LinkedHashSet<EventTypeFilter>.from(typesList) : null,
+              attributes: attributes,
+            )));
+          }
+        });
       });
     }
   }
 
-  static ContentAttributes? get contentAttributesExt {
+  static Future<LocationServicesStatus?> getLocationServicesStatus() async =>
+    FlexUI().isLocationServicesAvailable ? await LocationServices().status : LocationServicesStatus.serviceDisabled;
+
+  static ContentAttributes? contentAttributesExt({ LocationServicesStatus? status }) {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(Events2().contentAttributes);
-    contentAttributes?.attributes?.insert(0, eventTypeContentAttribute);
+    contentAttributes?.attributes?.insert(0, eventTypeContentAttribute(status: status));
     return contentAttributes;
   }
 
   static const String internalContentAttributesScope = 'internal';
   static const String eventTypeContentAttributeId = 'event-type';
   static const String eventTimeContentAttributeId = 'event-time';
-  
-  static ContentAttribute get eventTypeContentAttribute {
+
+  static ContentAttribute eventTypeContentAttribute({ LocationServicesStatus? status }) {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
     for (EventTypeFilter value in EventTypeFilter.values) {
-      values.add(ContentAttributeValue(
-        label: eventTypeFilterToDisplayString(value),
-        value: value,
-        group: eventTypeFilterGroups[value],
-      ));
+      if ((value != EventTypeFilter.nearby) || ((status == LocationServicesStatus.permissionAllowed) || (status == LocationServicesStatus.permissionNotDetermined))) {
+        values.add(ContentAttributeValue(
+          label: eventTypeFilterToDisplayString(value),
+          value: value,
+          group: eventTypeFilterGroups[value],
+        ));
+      } 
     }
 
     return ContentAttribute(
@@ -153,8 +164,6 @@ class Event2HomePanel extends StatefulWidget {
       return false;
     }
   }
-
-
 }
 
 class _Event2HomePanelState extends State<Event2HomePanel> implements NotificationsListener {
@@ -176,13 +185,19 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   late EventSortOrder _sortOrder;
   double? _sortDropdownWidth;
 
+  LocationServicesStatus? _locationServicesStatus;
+  bool _loadingLocationServicesStatus = false;
+  Position? _currentLocation;
+
   ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     
     NotificationService().subscribe(this, [
-      Storage.notifySettingChanged
+      Storage.notifySettingChanged,
+      AppLivecycle.notifyStateChanged,
+      FlexUI.notifyChanged,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -202,7 +217,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     _sortType = eventSortTypeFromString(Storage().events2SortType) ?? EventSortType.dateTime;
     _sortOrder = eventSortOrderFromString(Storage().events2SortOrder) ?? EventSortOrder.ascending;
 
-    _reload();
+    _initLocationServicesStatus().then((_) {
+      _reload();
+    });
     super.initState();
   }
 
@@ -221,21 +238,100 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _reload();
       }
     }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _currentLocation = null;
+      _updateLocationServicesStatus();
+    }
   }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _currentLocation = null;
+    }
+    else if (state == AppLifecycleState.resumed) {
+      _updateLocationServicesStatus();
+    }
+  }
+
+  // Location Status and Position
+
+  Future<void> _initLocationServicesStatus() async {
+    setStateIfMounted(() {
+      _loadingLocationServicesStatus = true;
+    });
+    LocationServicesStatus? locationServicesStatus = await Event2HomePanel.getLocationServicesStatus();
+    if (locationServicesStatus != null) {
+      setStateIfMounted(() {
+        _locationServicesStatus = locationServicesStatus;
+        _loadingLocationServicesStatus = false;
+        _updateOnLocationServicesStatus();
+      });
+    }
+  }
+
+  Future<void> _updateLocationServicesStatus() async {
+    LocationServicesStatus? locationServicesStatus = await Event2HomePanel.getLocationServicesStatus();
+    if (_locationServicesStatus != locationServicesStatus) {
+      bool needsReload = false;
+      setStateIfMounted(() {
+        _locationServicesStatus = locationServicesStatus;
+        needsReload = _updateOnLocationServicesStatus();
+      });
+      if (needsReload) {
+        _reload();
+      }
+    }
+  }
+
+  bool _updateOnLocationServicesStatus() {
+    bool result = false;
+    bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
+    if (_types.contains(EventTypeFilter.nearby) && locationNotAvailable) {
+      _types.remove(EventTypeFilter.nearby);
+      result = true;
+    }
+    if ((_sortType == EventSortType.proximity) && locationNotAvailable) {
+      _sortType = EventSortType.dateTime;
+      result = true;
+    }
+    return result;
+  }
+
+  Future<Position?> _ensureLocationIfNeeded() async {
+    if (_queryNeedsLocation && (_currentLocation == null)) {
+      if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
+        _locationServicesStatus = await LocationServices().requestPermission();
+        _updateOnLocationServicesStatus();
+      }
+      if (_locationServicesStatus == LocationServicesStatus.permissionAllowed) {
+        _currentLocation = await LocationServices().location;
+      }
+    }
+    return _currentLocation;
+  } 
 
   // Event2 Query
 
-  Events2Query queryParam({int offset = 0, int limit = eventsPageLength}) => Events2Query(
-    offset: offset,
-    limit: limit,
-    timeFilter: _timeFilter,
-    customStartTimeUtc: _customStartTime?.toUtc(),
-    customEndTimeUtc: _customEndTime?.toUtc(),
-    types: _types,
-    attributes: _attributes,
-    sortType: _sortType,
-    sortOrder: _sortOrder,
-  );
+  bool get _queryNeedsLocation => (_types.contains(EventTypeFilter.nearby) || (_sortType == EventSortType.proximity));
+
+  Future<Events2Query> _queryParam({int offset = 0, int limit = eventsPageLength}) async {
+    await _ensureLocationIfNeeded();
+    return Events2Query(
+      offset: offset,
+      limit: limit,
+      timeFilter: _timeFilter,
+      customStartTimeUtc: _customStartTime?.toUtc(),
+      customEndTimeUtc: _customEndTime?.toUtc(),
+      types: _types,
+      attributes: _attributes,
+      sortType: _sortType,
+      sortOrder: _sortOrder,
+      location: _currentLocation,
+    );
+  } 
 
   Future<void> _reload({ int limit = eventsPageLength }) async {
     if (!_loadingEvents && !_refreshingEvents) {
@@ -244,7 +340,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = false;
       });
 
-      List<Event2>? events = await Events2().loadEvents(queryParam(limit: limit));
+      List<Event2>? events = await Events2().loadEvents(await _queryParam(limit: limit));
 
       setStateIfMounted(() {
         _events = (events != null) ? List<Event2>.from(events) : null;
@@ -265,7 +361,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       });
 
       int limit = max(_events?.length ?? 0, eventsPageLength);
-      List<Event2>? events = await Events2().loadEvents(queryParam(limit: limit));
+      List<Event2>? events = await Events2().loadEvents(await _queryParam(limit: limit));
 
       setStateIfMounted(() {
         if (events != null) {
@@ -283,7 +379,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = true;
       });
 
-      List<Event2>? events = await Events2().loadEvents(queryParam(offset: _events?.length ?? 0, limit: eventsPageLength));
+      List<Event2>? events = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: eventsPageLength));
 
       if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
         setState(() {
@@ -398,13 +494,15 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   List<DropdownMenuItem<EventSortType>> _buildSortDropdownItems() {
     List<DropdownMenuItem<EventSortType>> items = <DropdownMenuItem<EventSortType>>[];
     for (EventSortType sortType in EventSortType.values) {
-      String? displaySortType = _sortDropdownItemTitle(sortType, sortOrder: (_sortType == sortType) ? _sortOrder : null);
-      items.add(DropdownMenuItem<EventSortType>(
-        value: sortType,
-        child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
-          Styles().textStyles?.getTextStyle("widget.message.regular.fat") :
-          Styles().textStyles?.getTextStyle("widget.message.regular"),
-      )));
+      if ((sortType != EventSortType.proximity) || (_locationServicesStatus == LocationServicesStatus.permissionAllowed) || (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined)) {
+        String? displaySortType = _sortDropdownItemTitle(sortType, sortOrder: (_sortType == sortType) ? _sortOrder : null);
+        items.add(DropdownMenuItem<EventSortType>(
+          value: sortType,
+          child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
+            Styles().textStyles?.getTextStyle("widget.message.regular.fat") :
+            Styles().textStyles?.getTextStyle("widget.message.regular"),
+        )));
+      }
     }
     return items;
   }
@@ -584,7 +682,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   );
 
   Widget _buildEventsContent() {
-    if (_loadingEvents) {
+    if (_loadingEvents || _loadingLocationServicesStatus) {
       return _buildLoadingContent();
     }
     else if (_refreshingEvents) {
@@ -594,7 +692,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       return _buildMessageContent('Failed to load events.');
     }
     else if (_events?.length == 0) {
-      return _buildMessageContent(_attributes.isNotEmpty ? 'There are no events matching the selected filters.' : 'There are no events defined yet.');
+      return _buildMessageContent('There are no events matching the selected filters.');
     }
     else {
       return _buildEventsList();
@@ -646,7 +744,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
 
   ContentAttributes? get contentAttributesExt {
-    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Event2HomePanel.contentAttributesExt);
+    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Event2HomePanel.contentAttributesExt(status: _locationServicesStatus));
     contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: _customStartTime, customEndTime: _customEndTime));
     return contentAttributes;
   }
