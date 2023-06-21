@@ -159,9 +159,11 @@ class Event2HomePanel extends StatefulWidget {
 
 class _Event2HomePanelState extends State<Event2HomePanel> implements NotificationsListener {
 
-  bool _loadingEvents = false;
   List<Event2>? _events;
-  static const int eventsPageLength = 12;
+  bool? _hasMoreEvents;
+  bool _loadingEvents = false;
+  bool _extendingEvents = false;
+  static const int eventsPageLength = 4;
 
   late EventTimeFilter _timeFilter;
   TZDateTime? _customStartTime;
@@ -173,11 +175,16 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   late EventSortOrder _sortOrder;
   double? _sortDropdownWidth;
 
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
+    
     NotificationService().subscribe(this, [
       Storage.notifySettingChanged
     ]);
+
+    _scrollController.addListener(_scrollListener);
 
     _timeFilter = widget.timeFilter ?? eventTimeFilterFromString(Storage().events2Time) ?? EventTimeFilter.upcoming;
 
@@ -194,13 +201,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     _sortType = eventSortTypeFromString(Storage().events2SortType) ?? EventSortType.dateTime;
     _sortOrder = eventSortOrderFromString(Storage().events2SortOrder) ?? EventSortOrder.ascending;
 
-    _loadingEvents = true;
-    Events2().loadEvents(queryParam).then((List<Event2>? events) {
-      setStateIfMounted(() {
-        _events = (events != null) ? List<Event2>.from(events) : null;
-        _loadingEvents = false;
-      });
-    });
+    _reload();
     super.initState();
   }
 
@@ -216,16 +217,14 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   void onNotification(String name, param) {
     if (name == Storage.notifySettingChanged) {
       if (param == rokwire.Storage.debugUseSampleEvents2Key) {
-        _onRefresh();
+        _reload();
       }
     }
   }
 
   // Event2 Query
 
-  Events2Query get queryParam => queryParamEx();
-
-  Events2Query queryParamEx({int offset = 0, int limit = eventsPageLength}) => Events2Query(
+  Events2Query queryParam({int offset = 0, int limit = eventsPageLength}) => Events2Query(
     offset: offset,
     limit: limit,
     timeFilter: _timeFilter,
@@ -236,6 +235,65 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     sortType: _sortType,
     sortOrder: _sortOrder,
   );
+
+  Future<void> _load(int limit, void Function(List<Event2>? events) handler) async {
+    if (!_loadingEvents) {
+      setStateIfMounted(() {
+        _loadingEvents = true;
+        _extendingEvents = false;
+      });
+
+      List<Event2>? events = await Events2().loadEvents(queryParam(limit: limit));
+
+      setStateIfMounted(() {
+        handler(events);
+        _loadingEvents = false;
+      });
+    }
+  }
+
+  Future<void> _reload({ int limit = eventsPageLength }) =>
+    _load(limit, (List<Event2>? events) {
+      _events = (events != null) ? List<Event2>.from(events) : null;
+      _hasMoreEvents = (_events != null) ? (_events!.length >= limit) : null;
+    });
+
+
+  Future<void> _refresh() {
+    int limit = max(_events?.length ?? 0, eventsPageLength);
+    return _load(limit, (List<Event2>? events) {
+      if (events != null) {
+        _events = List<Event2>.from(events);
+        _hasMoreEvents = (events.length >= limit);
+      }
+    });
+  }
+
+  Future<void> _extend() async {
+    if (!_loadingEvents && !_extendingEvents) {
+      setStateIfMounted(() {
+        _extendingEvents = true;
+      });
+
+      List<Event2>? events = await Events2().loadEvents(queryParam(offset: _events?.length ?? 0, limit: eventsPageLength));
+
+      if (mounted && _extendingEvents && !_loadingEvents) {
+        setState(() {
+          if (events != null) {
+            if (_events != null) {
+              _events?.addAll(events);
+            }
+            else {
+              _events = List<Event2>.from(events);
+            }
+            _hasMoreEvents = (events.length >= eventsPageLength);
+          }
+          _extendingEvents = false;
+        });
+      }
+
+    }
+  }
 
   // Widget
 
@@ -254,7 +312,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       _buildCommandBar(),
       Expanded(child:
         RefreshIndicator(onRefresh: _onRefresh, child:
-          SingleChildScrollView(child:
+          SingleChildScrollView(controller: _scrollController, child:
             _buildEventsContent(),
           )
         )
@@ -539,6 +597,11 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         Event2Card(event, onTap: () => _onEvent(event),),
       ),);
     }
+    if (_extendingEvents) {
+      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
+        _extendingIndicator
+      ));
+    }
     return Padding(padding: EdgeInsets.all(16), child:
       Column(children:  cardsList,)
     );
@@ -566,20 +629,24 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     ],);
   }
 
-  Future<void> _onRefresh() async {
-    if (_loadingEvents != true) {
-      setState(() {
-        _loadingEvents = true;
-      });
+  Widget get _extendingIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
+    Align(alignment: Alignment.center, child:
+      SizedBox(width: 24, height: 24, child:
+        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
 
-      Events2().loadEvents(queryParamEx(limit: max(_events?.length ?? 0, eventsPageLength))).then((List<Event2>? events) {
-        setStateIfMounted(() {
-          _events = (events != null) ? List<Event2>.from(events) : null;
-          _loadingEvents = false;
-        });
-      });
+  ContentAttributes? get contentAttributesExt {
+    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Event2HomePanel.contentAttributesExt);
+    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: _customStartTime, customEndTime: _customEndTime));
+    return contentAttributes;
+  }
+
+  void _scrollListener() {
+    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreEvents != false) && !_loadingEvents && !_extendingEvents) {
+      _extend();
     }
   }
+
+  Future<void> _onRefresh() => _refresh();
 
   void _onFilters() {
     Analytics().logSelect(target: 'Filters');
@@ -625,24 +692,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
             _customEndTime = customEndTime;
             _types = (typesList != null) ? LinkedHashSet<EventTypeFilter>.from(typesList) : LinkedHashSet<EventTypeFilter>();
             _attributes = attributes;
-            _loadingEvents = true;
           });
 
-          Events2().loadEvents(queryParam).then((List<Event2>? events) {
-            setStateIfMounted(() {
-              _events = (events != null) ? List<Event2>.from(events) : null;
-              _loadingEvents = false;
-            });
-          });
+          _reload();
         }
       });
     }
-  }
-
-  ContentAttributes? get contentAttributesExt {
-    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Event2HomePanel.contentAttributesExt);
-    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: _customStartTime, customEndTime: _customEndTime));
-    return contentAttributes;
   }
 
   void _onSortType(EventSortType? value) {
@@ -656,18 +711,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         else {
           _sortOrder = (_sortOrder == EventSortOrder.ascending) ? EventSortOrder.descending : EventSortOrder.ascending;
         }
-        _loadingEvents = true;
       });
 
       Storage().events2SortType = eventSortTypeToString(_sortType);
       Storage().events2SortOrder = eventSortOrderToString(_sortOrder);
 
-      Events2().loadEvents(Events2Query(offset: 0, limit: max(_events?.length ?? 0, eventsPageLength), attributes: _attributes, sortType: _sortType)).then((List<Event2>? events) {
-        setStateIfMounted(() {
-          _events = (events != null) ? List<Event2>.from(events) : null;
-          _loadingEvents = false;
-        });
-      });
+      _reload();
     }
   }
 
