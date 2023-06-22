@@ -33,11 +33,11 @@ import 'package:timezone/timezone.dart';
 class Event2HomePanel extends StatefulWidget {
   static final String routeName = 'Event2HomePanel';
 
-  final EventTimeFilter? timeFilter;
+  final Event2TimeFilter? timeFilter;
   final TZDateTime? customStartTime;
   final TZDateTime? customEndTime;
 
-  final LinkedHashSet<EventTypeFilter>? types;
+  final LinkedHashSet<Event2TypeFilter>? types;
   final Map<String, dynamic>? attributes;
 
   Event2HomePanel({Key? key,
@@ -66,15 +66,15 @@ class Event2HomePanel extends StatefulWidget {
           Map<String, dynamic>? selection = JsonUtils.mapValue(result);
           if (selection != null) {
             
-            List<EventTypeFilter>? typesList = eventTypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
-            Storage().events2Types = eventTypeFilterListToStringList(typesList) ;
+            List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
+            Storage().events2Types = event2TypeFilterListToStringList(typesList) ;
 
             Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
             attributes.remove(eventTypeContentAttributeId);
             Storage().events2Attributes = attributes;
 
             Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
-              types: (typesList != null) ? LinkedHashSet<EventTypeFilter>.from(typesList) : null,
+              types: (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : null,
               attributes: attributes,
             )));
           }
@@ -100,10 +100,10 @@ class Event2HomePanel extends StatefulWidget {
   static ContentAttribute buildEventTypeContentAttribute({ LocationServicesStatus? status }) {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
     bool locationAvailable = ((status == LocationServicesStatus.permissionAllowed) || (status == LocationServicesStatus.permissionNotDetermined));
-    for (EventTypeFilter value in EventTypeFilter.values) {
-      if ((value != EventTypeFilter.nearby) || locationAvailable) {
+    for (Event2TypeFilter value in Event2TypeFilter.values) {
+      if ((value != Event2TypeFilter.nearby) || locationAvailable) {
         values.add(ContentAttributeValue(
-          label: eventTypeFilterToDisplayString(value),
+          label: event2TypeFilterToDisplayString(value),
           value: value,
           group: eventTypeFilterGroups[value],
         ));
@@ -124,14 +124,14 @@ class Event2HomePanel extends StatefulWidget {
 
   static ContentAttribute eventTimeContentAttribute({ TZDateTime? customStartTime, TZDateTime? customEndTime }) {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
-    for (EventTimeFilter value in EventTimeFilter.values) {
-      values.add((value != EventTimeFilter.customRange) ? ContentAttributeValue(
-        label: eventTimeFilterToDisplayString(value),
-        info: eventTimeFilterDisplayInfo(value),
+    for (Event2TimeFilter value in Event2TimeFilter.values) {
+      values.add((value != Event2TimeFilter.customRange) ? ContentAttributeValue(
+        label: event2TimeFilterToDisplayString(value),
+        info: event2TimeFilterDisplayInfo(value),
         value: value,
       ) : _CustomRangeEventTimeAttributeValue(
-        label: eventTimeFilterToDisplayString(value),
-        info: eventTimeFilterDisplayInfo(value, customStartTime: customStartTime, customEndTime: customEndTime),
+        label: event2TimeFilterToDisplayString(value),
+        info: event2TimeFilterDisplayInfo(value, customStartTime: customStartTime, customEndTime: customEndTime),
         value: value,
         customData: Event2TimeRangePanel.buldCustomData(customStartTime, customEndTime),
       ));
@@ -150,7 +150,7 @@ class Event2HomePanel extends StatefulWidget {
   }
 
   Future<bool?> handleAttributeValue({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
-    return ((attribute.id == eventTimeContentAttributeId) && (value.value == EventTimeFilter.customRange)) ?
+    return ((attribute.id == eventTimeContentAttributeId) && (value.value == Event2TimeFilter.customRange)) ?
       handleCustomRangeTimeAttribute(context: context, attribute: attribute, value: value) : null;
   }
 
@@ -159,7 +159,7 @@ class Event2HomePanel extends StatefulWidget {
     Map<String, dynamic>? customData = JsonUtils.mapValue(result);
     if (customData != null) {
       value.customData = customData;
-      value.info = eventTimeFilterDisplayInfo(EventTimeFilter.customRange, customStartTime: Event2TimeRangePanel.getStartTime(customData), customEndTime: Event2TimeRangePanel.getEndTime(customData));
+      value.info = event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: Event2TimeRangePanel.getStartTime(customData), customEndTime: Event2TimeRangePanel.getEndTime(customData));
       return true;
     }
     else {
@@ -177,14 +177,14 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   bool _extendingEvents = false;
   static const int eventsPageLength = 4;
 
-  late EventTimeFilter _timeFilter;
+  late Event2TimeFilter _timeFilter;
   TZDateTime? _customStartTime;
   TZDateTime? _customEndTime;
-  late LinkedHashSet<EventTypeFilter> _types;
+  late LinkedHashSet<Event2TypeFilter> _types;
   late Map<String, dynamic> _attributes;
   
-  late EventSortType _sortType;
-  late EventSortOrder _sortOrder;
+  late Event2SortType _sortType;
+  late Event2SortOrder _sortOrder;
   double? _sortDropdownWidth;
 
   LocationServicesStatus? _locationServicesStatus;
@@ -204,20 +204,20 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
     _scrollController.addListener(_scrollListener);
 
-    _timeFilter = widget.timeFilter ?? eventTimeFilterFromString(Storage().events2Time) ?? EventTimeFilter.upcoming;
+    _timeFilter = widget.timeFilter ?? event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
 
-    if ((_timeFilter == EventTimeFilter.customRange) && (widget.customStartTime != null) && (widget.customEndTime != null)) {
+    if ((_timeFilter == Event2TimeFilter.customRange) && (widget.customStartTime != null) && (widget.customEndTime != null)) {
       _customStartTime = widget.customStartTime;
       _customEndTime = widget.customEndTime;
     }
     else {
-      _timeFilter = EventTimeFilter.upcoming;
+      _timeFilter = Event2TimeFilter.upcoming;
     }
 
-    _types = widget.types ?? LinkedHashSetUtils.from<EventTypeFilter>(eventTypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<EventTypeFilter>();
+    _types = widget.types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
-    _sortType = eventSortTypeFromString(Storage().events2SortType) ?? EventSortType.dateTime;
-    _sortOrder = eventSortOrderFromString(Storage().events2SortOrder) ?? EventSortOrder.ascending;
+    _sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    _sortOrder = event2SortOrderFromString(Storage().events2SortOrder) ?? Event2SortOrder.ascending;
 
     _initLocationServicesStatus().then((_) {
       _reload();
@@ -291,12 +291,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   bool _updateOnLocationServicesStatus() {
     bool result = false;
     bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
-    if (_types.contains(EventTypeFilter.nearby) && locationNotAvailable) {
-      _types.remove(EventTypeFilter.nearby);
+    if (_types.contains(Event2TypeFilter.nearby) && locationNotAvailable) {
+      _types.remove(Event2TypeFilter.nearby);
       result = true;
     }
-    if ((_sortType == EventSortType.proximity) && locationNotAvailable) {
-      _sortType = EventSortType.dateTime;
+    if ((_sortType == Event2SortType.proximity) && locationNotAvailable) {
+      _sortType = Event2SortType.dateTime;
       result = true;
     }
     return result;
@@ -317,7 +317,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   // Event2 Query
 
-  bool get _queryNeedsLocation => (_types.contains(EventTypeFilter.nearby) || (_sortType == EventSortType.proximity));
+  bool get _queryNeedsLocation => (_types.contains(Event2TypeFilter.nearby) || (_sortType == Event2SortType.proximity));
 
   Future<Events2Query> _queryParam({int offset = 0, int limit = eventsPageLength}) async {
     if (_queryNeedsLocation) {
@@ -485,7 +485,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   Widget get _sortButton {
     _sortDropdownWidth ??= _evaluateSortDropdownWidth();
     return DropdownButtonHideUnderline(child:
-      DropdownButton2<EventSortType>(
+      DropdownButton2<Event2SortType>(
         dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
         customButton: Event2FilterCommandButton(title: 'Sort', leftIconKey: 'sort'),
         isExpanded: false,
@@ -495,13 +495,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     );
   }
 
-  List<DropdownMenuItem<EventSortType>> _buildSortDropdownItems() {
-    List<DropdownMenuItem<EventSortType>> items = <DropdownMenuItem<EventSortType>>[];
+  List<DropdownMenuItem<Event2SortType>> _buildSortDropdownItems() {
+    List<DropdownMenuItem<Event2SortType>> items = <DropdownMenuItem<Event2SortType>>[];
     bool locationAvailable = ((_locationServicesStatus == LocationServicesStatus.permissionAllowed) || (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
-    for (EventSortType sortType in EventSortType.values) {
-      if ((sortType != EventSortType.proximity) || locationAvailable) {
+    for (Event2SortType sortType in Event2SortType.values) {
+      if ((sortType != Event2SortType.proximity) || locationAvailable) {
         String? displaySortType = _sortDropdownItemTitle(sortType, sortOrder: (_sortType == sortType) ? _sortOrder : null);
-        items.add(DropdownMenuItem<EventSortType>(
+        items.add(DropdownMenuItem<Event2SortType>(
           value: sortType,
           child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
             Styles().textStyles?.getTextStyle("widget.message.regular.fat") :
@@ -514,10 +514,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   double _evaluateSortDropdownWidth() {
     double width = 0;
-    for (EventSortType sortType in EventSortType.values) {
+    for (Event2SortType sortType in Event2SortType.values) {
       final Size sizeFull = (TextPainter(
           text: TextSpan(
-            text: _sortDropdownItemTitle(sortType, sortOrder: EventSortOrder.ascending),
+            text: _sortDropdownItemTitle(sortType, sortOrder: Event2SortOrder.ascending),
             style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
           ),
           textScaleFactor: MediaQuery.of(context).textScaleFactor,
@@ -530,10 +530,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     return min(width + 2 * 16, MediaQuery.of(context).size.width / 2); // add horizontal padding
   }
 
-  String _sortDropdownItemTitle(EventSortType sortType, { EventSortOrder? sortOrder}) {
-    String? displaySortType = eventSortTypeToDisplayString(sortType);
+  String _sortDropdownItemTitle(Event2SortType sortType, { Event2SortOrder? sortOrder}) {
+    String? displaySortType = event2SortTypeToDisplayString(sortType);
     if ((displaySortType != null) && (sortOrder != null)) {
-      String? displaySortOrderIndicator = eventSortOrderIndicatorDisplayString(sortOrder);
+      String? displaySortOrderIndicator = event2SortOrderIndicatorDisplayString(sortOrder);
       if (displaySortOrderIndicator != null) {
         displaySortType = "$displaySortType $displaySortOrderIndicator";
       }
@@ -546,9 +546,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
     TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
 
-    String? timeDescription = (_timeFilter != EventTimeFilter.customRange) ?
-      eventTimeFilterToDisplayString(_timeFilter) :
-      eventTimeFilterDisplayInfo(EventTimeFilter.customRange, customStartTime: _customStartTime, customEndTime: _customEndTime);
+    String? timeDescription = (_timeFilter != Event2TimeFilter.customRange) ?
+      event2TimeFilterToDisplayString(_timeFilter) :
+      event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: _customStartTime, customEndTime: _customEndTime);
     
     if (timeDescription != null) {
       if (descriptionList.isNotEmpty) {
@@ -557,11 +557,11 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       descriptionList.add(TextSpan(text: timeDescription, style: regularStyle,),);
     }
 
-    for (EventTypeFilter type in _types) {
+    for (Event2TypeFilter type in _types) {
       if (descriptionList.isNotEmpty) {
         descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
       }
-      descriptionList.add(TextSpan(text: eventTypeFilterToDisplayString(type), style: regularStyle,),);
+      descriptionList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
     }
 
     ContentAttributes? contentAttributes = Events2().contentAttributes;
@@ -614,7 +614,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
     List<InlineSpan> descriptionList = <InlineSpan>[];
 
-    String statusString = eventSortTypeDisplayStatusString(_sortType) ?? '';
+    String statusString = event2SortTypeDisplayStatusString(_sortType) ?? '';
     int headingStartIndex = statusString.indexOf(headingStartMarker);
     int headingEndIndex = statusString.indexOf(headingEndMarker);
     bool hasHeading = (0 <= headingStartIndex) && (headingStartIndex < headingEndIndex);
@@ -631,7 +631,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
         descriptionList.add(TextSpan(text: statusString.substring(headingEndIndex + headingEndMarker.length, sortOrderIndex), style: regularStyle,),);  
         
-        descriptionList.add(TextSpan(text: eventSortOrderStatusDisplayString(_sortOrder), style: regularStyle,),);
+        descriptionList.add(TextSpan(text: event2SortOrderStatusDisplayString(_sortOrder), style: regularStyle,),);
         
         if ((sortOrderIndex + sortOrderMarker.length) < statusString.length) {
           descriptionList.add(TextSpan(text: statusString.substring(sortOrderIndex + sortOrderMarker.length + 1), style: regularStyle,),);    
@@ -643,7 +643,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           descriptionList.add(TextSpan(text: statusString.substring(0, sortOrderIndex), style: regularStyle,),);  
         }
         
-        descriptionList.add(TextSpan(text: eventSortOrderStatusDisplayString(_sortOrder), style: regularStyle,),);
+        descriptionList.add(TextSpan(text: event2SortOrderStatusDisplayString(_sortOrder), style: regularStyle,),);
 
         descriptionList.add(TextSpan(text: statusString.substring(sortOrderIndex + sortOrderMarker.length, headingStartIndex), style: regularStyle,),);  
 
@@ -670,7 +670,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           descriptionList.add(TextSpan(text: statusString.substring(0, sortOrderIndex), style: regularStyle,),);  
         }
         
-        descriptionList.add(TextSpan(text: eventSortOrderStatusDisplayString(_sortOrder), style: regularStyle,),);
+        descriptionList.add(TextSpan(text: event2SortOrderStatusDisplayString(_sortOrder), style: regularStyle,),);
 
         if ((sortOrderIndex + sortOrderMarker.length) < statusString.length) {
           descriptionList.add(TextSpan(text: statusString.substring(sortOrderIndex + sortOrderMarker.length + 1), style: regularStyle,),);    
@@ -785,16 +785,16 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         if ((selection != null) && mounted) {
 
           TZDateTime? customStartTime, customEndTime;
-          EventTimeFilter timeFilter = eventTimeFilterListFromSelection(selection[Event2HomePanel.eventTimeContentAttributeId]) ?? _timeFilter;
-          Storage().events2Time = eventTimeFilterToString(timeFilter);
-          if (timeFilter == EventTimeFilter.customRange) {
-            Map<String, dynamic>? customData = contentAttributes?.findAttribute(id: Event2HomePanel.eventTimeContentAttributeId)?.findValue(value: EventTimeFilter.customRange)?.customData;
+          Event2TimeFilter timeFilter = event2TimeFilterListFromSelection(selection[Event2HomePanel.eventTimeContentAttributeId]) ?? _timeFilter;
+          Storage().events2Time = event2TimeFilterToString(timeFilter);
+          if (timeFilter == Event2TimeFilter.customRange) {
+            Map<String, dynamic>? customData = contentAttributes?.findAttribute(id: Event2HomePanel.eventTimeContentAttributeId)?.findValue(value: Event2TimeFilter.customRange)?.customData;
             customStartTime = Event2TimeRangePanel.getStartTime(customData);
             customEndTime = Event2TimeRangePanel.getEndTime(customData);
           }
 
-          List<EventTypeFilter>? typesList = eventTypeFilterListFromSelection(selection[Event2HomePanel.eventTypeContentAttributeId]);
-          Storage().events2Types = eventTypeFilterListToStringList(typesList);
+          List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[Event2HomePanel.eventTypeContentAttributeId]);
+          Storage().events2Types = event2TypeFilterListToStringList(typesList);
 
           Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
           attributes.remove(Event2HomePanel.eventTimeContentAttributeId);
@@ -805,7 +805,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
             _timeFilter = timeFilter;
             _customStartTime = customStartTime;
             _customEndTime = customEndTime;
-            _types = (typesList != null) ? LinkedHashSet<EventTypeFilter>.from(typesList) : LinkedHashSet<EventTypeFilter>();
+            _types = (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : LinkedHashSet<Event2TypeFilter>();
             _attributes = attributes;
           });
 
@@ -815,21 +815,21 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
   }
 
-  void _onSortType(EventSortType? value) {
+  void _onSortType(Event2SortType? value) {
     Analytics().logSelect(target: 'Sort');
     if (value != null) {
       setState(() {
         if (_sortType != value) {
           _sortType = value;
-          _sortOrder = EventSortOrder.ascending;
+          _sortOrder = Event2SortOrder.ascending;
         }
         else {
-          _sortOrder = (_sortOrder == EventSortOrder.ascending) ? EventSortOrder.descending : EventSortOrder.ascending;
+          _sortOrder = (_sortOrder == Event2SortOrder.ascending) ? Event2SortOrder.descending : Event2SortOrder.ascending;
         }
       });
 
-      Storage().events2SortType = eventSortTypeToString(_sortType);
-      Storage().events2SortOrder = eventSortOrderToString(_sortOrder);
+      Storage().events2SortType = event2SortTypeToString(_sortType);
+      Storage().events2SortOrder = event2SortOrderToString(_sortOrder);
 
       _reload();
     }
