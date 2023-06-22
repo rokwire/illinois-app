@@ -3302,10 +3302,6 @@
     "widget.id_card.dialog.button.mobile_access.renew.cancel": "Cancelar",
     "widget.id_card.dialog.button.mobile_access.renew_access": "Renovar acceso",
     "widget.id_card.dialog.text.renew_access.done": "Si su i-card+ no funciona en 30 minutos, llame al <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, envíe un correo electrónico a <a href='mailto:{{mobile_access_email}} '>{{mobile_access_email}}</a>, o <a href='{{mobile_access_website_url}}'>visite el sitio web de i-card</a> <img src='asset:{{external_link_icon}}' alt= ''/>",
-    "widget.id_card.label.identity_credential.label": "Credencial",
-    "widget.id_card.label.identity_credential.id.label": "Id: %s",
-    "widget.id_card.label.identity_credentials.label": "Credenciales de identidad",
-    "widget.id_card.label.identity_credentials.not_available": "No hay credenciales de identidad disponibles.",
 
     "widget.bus_pass.header.title": "MTD pase de autobús",
     "widget.card.label.uin.title": "UIN",

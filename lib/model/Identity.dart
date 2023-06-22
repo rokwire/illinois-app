@@ -231,16 +231,16 @@ class StudentId {
         resultDescription: JsonUtils.stringValue(json['result_description']),
         isActiveCard: isActiveCard,
         birthYear: JsonUtils.intValue(int.tryParse(json['birth_year'])),
-        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.decodeList(json['mobile_credentials'])));
+        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])));
   }
 }
 
 class MobileIdCredential {
   final String? id;
   final String? status;
-  final DateTime? expirationDateUtc;
+  final String? expirationDateString;
 
-  MobileIdCredential({this.id, this.status, this.expirationDateUtc});
+  MobileIdCredential({this.id, this.status, this.expirationDateString});
 
   static MobileIdCredential? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -249,8 +249,7 @@ class MobileIdCredential {
     return MobileIdCredential(
         id: JsonUtils.stringValue(json['id']),
         status: JsonUtils.stringValue(json['status']),
-        expirationDateUtc:
-            DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['expiration_date']), format: _serverDateTimeFormat, isUtc: true));
+        expirationDateString: JsonUtils.stringValue(json['expiration_date']));
   }
 
   static List<MobileIdCredential>? fromJsonList(List<dynamic>? jsonList) {
