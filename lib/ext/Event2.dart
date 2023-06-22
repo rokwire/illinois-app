@@ -81,78 +81,78 @@ extension Event2Ext on Event2 {
   };
 }
 
-// EventSortType
+// Event2SortType
 
-String? eventSortTypeToDisplayString(EventSortType? value) {
+String? event2SortTypeToDisplayString(Event2SortType? value) {
   switch (value) {
-    case EventSortType.dateTime: return Localization().getStringEx('model.event2.sort_type.date_time', 'Date & Time');
-    case EventSortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.alphabetical', 'Alphabetical');
-    case EventSortType.proximity: return Localization().getStringEx('model.event2.sort_type.proximity', 'Proximity');
+    case Event2SortType.dateTime: return Localization().getStringEx('model.event2.sort_type.date_time', 'Date & Time');
+    case Event2SortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.alphabetical', 'Alphabetical');
+    case Event2SortType.proximity: return Localization().getStringEx('model.event2.sort_type.proximity', 'Proximity');
     default: return null;
   }
 }
 
-String? eventSortTypeDisplayStatusString(EventSortType? value) {
+String? event2SortTypeDisplayStatusString(Event2SortType? value) {
   switch (value) {
-    case EventSortType.dateTime: return Localization().getStringEx('model.event2.sort_type.status.date_time', '{{headning_start}}Sort by{{headning_end}} Date & Time {{sort_order}}');
-    case EventSortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.status.alphabetical', '{{headning_start}}Sort{{headning_end}} Alphabetically {{sort_order}}');
-    case EventSortType.proximity: return Localization().getStringEx('model.event2.sort_type.status.proximity', '{{headning_start}}Sort by{{headning_end}} Proximity {{sort_order}}');
+    case Event2SortType.dateTime: return Localization().getStringEx('model.event2.sort_type.status.date_time', '{{headning_start}}Sort by{{headning_end}} Date & Time {{sort_order}}');
+    case Event2SortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.status.alphabetical', '{{headning_start}}Sort{{headning_end}} Alphabetically {{sort_order}}');
+    case Event2SortType.proximity: return Localization().getStringEx('model.event2.sort_type.status.proximity', '{{headning_start}}Sort by{{headning_end}} Proximity {{sort_order}}');
     default: return null;
   }
 }
 
-// EventSortOrder
+// Event2SortOrder
 
-String? eventSortOrderIndicatorDisplayString(EventSortOrder? value) {
+String? event2SortOrderIndicatorDisplayString(Event2SortOrder? value) {
   switch (value) {
-    case EventSortOrder.ascending: return Localization().getStringEx('model.event2.sort_order.indicator.ascending', '⇩');
-    case EventSortOrder.descending: return Localization().getStringEx('model.event2.sort_order.indicator.descending', '⇧');
+    case Event2SortOrder.ascending: return Localization().getStringEx('model.event2.sort_order.indicator.ascending', '⇩');
+    case Event2SortOrder.descending: return Localization().getStringEx('model.event2.sort_order.indicator.descending', '⇧');
     default: return null;
   }
 }
 
-String? eventSortOrderStatusDisplayString(EventSortOrder? value) {
+String? event2SortOrderStatusDisplayString(Event2SortOrder? value) {
   switch (value) {
-    case EventSortOrder.ascending: return Localization().getStringEx('model.event2.sort_order.status.ascending', 'Asc');
-    case EventSortOrder.descending: return Localization().getStringEx('model.event2.sort_order.status.descending', 'Desc');
+    case Event2SortOrder.ascending: return Localization().getStringEx('model.event2.sort_order.status.ascending', 'Asc');
+    case Event2SortOrder.descending: return Localization().getStringEx('model.event2.sort_order.status.descending', 'Desc');
     default: return null;
   }
 }
 
-// EventTypeFilter
+// Event2TypeFilter
 
-String? eventTypeFilterToDisplayString(EventTypeFilter? value) {
+String? event2TypeFilterToDisplayString(Event2TypeFilter? value) {
   switch (value) {
-    case EventTypeFilter.free: return Localization().getStringEx('model.event2.event_type.free', 'Free');
-    case EventTypeFilter.paid: return Localization().getStringEx('model.event2.event_type.paid', 'Paid');
-    case EventTypeFilter.inPerson: return Localization().getStringEx('model.event2.event_type.in_person', 'In-person');
-    case EventTypeFilter.online: return Localization().getStringEx('model.event2.event_type.online', 'Online');
-    case EventTypeFilter.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
-    case EventTypeFilter.private: return Localization().getStringEx('model.event2.event_type.private', 'Private');
-    case EventTypeFilter.nearby: return Localization().getStringEx('model.event2.event_type.nearby', 'Nearby');
+    case Event2TypeFilter.free: return Localization().getStringEx('model.event2.event_type.free', 'Free');
+    case Event2TypeFilter.paid: return Localization().getStringEx('model.event2.event_type.paid', 'Paid');
+    case Event2TypeFilter.inPerson: return Localization().getStringEx('model.event2.event_type.in_person', 'In-person');
+    case Event2TypeFilter.online: return Localization().getStringEx('model.event2.event_type.online', 'Online');
+    case Event2TypeFilter.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
+    case Event2TypeFilter.private: return Localization().getStringEx('model.event2.event_type.private', 'Private');
+    case Event2TypeFilter.nearby: return Localization().getStringEx('model.event2.event_type.nearby', 'Nearby');
     default: return null;
   }
 }
 
-// EventTimeFilter
+// Event2TimeFilter
 
-String? eventTimeFilterToDisplayString(EventTimeFilter? value) {
+String? event2TimeFilterToDisplayString(Event2TimeFilter? value) {
   switch (value) {
-    case EventTimeFilter.upcoming: return Localization().getStringEx("model.event2.event_time.upcoming", "Upcoming");
-    case EventTimeFilter.today: return Localization().getStringEx("model.event2.event_time.today", "Today");
-    case EventTimeFilter.tomorrow: return Localization().getStringEx("model.event2.event_time.tomorrow", "Tomorrow");
-    case EventTimeFilter.thisWeek: return Localization().getStringEx("model.event2.event_time.this_week", "This week");
-    case EventTimeFilter.thisWeekend: return Localization().getStringEx("model.event2.event_time.this_weekend", "This weekend");
-    case EventTimeFilter.nextWeek: return Localization().getStringEx("model.event2.event_time.next_week", "Next week");
-    case EventTimeFilter.nextWeekend: return Localization().getStringEx("model.event2.event_time.next_weekend", "Next weekend");
-    case EventTimeFilter.thisMonth: return Localization().getStringEx("model.event2.event_time.this_month", "This month");
-    case EventTimeFilter.nextMonth: return Localization().getStringEx("model.event2.event_time.next_month", "Next month");
-    case EventTimeFilter.customRange: return Localization().getStringEx("model.event2.event_time.custom_range.select", "Choose");
+    case Event2TimeFilter.upcoming: return Localization().getStringEx("model.event2.event_time.upcoming", "Upcoming");
+    case Event2TimeFilter.today: return Localization().getStringEx("model.event2.event_time.today", "Today");
+    case Event2TimeFilter.tomorrow: return Localization().getStringEx("model.event2.event_time.tomorrow", "Tomorrow");
+    case Event2TimeFilter.thisWeek: return Localization().getStringEx("model.event2.event_time.this_week", "This week");
+    case Event2TimeFilter.thisWeekend: return Localization().getStringEx("model.event2.event_time.this_weekend", "This weekend");
+    case Event2TimeFilter.nextWeek: return Localization().getStringEx("model.event2.event_time.next_week", "Next week");
+    case Event2TimeFilter.nextWeekend: return Localization().getStringEx("model.event2.event_time.next_weekend", "Next weekend");
+    case Event2TimeFilter.thisMonth: return Localization().getStringEx("model.event2.event_time.this_month", "This month");
+    case Event2TimeFilter.nextMonth: return Localization().getStringEx("model.event2.event_time.next_month", "Next month");
+    case Event2TimeFilter.customRange: return Localization().getStringEx("model.event2.event_time.custom_range.select", "Choose");
     default: return null;
   }
 }
 
-String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { TZDateTime? customStartTime, TZDateTime? customEndTime }) {
+String? event2TimeFilterDisplayInfo(Event2TimeFilter? value, { TZDateTime? customStartTime, TZDateTime? customEndTime }) {
   final String dateFormat = 'MM/dd';
   Map<String, dynamic> options = <String, dynamic>{};
   Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTime?.toUtc(), customEndTimeUtc: customEndTime?.toUtc());
@@ -163,10 +163,10 @@ String? eventTimeFilterDisplayInfo(EventTimeFilter? value, { TZDateTime? customS
   int? endTimeEpoch = JsonUtils.intValue(options['start_time_before']);
   TZDateTime? endTimeUni = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? DateTimeUni.timezoneUniOrLocal, endTimeEpoch * 1000).toUniOrLocal() : null;
 
-  if (value == EventTimeFilter.upcoming) {
+  if (value == Event2TimeFilter.upcoming) {
     return null;
   }
-  else if ((value == EventTimeFilter.today) || (value == EventTimeFilter.tomorrow)) {
+  else if ((value == Event2TimeFilter.today) || (value == Event2TimeFilter.tomorrow)) {
     return (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
   }
   else {
