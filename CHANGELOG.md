@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Implemented gradual page loading of Events2 home panel content [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+- Display user's 6-digit credential id in mobile access UI [#2921](https://github.com/rokwire/illinois-app/issues/2921).
 
 ## [5.0.12] - 2023-06-20
 ### Changed

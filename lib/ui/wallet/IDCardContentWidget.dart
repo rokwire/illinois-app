@@ -71,14 +71,11 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   late bool _loadingBuildingAccess;
   late AnimationController _animationController;
 
+  int _mobileAccessLoadingProgress = 0;
   bool _isIcardMobileAvailable = false;
   List<dynamic>? _mobileAccessKeys;
-  bool _mobileAccessKeysLoading = false;
-  PageController? _mobileKeysPageController;
-
-  List<Credential>? _mobileIdentityCredentials;
-  bool _mobileIdentityCredentialsLoading = false;
-  PageController? _mobileIdentityCredentialsPageController;
+  List<MobileIdCredential>? _mobileIdCredentials;
+  PageController? _mobileAccessPageController;
 
   @override
   void initState() {
@@ -136,8 +133,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   void dispose() {
     NotificationService().unsubscribe(this);
     _animationController.dispose();
-    _mobileKeysPageController?.dispose();
-    _mobileIdentityCredentialsPageController?.dispose();
+    _mobileAccessPageController?.dispose();
     super.dispose();
   }
 
@@ -165,34 +161,34 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     return null;
   }
 
-  Future<void> _loadMobileAccessKey() async {
+  Future<void> _loadMobileAccess() async {
     if (_isIcardMobileAvailable) {
-      _setMobileAccessKeysLoading(true);
+      _increaseMobileAccessLoadingProgress();
       MobileAccess().getAvailableKeys().then((List<dynamic>? mobileAccessKeys) {
         _mobileAccessKeys = mobileAccessKeys;
-        _setMobileAccessKeysLoading(false);
+        _decreaseMobileAccessLoadingProgress();
+        if ((_mobileAccessKeys != null) && _mobileAccessKeys!.isNotEmpty) {
+          _loadMobileIdCredentials();
+        }
       });
     } else {
       setStateIfMounted(() {
         _mobileAccessKeys = null;
+        _mobileIdCredentials = null;
       });
     }
   }
 
-  Future<void> _loadMobileIdentityCredentials() async {
+  Future<void> _loadMobileIdCredentials() async {
     if (_isIcardMobileAvailable) {
-      setStateIfMounted(() {
-        _mobileIdentityCredentialsLoading = true;
-      });
-      Identity().loadMobileCredential().then((mobileCredential) {
-        setStateIfMounted(() {
-          _mobileIdentityCredentials = mobileCredential?.credentials;
-          _mobileIdentityCredentialsLoading = false;
-        });
+      _increaseMobileAccessLoadingProgress();
+      Identity().loadStudentId().then((studentId) {
+        _mobileIdCredentials = studentId?.mobileCredentials;
+        _decreaseMobileAccessLoadingProgress();
       });
     } else {
       setStateIfMounted(() {
-        _mobileIdentityCredentials = null;
+        _mobileIdCredentials = null;
       });
     }
   }
@@ -356,9 +352,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       ),
       Text(cardExpiresText, style:  Styles().textStyles?.getTextStyle("panel.id_card.detail.title.tiny")),
       Container(height: 30,),
-      _buildMobileAccessContent(),
-      _buildMobileIdentityCredentialsContent()
-
+      _buildMobileAccessContent()
     ]);
   }
 
@@ -382,7 +376,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   Widget _buildMobileAccessContent() {
     if (!_isIcardMobileAvailable) {
       return Container();
-    } else if (_mobileAccessKeysLoading) {
+    } else if (_isMobileAccessLoading) {
       return Center(child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary));
     } else {
       return Padding(
@@ -390,29 +384,28 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
         child: Column(children: [
           Container(color: Styles().colors!.dividerLine, height: 1),
           Padding(padding: EdgeInsets.only(top: 20), child: Styles().images?.getImage('mobile-access-logo', excludeFromSemantics: true)),
-          (_hasMobileAccessKeys ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessExistsContent())
+          (_hasMobileAccess ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessExistsContent())
         ]));
     }
 
   }
 
   Widget _buildExistingMobileAccessContent() {
-    if (!_hasMobileAccessKeys) {
+    if (!_hasMobileAccess) {
       return Container();
     }
-    if (_mobileKeysPageController == null) {
-      _mobileKeysPageController = PageController();
+    if (_mobileAccessPageController == null) {
+      _mobileAccessPageController = PageController();
     }
-    int keysCount = _mobileAccessKeys!.length;
-    List<Widget> keyWidgets = <Widget>[];
-    for(dynamic key in _mobileAccessKeys!) {
-      Map<String, dynamic>? keyMap = JsonUtils.mapValue(key);
-      Widget keyWidget = _buildSingleMobileAccessKeyContent(keyMap);
-      keyWidgets.add(keyWidget);
+    int credentialsCount = _mobileIdCredentials!.length;
+    List<Widget> credentialWidgets = <Widget>[];
+    for(MobileIdCredential credential in _mobileIdCredentials!) {
+      Widget credentialWidget = _buildSingleMobileAccessCredentialContent(credential);
+      credentialWidgets.add(credentialWidget);
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      ExpandablePageView(children: keyWidgets, controller: _mobileKeysPageController),
-      AccessibleViewPagerNavigationButtons(controller: _mobileKeysPageController, pagesCount: () => keysCount),
+      ExpandablePageView(children: credentialWidgets, controller: _mobileAccessPageController),
+      AccessibleViewPagerNavigationButtons(controller: _mobileAccessPageController, pagesCount: () => credentialsCount),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: InkWell(
@@ -428,27 +421,23 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     ]);
   }
 
-  Widget _buildSingleMobileAccessKeyContent(Map<String, dynamic>? mobileAccessKey) {
-    if (mobileAccessKey == null) {
-      return Container();
-    }
-
-    String? mobileAccessExternalId = JsonUtils.stringValue(mobileAccessKey['external_id']);
-    String? mobileAccessExpirationDateString = JsonUtils.stringValue(mobileAccessKey['expiration_date']);
+  Widget _buildSingleMobileAccessCredentialContent(MobileIdCredential credential) {
+    String? credentialId = credential.id;
+    String? expirationDateString = credential.expirationDateString;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Padding(
           padding: EdgeInsets.only(left: 16, bottom: 2, right: 16),
           child: Text(
               sprintf(
-                  Localization().getStringEx('widget.id_card.label.mobile_access.my', 'My Mobile Access: %s'), [mobileAccessExternalId]),
+                  Localization().getStringEx('widget.id_card.label.mobile_access.my', 'My Mobile Access: %s'), [credentialId]),
               textAlign: TextAlign.center,
               style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.large'))),
       Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: Text(
               sprintf(Localization().getStringEx('widget.id_card.label.mobile_access.expires', 'Expires: %s'),
-                  [mobileAccessExpirationDateString ?? '---']),
+                  [StringUtils.ensureNotEmpty(expirationDateString, defaultValue: '---')]),
               style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.tiny'))),
       Padding(
           padding: EdgeInsets.only(bottom: 10),
@@ -464,7 +453,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   }
 
   Widget _buildMissingMobileAccessExistsContent() {
-    if (_hasMobileAccessKeys) {
+    if (_hasMobileAccess) {
       return Container();
     }
 
@@ -488,81 +477,6 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
           child: Text(
               Localization().getStringEx('widget.id_card.label.mobile_access.i_card.not_available',
                   'Access various services and buildings on campus with your i-card+.'),
-              textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.italic')))
-    ]);
-  }
-
-  Widget _buildMobileIdentityCredentialsContent() {
-    if (!_isIcardMobileAvailable) {
-      return Container();
-    } else if (_mobileIdentityCredentialsLoading) {
-      return Center(child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary));
-    } else {
-      return Padding(
-          padding: EdgeInsets.only(bottom: 30),
-          child: Column(children: [
-            Container(color: Styles().colors!.dividerLine, height: 1),
-            Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: (_hasMobileIdentityCredentials
-                    ? _buildExistingIdentityCredentialsContent()
-                    : _buildMissingIdentityCredentialsContent()))
-          ]));
-    }
-  }
-
-  Widget _buildExistingIdentityCredentialsContent() {
-    if (!_hasMobileIdentityCredentials) {
-      return Container();
-    }
-    if (_mobileIdentityCredentialsPageController == null) {
-      _mobileIdentityCredentialsPageController = PageController();
-    }
-    int credentialsCount = _mobileIdentityCredentials!.length;
-    List<Widget> credentialWidgets = <Widget>[];
-    for (Credential credential in _mobileIdentityCredentials!) {
-      Widget keyWidget = _buildSingleIdentityCredentialContent(credential);
-      credentialWidgets.add(keyWidget);
-    }
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      ExpandablePageView(children: credentialWidgets, controller: _mobileIdentityCredentialsPageController),
-      AccessibleViewPagerNavigationButtons(controller: _mobileIdentityCredentialsPageController, pagesCount: () => credentialsCount)
-    ]);
-  }
-
-  Widget _buildSingleIdentityCredentialContent(Credential? credential) {
-    if (credential == null) {
-      return Container();
-    }
-
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Padding(
-          padding: EdgeInsets.only(left: 16, bottom: 2, right: 16),
-          child: Text(Localization().getStringEx('widget.id_card.label.identity_credential.label', 'Credential'),
-              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.large'))),
-      Padding(
-          padding: EdgeInsets.only(left: 16, bottom: 2, right: 16),
-          child: Text(sprintf(Localization().getStringEx('widget.id_card.label.identity_credential.id.label', 'Id: %s'), [credential.id]),
-              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.large'))),
-    ]);
-  }
-
-  Widget _buildMissingIdentityCredentialsContent() {
-    if (_hasMobileIdentityCredentials) {
-      return Container();
-    }
-
-    return Column(children: [
-      Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: Text(Localization().getStringEx('widget.id_card.label.identity_credentials.label', 'Identity Credentials'),
-              style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.large'))),
-      Padding(
-          padding: EdgeInsets.symmetric(horizontal: 50),
-          child: Text(
-              Localization()
-                  .getStringEx('widget.id_card.label.identity_credentials.not_available', 'There are no identity credentials available.'),
               textAlign: TextAlign.center,
               style: Styles().textStyles?.getTextStyle('panel.id_card.detail.description.italic')))
     ]);
@@ -694,15 +608,24 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   void _checkIcarMobileAvailable() {
     if (_isIcardMobileAvailable != FlexUI().isIcardMobileAvailable) {
       _isIcardMobileAvailable = FlexUI().isIcardMobileAvailable;
-      _loadMobileAccessKey();
-      _loadMobileIdentityCredentials();
+      _loadMobileAccess();
     }
   }
 
-  void _setMobileAccessKeysLoading(bool loading) {
+  void _increaseMobileAccessLoadingProgress() {
     setStateIfMounted(() {
-      _mobileAccessKeysLoading = loading;
+      _mobileAccessLoadingProgress++;
     });
+  }
+
+  void _decreaseMobileAccessLoadingProgress() {
+    setStateIfMounted(() {
+      _mobileAccessLoadingProgress--;
+    });
+  }
+
+  bool get _isMobileAccessLoading {
+    return (_mobileAccessLoadingProgress > 0);
   }
 
   String? get _userQRCodeContent {
@@ -712,9 +635,11 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
 
   bool get _hasBuildingAccess => FlexUI().isSaferAvailable;
 
+  bool get _hasMobileAccess => (_hasMobileAccessKeys && _hasMobileIdentityCredentials);
+
   bool get _hasMobileAccessKeys => ((_mobileAccessKeys != null) && _mobileAccessKeys!.isNotEmpty);
 
-  bool get _hasMobileIdentityCredentials => CollectionUtils.isNotEmpty(_mobileIdentityCredentials);
+  bool get _hasMobileIdentityCredentials => CollectionUtils.isNotEmpty(_mobileIdCredentials);
 }
 
 
