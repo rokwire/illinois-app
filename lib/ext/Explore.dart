@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -12,6 +13,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
@@ -21,6 +23,7 @@ import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -119,7 +122,7 @@ extension ExploreExt on Explore {
       }
     }
 
-    if (exploresType == "event") {
+    if ((exploresType == "event") || (exploresType == "event2")) {
       return Localization().getStringEx('panel.explore.item.events.name', 'Events');
     }
     else if (exploresType == "dining") {
@@ -189,6 +192,9 @@ extension ExploreExt on Explore {
     if (this is Event) {
       return (this as Event).analyticsAttributes;
     }
+    else if (this is Event2) {
+      return (this as Event2).analyticsAttributes;
+    }
     else if (this is Dining) {
       return (this as Dining).analyticsAttributes;
     }
@@ -213,6 +219,9 @@ extension ExploreExt on Explore {
 
     if (this is Event) {
       return (this as Event).uiColor;
+    }
+    else if (this is Event2) {
+      return (this as Event2).uiColor;
     }
     else if (this is Dining) {
       return (this as Dining).uiColor;
@@ -240,7 +249,18 @@ extension ExploreExt on Explore {
     }
   }
 
-  String? get exploreImageUrl => (this is Event) ? (this as Event).eventImageUrl : exploreImageURL;
+  String? get exploreImageUrl {
+    if (this is Event) {
+      return (this as Event).eventImageUrl;
+    }
+    else if (this is Event2) {
+      return (this as Event2).displayImageUrl;
+    }
+    else {
+      return exploreImageURL;
+    }
+
+  }
 
   void exploreLaunchDetail(BuildContext context, { Core.Position? initialLocationData }) {
     Route? route;
@@ -254,6 +274,9 @@ extension ExploreExt on Explore {
       else {
         route = CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event, initialLocationData: initialLocationData),);
       }
+    }
+    else if (this is Event2) {
+        route = CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: this as Event2, userLocation: initialLocationData,));
     }
     else if (this is Dining) {
       route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData),);
@@ -311,6 +334,9 @@ extension ExploreMap on Explore {
     if (this is Event) {
       return (this as Event).displayDate;
     }
+    else if (this is Event2) {
+      return (this as Event2).displayDate;
+    }
     else if (this is Dining) {
       return (this as Dining).diningType;
     }
@@ -344,7 +370,7 @@ extension ExploreMap on Explore {
   }
 
   String? getMapGroupMarkerTitle(int count) {
-    if (this is Event) {
+    if ((this is Event) || (this is Event2)) {
       return sprintf(Localization().getStringEx('panel.explore.item.events.count', '%s Events'), [count]);
     }
     else if (this is Dining) {

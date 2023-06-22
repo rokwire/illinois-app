@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -116,9 +117,10 @@ class Event2ImageCommandButton extends StatelessWidget {
 
 class Event2Card extends StatefulWidget {
   final Event2 event;
+  final Position? userLocation;
   final void Function()? onTap;
   
-  Event2Card(this.event, { Key? key, this.onTap}) : super(key: key);
+  Event2Card(this.event, { Key? key, this.userLocation, this.onTap}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CardState();

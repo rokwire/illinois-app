@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -19,7 +20,8 @@ import 'package:timezone/timezone.dart';
 
 class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event2? event;
-  Event2DetailPanel({this.event});
+  final Position? userLocation;
+  Event2DetailPanel({ this.event, this.userLocation });
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();

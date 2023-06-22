@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -79,6 +80,8 @@ extension Event2Ext on Event2 {
     Analytics.LogAttributeEventAttributes: attributes,
     Analytics.LogAttributeLocation : location?.analyticsValue,
   };
+
+  String? get displayDate => AppDateTimeUtils.getDisplayDay(dateTimeUtc: startTimeUtc, allDay: allDay);
 }
 
 // Event2SortType
