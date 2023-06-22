@@ -59,7 +59,7 @@ class Event2HomePanel extends StatefulWidget {
           description: Localization().getStringEx('panel.events2.home.attributes.launch.header.description', 'Discover events across campus and around the world'),
           applyTitle: Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Explore'),
           continueTitle:Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Not right now'),
-          contentAttributes: contentAttributesExt(status: status),
+          contentAttributes: buildContentAttributes(status: status),
           sortType: ContentAttributesSortType.native,
           filtersMode: true,
         ))).then((result) {
@@ -86,9 +86,10 @@ class Event2HomePanel extends StatefulWidget {
   static Future<LocationServicesStatus?> getLocationServicesStatus() async =>
     FlexUI().isLocationServicesAvailable ? await LocationServices().status : LocationServicesStatus.serviceDisabled;
 
-  static ContentAttributes? contentAttributesExt({ LocationServicesStatus? status }) {
+  // Builds content ttributes with EventType filter added
+  static ContentAttributes? buildContentAttributes({ LocationServicesStatus? status }) {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(Events2().contentAttributes);
-    contentAttributes?.attributes?.insert(0, eventTypeContentAttribute(status: status));
+    contentAttributes?.attributes?.insert(0, buildEventTypeContentAttribute(status: status));
     return contentAttributes;
   }
 
@@ -96,10 +97,11 @@ class Event2HomePanel extends StatefulWidget {
   static const String eventTypeContentAttributeId = 'event-type';
   static const String eventTimeContentAttributeId = 'event-time';
 
-  static ContentAttribute eventTypeContentAttribute({ LocationServicesStatus? status }) {
+  static ContentAttribute buildEventTypeContentAttribute({ LocationServicesStatus? status }) {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
+    bool locationAvailable = ((status == LocationServicesStatus.permissionAllowed) || (status == LocationServicesStatus.permissionNotDetermined));
     for (EventTypeFilter value in EventTypeFilter.values) {
-      if ((value != EventTypeFilter.nearby) || ((status == LocationServicesStatus.permissionAllowed) || (status == LocationServicesStatus.permissionNotDetermined))) {
+      if ((value != EventTypeFilter.nearby) || locationAvailable) {
         values.add(ContentAttributeValue(
           label: eventTypeFilterToDisplayString(value),
           value: value,
@@ -300,8 +302,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     return result;
   }
 
-  Future<Position?> _ensureLocationIfNeeded() async {
-    if (_queryNeedsLocation && (_currentLocation == null)) {
+  Future<Position?> _ensureLocation() async {
+    if (_currentLocation == null) {
       if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
         _locationServicesStatus = await LocationServices().requestPermission();
         _updateOnLocationServicesStatus();
@@ -318,7 +320,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   bool get _queryNeedsLocation => (_types.contains(EventTypeFilter.nearby) || (_sortType == EventSortType.proximity));
 
   Future<Events2Query> _queryParam({int offset = 0, int limit = eventsPageLength}) async {
-    await _ensureLocationIfNeeded();
+    if (_queryNeedsLocation) {
+      await _ensureLocation();
+    }
     return Events2Query(
       offset: offset,
       limit: limit,
@@ -493,8 +497,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   List<DropdownMenuItem<EventSortType>> _buildSortDropdownItems() {
     List<DropdownMenuItem<EventSortType>> items = <DropdownMenuItem<EventSortType>>[];
+    bool locationAvailable = ((_locationServicesStatus == LocationServicesStatus.permissionAllowed) || (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
     for (EventSortType sortType in EventSortType.values) {
-      if ((sortType != EventSortType.proximity) || (_locationServicesStatus == LocationServicesStatus.permissionAllowed) || (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined)) {
+      if ((sortType != EventSortType.proximity) || locationAvailable) {
         String? displaySortType = _sortDropdownItemTitle(sortType, sortOrder: (_sortType == sortType) ? _sortOrder : null);
         items.add(DropdownMenuItem<EventSortType>(
           value: sortType,
@@ -743,8 +748,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       SizedBox(width: 24, height: 24, child:
         CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
 
-  ContentAttributes? get contentAttributesExt {
-    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Event2HomePanel.contentAttributesExt(status: _locationServicesStatus));
+  // Builds content ttributes with EventType and EventTile filters added
+  ContentAttributes? _buildContentAttributes() {
+    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Event2HomePanel.buildContentAttributes(status: _locationServicesStatus));
     contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: _customStartTime, customEndTime: _customEndTime));
     return contentAttributes;
   }
@@ -765,7 +771,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     selection[Event2HomePanel.eventTimeContentAttributeId] = <dynamic>[_timeFilter];
     
     if (Events2().contentAttributes != null) {
-      ContentAttributes? contentAttributes = contentAttributesExt;
+      ContentAttributes? contentAttributes = _buildContentAttributes();
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
         description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
