@@ -53,4 +53,22 @@ class Identity /* with Service */ {
       return null;
     }
   }
+
+  // Student id
+
+  Future<StudentId?> loadStudentId() async {
+    if (StringUtils.isEmpty(Config().identityUrl)) {
+      Log.e('Identity: loadStudentId - missing identity url.');
+      return null;
+    }
+    Response? response = await Network().get("${Config().identityUrl}/studentid", auth: Auth2(), headers: _externalAuthorizationHeader);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return StudentId.fromJson(JsonUtils.decodeMap(responseString));
+    } else {
+      Log.e('Identity: Failed to load student id. Reason ($responseCode): $responseString');
+      return null;
+    }
+  }
 }
