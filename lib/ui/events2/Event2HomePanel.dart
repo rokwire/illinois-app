@@ -220,6 +220,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     _sortOrder = event2SortOrderFromString(Storage().events2SortOrder) ?? Event2SortOrder.ascending;
 
     _initLocationServicesStatus().then((_) {
+      _ensureCurrentLocation();
       _reload();
     });
     super.initState();
@@ -245,7 +246,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
     else if (name == FlexUI.notifyChanged) {
       _currentLocation = null;
-      _updateLocationServicesStatus();
+      _updateLocationServicesStatus().then((_) {
+        _ensureCurrentLocation();
+      });
     }
   }
 
@@ -254,7 +257,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       _currentLocation = null;
     }
     else if (state == AppLifecycleState.resumed) {
-      _updateLocationServicesStatus();
+      _updateLocationServicesStatus().then((_) {
+        _ensureCurrentLocation();
+      });
     }
   }
 
@@ -302,9 +307,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     return result;
   }
 
-  Future<Position?> _ensureLocation() async {
+  Future<Position?> _ensureCurrentLocation({ bool prompt = false}) async {
     if (_currentLocation == null) {
-      if (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
+      if (prompt && (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined)) {
         _locationServicesStatus = await LocationServices().requestPermission();
         _updateOnLocationServicesStatus();
       }
@@ -321,7 +326,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   Future<Events2Query> _queryParam({int offset = 0, int limit = eventsPageLength}) async {
     if (_queryNeedsLocation) {
-      await _ensureLocation();
+      await _ensureCurrentLocation(prompt: true);
     }
     return Events2Query(
       offset: offset,
@@ -449,7 +454,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       Padding(padding: EdgeInsets.only(left: 16)),
       Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         Event2FilterCommandButton(
-          title: 'Filters',
+          title: Localization().getStringEx('panel.events2.home.bar.button.filters.title', 'Filters'),
           leftIconKey: 'filters',
           rightIconKey: 'chevron-right',
           onTap: _onFilters,
@@ -459,21 +464,21 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       ])),
       Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
         LinkButton(
-          title: 'Map View',
-          hint: 'Tap to view map',
+          title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map View'), 
+          hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
           onTap: _onMapView,
           padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
           textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
         ),
         Event2ImageCommandButton('plus-circle',
-          label: 'Create',
-          hint: 'Tap to create event',
+          label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
+          hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
           contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
           onTap: _onCreate
         ),
         Event2ImageCommandButton('search',
-          label: 'Search',
-          hint: 'Tap to search events',
+          label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
+          hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
           contentPadding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
           onTap: _onSearch
         ),
@@ -487,7 +492,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     return DropdownButtonHideUnderline(child:
       DropdownButton2<Event2SortType>(
         dropdownStyleData: DropdownStyleData(width: _sortDropdownWidth),
-        customButton: Event2FilterCommandButton(title: 'Sort', leftIconKey: 'sort'),
+        customButton: Event2FilterCommandButton(
+          title: Localization().getStringEx('panel.events2.home.bar.button.sort.title', 'Sort'),
+          leftIconKey: 'sort'
+        ),
         isExpanded: false,
         items: _buildSortDropdownItems(),
         onChanged: _onSortType,
@@ -708,7 +716,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     List<Widget> cardsList = <Widget>[];
     for (Event2 event in _events!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        Event2Card(event, onTap: () => _onEvent(event),),
+        Event2Card(event, userLocation: _currentLocation, onTap: () => _onEvent(event),),
       ),);
     }
     if (_extendingEvents) {
@@ -852,7 +860,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation,)));
   }
 }
 
