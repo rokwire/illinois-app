@@ -423,7 +423,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
 
   Widget _buildSingleMobileAccessCredentialContent(MobileIdCredential credential) {
     String? credentialId = credential.id;
-    String? expirationDateString = credential.expirationDateString;
+    String? expirationDateString = credential.displayExpirationDate;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Padding(
