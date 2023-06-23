@@ -32,7 +32,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 
 class Event2HomePanel extends StatefulWidget {
-  static final String routeName = 'Event2HomePanel';
+
+  static const String routeName = 'Event2HomePanel';
 
   final Event2TimeFilter? timeFilter;
   final TZDateTime? customStartTime;
@@ -273,18 +274,20 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       Storage.notifySettingChanged,
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
+      Event2FilterParam.notifyChanged,
     ]);
 
     _scrollController.addListener(_scrollListener);
 
-    _timeFilter = widget.timeFilter ?? event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
-
-    if ((_timeFilter == Event2TimeFilter.customRange) && (widget.customStartTime != null) && (widget.customEndTime != null)) {
-      _customStartTime = widget.customStartTime;
-      _customEndTime = widget.customEndTime;
+    if ((widget.timeFilter != null) && ((widget.timeFilter != Event2TimeFilter.customRange) || ((widget.customStartTime != null) && (widget.customEndTime != null)))) {
+      _timeFilter = widget.timeFilter!;
+      _customStartTime = (_timeFilter == Event2TimeFilter.customRange) ? widget.customStartTime : null;
+      _customEndTime = (_timeFilter == Event2TimeFilter.customRange) ? widget.customEndTime : null;
     }
     else {
-      _timeFilter = Event2TimeFilter.upcoming;
+      _timeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
+      _customStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
+      _customEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     }
 
     _types = widget.types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
@@ -322,6 +325,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       _updateLocationServicesStatus().then((_) {
         _ensureCurrentLocation();
       });
+    }
+    else if (name == Event2FilterParam.notifyChanged) {
+      _updateFilers();
     }
   }
 
@@ -857,10 +863,40 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           });
           
           Storage().events2Time = event2TimeFilterToString(_timeFilter);
+          Storage().events2CustomStartTime = JsonUtils.encode(_customStartTime?.toJson());
+          Storage().events2CustomEndTime = JsonUtils.encode(_customEndTime?.toJson());
           Storage().events2Types = event2TypeFilterListToStringList(_types.toList());
           Storage().events2Attributes = _attributes;
+
+          Event2FilterParam.notifySubscribersChanged(except: this);
+
+          _reload();
       }
     });
+  }
+
+  void _updateFilers() {
+    Event2TimeFilter? timeFilter = event2TimeFilterFromString(Storage().events2Time);
+    TZDateTime? customStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
+    TZDateTime? customEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
+    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+    Map<String, dynamic>? attributes = Storage().events2Attributes;
+
+    setStateIfMounted(() {
+      if (timeFilter != null) {
+        _timeFilter = timeFilter;
+        _customStartTime = customStartTime;
+        _customEndTime = customEndTime;
+      }
+      if (types != null) {
+        _types = types;
+      }
+      if (attributes != null) {
+        _attributes = attributes;
+      }
+    });
+    
+    _reload();
   }
 
   void _onSortType(Event2SortType? value) {
@@ -916,6 +952,8 @@ class _CustomRangeEventTimeAttributeValue extends ContentAttributeValue {
 }
 
 class Event2FilterParam {
+  static const String notifyChanged = "edu.illinois.rokwire.event2.home.filters.changed";
+
   final Event2TimeFilter? timeFilter;
   final TZDateTime? customStartTime;
   final TZDateTime? customEndTime;
@@ -926,4 +964,15 @@ class Event2FilterParam {
     this.timeFilter, this.customStartTime, this.customEndTime,
     this.types, this.attributes,
   });
+
+  static void notifySubscribersChanged({NotificationsListener? except}) {
+    Set<NotificationsListener>? subscribers = NotificationService().subscribers(notifyChanged);
+    if (subscribers != null) {
+      for (NotificationsListener subscriber in subscribers) {
+        if (subscriber != except) {
+          subscriber.onNotification(notifyChanged, null);
+        }
+      }
+    }
+  }
 }

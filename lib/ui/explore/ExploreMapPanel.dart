@@ -180,6 +180,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       ExploreMapPanel.notifySelect,
       RootPanel.notifyTabChanged,
       Storage.notifySettingChanged,
+      Event2FilterParam.notifyChanged,
     ]);
     
     _exploreTypes = _buildExploreTypes();
@@ -187,9 +188,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     _selectedEventsDisplayType = EventsDisplayType.single;
     
     _event2TimeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
-    if (_event2TimeFilter == Event2TimeFilter.customRange) {
-      _event2TimeFilter = Event2TimeFilter.upcoming;
-    }
+    _event2CustomStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
+    _event2CustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     _event2Types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _event2Attributes = Storage().events2Attributes ?? <String, dynamic>{};
 
@@ -299,21 +299,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           _refreshExplores();
         }
       }
-      else if (param == Storage.events2TimeKey) {
-        _applyEvent2Filter(() {
-          _event2TimeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
-        });
-      }
-      else if (param == Storage.events2TypesKey) {
-        _applyEvent2Filter(() {
-          _event2Types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
-        });
-      }
-      else if (param == Storage.events2AttributesKey) {
-        _applyEvent2Filter(() {
-          _event2Attributes = Storage().events2Attributes ?? <String, dynamic>{};
-        });
-      }
+    }
+    else if (name == Event2FilterParam.notifyChanged) {
+      _updateEvent2Filers();
     }
   }
   
@@ -936,23 +924,52 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       attributes: _event2Attributes
     )).then((Event2FilterParam? filterResult) {
       if ((filterResult != null) && mounted) {
-          setState(() {
-            _event2TimeFilter = filterResult.timeFilter ?? Event2TimeFilter.upcoming;
-            _event2CustomStartTime = filterResult.customStartTime;
-            _event2CustomEndTime = filterResult.customEndTime;
-            _event2Types = filterResult.types ?? LinkedHashSet<Event2TypeFilter>();
-            _event2Attributes = filterResult.attributes ?? <String, dynamic>{};
-          });
-          
-          Storage().events2Time = event2TimeFilterToString(_event2TimeFilter);
-          Storage().events2Types = event2TypeFilterListToStringList(_event2Types.toList());
-          Storage().events2Attributes = _event2Attributes;
+        setState(() {
+          _event2TimeFilter = filterResult.timeFilter ?? Event2TimeFilter.upcoming;
+          _event2CustomStartTime = filterResult.customStartTime;
+          _event2CustomEndTime = filterResult.customEndTime;
+          _event2Types = filterResult.types ?? LinkedHashSet<Event2TypeFilter>();
+          _event2Attributes = filterResult.attributes ?? <String, dynamic>{};
+        });
+        
+        Storage().events2Time = event2TimeFilterToString(_event2TimeFilter);
+        Storage().events2CustomStartTime = JsonUtils.encode(_event2CustomStartTime?.toJson());
+        Storage().events2CustomEndTime = JsonUtils.encode(_event2CustomEndTime?.toJson());
+        Storage().events2Types = event2TypeFilterListToStringList(_event2Types.toList());
+        Storage().events2Attributes = _event2Attributes;
+
+        Event2FilterParam.notifySubscribersChanged(except: this);
+
+        _refreshExplores();
       }
     });
   }
 
-  void _applyEvent2Filter(VoidCallback fn) =>
-    ((_selectedMapType == ExploreMapType.Events2) && mounted) ? setState(fn) : fn();
+  void _updateEvent2Filers() {
+    Event2TimeFilter? timeFilter = event2TimeFilterFromString(Storage().events2Time);
+    TZDateTime? customStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
+    TZDateTime? customEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
+    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+    Map<String, dynamic>? attributes = Storage().events2Attributes;
+
+    setStateIfMounted(() {
+      if (timeFilter != null) {
+        _event2TimeFilter = timeFilter;
+        _event2CustomStartTime = customStartTime;
+        _event2CustomEndTime = customEndTime;
+      }
+      if (types != null) {
+        _event2Types = types;
+      }
+      if (attributes != null) {
+        _event2Attributes = attributes;
+      }
+    });
+
+    if (_selectedMapType == ExploreMapType.Events2) {
+      _refreshExplores();
+    }
+  }
 
   void _onEvent2Search() {
     Analytics().logSelect(target: 'Search');
