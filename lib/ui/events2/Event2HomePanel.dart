@@ -48,6 +48,8 @@ class Event2HomePanel extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _Event2HomePanelState();
 
+  // Filters onboarding
+
   static void present(BuildContext context) {
     if (Storage().events2Attributes != null) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel()));
@@ -59,7 +61,7 @@ class Event2HomePanel extends StatefulWidget {
           description: Localization().getStringEx('panel.events2.home.attributes.launch.header.description', 'Discover events across campus and around the world'),
           applyTitle: Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Explore'),
           continueTitle:Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Not right now'),
-          contentAttributes: buildContentAttributes(status: status),
+          contentAttributes: buildContentAttributesV1(status: status),
           sortType: ContentAttributesSortType.native,
           filtersMode: true,
         ))).then((result) {
@@ -83,11 +85,14 @@ class Event2HomePanel extends StatefulWidget {
     }
   }
 
+  // Location Services
+
   static Future<LocationServicesStatus?> getLocationServicesStatus() async =>
     FlexUI().isLocationServicesAvailable ? await LocationServices().status : LocationServicesStatus.serviceDisabled;
 
-  // Builds content ttributes with EventType filter added
-  static ContentAttributes? buildContentAttributes({ LocationServicesStatus? status }) {
+  // ContentAttributes + EventType filter
+
+  static ContentAttributes? buildContentAttributesV1({LocationServicesStatus? status}) {
     ContentAttributes? contentAttributes = ContentAttributes.fromOther(Events2().contentAttributes);
     contentAttributes?.attributes?.insert(0, buildEventTypeContentAttribute(status: status));
     return contentAttributes;
@@ -122,6 +127,14 @@ class Event2HomePanel extends StatefulWidget {
     );
   }
 
+  // ContentAttributes + EventTime & EventType filter
+
+  static ContentAttributes? buildContentAttributesV2({LocationServicesStatus? status, TZDateTime? customStartTime, TZDateTime? customEndTime }) {
+    ContentAttributes? contentAttributes = ContentAttributes.fromOther(buildContentAttributesV1(status: status));
+    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: customStartTime, customEndTime: customEndTime));
+    return contentAttributes;
+  }
+
   static ContentAttribute eventTimeContentAttribute({ TZDateTime? customStartTime, TZDateTime? customEndTime }) {
     List<ContentAttributeValue> values = <ContentAttributeValue>[];
     for (Event2TimeFilter value in Event2TimeFilter.values) {
@@ -149,12 +162,71 @@ class Event2HomePanel extends StatefulWidget {
     );
   }
 
-  Future<bool?> handleAttributeValue({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
+  // Filters UI
+
+  static Future<Event2FilterParam?> presentFiltersV2(BuildContext context, Event2FilterParam filterParam, { LocationServicesStatus? status }) async {
+
+    ContentAttributes? contentAttributes = buildContentAttributesV2(
+      status: status,
+      customStartTime: filterParam.customStartTime,
+      customEndTime: filterParam.customEndTime,
+    );
+
+    if (contentAttributes != null) {
+      Map<String, dynamic>? selection = (filterParam.attributes != null) ? Map<String, dynamic>.from(filterParam.attributes!) : <String, dynamic> {};
+      selection[eventTimeContentAttributeId] = (filterParam.timeFilter != null) ? <Event2TimeFilter>[filterParam.timeFilter!] : <Event2TimeFilter>[];
+      selection[eventTypeContentAttributeId] = (filterParam.types != null) ? filterParam.types!.toList() : <Event2TypeFilter>[];
+
+      dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+        title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
+        description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
+        contentAttributes: contentAttributes,
+        selection: selection,
+        sortType: ContentAttributesSortType.native,
+        filtersMode: true,
+        handleAttributeValue: handleAttributeValue,
+      )));
+
+      selection = JsonUtils.mapValue(result);
+      if (selection != null) {
+
+        TZDateTime? customStartTime, customEndTime;
+        Event2TimeFilter? timeFilter = event2TimeFilterListFromSelection(selection[eventTimeContentAttributeId]);
+        if (timeFilter == Event2TimeFilter.customRange) {
+          Map<String, dynamic>? customData = contentAttributes.findAttribute(id: eventTimeContentAttributeId)?.findValue(value: Event2TimeFilter.customRange)?.customData;
+          customStartTime = Event2TimeRangePanel.getStartTime(customData);
+          customEndTime = Event2TimeRangePanel.getEndTime(customData);
+        }
+
+        List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[eventTypeContentAttributeId]);
+
+        Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
+        attributes.remove(Event2HomePanel.eventTimeContentAttributeId);
+        attributes.remove(Event2HomePanel.eventTypeContentAttributeId);
+
+        return Event2FilterParam(
+          timeFilter: timeFilter,
+          customStartTime: customStartTime,
+          customEndTime: customEndTime,
+          types: (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : null,
+          attributes: attributes
+        );
+      }
+      else {
+        return null;
+      }
+    }
+    else {
+      return null;
+    }
+  }
+
+  static Future<bool?> handleAttributeValue({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
     return ((attribute.id == eventTimeContentAttributeId) && (value.value == Event2TimeFilter.customRange)) ?
       handleCustomRangeTimeAttribute(context: context, attribute: attribute, value: value) : null;
   }
 
-  Future<bool> handleCustomRangeTimeAttribute({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
+  static Future<bool> handleCustomRangeTimeAttribute({required BuildContext context, required ContentAttribute attribute, required ContentAttributeValue value}) async {
     dynamic result = await Navigator.of(context).push(CupertinoPageRoute(builder: (context) => Event2TimeRangePanel(customData: value.customData,)));
     Map<String, dynamic>? customData = JsonUtils.mapValue(result);
     if (customData != null) {
@@ -756,13 +828,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       SizedBox(width: 24, height: 24, child:
         CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
 
-  // Builds content ttributes with EventType and EventTile filters added
-  ContentAttributes? _buildContentAttributes() {
-    ContentAttributes? contentAttributes = ContentAttributes.fromOther(Event2HomePanel.buildContentAttributes(status: _locationServicesStatus));
-    contentAttributes?.attributes?.insert(0, Event2HomePanel.eventTimeContentAttribute(customStartTime: _customStartTime, customEndTime: _customEndTime));
-    return contentAttributes;
-  }
-
   void _scrollListener() {
     if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreEvents != false) && !_loadingEvents && !_extendingEvents) {
       _extend();
@@ -773,54 +838,28 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onFilters() {
     Analytics().logSelect(target: 'Filters');
-    //Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2FiltersPanel(_attributes)));
-    Map<String, dynamic> selection = Map<String, dynamic>.from(_attributes);
-    selection[Event2HomePanel.eventTypeContentAttributeId] = _types.toList();
-    selection[Event2HomePanel.eventTimeContentAttributeId] = <dynamic>[_timeFilter];
     
-    if (Events2().contentAttributes != null) {
-      ContentAttributes? contentAttributes = _buildContentAttributes();
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
-        title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
-        description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
-        contentAttributes: contentAttributes,
-        selection: selection,
-        sortType: ContentAttributesSortType.native,
-        filtersMode: true,
-        handleAttributeValue: widget.handleAttributeValue,
-      ))).then((result) {
-        Map<String, dynamic>? selection = JsonUtils.mapValue(result);
-        if ((selection != null) && mounted) {
-
-          TZDateTime? customStartTime, customEndTime;
-          Event2TimeFilter timeFilter = event2TimeFilterListFromSelection(selection[Event2HomePanel.eventTimeContentAttributeId]) ?? _timeFilter;
-          Storage().events2Time = event2TimeFilterToString(timeFilter);
-          if (timeFilter == Event2TimeFilter.customRange) {
-            Map<String, dynamic>? customData = contentAttributes?.findAttribute(id: Event2HomePanel.eventTimeContentAttributeId)?.findValue(value: Event2TimeFilter.customRange)?.customData;
-            customStartTime = Event2TimeRangePanel.getStartTime(customData);
-            customEndTime = Event2TimeRangePanel.getEndTime(customData);
-          }
-
-          List<Event2TypeFilter>? typesList = event2TypeFilterListFromSelection(selection[Event2HomePanel.eventTypeContentAttributeId]);
-          Storage().events2Types = event2TypeFilterListToStringList(typesList);
-
-          Map<String, dynamic> attributes = Map<String, dynamic>.from(selection);
-          attributes.remove(Event2HomePanel.eventTimeContentAttributeId);
-          attributes.remove(Event2HomePanel.eventTypeContentAttributeId);
-          Storage().events2Attributes = attributes;
-
+    Event2HomePanel.presentFiltersV2(context, Event2FilterParam(
+      timeFilter: _timeFilter,
+      customStartTime: _customStartTime,
+      customEndTime: _customEndTime,
+      types: _types,
+      attributes: _attributes
+    )).then((Event2FilterParam? filterResult) {
+      if ((filterResult != null) && mounted) {
           setState(() {
-            _timeFilter = timeFilter;
-            _customStartTime = customStartTime;
-            _customEndTime = customEndTime;
-            _types = (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : LinkedHashSet<Event2TypeFilter>();
-            _attributes = attributes;
+            _timeFilter = filterResult.timeFilter ?? Event2TimeFilter.upcoming;
+            _customStartTime = filterResult.customStartTime;
+            _customEndTime = filterResult.customEndTime;
+            _types = filterResult.types ?? LinkedHashSet<Event2TypeFilter>();
+            _attributes = filterResult.attributes ?? <String, dynamic>{};
           });
-
-          _reload();
-        }
-      });
-    }
+          
+          Storage().events2Time = event2TimeFilterToString(_timeFilter);
+          Storage().events2Types = event2TypeFilterListToStringList(_types.toList());
+          Storage().events2Attributes = _attributes;
+      }
+    });
   }
 
   void _onSortType(Event2SortType? value) {
@@ -873,4 +912,17 @@ class _CustomRangeEventTimeAttributeValue extends ContentAttributeValue {
     String title = Localization().getStringEx("model.event2.event_time.custom_range.selected", "Custom");
     return (StringUtils.isNotEmpty(info)) ? '$title $info' : title;
   }
+}
+
+class Event2FilterParam {
+  final Event2TimeFilter? timeFilter;
+  final TZDateTime? customStartTime;
+  final TZDateTime? customEndTime;
+  final LinkedHashSet<Event2TypeFilter>? types;
+  final Map<String, dynamic>? attributes;
+
+  Event2FilterParam({
+    this.timeFilter, this.customStartTime, this.customEndTime,
+    this.types, this.attributes,
+  });
 }
