@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class MobileCredential {
@@ -223,7 +224,7 @@ class StudentId {
         studentLevel: JsonUtils.stringValue(json['student_level']),
         cardNumber: JsonUtils.stringValue(json['card_number']),
         expirationDate:
-            DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['expiration_date']), format: 'yyyy-MM-dd', isUtc: false),
+            DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['expiration_date']), format: _expirationDateFormat, isUtc: false),
         libraryNumber: JsonUtils.stringValue(json['library_number']),
         magTrack2: JsonUtils.stringValue(json['mag_track2']),
         photoBase64: JsonUtils.stringValue(json['photo_base64']),
@@ -238,9 +239,13 @@ class StudentId {
 class MobileIdCredential {
   final String? id;
   final String? status;
-  final String? expirationDateString;
+  final DateTime? expirationDate;
 
-  MobileIdCredential({this.id, this.status, this.expirationDateString});
+  MobileIdCredential({this.id, this.status, this.expirationDate});
+
+  String? get displayExpirationDate {
+    return AppDateTime().formatDateTime(expirationDate, format: _expirationDateFormat);
+  }
 
   static MobileIdCredential? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -249,7 +254,7 @@ class MobileIdCredential {
     return MobileIdCredential(
         id: JsonUtils.stringValue(json['id']),
         status: JsonUtils.stringValue(json['status']),
-        expirationDateString: JsonUtils.stringValue(json['expiration_date']));
+        expirationDate: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['expiration_date']), format: 'yyyy-MM-dd', isUtc: false));
   }
 
   static List<MobileIdCredential>? fromJsonList(List<dynamic>? jsonList) {
@@ -265,3 +270,4 @@ class MobileIdCredential {
 }
 
 final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
+final String _expirationDateFormat = 'yyyy-MM-dd';
