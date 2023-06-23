@@ -299,6 +299,21 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           _refreshExplores();
         }
       }
+      else if (param == Storage.events2TimeKey) {
+        _applyEvent2Filter(() {
+          _event2TimeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
+        });
+      }
+      else if (param == Storage.events2TypesKey) {
+        _applyEvent2Filter(() {
+          _event2Types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
+        });
+      }
+      else if (param == Storage.events2AttributesKey) {
+        _applyEvent2Filter(() {
+          _event2Attributes = Storage().events2Attributes ?? <String, dynamic>{};
+        });
+      }
     }
   }
   
@@ -936,6 +951,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     });
   }
 
+  void _applyEvent2Filter(VoidCallback fn) =>
+    ((_selectedMapType == ExploreMapType.Events2) && mounted) ? setState(fn) : fn();
+
   void _onEvent2Search() {
     Analytics().logSelect(target: 'Search');
     AppAlert.showDialogResult(context, 'TBD');
@@ -948,7 +966,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onEvent2ListView() {
     Analytics().logSelect(target: 'List View');
-    AppAlert.showDialogResult(context, 'TBD');
+    Event2HomePanel.present(context);
   }
 
   // Dropdown Widgets

@@ -14,6 +14,7 @@ import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -838,7 +839,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onFilters() {
     Analytics().logSelect(target: 'Filters');
-    
+
     Event2HomePanel.presentFiltersV2(context, Event2FilterParam(
       timeFilter: _timeFilter,
       customStartTime: _customStartTime,
@@ -894,7 +895,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onMapView() {
     Analytics().logSelect(target: 'Map View');
-    AppAlert.showDialogResult(context, 'TBD');
+    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.Events2);
   }
 
   void _onEvent(Event2 event) {
