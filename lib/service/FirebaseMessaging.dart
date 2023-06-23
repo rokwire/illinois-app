@@ -47,6 +47,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyConfigUpdate                   = "edu.illinois.rokwire.firebase.messaging.config.update";
   static const String notifyPollNotification               = "edu.illinois.rokwire.firebase.messaging.poll";
   static const String notifyPollOpen                       = "edu.illinois.rokwire.firebase.messaging.poll.create";
+  static const String notifyEventsNotification        = "edu.illinois.rokwire.firebase.messaging.events";
   static const String notifyEventDetail                    = "edu.illinois.rokwire.firebase.messaging.event.detail";
   static const String notifyGameDetail                     = "edu.illinois.rokwire.firebase.messaging.game.detail";
   static const String notifyAthleticsGameStarted           = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
@@ -179,6 +180,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeConfigUpdate = 'config_update';
   static const String payloadTypePopupMessage = 'popup_message';
   static const String payloadTypeOpenPoll = 'poll_open';
+  static const String payloadTypeEvents = 'events';
   static const String payloadTypeEventDetail = 'event_detail';
   static const String payloadTypeGameDetail = 'game_detail';
   static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
@@ -357,6 +359,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypePoll) {
       NotificationService().notify(notifyPollNotification, data);
+    }
+    else if (type == payloadTypeEvents) {
+      NotificationService().notify(notifyEventsNotification, data);
     }
     else if (type == payloadTypeEventDetail) {
       NotificationService().notify(notifyEventDetail, data);
