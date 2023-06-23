@@ -33,6 +33,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/RootPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -911,7 +912,28 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onEvent2Filters() {
     Analytics().logSelect(target: 'Filters');
-    AppAlert.showDialogResult(context, 'TBD');
+
+    Event2HomePanel.presentFiltersV2(context, Event2FilterParam(
+      timeFilter: _event2TimeFilter,
+      customStartTime: _event2CustomStartTime,
+      customEndTime: _event2CustomEndTime,
+      types: _event2Types,
+      attributes: _event2Attributes
+    )).then((Event2FilterParam? filterResult) {
+      if ((filterResult != null) && mounted) {
+          setState(() {
+            _event2TimeFilter = filterResult.timeFilter ?? Event2TimeFilter.upcoming;
+            _event2CustomStartTime = filterResult.customStartTime;
+            _event2CustomEndTime = filterResult.customEndTime;
+            _event2Types = filterResult.types ?? LinkedHashSet<Event2TypeFilter>();
+            _event2Attributes = filterResult.attributes ?? <String, dynamic>{};
+          });
+          
+          Storage().events2Time = event2TimeFilterToString(_event2TimeFilter);
+          Storage().events2Types = event2TypeFilterListToStringList(_event2Types.toList());
+          Storage().events2Attributes = _event2Attributes;
+      }
+    });
   }
 
   void _onEvent2Search() {
