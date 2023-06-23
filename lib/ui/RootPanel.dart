@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,6 +28,7 @@ import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
@@ -39,6 +41,7 @@ import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:rokwire_plugin/model/actions.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -102,6 +105,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     NotificationService().subscribe(this, [
       FirebaseMessaging.notifyForegroundMessage,
       FirebaseMessaging.notifyPopupMessage,
+      FirebaseMessaging.notifyEventsNotification,
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
@@ -226,6 +230,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyPopupMessage) {
       _onFirebasePopupMessage(param);
+    }
+    else if (name == FirebaseMessaging.notifyEventsNotification) {
+      _onFirebaseEvents(param);
     }
     else if (name == FirebaseMessaging.notifyEventDetail) {
       _onFirebaseEventDetail(param);
@@ -702,6 +709,19 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       message: JsonUtils.stringValue(content["display_text"]),
       buttonTitle: JsonUtils.stringValue(content["positive_button_text"]) ?? Localization().getStringEx("dialog.ok.title", "OK")
     );
+  }
+
+  Future<void> _onFirebaseEvents(Map<String, dynamic>? content) async {
+    Map<String, dynamic>? attributes = (content != null) ? JsonUtils.mapValue(JsonUtils.decode(JsonUtils.stringValue(content['attributes']))) : null;
+    List<String>? types = (content != null) ? JsonUtils.listStringsValue(content['types']) : null;
+    String? time =  (content != null) ? JsonUtils.stringValue(content['time']) : null;
+
+    LinkedHashSet<Event2TypeFilter>? typeFilters = types != null ? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(types)) : null;
+    Event2TimeFilter? timeFilter = time != null ? event2TimeFilterFromString(time) : null;
+
+    if (attributes != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2HomePanel(attributes: attributes, types: typeFilters, timeFilter: timeFilter,)));
+    }
   }
 
   Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {

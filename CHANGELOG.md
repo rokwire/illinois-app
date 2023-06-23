@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added filters to Events2 map view and implemented list/map swtiching [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+- Added support for "events" fcm notification deep link [#3326](https://github.com/rokwire/illinois-app/issues/3326).
 ### Changed
 - Expect yyyy-MM-dd date format for expiration date in student id [#2921](https://github.com/rokwire/illinois-app/issues/2921).
 
