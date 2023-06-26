@@ -184,3 +184,14 @@ String? event2TimeFilterDisplayInfo(Event2TimeFilter? value, { TZDateTime? custo
   }
 
 }
+
+// Event2Type
+
+String? event2TypeToDisplayString(Event2Type? value) {
+  switch (value) {
+    case Event2Type.inPerson: return Localization().getStringEx("model.event2.event_type.in_person", "In-person");
+    case Event2Type.online: return Localization().getStringEx("model.event2.event_type.online", "Online");
+    case Event2Type.hybrid: return Localization().getStringEx("model.event2.event_type.hybrid", "Hybrid");
+    default: return null;
+  }
+}

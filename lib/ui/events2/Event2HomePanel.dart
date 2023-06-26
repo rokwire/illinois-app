@@ -11,6 +11,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -926,7 +927,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onCreate() {
     Analytics().logSelect(target: 'Create');
-    AppAlert.showDialogResult(context, 'TBD');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel()));
   }
 
   void _onMapView() {

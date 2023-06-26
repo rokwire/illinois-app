@@ -1155,8 +1155,15 @@
     "panel.events2.home.attributes.event_time.hint.empty": "Select an date & time...",
     "panel.events2.home.attributes.event_time.hint.semantics": "Double type to show date & time options.",
 	
-	"panel.events2_filters.header.title": "Event Filters",
+	"panel.event2.filters.header.title": "Event Filters",
 	
+	"panel.event2.create.header.title": "Create an Event",
+	"panel.event2.create.event.section.title.title": "EVENT TITLE",
+	"panel.event2.create.event.section.description.title": "EVENT DESCRIPTION",
+	"panel.event2.create.event.section.date_and_time.title": "DATE AND TIME",
+	"panel.event2.create.event.section.type_and_location.title": "EVENT TYPE AND LOCATION",
+	"panel.event2.create.event.label.event_type.title": "EVENT TYPE",
+
 	"panel.settings.manage_interests.instructions.format": "點按 {{check_mark_icon}} 以關注您最感興趣的標籤",
 	"panel.settings.manage_interests.list.following":"关注对象",
 	"panel.settings.manage_interests.list.all_tags":"所有标签",
@@ -3469,6 +3476,7 @@
 	"model.event2.event_type.paid": "Paid",
 	"model.event2.event_type.in_person": "In-person",
 	"model.event2.event_type.online": "Online",
+	"model.event2.event_type.hybrid": "Hybrid",
 	"model.event2.event_type.public": "Public",
 	"model.event2.event_type.private": "Private",
 	"model.event2.event_type.nearby": "Nearby",
