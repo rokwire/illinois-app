@@ -40,7 +40,7 @@ class _Event2FiltersPanelState extends State<Event2FiltersPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.events2_filters.header.title", "Event Filters"),),
+      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.filters.header.title", "Event Filters"),),
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.background,
     );

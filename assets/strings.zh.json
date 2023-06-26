@@ -1155,8 +1155,10 @@
     "panel.events2.home.attributes.event_time.hint.empty": "Select an date & time...",
     "panel.events2.home.attributes.event_time.hint.semantics": "Double type to show date & time options.",
 	
-	"panel.events2_filters.header.title": "Event Filters",
+	"panel.event2.filters.header.title": "Event Filters",
 	
+	"panel.event2.create.header.title": "Create an Event",
+
 	"panel.settings.manage_interests.instructions.format": "點按 {{check_mark_icon}} 以關注您最感興趣的標籤",
 	"panel.settings.manage_interests.list.following":"关注对象",
 	"panel.settings.manage_interests.list.all_tags":"所有标签",

@@ -1154,7 +1154,9 @@
     "panel.events2.home.attributes.event_time.hint.empty": "Select an date & time...",
     "panel.events2.home.attributes.event_time.hint.semantics": "Double type to show date & time options.",
 
-    "panel.events2_filters.header.title": "Event Filters",
+    "panel.event2.filters.header.title": "Event Filters",
+
+    "panel.event2.create.header.title": "Create an Event",
 
     "panel.settings.manage_interests.instructions.format": "Toca el {{check_mark_icon}} para seguir las etiquetas que más te interesen",
     "panel.settings.manage_interests.list.following":"SIGUIENTE",
