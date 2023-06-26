@@ -1162,6 +1162,8 @@
     "panel.event2.create.event.section.title.title": "EVENT TITLE",
     "panel.event2.create.event.section.description.title": "EVENT DESCRIPTION",
     "panel.event2.create.event.section.date_and_time.title": "DATE AND TIME",
+    "panel.event2.create.event.section.type_and_location.title": "EVENT TYPE AND LOCATION",
+    "panel.event2.create.event.label.event_type.title": "EVENT TYPE",
 
     "panel.settings.manage_interests.instructions.format": "Tap the {{check_mark_icon}} to follow the tags that interest you most",
     "panel.settings.manage_interests.list.following": "FOLLOWING",
@@ -3477,6 +3479,7 @@
 	"model.event2.event_type.paid": "Paid",
 	"model.event2.event_type.in_person": "In-person",
 	"model.event2.event_type.online": "Online",
+	"model.event2.event_type.hybrid": "Hybrid",
 	"model.event2.event_type.public": "Public",
 	"model.event2.event_type.private": "Private",
 	"model.event2.event_type.nearby": "Nearby",
