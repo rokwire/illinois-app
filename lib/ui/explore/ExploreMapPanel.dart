@@ -33,6 +33,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/RootPanel.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
@@ -978,7 +979,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onEvent2Create() {
     Analytics().logSelect(target: 'Create');
-    AppAlert.showDialogResult(context, 'TBD');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel()));
   }
 
   void _onEvent2ListView() {
