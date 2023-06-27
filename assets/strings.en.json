@@ -1163,6 +1163,7 @@
     "panel.event2.create.event.section.description.title": "EVENT DESCRIPTION",
     "panel.event2.create.event.section.date_and_time.title": "DATE AND TIME",
     "panel.event2.create.event.section.type_and_location.title": "EVENT TYPE AND LOCATION",
+    "panel.event2.create.event.section.cost.title": "COST",
     "panel.event2.create.event.label.event_type.title": "EVENT TYPE",
     "panel.event2.create.event.online_details.url.title": "ONLINE URL",
     "panel.event2.create.event.online_details.meeting_id.title": "MEETING ID",
@@ -1173,6 +1174,10 @@
     "panel.event2.create.event.location.longitude.title": "LOCATION LONGITUDE",
     "panel.event2.create.event.location.button.select.title": "Select Location on a Map",
     "panel.event2.create.event.location.button.select.hint": "",
+    "panel.event2.create.event.free.toggle.title": "Is this event free?",
+    "panel.event2.create.event.free.toggle.hint": "",
+    "panel.event2.create.event.label.cost.title": "COST DESCRIPTION",
+    "panel.event2.create.event.label.cost.description": " (eg: $10, Donation suggested)",
 
     "panel.settings.manage_interests.instructions.format": "Tap the {{check_mark_icon}} to follow the tags that interest you most",
     "panel.settings.manage_interests.list.following": "FOLLOWING",

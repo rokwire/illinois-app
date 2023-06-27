@@ -36,6 +36,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Event2Type? _eventType;
   
+  bool _free = true;
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   
@@ -48,8 +50,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   final TextEditingController _onlineMeetingIdController = TextEditingController();
   final TextEditingController _onlinePasscodeController = TextEditingController();
 
+  final TextEditingController _costController = TextEditingController();
+
   bool _dateTimeSectionExpanded = false;
   bool _typeAndLocationSectionExpanded = false;
+  bool _costSectionExpanded = false;
 
   @override
   void initState() {
@@ -70,6 +75,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     _onlineUrlController.dispose();
     _onlineMeetingIdController.dispose();
     _onlinePasscodeController.dispose();
+
+    _costController.dispose();
     super.dispose();
   }
 
@@ -91,6 +98,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildTitleSection(),
             _buildDateAndTimeDropdownSection(),
             _buildTypeAndLocationDropdownSection(),
+            _buildCostDropdownSection(),
             _buildDescriptionSection(),
           ]),
         )
@@ -174,7 +182,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.date_and_time.title','DATE AND TIME'),
       required: true,
       expanded: _dateTimeSectionExpanded,
-      onToggleExpanded: _onDateAndTimeSection,
+      onToggleExpanded: _onToggleDateAndTimeSection,
     ),
     body: _buildDateAndTimeSectionBody(),
     expanded: _dateTimeSectionExpanded,
@@ -339,7 +347,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       label: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
       padding: _togglePadding,
       toggled: _allDay,
-      onTap: _onAllDay,
+      onTap: _onTapAllDay,
       border: _toggleBorder,
       borderRadius: _toggleBorderRadius,
     ));
@@ -348,7 +356,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
   BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
-  void _onDateAndTimeSection() {
+  void _onToggleDateAndTimeSection() {
     Analytics().logSelect(target: "Toggle Date & Time");
     setStateIfMounted(() {
       _dateTimeSectionExpanded = !_dateTimeSectionExpanded;
@@ -421,20 +429,20 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
     TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
 
-  void _onAllDay() {
-    Analytics().logSelect(target: "All Day");
+  void _onTapAllDay() {
+    Analytics().logSelect(target: "Toggle All Day");
     setStateIfMounted(() {
       _allDay = !_allDay;
     });
   }
 
-  // Event Type and Location
+  // Event Type, Location and Online Details
 
   Widget _buildTypeAndLocationDropdownSection() => _buildDropdownSectionWidget(
     heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.type_and_location.title', 'EVENT TYPE AND LOCATION'),
       required: true,
       expanded: _typeAndLocationSectionExpanded,
-      onToggleExpanded: _onTypeAndLocationSection,
+      onToggleExpanded: _onToggleTypeAndLocationSection,
     ),
     body: _buildTypeAndLocationSectionBody(),
     expanded: _typeAndLocationSectionExpanded,
@@ -448,10 +456,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     if ((_eventType == Event2Type.inPerson) || (_eventType == Event2Type.hybrid)) {
       contentList.addAll(<Widget>[
         Padding(padding: _innerSectionPadding),
-        _buildLocationBuildingSection(),
-        _buildLocationAddressSection(),
-        _buildLocationLatitudeSection(),
-        _buildLocationLongitudeSection(),
+        _buildLocationBuildingInnerSection(),
+        _buildLocationAddressInnerSection(),
+        _buildLocationLatitudeInnerSection(),
+        _buildLocationLongitudeInnerSection(),
         _buildSelectLocationButton()
       ]);
     }
@@ -459,9 +467,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     if ((_eventType == Event2Type.online) || (_eventType == Event2Type.hybrid)) {
       contentList.addAll(<Widget>[
         Padding(padding: _innerSectionPadding),
-        _buildOnlineUrlSection(),
-        _buildOnlineMeetingIdSection(),
-        _buildOnlinePasscodeSection(),
+        _buildOnlineUrlInnerSection(),
+        _buildOnlineMeetingIdInnerSection(),
+        _buildOnlinePasscodeInnerSection(),
       ]);
     }
 
@@ -518,7 +526,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     return menuItems;
   }
 
-  void _onTypeAndLocationSection() {
+  void _onToggleTypeAndLocationSection() {
     Analytics().logSelect(target: "Toggle Event Type and Location");
     setStateIfMounted(() {
       _typeAndLocationSectionExpanded = !_typeAndLocationSectionExpanded;
@@ -534,22 +542,22 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     }
   }
 
-  Widget _buildLocationBuildingSection() => _buildInnerSectionWidget(
+  Widget _buildLocationBuildingInnerSection() => _buildInnerSectionWidget(
     heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.building.title','LOCATION BUILDING')),
     body: _buildTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text),
   );
 
-  Widget _buildLocationAddressSection() => _buildInnerSectionWidget(
+  Widget _buildLocationAddressInnerSection() => _buildInnerSectionWidget(
     heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.address.title','LOCATION ADDRESS')),
     body: _buildTextEditWidget(_locationAddressController, keyboardType: TextInputType.text),
   );
 
-  Widget _buildLocationLatitudeSection() => _buildInnerSectionWidget(
+  Widget _buildLocationLatitudeInnerSection() => _buildInnerSectionWidget(
     heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.latitude.title','LOCATION LATITUDE'), required: true),
     body: _buildTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number),
   );
 
-  Widget _buildLocationLongitudeSection() => _buildInnerSectionWidget(
+  Widget _buildLocationLongitudeInnerSection() => _buildInnerSectionWidget(
     heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.longitude.title','LOCATION LONGITUDE'), required: true),
     body: _buildTextEditWidget(_locationLongitudeController, keyboardType: TextInputType.number),
   );
@@ -572,18 +580,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
-  Widget _buildOnlineUrlSection() => _buildInnerSectionWidget(
+  Widget _buildOnlineUrlInnerSection() => _buildInnerSectionWidget(
     heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.url.title','ONLINE URL'), required: true),
     body: _buildTextEditWidget(_onlineUrlController, keyboardType: TextInputType.url),
   );
 
-  Widget _buildOnlineMeetingIdSection() => _buildInnerSectionWidget(
+  Widget _buildOnlineMeetingIdInnerSection() => _buildInnerSectionWidget(
     heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.meeting_id.title','MEETING ID')),
     body: _buildTextEditWidget(_onlineMeetingIdController, keyboardType: TextInputType.text),
   );
 
-  Widget _buildOnlinePasscodeSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.passcode.title','PASSCODE')),
+  Widget _buildOnlinePasscodeInnerSection() => _buildInnerSectionWidget(
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.passcode.title', 'PASSCODE')),
     body: _buildTextEditWidget(_onlinePasscodeController, keyboardType: TextInputType.text),
   );
 
@@ -591,6 +599,85 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     Analytics().logSelect(target: "Select Location");
     AppAlert.showDialogResult(context, 'TBD');
   }
+
+  // Cost
+
+  Widget _buildCostDropdownSection() => _buildDropdownSectionWidget(
+    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.cost.title', 'COST'),
+      required: true,
+      expanded: _costSectionExpanded,
+      onToggleExpanded: _onToggleCostSection,
+    ),
+    body: _buildCostSectionBody(),
+    expanded: _costSectionExpanded,
+  );
+
+  Widget _buildCostSectionBody() {
+    List<Widget> contentList = <Widget>[
+      _buildFreeToggle(),
+    ];
+
+    if (_free == false) {
+      contentList.addAll(<Widget>[
+        Padding(padding: _innerSectionPadding),
+        _buildCostInnerSection(),
+      ]);
+    }
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
+  }
+
+  Widget _buildFreeToggle() => Semantics(toggled: _free, excludeSemantics: true, 
+    label: Localization().getStringEx("panel.event2.create.event.free.toggle.title", "Is this event free?"),
+    hint: Localization().getStringEx("panel.event2.create.event.free.toggle.hint", ""),
+    child: ToggleRibbonButton(
+      label: Localization().getStringEx("panel.event2.create.event.free.toggle.title", "Is this event free?"),
+      padding: _togglePadding,
+      toggled: _free,
+      onTap: _onTapFree,
+      border: _toggleBorder,
+      borderRadius: _toggleBorderRadius,
+    ));
+
+  Widget _buildCostInnerSection() => _buildInnerSectionWidget(
+    heading: _buildCostInnerSectionHeadingWidget(),
+    body: _buildTextEditWidget(_costController, keyboardType: TextInputType.text),
+  );
+
+  Widget _buildCostInnerSectionHeadingWidget() {
+    String title = Localization().getStringEx('panel.event2.create.event.label.cost.title', 'COST DESCRIPTION');
+    String description = Localization().getStringEx('panel.event2.create.event.label.cost.description', ' (eg: \$10, Donation suggested)');
+    String semanticsLabel = title + description;
+
+    return Padding(padding: _innerSectionHeadingPadding, child:
+      Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
+        Row(children: [
+          Expanded(child:
+            RichText(text:
+              TextSpan(text: title, style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"), children: <InlineSpan>[
+                TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
+              ])
+            )
+          ),
+        ]),
+      ),
+    );
+  }
+
+  void _onToggleCostSection() {
+    Analytics().logSelect(target: "Toggle Cost Sectoion");
+    setStateIfMounted(() {
+      _costSectionExpanded = !_costSectionExpanded;
+    });
+  }
+
+  void _onTapFree() {
+    Analytics().logSelect(target: "Toggle Free");
+    setStateIfMounted(() {
+      _free = !_free;
+    });
+  }
+
 
   // Section
 
