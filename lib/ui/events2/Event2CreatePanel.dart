@@ -534,28 +534,24 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     }
   }
 
-  Widget _buildLocationBuildingSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.building.title','LOCATION BUILDING'), padding: _innerSectionHeadingPadding),
+  Widget _buildLocationBuildingSection() => _buildInnerSectionWidget(
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.building.title','LOCATION BUILDING')),
     body: _buildTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text),
-    padding: _innerSectionPadding,
   );
 
-  Widget _buildLocationAddressSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.address.title','LOCATION ADDRESS'), padding: _innerSectionHeadingPadding),
+  Widget _buildLocationAddressSection() => _buildInnerSectionWidget(
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.address.title','LOCATION ADDRESS')),
     body: _buildTextEditWidget(_locationAddressController, keyboardType: TextInputType.text),
-    padding: _innerSectionPadding,
   );
 
-  Widget _buildLocationLatitudeSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.latitude.title','LOCATION LATITUDE'), padding: _innerSectionHeadingPadding, required: true),
+  Widget _buildLocationLatitudeSection() => _buildInnerSectionWidget(
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.latitude.title','LOCATION LATITUDE'), required: true),
     body: _buildTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number),
-    padding: _innerSectionPadding,
   );
 
-  Widget _buildLocationLongitudeSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.longitude.title','LOCATION LONGITUDE'), padding: _innerSectionHeadingPadding, required: true),
+  Widget _buildLocationLongitudeSection() => _buildInnerSectionWidget(
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.longitude.title','LOCATION LONGITUDE'), required: true),
     body: _buildTextEditWidget(_locationLongitudeController, keyboardType: TextInputType.number),
-    padding: _innerSectionPadding,
   );
 
   Widget _buildSelectLocationButton() {
@@ -576,22 +572,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
-  Widget _buildOnlineUrlSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.url.title','ONLINE URL'), padding: _innerSectionHeadingPadding, required: true),
+  Widget _buildOnlineUrlSection() => _buildInnerSectionWidget(
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.url.title','ONLINE URL'), required: true),
     body: _buildTextEditWidget(_onlineUrlController, keyboardType: TextInputType.url),
-    padding: _innerSectionPadding,
   );
 
-  Widget _buildOnlineMeetingIdSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.meeting_id.title','MEETING ID'), padding: _innerSectionHeadingPadding),
+  Widget _buildOnlineMeetingIdSection() => _buildInnerSectionWidget(
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.meeting_id.title','MEETING ID')),
     body: _buildTextEditWidget(_onlineMeetingIdController, keyboardType: TextInputType.text),
-    padding: _innerSectionPadding,
   );
 
-  Widget _buildOnlinePasscodeSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.passcode.title','PASSCODE'), padding: _innerSectionHeadingPadding),
+  Widget _buildOnlinePasscodeSection() => _buildInnerSectionWidget(
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.passcode.title','PASSCODE')),
     body: _buildTextEditWidget(_onlinePasscodeController, keyboardType: TextInputType.text),
-    padding: _innerSectionPadding,
   );
 
   void _onTapSelectLocation() {
@@ -621,6 +614,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       ],)
     );
   }
+
+  Widget _buildInnerSectionWidget({ required Widget heading, required Widget body,
+    EdgeInsetsGeometry padding = _innerSectionPadding,
+    EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
+  }) => _buildSectionWidget(heading: heading, body: body, padding: padding, bodyPadding: bodyPadding);
 
   Widget _buildSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = _sectionHeadingPadding }) {
     String semanticsLabel = title;
@@ -658,6 +656,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       ),
     );
   }
+
+  Widget _buildInnerSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = _innerSectionHeadingPadding }) =>
+    _buildSectionHeadingWidget(title, required: required, prefixImageKey: prefixImageKey, suffixImageKey: suffixImageKey, padding : padding);
 
   Widget _buildSectionTitleWidget(String title) =>
     Text(title, style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"));
