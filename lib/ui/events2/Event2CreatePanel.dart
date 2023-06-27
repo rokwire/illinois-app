@@ -749,7 +749,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
 
-  // Section
+  // Sections
 
   static const EdgeInsetsGeometry _sectionPadding = const EdgeInsets.only(bottom: 24);
   static const EdgeInsetsGeometry _innerSectionPadding = const EdgeInsets.only(bottom: 12);
@@ -757,6 +757,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   static const EdgeInsetsGeometry _sectionHeadingPadding = const EdgeInsets.only(bottom: 8);
   static const EdgeInsetsGeometry _innerSectionHeadingPadding = const EdgeInsets.only(bottom: 4);
 
+  BoxDecoration get _sectionDecoration => BoxDecoration(
+    border: Border.all(color: Styles().colors!.mediumGray2!, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(8))
+  );
+
+  BoxDecoration get _sectionSplitterDecoration => BoxDecoration(
+    border: Border(top: BorderSide(color: Styles().colors!.mediumGray2!, width: 1))
+  );
+
+  // Sections / Regular Section
+  
   Widget _buildSectionWidget({ required Widget heading, required Widget body,
     EdgeInsetsGeometry padding = _sectionPadding,
     EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
@@ -823,16 +834,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Widget _buildSectionRequiredWidget() => 
     Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),);
 
+  // Sections / Dropdown Section
+
   Widget _buildDropdownSectionWidget({ required Widget heading, required Widget body, bool expanded = false,
     EdgeInsetsGeometry padding = _sectionPadding,
     EdgeInsetsGeometry bodyPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16)
   }) {
     return Padding(padding: padding, child:
-      Container(decoration: _dropdownSectionDecoration, child:
+      Container(decoration: _sectionDecoration, child:
         Column(children: [
           heading,
           Visibility(visible: expanded, child:
-            Container(decoration: _dropdownSectionSplitterDecoration, child:
+            Container(decoration: _sectionSplitterDecoration, child:
               Padding(padding: bodyPadding, child:
                 body,
               ),
@@ -869,6 +882,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
+  // Sections / Button Section
+
   Widget _buildButtonSectionWidget({ required Widget heading, Widget? body,
     EdgeInsetsGeometry padding = _sectionPadding,
     EdgeInsetsGeometry bodyPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
@@ -877,14 +892,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       heading
     ];
     if (body != null) {
-      contentList.add(Container(decoration: _dropdownSectionSplitterDecoration, child:
+      contentList.add(Container(decoration: _sectionSplitterDecoration, child:
         Padding(padding: bodyPadding, child:
           body,
         ),
       ),);
     }
     return Padding(padding: padding, child:
-      Container(decoration: _dropdownSectionDecoration, child:
+      Container(decoration: _sectionDecoration, child:
         Column(children: contentList,),
       ),
     );
@@ -915,15 +930,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       ),
     );
   }
-
-  BoxDecoration get _dropdownSectionDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors!.mediumGray2!, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(8))
-  );
-
-  BoxDecoration get _dropdownSectionSplitterDecoration => BoxDecoration(
-    border: Border(top: BorderSide(color: Styles().colors!.mediumGray2!, width: 1))
-  );
 
   // Text Edit
 
