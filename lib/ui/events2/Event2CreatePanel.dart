@@ -735,7 +735,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
       title:  Localization().getStringEx('panel.event2.attributes.attributes.header.title', 'Event Attributes'),
-      description: Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this event.'),
+      description: Localization().getStringEx('panel.event2.attributes.attributes.header.description', 'Choose one or more attributes that help describe this event.'),
       contentAttributes: Events2().contentAttributes,
       selection: _attributes,
       sortType: ContentAttributesSortType.native,
