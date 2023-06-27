@@ -1171,6 +1171,8 @@
     "panel.event2.create.event.location.address.title": "LOCATION ADDRESS",
     "panel.event2.create.event.location.latitude.title": "LOCATION LATITUDE",
     "panel.event2.create.event.location.longitude.title": "LOCATION LONGITUDE",
+    "panel.event2.create.event.location.button.select.title": "Select Location on a Map",
+    "panel.event2.create.event.location.button.select.hint": "",
 
     "panel.settings.manage_interests.instructions.format": "Tap the {{check_mark_icon}} to follow the tags that interest you most",
     "panel.settings.manage_interests.list.following": "FOLLOWING",
