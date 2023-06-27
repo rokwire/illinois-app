@@ -38,6 +38,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  
+  final TextEditingController _locationBuildingController = TextEditingController();
+  final TextEditingController _locationAddressController = TextEditingController();
+  final TextEditingController _locationLatitudeController = TextEditingController();
+  final TextEditingController _locationLongitudeController = TextEditingController();
+
+  final TextEditingController _onlineUrlController = TextEditingController();
+  final TextEditingController _onlineMeetingIdController = TextEditingController();
+  final TextEditingController _onlinePasscodeController = TextEditingController();
+
+  bool _dateTimeSectionExpanded = false;
+  bool _typeAndLocationSectionExpanded = false;
 
   @override
   void initState() {
@@ -49,6 +61,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+
+    _locationBuildingController.dispose();
+    _locationAddressController.dispose();
+    _locationLatitudeController.dispose();
+    _locationLongitudeController.dispose();
+  
+    _onlineUrlController.dispose();
+    _onlineMeetingIdController.dispose();
+    _onlinePasscodeController.dispose();
     super.dispose();
   }
 
@@ -131,12 +152,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildTitleSection() => _buildSectionWidget(
     heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.title.title','EVENT TITLE'), required: true),
-    body: _buildTextEditWidget(_titleController, maxLines: null),
+    body: _buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null),
   );
 
   Widget _buildDescriptionSection() => _buildSectionWidget(
     heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.description.title','EVENT DESCRIPTION')),
-    body: _buildTextEditWidget(_descriptionController, maxLines: null),
+    body: _buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null),
   );
 
   // Date & Time
@@ -148,8 +169,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     body: _buildDateAndTimeSectionBody(),
     bodyPadding: EdgeInsets.only(top: 8)
   );*/
-
-  bool _dateTimeSectionExpanded = false;
 
   Widget _buildDateAndTimeDropdownSection() => _buildDropdownSectionWidget(
     heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.date_and_time.title','DATE AND TIME'),
@@ -411,8 +430,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Event Type and Location
 
-  bool _typeAndLocationSectionExpanded = false;
-
   Widget _buildTypeAndLocationDropdownSection() => _buildDropdownSectionWidget(
     heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.type_and_location.title', 'EVENT TYPE AND LOCATION'),
       required: true,
@@ -423,22 +440,49 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     expanded: _typeAndLocationSectionExpanded,
   );
 
-  Widget _buildTypeAndLocationSectionBody() => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-    _buildEventTypeDropdown(),
-    Padding(padding: EdgeInsets.only(bottom: 12)),
-    Text('More stuff to come here...', style:
-      Styles().textStyles?.getTextStyle("panel.create_event.title.small")
-    ),
+  Widget _buildTypeAndLocationSectionBody() {
+    List<Widget> contentList = <Widget>[
+      _buildEventTypeDropdown(),
+    ];
 
-  ]);
+    if ((_eventType == Event2Type.inPerson) || (_eventType == Event2Type.hybrid)) {
+      contentList.addAll(<Widget>[
+        Padding(padding: _innerSectionPadding),
+        _buildLocationBuildingSection(),
+        _buildLocationAddressSection(),
+        _buildLocationLatitudeSection(),
+        _buildLocationLongitudeSection(),
+        _buildSelectLocationButton()
+      ]);
+    }
+
+    if ((_eventType == Event2Type.online) || (_eventType == Event2Type.hybrid)) {
+      contentList.addAll(<Widget>[
+        Padding(padding: _innerSectionPadding),
+        _buildOnlineUrlSection(),
+        _buildOnlineMeetingIdSection(),
+        _buildOnlinePasscodeSection(),
+      ]);
+    }
+
+    /* contentList.add(Padding(padding: EdgeInsets.only(bottom: 12), child:
+      Text('More stuff to come here...', style:
+        Styles().textStyles?.getTextStyle("panel.create_event.title.small")
+      ),
+    ),); */
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
+  }
 
   Widget _buildEventTypeDropdown(){
     return Semantics(container: true, child:
       Row(children: <Widget>[
         Expanded(flex: 3, child:
-          Text(Localization().getStringEx("panel.event2.create.event.label.event_type.title", "EVENT TYPE"), style:
-            Styles().textStyles?.getTextStyle("panel.create_event.title.small")
-          ),
+          RichText(text:
+            TextSpan(text: Localization().getStringEx("panel.event2.create.event.label.event_type.title", "EVENT TYPE"), style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"), children: <InlineSpan>[
+              TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'),),
+            ])
+          )
         ),
         Container(width: 16,),
         Expanded(flex: 7, child:
@@ -490,10 +534,84 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     }
   }
 
+  Widget _buildLocationBuildingSection() => _buildSectionWidget(
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.building.title','LOCATION BUILDING'), padding: _innerSectionHeadingPadding),
+    body: _buildTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text),
+    padding: _innerSectionPadding,
+  );
+
+  Widget _buildLocationAddressSection() => _buildSectionWidget(
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.address.title','LOCATION ADDRESS'), padding: _innerSectionHeadingPadding),
+    body: _buildTextEditWidget(_locationAddressController, keyboardType: TextInputType.text),
+    padding: _innerSectionPadding,
+  );
+
+  Widget _buildLocationLatitudeSection() => _buildSectionWidget(
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.latitude.title','LOCATION LATITUDE'), padding: _innerSectionHeadingPadding, required: true),
+    body: _buildTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number),
+    padding: _innerSectionPadding,
+  );
+
+  Widget _buildLocationLongitudeSection() => _buildSectionWidget(
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.longitude.title','LOCATION LONGITUDE'), padding: _innerSectionHeadingPadding, required: true),
+    body: _buildTextEditWidget(_locationLongitudeController, keyboardType: TextInputType.number),
+    padding: _innerSectionPadding,
+  );
+
+  Widget _buildSelectLocationButton() {
+    String buttonTitle = Localization().getStringEx("panel.event2.create.event.location.button.select.title", "Select Location on a Map");
+    String buttonHint = Localization().getStringEx("panel.event2.create.event.location.button.select.hint", "");
+
+    return Padding(padding: _innerSectionPadding, child:
+      Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
+        RoundedButton(
+          label: buttonTitle,
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular"),
+          onTap: _onTapSelectLocation,
+          backgroundColor: Styles().colors!.white,
+          borderColor: Styles().colors!.fillColorSecondary,
+          contentWeight: 0.80,
+        )
+      ),
+    );
+  }
+
+  Widget _buildOnlineUrlSection() => _buildSectionWidget(
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.url.title','ONLINE URL'), padding: _innerSectionHeadingPadding, required: true),
+    body: _buildTextEditWidget(_onlineUrlController, keyboardType: TextInputType.url),
+    padding: _innerSectionPadding,
+  );
+
+  Widget _buildOnlineMeetingIdSection() => _buildSectionWidget(
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.meeting_id.title','MEETING ID'), padding: _innerSectionHeadingPadding),
+    body: _buildTextEditWidget(_onlineMeetingIdController, keyboardType: TextInputType.text),
+    padding: _innerSectionPadding,
+  );
+
+  Widget _buildOnlinePasscodeSection() => _buildSectionWidget(
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.passcode.title','PASSCODE'), padding: _innerSectionHeadingPadding),
+    body: _buildTextEditWidget(_onlinePasscodeController, keyboardType: TextInputType.text),
+    padding: _innerSectionPadding,
+  );
+
+  void _onTapSelectLocation() {
+    Analytics().logSelect(target: "Select Location");
+    AppAlert.showDialogResult(context, 'TBD');
+  }
+
   // Section
 
-  Widget _buildSectionWidget({ required Widget heading, required Widget body, EdgeInsetsGeometry bodyPadding = EdgeInsets.zero }) {
-    return Padding(padding: _sectionPadding, child:
+  static const EdgeInsetsGeometry _sectionPadding = const EdgeInsets.only(bottom: 24);
+  static const EdgeInsetsGeometry _innerSectionPadding = const EdgeInsets.only(bottom: 12);
+
+  static const EdgeInsetsGeometry _sectionHeadingPadding = const EdgeInsets.only(bottom: 8);
+  static const EdgeInsetsGeometry _innerSectionHeadingPadding = const EdgeInsets.only(bottom: 4);
+
+  Widget _buildSectionWidget({ required Widget heading, required Widget body,
+    EdgeInsetsGeometry padding = _sectionPadding,
+    EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
+  }) {
+    return Padding(padding: padding, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         heading,
         Padding(padding: bodyPadding, child:
@@ -504,9 +622,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
-  EdgeInsetsGeometry get _sectionPadding => const EdgeInsets.only(bottom: 24);
-
-  Widget _buildSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = const EdgeInsets.only(bottom: 8) }) {
+  Widget _buildSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = _sectionHeadingPadding }) {
     String semanticsLabel = title;
     if (required) {
       semanticsLabel += ", required";
@@ -549,8 +665,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Widget _buildSectionRequiredWidget() => 
     Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),);
 
-  Widget _buildDropdownSectionWidget({ required Widget heading, required Widget body, bool expanded = false, EdgeInsetsGeometry bodyPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16) }) {
-    return Padding(padding: _sectionPadding, child:
+  Widget _buildDropdownSectionWidget({ required Widget heading, required Widget body, bool expanded = false,
+    EdgeInsetsGeometry padding = _sectionPadding,
+    EdgeInsetsGeometry bodyPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16)
+  }) {
+    return Padding(padding: padding, child:
       Container(decoration: _dropdownSectionDecoration, child:
         Column(children: [
           heading,
@@ -603,13 +722,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Text Edit
 
-  Widget _buildTextEditWidget(TextEditingController controller, { int? maxLines = 1}) =>
+  Widget _buildTextEditWidget(TextEditingController controller, { int? maxLines = 1, TextInputType? keyboardType}) =>
     TextField(
       controller: controller,
       decoration: _textEditDecoration,
       style: _textEditStyle,
       maxLines: maxLines,
-      
+      keyboardType: keyboardType,
     );
 
   TextStyle? get _textEditStyle =>
