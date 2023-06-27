@@ -1,15 +1,19 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -37,6 +41,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Event2Type? _eventType;
   
   bool _free = true;
+
+  Map<String, dynamic>? _attributes;
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -98,6 +104,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildTitleSection(),
             _buildDateAndTimeDropdownSection(),
             _buildTypeAndLocationDropdownSection(),
+            _buildAttributesButtonSection(),
             _buildCostDropdownSection(),
             _buildDescriptionSection(),
           ]),
@@ -679,6 +686,69 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
 
+  // Attributes
+
+  Widget _buildAttributesButtonSection() => _buildButtonSectionWidget(
+    heading: _buildButtonSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.button.attributes.title', 'ATTRIBUTES'),
+      required: true,
+      onTap: _onEventAttributes,
+    ),
+    body: _buildAttributesSectionBody(),
+  );
+
+  Widget? _buildAttributesSectionBody() {
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+
+    ContentAttributes? contentAttributes = Events2().contentAttributes;
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if ((_attributes != null) && _attributes!.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_attributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+          for (String attributeValue in displayAttributeValues) {
+            if (descriptionList.isNotEmpty) {
+              descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+            }
+            descriptionList.add(TextSpan(text: attributeValue, style: regularStyle,),);
+          }
+        }
+      }
+
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
+      }
+
+      return Row(children: [
+        Expanded(child:
+          RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+        ),
+      ],);
+    }
+    else {
+      return null;
+    }
+  }
+
+  void _onEventAttributes() {
+    Analytics().logSelect(target: "Attributes");
+
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
+      title:  Localization().getStringEx('panel.event2.attributes.attributes.header.title', 'Event Attributes'),
+      description: Localization().getStringEx('panel.project.attributes.attributes.header.description', 'Choose one or more attributes that help describe this event.'),
+      contentAttributes: Events2().contentAttributes,
+      selection: _attributes,
+      sortType: ContentAttributesSortType.native,
+    ))).then((selection) {
+      if ((selection != null) && mounted) {
+        setState(() {
+          _attributes = selection;
+        });
+      }
+    });
+  }
+
+
   // Section
 
   static const EdgeInsetsGeometry _sectionPadding = const EdgeInsets.only(bottom: 24);
@@ -793,6 +863,53 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           ),
           Padding(padding: EdgeInsets.only(left: 8), child:
             Styles().images?.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
+          ),
+        ],),
+      ),
+    );
+  }
+
+  Widget _buildButtonSectionWidget({ required Widget heading, Widget? body,
+    EdgeInsetsGeometry padding = _sectionPadding,
+    EdgeInsetsGeometry bodyPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
+  }) {
+    List<Widget> contentList = <Widget>[
+      heading
+    ];
+    if (body != null) {
+      contentList.add(Container(decoration: _dropdownSectionSplitterDecoration, child:
+        Padding(padding: bodyPadding, child:
+          body,
+        ),
+      ),);
+    }
+    return Padding(padding: padding, child:
+      Container(decoration: _dropdownSectionDecoration, child:
+        Column(children: contentList,),
+      ),
+    );
+  }
+
+  Widget _buildButtonSectionHeadingWidget(String title, { bool required = false, void Function()? onTap, EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16) }) {
+
+    List<Widget> wrapList = <Widget>[
+      _buildSectionTitleWidget(title),
+    ];
+
+    if (required) {
+      wrapList.add(Padding(padding: EdgeInsets.only(left: 2), child:
+        _buildSectionRequiredWidget(), 
+      ));
+    }
+
+    return InkWell(onTap: onTap, child:
+      Padding(padding: padding, child:
+        Row(children: [
+          Expanded(child:
+            Wrap(children: wrapList),
+          ),
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            Styles().images?.getImage('chevron-right') ?? Container()
           ),
         ],),
       ),

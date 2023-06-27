@@ -1163,6 +1163,7 @@
 	"panel.event2.create.event.section.date_and_time.title": "DATE AND TIME",
 	"panel.event2.create.event.section.type_and_location.title": "EVENT TYPE AND LOCATION",
 	"panel.event2.create.event.section.cost.title": "COST",
+	"panel.event2.create.event.button.attributes.title": "ATTRIBUTES",
 	"panel.event2.create.event.label.event_type.title": "EVENT TYPE",
 	"panel.event2.create.event.online_details.url.title": "ONLINE URL",
 	"panel.event2.create.event.online_details.meeting_id.title": "MEETING ID",
@@ -1177,6 +1178,11 @@
 	"panel.event2.create.event.free.toggle.hint": "",
 	"panel.event2.create.event.label.cost.title": "COST DESCRIPTION",
 	"panel.event2.create.event.label.cost.description": " (eg: $10, Donation suggested)",
+
+	"panel.event2.attributes.attributes.header.title": "Event Attributes",
+	"panel.event2.attributes.attributes.header.description": "Choose one or more attributes that help describe this event",
+	"panel.event2.attributes.filters.header.title": "Event Filters",
+	"panel.event2.attributes.filters.header.description": "Choose one or more attributes to filter the events",
 
 	"panel.settings.manage_interests.instructions.format": "點按 {{check_mark_icon}} 以關注您最感興趣的標籤",
 	"panel.settings.manage_interests.list.following":"关注对象",
