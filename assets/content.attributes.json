@@ -11,7 +11,7 @@
 			"scope": ["events"],
 			"requirements" : {
 				"min-selected-count": 0,
-				"max-selected-count": null
+				"max-selected-count": 1
 			},
 			"values": [
 				"Big 10 Athletics",
