@@ -33,13 +33,15 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
 }
 
 class _Event2DetailPanelState extends State<Event2DetailPanel> implements NotificationsListener {
-
+  Event2? _event;
+  
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
-
+    _event = widget.event;
+    
     super.initState();
   }
 
@@ -66,7 +68,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         Expanded(child:
           CustomScrollView(slivers: <Widget>[
             SliverToutHeaderBar(
-              flexImageUrl: widget.event?.imageUrl,
+              flexImageUrl:  _event?.imageUrl,
+              flexImageKey: 'event-detail-default',
               flexRightToLeftTriangleColor: Colors.white,
             ),
             SliverList(delegate:
@@ -99,10 +102,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ]);
 
   List<String>? get _displayCategories =>
-    Events2().contentAttributes?.displaySelectedLabelsFromSelection(widget.event?.attributes, usage: ContentAttributeUsage.category);
+    Events2().contentAttributes?.displaySelectedLabelsFromSelection(_event?.attributes, usage: ContentAttributeUsage.category);
 
   Widget get _favoriteButton {
-    bool isFavorite = Auth2().isFavorite(widget.event);
+    bool isFavorite = Auth2().isFavorite(_event);
     return Opacity(opacity: Auth2().canFavorite ? 1 : 0, child:
       Semantics(container: true,
         child: Semantics(
@@ -125,14 +128,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Widget get _titleWidget => Row(children: [
     Expanded(child: 
-      Text(widget.event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'), maxLines: 2,)
+      Text(_event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'), maxLines: 2,)
     ),
   ],);
 
-  Widget get _sponsorWidget => StringUtils.isNotEmpty(widget.event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
+  Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
       Expanded(child: 
-        Text(widget.event?.sponsor ?? '', style: Styles().textStyles?.getTextStyle('widget.item.regular.fat'), maxLines: 2,)
+        Text(_event?.sponsor ?? '', style: Styles().textStyles?.getTextStyle('widget.item.regular.fat'), maxLines: 2,)
       ),
     ],),
    ) : Container();
@@ -151,13 +154,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _dateDetailWidget {
-    TZDateTime? dateTimeUni = widget.event?.startTimeUtc?.toUniOrLocal();
+    TZDateTime? dateTimeUni = _event?.startTimeUtc?.toUniOrLocal();
     return (dateTimeUni != null) ? <Widget>[_buildTextDetailWidget(DateFormat('MMM d, ha').format(dateTimeUni), 'calendar')] : null;
   }
 
   List<Widget>? get _onlineDetailWidget {
-    if (widget.event?.online == true) {
-      bool canLaunch = StringUtils.isNotEmpty(widget.event?.onlineDetails?.url);
+    if (_event?.online == true) {
+      bool canLaunch = StringUtils.isNotEmpty(_event?.onlineDetails?.url);
       List<Widget> details = <Widget>[
         InkWell(onTap: canLaunch ? _onOnline : null, child:
           _buildTextDetailWidget('Online', 'laptop'),
@@ -165,8 +168,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ];
 
       Widget onlineWidget = canLaunch ?
-        Text(widget.event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_bold.underline'),) :
-        Text(widget.event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_bold.underline'),) :
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
       details.add(
         InkWell(onTap: canLaunch ? _onOnline : null, child:
           _buildDetailWidget(onlineWidget, 'laptop', iconVisible: false, contentPadding: EdgeInsets.zero)
@@ -179,9 +182,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _locationDetailWidget {
-    if (widget.event?.inPerson == true) {
+    if (_event?.inPerson == true) {
 
-      bool canLocation = widget.event?.location?.isLocationCoordinateValid ?? false;
+      bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
       
       List<Widget> details = <Widget>[
         InkWell(onTap: canLocation ? _onLocation : null, child:
@@ -190,9 +193,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ];
 
       String? locationText = (
-        widget.event?.location?.displayName ??
-        widget.event?.location?.displayAddress ??
-        widget.event?.location?.displayCoordinates
+        _event?.location?.displayName ??
+        _event?.location?.displayAddress ??
+        _event?.location?.displayCoordinates
       );
       if (locationText != null) {
         Widget locationWidget = canLocation ?
@@ -245,16 +248,16 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onLocation() {
-    Analytics().logSelect(target: "Location Directions: ${widget.event?.name}");
-    widget.event?.launchDirections();
+    Analytics().logSelect(target: "Location Directions: ${_event?.name}");
+    _event?.launchDirections();
   }
 
   void _onOnline() {
-    Analytics().logSelect(target: "Online Url: ${widget.event?.name}");
+    Analytics().logSelect(target: "Online Url: ${_event?.name}");
   }
 
   void _onFavorite() {
-    Analytics().logSelect(target: "Favorite: ${widget.event?.name}");
-    Auth2().prefs?.toggleFavorite(widget.event);
+    Analytics().logSelect(target: "Favorite: ${_event?.name}");
+    Auth2().prefs?.toggleFavorite(_event);
   }
 }

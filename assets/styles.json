@@ -929,6 +929,8 @@
     "payment-google-pay": {"src": "images/icon-payment-type-google-pay.png", "type": "flutter.asset"},
     "payment-apple-pay": {"src": "images/icon-payment-type-apple-pay.png", "type": "flutter.asset"},
 
-    "mobile-access-logo": {"src": "images/hid-logo.png", "type": "flutter.asset"}
+    "mobile-access-logo": {"src": "images/hid-logo.png", "type": "flutter.asset"},
+
+    "event-detail-default": {"src": "images/event-detail-default.png", "type": "flutter.asset"}
   }
 }
