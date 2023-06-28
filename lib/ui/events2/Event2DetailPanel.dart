@@ -179,7 +179,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _locationDetailWidget {
-    if (widget.event?.online != true) {
+    if (widget.event?.inPerson == true) {
 
       bool canLocation = widget.event?.location?.isLocationCoordinateValid ?? false;
       
