@@ -43,6 +43,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   bool _allDay = false;
 
   Event2Type? _eventType;
+  _Event2Visibility _visibility = _Event2Visibility.public;
   
   bool _free = true;
 
@@ -114,6 +115,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildDescriptionSection(),
             _buildWebsiteSection(),
             _buildAttributesButtonSection(),
+            _buildRegistrationButtonSection(),
+            _buildAttendanceButtonSection(),
+            _buildVisibilitySection(),
+            _buildCreateEventButton(),
           ]),
         )
 
@@ -766,6 +771,119 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     });
   }
 
+  // Registration
+
+  Widget  _buildRegistrationButtonSection() => _buildButtonSectionWidget(
+    heading: _buildButtonSectionHeadingWidget(
+      title: Localization().getStringEx('panel.event2.create.event.button.registration.title', 'EVENT REGISTRATION'),
+      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.event.button.registration.description', 'Use in-app options or an external link.') : null,
+      required: true,
+      onTap: _onEventRegistration,
+    ),
+  );
+
+  void _onEventRegistration() {
+    Analytics().logSelect(target: "Event Registration");
+    AppAlert.showDialogResult(context, 'TBD');
+  }
+
+  // Attendance
+
+  Widget  _buildAttendanceButtonSection() => _buildButtonSectionWidget(
+    heading: _buildButtonSectionHeadingWidget(
+      title: Localization().getStringEx('panel.event2.create.event.button.attendance.title', 'EVENT ATTENDANCE'),
+      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.event.button.attendance.description', 'Receive feedback about your event.') : null,
+      required: true,
+      onTap: _onEventAttendance,
+    ),
+  );
+
+  void _onEventAttendance() {
+    Analytics().logSelect(target: "Event Attendance");
+    AppAlert.showDialogResult(context, 'TBD');
+  }
+
+  // Visibility
+
+  Widget _buildVisibilitySection() {
+    String title = Localization().getStringEx('panel.event2.create.event.label.visibility.title', 'EVENT VISIBILITY');
+    return Padding(padding: _sectionPadding, child:
+      Semantics(container: true, child:
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Expanded(child:
+            Wrap(children: [
+              _buildSectionTitleWidget(title),
+              _buildSectionRequiredWidget(), 
+            ]),
+          ),
+          Expanded(child:
+            Container(decoration: _dropdownButtonDecoration, child:
+              Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
+                DropdownButtonHideUnderline(child:
+                  DropdownButton<_Event2Visibility>(
+                    icon: Styles().images?.getImage('chevron-down'),
+                    isExpanded: true,
+                    style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                    hint: Text(_event2VisibilityToDisplayString(_visibility),),
+                    items: _buildVisibilityDropDownItems(),
+                    onChanged: _onVisibilityChanged
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  List<DropdownMenuItem<_Event2Visibility>>? _buildVisibilityDropDownItems() {
+    List<DropdownMenuItem<_Event2Visibility>> menuItems = <DropdownMenuItem<_Event2Visibility>>[];
+    for (_Event2Visibility value in _Event2Visibility.values) {
+      menuItems.add(DropdownMenuItem<_Event2Visibility>(
+        value: value,
+        child: Text(_event2VisibilityToDisplayString(value),),
+      ));
+    }
+    return menuItems;
+  }
+
+  void _onVisibilityChanged(_Event2Visibility? value) {
+    Analytics().logSelect(target: "Visibility: $value");
+    if ((value != null) && mounted) {
+      setState(() {
+        _visibility = value;
+      });
+    }
+  }
+
+  // Create Event
+
+  bool canCreateEvent() => false;
+
+  Widget _buildCreateEventButton() {
+    String buttonTitle = Localization().getStringEx("panel.event2.create.event.button.create.title", "Create Event");
+    String buttonHint = Localization().getStringEx("panel.event2.create.event.button.create.hint", "");
+    bool buttonEnabled = canCreateEvent();
+
+
+    return Padding(padding: _sectionPadding, child:
+      Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
+        RoundedButton(
+          label: buttonTitle,
+          textStyle: buttonEnabled ? Styles().textStyles?.getTextStyle('widget.button.title.large.fat') : Styles().textStyles?.getTextStyle('widget.button.disabled.title.large.fat'),
+          onTap: _onTapCreateEvent,
+          backgroundColor: Styles().colors!.white,
+          borderColor: buttonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+        )
+      ),
+    );
+  }
+
+  void _onTapCreateEvent() {
+    Analytics().logSelect(target: "Create Event");
+    AppAlert.showDialogResult(context, 'TBD');
+  }
 
   // Sections
 
@@ -1045,3 +1163,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 }
 
+// _Event2Visibility
+
+enum _Event2Visibility { public, private }
+
+String _event2VisibilityToDisplayString(_Event2Visibility value) {
+  switch(value) {
+    case _Event2Visibility.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
+    case _Event2Visibility.private: return Localization().getStringEx('model.event2.event_type.private', 'Private');
+  }
+}
