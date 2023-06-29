@@ -1,6 +1,7 @@
 
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -15,6 +16,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -49,6 +51,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Map<String, dynamic>? _attributes;
 
+  late List<String> _createErrorList;
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _websiteController = TextEditingController();
@@ -70,7 +74,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   @override
   void initState() {
+    _titleController.addListener(_updateCreateErrorList);
+    _locationLatitudeController.addListener(_updateCreateErrorList);
+    _locationLongitudeController.addListener(_updateCreateErrorList);
+    _onlineUrlController.addListener(_updateCreateErrorList);
+
     _timeZone = DateTimeUni.timezoneUniOrLocal;
+    _createErrorList = _buildCreateErrorList();
     super.initState();
   }
 
@@ -118,7 +128,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildRegistrationButtonSection(),
             _buildAttendanceButtonSection(),
             _buildVisibilitySection(),
-            _buildCreateEventButton(),
+            _buildCreateEventSection(),
           ]),
         )
 
@@ -165,6 +175,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTapAddImage() {
     Analytics().logSelect(target: "Add Image");
+    _hideKeyboard();
     GroupAddImageWidget.show(context: context, updateUrl: _imageUrl).then((String? updateUrl) {
       if (mounted && (updateUrl != null) && (0 < updateUrl.length) && (_imageUrl != updateUrl)) {
         setState(() {
@@ -299,6 +310,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTimeZoneChanged(Location? value) {
     Analytics().logSelect(target: "Time Zone selected: $value");
+    _hideKeyboard();
     if ((value != null) && mounted) {
       setState(() {
         _timeZone = value;
@@ -386,6 +398,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onToggleDateAndTimeSection() {
     Analytics().logSelect(target: "Toggle Date & Time");
+    _hideKeyboard();
     setStateIfMounted(() {
       _dateTimeSectionExpanded = !_dateTimeSectionExpanded;
     });
@@ -393,6 +406,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onStartDate() {
     Analytics().logSelect(target: "Start Date");
+    _hideKeyboard();
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = now;
     DateTime maxDate = ((_endDate != null) && now.isBefore(_endDate!)) ? _endDate! : now.add(Duration(days: 366));
@@ -405,6 +419,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       if ((result != null) && mounted) {
         setState(() {
           _startDate = DateUtils.dateOnly(result);
+          _createErrorList = _buildCreateErrorList();
         });
       }
     });
@@ -412,6 +427,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
+    _hideKeyboard();
     showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay.fromDateTime(DateTime.now())).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -423,6 +439,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEndDate() {
     Analytics().logSelect(target: "End Date");
+    _hideKeyboard();
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = (_startDate != null) ? DateTimeUtils.max(_startDate!, now) : now;
     DateTime maxDate = minDate.add(Duration(days: 366));
@@ -442,6 +459,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEndTime() {
     Analytics().logSelect(target: "End Time");
+    _hideKeyboard();
     showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay.fromDateTime(TZDateTime.now(_timeZone))).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -459,6 +477,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTapAllDay() {
     Analytics().logSelect(target: "Toggle All Day");
+    _hideKeyboard();
     setStateIfMounted(() {
       _allDay = !_allDay;
     });
@@ -556,6 +575,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onToggleTypeAndLocationSection() {
     Analytics().logSelect(target: "Toggle Event Type and Location");
+    _hideKeyboard();
     setStateIfMounted(() {
       _typeAndLocationSectionExpanded = !_typeAndLocationSectionExpanded;
     });
@@ -563,9 +583,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEventTypeChanged(Event2Type? value) {
     Analytics().logSelect(target: "Time Zone selected: $value");
+    _hideKeyboard();
     if ((value != null) && mounted) {
       setState(() {
         _eventType = value;
+        _createErrorList = _buildCreateErrorList();
       });
     }
   }
@@ -625,6 +647,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTapSelectLocation() {
     Analytics().logSelect(target: "Select Location");
+    _hideKeyboard();
     AppAlert.showDialogResult(context, 'TBD');
   }
 
@@ -694,6 +717,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onToggleCostSection() {
     Analytics().logSelect(target: "Toggle Cost Sectoion");
+    _hideKeyboard();
     setStateIfMounted(() {
       _costSectionExpanded = !_costSectionExpanded;
     });
@@ -701,6 +725,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTapFree() {
     Analytics().logSelect(target: "Toggle Free");
+    _hideKeyboard();
     setStateIfMounted(() {
       _free = !_free;
     });
@@ -713,7 +738,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     heading: _buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.event.button.attributes.title', 'EVENT ATTRIBUTES'),
       subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.event.button.attributes.description', 'Choose attributes related to your event.') : null,
-      required: true,
+      required: Events2().contentAttributes?.hasRequired(contentAttributeRequirementsScopeCreate) ?? false,
       onTap: _onEventAttributes,
     ),
     body: _buildAttributesSectionBody(),
@@ -756,6 +781,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventAttributes() {
     Analytics().logSelect(target: "Attributes");
 
+    _hideKeyboard();
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
       title:  Localization().getStringEx('panel.event2.attributes.attributes.header.title', 'Event Attributes'),
       description: Localization().getStringEx('panel.event2.attributes.attributes.header.description', 'Choose one or more attributes that help describe this event.'),
@@ -766,6 +792,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       if ((selection != null) && mounted) {
         setState(() {
           _attributes = selection;
+          _createErrorList = _buildCreateErrorList();
         });
       }
     });
@@ -784,6 +811,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEventRegistration() {
     Analytics().logSelect(target: "Event Registration");
+    _hideKeyboard();
     AppAlert.showDialogResult(context, 'TBD');
   }
 
@@ -800,6 +828,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
+    _hideKeyboard();
     AppAlert.showDialogResult(context, 'TBD');
   }
 
@@ -850,6 +879,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onVisibilityChanged(_Event2Visibility? value) {
     Analytics().logSelect(target: "Visibility: $value");
+    _hideKeyboard();
     if ((value != null) && mounted) {
       setState(() {
         _visibility = value;
@@ -859,30 +889,146 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Create Event
 
-  bool canCreateEvent() => false;
+  Widget _buildCreateEventSection() {
+    List<Widget> contentList = <Widget>[
+      _buildCreateEventButton(),
+    ];
+    if (_createErrorList.isNotEmpty) {
+      contentList.add(_buildCreateErrorStatus());
+    }
+    return Padding(padding: _sectionPadding, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList, )
+    );
+  }
 
   Widget _buildCreateEventButton() {
     String buttonTitle = Localization().getStringEx("panel.event2.create.event.button.create.title", "Create Event");
     String buttonHint = Localization().getStringEx("panel.event2.create.event.button.create.hint", "");
-    bool buttonEnabled = canCreateEvent();
+    bool buttonEnabled = _canCreateEvent();
+
+    return Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
+      RoundedButton(
+        label: buttonTitle,
+        textStyle: buttonEnabled ? Styles().textStyles?.getTextStyle('widget.button.title.large.fat') : Styles().textStyles?.getTextStyle('widget.button.disabled.title.large.fat'),
+        onTap: _onTapCreateEvent,
+        backgroundColor: Styles().colors!.white,
+        borderColor: buttonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+      )
+    );
+  }
+
+  List<String> _buildCreateErrorList() {
+    List<String> errorList = <String>[];
+
+    if (_titleController.text.isEmpty) {
+      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.name', 'event name'));
+    }
+
+    if (_startDate == null) {
+      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.date', 'date and time'));
+    }
+
+    if (_eventType == null) {
+      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.event_type', 'event type'));
+    }
+    else if (_inPersonEventType && !_hasLocation) {
+      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.location', 'location coordinates'));
+    }
+    else if (_onlineEventType && !_hasOnlineDetails) {
+      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.online_url', 'online URL'));
+    }
+
+    if (Events2().contentAttributes?.isSelectionValid(_attributes) != true) {
+      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.attributes', 'event attributes'));
+    }
+    
+    return errorList;
+  }
 
 
-    return Padding(padding: _sectionPadding, child:
-      Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
-        RoundedButton(
-          label: buttonTitle,
-          textStyle: buttonEnabled ? Styles().textStyles?.getTextStyle('widget.button.title.large.fat') : Styles().textStyles?.getTextStyle('widget.button.disabled.title.large.fat'),
-          onTap: _onTapCreateEvent,
-          backgroundColor: Styles().colors!.white,
-          borderColor: buttonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-        )
-      ),
+  Widget _buildCreateErrorStatus() {
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text");
+    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text.small");
+
+    for (String error in _createErrorList) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: error, style: regularStyle,),);
+    }
+
+    if (descriptionList.isNotEmpty) {
+      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.event2.create.event.status.missing.heading', 'Missing: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: "." , style: regularStyle,));
+    }
+
+    return Padding(padding: EdgeInsets.only(top: 12), child:
+      Row(children: [ Expanded(child:
+        RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+      ),],),
     );
   }
 
   void _onTapCreateEvent() {
     Analytics().logSelect(target: "Create Event");
+    _hideKeyboard();
     AppAlert.showDialogResult(context, 'TBD');
+  }
+
+  bool get _onlineEventType => (_eventType == Event2Type.online) ||  (_eventType == Event2Type.hybrid);
+  bool get _inPersonEventType => (_eventType == Event2Type.inPerson) ||  (_eventType == Event2Type.hybrid);
+
+  ExploreLocation? get _location {
+    double? latitude = _parseDouble(_locationLatitudeController);
+    double? longitude = _parseDouble(_locationLongitudeController);
+    return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0)) ? ExploreLocation(
+      building: _locationBuildingController.text,
+      fullAddress: _locationAddressController.text,
+      latitude: latitude,
+      longitude: longitude
+    ) : null;
+  }
+
+  bool get _hasLocation {
+    double? latitude = _parseDouble(_locationLatitudeController);
+    double? longitude = _parseDouble(_locationLongitudeController);
+    return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0));
+  }
+
+  static double? _parseDouble(TextEditingController textController) =>
+    textController.text.isNotEmpty ? double.tryParse(textController.text) : null;
+
+  OnlineDetails? get _onlineDetails => 
+    _onlineUrlController.text.isNotEmpty ? OnlineDetails(
+      url: _onlineUrlController.text,
+      meetingId: _onlineMeetingIdController.text,
+      meetingPasscode: _onlinePasscodeController.text,
+    ) : null;
+
+  bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
+
+  bool _canCreateEvent() => (
+    _titleController.text.isNotEmpty &&
+    (_startDate != null) &&
+    (_eventType != null) &&
+    (!_inPersonEventType || _hasLocation) &&
+    (!_onlineEventType || _hasOnlineDetails) &&
+    (Events2().contentAttributes?.isAttributesSelectionValid(_attributes) ?? false)
+  );
+
+  void _updateCreateErrorList() {
+    debugPrint("EVENT NAME: ${_titleController.text}");
+    List<String> createErrorList = _buildCreateErrorList();
+    if (!DeepCollectionEquality().equals(createErrorList, _createErrorList)) {
+      setStateIfMounted(() {
+        _createErrorList = createErrorList;
+      });
+    }
+  }
+
+  void _hideKeyboard() {
+    FocusScope.of(context).unfocus();
   }
 
   // Sections
@@ -1105,7 +1251,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   // Text Edit
 
   Widget _buildTextEditWidget(TextEditingController controller, {
-    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = _textEditContentPadding
+    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = _textEditContentPadding,
+    void Function()? onChanged,
   }) =>
     TextField(
       controller: controller,
@@ -1113,12 +1260,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       style: _textEditStyle,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      onChanged: (onChanged != null) ? ((_) => onChanged) : null,
     );
 
   Widget _buildInnerTextEditWidget(TextEditingController controller, {
-    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = _innerTextEditContentPadding
+    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = _innerTextEditContentPadding,
+    void Function()? onChanged,
   }) =>
-    _buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, padding: padding);
+    _buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, padding: padding, onChanged: onChanged);
 
   TextStyle? get _textEditStyle =>
     Styles().textStyles?.getTextStyle('widget.input_field.dark.text.regular.thin');

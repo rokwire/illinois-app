@@ -1189,6 +1189,13 @@
 	"panel.event2.create.event.label.visibility.title": "EVENT VISIBILITY",
 	"panel.event2.create.event.button.create.title": "Create Event",
 	"panel.event2.create.event.button.create.hint": "",
+	"panel.event2.create.event.status.missing.heading": "Missing: ",
+	"panel.event2.create.event.status.missing.name": "event name",
+	"panel.event2.create.event.status.missing.date": "date and time",
+	"panel.event2.create.event.status.missing.event_type": "event type",
+	"panel.event2.create.event.status.missing.location": "location coordinates",
+	"panel.event2.create.event.status.missing.online_url": "online URL",
+	"panel.event2.create.event.status.missing.attributes": "event attributes",
 
 	"panel.event2.attributes.attributes.header.title": "Event Attributes",
 	"panel.event2.attributes.attributes.header.description": "Choose one or more attributes that help describe this event",
