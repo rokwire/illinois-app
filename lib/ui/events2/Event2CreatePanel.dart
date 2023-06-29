@@ -8,6 +8,7 @@ import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -52,6 +53,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Map<String, dynamic>? _attributes;
 
   late List<String> _createErrorList;
+  bool _creatingEvent = false;
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -910,9 +912,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       RoundedButton(
         label: buttonTitle,
         textStyle: buttonEnabled ? Styles().textStyles?.getTextStyle('widget.button.title.large.fat') : Styles().textStyles?.getTextStyle('widget.button.disabled.title.large.fat'),
-        onTap: _onTapCreateEvent,
+        onTap: buttonEnabled ? _onTapCreateEvent : null,
         backgroundColor: Styles().colors!.white,
         borderColor: buttonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+        progress: _creatingEvent,
       )
     );
   }
@@ -970,10 +973,60 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
+  Future<void> _showPopup(String title, String? message) {
+    return showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),),
+        (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
+          Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
+        ) : Container()
+      ],),
+      actions: <Widget>[
+        TextButton(
+          child: Text(Localization().getStringEx("dialog.ok.title", "OK"), style:
+            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+          ),
+          onPressed: () {
+            Analytics().logAlert(text: message, selection: "OK");
+            Navigator.pop(context);
+          }
+        )
+      ],
+
+    ));
+  }
+
   void _onTapCreateEvent() {
     Analytics().logSelect(target: "Create Event");
     _hideKeyboard();
-    AppAlert.showDialogResult(context, 'TBD');
+    setStateIfMounted(() {
+      _creatingEvent = true;
+    });
+    Events2().createEvent(_createEventFromData()).then((dynamic result) {
+      if (mounted) {
+        setState(() {
+          _creatingEvent = false;
+        });
+
+        String? title, message;
+        if (result is Event2) {
+          title = Localization().getStringEx('panel.event2.create.event.message.succeeded.title', 'Succeeded');
+          message = Localization().getStringEx('panel.event2.create.event.message.succeeded.message', 'Successfully created {{event_name}} event').replaceAll('{{event_name}}', result.name ?? '');
+        }
+        else if (result is String) {
+          title = Localization().getStringEx('panel.event2.create.event.message.failed.title', 'Failed');
+          message = result;
+        }
+
+        if (title != null) {
+          _showPopup(title, message).then((_) {
+            if (result is Event2) {
+              Navigator.of(context).pop();
+            }
+          });
+        }
+      }
+    });
   }
 
   bool get _onlineEventType => (_eventType == Event2Type.online) ||  (_eventType == Event2Type.hybrid);
@@ -986,7 +1039,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       building: _locationBuildingController.text,
       fullAddress: _locationAddressController.text,
       latitude: latitude,
-      longitude: longitude
+      longitude: longitude,
     ) : null;
   }
 
@@ -1007,6 +1060,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     ) : null;
 
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
+
+  DateTime? get _startDateTimeUtc =>
+    (_startDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime).toUtc() : null;
+
+  DateTime? get _endDateTimeUtc =>
+    (_endDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _endDate!, _endTime) : null;
+
+  bool get _private => (_visibility == _Event2Visibility.private);
 
   bool _canCreateEvent() => (
     _titleController.text.isNotEmpty &&
@@ -1030,6 +1091,47 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _hideKeyboard() {
     FocusScope.of(context).unfocus();
   }
+
+  Event2 _createEventFromData() =>
+    Event2(
+      name: _textFieldValue(_titleController),
+      description: _textFieldValue(_descriptionController),
+      instructions: null,
+      imageUrl: _imageUrl,
+      eventUrl: _textFieldValue(_websiteController),
+
+      timezone: _timeZone.name,
+      startTimeUtc: _startDateTimeUtc,
+      endTimeUtc: _endDateTimeUtc,
+      allDay: _allDay,
+
+      eventType: _eventType,
+      location: _location,
+      onlineDetails: _onlineDetails,
+
+      grouping: null, // TBD
+      attributes: _attributes,
+
+      canceled: null, // NA
+      userRole: null, // NA
+
+      attendanceRequired: false, // TBD
+      private: _private,
+
+      free: _free,
+      cost: _textFieldValue(_costController),
+
+      registrationRequired: false, // TBD
+      registrationDetails: null, // TBD
+      maxEventCapacity: null, // TBD
+
+      sponsor: null, // TBD
+      speaker: null, // TBD
+      contacts: null, // TBD
+    );
+
+  String? _textFieldValue(TextEditingController textController) =>
+    textController.text.isNotEmpty ? textController.text : null;
 
   // Sections
 

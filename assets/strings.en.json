@@ -1197,6 +1197,9 @@
     "panel.event2.create.event.status.missing.location": "location coordinates",
     "panel.event2.create.event.status.missing.online_url": "online URL",
     "panel.event2.create.event.status.missing.attributes": "event attributes",
+    "panel.event2.create.event.message.succeeded.title": "Succeeded",
+    "panel.event2.create.event.message.succeeded.message": "Successfully created \"{{event_name}}\" event.",
+    "panel.event2.create.event.message.failed.title": "Failed",
 
 	"panel.event2.attributes.attributes.header.title": "Event Attributes",
 	"panel.event2.attributes.attributes.header.description": "Choose one or more attributes that help describe this event.",
