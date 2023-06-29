@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
@@ -15,8 +18,10 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event2? event;
@@ -74,15 +79,23 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
             ),
             SliverList(delegate:
               SliverChildListDelegate([
-                _categoriesWidget,
-                Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+                Container(color: Styles().colors?.white, child:
                   Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _titleWidget,
-                    _sponsorWidget,
-                    _detailsWidget,
+                    _categoriesWidget,
+                    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+                      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        _titleWidget,
+                        _sponsorWidget,
+                        _detailsWidget,
+                      ])
+                    ),
                   ]),
                 ),
-
+                Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+                  Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  _descriptionWidget,
+                  _buttonsWidget,
+               ]))
               ], addSemanticIndexes:false)
             ),
           ])
@@ -140,17 +153,27 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ],),
    ) : Container();
 
+  Widget get _descriptionWidget => StringUtils.isNotEmpty(_event?.description) ? Padding(padding: EdgeInsets.only(top: 24, left: 10, right: 10), child:
+       HtmlWidget(
+          StringUtils.ensureNotEmpty(_event?.description),
+          onTapUrl : (url) {_onLaunchUrl(url, context: context); return true;},
+          textStyle: Styles().textStyles?.getTextStyle("widget.info.regular")
+      )
+  ) : Container();
+
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
       ...?_dateDetailWidget,
       ...?_onlineDetailWidget,
       ...?_locationDetailWidget,
+      ...?_priceDetailWidget,
+      ...?_privacyDetailWidget,
+      ...?_contactsDetailWidget,
     ];
 
     return detailWidgets.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 16), child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: detailWidgets,)
     ) : Container();
-    
   }
 
   List<Widget>? get _dateDetailWidget {
@@ -212,6 +235,40 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return null;
   }
 
+  List<Widget>? get _priceDetailWidget{
+    return null; //TBD
+  }
+
+  List<Widget>? get _privacyDetailWidget{
+    return null; //TBD
+  }
+
+  List<Widget>? get _contactsDetailWidget{
+    return null; //TBD
+  }
+
+  Widget get _buttonsWidget {
+    List<Widget> buttons = <Widget>[
+      ...?_urlButtonWidget,
+      ...?_registrationButtonWidget
+    ];
+
+    return buttons.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 16), child:
+    Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: buttons,)
+    ) : Container();
+  }
+
+  List<Widget>? get _urlButtonWidget => //TBD check if this is the proper url for this button
+    StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildUrlButtonWidget(
+      title: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+      hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+      onTap: (){_onWebButton(_event?.eventUrl, analyticsName: 'Website');}
+    )] : null;
+
+  List<Widget>? get _registrationButtonWidget{
+    return null; //TBD
+  }
+
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
@@ -247,6 +304,24 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     );
   }
 
+  //TBD remove if not needed
+  Widget _buildUrlButtonWidget({String? title, String? hint, bool enabled = true, void Function()? onTap}) => StringUtils.isNotEmpty(title) ?
+    Padding(padding: EdgeInsets.only(bottom: 6), child:
+      Row(children:<Widget>[
+        Expanded(child:
+          RoundedButton(
+              label: StringUtils.ensureNotEmpty(title),
+              hint: hint,
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+              backgroundColor: enabled ? Colors.white : Styles().colors!.background,
+              borderColor: enabled ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary,  //TBD proper disabled colors
+              rightIcon: Styles().images?.getImage(enabled ? 'external-link-dark' : 'external-link'),
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              onTap: onTap
+          ),
+        ),],)
+      ) : Container();
+
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions: ${_event?.name}");
     _event?.launchDirections();
@@ -259,5 +334,27 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   void _onFavorite() {
     Analytics().logSelect(target: "Favorite: ${_event?.name}");
     Auth2().prefs?.toggleFavorite(_event);
+  }
+
+  void _onLaunchUrl(String? url, {BuildContext? context}) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
+        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
+      }
+    }
+  }
+
+  void _onWebButton(String? url, { String? analyticsName }) {
+    if (analyticsName != null) {
+      Analytics().logSelect(target: analyticsName);
+    }
+    if(StringUtils.isNotEmpty(url)){
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
+    }
   }
 }
