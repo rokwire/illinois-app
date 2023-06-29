@@ -33,6 +33,9 @@ class Event2TimeRangePanel extends StatefulWidget {
     customEndTimeAttribute : endTime,
   };
 
+  static TZDateTime dateTimeWithDateAndTimeOfDay(Location timeZone, DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
+    TZDateTime(timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
+
   @override
   State<StatefulWidget> createState() => _Event2TimeRangePanelState();
 }
@@ -306,7 +309,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     _dateTimeWithDateAndTimeOfDay(DateTime.now(), time);
 
   TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
-    TZDateTime(_timeZone, date.year, date.month, date.day, time?.hour ?? (inclusive ? 23 : 0), time?.minute ?? (inclusive ? 59 : 0));
+    Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, date, time, inclusive: inclusive);
 
   bool get _canApply {
     TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;

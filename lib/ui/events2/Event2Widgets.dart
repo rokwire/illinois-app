@@ -260,13 +260,13 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   List<Widget>? get _onlineDetailWidget {
-    return (widget.event.online == true) ? <Widget>[
+    return widget.event.online ? <Widget>[
       _buildTextDetailWidget('Online', 'laptop')
     ] : null;
   }
 
   List<Widget>? get _locationDetailWidget {
-    if (widget.event.online != true) {
+    if (widget.event.inPerson) {
 
       bool canLocation = widget.event.location?.isLocationCoordinateValid ?? false;
       
