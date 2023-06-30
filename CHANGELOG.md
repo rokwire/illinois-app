@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.17] - 2023-06-30
 ### Changed
 - Check for calendar admin permission to expose Create Event2 button [#3343](https://github.com/rokwire/illinois-app/issues/3343).
 ### Added
