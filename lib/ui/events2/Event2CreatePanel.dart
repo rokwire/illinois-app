@@ -191,17 +191,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   // Title and Description
 
   Widget _buildTitleSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.title.title', 'EVENT TITLE'), required: true),
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.title.title', 'EVENT TITLE'), required: true),
     body: _buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null),
   );
 
   Widget _buildDescriptionSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.description.title', 'EVENT DESCRIPTION')),
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION')),
     body: _buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null),
   );
 
   Widget _buildWebsiteSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.website.title', 'ADD EVENT WEBSITE LINK'), suffixImageKey: 'external-link'),
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.website.title', 'ADD EVENT WEBSITE LINK'), suffixImageKey: 'external-link'),
     body: _buildTextEditWidget(_websiteController, keyboardType: TextInputType.url),
     trailing: _buildConfirmUrlLink(onTap: (_onConfirmWebsiteLink)),
     padding: const EdgeInsets.only(bottom: 8), // Link button tapable area
@@ -212,7 +212,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   // Date & Time
 
   /*Widget _buildDateAndTimeSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.date_and_time.title', 'DATE AND TIME'),
+    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.date_and_time.title', 'DATE AND TIME'),
       required: true
     ),
     body: _buildDateAndTimeSectionBody(),
@@ -220,7 +220,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   );*/
 
   Widget _buildDateAndTimeDropdownSection() => _buildDropdownSectionWidget(
-    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.date_and_time.title', 'DATE AND TIME'),
+    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.date_and_time.title', 'DATE AND TIME'),
       required: true,
       expanded: _dateTimeSectionExpanded,
       onToggleExpanded: _onToggleDateAndTimeSection,
@@ -488,7 +488,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   // Event Type, Location and Online Details
 
   Widget _buildTypeAndLocationDropdownSection() => _buildDropdownSectionWidget(
-    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.type_and_location.title', 'EVENT TYPE AND LOCATION'),
+    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.type_and_location.title', 'EVENT TYPE AND LOCATION'),
       required: true,
       expanded: _typeAndLocationSectionExpanded,
       onToggleExpanded: _onToggleTypeAndLocationSection,
@@ -536,7 +536,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       Row(children: <Widget>[
         Expanded(flex: 3, child:
           RichText(text:
-            TextSpan(text: Localization().getStringEx("panel.event2.create.event.label.event_type.title", "EVENT TYPE"), style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"), children: <InlineSpan>[
+            TextSpan(text: Localization().getStringEx("panel.event2.create.label.event_type.title", "EVENT TYPE"), style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"), children: <InlineSpan>[
               TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'),),
             ])
           )
@@ -595,28 +595,28 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   Widget _buildLocationBuildingInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.building.title', 'LOCATION BUILDING')),
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.building.title', 'LOCATION BUILDING')),
     body: _buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text),
   );
 
   Widget _buildLocationAddressInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.address.title', 'LOCATION ADDRESS')),
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.address.title', 'LOCATION ADDRESS')),
     body: _buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text),
   );
 
   Widget _buildLocationLatitudeInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.latitude.title', 'LOCATION LATITUDE'), required: true),
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.latitude.title', 'LOCATION LATITUDE'), required: true),
     body: _buildInnerTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number),
   );
 
   Widget _buildLocationLongitudeInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.location.longitude.title', 'LOCATION LONGITUDE'), required: true),
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.longitude.title', 'LOCATION LONGITUDE'), required: true),
     body: _buildInnerTextEditWidget(_locationLongitudeController, keyboardType: TextInputType.number),
   );
 
   Widget _buildSelectLocationButton() {
-    String buttonTitle = Localization().getStringEx("panel.event2.create.event.location.button.select.title", "Select Location on a Map");
-    String buttonHint = Localization().getStringEx("panel.event2.create.event.location.button.select.hint", "");
+    String buttonTitle = Localization().getStringEx("panel.event2.create.location.button.select.title", "Select Location on a Map");
+    String buttonHint = Localization().getStringEx("panel.event2.create.location.button.select.hint", "");
 
     return Padding(padding: _innerSectionPadding, child:
       Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
@@ -633,17 +633,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   Widget _buildOnlineUrlInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.url.title', 'ONLINE URL'), required: true),
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.url.title', 'ONLINE URL'), required: true),
     body: _buildInnerTextEditWidget(_onlineUrlController, keyboardType: TextInputType.url),
   );
 
   Widget _buildOnlineMeetingIdInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.meeting_id.title', 'MEETING ID')),
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.meeting_id.title', 'MEETING ID')),
     body: _buildInnerTextEditWidget(_onlineMeetingIdController, keyboardType: TextInputType.text),
   );
 
   Widget _buildOnlinePasscodeInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.online_details.passcode.title', 'PASSCODE')),
+    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.passcode.title', 'PASSCODE')),
     body: _buildInnerTextEditWidget(_onlinePasscodeController, keyboardType: TextInputType.text),
   );
 
@@ -656,7 +656,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   // Cost
 
   Widget _buildCostDropdownSection() => _buildDropdownSectionWidget(
-    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.event.section.cost.title', 'COST'),
+    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.cost.title', 'COST'),
       required: true,
       expanded: _costSectionExpanded,
       onToggleExpanded: _onToggleCostSection,
@@ -681,10 +681,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   Widget _buildFreeToggle() => Semantics(toggled: _free, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.create.event.free.toggle.title", "Is this event free?"),
-    hint: Localization().getStringEx("panel.event2.create.event.free.toggle.hint", ""),
+    label: Localization().getStringEx("panel.event2.create.free.toggle.title", "Is this event free?"),
+    hint: Localization().getStringEx("panel.event2.create.free.toggle.hint", ""),
     child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.create.event.free.toggle.title", "Is this event free?"),
+      label: Localization().getStringEx("panel.event2.create.free.toggle.title", "Is this event free?"),
       padding: _togglePadding,
       toggled: _free,
       onTap: _onTapFree,
@@ -698,8 +698,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   );
 
   Widget _buildCostInnerSectionHeadingWidget() {
-    String title = Localization().getStringEx('panel.event2.create.event.label.cost.title', 'COST DESCRIPTION');
-    String description = Localization().getStringEx('panel.event2.create.event.label.cost.description', ' (eg: \$10, Donation suggested)');
+    String title = Localization().getStringEx('panel.event2.create.label.cost.title', 'COST DESCRIPTION');
+    String description = Localization().getStringEx('panel.event2.create.label.cost.description', ' (eg: \$10, Donation suggested)');
     String semanticsLabel = title + description;
 
     return Padding(padding: _innerSectionHeadingPadding, child:
@@ -738,8 +738,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildAttributesButtonSection() => _buildButtonSectionWidget(
     heading: _buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.event.button.attributes.title', 'EVENT ATTRIBUTES'),
-      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.event.button.attributes.description', 'Choose attributes related to your event.') : null,
+      title: Localization().getStringEx('panel.event2.create.button.attributes.title', 'EVENT ATTRIBUTES'),
+      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.button.attributes.description', 'Choose attributes related to your event.') : null,
       required: Events2().contentAttributes?.hasRequired(contentAttributeRequirementsScopeCreate) ?? false,
       onTap: _onEventAttributes,
     ),
@@ -804,8 +804,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget  _buildRegistrationButtonSection() => _buildButtonSectionWidget(
     heading: _buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.event.button.registration.title', 'EVENT REGISTRATION'),
-      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.event.button.registration.description', 'Use in-app options or an external link.') : null,
+      title: Localization().getStringEx('panel.event2.create.button.registration.title', 'EVENT REGISTRATION'),
+      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.button.registration.description', 'Use in-app options or an external link.') : null,
       required: true,
       onTap: _onEventRegistration,
     ),
@@ -821,8 +821,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget  _buildAttendanceButtonSection() => _buildButtonSectionWidget(
     heading: _buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.event.button.attendance.title', 'EVENT ATTENDANCE'),
-      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.event.button.attendance.description', 'Receive feedback about your event.') : null,
+      title: Localization().getStringEx('panel.event2.create.button.attendance.title', 'EVENT ATTENDANCE'),
+      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.button.attendance.description', 'Receive feedback about your event.') : null,
       required: true,
       onTap: _onEventAttendance,
     ),
@@ -837,7 +837,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   // Visibility
 
   Widget _buildVisibilitySection() {
-    String title = Localization().getStringEx('panel.event2.create.event.label.visibility.title', 'EVENT VISIBILITY');
+    String title = Localization().getStringEx('panel.event2.create.label.visibility.title', 'EVENT VISIBILITY');
     return Padding(padding: _sectionPadding, child:
       Semantics(container: true, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -904,8 +904,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   Widget _buildCreateEventButton() {
-    String buttonTitle = Localization().getStringEx("panel.event2.create.event.button.create.title", "Create Event");
-    String buttonHint = Localization().getStringEx("panel.event2.create.event.button.create.hint", "");
+    String buttonTitle = Localization().getStringEx("panel.event2.create.button.create.title", "Create Event");
+    String buttonHint = Localization().getStringEx("panel.event2.create.button.create.hint", "");
     bool buttonEnabled = _canCreateEvent();
 
     return Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
@@ -924,25 +924,25 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     List<String> errorList = <String>[];
 
     if (_titleController.text.isEmpty) {
-      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.name', 'event name'));
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.name', 'event name'));
     }
 
     if (_startDate == null) {
-      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.date', 'date and time'));
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.date', 'date and time'));
     }
 
     if (_eventType == null) {
-      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.event_type', 'event type'));
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.event_type', 'event type'));
     }
     else if (_inPersonEventType && !_hasLocation) {
-      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.location', 'location coordinates'));
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.location', 'location coordinates'));
     }
     else if (_onlineEventType && !_hasOnlineDetails) {
-      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.online_url', 'online URL'));
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.online_url', 'online URL'));
     }
 
     if (Events2().contentAttributes?.isSelectionValid(_attributes) != true) {
-      errorList.add(Localization().getStringEx('panel.event2.create.event.status.missing.attributes', 'event attributes'));
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.attributes', 'event attributes'));
     }
     
     return errorList;
@@ -962,7 +962,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     }
 
     if (descriptionList.isNotEmpty) {
-      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.event2.create.event.status.missing.heading', 'Missing: ') , style: boldStyle,));
+      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.event2.create.status.missing.heading', 'Missing: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: "." , style: regularStyle,));
     }
 
@@ -1010,11 +1010,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
         String? title, message;
         if (result is Event2) {
-          title = Localization().getStringEx('panel.event2.create.event.message.succeeded.title', 'Succeeded');
-          message = Localization().getStringEx('panel.event2.create.event.message.succeeded.message', 'Successfully created {{event_name}} event').replaceAll('{{event_name}}', result.name ?? '');
+          title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
+          message = Localization().getStringEx('panel.event2.create.message.succeeded.message', 'Successfully created {{event_name}} event').replaceAll('{{event_name}}', result.name ?? '');
         }
         else if (result is String) {
-          title = Localization().getStringEx('panel.event2.create.event.message.failed.title', 'Failed');
+          title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
           message = result;
         }
 
@@ -1390,8 +1390,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }) {
     return Align(alignment: Alignment.centerRight, child:
       LinkButton(
-        title: Localization().getStringEx('panel.event2.create.event.button.confirm_url.title', 'Confirm URL'),
-        hint: Localization().getStringEx('panel.event2.create.event.button.confirm_url.hint', ''),
+        title: Localization().getStringEx('panel.event2.create.button.confirm_url.title', 'Confirm URL'),
+        hint: Localization().getStringEx('panel.event2.create.button.confirm_url.hint', ''),
         onTap: onTap,
         padding: padding,
       )
