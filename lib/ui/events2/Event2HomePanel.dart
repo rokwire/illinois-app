@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -550,11 +551,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
           textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
         ),
-        Event2ImageCommandButton('plus-circle',
-          label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
-          hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
-          contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
-          onTap: _onCreate
+        Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
+          Event2ImageCommandButton('plus-circle',
+            label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
+            hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
+            contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
+            onTap: _onCreate
+          ),
         ),
         Event2ImageCommandButton('search',
           label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),

@@ -842,11 +842,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
           textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
         ),
-        Event2ImageCommandButton('plus-circle',
-          label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
-          hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
-          contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
-          onTap: _onEvent2Create
+        Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
+          Event2ImageCommandButton('plus-circle',
+            label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
+            hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
+            contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
+            onTap: _onEvent2Create
+          ),
         ),
         Event2ImageCommandButton('search',
           label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
