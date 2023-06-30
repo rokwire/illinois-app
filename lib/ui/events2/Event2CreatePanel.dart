@@ -8,6 +8,7 @@ import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -49,10 +50,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   _Event2Visibility _visibility = _Event2Visibility.public;
   
   bool _free = true;
-
+  
   Map<String, dynamic>? _attributes;
 
-  late List<String> _createErrorList;
+  bool _registrationRequired = false;
+  String? _registrationLabel;
+  String? _registrationLink;
+  int? _eventCapacity;
+
+  late List<String> _errorList;
   bool _creatingEvent = false;
 
   final TextEditingController _titleController = TextEditingController();
@@ -76,13 +82,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   @override
   void initState() {
-    _titleController.addListener(_updateCreateErrorList);
-    _locationLatitudeController.addListener(_updateCreateErrorList);
-    _locationLongitudeController.addListener(_updateCreateErrorList);
-    _onlineUrlController.addListener(_updateCreateErrorList);
+    _titleController.addListener(_updateErrorList);
+    _locationLatitudeController.addListener(_updateErrorList);
+    _locationLongitudeController.addListener(_updateErrorList);
+    _onlineUrlController.addListener(_updateErrorList);
 
     _timeZone = DateTimeUni.timezoneUniOrLocal;
-    _createErrorList = _buildCreateErrorList();
+    _errorList = _buildErrorList();
     super.initState();
   }
 
@@ -271,8 +277,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     return Semantics(container: true, child:
       Row(children: <Widget>[
         Expanded(flex: 3, child:
-          Text(Localization().getStringEx("panel.create_event.date_time.time_zone.title", "TIME ZONE"), style:
-            Styles().textStyles?.getTextStyle("panel.create_event.title.small")
+          Text(Localization().getStringEx("panel.create_event.date_time.time_zone.title", "TIME ZONE"), style: _headingTextStype
           ),
         ),
         Container(width: 16,),
@@ -337,7 +342,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.only(bottom: 4), child:
               Row(children: <Widget>[
-                Text(dateLabel ?? '', style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"), ),
+                Text(dateLabel ?? '', style: _headingTextStype, ),
               ],),
             ),
             _buildDropdownButton(label: (date != null) ? DateFormat("EEE, MMM dd, yyyy").format(date) : "-", onTap: onDate,)
@@ -353,7 +358,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(bottom: 4), child:
                 Row(children: <Widget>[
-                  Text(timeLabel ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")),
+                  Text(timeLabel ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: _headingTextStype),
                 ],),
               ),
               _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,)
@@ -421,7 +426,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       if ((result != null) && mounted) {
         setState(() {
           _startDate = DateUtils.dateOnly(result);
-          _createErrorList = _buildCreateErrorList();
+          _errorList = _buildErrorList();
         });
       }
     });
@@ -522,12 +527,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       ]);
     }
 
-    /* contentList.add(Padding(padding: EdgeInsets.only(bottom: 12), child:
-      Text('More stuff to come here...', style:
-        Styles().textStyles?.getTextStyle("panel.create_event.title.small")
-      ),
-    ),); */
-
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
@@ -536,7 +535,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       Row(children: <Widget>[
         Expanded(flex: 3, child:
           RichText(text:
-            TextSpan(text: Localization().getStringEx("panel.event2.create.label.event_type.title", "EVENT TYPE"), style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"), children: <InlineSpan>[
+            TextSpan(text: Localization().getStringEx("panel.event2.create.label.event_type.title", "EVENT TYPE"), style: _headingTextStype, children: <InlineSpan>[
               TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'),),
             ])
           )
@@ -589,7 +588,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     if ((value != null) && mounted) {
       setState(() {
         _eventType = value;
-        _createErrorList = _buildCreateErrorList();
+        _errorList = _buildErrorList();
       });
     }
   }
@@ -707,7 +706,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         Row(children: [
           Expanded(child:
             RichText(text:
-              TextSpan(text: title, style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"), children: <InlineSpan>[
+              TextSpan(text: title, style: _headingTextStype, children: <InlineSpan>[
                 TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
               ])
             )
@@ -794,7 +793,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       if ((selection != null) && mounted) {
         setState(() {
           _attributes = selection;
-          _createErrorList = _buildCreateErrorList();
+          _errorList = _buildErrorList();
         });
       }
     });
@@ -805,7 +804,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Widget  _buildRegistrationButtonSection() => _buildButtonSectionWidget(
     heading: _buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.registration.title', 'EVENT REGISTRATION'),
-      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.button.registration.description', 'Use in-app options or an external link.') : null,
+      subTitle: _registrationRequired ?
+        Localization().getStringEx('panel.event2.create.button.registration.confirmation', 'Event registration set up.') :
+        Localization().getStringEx('panel.event2.create.button.registration.description', 'Use in-app options or an external link.'),
       required: true,
       onTap: _onEventRegistration,
     ),
@@ -814,7 +815,24 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventRegistration() {
     Analytics().logSelect(target: "Event Registration");
     _hideKeyboard();
-    AppAlert.showDialogResult(context, 'TBD');
+    Navigator.push<Event2SetupRegistrationParam>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(param:
+      Event2SetupRegistrationParam(
+        registrationRequired: _registrationRequired,
+        registrationLabel: _registrationLabel,
+        registrationLink: _registrationLink,
+        eventCapacity: _eventCapacity,
+      ),
+    ))).then((Event2SetupRegistrationParam? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          _registrationRequired = result.registrationRequired;
+          _registrationLabel = result.registrationLabel;
+          _registrationLink = result.registrationLink;
+          _eventCapacity = result.eventCapacity;
+          _errorList = _buildErrorList();
+        });
+      }
+    });
   }
 
   // Attendance
@@ -822,7 +840,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Widget  _buildAttendanceButtonSection() => _buildButtonSectionWidget(
     heading: _buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.attendance.title', 'EVENT ATTENDANCE'),
-      subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.button.attendance.description', 'Receive feedback about your event.') : null,
+      subTitle: Localization().getStringEx('panel.event2.create.button.attendance.description', 'Receive feedback about your event.'),
       required: true,
       onTap: _onEventAttendance,
     ),
@@ -895,7 +913,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     List<Widget> contentList = <Widget>[
       _buildCreateEventButton(),
     ];
-    if (_createErrorList.isNotEmpty) {
+    if (_errorList.isNotEmpty) {
       contentList.add(_buildCreateErrorStatus());
     }
     return Padding(padding: _sectionPadding, child:
@@ -920,7 +938,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
-  List<String> _buildCreateErrorList() {
+  List<String> _buildErrorList() {
     List<String> errorList = <String>[];
 
     if (_titleController.text.isEmpty) {
@@ -944,6 +962,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     if (Events2().contentAttributes?.isSelectionValid(_attributes) != true) {
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.attributes', 'event attributes'));
     }
+
+    if (_registrationRequired && (_registrationLink?.isEmpty ?? true)) {
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.registration_link', 'registration link'));
+    }
     
     return errorList;
   }
@@ -954,7 +976,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     TextStyle? boldStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text");
     TextStyle? regularStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text.small");
 
-    for (String error in _createErrorList) {
+    for (String error in _errorList) {
       if (descriptionList.isNotEmpty) {
         descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
       }
@@ -1075,15 +1097,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     (_eventType != null) &&
     (!_inPersonEventType || _hasLocation) &&
     (!_onlineEventType || _hasOnlineDetails) &&
-    (Events2().contentAttributes?.isAttributesSelectionValid(_attributes) ?? false)
+    (Events2().contentAttributes?.isAttributesSelectionValid(_attributes) ?? false) &&
+    (!_registrationRequired || (_registrationLink?.isNotEmpty ?? false))
   );
 
-  void _updateCreateErrorList() {
+  void _updateErrorList() {
     debugPrint("EVENT NAME: ${_titleController.text}");
-    List<String> createErrorList = _buildCreateErrorList();
-    if (!DeepCollectionEquality().equals(createErrorList, _createErrorList)) {
+    List<String> errorList = _buildErrorList();
+    if (!DeepCollectionEquality().equals(errorList, _errorList)) {
       setStateIfMounted(() {
-        _createErrorList = createErrorList;
+        _errorList = errorList;
       });
     }
   }
@@ -1121,9 +1144,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       free: _free,
       cost: _textFieldValue(_costController),
 
-      registrationRequired: false, // TBD
-      registrationDetails: null, // TBD
-      maxEventCapacity: null, // TBD
+      registrationRequired: _registrationRequired,
+      registrationDetails: _registrationRequired ? RegistrationDetails(
+        label: _registrationLabel,
+        externalLink: _registrationLink
+      ) : null,
+      eventCapacity: _eventCapacity,
 
       sponsor: null, // TBD
       speaker: null, // TBD
@@ -1147,6 +1173,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   static const EdgeInsetsGeometry _textEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
   static const EdgeInsetsGeometry _innerTextEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+
+  TextStyle? get _headingTextStype => Styles().textStyles?.getTextStyle("panel.create_event.title.small");
 
   BoxDecoration get _sectionDecoration => BoxDecoration(
     border: Border.all(color: Styles().colors!.mediumGray2!, width: 1),
@@ -1226,7 +1254,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     _buildSectionHeadingWidget(title, required: required, prefixImageKey: prefixImageKey, suffixImageKey: suffixImageKey, padding : padding);
 
   Widget _buildSectionTitleWidget(String title) =>
-    Text(title, style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"));
+    Text(title, style: _headingTextStype);
 
   Widget _buildSectionSubTitleWidget(String subTitle) =>
     Text(subTitle, style: Styles().textStyles?.getTextStyle("widget.card.detail.small.regular"));
