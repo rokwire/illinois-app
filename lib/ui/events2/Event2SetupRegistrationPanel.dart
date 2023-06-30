@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -76,7 +77,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   // Require Registration
 
   Widget _buildRequireSection() =>
-    Padding(padding: _sectionPadding, child:
+    Padding(padding: Event2CreatePanel.sectionPadding, child:
       _buildRequireToggle()
     );
 
@@ -98,7 +99,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   void _onTapRegistrationRequired() {
     Analytics().logSelect(target: "Toggle All Day");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _registrationRequired = !_registrationRequired;
     });
@@ -107,13 +108,13 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   // Event Capacity
 
   Widget _buildCapacitySection() =>
-    Padding(padding: _sectionPadding, child:
+    Padding(padding: Event2CreatePanel.sectionPadding, child:
       Row(children: [
         Padding(padding: EdgeInsets.only(right: 6), child:
-          _buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY')),
+          Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY')),
         ),
         Expanded(child:
-          _buildTextEditWidget(_capacityController),
+          Event2CreatePanel.buildTextEditWidget(_capacityController),
         )
       ],)
     );
@@ -122,7 +123,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   // Description
 
   Widget _buildDescriptionSection() =>
-    Padding(padding: _sectionPadding, child:
+    Padding(padding: Event2CreatePanel.sectionPadding, child:
       Row(children: [
         Expanded(child:
           Text(Localization().getStringEx('panel.event2.setup.registration.description.label.title', 'Registration within the Illinois app requires the user to log in with a NetID.'), style: _descriptionTextStype,),
@@ -130,19 +131,20 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       ],)
     );
 
+  TextStyle? get _descriptionTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
 
   // Label
   
-  Widget _buildLabelSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.label.label.title', 'ADD REGISTRATION LABEL')),
-    body: _buildTextEditWidget(_labelController, keyboardType: TextInputType.text, maxLines: null),
+  Widget _buildLabelSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.label.label.title', 'ADD REGISTRATION LABEL')),
+    body: Event2CreatePanel.buildTextEditWidget(_labelController, keyboardType: TextInputType.text, maxLines: null),
   );
 
   // External Link
   
-  Widget _buildLinkSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.link.label.title', 'ADD EXTERNAL LINK FOR REGISTRATION'), suffixImageKey: 'external-link'),
-    body: _buildTextEditWidget(_linkController, keyboardType: TextInputType.url, maxLines: 1),
+  Widget _buildLinkSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.link.label.title', 'ADD EXTERNAL LINK FOR REGISTRATION'), suffixImageKey: 'external-link'),
+    body: Event2CreatePanel.buildTextEditWidget(_linkController, keyboardType: TextInputType.url, maxLines: 1),
     trailing: _buildConfirmUrlLink(onTap: (_onConfirmLink)),
   );
 
@@ -179,117 +181,12 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     }
   }
 
-  // Helpers
-
-  static const EdgeInsetsGeometry _sectionPadding = const EdgeInsets.only(bottom: 24);
-  static const EdgeInsetsGeometry _sectionHeadingPadding = const EdgeInsets.only(bottom: 8);
-  static const EdgeInsetsGeometry _textEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
-
-  TextStyle? get _headingTextStype => Styles().textStyles?.getTextStyle("panel.create_event.title.small");
-  TextStyle? get _descriptionTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
-
-  Widget _buildSectionWidget({
-    Widget? heading, Widget? body, Widget? trailing,
-    EdgeInsetsGeometry padding = _sectionPadding,
-    EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
-  }) {
-    List<Widget> contentList = <Widget>[];
-    if (heading != null) {
-      contentList.add(heading);
-    }
-    if (body != null) {
-      contentList.add(Padding(padding: bodyPadding, child: body));
-    }
-    if (trailing != null) {
-      contentList.add(trailing);
-    }
-
-    return Padding(padding: padding, child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,)
-    );
-  }
-
-  Widget _buildSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = _sectionHeadingPadding }) {
-    String semanticsLabel = title;
-    if (required) {
-      semanticsLabel += ", required";
-    }
-
-    List<Widget> contentList = <Widget>[];
-
-    Widget? prefixImageWidget = (prefixImageKey != null) ? Styles().images?.getImage(prefixImageKey) : null;
-    if (prefixImageWidget != null) {
-      contentList.add(Padding(padding: EdgeInsets.only(right: 6), child:
-        prefixImageWidget,
-      ));
-    }
-
-    contentList.add(_buildSectionTitleWidget(title));
-    
-    if (required) {
-      contentList.add(Padding(padding: EdgeInsets.only(left: 2), child:
-        Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),),
-      ));
-    }
-
-    Widget? suffixImageWidget = (suffixImageKey != null) ? Styles().images?.getImage(suffixImageKey) : null;
-    if (suffixImageWidget != null) {
-      contentList.add(Padding(padding: EdgeInsets.only(left: 6), child:
-        suffixImageWidget,
-      ));
-    }
-
-    return Padding(padding: padding, child:
-      Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
-        Row(children: contentList),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitleWidget(String title) =>
-    Text(title, style: _headingTextStype);
-
-  Widget _buildTextEditWidget(TextEditingController controller, {
-    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = _textEditContentPadding,
-    void Function()? onChanged,
-  }) =>
-    TextField(
-      controller: controller,
-      decoration: _textEditDecoration(padding: padding),
-      style: _textEditStyle,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      onChanged: (onChanged != null) ? ((_) => onChanged) : null,
-    );
-
-  TextStyle? get _textEditStyle =>
-    Styles().textStyles?.getTextStyle('widget.input_field.dark.text.regular.thin');
-
-  InputDecoration _textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
-    border: OutlineInputBorder(
-      borderSide: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
-      borderRadius: BorderRadius.circular(8)
-    ),
-    contentPadding: padding,
-  );
-
-  void _hideKeyboard() {
-    FocusScope.of(context).unfocus();
-  }
-
-  String? _textFieldValue(TextEditingController textController) =>
-    textController.text.isNotEmpty ? textController.text : null;
-
-  int? _textFieldIntValue(TextEditingController textController) =>
-    textController.text.isNotEmpty ? int.tryParse(textController.text) : null;
-
-
   void _onHeaderBack() {
     Navigator.of(context).pop(Event2SetupRegistrationParam(
       registrationRequired: _registrationRequired,
-      registrationLabel: _textFieldValue(_labelController),
-      registrationLink: _textFieldValue(_linkController),
-      eventCapacity: _textFieldIntValue(_capacityController),
+      registrationLabel: Event2CreatePanel.textFieldValue(_labelController),
+      registrationLink: Event2CreatePanel.textFieldValue(_linkController),
+      eventCapacity: Event2CreatePanel.textFieldIntValue(_capacityController),
     ));
   }
 }

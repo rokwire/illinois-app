@@ -33,6 +33,302 @@ class Event2CreatePanel extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _Event2CreatePanelState();
+
+  // Shared Helpers
+
+  static const EdgeInsetsGeometry sectionPadding = const EdgeInsets.only(bottom: 24);
+  static const EdgeInsetsGeometry innerSectionPadding = const EdgeInsets.only(bottom: 12);
+
+  static const EdgeInsetsGeometry sectionHeadingPadding = const EdgeInsets.only(bottom: 8);
+  static const EdgeInsetsGeometry innerSectionHeadingPadding = const EdgeInsets.only(bottom: 4);
+
+  static const EdgeInsetsGeometry sectionHeadingContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
+  static const EdgeInsetsGeometry sectionBodyContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+  static const EdgeInsetsGeometry dropdownButtonContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+
+  static const EdgeInsetsGeometry textEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
+  static const EdgeInsetsGeometry innerTextEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+
+  static TextStyle? get headingTextStype => Styles().textStyles?.getTextStyle("panel.create_event.title.small");
+  static TextStyle? get subTitleTextStype => Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+  static TextStyle? get textEditStyle => Styles().textStyles?.getTextStyle('widget.input_field.dark.text.regular.thin');
+
+  static BoxDecoration get sectionDecoration => BoxDecoration(
+    border: Border.all(color: Styles().colors!.mediumGray2!, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(8))
+  );
+
+  static BoxDecoration get sectionSplitterDecoration => BoxDecoration(
+    border: Border(top: BorderSide(color: Styles().colors!.mediumGray2!, width: 1))
+  );
+
+  static InputDecoration textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
+    border: OutlineInputBorder(
+      borderSide: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+      borderRadius: BorderRadius.circular(8)
+    ),
+    contentPadding: padding,
+  );
+
+  // Sections / Regular Section
+  
+  static Widget buildSectionWidget({
+    Widget? heading, Widget? body, Widget? trailing,
+    EdgeInsetsGeometry padding = sectionPadding,
+    EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
+  }) {
+    List<Widget> contentList = <Widget>[];
+    if (heading != null) {
+      contentList.add(heading);
+    }
+    if (body != null) {
+      contentList.add(Padding(padding: bodyPadding, child: body));
+    }
+    if (trailing != null) {
+      contentList.add(trailing);
+    }
+
+    return Padding(padding: padding, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,)
+    );
+  }
+
+  static Widget buildInnerSectionWidget({ required Widget heading, required Widget body,
+    EdgeInsetsGeometry padding = innerSectionPadding,
+    EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
+  }) => buildSectionWidget(heading: heading, body: body, padding: padding, bodyPadding: bodyPadding);
+
+  static Widget buildSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = sectionHeadingPadding }) {
+    String semanticsLabel = title;
+    if (required) {
+      semanticsLabel += ", required";
+    }
+
+    List<Widget> contentList = <Widget>[];
+
+    Widget? prefixImageWidget = (prefixImageKey != null) ? Styles().images?.getImage(prefixImageKey) : null;
+    if (prefixImageWidget != null) {
+      contentList.add(Padding(padding: EdgeInsets.only(right: 6), child:
+        prefixImageWidget,
+      ));
+    }
+
+    contentList.add(buildSectionTitleWidget(title));
+    
+    if (required) {
+      contentList.add(Padding(padding: EdgeInsets.only(left: 2), child:
+        Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),),
+      ));
+    }
+
+    Widget? suffixImageWidget = (suffixImageKey != null) ? Styles().images?.getImage(suffixImageKey) : null;
+    if (suffixImageWidget != null) {
+      contentList.add(Padding(padding: EdgeInsets.only(left: 6), child:
+        suffixImageWidget,
+      ));
+    }
+
+    return Padding(padding: padding, child:
+      Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
+        Row(children: contentList),
+      ),
+    );
+  }
+
+  static Widget buildInnerSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = innerSectionHeadingPadding }) =>
+    buildSectionHeadingWidget(title, required: required, prefixImageKey: prefixImageKey, suffixImageKey: suffixImageKey, padding : padding);
+
+  static Widget buildSectionTitleWidget(String title) =>
+    Text(title, style: headingTextStype);
+
+  static Widget buildSectionSubTitleWidget(String subTitle) =>
+    Text(subTitle, style: subTitleTextStype);
+
+  static Widget buildSectionRequiredWidget() => 
+    Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),);
+
+  // Sections / Dropdown Section
+
+  static Widget buildDropdownSectionWidget({ required Widget heading, required Widget body, bool expanded = false,
+    EdgeInsetsGeometry padding = sectionPadding,
+    EdgeInsetsGeometry bodyPadding = sectionBodyContentPadding
+  }) {
+    return Padding(padding: padding, child:
+      Container(decoration: sectionDecoration, child:
+        Column(children: [
+          heading,
+          Visibility(visible: expanded, child:
+            Container(decoration: sectionSplitterDecoration, child:
+              Padding(padding: bodyPadding, child:
+                body,
+              ),
+            ),
+          )
+        ],),
+
+      ),
+    );
+  }
+
+  static Widget buildDropdownSectionHeadingWidget(String title, {
+    bool required = false,
+    bool expanded = false,
+    void Function()? onToggleExpanded,
+    EdgeInsetsGeometry padding = sectionHeadingContentPadding
+  }) {
+    List<Widget> wrapList = <Widget>[
+      buildSectionTitleWidget(title),
+    ];
+
+    if (required) {
+      wrapList.add(Padding(padding: EdgeInsets.only(left: 2), child:
+        buildSectionRequiredWidget(), 
+      ));
+    }
+
+    return InkWell(onTap: onToggleExpanded, child:
+      Padding(padding: padding, child:
+        Row(children: [
+          Expanded(child:
+            Wrap(children: wrapList),
+          ),
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            Styles().images?.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
+          ),
+        ],),
+      ),
+    );
+  }
+
+  // Sections / Button Section
+
+  static Widget buildButtonSectionWidget({ required Widget heading, Widget? body,
+    EdgeInsetsGeometry padding = sectionPadding,
+    EdgeInsetsGeometry bodyPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
+  }) {
+    List<Widget> contentList = <Widget>[
+      heading
+    ];
+    if (body != null) {
+      contentList.add(Container(decoration: sectionSplitterDecoration, child:
+        Padding(padding: bodyPadding, child:
+          body,
+        ),
+      ),);
+    }
+    return Padding(padding: padding, child:
+      Container(decoration: sectionDecoration, child:
+        Column(children: contentList,),
+      ),
+    );
+  }
+
+  static Widget buildButtonSectionHeadingWidget({String? title, String? subTitle, bool required = false, void Function()? onTap, EdgeInsetsGeometry? padding }) {
+
+    List<Widget> wrapList = <Widget>[];
+
+    if (title != null) {
+      wrapList.add(buildSectionTitleWidget(title));
+    }
+
+    if (required) {
+      wrapList.add(Padding(padding: EdgeInsets.only(left: 2), child:
+        buildSectionRequiredWidget(), 
+      ));
+    }
+
+    Widget leftWidget = (subTitle != null) ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Wrap(children: wrapList),
+      Padding(padding: EdgeInsets.only(top: 2), child:
+        buildSectionSubTitleWidget(subTitle),
+      )
+    ],) : Wrap(children: wrapList);
+
+    EdgeInsetsGeometry appliedPadding = padding ?? ((subTitle != null) ?
+      const EdgeInsets.symmetric(horizontal: 16, vertical: 11) :
+      sectionHeadingContentPadding
+    );
+
+    return InkWell(onTap: onTap, child:
+      Padding(padding: appliedPadding, child:
+        Row(children: [
+          Expanded(child:
+            leftWidget,
+          ),
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            Styles().images?.getImage('chevron-right') ?? Container()
+          ),
+        ],),
+      ),
+    );
+  }
+
+  // Text Edit
+
+  static Widget buildTextEditWidget(TextEditingController controller, {
+    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = textEditContentPadding,
+    void Function()? onChanged,
+  }) =>
+    TextField(
+      controller: controller,
+      decoration: textEditDecoration(padding: padding),
+      style: textEditStyle,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      onChanged: (onChanged != null) ? ((_) => onChanged) : null,
+    );
+
+  static Widget buildInnerTextEditWidget(TextEditingController controller, {
+    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = innerTextEditContentPadding,
+    void Function()? onChanged,
+  }) =>
+    buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, padding: padding, onChanged: onChanged);
+
+
+  // Confirm URL
+
+  static Widget buildConfirmUrlLink({
+    void Function()? onTap,
+    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 8, bottom: 16, left: 12)
+  }) {
+    return Align(alignment: Alignment.centerRight, child:
+      LinkButton(
+        title: Localization().getStringEx('panel.event2.create.button.confirm_url.title', 'Confirm URL'),
+        hint: Localization().getStringEx('panel.event2.create.button.confirm_url.hint', ''),
+        onTap: onTap,
+        padding: padding,
+      )
+    );
+  }
+
+  static void confirmLinkUrl(TextEditingController controller, { String? analyticsTarget }) {
+    Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
+    if (controller.text.isNotEmpty) {
+      Uri? uri = Uri.tryParse(controller.text);
+      if (uri != null) {
+        Uri? fixedUri = UrlUtils.fixUri(uri);
+        if (fixedUri != null) {
+          controller.text = fixedUri.toString();
+          uri = fixedUri;
+        }
+        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      }
+    }
+  }
+
+  // Text Controller
+
+  static String? textFieldValue(TextEditingController textController) =>
+    textController.text.isNotEmpty ? textController.text : null;
+
+  static int? textFieldIntValue(TextEditingController textController) =>
+    textController.text.isNotEmpty ? int.tryParse(textController.text) : null;
+
+  // Keyboard
+
+  static void hideKeyboard(BuildContext context) {
+    FocusScope.of(context).unfocus();
+  }
 }
 
 class _Event2CreatePanelState extends State<Event2CreatePanel>  {
@@ -183,7 +479,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTapAddImage() {
     Analytics().logSelect(target: "Add Image");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     GroupAddImageWidget.show(context: context, updateUrl: _imageUrl).then((String? updateUrl) {
       if (mounted && (updateUrl != null) && (0 < updateUrl.length) && (_imageUrl != updateUrl)) {
         setState(() {
@@ -196,37 +492,37 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Title and Description
 
-  Widget _buildTitleSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.title.title', 'EVENT TITLE'), required: true),
-    body: _buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null),
+  Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.title.title', 'EVENT TITLE'), required: true),
+    body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null),
   );
 
-  Widget _buildDescriptionSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION')),
-    body: _buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null),
+  Widget _buildDescriptionSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION')),
+    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null),
   );
 
-  Widget _buildWebsiteSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.website.title', 'ADD EVENT WEBSITE LINK'), suffixImageKey: 'external-link'),
-    body: _buildTextEditWidget(_websiteController, keyboardType: TextInputType.url),
-    trailing: _buildConfirmUrlLink(onTap: (_onConfirmWebsiteLink)),
+  Widget _buildWebsiteSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.website.title', 'ADD EVENT WEBSITE LINK'), suffixImageKey: 'external-link'),
+    body: Event2CreatePanel.buildTextEditWidget(_websiteController, keyboardType: TextInputType.url),
+    trailing: Event2CreatePanel.buildConfirmUrlLink(onTap: (_onConfirmWebsiteLink)),
     padding: const EdgeInsets.only(bottom: 8), // Link button tapable area
   );
 
-  void _onConfirmWebsiteLink() => _confirmLinkUrl(_websiteController, analyticsTarget: 'Confirm Website URL');
+  void _onConfirmWebsiteLink() => Event2CreatePanel.confirmLinkUrl(_websiteController, analyticsTarget: 'Confirm Website URL');
 
   // Date & Time
 
-  /*Widget _buildDateAndTimeSection() => _buildSectionWidget(
-    heading: _buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.date_and_time.title', 'DATE AND TIME'),
+  /*Widget _buildDateAndTimeSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.date_and_time.title', 'DATE AND TIME'),
       required: true
     ),
     body: _buildDateAndTimeSectionBody(),
     bodyPadding: EdgeInsets.only(top: 8)
   );*/
 
-  Widget _buildDateAndTimeDropdownSection() => _buildDropdownSectionWidget(
-    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.date_and_time.title', 'DATE AND TIME'),
+  Widget _buildDateAndTimeDropdownSection() => Event2CreatePanel.buildDropdownSectionWidget(
+    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.date_and_time.title', 'DATE AND TIME'),
       required: true,
       expanded: _dateTimeSectionExpanded,
       onToggleExpanded: _onToggleDateAndTimeSection,
@@ -277,8 +573,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     return Semantics(container: true, child:
       Row(children: <Widget>[
         Expanded(flex: 3, child:
-          Text(Localization().getStringEx("panel.create_event.date_time.time_zone.title", "TIME ZONE"), style: _headingTextStype
-          ),
+          Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx("panel.create_event.date_time.time_zone.title", "TIME ZONE")),
         ),
         Container(width: 16,),
         Expanded(flex: 7, child:
@@ -317,7 +612,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTimeZoneChanged(Location? value) {
     Analytics().logSelect(target: "Time Zone selected: $value");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     if ((value != null) && mounted) {
       setState(() {
         _timeZone = value;
@@ -342,7 +637,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.only(bottom: 4), child:
               Row(children: <Widget>[
-                Text(dateLabel ?? '', style: _headingTextStype, ),
+                Event2CreatePanel.buildSectionTitleWidget(dateLabel ?? ''),
               ],),
             ),
             _buildDropdownButton(label: (date != null) ? DateFormat("EEE, MMM dd, yyyy").format(date) : "-", onTap: onDate,)
@@ -358,7 +653,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(bottom: 4), child:
                 Row(children: <Widget>[
-                  Text(timeLabel ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: _headingTextStype),
+                  Text(timeLabel ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Event2CreatePanel.headingTextStype),
                 ],),
               ),
               _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,)
@@ -373,7 +668,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildDropdownButton({String? label, GestureTapCallback? onTap}) {
     return InkWell(onTap: onTap, child:
-      Container(decoration: _dropdownButtonDecoration, padding: _dropdownButtonContentPadding, child:
+      Container(decoration: _dropdownButtonDecoration, padding: Event2CreatePanel.dropdownButtonContentPadding, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
           Text(label ??  '-', style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
           Styles().images?.getImage('chevron-down') ?? Container()
@@ -405,7 +700,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onToggleDateAndTimeSection() {
     Analytics().logSelect(target: "Toggle Date & Time");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _dateTimeSectionExpanded = !_dateTimeSectionExpanded;
     });
@@ -413,7 +708,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onStartDate() {
     Analytics().logSelect(target: "Start Date");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = now;
     DateTime maxDate = ((_endDate != null) && now.isBefore(_endDate!)) ? _endDate! : now.add(Duration(days: 366));
@@ -434,7 +729,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay.fromDateTime(DateTime.now())).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -446,7 +741,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEndDate() {
     Analytics().logSelect(target: "End Date");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = (_startDate != null) ? DateTimeUtils.max(_startDate!, now) : now;
     DateTime maxDate = minDate.add(Duration(days: 366));
@@ -466,7 +761,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEndTime() {
     Analytics().logSelect(target: "End Time");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay.fromDateTime(TZDateTime.now(_timeZone))).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -484,7 +779,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTapAllDay() {
     Analytics().logSelect(target: "Toggle All Day");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _allDay = !_allDay;
     });
@@ -492,8 +787,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Event Type, Location and Online Details
 
-  Widget _buildTypeAndLocationDropdownSection() => _buildDropdownSectionWidget(
-    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.type_and_location.title', 'EVENT TYPE AND LOCATION'),
+  Widget _buildTypeAndLocationDropdownSection() => Event2CreatePanel.buildDropdownSectionWidget(
+    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.type_and_location.title', 'EVENT TYPE AND LOCATION'),
       required: true,
       expanded: _typeAndLocationSectionExpanded,
       onToggleExpanded: _onToggleTypeAndLocationSection,
@@ -509,7 +804,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
     if ((_eventType == Event2Type.inPerson) || (_eventType == Event2Type.hybrid)) {
       contentList.addAll(<Widget>[
-        Padding(padding: _innerSectionPadding),
+        Padding(padding: Event2CreatePanel.innerSectionPadding),
         _buildLocationBuildingInnerSection(),
         _buildLocationAddressInnerSection(),
         _buildLocationLatitudeInnerSection(),
@@ -520,7 +815,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
     if ((_eventType == Event2Type.online) || (_eventType == Event2Type.hybrid)) {
       contentList.addAll(<Widget>[
-        Padding(padding: _innerSectionPadding),
+        Padding(padding: Event2CreatePanel.innerSectionPadding),
         _buildOnlineUrlInnerSection(),
         _buildOnlineMeetingIdInnerSection(),
         _buildOnlinePasscodeInnerSection(),
@@ -535,7 +830,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       Row(children: <Widget>[
         Expanded(flex: 3, child:
           RichText(text:
-            TextSpan(text: Localization().getStringEx("panel.event2.create.label.event_type.title", "EVENT TYPE"), style: _headingTextStype, children: <InlineSpan>[
+            TextSpan(text: Localization().getStringEx("panel.event2.create.label.event_type.title", "EVENT TYPE"), style: Event2CreatePanel.headingTextStype, children: <InlineSpan>[
               TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'),),
             ])
           )
@@ -576,7 +871,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onToggleTypeAndLocationSection() {
     Analytics().logSelect(target: "Toggle Event Type and Location");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _typeAndLocationSectionExpanded = !_typeAndLocationSectionExpanded;
     });
@@ -584,7 +879,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEventTypeChanged(Event2Type? value) {
     Analytics().logSelect(target: "Time Zone selected: $value");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     if ((value != null) && mounted) {
       setState(() {
         _eventType = value;
@@ -593,31 +888,31 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     }
   }
 
-  Widget _buildLocationBuildingInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.building.title', 'LOCATION BUILDING')),
-    body: _buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text),
+  Widget _buildLocationBuildingInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.building.title', 'LOCATION BUILDING')),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text),
   );
 
-  Widget _buildLocationAddressInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.address.title', 'LOCATION ADDRESS')),
-    body: _buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text),
+  Widget _buildLocationAddressInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.address.title', 'LOCATION ADDRESS')),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text),
   );
 
-  Widget _buildLocationLatitudeInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.latitude.title', 'LOCATION LATITUDE'), required: true),
-    body: _buildInnerTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number),
+  Widget _buildLocationLatitudeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.latitude.title', 'LOCATION LATITUDE'), required: true),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number),
   );
 
-  Widget _buildLocationLongitudeInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.longitude.title', 'LOCATION LONGITUDE'), required: true),
-    body: _buildInnerTextEditWidget(_locationLongitudeController, keyboardType: TextInputType.number),
+  Widget _buildLocationLongitudeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.longitude.title', 'LOCATION LONGITUDE'), required: true),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationLongitudeController, keyboardType: TextInputType.number),
   );
 
   Widget _buildSelectLocationButton() {
     String buttonTitle = Localization().getStringEx("panel.event2.create.location.button.select.title", "Select Location on a Map");
     String buttonHint = Localization().getStringEx("panel.event2.create.location.button.select.hint", "");
 
-    return Padding(padding: _innerSectionPadding, child:
+    return Padding(padding: Event2CreatePanel.innerSectionPadding, child:
       Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
         RoundedButton(
           label: buttonTitle,
@@ -631,31 +926,31 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
-  Widget _buildOnlineUrlInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.url.title', 'ONLINE URL'), required: true),
-    body: _buildInnerTextEditWidget(_onlineUrlController, keyboardType: TextInputType.url),
+  Widget _buildOnlineUrlInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.url.title', 'ONLINE URL'), required: true),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_onlineUrlController, keyboardType: TextInputType.url),
   );
 
-  Widget _buildOnlineMeetingIdInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.meeting_id.title', 'MEETING ID')),
-    body: _buildInnerTextEditWidget(_onlineMeetingIdController, keyboardType: TextInputType.text),
+  Widget _buildOnlineMeetingIdInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.meeting_id.title', 'MEETING ID')),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_onlineMeetingIdController, keyboardType: TextInputType.text),
   );
 
-  Widget _buildOnlinePasscodeInnerSection() => _buildInnerSectionWidget(
-    heading: _buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.passcode.title', 'PASSCODE')),
-    body: _buildInnerTextEditWidget(_onlinePasscodeController, keyboardType: TextInputType.text),
+  Widget _buildOnlinePasscodeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
+    heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.passcode.title', 'PASSCODE')),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_onlinePasscodeController, keyboardType: TextInputType.text),
   );
 
   void _onTapSelectLocation() {
     Analytics().logSelect(target: "Select Location");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     AppAlert.showDialogResult(context, 'TBD');
   }
 
   // Cost
 
-  Widget _buildCostDropdownSection() => _buildDropdownSectionWidget(
-    heading: _buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.cost.title', 'COST'),
+  Widget _buildCostDropdownSection() => Event2CreatePanel.buildDropdownSectionWidget(
+    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.cost.title', 'COST'),
       required: true,
       expanded: _costSectionExpanded,
       onToggleExpanded: _onToggleCostSection,
@@ -671,7 +966,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
     if (_free == false) {
       contentList.addAll(<Widget>[
-        Padding(padding: _innerSectionPadding),
+        Padding(padding: Event2CreatePanel.innerSectionPadding),
         _buildCostInnerSection(),
       ]);
     }
@@ -691,9 +986,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       borderRadius: _toggleBorderRadius,
     ));
 
-  Widget _buildCostInnerSection() => _buildInnerSectionWidget(
+  Widget _buildCostInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: _buildCostInnerSectionHeadingWidget(),
-    body: _buildInnerTextEditWidget(_costController, keyboardType: TextInputType.text),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_costController, keyboardType: TextInputType.text),
   );
 
   Widget _buildCostInnerSectionHeadingWidget() {
@@ -701,12 +996,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     String description = Localization().getStringEx('panel.event2.create.label.cost.description', ' (eg: \$10, Donation suggested)');
     String semanticsLabel = title + description;
 
-    return Padding(padding: _innerSectionHeadingPadding, child:
+    return Padding(padding: Event2CreatePanel.innerSectionHeadingPadding, child:
       Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
         Row(children: [
           Expanded(child:
             RichText(text:
-              TextSpan(text: title, style: _headingTextStype, children: <InlineSpan>[
+              TextSpan(text: title, style: Event2CreatePanel.headingTextStype, children: <InlineSpan>[
                 TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
               ])
             )
@@ -718,7 +1013,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onToggleCostSection() {
     Analytics().logSelect(target: "Toggle Cost Sectoion");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _costSectionExpanded = !_costSectionExpanded;
     });
@@ -726,7 +1021,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTapFree() {
     Analytics().logSelect(target: "Toggle Free");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _free = !_free;
     });
@@ -735,8 +1030,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Attributes
 
-  Widget _buildAttributesButtonSection() => _buildButtonSectionWidget(
-    heading: _buildButtonSectionHeadingWidget(
+  Widget _buildAttributesButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.attributes.title', 'EVENT ATTRIBUTES'),
       subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.button.attributes.description', 'Choose attributes related to your event.') : null,
       required: Events2().contentAttributes?.hasRequired(contentAttributeRequirementsScopeCreate) ?? false,
@@ -782,7 +1077,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventAttributes() {
     Analytics().logSelect(target: "Attributes");
 
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
       title:  Localization().getStringEx('panel.event2.attributes.attributes.header.title', 'Event Attributes'),
       description: Localization().getStringEx('panel.event2.attributes.attributes.header.description', 'Choose one or more attributes that help describe this event.'),
@@ -801,8 +1096,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Registration
 
-  Widget  _buildRegistrationButtonSection() => _buildButtonSectionWidget(
-    heading: _buildButtonSectionHeadingWidget(
+  Widget  _buildRegistrationButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.registration.title', 'EVENT REGISTRATION'),
       subTitle: _registrationRequired ?
         Localization().getStringEx('panel.event2.create.button.registration.confirmation', 'Event registration set up.') :
@@ -814,7 +1109,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEventRegistration() {
     Analytics().logSelect(target: "Event Registration");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2SetupRegistrationParam>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(param:
       Event2SetupRegistrationParam(
         registrationRequired: _registrationRequired,
@@ -837,8 +1132,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Attendance
 
-  Widget  _buildAttendanceButtonSection() => _buildButtonSectionWidget(
-    heading: _buildButtonSectionHeadingWidget(
+  Widget  _buildAttendanceButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.attendance.title', 'EVENT ATTENDANCE'),
       subTitle: Localization().getStringEx('panel.event2.create.button.attendance.description', 'Receive feedback about your event.'),
       required: true,
@@ -848,7 +1143,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     AppAlert.showDialogResult(context, 'TBD');
   }
 
@@ -856,13 +1151,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildVisibilitySection() {
     String title = Localization().getStringEx('panel.event2.create.label.visibility.title', 'EVENT VISIBILITY');
-    return Padding(padding: _sectionPadding, child:
+    return Padding(padding: Event2CreatePanel.sectionPadding, child:
       Semantics(container: true, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Expanded(child:
             Wrap(children: [
-              _buildSectionTitleWidget(title),
-              _buildSectionRequiredWidget(), 
+              Event2CreatePanel.buildSectionTitleWidget(title),
+              Event2CreatePanel.buildSectionRequiredWidget(), 
             ]),
           ),
           Expanded(child:
@@ -899,7 +1194,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onVisibilityChanged(_Event2Visibility? value) {
     Analytics().logSelect(target: "Visibility: $value");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     if ((value != null) && mounted) {
       setState(() {
         _visibility = value;
@@ -916,7 +1211,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     if (_errorList.isNotEmpty) {
       contentList.add(_buildCreateErrorStatus());
     }
-    return Padding(padding: _sectionPadding, child:
+    return Padding(padding: Event2CreatePanel.sectionPadding, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList, )
     );
   }
@@ -1020,7 +1315,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   void _onTapCreateEvent() {
     Analytics().logSelect(target: "Create Event");
-    _hideKeyboard();
+    Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _creatingEvent = true;
     });
@@ -1111,17 +1406,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     }
   }
 
-  void _hideKeyboard() {
-    FocusScope.of(context).unfocus();
-  }
-
   Event2 _createEventFromData() =>
     Event2(
-      name: _textFieldValue(_titleController),
-      description: _textFieldValue(_descriptionController),
+      name: Event2CreatePanel.textFieldValue(_titleController),
+      description: Event2CreatePanel.textFieldValue(_descriptionController),
       instructions: null,
       imageUrl: _imageUrl,
-      eventUrl: _textFieldValue(_websiteController),
+      eventUrl: Event2CreatePanel.textFieldValue(_websiteController),
 
       timezone: _timeZone.name,
       startTimeUtc: _startDateTimeUtc,
@@ -1142,7 +1433,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       private: _private,
 
       free: _free,
-      cost: _textFieldValue(_costController),
+      cost: Event2CreatePanel.textFieldValue(_costController),
 
       registrationRequired: _registrationRequired,
       registrationDetails: _registrationRequired ? RegistrationDetails(
@@ -1155,291 +1446,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       speaker: null, // TBD
       contacts: null, // TBD
     );
-
-  String? _textFieldValue(TextEditingController textController) =>
-    textController.text.isNotEmpty ? textController.text : null;
-
-  // Sections
-
-  static const EdgeInsetsGeometry _sectionPadding = const EdgeInsets.only(bottom: 24);
-  static const EdgeInsetsGeometry _innerSectionPadding = const EdgeInsets.only(bottom: 12);
-
-  static const EdgeInsetsGeometry _sectionHeadingPadding = const EdgeInsets.only(bottom: 8);
-  static const EdgeInsetsGeometry _innerSectionHeadingPadding = const EdgeInsets.only(bottom: 4);
-
-  static const EdgeInsetsGeometry _sectionHeadingContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
-  static const EdgeInsetsGeometry _sectionBodyContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
-  static const EdgeInsetsGeometry _dropdownButtonContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
-
-  static const EdgeInsetsGeometry _textEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
-  static const EdgeInsetsGeometry _innerTextEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
-
-  TextStyle? get _headingTextStype => Styles().textStyles?.getTextStyle("panel.create_event.title.small");
-
-  BoxDecoration get _sectionDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors!.mediumGray2!, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(8))
-  );
-
-  BoxDecoration get _sectionSplitterDecoration => BoxDecoration(
-    border: Border(top: BorderSide(color: Styles().colors!.mediumGray2!, width: 1))
-  );
-
-  // Sections / Regular Section
-  
-  Widget _buildSectionWidget({
-    Widget? heading, Widget? body, Widget? trailing,
-    EdgeInsetsGeometry padding = _sectionPadding,
-    EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
-  }) {
-    List<Widget> contentList = <Widget>[];
-    if (heading != null) {
-      contentList.add(heading);
-    }
-    if (body != null) {
-      contentList.add(Padding(padding: bodyPadding, child: body));
-    }
-    if (trailing != null) {
-      contentList.add(trailing);
-    }
-
-    return Padding(padding: padding, child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,)
-    );
-  }
-
-  Widget _buildInnerSectionWidget({ required Widget heading, required Widget body,
-    EdgeInsetsGeometry padding = _innerSectionPadding,
-    EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
-  }) => _buildSectionWidget(heading: heading, body: body, padding: padding, bodyPadding: bodyPadding);
-
-  Widget _buildSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = _sectionHeadingPadding }) {
-    String semanticsLabel = title;
-    if (required) {
-      semanticsLabel += ", required";
-    }
-
-    List<Widget> contentList = <Widget>[];
-
-    Widget? prefixImageWidget = (prefixImageKey != null) ? Styles().images?.getImage(prefixImageKey) : null;
-    if (prefixImageWidget != null) {
-      contentList.add(Padding(padding: EdgeInsets.only(right: 6), child:
-        prefixImageWidget,
-      ));
-    }
-
-    contentList.add(_buildSectionTitleWidget(title));
-    
-    if (required) {
-      contentList.add(Padding(padding: EdgeInsets.only(left: 2), child:
-        Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),),
-      ));
-    }
-
-    Widget? suffixImageWidget = (suffixImageKey != null) ? Styles().images?.getImage(suffixImageKey) : null;
-    if (suffixImageWidget != null) {
-      contentList.add(Padding(padding: EdgeInsets.only(left: 6), child:
-        suffixImageWidget,
-      ));
-    }
-
-    return Padding(padding: padding, child:
-      Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
-        Row(children: contentList),
-      ),
-    );
-  }
-
-  Widget _buildInnerSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = _innerSectionHeadingPadding }) =>
-    _buildSectionHeadingWidget(title, required: required, prefixImageKey: prefixImageKey, suffixImageKey: suffixImageKey, padding : padding);
-
-  Widget _buildSectionTitleWidget(String title) =>
-    Text(title, style: _headingTextStype);
-
-  Widget _buildSectionSubTitleWidget(String subTitle) =>
-    Text(subTitle, style: Styles().textStyles?.getTextStyle("widget.card.detail.small.regular"));
-
-  Widget _buildSectionRequiredWidget() => 
-    Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),);
-
-  // Sections / Dropdown Section
-
-  Widget _buildDropdownSectionWidget({ required Widget heading, required Widget body, bool expanded = false,
-    EdgeInsetsGeometry padding = _sectionPadding,
-    EdgeInsetsGeometry bodyPadding = _sectionBodyContentPadding
-  }) {
-    return Padding(padding: padding, child:
-      Container(decoration: _sectionDecoration, child:
-        Column(children: [
-          heading,
-          Visibility(visible: expanded, child:
-            Container(decoration: _sectionSplitterDecoration, child:
-              Padding(padding: bodyPadding, child:
-                body,
-              ),
-            ),
-          )
-        ],),
-
-      ),
-    );
-  }
-
-  Widget _buildDropdownSectionHeadingWidget(String title, {
-    bool required = false,
-    bool expanded = false,
-    void Function()? onToggleExpanded,
-    EdgeInsetsGeometry padding = _sectionHeadingContentPadding
-  }) {
-    List<Widget> wrapList = <Widget>[
-      _buildSectionTitleWidget(title),
-    ];
-
-    if (required) {
-      wrapList.add(Padding(padding: EdgeInsets.only(left: 2), child:
-        _buildSectionRequiredWidget(), 
-      ));
-    }
-
-    return InkWell(onTap: onToggleExpanded, child:
-      Padding(padding: padding, child:
-        Row(children: [
-          Expanded(child:
-            Wrap(children: wrapList),
-          ),
-          Padding(padding: EdgeInsets.only(left: 8), child:
-            Styles().images?.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
-          ),
-        ],),
-      ),
-    );
-  }
-
-  // Sections / Button Section
-
-  Widget _buildButtonSectionWidget({ required Widget heading, Widget? body,
-    EdgeInsetsGeometry padding = _sectionPadding,
-    EdgeInsetsGeometry bodyPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
-  }) {
-    List<Widget> contentList = <Widget>[
-      heading
-    ];
-    if (body != null) {
-      contentList.add(Container(decoration: _sectionSplitterDecoration, child:
-        Padding(padding: bodyPadding, child:
-          body,
-        ),
-      ),);
-    }
-    return Padding(padding: padding, child:
-      Container(decoration: _sectionDecoration, child:
-        Column(children: contentList,),
-      ),
-    );
-  }
-
-  Widget _buildButtonSectionHeadingWidget({String? title, String? subTitle, bool required = false, void Function()? onTap, EdgeInsetsGeometry? padding }) {
-
-    List<Widget> wrapList = <Widget>[];
-
-    if (title != null) {
-      wrapList.add(_buildSectionTitleWidget(title));
-    }
-
-    if (required) {
-      wrapList.add(Padding(padding: EdgeInsets.only(left: 2), child:
-        _buildSectionRequiredWidget(), 
-      ));
-    }
-
-    Widget leftWidget = (subTitle != null) ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Wrap(children: wrapList),
-      Padding(padding: EdgeInsets.only(top: 2), child:
-        _buildSectionSubTitleWidget(subTitle),
-      )
-    ],) : Wrap(children: wrapList);
-
-    EdgeInsetsGeometry appliedPadding = padding ?? ((subTitle != null) ?
-      const EdgeInsets.symmetric(horizontal: 16, vertical: 11) :
-      _sectionHeadingContentPadding
-    );
-
-    return InkWell(onTap: onTap, child:
-      Padding(padding: appliedPadding, child:
-        Row(children: [
-          Expanded(child:
-            leftWidget,
-          ),
-          Padding(padding: EdgeInsets.only(left: 8), child:
-            Styles().images?.getImage('chevron-right') ?? Container()
-          ),
-        ],),
-      ),
-    );
-  }
-
-  // Text Edit
-
-  Widget _buildTextEditWidget(TextEditingController controller, {
-    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = _textEditContentPadding,
-    void Function()? onChanged,
-  }) =>
-    TextField(
-      controller: controller,
-      decoration: _textEditDecoration(padding: padding),
-      style: _textEditStyle,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      onChanged: (onChanged != null) ? ((_) => onChanged) : null,
-    );
-
-  Widget _buildInnerTextEditWidget(TextEditingController controller, {
-    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = _innerTextEditContentPadding,
-    void Function()? onChanged,
-  }) =>
-    _buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, padding: padding, onChanged: onChanged);
-
-  TextStyle? get _textEditStyle =>
-    Styles().textStyles?.getTextStyle('widget.input_field.dark.text.regular.thin');
-
-  InputDecoration _textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
-    border: OutlineInputBorder(
-      borderSide: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
-      borderRadius: BorderRadius.circular(8)
-    ),
-    contentPadding: padding,
-  );
-
-  // Confirm URL
-
-  Widget _buildConfirmUrlLink({
-    void Function()? onTap,
-    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 8, bottom: 16, left: 12)
-  }) {
-    return Align(alignment: Alignment.centerRight, child:
-      LinkButton(
-        title: Localization().getStringEx('panel.event2.create.button.confirm_url.title', 'Confirm URL'),
-        hint: Localization().getStringEx('panel.event2.create.button.confirm_url.hint', ''),
-        onTap: onTap,
-        padding: padding,
-      )
-    );
-  }
-
-  void _confirmLinkUrl(TextEditingController controller, { String? analyticsTarget }) {
-    Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
-    if (controller.text.isNotEmpty) {
-      Uri? uri = Uri.tryParse(controller.text);
-      if (uri != null) {
-        Uri? fixedUri = UrlUtils.fixUri(uri);
-        if (fixedUri != null) {
-          controller.text = fixedUri.toString();
-          uri = fixedUri;
-        }
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-      }
-    }
-  }
 }
 
 // _Event2Visibility
