@@ -252,6 +252,7 @@
     "widget.item.small": { "font_family": "medium", "size": 14.0, "color": "textBackground"},
     "widget.item.small.thin": { "font_family": "regular", "size": 14.0, "color": "textBackground"},
     "widget.item.small.thin.spaced": { "font_family": "regular", "size": 14.0, "color": "textBackground", "letter_spacing": 1.0},
+    "widget.item.small.thin.italic": { "font_family": "regular_italic", "size": 14.0, "color": "textBackground", "letter_spacing": 1.0},
     "widget.item.small.semi_fat": { "font_family": "semi_bold", "size": 14.0, "color": "textBackground"},
     "widget.item.tiny.extra_fat": { "font_family": "extra_bold", "size": 12.0, "color": "textBackground"},
     "widget.item.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "textBackground"},
