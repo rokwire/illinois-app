@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Assistant.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -27,7 +28,6 @@ class AssistantPanel extends StatefulWidget {
 class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAliveClientMixin<AssistantPanel> implements NotificationsListener {
 
   List<String>? _contentCodes;
-  StreamController<String> _updateController = StreamController.broadcast();
   TextEditingController _inputController = TextEditingController();
   ScrollController _scrollController = ScrollController();
 
@@ -36,6 +36,9 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   List<Message> _messages = [];
 
   bool _loadingResponse = false;
+  Message? _feedbackMessage;
+
+  int? _queryLimit = 5;
 
   @override
   void initState() {
@@ -71,7 +74,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       user: true,
       example: true
     ));
-    
+
     _contentCodes = buildContentCodes();
     super.initState();
   }
@@ -79,7 +82,6 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _updateController.close();
     super.dispose();
   }
 
@@ -173,7 +175,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     EdgeInsets bubblePadding = message.user ? const EdgeInsets.only(left: 32.0) :
       const EdgeInsets.only(right: 0);
 
-    Link? link = message.link;
+    List<Link>? deepLinks = message.links;
 
     List<Widget> sourceLinks = [];
     for (String source in message.sources) {
@@ -264,28 +266,16 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                 visible: message.acceptsFeedback,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.center,
                   children: [// TODO: Handle material icons in styles images
-                    IconButton(onPressed: () {
-                      setState(() {
-                        if (message.feedback == MessageFeedback.good) {
-                          message.feedback = null;
-                        } else {
-                          message.feedback = MessageFeedback.good;
-                        }
-                      });
-                    },
+                    IconButton(onPressed: message.feedbackExplanation == null ? () {
+                      _sendFeedback(message, true);
+                    }: null,
                       icon: Icon(message.feedback == MessageFeedback.good ? Icons.thumb_up : Icons.thumb_up_outlined,
-                          size: 24, color: Styles().colors?.fillColorPrimary),
+                          size: 24, color: message.feedbackExplanation == null ? Styles().colors?.fillColorPrimary : Styles().colors?.disabledTextColor),
                       iconSize: 24,
                       splashRadius: 24),
-                    IconButton(onPressed: () {
-                      setState(() {
-                        if (message.feedback == MessageFeedback.bad) {
-                          message.feedback = null;
-                        } else {
-                          message.feedback = MessageFeedback.bad;
-                        }
-                      });
-                    },
+                    IconButton(onPressed: message.feedbackExplanation == null ? () {
+                      _sendFeedback(message, false);
+                    }: null,
                       icon: Icon(message.feedback == MessageFeedback.bad ? Icons.thumb_down :Icons.thumb_down_outlined,
                           size: 24, color: Styles().colors?.fillColorPrimary),
                       iconSize: 24,
@@ -296,12 +286,49 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
             ],
           ),
         ),
-        Visibility(visible: link != null, child: Padding(
+        Visibility(visible: CollectionUtils.isNotEmpty(deepLinks), child: Padding(
           padding: const EdgeInsets.only(top: 8.0, left: 24.0, right: 32.0),
-          child: _buildLinkWidget(link),
+          child: _buildLinkWidgets(deepLinks),
         ))
       ],
     );
+  }
+
+  void _sendFeedback(Message message, bool good) {
+    if (message.feedbackExplanation != null) {
+      return;
+    }
+
+    bool bad = false;
+
+    setState(() {
+      if (good) {
+        if (message.feedback == MessageFeedback.good) {
+          message.feedback = null;
+        } else {
+          message.feedback = MessageFeedback.good;
+        }
+      } else {
+        if (message.feedback == MessageFeedback.bad) {
+          message.feedback = null;
+        } else {
+          message.feedback = MessageFeedback.bad;
+          _messages.add(Message(content: Localization().getStringEx('',
+              "Thank you for providing feedback! Could you please explain "
+                  "the issue with my response?"),
+              user: false));
+          _feedbackMessage = message;
+          bad = true;
+        }
+      }
+    });
+
+    if (!bad && _feedbackMessage != null) {
+      _messages.removeLast();
+      _feedbackMessage = null;
+    }
+
+    Assistant().sendFeedback(message);
   }
 
   Widget _buildTypingChatBubble() {
@@ -324,6 +351,14 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     );
   }
 
+  Widget _buildLinkWidgets(List<Link>? links) {
+    List<Widget> linkWidgets = [];
+    for (Link link in links ?? []) {
+      linkWidgets.add(_buildLinkWidget(link));
+    }
+    return Column(children: linkWidgets);
+  }
+
   Widget _buildLinkWidget(Link? link) {
     if (link == null) {
       return Container();
@@ -337,7 +372,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         child: InkWell(
           borderRadius: BorderRadius.circular(8.0),
           onTap: () {
-            NotificationService().notify(link.link);
+            NotificationService().notify('${FirebaseMessaging.linkBase}.${link.link}');
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -359,58 +394,95 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   }
 
   Widget _buildChatBar() {
+    bool enabled = _feedbackMessage != null || _queryLimit == null || _queryLimit! > 0;
     return Material(
       color: Styles().colors?.surface,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-        child: Row(mainAxisSize: MainAxisSize.max,
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Visibility(
-              visible: SpeechToText().isEnabled,
-              child: IconButton(//TODO: Enable support for material icons in styles images
-                splashRadius: 24,
-                icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors?.fillColorSecondary),
-                onPressed: () {
-                  if (_listening) {
-                    _stopListening();
-                  } else {
-                    _startListening();
-                  }
-                },
-              ),
-            ),
-            Expanded(
-              child: Material(
-                color: Styles().colors?.background,
-                borderRadius: BorderRadius.circular(16.0),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: TextField(
-                    controller: _inputController,
-                    minLines: 1,
-                    maxLines: 3,
-                    textCapitalization: TextCapitalization.sentences,
-                    textInputAction: TextInputAction.send,
-                    onSubmitted: _submitMessage,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: Localization().getStringEx('', 'Type your question here...'),
-                    ),
-                    style: Styles().textStyles?.getTextStyle('widget.title.regular')
+            Row(mainAxisSize: MainAxisSize.max,
+              children: [
+                Visibility(
+                  visible: enabled && SpeechToText().isEnabled,
+                  child: IconButton(//TODO: Enable support for material icons in styles images
+                    splashRadius: 24,
+                    icon: Icon(_listening ? Icons.stop_circle_outlined : Icons.mic, color: Styles().colors?.fillColorSecondary),
+                    onPressed: enabled ? () {
+                      if (_listening) {
+                        _stopListening();
+                      } else {
+                        _startListening();
+                      }
+                    } : null,
                   ),
                 ),
-              ),
+                Expanded(
+                  child: Material(
+                    color: Styles().colors?.background,
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: TextField(
+                        enabled: enabled,
+                        controller: _inputController,
+                        minLines: 1,
+                        maxLines: 3,
+                        textCapitalization: TextCapitalization.sentences,
+                        textInputAction: TextInputAction.send,
+                        onSubmitted: _submitMessage,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: _feedbackMessage == null ?
+                            enabled ? Localization().getStringEx('', 'Type your question here...') :
+                              Localization().getStringEx(
+                                '', 'Sorry you are out of questions for today. '
+                                'Please check back tomorrow to ask more questions!')
+                            : Localization().getStringEx('', 'Type your feedback here...'),
+                        ),
+                        style: Styles().textStyles?.getTextStyle('widget.title.regular')
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(//TODO: Enable support for material icons in styles images
+                  splashRadius: 24,
+                  icon: Icon(Icons.send, color: enabled ? Styles().colors?.fillColorSecondary : Styles().colors?.disabledTextColor),
+                  onPressed: enabled ? () {
+                    _submitMessage(_inputController.text);
+                  }: null,
+                ),
+              ],
             ),
-            IconButton(//TODO: Enable support for material icons in styles images
-              splashRadius: 24,
-              icon: Icon(Icons.send, color: Styles().colors?.fillColorSecondary),
-              onPressed: () {
-                _submitMessage(_inputController.text);
-              },
-            ),
+            _buildQueryLimit(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildQueryLimit() {
+    if (_queryLimit == null) {
+      return Container();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Container(
+          height: 10,
+          width: 10,
+          decoration: BoxDecoration(
+            color: (_queryLimit ?? 0) > 0 ? Styles().colors?.saferLocationWaitTimeColorGreen :
+              Styles().colors?.saferLocationWaitTimeColorRed,
+            shape: BoxShape.circle
+          ),
+        ),
+        SizedBox(width: 8),
+        Text(Localization().getStringEx('', "{{query_limit}} questions remaining today")
+            .replaceAll('{{query_limit}}', _queryLimit.toString()),
+          style: Styles().textStyles?.getTextStyle('widget.title.small'),
+        ),
+      ]),
     );
   }
 
@@ -418,6 +490,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     if (_loadingResponse) {
       return;
     }
+
     setState(() {
       if (message.isNotEmpty) {
         _messages.add(Message(content: message, user: true));
@@ -425,6 +498,36 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       _inputController.text = '';
       _loadingResponse = true;
     });
+
+    if (_feedbackMessage != null) {
+      _feedbackMessage?.feedbackExplanation = message;
+      Message? response = await Assistant().sendFeedback(_feedbackMessage!);
+      setState(() {
+        if (response != null){
+          _messages.add(response);
+        } else {
+          _messages.add(Message(
+              content: Localization().getStringEx('', 'Thank you for the explanation! '
+                  'Your response has been recorded and will be used to improve results in the future.'),
+              user: false));
+        }
+        _loadingResponse = false;
+      });
+      _feedbackMessage = null;
+      return;
+    }
+
+    int? limit = _queryLimit;
+    if (limit != null && limit <= 0) {
+      setState(() {
+        _messages.add(Message(
+            content: Localization().getStringEx(
+                '', 'Sorry you are out of questions for today. '
+                'Please check back tomorrow to ask more questions!'),
+            user: false));
+      });
+      return;
+    }
 
     _scrollController.animateTo(
       _scrollController.position.minScrollExtent,
@@ -437,6 +540,13 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       setState(() {
         if (response != null){
           _messages.add(response);
+          if (_queryLimit != null) {
+            if (response.queryLimit != null) {
+              _queryLimit = response.queryLimit;
+            } else {
+              _queryLimit = _queryLimit! - 1;
+            }
+          }
         } else {
           _messages.add(Message(content: Localization().getStringEx('', 'Sorry something went wrong! Please try asking your question again.'), user: false));
           _inputController.text = message;
@@ -488,9 +598,14 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   }
   
   Future<void> _onPullToRefresh() async {
-    _updateController.add(AssistantPanel.notifyRefresh);
     if (mounted) {
-      setState(() {});
+      Assistant().getQueryLimit().then((limit) {
+        if (limit != null) {
+          setState(() {
+            _queryLimit = limit;
+          });
+        }
+      });
     }
   }
 

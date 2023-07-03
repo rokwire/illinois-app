@@ -1,6 +1,6 @@
 import 'package:rokwire_plugin/utils/utils.dart';
 
-Map<String, String> deeplinks = {
+Map<String, String> deeplinkNameMap = {
   'home': 'Home',
   'browse': 'Browse',
   'map': 'Map',
@@ -59,17 +59,19 @@ Map<String, String> deeplinks = {
 };
 
 class Message {
+  final String id;
   final String content;
   final bool user;
   final bool example;
-  final Link? link;
+  final List<Link>? links;
   final List<String> sources;
   final bool acceptsFeedback;
+  final int? queryLimit;
   MessageFeedback? feedback;
   String? feedbackExplanation;
 
-  Message({required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
-    this.link, this.sources = const [], this.feedback, this.feedbackExplanation});
+  Message({this.id = '', required this.content, required this.user, this.example = false, this.acceptsFeedback = false,
+    this.links, this.sources = const [], this.queryLimit, this.feedback,  this.feedbackExplanation});
 
   factory Message.fromAnswerJson(Map<String, dynamic> json) {
     List<String>? sources = JsonUtils.stringListValue(json['sources']);
@@ -80,15 +82,24 @@ class Message {
         sources = sources.map((e) => e.trim()).toList();
       }
     }
+
+    List<Link>? deeplinks = Link.listFromJson(json['deeplinks']);
     String? deeplink = JsonUtils.stringValue(json['deeplink'])?.trim();
+    if (deeplink != null) {
+      if (deeplinks == null) {
+        deeplinks = [];
+      }
+      deeplinks.add(Link(name: deeplinkNameMap[deeplink] ?? deeplink.split('.|_').join(' '), link: deeplink));
+    }
+
     return Message(
+      id: JsonUtils.stringValue(json['id'])?.trim() ?? '',
       content: JsonUtils.stringValue(json['answer'])?.trim() ?? '',
       user: JsonUtils.boolValue(json['user']) ?? false,
       example: JsonUtils.boolValue(json['example']) ?? false,
+      queryLimit: JsonUtils.intValue(json['query_limit']),
       acceptsFeedback: JsonUtils.boolValue(json['accepts_feedback']) ?? true,
-      link: deeplink != null ?
-        Link(name: deeplinks[deeplink] ?? deeplink.split('.|_').join(' '),
-          link: 'edu.illinois.rokwire.firebase.messaging.$deeplink') : null, //TODO: handle link base better
+      links: deeplinks, //TODO: handle link base better
       sources: sources ?? [],
       feedback: null,
       feedbackExplanation: null,
@@ -102,6 +113,25 @@ class Link {
   final String? iconKey;
 
   Link({required this.name, required this.link, this.iconKey});
+
+  factory Link.fromJson(Map<String, dynamic> json) {
+    return Link(
+      name: JsonUtils.stringValue(json['name']) ?? '',
+      link: JsonUtils.stringValue(json['link']) ?? '',
+      iconKey: JsonUtils.stringValue(json['icon_key']),
+    );
+  }
+
+  static List<Link>? listFromJson(List<dynamic>? jsonList) {
+    List<Link>? items;
+    if (jsonList != null && jsonList.isNotEmpty) {
+      items = <Link>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(items, Link.fromJson(jsonEntry));
+      }
+    }
+    return items;
+  }
 }
 
 enum MessageFeedback { good, bad }

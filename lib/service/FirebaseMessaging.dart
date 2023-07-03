@@ -42,6 +42,8 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static String get notifyForegroundMessage      => rokwire.FirebaseMessaging.notifyForegroundMessage;
   static String get notifyGroupsNotification     => rokwire.FirebaseMessaging.notifyGroupsNotification;
 
+  static const String linkBase = 'edu.illinois.rokwire.firebase.messaging';
+
   static const String notifyPopupMessage                   = "edu.illinois.rokwire.firebase.messaging.message.popup";
   static const String notifyScoreMessage                   = "edu.illinois.rokwire.firebase.messaging.message.score";
   static const String notifyConfigUpdate                   = "edu.illinois.rokwire.firebase.messaging.config.update";
