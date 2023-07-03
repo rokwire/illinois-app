@@ -56,9 +56,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     super.dispose();
   }
 
-
   // NotificationsListener
-
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
@@ -81,6 +79,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               SliverChildListDelegate([
                 Container(color: Styles().colors?.white, child:
                   Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    _badgeWidget,
                     _categoriesWidget,
                     Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
                       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -103,6 +102,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ])
     );
   }
+
+  Widget get _badgeWidget => _event?.userRole == Event2UserRole.admin ?
+  Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
+        Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+  ))) : Container();
+
 
   Widget get _categoriesWidget => 
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -257,7 +264,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _privacyDetailWidget{
-    String privacyTypeTitle = _event?.private == true ? Localization().getStringEx('model.event2.event_type.private', 'Private') : Localization().getStringEx('model.event2.event_type.public', 'Public');
+    String privacyTypeTitle = _event?.private == true ?
+      Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event') :
+      Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+
     return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
   }
 
@@ -286,7 +296,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _buttonsWidget {
     List<Widget> buttons = <Widget>[
       ...?_urlButtonWidget,
-      ...?_registrationButtonWidget
+      ...?_registrationButtonWidget,
+      ...?_logInButtonWidget
     ];
 
     return buttons.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 16), child:
@@ -295,14 +306,53 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _urlButtonWidget => //TBD check if this is the proper url for this button
-    StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildUrlButtonWidget(
+    StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildButtonWidget(
       title: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
       hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
       onTap: (){_onWebButton(_event?.eventUrl, analyticsName: 'Website');}
     )] : null;
 
-  List<Widget>? get _registrationButtonWidget{
-    return null; //TBD
+  List<Widget>? get _logInButtonWidget{//TBD localize
+    if(Auth2().isLoggedIn == true)
+      return null;
+
+    return _event?.registrationRequired == true ? <Widget>[_buildButtonWidget( //TBD check if we can show this button even if the registration is not required
+        title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Log In to Register'),
+        onTap: _onLogIn,
+        externalLink: false,
+        enabled: false
+    )] : null;
+  }
+
+  List<Widget>? get _registrationButtonWidget{//TBD localize
+    if(Auth2().isLoggedIn == false) //We can register only if logged in
+      return null;
+
+    if(_event?.registrationRequired == true){ //Require App registration
+        if(_event?.userRole == Event2UserRole.participant){//Already registered
+            return <Widget>[_buildButtonWidget(
+                title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
+                onTap: _onRegister,
+                externalLink: false
+            )];
+        } else if (_event?.userRole == null){//Not registered yet
+          return <Widget>[_buildButtonWidget(
+              title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Unregister me'),
+              onTap: _onUnregister,
+              externalLink: false
+          )];
+        }
+    } else if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink)){// else external registration
+      if(_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
+        return <Widget>[_buildButtonWidget(
+            title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
+            onTap: _onExternalRegistration,
+            externalLink: true
+        )];
+      }
+    }
+
+    return null; //not required
   }
 
   Widget get _detailSpacerWidget => Container(height: 8,);
@@ -343,7 +393,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   //TBD remove if not needed
-  Widget _buildUrlButtonWidget({String? title, String? hint, bool enabled = true, void Function()? onTap}) => StringUtils.isNotEmpty(title) ?
+  Widget _buildButtonWidget({String? title,
+    String? hint,
+    bool enabled = true,
+    bool externalLink = true,
+    void Function()? onTap
+  }) => StringUtils.isNotEmpty(title) ?
     Padding(padding: EdgeInsets.only(bottom: 6), child:
       Row(children:<Widget>[
         Expanded(child:
@@ -353,7 +408,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: enabled ? Colors.white : Styles().colors!.background,
               borderColor: enabled ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary,  //TBD proper disabled colors
-              rightIcon: Styles().images?.getImage(enabled ? 'external-link-dark' : 'external-link'),
+              rightIcon:externalLink? Styles().images?.getImage(enabled ? 'external-link-dark' : 'external-link') : null,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: onTap
           ),
@@ -394,5 +449,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if(StringUtils.isNotEmpty(url)){
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
     }
+  }
+
+  void _onRegister(){
+    //TBD
+  }
+
+  void _onUnregister(){
+  //TBD
+  }
+
+  void _onExternalRegistration(){
+    //TBD
+  }
+
+  void _onLogIn(){
+    //TBD
   }
 }
