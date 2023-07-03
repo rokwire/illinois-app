@@ -283,6 +283,16 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
+                    label: "Clear Account Prefs",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onTapClearAccountPrefs
+                  )
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
                     label: "Clear Voting",
                     backgroundColor: Styles().colors!.background,
                     fontSize: 16.0,
@@ -729,6 +739,11 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     setState(() {
       Storage().useDeviceLocalTimeZone = !Storage().useDeviceLocalTimeZone!;
     });
+  }
+
+  void _onTapClearAccountPrefs() {
+    Auth2().prefs?.clear(notify: true);
+    AppAlert.showDialogResult(context, 'Successfully cleared user account prefs.');
   }
 
   void _onTapClearVoting() {
