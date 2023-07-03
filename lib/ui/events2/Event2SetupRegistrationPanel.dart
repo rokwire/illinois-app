@@ -82,10 +82,10 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     );
 
   Widget _buildRequireToggle() => Semantics(toggled: _registrationRequired, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQIRE REGISTRATION VIA THE APP"),
+    label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQUIRE REGISTRATION VIA THE APP"),
     hint: Localization().getStringEx("panel.event2.setup.registration.require.toggle.hint", ""),
     child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQIRE REGISTRATION VIA THE APP"),
+      label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQUIRE REGISTRATION VIA THE APP"),
       padding: _togglePadding,
       toggled: _registrationRequired,
       onTap: _onTapRegistrationRequired,

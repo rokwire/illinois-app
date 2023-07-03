@@ -1203,7 +1203,7 @@
     "panel.event2.create.message.failed.title": "Failed",
 
     "panel.event2.setup.registration.header.title": "Event Registration",
-    "panel.event2.setup.registration.require.toggle.title": "REQIRE REGISTRATION VIA THE APP",
+    "panel.event2.setup.registration.require.toggle.title": "REQUIRE REGISTRATION VIA THE APP",
     "panel.event2.setup.registration.require.toggle.hint": "",
     "panel.event2.setup.registration.capacity.label.title": "EVENT CAPACITY",
     "panel.event2.setup.registration.label.label.title": "ADD REGISTRATION LABEL",
