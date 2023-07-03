@@ -82,10 +82,10 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     );
 
   Widget _buildRequireToggle() => Semantics(toggled: _registrationRequired, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQIRE REGISTRATION VIA THE APP"),
+    label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQUIRE REGISTRATION VIA THE APP"),
     hint: Localization().getStringEx("panel.event2.setup.registration.require.toggle.hint", ""),
     child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQIRE REGISTRATION VIA THE APP"),
+      label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQUIRE REGISTRATION VIA THE APP"),
       padding: _togglePadding,
       toggled: _registrationRequired,
       onTap: _onTapRegistrationRequired,
@@ -93,7 +93,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       borderRadius: _toggleBorderRadius,
     ));
 
-  EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
+  EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
   BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
   BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 

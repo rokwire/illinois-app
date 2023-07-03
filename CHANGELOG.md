@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Do not initialize default content for Favorites panel [#3346](https://github.com/rokwire/illinois-app/issues/3346).
 - Preserve Home and Browse tout images aspect ratio while loading.
+- Update Event2DetailPanel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Added
+- Hooked up attendance details in create event panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
 
 ## [5.0.17] - 2023-06-30
 ### Changed

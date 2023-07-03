@@ -178,7 +178,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<Widget>? get _dateDetailWidget {
     TZDateTime? dateTimeUni = _event?.startTimeUtc?.toUniOrLocal();
-    return (dateTimeUni != null) ? <Widget>[_buildTextDetailWidget(DateFormat('MMM d, ha').format(dateTimeUni), 'calendar')] : null;
+    return (dateTimeUni != null) ? <Widget>[_buildTextDetailWidget(DateFormat('MMM d, ha').format(dateTimeUni), 'calendar'),  _detailSpacerWidget] : null;
   }
 
   List<Widget>? get _onlineDetailWidget {
@@ -198,6 +198,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           _buildDetailWidget(onlineWidget, 'laptop', iconVisible: false, contentPadding: EdgeInsets.zero)
         )
       );
+      details.add( _detailSpacerWidget);
 
       return details;
     }
@@ -229,6 +230,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
             _buildDetailWidget(locationWidget, 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
           )
         );
+        details.add( _detailSpacerWidget);
       }
       return details;
     }
@@ -236,15 +238,49 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _priceDetailWidget{
-    return null; //TBD
+    bool isFree = _event?.free ?? false;
+    String priceText =isFree? "Free" : (_event?.cost ?? "Free");
+    String? additionalDescription = isFree? _event?.cost : null;
+    List<Widget>? details = priceText.isNotEmpty ? <Widget>[
+      _buildTextDetailWidget(priceText, 'cost'),
+    ] : null;
+    
+    if(details != null && StringUtils.isNotEmpty(additionalDescription)){
+      details.add(Container(padding: EdgeInsets.only(left: 28), child:
+        Row(children: [Expanded(child:
+            Text(additionalDescription!, style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
+          ])));
+    }
+    details?.add( _detailSpacerWidget);
+
+    return details;
   }
 
   List<Widget>? get _privacyDetailWidget{
-    return null; //TBD
+    String privacyTypeTitle = _event?.private == true ? Localization().getStringEx('model.event2.event_type.private', 'Private') : Localization().getStringEx('model.event2.event_type.public', 'Public');
+    return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
   }
 
   List<Widget>? get _contactsDetailWidget{
-    return null; //TBD
+    if(CollectionUtils.isEmpty(_event?.contacts))
+      return null;
+
+    List<Widget> contactList = [];
+    contactList.add(Padding(
+        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
+
+    for (Contact? contact in _event!.contacts!) {
+      String? details =  event2ContactToDisplayString(contact);
+      if(StringUtils.isNotEmpty(details)){
+        contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child:
+          Text(details!, style: Styles().textStyles?.getTextStyle("widget.text.regular"))
+        ));
+      }
+    }
+
+    contactList.add( _detailSpacerWidget);
+
+    return contactList;
   }
 
   Widget get _buttonsWidget {
@@ -268,6 +304,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   List<Widget>? get _registrationButtonWidget{
     return null; //TBD
   }
+
+  Widget get _detailSpacerWidget => Container(height: 8,);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),

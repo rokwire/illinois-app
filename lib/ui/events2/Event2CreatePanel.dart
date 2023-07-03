@@ -29,6 +29,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'Event2SetupAttendancePanel.dart';
+
 class Event2CreatePanel extends StatefulWidget {
 
   @override
@@ -353,6 +355,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   String? _registrationLabel;
   String? _registrationLink;
   int? _eventCapacity;
+
+  AttendanceDetails? _attendanceDetails;
 
   late List<String> _errorList;
   bool _creatingEvent = false;
@@ -1135,7 +1139,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Widget  _buildAttendanceButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.attendance.title', 'EVENT ATTENDANCE'),
-      subTitle: Localization().getStringEx('panel.event2.create.button.attendance.description', 'Receive feedback about your event.'),
+      subTitle: (_attendanceDetails?.isNotEmpty == true) ?
+        Localization().getStringEx('panel.event2.create.button.attendance.confirmation', 'Event attendance details set up.') :
+        Localization().getStringEx('panel.event2.create.button.attendance.description', 'Receive feedback about your event.'),
       required: true,
       onTap: _onEventAttendance,
     ),
@@ -1144,7 +1150,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
     Event2CreatePanel.hideKeyboard(context);
-    AppAlert.showDialogResult(context, 'TBD');
+    Navigator.push<AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
+    ))).then((AttendanceDetails? result) {
+      setStateIfMounted(() {
+        _attendanceDetails = (result?.isNotEmpty == true) ? result : null;
+      });
+    });
   }
 
   // Visibility
@@ -1425,12 +1436,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
       grouping: null, // TBD
       attributes: _attributes,
+      private: _private,
 
       canceled: null, // NA
       userRole: null, // NA
-
-      attendanceRequired: false, // TBD
-      private: _private,
 
       free: _free,
       cost: Event2CreatePanel.textFieldValue(_costController),
@@ -1441,6 +1450,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         externalLink: _registrationLink
       ) : null,
       eventCapacity: _eventCapacity,
+
+      attendanceRequired: (_attendanceDetails != null),
+      attendanceDetails: _attendanceDetails,
 
       sponsor: null, // TBD
       speaker: null, // TBD

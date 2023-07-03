@@ -196,3 +196,37 @@ String? event2TypeToDisplayString(Event2Type? value) {
     default: return null;
   }
 }
+
+String? event2ContactToDisplayString(Contact? value){
+  if(value == null)
+    return null;
+
+  String contactDetails = '';
+
+  if (StringUtils.isNotEmpty(value.firstName)) {
+    contactDetails += value.firstName!;
+  }
+  if (StringUtils.isNotEmpty(value.lastName)) {
+    if (StringUtils.isNotEmpty(contactDetails)) {
+      contactDetails += ' ';
+    }
+    contactDetails += value.lastName!;
+  }
+  if (StringUtils.isNotEmpty(value.organization)) {
+    contactDetails += ' (${value.organization})';
+  }
+  if (StringUtils.isNotEmpty(value.email)) {
+    if (StringUtils.isNotEmpty(contactDetails)) {
+      contactDetails += ', ';
+    }
+    contactDetails += value.email!;
+  }
+  if (StringUtils.isNotEmpty(value.phone)) {
+    if (StringUtils.isNotEmpty(contactDetails)) {
+      contactDetails += ', ';
+    }
+    contactDetails += value.phone!;
+  }
+
+  return contactDetails;
+}
