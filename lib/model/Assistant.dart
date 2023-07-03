@@ -99,7 +99,7 @@ class Message {
       example: JsonUtils.boolValue(json['example']) ?? false,
       queryLimit: JsonUtils.intValue(json['query_limit']),
       acceptsFeedback: JsonUtils.boolValue(json['accepts_feedback']) ?? true,
-      links: deeplinks, //TODO: handle link base better
+      links: deeplinks,
       sources: sources ?? [],
       feedback: null,
       feedbackExplanation: null,

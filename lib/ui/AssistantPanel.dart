@@ -76,6 +76,9 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     ));
 
     _contentCodes = buildContentCodes();
+
+    _onPullToRefresh();
+
     super.initState();
   }
 
@@ -354,6 +357,9 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   Widget _buildLinkWidgets(List<Link>? links) {
     List<Widget> linkWidgets = [];
     for (Link link in links ?? []) {
+      if (linkWidgets.isNotEmpty) {
+        linkWidgets.add(SizedBox(height: 8.0));
+      }
       linkWidgets.add(_buildLinkWidget(link));
     }
     return Column(children: linkWidgets);
