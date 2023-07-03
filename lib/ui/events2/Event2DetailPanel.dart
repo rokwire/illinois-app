@@ -330,15 +330,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     if(_event?.registrationRequired == true){ //Require App registration
         if(_event?.userRole == Event2UserRole.participant){//Already registered
-            return <Widget>[_buildButtonWidget(
-                title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
-                onTap: _onRegister,
-                externalLink: false
-            )];
-        } else if (_event?.userRole == null){//Not registered yet
           return <Widget>[_buildButtonWidget(
               title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Unregister me'),
               onTap: _onUnregister,
+              externalLink: false
+          )];
+        } else if (_event?.userRole == null){//Not registered yet
+          return <Widget>[_buildButtonWidget(
+              title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
+              onTap: _onRegister,
               externalLink: false
           )];
         }
