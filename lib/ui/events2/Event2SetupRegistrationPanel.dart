@@ -93,7 +93,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       borderRadius: _toggleBorderRadius,
     ));
 
-  EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
+  EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
   BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
   BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
