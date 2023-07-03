@@ -1436,12 +1436,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
       grouping: null, // TBD
       attributes: _attributes,
+      private: _private,
 
       canceled: null, // NA
       userRole: null, // NA
-
-      attendanceDetails: _attendanceDetails, // TBD
-      private: _private,
 
       free: _free,
       cost: Event2CreatePanel.textFieldValue(_costController),
@@ -1452,6 +1450,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         externalLink: _registrationLink
       ) : null,
       eventCapacity: _eventCapacity,
+
+      attendanceRequired: (_attendanceDetails != null),
+      attendanceDetails: _attendanceDetails,
 
       sponsor: null, // TBD
       speaker: null, // TBD
