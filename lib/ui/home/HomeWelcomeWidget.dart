@@ -132,7 +132,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
 
   Widget _buildVideoEntry() {
     if (_video == null) {
-      return Container();
+      return emptyImagePlaceholder;
     }
     return GestureDetector(onTap: _onTapVideo, child:
       Semantics(button: true, child:
