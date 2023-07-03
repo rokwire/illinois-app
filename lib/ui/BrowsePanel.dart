@@ -1220,11 +1220,15 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
       ModalImageHolder(child: Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
-        return (loadingProgress != null) ? Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
-          Center(child:
-            CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
-          ),
-        ) : child;
+        return (loadingProgress != null) ?
+          Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+            Center(child:
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
+            ),
+          ) :
+          AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
+            Container(color: Styles().colors?.fillColorPrimary, child: child)
+          );
       })),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
