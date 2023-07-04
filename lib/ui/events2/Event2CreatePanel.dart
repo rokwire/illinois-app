@@ -730,7 +730,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
     Event2CreatePanel.hideKeyboard(context);
-    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay.fromDateTime(DateTime.now())).then((TimeOfDay? result) {
+    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
@@ -762,7 +762,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEndTime() {
     Analytics().logSelect(target: "End Time");
     Event2CreatePanel.hideKeyboard(context);
-    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay.fromDateTime(TZDateTime.now(_timeZone))).then((TimeOfDay? result) {
+    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _endTime = result;
