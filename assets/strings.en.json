@@ -442,6 +442,10 @@
 
     "panel.maps.header.title": "Map",
 
+    "panel.map.select.header.title": "Select Location",
+    "panel.map.select.button.select.title": "Select",
+    "panel.map.select.button.select.hint": "",
+
     "panel.academics.header.title": "Academics",
     "panel.academics.section.events.label": "Academic Events",
     "panel.academics.section.gies_checklist.label": "iDegrees New Student Checklist",

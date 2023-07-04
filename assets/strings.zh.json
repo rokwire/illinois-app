@@ -441,6 +441,10 @@
 	
 	"panel.maps.header.title": "地圖",
 	
+	"panel.map.select.header.title": "Select Location",
+	"panel.map.select.button.select.title": "Select",
+	"panel.map.select.button.select.hint": "",
+
 	"panel.academics.header.title": "學者",
 	"panel.academics.section.events.label": "學術活動",
 	"panel.academics.section.gies_checklist.label": "iDegrees 新學生清單",
@@ -448,8 +452,8 @@
 	"panel.academics.section.canvas_courses.label": "我的 Gies 帆布課程",
 	"panel.academics.section.student_courses.label": "我的課程",
 	"panel.academics.section.medicine_courses.label": "我的醫學院合規",
-		"panel.academics.section.skills_self_evaluation.label": "技能自我評估",
-		"panel.academics.section.todo_list.label": "待辦事項清單",
+	"panel.academics.section.skills_self_evaluation.label": "技能自我評估",
+	"panel.academics.section.todo_list.label": "待辦事項清單",
 	"panel.academics.section.due_date_catalog.label": "到期日目錄",
 	"panel.academics.section.appointments.label": "約會",
 	"panel.academics.section.my_illini.label": "myIllini",

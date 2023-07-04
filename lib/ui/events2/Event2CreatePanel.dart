@@ -5,11 +5,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
+import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -358,6 +361,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Event2RegistrationDetails? _registrationDetails;
   Event2AttendanceDetails? _attendanceDetails;
+  // Explore? _locationExplore;
 
   late List<String> _errorList;
   bool _creatingEvent = false;
@@ -384,9 +388,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   @override
   void initState() {
     _titleController.addListener(_updateErrorList);
+    _onlineUrlController.addListener(_updateErrorList);
     _locationLatitudeController.addListener(_updateErrorList);
     _locationLongitudeController.addListener(_updateErrorList);
-    _onlineUrlController.addListener(_updateErrorList);
 
     _timeZone = DateTimeUni.timezoneUniOrLocal;
     _errorList = _buildErrorList();
@@ -944,7 +948,21 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onTapSelectLocation() {
     Analytics().logSelect(target: "Select Location");
     Event2CreatePanel.hideKeyboard(context);
-    AppAlert.showDialogResult(context, 'TBD');
+    ExploreLocation? location = _constructLocation();
+
+    Navigator.push<Explore>(context, CupertinoPageRoute(builder: (context) => ExploreMapSelectLocationPanel(
+      selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
+    ))).then((Explore? explore) {
+      if ((explore != null) && mounted) {
+        _locationBuildingController.text = explore.exploreTitle ?? explore.exploreLocation?.building ?? explore.exploreLocation?.name ?? '';
+        _locationAddressController.text = explore.exploreLocation?.fullAddress ?? explore.exploreLocation?.buildDisplayAddress() ?? explore.exploreLocation?.description ?? '';
+        _locationLatitudeController.text = _printLatLng(explore.exploreLocation?.latitude);
+        _locationLongitudeController.text = _printLatLng(explore.exploreLocation?.longitude);
+        setState(() {
+          _errorList = _buildErrorList();
+        });
+      }
+    });
   }
 
   // Cost
@@ -1351,25 +1369,29 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   bool get _onlineEventType => (_eventType == Event2Type.online) ||  (_eventType == Event2Type.hybrid);
   bool get _inPersonEventType => (_eventType == Event2Type.inPerson) ||  (_eventType == Event2Type.hybrid);
 
-  ExploreLocation? get _location {
-    double? latitude = _parseDouble(_locationLatitudeController);
-    double? longitude = _parseDouble(_locationLongitudeController);
+  ExploreLocation? _constructLocation() {
+    double? latitude = _parseLatLng(_locationLatitudeController);
+    double? longitude = _parseLatLng(_locationLongitudeController);
     return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0)) ? ExploreLocation(
-      building: _locationBuildingController.text,
-      fullAddress: _locationAddressController.text,
+      name: _locationBuildingController.text.isNotEmpty ? _locationBuildingController.text : null,
+      building: _locationBuildingController.text.isNotEmpty ? _locationBuildingController.text : null,
+      description: _locationAddressController.text.isNotEmpty ? _locationAddressController.text : null,
+      fullAddress: _locationAddressController.text.isNotEmpty ? _locationAddressController.text : null,
       latitude: latitude,
       longitude: longitude,
     ) : null;
   }
 
   bool get _hasLocation {
-    double? latitude = _parseDouble(_locationLatitudeController);
-    double? longitude = _parseDouble(_locationLongitudeController);
+    double? latitude = _parseLatLng(_locationLatitudeController);
+    double? longitude = _parseLatLng(_locationLongitudeController);
     return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0));
   }
 
-  static double? _parseDouble(TextEditingController textController) =>
+  static double? _parseLatLng(TextEditingController textController) =>
     textController.text.isNotEmpty ? double.tryParse(textController.text) : null;
+
+  static String _printLatLng(double? value) => value?.toStringAsFixed(6) ?? '';
 
   Event2OnlineDetails? get _onlineDetails => 
     _onlineUrlController.text.isNotEmpty ? Event2OnlineDetails(
@@ -1421,7 +1443,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       allDay: _allDay,
 
       eventType: _eventType,
-      location: _location,
+      location: _constructLocation(),
       onlineDetails: _onlineDetails,
 
       grouping: null, // TBD
