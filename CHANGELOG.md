@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Illinois Assistant query limits and feedback integration [#3349](https://github.com/rokwire/illinois-app/issues/3349)
+- Initialize simplified default content for Favorites panel [#3346](https://github.com/rokwire/illinois-app/issues/3346).
 
 ## [5.0.18] - 2023-07-03
 ### Changed

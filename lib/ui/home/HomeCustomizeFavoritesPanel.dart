@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -13,6 +14,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -243,7 +245,47 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   }
 
   Future<void> _onPullToRefresh() async {
-    setStateIfMounted((){});
+    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+      _initDefaultFavorites();
+    }
+    else {
+      setStateIfMounted((){});
+    }
+  }
+
+  static LinkedHashSet<String>? _initDefaultFavorites() {
+    Map<String, dynamic>? defaults = FlexUI().content('defaults.favorites');
+    if (defaults != null) {
+      List<String>? defaultContent = JsonUtils.listStringsValue(defaults['home']);
+      if (defaultContent != null) {
+
+        // Init content of all compound widgets that bellongs to home favorites content
+        for (String code in defaultContent) {
+          List<String>? defaultWidgetContent = JsonUtils.listStringsValue(defaults['home.$code']);
+          if (defaultWidgetContent != null) {
+            Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: code),
+              LinkedHashSet<String>.from(defaultWidgetContent.reversed));
+          }
+        }
+
+        // Clear content of all compound widgets that do not bellongs to home favorites content
+        Iterable<String>? favoriteKeys = Auth2().prefs?.favoritesKeys;
+        if (favoriteKeys != null) {
+          for (String favoriteKey in List.from(favoriteKeys)) {
+            String? code = HomeFavorite.parseFavoriteKeyCategory(favoriteKey);
+            if ((code != null) && !defaultContent.contains(code)) {
+              Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: code), null);
+            }
+          }
+        }
+
+        // Init content of home favorites
+        LinkedHashSet<String>? defaultFavorites = LinkedHashSet<String>.from(defaultContent.reversed);
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), defaultFavorites);
+        return defaultFavorites;
+      }
+    }
+    return null;
   }
 
   void _onPointerMove(PointerMoveEvent event) {

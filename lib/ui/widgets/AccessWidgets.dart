@@ -189,7 +189,7 @@ class _AccessContent extends StatelessWidget {
       message += '$stepNum. ';
 
       String ruleType = messageKey.split('.').first;
-      dynamic rule = MapPathKey.entry(FlexUI().rules, messageKey);
+      dynamic rule = MapPathKey.entry(FlexUI().defaultRules, messageKey);
       switch (ruleType) {
         case 'roles': message += sprintf(Localization().getStringEx('widget.access.$messageKey.unsatisfied.message', '%s is currently only available to ${(rule as List).join(' ')}'), [resourceName]); break;
         case 'privacy': message += Localization().getStringEx('widget.access.$messageKey.unsatisfied.message', 'Update your privacy level to at least ') + rule.toString(); break;
@@ -246,7 +246,7 @@ class _AccessContent extends StatelessWidget {
     List<String>? requiredFeatures = JsonUtils.stringListValue(FlexUI()['$resource.features']);
     for (String feature in requiredFeatures ?? []) {
       if (!FlexUI().hasFeature(feature)) {
-        for (MapEntry<String, dynamic> ruleCategory in FlexUI().rules.entries) {
+        for (MapEntry<String, dynamic> ruleCategory in FlexUI().defaultRules.entries) {
           if (ruleCategory.value is Map) {
             dynamic rule = MapPathKey.entry(ruleCategory.value, 'features.$feature');
             if (rule != null) {
