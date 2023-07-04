@@ -316,7 +316,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if(Auth2().isLoggedIn == true)
       return null;
 
-    return _event?.registrationRequired == true ? <Widget>[_buildButtonWidget( //TBD check if we can show this button even if the registration is not required
+    return (_event?.registrationDetails?.type == Event2RegistrationType.internal) ? <Widget>[_buildButtonWidget( //TBD check if we can show this button even if the registration is not required
         title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Log In to Register'),
         onTap: _onLogIn,
         externalLink: false,
@@ -328,7 +328,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if(Auth2().isLoggedIn == false) //We can register only if logged in
       return null;
 
-    if(_event?.registrationRequired == true){ //Require App registration
+    if (_event?.registrationDetails?.type == Event2RegistrationType.internal) { //Require App registration
         if(_event?.userRole == Event2UserRole.participant){//Already registered
           return <Widget>[_buildButtonWidget(
               title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Unregister me'),

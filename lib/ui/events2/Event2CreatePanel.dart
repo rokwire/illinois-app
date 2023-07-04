@@ -72,6 +72,11 @@ class Event2CreatePanel extends StatefulWidget {
     contentPadding: padding,
   );
 
+  static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
+    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(4))
+  );
+
   // Sections / Regular Section
   
   static Widget buildSectionWidget({
@@ -351,11 +356,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   
   Map<String, dynamic>? _attributes;
 
-  bool _registrationRequired = false;
-  String? _registrationLabel;
-  String? _registrationLink;
-  int? _eventCapacity;
-
+  Event2RegistrationDetails? _registrationDetails;
   Event2AttendanceDetails? _attendanceDetails;
 
   late List<String> _errorList;
@@ -581,7 +582,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         ),
         Container(width: 16,),
         Expanded(flex: 7, child:
-          Container(decoration: _dropdownButtonDecoration, child:
+          Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Location>(
@@ -672,7 +673,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildDropdownButton({String? label, GestureTapCallback? onTap}) {
     return InkWell(onTap: onTap, child:
-      Container(decoration: _dropdownButtonDecoration, padding: Event2CreatePanel.dropdownButtonContentPadding, child:
+      Container(decoration: Event2CreatePanel.dropdownButtonDecoration, padding: Event2CreatePanel.dropdownButtonContentPadding, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
           Text(label ??  '-', style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
           Styles().images?.getImage('chevron-down') ?? Container()
@@ -680,11 +681,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       ),
     );
   }
-
-  BoxDecoration get _dropdownButtonDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(4))
-  );
 
   Widget _buildAllDayToggle() => Semantics(toggled: _allDay, excludeSemantics: true, 
     label:Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
@@ -841,7 +837,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         ),
         Container(width: 16,),
         Expanded(flex: 7, child:
-          Container(decoration: _dropdownButtonDecoration, child:
+          Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Event2Type>(
@@ -1103,34 +1099,29 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Widget  _buildRegistrationButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.registration.title', 'EVENT REGISTRATION'),
-      subTitle: _registrationRequired ?
-        Localization().getStringEx('panel.event2.create.button.registration.confirmation', 'Event registration set up.') :
-        Localization().getStringEx('panel.event2.create.button.registration.description', 'Use in-app options or an external link.'),
+      subTitle: _displayRegistrationDescription,
       required: true,
       onTap: _onEventRegistration,
     ),
   );
 
+  String get _displayRegistrationDescription {
+    switch (_registrationDetails?.type) {
+      case Event2RegistrationType.internal: return Localization().getStringEx('panel.event2.create.button.registration.confirmation.internal', 'Registration via the app is set up.');
+      case Event2RegistrationType.external: return Localization().getStringEx('panel.event2.create.button.registration.confirmation.external', 'Registration via external link is set up.');
+      default: return Localization().getStringEx('panel.event2.create.button.registration.description', 'Use in-app options or an external link.');
+    }
+  }
+
   void _onEventRegistration() {
     Analytics().logSelect(target: "Event Registration");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2SetupRegistrationParam>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(param:
-      Event2SetupRegistrationParam(
-        registrationRequired: _registrationRequired,
-        registrationLabel: _registrationLabel,
-        registrationLink: _registrationLink,
-        eventCapacity: _eventCapacity,
-      ),
-    ))).then((Event2SetupRegistrationParam? result) {
-      if ((result != null) && mounted) {
-        setState(() {
-          _registrationRequired = result.registrationRequired;
-          _registrationLabel = result.registrationLabel;
-          _registrationLink = result.registrationLink;
-          _eventCapacity = result.eventCapacity;
-          _errorList = _buildErrorList();
-        });
-      }
+    Navigator.push<Event2RegistrationDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
+      details: _registrationDetails,
+    ))).then((Event2RegistrationDetails? result) {
+      setStateIfMounted(() {
+        _registrationDetails = result;
+      });
     });
   }
 
@@ -1150,10 +1141,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
+    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(details: _attendanceDetails
     ))).then((Event2AttendanceDetails? result) {
       setStateIfMounted(() {
-        _attendanceDetails = (result?.isNotEmpty == true) ? result : null;
+        _attendanceDetails = result;
       });
     });
   }
@@ -1172,7 +1163,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             ]),
           ),
           Expanded(child:
-            Container(decoration: _dropdownButtonDecoration, child:
+            Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
                   DropdownButton<_Event2Visibility>(
@@ -1269,7 +1260,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.attributes', 'event attributes'));
     }
 
-    if (_registrationRequired && (_registrationLink?.isEmpty ?? true)) {
+    if ((_registrationDetails?.type == Event2RegistrationType.external) && (_registrationDetails?.externalLink?.isEmpty ?? true)) {
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.registration_link', 'registration link'));
     }
     
@@ -1404,11 +1395,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     (!_inPersonEventType || _hasLocation) &&
     (!_onlineEventType || _hasOnlineDetails) &&
     (Events2().contentAttributes?.isAttributesSelectionValid(_attributes) ?? false) &&
-    (!_registrationRequired || (_registrationLink?.isNotEmpty ?? false))
+    ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false))
   );
 
   void _updateErrorList() {
-    debugPrint("EVENT NAME: ${_titleController.text}");
     List<String> errorList = _buildErrorList();
     if (!DeepCollectionEquality().equals(errorList, _errorList)) {
       setStateIfMounted(() {
@@ -1444,15 +1434,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       free: _free,
       cost: Event2CreatePanel.textFieldValue(_costController),
 
-      registrationRequired: _registrationRequired,
-      registrationDetails: _registrationRequired ? Event2RegistrationDetails(
-        label: _registrationLabel,
-        externalLink: _registrationLink
-      ) : null,
-      eventCapacity: _eventCapacity,
-
-      attendanceRequired: (_attendanceDetails != null),
-      attendanceDetails: _attendanceDetails,
+      registrationDetails: _registrationDetails ?? Event2RegistrationDetails.empty(), // TBD: (_registrationDetails?.type != Event2RegistrationType.none) ? _registrationDetails : null,
+      attendanceDetails: (_attendanceDetails?.isNotEmpty ?? false) ? _attendanceDetails : null,
 
       sponsor: null, // TBD
       speaker: null, // TBD
