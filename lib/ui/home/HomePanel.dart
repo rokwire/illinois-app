@@ -658,6 +658,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
+    if (homeFavorites == null) {
+      homeFavorites = _initDefaultFavorites();
+    }
     return (homeFavorites != null) ? List.from(homeFavorites) : null;
   }
 
@@ -670,6 +673,41 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         });
       }
     }
+  }
+
+  static LinkedHashSet<String>? _initDefaultFavorites() {
+    Map<String, dynamic>? defaults = FlexUI().content('defaults.favorites');
+    if (defaults != null) {
+      List<String>? defaultContent = JsonUtils.listStringsValue(defaults['home']);
+      if (defaultContent != null) {
+
+        // Init content of all compound widgets that bellongs to home favorites content
+        for (String code in defaultContent) {
+          List<String>? defaultWidgetContent = JsonUtils.listStringsValue(defaults['home.$code']);
+          if (defaultWidgetContent != null) {
+            Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: code),
+              LinkedHashSet<String>.from(defaultWidgetContent.reversed));
+          }
+        }
+
+        // Clear content of all compound widgets that do not bellongs to home favorites content
+        Iterable<String>? favoriteKeys = Auth2().prefs?.favoritesKeys;
+        if (favoriteKeys != null) {
+          for (String favoriteKey in List.from(favoriteKeys)) {
+            String? code = HomeFavorite.parseFavoriteKeyCategory(favoriteKey);
+            if ((code != null) && !defaultContent.contains(code)) {
+              Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: code), null);
+            }
+          }
+        }
+
+        // Init content of home favorites
+        LinkedHashSet<String>? defaultFavorites = LinkedHashSet<String>.from(defaultContent.reversed);
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), defaultFavorites);
+        return defaultFavorites;
+      }
+    }
+    return null;
   }
 
   Future<void> _onPullToRefresh() async {
