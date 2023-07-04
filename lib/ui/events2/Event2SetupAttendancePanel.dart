@@ -10,9 +10,9 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
-  final AttendanceDetails? attendanceDetails;
+  final Event2AttendanceDetails? details;
   
-  Event2SetupAttendancePanel({Key? key, this.attendanceDetails}) : super(key: key);
+  Event2SetupAttendancePanel({Key? key, this.details}) : super(key: key);
   
   @override
   State<StatefulWidget> createState() => _Event2SetupAttendancePanelState();
@@ -26,9 +26,9 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   @override
   void initState() {
-    _takeAttendanceViaAppEnabled = widget.attendanceDetails?.takeAttendanceViaAppEnabled ?? false;
-    _scanningEnabled = widget.attendanceDetails?.scanningEnabled ?? false;
-    _manualCheckEnabled = widget.attendanceDetails?.manualCheckEnabled ?? false;
+    _takeAttendanceViaAppEnabled = widget.details?.takeAttendanceViaAppEnabled ?? false;
+    _scanningEnabled = widget.details?.scanningEnabled ?? false;
+    _manualCheckEnabled = widget.details?.manualCheckEnabled ?? false;
     super.initState();
   }
 
@@ -153,8 +153,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   // Submit
 
   void _onHeaderBack() {
-    Navigator.of(context).pop((_takeAttendanceViaAppEnabled || _scanningEnabled || _manualCheckEnabled) ? AttendanceDetails(
-      attendanceRequired: widget.attendanceDetails?.attendanceRequired,
+    Navigator.of(context).pop((_takeAttendanceViaAppEnabled || _scanningEnabled || _manualCheckEnabled) ? Event2AttendanceDetails(
+      attendanceRequired: widget.details?.attendanceRequired,
       takeAttendanceViaAppEnabled: _takeAttendanceViaAppEnabled,
       scanningEnabled: _scanningEnabled,
       manualCheckEnabled: _manualCheckEnabled,

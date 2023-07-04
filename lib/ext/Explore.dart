@@ -353,7 +353,9 @@ extension ExploreMap on Explore {
       return (this as StudentCourse).section?.displayLocation;
     }
     else if (this is ExplorePOI) {
-      return (this as ExplorePOI).location?.displayCoordinates;
+      return (this as ExplorePOI).location?.description ??
+        (this as ExplorePOI).location?.fullAddress ??
+        (this as ExplorePOI).location?.displayCoordinates;
     }
     else if (this is Building) {
       return (this as Building).address1;

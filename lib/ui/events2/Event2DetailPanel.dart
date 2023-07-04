@@ -15,7 +15,9 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as pluginAuth;
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -24,9 +26,10 @@ import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  final String? eventId;
   final Event2? event;
   final Position? userLocation;
-  Event2DetailPanel({ this.event, this.userLocation });
+  Event2DetailPanel({ this.event, this.eventId, this.userLocation});
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();
@@ -39,14 +42,17 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
 
 class _Event2DetailPanelState extends State<Event2DetailPanel> implements NotificationsListener {
   Event2? _event;
-  
+
+  bool _authLoading = false; //TBD visualize
+  bool _eventLoading = false; //TBD visualize
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
+      Auth2.notifyLoginChanged,
     ]);
-    _event = widget.event;
-    
+   _initEvent();
     super.initState();
   }
 
@@ -56,13 +62,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     super.dispose();
   }
 
-
   // NotificationsListener
-
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() { });
+    } else if(name == Auth2.notifyLoginChanged){
+      _refreshEvent();
     }
   }
   
@@ -81,6 +87,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               SliverChildListDelegate([
                 Container(color: Styles().colors?.white, child:
                   Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    _badgeWidget,
                     _categoriesWidget,
                     Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
                       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -91,7 +98,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
                     ),
                   ]),
                 ),
-                Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+                Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
                   Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                   _descriptionWidget,
                   _buttonsWidget,
@@ -103,6 +110,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ])
     );
   }
+
+  Widget get _badgeWidget => _event?.userRole == Event2UserRole.admin ?
+  Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+      Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
+        Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+  ))) : Container();
+
 
   Widget get _categoriesWidget => 
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -257,7 +272,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _privacyDetailWidget{
-    String privacyTypeTitle = _event?.private == true ? Localization().getStringEx('model.event2.event_type.private', 'Private') : Localization().getStringEx('model.event2.event_type.public', 'Public');
+    String privacyTypeTitle = _event?.private == true ?
+      Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event') :
+      Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+
     return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
   }
 
@@ -269,7 +287,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     contactList.add(Padding(
         padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
 
-    for (Contact? contact in _event!.contacts!) {
+    for (Event2Contact? contact in _event!.contacts!) {
       String? details =  event2ContactToDisplayString(contact);
       if(StringUtils.isNotEmpty(details)){
         contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child:
@@ -286,7 +304,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _buttonsWidget {
     List<Widget> buttons = <Widget>[
       ...?_urlButtonWidget,
-      ...?_registrationButtonWidget
+      ...?_registrationButtonWidget,
+      ...?_logInButtonWidget
     ];
 
     return buttons.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 16), child:
@@ -295,14 +314,53 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _urlButtonWidget => //TBD check if this is the proper url for this button
-    StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildUrlButtonWidget(
+    StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildButtonWidget(
       title: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
       hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
       onTap: (){_onWebButton(_event?.eventUrl, analyticsName: 'Website');}
     )] : null;
 
-  List<Widget>? get _registrationButtonWidget{
-    return null; //TBD
+  List<Widget>? get _logInButtonWidget{//TBD localize
+    if(Auth2().isLoggedIn == true)
+      return null;
+
+    return (_event?.registrationDetails?.type == Event2RegistrationType.internal) ? <Widget>[_buildButtonWidget( //TBD check if we can show this button even if the registration is not required
+        title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Log In to Register'),
+        onTap: _onLogIn,
+        externalLink: false,
+        enabled: false
+    )] : null;
+  }
+
+  List<Widget>? get _registrationButtonWidget{//TBD localize
+    if(Auth2().isLoggedIn == false) //We can register only if logged in
+      return null;
+
+    if (_event?.registrationDetails?.type == Event2RegistrationType.internal) { //Require App registration
+        if(_event?.userRole == Event2UserRole.participant){//Already registered
+          return <Widget>[_buildButtonWidget(
+              title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Unregister me'),
+              onTap: _onUnregister,
+              externalLink: false
+          )];
+        } else if (_event?.userRole == null){//Not registered yet
+          return <Widget>[_buildButtonWidget(
+              title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
+              onTap: _onRegister,
+              externalLink: false
+          )];
+        }
+    } else if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink)){// else external registration
+      if(_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
+        return <Widget>[_buildButtonWidget(
+            title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
+            onTap: _onExternalRegistration,
+            externalLink: true
+        )];
+      }
+    }
+
+    return null; //not required
   }
 
   Widget get _detailSpacerWidget => Container(height: 8,);
@@ -343,7 +401,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   //TBD remove if not needed
-  Widget _buildUrlButtonWidget({String? title, String? hint, bool enabled = true, void Function()? onTap}) => StringUtils.isNotEmpty(title) ?
+  Widget _buildButtonWidget({String? title,
+    String? hint,
+    bool enabled = true,
+    bool externalLink = true,
+    void Function()? onTap
+  }) => StringUtils.isNotEmpty(title) ?
     Padding(padding: EdgeInsets.only(bottom: 6), child:
       Row(children:<Widget>[
         Expanded(child:
@@ -353,7 +416,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: enabled ? Colors.white : Styles().colors!.background,
               borderColor: enabled ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary,  //TBD proper disabled colors
-              rightIcon: Styles().images?.getImage(enabled ? 'external-link-dark' : 'external-link'),
+              rightIcon:externalLink? Styles().images?.getImage(enabled ? 'external-link-dark' : 'external-link') : null,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: onTap
           ),
@@ -395,4 +458,93 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
     }
   }
+
+  void _onRegister(){
+    if(_event?.id != null){
+      Events2().registerToEvent(_event!.id!).then((value){
+          if(value != null){ //success
+            String? errorMessage = JsonUtils.stringValue(value);
+            if(StringUtils.isNotEmpty(errorMessage)){
+              Log.e(errorMessage);
+            } else {
+              _refreshEvent();
+            }
+          }
+      });
+    }
+  }
+
+  void _onUnregister(){
+    if(_event?.id != null){
+      Events2().unregisterFromEvent(_event!.id!).then((value){
+        if(value != null){ //success
+          String? errorMessage = JsonUtils.stringValue(value);
+          if(StringUtils.isNotEmpty(errorMessage)){
+            Log.e(errorMessage);
+          } else {
+            _refreshEvent();
+          }
+        }
+      });
+    }
+  }
+
+  void _onExternalRegistration(){
+    if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink))
+       _onLaunchUrl(_event?.registrationDetails?.externalLink);
+  }
+
+  void _onLogIn(){
+    Analytics().logSelect(target: "Log in");
+    if (_authLoading != true) {
+      setState(() { _authLoading = true; });
+      Auth2().authenticateWithOidc().then((pluginAuth.Auth2OidcAuthenticateResult? result) {
+        setStateIfMounted(() { _authLoading = false; });
+          if (result != pluginAuth.Auth2OidcAuthenticateResult.succeeded) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
+        }
+      );
+    }
+  }
+
+  //loading
+  void _initEvent() async {
+    _event = widget.event;
+
+    if(_event == null && StringUtils.isEmpty(widget.eventId!)) {
+      _eventLoading = true;
+      _loadEvent().then((event) {
+        _eventLoading = false;
+        _event = event;
+        setStateIfMounted(() { });
+      });
+    }
+  }
+
+  void _refreshEvent({bool visibleProgress = false}){
+    _eventLoading = visibleProgress;
+
+    _loadEvent().then((event) {
+      _eventLoading = false;
+      _event = event;
+      setStateIfMounted(() { });
+    });
+  }
+
+  Future<Event2?> _loadEvent() async {
+    if(_eventLoading){
+      // return Do we allow it?
+    }
+
+    String? eventId = _event?.id ?? widget.eventId;
+    if(eventId != null) {
+      List<Event2>? events = await Events2().loadEvents(Events2Query(ids: {eventId}));
+      if (events?.isNotEmpty == true && events?.first != null) {
+        return events!.first;
+      }
+    }
+    return null;
+  }
+
 }

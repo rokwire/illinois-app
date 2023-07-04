@@ -441,6 +441,10 @@
 	
 	"panel.maps.header.title": "地圖",
 	
+	"panel.map.select.header.title": "Select Location",
+	"panel.map.select.button.select.title": "Select",
+	"panel.map.select.button.select.hint": "",
+
 	"panel.academics.header.title": "學者",
 	"panel.academics.section.events.label": "學術活動",
 	"panel.academics.section.gies_checklist.label": "iDegrees 新學生清單",
@@ -448,8 +452,8 @@
 	"panel.academics.section.canvas_courses.label": "我的 Gies 帆布課程",
 	"panel.academics.section.student_courses.label": "我的課程",
 	"panel.academics.section.medicine_courses.label": "我的醫學院合規",
-		"panel.academics.section.skills_self_evaluation.label": "技能自我評估",
-		"panel.academics.section.todo_list.label": "待辦事項清單",
+	"panel.academics.section.skills_self_evaluation.label": "技能自我評估",
+	"panel.academics.section.todo_list.label": "待辦事項清單",
 	"panel.academics.section.due_date_catalog.label": "到期日目錄",
 	"panel.academics.section.appointments.label": "約會",
 	"panel.academics.section.my_illini.label": "myIllini",
@@ -1168,7 +1172,8 @@
 	"panel.event2.create.button.attributes.description": "Choose attributes related to your event.",
 	"panel.event2.create.button.registration.title": "EVENT REGISTRATION",
 	"panel.event2.create.button.registration.description": "Use in-app options or an external link.",
-	"panel.event2.create.button.registration.confirmation": "Event registration set up.",
+	"panel.event2.create.button.registration.confirmation.internal": "Registration via the app is set up.",
+	"panel.event2.create.button.registration.confirmation.external": "Registration via external link is set up.",
 	"panel.event2.create.button.attendance.title": "EVENT ATTENDANCE",
 	"panel.event2.create.button.attendance.description": "Receive feedback about your event.",
 	"panel.event2.create.button.attendance.confirmation": "Event attendance details set up.",
@@ -1204,6 +1209,7 @@
 	"panel.event2.create.message.failed.title": "Failed",
 
 	"panel.event2.setup.registration.header.title": "Event Registration",
+	"panel.event2.setup.registration.type.title": "REQUIRE REGISTRATION",
 	"panel.event2.setup.registration.require.toggle.title": "REQUIRE REGISTRATION VIA THE APP",
 	"panel.event2.setup.registration.require.toggle.hint": "",
 	"panel.event2.setup.registration.capacity.label.title": "EVENT CAPACITY",
@@ -3554,6 +3560,10 @@
 	"model.event2.event_time.next_month": "Next month",
 	"model.event2.event_time.custom_range.select": "Choose",
 	"model.event2.event_time.custom_range.selected": "Custom",
+
+	"model.event2.registration_type.none": "None",
+	"model.event2.registration_type.internal": "Via the app",
+	"model.event2.registration_type.external": "Via external link",
 
 	"model.canvas.calendar.event.type.event.label": "事件",
 	"model.canvas.calendar.event.type.assignment.label": "任務",

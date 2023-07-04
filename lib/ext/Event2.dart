@@ -197,7 +197,7 @@ String? event2TypeToDisplayString(Event2Type? value) {
   }
 }
 
-String? event2ContactToDisplayString(Contact? value){
+String? event2ContactToDisplayString(Event2Contact? value){
   if(value == null)
     return null;
 
@@ -229,4 +229,14 @@ String? event2ContactToDisplayString(Contact? value){
   }
 
   return contactDetails;
+}
+
+// Event2RegistrationType
+
+String event2RegistrationToDisplayString(Event2RegistrationType value) {
+  switch (value) {
+    case Event2RegistrationType.none: return Localization().getStringEx("model.event2.registration_type.none", "None");
+    case Event2RegistrationType.internal: return Localization().getStringEx("model.event2.registration_type.internal", "Via the app");
+    case Event2RegistrationType.external: return Localization().getStringEx("model.event2.registration_type.external", "Via external link");
+  }
 }

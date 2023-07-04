@@ -441,6 +441,10 @@
 
     "panel.maps.header.title": "Mapa",
 
+    "panel.map.select.header.title": "Select Location",
+    "panel.map.select.button.select.title": "Select",
+    "panel.map.select.button.select.hint": "",
+
     "panel.academics.header.title": "Académica",
     "panel.academics.section.events.label": "Eventos Académicos",
     "panel.academics.section.gies_checklist.label": "Lista de verificación para nuevos estudiantes de iDegrees",
@@ -1167,7 +1171,8 @@
 	"panel.event2.create.button.attributes.description": "Choose attributes related to your event.",
 	"panel.event2.create.button.registration.title": "EVENT REGISTRATION",
 	"panel.event2.create.button.registration.description": "Use in-app options or an external link.",
-	"panel.event2.create.button.registration.confirmation": "Event registration set up.",
+	"panel.event2.create.button.registration.confirmation.internal": "Registration via the app is set up.",
+	"panel.event2.create.button.registration.confirmation.external": "Registration via external link is set up.",
 	"panel.event2.create.button.attendance.title": "EVENT ATTENDANCE",
 	"panel.event2.create.button.attendance.description": "Receive feedback about your event.",
 	"panel.event2.create.button.attendance.confirmation": "Event attendance details set up.",
@@ -1203,6 +1208,7 @@
     "panel.event2.create.message.failed.title": "Failed",
 
     "panel.event2.setup.registration.header.title": "Event Registration",
+    "panel.event2.setup.registration.type.title": "REQUIRE REGISTRATION",
     "panel.event2.setup.registration.require.toggle.title": "REQUIRE REGISTRATION VIA THE APP",
     "panel.event2.setup.registration.require.toggle.hint": "",
     "panel.event2.setup.registration.capacity.label.title": "EVENT CAPACITY",
@@ -3554,6 +3560,10 @@
     "model.event2.event_time.next_month": "Next month",
     "model.event2.event_time.custom_range.select": "Choose",
     "model.event2.event_time.custom_range.selected": "Custom",
+
+    "model.event2.registration_type.none": "None",
+    "model.event2.registration_type.internal": "Via the app",
+    "model.event2.registration_type.external": "Via external link",
 
     "model.canvas.calendar.event.type.event.label": "Evento",
     "model.canvas.calendar.event.type.assignment.label": "Asignación",

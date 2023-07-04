@@ -2,21 +2,21 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Event2SetupRegistrationPanel extends StatefulWidget {
-  final Event2SetupRegistrationParam? param;
+  final Event2RegistrationDetails? details;
   
-  Event2SetupRegistrationPanel({Key? key, this.param}) : super(key: key);
+  Event2SetupRegistrationPanel({Key? key, this.details}) : super(key: key);
   
   @override
   State<StatefulWidget> createState() => _Event2SetupRegistrationPanelState();
@@ -24,7 +24,7 @@ class Event2SetupRegistrationPanel extends StatefulWidget {
 
 class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPanel>  {
 
-  late bool _registrationRequired;
+  late Event2RegistrationType _registrationType;
 
   final TextEditingController _labelController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
@@ -32,10 +32,10 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   @override
   void initState() {
-    _registrationRequired = widget.param?.registrationRequired ?? false;
-    _labelController.text = widget.param?.registrationLabel ?? '';
-    _linkController.text = widget.param?.registrationLink ?? '';
-    _capacityController.text = (widget.param?.eventCapacity != null) ? '${widget.param?.eventCapacity}' : '';
+    _registrationType = widget.details?.type ?? Event2RegistrationType.none;
+    _labelController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.label != null)) ? '${widget.details?.label}' : '';
+    _linkController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.externalLink != null)) ? '${widget.details?.externalLink}' : '';
+    _capacityController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.eventCapacity != null)) ? '${widget.details?.eventCapacity}' : '';
     super.initState();
   }
 
@@ -59,13 +59,16 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildPanelContent() {
     return SingleChildScrollView(child:
       Column(children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildRequireSection(),
-            _buildCapacitySection(),
-            _buildDescriptionSection(),
-            _buildLabelSection(),
-            _buildLinkSection(),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _buildRegistrationTypeSection(),
+                _buildDescriptionSection(),
+              ]),
+            ),
+            _buildInternalSection(),
+            _buildExternalSection(),
           ]),
         )
 
@@ -74,64 +77,125 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     );
   }
 
-  // Require Registration
+  // Registration Type
 
-  Widget _buildRequireSection() =>
-    Padding(padding: Event2CreatePanel.sectionPadding, child:
-      _buildRequireToggle()
+  Widget _buildRegistrationTypeSection() {
+    String title = Localization().getStringEx('panel.event2.setup.registration.type.title', 'REQUIRE REGISTRATION');
+    return Padding(padding: EdgeInsets.zero, child:
+      Semantics(container: true, child:
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Expanded(child:
+            Wrap(children: [
+              Event2CreatePanel.buildSectionTitleWidget(title),
+              //Event2CreatePanel.buildSectionRequiredWidget(), 
+            ]),
+          ),
+          Expanded(child:
+            Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
+              Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
+                DropdownButtonHideUnderline(child:
+                  DropdownButton<Event2RegistrationType>(
+                    icon: Styles().images?.getImage('chevron-down'),
+                    isExpanded: true,
+                    style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                    hint: Text(event2RegistrationToDisplayString(_registrationType)),
+                    items: _buildRegistrationTypeDropDownItems(),
+                    onChanged: _onRegistrationTypeChanged
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ]),
+      ),
     );
+  }
 
-  Widget _buildRequireToggle() => Semantics(toggled: _registrationRequired, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQUIRE REGISTRATION VIA THE APP"),
-    hint: Localization().getStringEx("panel.event2.setup.registration.require.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.registration.require.toggle.title", "REQUIRE REGISTRATION VIA THE APP"),
-      padding: _togglePadding,
-      toggled: _registrationRequired,
-      onTap: _onTapRegistrationRequired,
-      border: _toggleBorder,
-      borderRadius: _toggleBorderRadius,
-    ));
+  List<DropdownMenuItem<Event2RegistrationType>>? _buildRegistrationTypeDropDownItems() {
+    List<DropdownMenuItem<Event2RegistrationType>> menuItems = <DropdownMenuItem<Event2RegistrationType>>[];
+    for (Event2RegistrationType value in Event2RegistrationType.values) {
+      menuItems.add(DropdownMenuItem<Event2RegistrationType>(
+        value: value,
+        child: Text(event2RegistrationToDisplayString(value),),
+      ));
+    }
+    return menuItems;
+  }
 
-  EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
-  BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
-  BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
-
-  void _onTapRegistrationRequired() {
-    Analytics().logSelect(target: "Toggle All Day");
+  void _onRegistrationTypeChanged(Event2RegistrationType? value) {
+    Analytics().logSelect(target: "Require registration: ${(value != null) ? event2RegistrationToDisplayString(value) : 'null'}");
     Event2CreatePanel.hideKeyboard(context);
-    setStateIfMounted(() {
-      _registrationRequired = !_registrationRequired;
-    });
+    if ((value != null) && mounted) {
+      setState(() {
+        _registrationType = value;
+      });
+    }
+  }
+
+
+  // Description
+
+  Widget _buildDescriptionSection() {
+    String description = (_registrationType == Event2RegistrationType.internal) ?
+      Localization().getStringEx('panel.event2.setup.registration.description.label.title', 'Registration within the Illinois app requires the user to log in with a NetID.') : '';
+
+    return Padding(padding: Event2CreatePanel.sectionPadding, child:
+      Visibility(visible: description.isNotEmpty, child:
+        Padding(padding: EdgeInsets.only(top: 12), child:
+          Row(children: [
+            Expanded(child:
+              Text(description, style: _descriptionTextStype,),
+            )
+          ],)
+        ),
+      ),
+    );
+  }
+
+
+  TextStyle? get _descriptionTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+
+
+  // Internal Details
+
+  Widget _buildInternalSection() {
+    return Visibility(visible: (_registrationType == Event2RegistrationType.internal), child:
+      Container(decoration: Event2CreatePanel.sectionSplitterDecoration, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Column(children: [
+         _buildCapacitySection(),
+        ],),
+      ),
+    );
   }
 
   // Event Capacity
 
   Widget _buildCapacitySection() =>
-    Padding(padding: Event2CreatePanel.sectionPadding, child:
-      Row(children: [
-        Padding(padding: EdgeInsets.only(right: 6), child:
-          Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY')),
-        ),
-        Expanded(child:
-          Event2CreatePanel.buildTextEditWidget(_capacityController),
-        )
-      ],)
+    Visibility(visible: (_registrationType == Event2RegistrationType.internal), child:
+      Padding(padding: Event2CreatePanel.sectionPadding, child:
+        Row(children: [
+          Padding(padding: EdgeInsets.only(right: 6), child:
+            Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY')),
+          ),
+          Expanded(child:
+            Event2CreatePanel.buildTextEditWidget(_capacityController),
+          )
+        ],)
+      ),
     );
 
+  // External Details
 
-  // Description
-
-  Widget _buildDescriptionSection() =>
-    Padding(padding: Event2CreatePanel.sectionPadding, child:
-      Row(children: [
-        Expanded(child:
-          Text(Localization().getStringEx('panel.event2.setup.registration.description.label.title', 'Registration within the Illinois app requires the user to log in with a NetID.'), style: _descriptionTextStype,),
-        )
-      ],)
+  Widget _buildExternalSection() {
+    return Visibility(visible: (_registrationType == Event2RegistrationType.external), child:
+      Container(decoration: Event2CreatePanel.sectionSplitterDecoration, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Column(children: [
+         _buildLinkSection(),
+         _buildLabelSection(), 
+        ],),
+      ),
     );
-
-  TextStyle? get _descriptionTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  }
 
   // Label
   
@@ -146,6 +210,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.link.label.title', 'ADD EXTERNAL LINK FOR REGISTRATION'), suffixImageKey: 'external-link'),
     body: Event2CreatePanel.buildTextEditWidget(_linkController, keyboardType: TextInputType.url, maxLines: 1),
     trailing: _buildConfirmUrlLink(onTap: (_onConfirmLink)),
+    padding: EdgeInsets.zero
   );
 
   void _onConfirmLink() => _confirmLinkUrl(_linkController, analyticsTarget: 'Confirm Website URL');
@@ -182,20 +247,11 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
   void _onHeaderBack() {
-    Navigator.of(context).pop(Event2SetupRegistrationParam(
-      registrationRequired: _registrationRequired,
-      registrationLabel: Event2CreatePanel.textFieldValue(_labelController),
-      registrationLink: Event2CreatePanel.textFieldValue(_linkController),
-      eventCapacity: Event2CreatePanel.textFieldIntValue(_capacityController),
+    Navigator.of(context).pop(Event2RegistrationDetails(
+      type: _registrationType,
+      externalLink: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_linkController) : null,
+      label: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_labelController) : null,
+      eventCapacity: (_registrationType == Event2RegistrationType.internal) ? Event2CreatePanel.textFieldIntValue(_capacityController) : null,
     ));
   }
-}
-
-class Event2SetupRegistrationParam {
-  final bool registrationRequired;
-  final String? registrationLabel;
-  final String? registrationLink;
-  final int? eventCapacity;
-
-  Event2SetupRegistrationParam({required this.registrationRequired, this.registrationLabel, this.registrationLink, this.eventCapacity});
 }

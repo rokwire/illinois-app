@@ -5,11 +5,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
+import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -70,6 +73,11 @@ class Event2CreatePanel extends StatefulWidget {
       borderRadius: BorderRadius.circular(8)
     ),
     contentPadding: padding,
+  );
+
+  static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
+    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
   // Sections / Regular Section
@@ -351,12 +359,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   
   Map<String, dynamic>? _attributes;
 
-  bool _registrationRequired = false;
-  String? _registrationLabel;
-  String? _registrationLink;
-  int? _eventCapacity;
-
-  AttendanceDetails? _attendanceDetails;
+  Event2RegistrationDetails? _registrationDetails;
+  Event2AttendanceDetails? _attendanceDetails;
+  // Explore? _locationExplore;
 
   late List<String> _errorList;
   bool _creatingEvent = false;
@@ -383,9 +388,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   @override
   void initState() {
     _titleController.addListener(_updateErrorList);
+    _onlineUrlController.addListener(_updateErrorList);
     _locationLatitudeController.addListener(_updateErrorList);
     _locationLongitudeController.addListener(_updateErrorList);
-    _onlineUrlController.addListener(_updateErrorList);
 
     _timeZone = DateTimeUni.timezoneUniOrLocal;
     _errorList = _buildErrorList();
@@ -581,7 +586,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         ),
         Container(width: 16,),
         Expanded(flex: 7, child:
-          Container(decoration: _dropdownButtonDecoration, child:
+          Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Location>(
@@ -672,7 +677,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildDropdownButton({String? label, GestureTapCallback? onTap}) {
     return InkWell(onTap: onTap, child:
-      Container(decoration: _dropdownButtonDecoration, padding: Event2CreatePanel.dropdownButtonContentPadding, child:
+      Container(decoration: Event2CreatePanel.dropdownButtonDecoration, padding: Event2CreatePanel.dropdownButtonContentPadding, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
           Text(label ??  '-', style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
           Styles().images?.getImage('chevron-down') ?? Container()
@@ -680,11 +685,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       ),
     );
   }
-
-  BoxDecoration get _dropdownButtonDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-    borderRadius: BorderRadius.all(Radius.circular(4))
-  );
 
   Widget _buildAllDayToggle() => Semantics(toggled: _allDay, excludeSemantics: true, 
     label:Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
@@ -734,7 +734,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
     Event2CreatePanel.hideKeyboard(context);
-    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay.fromDateTime(DateTime.now())).then((TimeOfDay? result) {
+    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
@@ -766,7 +766,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEndTime() {
     Analytics().logSelect(target: "End Time");
     Event2CreatePanel.hideKeyboard(context);
-    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay.fromDateTime(TZDateTime.now(_timeZone))).then((TimeOfDay? result) {
+    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _endTime = result;
@@ -841,7 +841,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         ),
         Container(width: 16,),
         Expanded(flex: 7, child:
-          Container(decoration: _dropdownButtonDecoration, child:
+          Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Event2Type>(
@@ -948,7 +948,21 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onTapSelectLocation() {
     Analytics().logSelect(target: "Select Location");
     Event2CreatePanel.hideKeyboard(context);
-    AppAlert.showDialogResult(context, 'TBD');
+    ExploreLocation? location = _constructLocation();
+
+    Navigator.push<Explore>(context, CupertinoPageRoute(builder: (context) => ExploreMapSelectLocationPanel(
+      selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
+    ))).then((Explore? explore) {
+      if ((explore != null) && mounted) {
+        _locationBuildingController.text = explore.exploreTitle ?? explore.exploreLocation?.building ?? explore.exploreLocation?.name ?? '';
+        _locationAddressController.text = explore.exploreLocation?.fullAddress ?? explore.exploreLocation?.buildDisplayAddress() ?? explore.exploreLocation?.description ?? '';
+        _locationLatitudeController.text = _printLatLng(explore.exploreLocation?.latitude);
+        _locationLongitudeController.text = _printLatLng(explore.exploreLocation?.longitude);
+        setState(() {
+          _errorList = _buildErrorList();
+        });
+      }
+    });
   }
 
   // Cost
@@ -1103,34 +1117,29 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Widget  _buildRegistrationButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.registration.title', 'EVENT REGISTRATION'),
-      subTitle: _registrationRequired ?
-        Localization().getStringEx('panel.event2.create.button.registration.confirmation', 'Event registration set up.') :
-        Localization().getStringEx('panel.event2.create.button.registration.description', 'Use in-app options or an external link.'),
+      subTitle: _displayRegistrationDescription,
       required: true,
       onTap: _onEventRegistration,
     ),
   );
 
+  String get _displayRegistrationDescription {
+    switch (_registrationDetails?.type) {
+      case Event2RegistrationType.internal: return Localization().getStringEx('panel.event2.create.button.registration.confirmation.internal', 'Registration via the app is set up.');
+      case Event2RegistrationType.external: return Localization().getStringEx('panel.event2.create.button.registration.confirmation.external', 'Registration via external link is set up.');
+      default: return Localization().getStringEx('panel.event2.create.button.registration.description', 'Use in-app options or an external link.');
+    }
+  }
+
   void _onEventRegistration() {
     Analytics().logSelect(target: "Event Registration");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2SetupRegistrationParam>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(param:
-      Event2SetupRegistrationParam(
-        registrationRequired: _registrationRequired,
-        registrationLabel: _registrationLabel,
-        registrationLink: _registrationLink,
-        eventCapacity: _eventCapacity,
-      ),
-    ))).then((Event2SetupRegistrationParam? result) {
-      if ((result != null) && mounted) {
-        setState(() {
-          _registrationRequired = result.registrationRequired;
-          _registrationLabel = result.registrationLabel;
-          _registrationLink = result.registrationLink;
-          _eventCapacity = result.eventCapacity;
-          _errorList = _buildErrorList();
-        });
-      }
+    Navigator.push<Event2RegistrationDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
+      details: _registrationDetails,
+    ))).then((Event2RegistrationDetails? result) {
+      setStateIfMounted(() {
+        _registrationDetails = result;
+      });
     });
   }
 
@@ -1150,10 +1159,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
-    ))).then((AttendanceDetails? result) {
+    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(details: _attendanceDetails
+    ))).then((Event2AttendanceDetails? result) {
       setStateIfMounted(() {
-        _attendanceDetails = (result?.isNotEmpty == true) ? result : null;
+        _attendanceDetails = result;
       });
     });
   }
@@ -1172,7 +1181,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             ]),
           ),
           Expanded(child:
-            Container(decoration: _dropdownButtonDecoration, child:
+            Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
                   DropdownButton<_Event2Visibility>(
@@ -1269,7 +1278,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.attributes', 'event attributes'));
     }
 
-    if (_registrationRequired && (_registrationLink?.isEmpty ?? true)) {
+    if ((_registrationDetails?.type == Event2RegistrationType.external) && (_registrationDetails?.externalLink?.isEmpty ?? true)) {
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.registration_link', 'registration link'));
     }
     
@@ -1360,28 +1369,32 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   bool get _onlineEventType => (_eventType == Event2Type.online) ||  (_eventType == Event2Type.hybrid);
   bool get _inPersonEventType => (_eventType == Event2Type.inPerson) ||  (_eventType == Event2Type.hybrid);
 
-  ExploreLocation? get _location {
-    double? latitude = _parseDouble(_locationLatitudeController);
-    double? longitude = _parseDouble(_locationLongitudeController);
+  ExploreLocation? _constructLocation() {
+    double? latitude = _parseLatLng(_locationLatitudeController);
+    double? longitude = _parseLatLng(_locationLongitudeController);
     return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0)) ? ExploreLocation(
-      building: _locationBuildingController.text,
-      fullAddress: _locationAddressController.text,
+      name: _locationBuildingController.text.isNotEmpty ? _locationBuildingController.text : null,
+      building: _locationBuildingController.text.isNotEmpty ? _locationBuildingController.text : null,
+      description: _locationAddressController.text.isNotEmpty ? _locationAddressController.text : null,
+      fullAddress: _locationAddressController.text.isNotEmpty ? _locationAddressController.text : null,
       latitude: latitude,
       longitude: longitude,
     ) : null;
   }
 
   bool get _hasLocation {
-    double? latitude = _parseDouble(_locationLatitudeController);
-    double? longitude = _parseDouble(_locationLongitudeController);
+    double? latitude = _parseLatLng(_locationLatitudeController);
+    double? longitude = _parseLatLng(_locationLongitudeController);
     return ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0));
   }
 
-  static double? _parseDouble(TextEditingController textController) =>
+  static double? _parseLatLng(TextEditingController textController) =>
     textController.text.isNotEmpty ? double.tryParse(textController.text) : null;
 
-  OnlineDetails? get _onlineDetails => 
-    _onlineUrlController.text.isNotEmpty ? OnlineDetails(
+  static String _printLatLng(double? value) => value?.toStringAsFixed(6) ?? '';
+
+  Event2OnlineDetails? get _onlineDetails => 
+    _onlineUrlController.text.isNotEmpty ? Event2OnlineDetails(
       url: _onlineUrlController.text,
       meetingId: _onlineMeetingIdController.text,
       meetingPasscode: _onlinePasscodeController.text,
@@ -1404,11 +1417,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     (!_inPersonEventType || _hasLocation) &&
     (!_onlineEventType || _hasOnlineDetails) &&
     (Events2().contentAttributes?.isAttributesSelectionValid(_attributes) ?? false) &&
-    (!_registrationRequired || (_registrationLink?.isNotEmpty ?? false))
+    ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false))
   );
 
   void _updateErrorList() {
-    debugPrint("EVENT NAME: ${_titleController.text}");
     List<String> errorList = _buildErrorList();
     if (!DeepCollectionEquality().equals(errorList, _errorList)) {
       setStateIfMounted(() {
@@ -1431,7 +1443,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       allDay: _allDay,
 
       eventType: _eventType,
-      location: _location,
+      location: _constructLocation(),
       onlineDetails: _onlineDetails,
 
       grouping: null, // TBD
@@ -1444,15 +1456,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       free: _free,
       cost: Event2CreatePanel.textFieldValue(_costController),
 
-      registrationRequired: _registrationRequired,
-      registrationDetails: _registrationRequired ? RegistrationDetails(
-        label: _registrationLabel,
-        externalLink: _registrationLink
-      ) : null,
-      eventCapacity: _eventCapacity,
-
-      attendanceRequired: (_attendanceDetails != null),
-      attendanceDetails: _attendanceDetails,
+      registrationDetails: (_registrationDetails?.type != Event2RegistrationType.none) ? _registrationDetails : null,
+      attendanceDetails: (_attendanceDetails?.isNotEmpty ?? false) ? _attendanceDetails : null,
 
       sponsor: null, // TBD
       speaker: null, // TBD
