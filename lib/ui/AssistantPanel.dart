@@ -378,7 +378,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         child: InkWell(
           borderRadius: BorderRadius.circular(8.0),
           onTap: () {
-            NotificationService().notify('${FirebaseMessaging.linkBase}.${link.link}');
+            NotificationService().notify('${FirebaseMessaging.notifyBase}.${link.link}');
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
