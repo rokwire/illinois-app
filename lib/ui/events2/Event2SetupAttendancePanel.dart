@@ -10,7 +10,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
-  final AttendanceDetails? attendanceDetails;
+  final Event2AttendanceDetails? attendanceDetails;
   
   Event2SetupAttendancePanel({Key? key, this.attendanceDetails}) : super(key: key);
   
@@ -153,7 +153,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   // Submit
 
   void _onHeaderBack() {
-    Navigator.of(context).pop((_takeAttendanceViaAppEnabled || _scanningEnabled || _manualCheckEnabled) ? AttendanceDetails(
+    Navigator.of(context).pop((_takeAttendanceViaAppEnabled || _scanningEnabled || _manualCheckEnabled) ? Event2AttendanceDetails(
       attendanceRequired: widget.attendanceDetails?.attendanceRequired,
       takeAttendanceViaAppEnabled: _takeAttendanceViaAppEnabled,
       scanningEnabled: _scanningEnabled,

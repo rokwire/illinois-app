@@ -197,7 +197,7 @@ String? event2TypeToDisplayString(Event2Type? value) {
   }
 }
 
-String? event2ContactToDisplayString(Contact? value){
+String? event2ContactToDisplayString(Event2Contact? value){
   if(value == null)
     return null;
 

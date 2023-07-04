@@ -279,7 +279,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     contactList.add(Padding(
         padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
 
-    for (Contact? contact in _event!.contacts!) {
+    for (Event2Contact? contact in _event!.contacts!) {
       String? details =  event2ContactToDisplayString(contact);
       if(StringUtils.isNotEmpty(details)){
         contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child:

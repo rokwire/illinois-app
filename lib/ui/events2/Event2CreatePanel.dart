@@ -356,7 +356,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   String? _registrationLink;
   int? _eventCapacity;
 
-  AttendanceDetails? _attendanceDetails;
+  Event2AttendanceDetails? _attendanceDetails;
 
   late List<String> _errorList;
   bool _creatingEvent = false;
@@ -1150,8 +1150,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
-    ))).then((AttendanceDetails? result) {
+    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
+    ))).then((Event2AttendanceDetails? result) {
       setStateIfMounted(() {
         _attendanceDetails = (result?.isNotEmpty == true) ? result : null;
       });
@@ -1380,8 +1380,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   static double? _parseDouble(TextEditingController textController) =>
     textController.text.isNotEmpty ? double.tryParse(textController.text) : null;
 
-  OnlineDetails? get _onlineDetails => 
-    _onlineUrlController.text.isNotEmpty ? OnlineDetails(
+  Event2OnlineDetails? get _onlineDetails => 
+    _onlineUrlController.text.isNotEmpty ? Event2OnlineDetails(
       url: _onlineUrlController.text,
       meetingId: _onlineMeetingIdController.text,
       meetingPasscode: _onlinePasscodeController.text,
@@ -1445,7 +1445,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       cost: Event2CreatePanel.textFieldValue(_costController),
 
       registrationRequired: _registrationRequired,
-      registrationDetails: _registrationRequired ? RegistrationDetails(
+      registrationDetails: _registrationRequired ? Event2RegistrationDetails(
         label: _registrationLabel,
         externalLink: _registrationLink
       ) : null,
