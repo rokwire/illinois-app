@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Illinois Assistant query limits and feedback integration [#3349](https://github.com/rokwire/illinois-app/issues/3349)
+- Illinois Assistant query limits and feedback integration [#3349](https://github.com/rokwire/illinois-app/issues/3349).
+- Location picker utility in Create Event panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Changed
 - Initialize simplified default content for Favorites panel [#3346](https://github.com/rokwire/illinois-app/issues/3346).
+- Cleaned up registratio setup panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
 
 ## [5.0.18] - 2023-07-03
 ### Changed
