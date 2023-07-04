@@ -33,9 +33,9 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   @override
   void initState() {
     _registrationType = widget.details?.type ?? Event2RegistrationType.none;
-    _labelController.text = widget.details?.label ?? '';
-    _linkController.text = widget.details?.externalLink ?? '';
-    _capacityController.text = (widget.details?.eventCapacity != null) ? '${widget.details?.eventCapacity}' : '';
+    _labelController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.label != null)) ? '${widget.details?.label}' : '';
+    _linkController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.externalLink != null)) ? '${widget.details?.externalLink}' : '';
+    _capacityController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.eventCapacity != null)) ? '${widget.details?.eventCapacity}' : '';
     super.initState();
   }
 
@@ -65,9 +65,9 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 _buildRegistrationTypeSection(),
                 _buildDescriptionSection(),
-                _buildCapacitySection(),
               ]),
             ),
+            _buildInternalSection(),
             _buildExternalSection(),
           ]),
         )
@@ -81,7 +81,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   Widget _buildRegistrationTypeSection() {
     String title = Localization().getStringEx('panel.event2.setup.registration.type.title', 'REQUIRE REGISTRATION');
-    return Padding(padding: Event2CreatePanel.sectionPadding, child:
+    return Padding(padding: EdgeInsets.zero, child:
       Semantics(container: true, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Expanded(child:
@@ -139,13 +139,15 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     String description = (_registrationType == Event2RegistrationType.internal) ?
       Localization().getStringEx('panel.event2.setup.registration.description.label.title', 'Registration within the Illinois app requires the user to log in with a NetID.') : '';
 
-    return Visibility(visible: description.isNotEmpty, child:
-      Padding(padding: Event2CreatePanel.sectionPadding, child:
-        Row(children: [
-          Expanded(child:
-            Text(description, style: _descriptionTextStype,),
-          )
-        ],)
+    return Padding(padding: Event2CreatePanel.sectionPadding, child:
+      Visibility(visible: description.isNotEmpty, child:
+        Padding(padding: EdgeInsets.only(top: 12), child:
+          Row(children: [
+            Expanded(child:
+              Text(description, style: _descriptionTextStype,),
+            )
+          ],)
+        ),
       ),
     );
   }
@@ -154,10 +156,22 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   TextStyle? get _descriptionTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
 
 
+  // Internal Details
+
+  Widget _buildInternalSection() {
+    return Visibility(visible: (_registrationType == Event2RegistrationType.internal), child:
+      Container(decoration: Event2CreatePanel.sectionSplitterDecoration, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Column(children: [
+         _buildCapacitySection(),
+        ],),
+      ),
+    );
+  }
+
   // Event Capacity
 
   Widget _buildCapacitySection() =>
-    Visibility(visible: (_registrationType != Event2RegistrationType.none), child:
+    Visibility(visible: (_registrationType == Event2RegistrationType.internal), child:
       Padding(padding: Event2CreatePanel.sectionPadding, child:
         Row(children: [
           Padding(padding: EdgeInsets.only(right: 6), child:
@@ -235,9 +249,9 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   void _onHeaderBack() {
     Navigator.of(context).pop(Event2RegistrationDetails(
       type: _registrationType,
-      externalLink: Event2CreatePanel.textFieldValue(_linkController),
-      label: Event2CreatePanel.textFieldValue(_labelController),
-      eventCapacity: Event2CreatePanel.textFieldIntValue(_capacityController),
+      externalLink: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_linkController) : null,
+      label: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_labelController) : null,
+      eventCapacity: (_registrationType == Event2RegistrationType.internal) ? Event2CreatePanel.textFieldIntValue(_capacityController) : null,
     ));
   }
 }
