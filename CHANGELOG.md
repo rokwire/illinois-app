@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Initialize simplified default content for Favorites panel [#3346](https://github.com/rokwire/illinois-app/issues/3346).
 - Cleaned up registratio setup panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+- Updated event detail panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
 
 ## [5.0.18] - 2023-07-03
 ### Changed

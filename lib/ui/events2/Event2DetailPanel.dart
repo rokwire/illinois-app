@@ -15,7 +15,9 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/auth2.dart' as pluginAuth;
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -24,9 +26,10 @@ import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  final String? eventId;
   final Event2? event;
   final Position? userLocation;
-  Event2DetailPanel({ this.event, this.userLocation });
+  Event2DetailPanel({ this.event, this.eventId, this.userLocation});
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();
@@ -39,14 +42,17 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
 
 class _Event2DetailPanelState extends State<Event2DetailPanel> implements NotificationsListener {
   Event2? _event;
-  
+
+  bool _authLoading = false; //TBD visualize
+  bool _eventLoading = false; //TBD visualize
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
+      Auth2.notifyLoginChanged,
     ]);
-    _event = widget.event;
-    
+   _initEvent();
     super.initState();
   }
 
@@ -61,6 +67,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() { });
+    } else if(name == Auth2.notifyLoginChanged){
+      _refreshEvent();
     }
   }
   
@@ -90,7 +98,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
                     ),
                   ]),
                 ),
-                Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+                Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
                   Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                   _descriptionWidget,
                   _buttonsWidget,
@@ -452,18 +460,91 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onRegister(){
-    //TBD
+    if(_event?.id != null){
+      Events2().registerToEvent(_event!.id!).then((value){
+          if(value != null){ //success
+            String? errorMessage = JsonUtils.stringValue(value);
+            if(StringUtils.isNotEmpty(errorMessage)){
+              Log.e(errorMessage);
+            } else {
+              _refreshEvent();
+            }
+          }
+      });
+    }
   }
 
   void _onUnregister(){
-  //TBD
+    if(_event?.id != null){
+      Events2().unregisterFromEvent(_event!.id!).then((value){
+        if(value != null){ //success
+          String? errorMessage = JsonUtils.stringValue(value);
+          if(StringUtils.isNotEmpty(errorMessage)){
+            Log.e(errorMessage);
+          } else {
+            _refreshEvent();
+          }
+        }
+      });
+    }
   }
 
   void _onExternalRegistration(){
-    //TBD
+    if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink))
+       _onLaunchUrl(_event?.registrationDetails?.externalLink);
   }
 
   void _onLogIn(){
-    //TBD
+    Analytics().logSelect(target: "Log in");
+    if (_authLoading != true) {
+      setState(() { _authLoading = true; });
+      Auth2().authenticateWithOidc().then((pluginAuth.Auth2OidcAuthenticateResult? result) {
+        setStateIfMounted(() { _authLoading = false; });
+          if (result != pluginAuth.Auth2OidcAuthenticateResult.succeeded) {
+            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
+          }
+        }
+      );
+    }
   }
+
+  //loading
+  void _initEvent() async {
+    _event = widget.event;
+
+    if(_event == null && StringUtils.isEmpty(widget.eventId!)) {
+      _eventLoading = true;
+      _loadEvent().then((event) {
+        _eventLoading = false;
+        _event = event;
+        setStateIfMounted(() { });
+      });
+    }
+  }
+
+  void _refreshEvent({bool visibleProgress = false}){
+    _eventLoading = visibleProgress;
+
+    _loadEvent().then((event) {
+      _eventLoading = false;
+      _event = event;
+      setStateIfMounted(() { });
+    });
+  }
+
+  Future<Event2?> _loadEvent() async {
+    if(_eventLoading){
+      // return Do we allow it?
+    }
+
+    String? eventId = _event?.id ?? widget.eventId;
+    if(eventId != null) {
+      List<Event2>? events = await Events2().loadEvents(Events2Query(ids: {eventId}));
+      if (events?.isNotEmpty == true && events?.first != null) {
+        return events!.first;
+      }
+    }
+    return null;
+  }
+
 }
