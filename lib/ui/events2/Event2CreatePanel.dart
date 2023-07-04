@@ -1434,7 +1434,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       free: _free,
       cost: Event2CreatePanel.textFieldValue(_costController),
 
-      registrationDetails: _registrationDetails ?? Event2RegistrationDetails.empty(), // TBD: (_registrationDetails?.type != Event2RegistrationType.none) ? _registrationDetails : null,
+      registrationDetails: (_registrationDetails?.type != Event2RegistrationType.none) ? _registrationDetails : null,
       attendanceDetails: (_attendanceDetails?.isNotEmpty ?? false) ? _attendanceDetails : null,
 
       sponsor: null, // TBD
