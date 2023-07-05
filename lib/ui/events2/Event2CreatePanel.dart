@@ -447,8 +447,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildAttributesButtonSection(),
             _buildRegistrationButtonSection(),
             _buildAttendanceButtonSection(),
-            _buildSponsorshipAndContactsButtonSection(),
             _buildSurveyButtonSection(),
+            _buildSponsorshipAndContactsButtonSection(),
             _buildVisibilitySection(),
             _buildCreateEventSection(),
           ]),
@@ -1174,17 +1174,92 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     });
   }
 
-  // Sponsorship and Contacts
+  // Follow-Up Survey
 
-  Widget  _buildSponsorshipAndContactsButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+  Widget  _buildSurveyButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'SPONSORSHIP AND CONTACTS'),
-      subTitle: _hasSponsorshipAndContacts ?
-        Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.confirmation', 'Event sponsorship and contacts set up.') :
-        Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Set sponsor, speaker and contacts to your event.'),
-      onTap: _onSponsorshipAndContacts,
+      title: Localization().getStringEx('panel.event2.create.button.survey.title', 'EVENT FOLLOW-UP SURVEY'),
+      subTitle: Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event'),
+      onTap: _onEventSurvey,
     ),
   );
+
+  void _onEventSurvey() {
+    Analytics().logSelect(target: "Event Follow-Up Survey");
+    Event2CreatePanel.hideKeyboard(context);
+    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(details: _surveyDetails
+    ))).then((Event2SurveyDetails? result) {
+      setStateIfMounted(() {
+        _surveyDetails = result;
+      });
+    });
+  }
+
+  // Sponsorship and Contacts
+
+  Widget _buildSponsorshipAndContactsButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+      title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'SPONSORSHIP AND CONTACTS'),
+      subTitle: !_hasSponsorshipAndContacts ? Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Set sponsor, speaker and contacts to your event.') : null,
+      onTap: _onSponsorshipAndContacts,
+    ),
+    body: _buildSponsorshipAndContactsSectionBody()
+  );
+
+  Widget? _buildSponsorshipAndContactsSectionBody() {
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+
+//	"panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Sponsor: ",
+//	"panel.event2.create.button.sponsorship_and_contacts.label.speaker": "Speaker: ",
+//	"panel.event2.create.button.sponsorship_and_contacts.label.contacts": "Contacts: ",
+
+    if (StringUtils.isNotEmpty(_sponsor)) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.sponsor', 'Sponsor: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: _sponsor, style: regularStyle,),);
+    }
+
+    if (StringUtils.isNotEmpty(_speaker)) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.speaker', 'Speaker: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: _speaker, style: regularStyle,),);
+    }
+
+    if (CollectionUtils.isNotEmpty(_contacts)) {
+      List<InlineSpan> contactsList = <InlineSpan>[];
+      for (Event2Contact contact in _contacts!) {
+        if (contactsList.isNotEmpty) {
+          contactsList.add(TextSpan(text: ", " , style: regularStyle,));
+        }
+        contactsList.add(TextSpan(text: contact.fullName, style: regularStyle,),);
+      }
+
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.contacts', 'Contacts: ') , style: boldStyle,));
+      descriptionList.addAll(contactsList);
+    }
+
+    if (descriptionList.isNotEmpty) {
+      descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
+
+      return Row(children: [
+        Expanded(child:
+          RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+        ),
+      ],);
+    }
+    else {
+      return null;
+    }
+  }
 
   bool get _hasSponsorshipAndContacts =>
     StringUtils.isNotEmpty(_sponsor) ||
@@ -1206,27 +1281,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           _contacts = result.contacts;
         });
       }
-    });
-  }
-
-  // Follow-Up Survey
-
-  Widget  _buildSurveyButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
-    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.button.survey.title', 'EVENT FOLLOW-UP SURVEY'),
-      subTitle: Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event'),
-      onTap: _onEventSurvey,
-    ),
-  );
-
-  void _onEventSurvey() {
-    Analytics().logSelect(target: "Event Follow-Up Survey");
-    Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(details: _surveyDetails
-    ))).then((Event2SurveyDetails? result) {
-      setStateIfMounted(() {
-        _surveyDetails = result;
-      });
     });
   }
 
