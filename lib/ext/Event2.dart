@@ -84,6 +84,24 @@ extension Event2Ext on Event2 {
   String? get displayDate => AppDateTimeUtils.getDisplayDay(dateTimeUtc: startTimeUtc, allDay: allDay);
 }
 
+extension Event2ContactExt on Event2Contact {
+  
+  String get fullName {
+    if (StringUtils.isNotEmpty(firstName)) {
+      if (StringUtils.isNotEmpty(lastName)) {
+        return '$firstName $lastName';
+      }
+      else {
+        return firstName ?? '';
+      }
+    }
+    else {
+        return lastName ?? '';
+    }
+  }
+}
+
+
 // Event2SortType
 
 String? event2SortTypeToDisplayString(Event2SortType? value) {

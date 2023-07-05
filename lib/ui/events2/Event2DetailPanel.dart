@@ -324,7 +324,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if(Auth2().isLoggedIn == true)
       return null;
 
-    return (_event?.registrationDetails?.type == Event2RegistrationType.internal) ? <Widget>[_buildButtonWidget( //TBD check if we can show this button even if the registration is not required
+    return (_event?.registrationDetails?.type == Event2RegistrationType.internal) ? <Widget>[_buildButtonWidget(
         title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Log In to Register'),
         onTap: _onLogIn,
         externalLink: false,
@@ -341,7 +341,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           return <Widget>[_buildButtonWidget(
               title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Unregister me'),
               onTap: _onUnregister,
-              externalLink: false
+              externalLink: false,
+              enabled: false
           )];
         } else if (_event?.userRole == null){//Not registered yet
           return <Widget>[_buildButtonWidget(
@@ -400,7 +401,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     );
   }
 
-  //TBD remove if not needed
   Widget _buildButtonWidget({String? title,
     String? hint,
     bool enabled = true,
@@ -413,12 +413,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           RoundedButton(
               label: StringUtils.ensureNotEmpty(title),
               hint: hint,
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+              textStyle: enabled ? Styles().textStyles?.getTextStyle("widget.button.title.small.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.small.fat"),
               backgroundColor: enabled ? Colors.white : Styles().colors!.background,
-              borderColor: enabled ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary,  //TBD proper disabled colors
-              rightIcon:externalLink? Styles().images?.getImage(enabled ? 'external-link-dark' : 'external-link') : null,
+              borderColor: enabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+              rightIcon:externalLink? Styles().images?.getImage(enabled ? 'external-link' : 'external-link-dark' ) : null,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              onTap: onTap
+              onTap: onTap ?? (){},
+            contentWeight: 0.5,
+
           ),
         ),],)
       ) : Container();
@@ -539,10 +541,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     String? eventId = _event?.id ?? widget.eventId;
     if(eventId != null) {
-      List<Event2>? events = await Events2().loadEvents(Events2Query(ids: {eventId}));
-      if (events?.isNotEmpty == true && events?.first != null) {
-        return events!.first;
-      }
+      return Events2().loadEvent(eventId);
     }
     return null;
   }

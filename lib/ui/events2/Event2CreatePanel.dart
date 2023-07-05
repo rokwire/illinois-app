@@ -11,6 +11,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
+import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
@@ -362,6 +363,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Event2RegistrationDetails? _registrationDetails;
   Event2AttendanceDetails? _attendanceDetails;
+
+  String? _sponsor;
+  String? _speaker;
+  List<Event2Contact>? _contacts;
   Event2SurveyDetails? _surveyDetails;
   // Explore? _locationExplore;
 
@@ -443,6 +448,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildRegistrationButtonSection(),
             _buildAttendanceButtonSection(),
             _buildSurveyButtonSection(),
+            _buildSponsorshipAndContactsButtonSection(),
             _buildVisibilitySection(),
             _buildCreateEventSection(),
           ]),
@@ -957,7 +963,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
     ))).then((Explore? explore) {
       if ((explore != null) && mounted) {
-        _locationBuildingController.text = explore.exploreTitle ?? explore.exploreLocation?.building ?? explore.exploreLocation?.name ?? '';
+        _locationBuildingController.text = (explore.exploreTitle ?? explore.exploreLocation?.building ?? explore.exploreLocation?.name ?? '').replaceAll('\n', ' ');
         _locationAddressController.text = explore.exploreLocation?.fullAddress ?? explore.exploreLocation?.buildDisplayAddress() ?? explore.exploreLocation?.description ?? '';
         _locationLatitudeController.text = _printLatLng(explore.exploreLocation?.latitude);
         _locationLongitudeController.text = _printLatLng(explore.exploreLocation?.longitude);
@@ -1121,7 +1127,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.registration.title', 'EVENT REGISTRATION'),
       subTitle: _displayRegistrationDescription,
-      required: true,
       onTap: _onEventRegistration,
     ),
   );
@@ -1154,7 +1159,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       subTitle: (_attendanceDetails?.isNotEmpty == true) ?
         Localization().getStringEx('panel.event2.create.button.attendance.confirmation', 'Event attendance details set up.') :
         Localization().getStringEx('panel.event2.create.button.attendance.description', 'Receive feedback about your event.'),
-      required: true,
       onTap: _onEventAttendance,
     ),
   );
@@ -1188,6 +1192,95 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       setStateIfMounted(() {
         _surveyDetails = result;
       });
+    });
+  }
+
+  // Sponsorship and Contacts
+
+  Widget _buildSponsorshipAndContactsButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+      title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'SPONSORSHIP AND CONTACTS'),
+      subTitle: !_hasSponsorshipAndContacts ? Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Set sponsor, speaker and contacts to your event.') : null,
+      onTap: _onSponsorshipAndContacts,
+    ),
+    body: _buildSponsorshipAndContactsSectionBody()
+  );
+
+  Widget? _buildSponsorshipAndContactsSectionBody() {
+    List<InlineSpan> descriptionList = <InlineSpan>[];
+    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+
+//	"panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Sponsor: ",
+//	"panel.event2.create.button.sponsorship_and_contacts.label.speaker": "Speaker: ",
+//	"panel.event2.create.button.sponsorship_and_contacts.label.contacts": "Contacts: ",
+
+    if (StringUtils.isNotEmpty(_sponsor)) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.sponsor', 'Sponsor: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: _sponsor, style: regularStyle,),);
+    }
+
+    if (StringUtils.isNotEmpty(_speaker)) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.speaker', 'Speaker: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: _speaker, style: regularStyle,),);
+    }
+
+    if (CollectionUtils.isNotEmpty(_contacts)) {
+      List<InlineSpan> contactsList = <InlineSpan>[];
+      for (Event2Contact contact in _contacts!) {
+        if (contactsList.isNotEmpty) {
+          contactsList.add(TextSpan(text: ", " , style: regularStyle,));
+        }
+        contactsList.add(TextSpan(text: contact.fullName, style: regularStyle,),);
+      }
+
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.contacts', 'Contacts: ') , style: boldStyle,));
+      descriptionList.addAll(contactsList);
+    }
+
+    if (descriptionList.isNotEmpty) {
+      descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
+
+      return Row(children: [
+        Expanded(child:
+          RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+        ),
+      ],);
+    }
+    else {
+      return null;
+    }
+  }
+
+  bool get _hasSponsorshipAndContacts =>
+    StringUtils.isNotEmpty(_sponsor) ||
+    StringUtils.isNotEmpty(_speaker) ||
+    CollectionUtils.isNotEmpty(_contacts);
+
+  void _onSponsorshipAndContacts() {
+    Analytics().logSelect(target: "Sponsorship and Contacts");
+    Event2CreatePanel.hideKeyboard(context);
+    Navigator.push<Event2SponsorshipAndContactsDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSponsorshipAndContactsPanel(details: Event2SponsorshipAndContactsDetails(
+      sponsor: _sponsor,
+      speaker: _speaker,
+      contacts: _contacts,
+    )))).then((Event2SponsorshipAndContactsDetails? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          _sponsor = result.sponsor;
+          _speaker = result.speaker;
+          _contacts = result.contacts;
+        });
+      }
     });
   }
 
@@ -1484,9 +1577,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       attendanceDetails: (_attendanceDetails?.isNotEmpty ?? false) ? _attendanceDetails : null,
       surveyDetails: (_surveyDetails?.hasSurvey == true) ? _surveyDetails : null,
 
-      sponsor: null, // TBD
-      speaker: null, // TBD
-      contacts: null, // TBD
+      sponsor: _sponsor,
+      speaker: _speaker,
+      contacts: _contacts,
     );
 }
 
