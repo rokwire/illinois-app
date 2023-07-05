@@ -1219,10 +1219,6 @@
     "panel.event2.setup.registration.link.label.title": "ADD EXTERNAL LINK FOR REGISTRATION",
     "panel.event2.setup.registration.description.label.title": "Registration within the Illinois app requires the user to log in with a NetID.",
 
-    "panel.event2.setup.sponsorship_and_contacts.header.title": "Sponsorship and Contacts",
-    "panel.event2.setup.sponsorship_and_contacts.sponsor.label.title": "SPONSOR",
-    "panel.event2.setup.sponsorship_and_contacts.speaker.label.title": "SPEAKER",
-
     "panel.event2.setup.attendance.header.title": "Event Attendance",
 	"panel.event2.setup.attendance.take_via_app.toggle.title": "TAKE ATTENDANCE VIA THE APP",
 	"panel.event2.setup.attendance.take_via_app.toggle.hint": "",
@@ -1237,6 +1233,26 @@
 	"panel.event2.attributes.attributes.header.description": "Choose one or more attributes that help describe this event",
 	"panel.event2.attributes.filters.header.title": "Event Filters",
 	"panel.event2.attributes.filters.header.description": "Choose one or more attributes to filter the events",
+
+    "panel.event2.setup.sponsorship_and_contacts.header.title": "Sponsorship and Contacts",
+    "panel.event2.setup.sponsorship_and_contacts.sponsor.label.title": "SPONSOR",
+    "panel.event2.setup.sponsorship_and_contacts.speaker.label.title": "SPEAKER",
+    "panel.event2.setup.sponsorship_and_contacts.contacts.label.title": "CONTACTS",
+    "panel.event2.setup.sponsorship_and_contacts.contacts.button.create.title": "Create",
+    "panel.event2.setup.sponsorship_and_contacts.contacts.button.create.hint": "Tap to create contact",
+    "panel.event2.setup.sponsorship_and_contacts.contacts.label.empty.title": "No contacts defined yet.",
+    "panel.event2.setup.sponsorship_and_contacts.contacts.prompt.confirm.delete.title": "Delete {{name}} contact?.",
+
+	"panel.event2.setup.contact.header.title": "Event Contact",
+    "panel.event2.setup.contact.first_name.label.title": "FIRST NAME",
+    "panel.event2.setup.contact.last_name.label.title": "LAST NAME",
+    "panel.event2.setup.contact.email.label.title": "EMAIL",
+    "panel.event2.setup.contact.phone.label.title": "PHONE NUMBER",
+    "panel.event2.setup.contact.organizarion.label.title": "ORGANIZATION",
+    "panel.event2.setup.contact.create.title": "Create",
+    "panel.event2.setup.contact.create.hint": "Tap to create contact",
+    "panel.event2.setup.contact.update.title": "Update",
+    "panel.event2.setup.contact.update.hint": "Tap to update contact",
 
     "panel.settings.manage_interests.instructions.format": "Toca el {{check_mark_icon}} para seguir las etiquetas que más te interesen",
     "panel.settings.manage_interests.list.following":"SIGUIENTE",

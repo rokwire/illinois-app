@@ -139,7 +139,7 @@ class AppAlert {
       {required BuildContext buildContext,
       required String message,
       String? positiveButtonLabel,
-      required VoidCallback positiveCallback,
+      VoidCallback? positiveCallback,
       VoidCallback? negativeCallback,
       String? negativeButtonLabel}) async {
     bool alertDismissed = await showDialog(
@@ -152,7 +152,9 @@ class AppAlert {
                 onPressed: () {
                   Analytics().logAlert(text: message, selection: 'Yes');
                   Navigator.pop(context, true);
-                  positiveCallback();
+                  if (positiveCallback != null) {
+                    positiveCallback();
+                  }
                 }),
             TextButton(
                 child: Text(

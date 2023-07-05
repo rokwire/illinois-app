@@ -959,7 +959,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       selectedExplore: (location != null) ? ExplorePOI(location: location) : null,
     ))).then((Explore? explore) {
       if ((explore != null) && mounted) {
-        _locationBuildingController.text = explore.exploreTitle ?? explore.exploreLocation?.building ?? explore.exploreLocation?.name ?? '';
+        _locationBuildingController.text = (explore.exploreTitle ?? explore.exploreLocation?.building ?? explore.exploreLocation?.name ?? '').replaceAll('\n', ' ');
         _locationAddressController.text = explore.exploreLocation?.fullAddress ?? explore.exploreLocation?.buildDisplayAddress() ?? explore.exploreLocation?.description ?? '';
         _locationLatitudeController.text = _printLatLng(explore.exploreLocation?.latitude);
         _locationLongitudeController.text = _printLatLng(explore.exploreLocation?.longitude);
@@ -1176,8 +1176,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'SPONSORSHIP AND CONTACTS'),
       subTitle: _hasSponsorshipAndContacts ?
-        Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Event sponsorship and contacts set up.') :
-        Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.confirmation', 'Set sponsor, speaker and contacts to your event.'),
+        Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.confirmation', 'Event sponsorship and contacts set up.') :
+        Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Set sponsor, speaker and contacts to your event.'),
       onTap: _onSponsorshipAndContacts,
     ),
   );
