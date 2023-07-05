@@ -11,6 +11,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
+import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -361,6 +362,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Event2RegistrationDetails? _registrationDetails;
   Event2AttendanceDetails? _attendanceDetails;
+  Event2SurveyDetails? _surveyDetails;
   // Explore? _locationExplore;
 
   late List<String> _errorList;
@@ -440,6 +442,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildAttributesButtonSection(),
             _buildRegistrationButtonSection(),
             _buildAttendanceButtonSection(),
+            _buildSurveyButtonSection(),
             _buildVisibilitySection(),
             _buildCreateEventSection(),
           ]),
@@ -1167,6 +1170,27 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     });
   }
 
+  // Follow-Up Survey
+
+  Widget  _buildSurveyButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+      title: Localization().getStringEx('panel.event2.create.button.survey.title', 'EVENT FOLLOW-UP SURVEY'),
+      subTitle: Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event'),
+      onTap: _onEventSurvey,
+    ),
+  );
+
+  void _onEventSurvey() {
+    Analytics().logSelect(target: "Event Follow-Up Survey");
+    Event2CreatePanel.hideKeyboard(context);
+    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(details: _surveyDetails
+    ))).then((Event2SurveyDetails? result) {
+      setStateIfMounted(() {
+        _surveyDetails = result;
+      });
+    });
+  }
+
   // Visibility
 
   Widget _buildVisibilitySection() {
@@ -1458,6 +1482,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
       registrationDetails: (_registrationDetails?.type != Event2RegistrationType.none) ? _registrationDetails : null,
       attendanceDetails: (_attendanceDetails?.isNotEmpty ?? false) ? _attendanceDetails : null,
+      surveyDetails: (_surveyDetails?.hasSurvey == true) ? _surveyDetails : null,
 
       sponsor: null, // TBD
       speaker: null, // TBD
