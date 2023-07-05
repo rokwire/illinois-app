@@ -539,10 +539,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     String? eventId = _event?.id ?? widget.eventId;
     if(eventId != null) {
-      List<Event2>? events = await Events2().loadEvents(Events2Query(ids: {eventId}));
-      if (events?.isNotEmpty == true && events?.first != null) {
-        return events!.first;
-      }
+      return Events2().loadEvent(eventId);
     }
     return null;
   }
