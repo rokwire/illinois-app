@@ -1123,7 +1123,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.registration.title', 'EVENT REGISTRATION'),
       subTitle: _displayRegistrationDescription,
-      required: true,
       onTap: _onEventRegistration,
     ),
   );
@@ -1156,7 +1155,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       subTitle: (_attendanceDetails?.isNotEmpty == true) ?
         Localization().getStringEx('panel.event2.create.button.attendance.confirmation', 'Event attendance details set up.') :
         Localization().getStringEx('panel.event2.create.button.attendance.description', 'Receive feedback about your event.'),
-      required: true,
       onTap: _onEventAttendance,
     ),
   );
@@ -1180,7 +1178,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       subTitle: _hasSponsorshipAndContacts ?
         Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Event sponsorship and contacts set up.') :
         Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.confirmation', 'Set sponsor, speaker and contacts to your event.'),
-      required: true,
       onTap: _onSponsorshipAndContacts,
     ),
   );
