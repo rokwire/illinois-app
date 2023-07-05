@@ -24,11 +24,15 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/events2.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
@@ -40,9 +44,11 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:timezone/timezone.dart';
 
 class ExploreCard extends StatefulWidget {
   final GestureTapCallback? onTap;
@@ -107,8 +113,9 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   @override
   Widget build(BuildContext context) {
     bool isEvent = (widget.explore is Event);
+    bool isEvent2 = (widget.explore is Event2);
     bool isGame = (widget.explore is Game);
-    Event? event = isEvent ? widget.explore as Event : null;
+    Event? event = (widget.explore is Event) ? (widget.explore as Event) : null;
     bool isCompositeEvent = event?.isComposite ?? false;
     String imageUrl = StringUtils.ensureNotEmpty(widget.explore?.exploreImageUrl);
     String interestsLabelValue = _getInterestsLabelValue();
@@ -132,7 +139,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                     Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                       Expanded(child:
                         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                          Visibility(visible: (isEvent || isGame), child:
+                          Visibility(visible: (isEvent || isEvent2 || isGame), child:
                             _exploreName(),
                           ),
                           _exploreDetails(),
@@ -363,6 +370,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         locationText = explore.getShortDisplayLocation(widget.locationData);
       }
     }
+    else if (explore is Event2 ) {//For Events we show Two Locati
+      if (explore.inPerson) {
+        locationText = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+      }
+    }
     else if (explore is Building) {
       locationText = explore.fullAddress;
       onLocationTap = _onTapExploreLocation;
@@ -397,8 +409,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget? _exploreOnlineDetail() {
-    if((widget.explore!=null && widget.explore is Event) &&
-        ((widget.explore as Event).displayAsVirtual)) {
+    if (((widget.explore is Event) && ((widget.explore as Event).displayAsVirtual)) ||
+        (widget.explore is Event2) && ((widget.explore as Event2).online)) {
         return Semantics(label: Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event"), child:Padding(
           padding: _detailPadding,
           child: Row(
@@ -476,6 +488,9 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     Explore? explore = widget.explore;
     if (explore is Event) {
       return explore.timeDisplayString;
+    } else if (explore is Event2) {
+      TZDateTime? dateTimeUni = explore.startTimeUtc?.toUniOrLocal();
+      return (dateTimeUni != null) ? DateFormat('MMM d, ha').format(dateTimeUni) : null;
     } else if (explore is Game) {
       return explore.displayTime;
     } else if (explore is StudentCourse) {
@@ -579,6 +594,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   String? get _exploreCategory {
     if (widget.explore is Event) {
       return (widget.explore as Event).category;
+    } else if (widget.explore is Event2) {
+      return Events2().contentAttributes?.displaySelectedLabelsFromSelection((widget.explore as Event2).attributes, usage: ContentAttributeUsage.category).join(', ');
     } else if (widget.explore is Game) {
       return 'Athletics';
     } else {
