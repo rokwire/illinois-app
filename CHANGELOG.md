@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Follow-Up survey details in Create Event panel [#3353](https://github.com/rokwire/illinois-app/issues/3353).
+- Sponsorship and Contacts in Create Event panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
 
 ## [5.0.20] - 2023-07-04
 ### Changed
