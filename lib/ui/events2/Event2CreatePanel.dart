@@ -11,6 +11,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
+import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -361,7 +362,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Event2RegistrationDetails? _registrationDetails;
   Event2AttendanceDetails? _attendanceDetails;
-  // Explore? _locationExplore;
+
+  String? _sponsor;
+  String? _speaker;
+  List<Event2Contact>? _contacts;
 
   late List<String> _errorList;
   bool _creatingEvent = false;
@@ -440,6 +444,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildAttributesButtonSection(),
             _buildRegistrationButtonSection(),
             _buildAttendanceButtonSection(),
+            _buildSponsorshipAndContactsButtonSection(),
             _buildVisibilitySection(),
             _buildCreateEventSection(),
           ]),
@@ -1167,6 +1172,42 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     });
   }
 
+  // Sponsorship and Contacts
+
+  Widget  _buildSponsorshipAndContactsButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+      title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'SPONSORSHIP AND CONTACTS'),
+      subTitle: _hasSponsorshipAndContacts ?
+        Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Event sponsorship and contacts set up.') :
+        Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.confirmation', 'Set sponsor, speaker and contacts to your event.'),
+      required: true,
+      onTap: _onSponsorshipAndContacts,
+    ),
+  );
+
+  bool get _hasSponsorshipAndContacts =>
+    StringUtils.isNotEmpty(_sponsor) ||
+    StringUtils.isNotEmpty(_speaker) ||
+    CollectionUtils.isNotEmpty(_contacts);
+
+  void _onSponsorshipAndContacts() {
+    Analytics().logSelect(target: "Sponsorship and Contacts");
+    Event2CreatePanel.hideKeyboard(context);
+    Navigator.push<Event2SponsorshipAndContactsDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSponsorshipAndContactsPanel(details: Event2SponsorshipAndContactsDetails(
+      sponsor: _sponsor,
+      speaker: _speaker,
+      contacts: _contacts,
+    )))).then((Event2SponsorshipAndContactsDetails? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          _sponsor = result.sponsor;
+          _speaker = result.speaker;
+          _contacts = result.contacts;
+        });
+      }
+    });
+  }
+
   // Visibility
 
   Widget _buildVisibilitySection() {
@@ -1459,9 +1500,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       registrationDetails: (_registrationDetails?.type != Event2RegistrationType.none) ? _registrationDetails : null,
       attendanceDetails: (_attendanceDetails?.isNotEmpty ?? false) ? _attendanceDetails : null,
 
-      sponsor: null, // TBD
-      speaker: null, // TBD
-      contacts: null, // TBD
+      sponsor: _sponsor,
+      speaker: _speaker,
+      contacts: _contacts,
     );
 }
 
