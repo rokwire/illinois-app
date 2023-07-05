@@ -277,6 +277,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
       Event2FilterParam.notifyChanged,
+      Events2.notifyChanged,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -330,6 +331,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
     else if (name == Event2FilterParam.notifyChanged) {
       _updateFilers();
+    }
+    else if (name == Events2.notifyChanged) {
+      _reload();
     }
   }
 
