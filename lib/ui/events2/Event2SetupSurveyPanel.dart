@@ -88,14 +88,14 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         padding: Event2CreatePanel.sectionPadding,
         child: ToggleRibbonButton(
           padding: EdgeInsets.zero,
-          label: Localization().getStringEx("panel.event2.setup.survey.has_survey.toggle.title", "TAKE FOLLOW-UP SURVEY"),
+          label: Localization().getStringEx('panel.event2.setup.survey.has_survey.toggle.title', 'SEND FOLLOW-UP SURVEY'),
           toggled: _hasSurvey,
           onTap: _onTapTakeFollowUpSurvey,
         ));
   }
 
   void _onTapTakeFollowUpSurvey() {
-    Analytics().logSelect(target: "Toggle Take Follow-Up Survey");
+    Analytics().logSelect(target: "Toggle Send Follow-Up Survey");
     setStateIfMounted(() {
       _hasSurvey = !_hasSurvey;
       if (!_hasSurvey && (_hoursAfterEvent != null)) {
@@ -137,7 +137,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     if (_hasSurvey && _loadingSurveys) {
       return Padding(padding: Event2CreatePanel.dropdownButtonContentPadding, child: Center(child: CircularProgressIndicator()));
     }
-    String title = Localization().getStringEx('panel.event2.setup.survey.surveys.title', 'SURVEYS');
+    String title = Localization().getStringEx('panel.event2.setup.survey.survey.title', 'SURVEY');
     return Visibility(
         visible: _hasSurvey,
         child: Padding(
