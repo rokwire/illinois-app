@@ -1181,6 +1181,8 @@
 	"panel.event2.create.button.sponsorship_and_contacts.title": "SPONSORSHIP AND CONTACTS",
 	"panel.event2.create.button.sponsorship_and_contacts.description": "Set sponsor, speaker and contacts to your event.",
 	"panel.event2.create.button.sponsorship_and_contacts.confirmation": "Event sponsorship and contacts set up.",
+    "panel.event2.create.button.survey.title": "EVENT FOLLOW-UP SURVEY",
+    "panel.event2.create.button.survey.description": "Receive feedback about your event",
     "panel.event2.create.label.event_type.title": "EVENT TYPE",
     "panel.event2.create.online_details.url.title": "ONLINE URL",
     "panel.event2.create.online_details.meeting_id.title": "MEETING ID",
@@ -1230,6 +1232,14 @@
 	"panel.event2.setup.attendance.manual.toggle.title": "Allow manual attendance check",
 	"panel.event2.setup.attendance.manual.toggle.hint": "",
 	"panel.event2.setup.attendance.manual.toggle.description": "Requires advance registration.",
+
+    "panel.event2.setup.survey.header.title": "Event Follow-Up Survey",
+    "panel.event2.setup.survey.has_survey.toggle.title": "SEND FOLLOW-UP SURVEY",
+    "panel.event2.setup.survey.hours.title": "FOLLOW-UP SURVEY HOURS",
+    "panel.event2.setup.survey.survey.title": "SURVEY",
+    "panel.event2.setup.survey.preview.button": "Preview",
+    "panel.event2.setup.survey.save.button": "Save",
+    "panel.event2.setup.survey.hours.invalid.msg": "Please, fill valid non-negative number for hours.",
 
     "panel.event2.attributes.attributes.header.title": "Event Attributes",
 	"panel.event2.attributes.attributes.header.description": "Choose one or more attributes that help describe this event.",
