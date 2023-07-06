@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:intl/intl.dart';
@@ -118,6 +119,22 @@ extension Event2Ext on Event2 {
         }
         return displayDateTime;
       }
+    }
+    else {
+      return null;
+    }
+  }
+
+  String? getDisplayDistance(Position? userLocation) {
+    double? latitude = location?.latitude;
+    double? longitude = location?.longitude;
+    if ((latitude != null) && (latitude != 0) && (longitude != null) && (longitude != 0) && (userLocation != null)) {
+      double distanceInMeters = Geolocator.distanceBetween(latitude, longitude, userLocation.latitude, userLocation.longitude);
+      double distanceInMiles = distanceInMeters / 1609.344;
+      //int whole = (((distanceInMiles * 10) + 0.5).toInt() % 10);
+      int displayPrecision = ((distanceInMiles < 10) && ((((distanceInMiles * 10) + 0.5).toInt() % 10) != 0)) ? 1 : 0;
+      return Localization().getStringEx('model.explore.distance.format', '{{distance}} mi away').
+        replaceAll('{{distance}}', distanceInMiles.toStringAsFixed(displayPrecision));
     }
     else {
       return null;

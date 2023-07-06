@@ -3549,6 +3549,7 @@
 	"model.explore.time.at":"在",
 	"model.explore.time.at.format": "{{day}} at {{time}}",
 	"model.explore.time.all_day": "一整天",
+	"model.explore.distance.format": "{{distance}} mi away",
 	
 	"model.groups.member.status.pending": "Pending",
 	"model.groups.member.status.member": "Member",

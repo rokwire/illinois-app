@@ -280,6 +280,14 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           _buildDetailWidget(Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
         );
       }
+
+      String? distanceText = widget.event.getDisplayDistance(widget.userLocation);
+      if (distanceText != null) {
+        details.add(
+          _buildDetailWidget(Text(distanceText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
+        );
+      }
+
       return details;
     }
     return null;

@@ -221,8 +221,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if (_event?.inPerson == true) {
 
       bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
-      
 
+      TextStyle? textDetailStyle = Styles().textStyles?.getTextStyle(canLocation ?
+        'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular');
+      
       List<Widget> details = <Widget>[
         _buildTextDetailWidget('In Person', 'location'),
       ];
@@ -233,13 +235,18 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         _event?.location?.displayCoordinates
       );
       if (locationText != null) {
-        Widget locationWidget = canLocation ?
-          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'),) :
-          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
         details.add(
-          _buildDetailWidget(locationWidget, 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
+          _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
         );
       }
+
+      String? distanceText = _event?.getDisplayDistance(widget.userLocation);
+      if (distanceText != null) {
+        details.add(
+          _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
+        );
+      }
+
       if (canLocation) {
         return <Widget>[
           InkWell(onTap: _onLocation, child:
