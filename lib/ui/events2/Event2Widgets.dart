@@ -1,21 +1,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:timezone/timezone.dart';
 
 class Event2FilterCommandButton extends StatelessWidget {
   final String? title;
@@ -255,8 +253,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   List<Widget>? get _dateDetailWidget {
-    TZDateTime? dateTimeUni = widget.event.startTimeUtc?.toUniOrLocal();
-    return (dateTimeUni != null) ? <Widget>[_buildTextDetailWidget(DateFormat('MMM d, ha').format(dateTimeUni), 'calendar')] : null;
+    String? dateTime = widget.event.shortDisplayDate;
+    return (dateTime != null) ? <Widget>[_buildTextDetailWidget(dateTime, 'calendar')] : null;
   }
 
   List<Widget>? get _onlineDetailWidget {
