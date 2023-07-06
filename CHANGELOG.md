@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added background image to Events2 filters panel [#3356](https://github.com/rokwire/illinois-app/issues/3356).
 ### Removed
 - "Preview" survey button in Create Event panel [#3357](https://github.com/rokwire/illinois-app/issues/3357).
 
