@@ -1266,6 +1266,8 @@
     "panel.event2.setup.contact.update.title": "Update",
     "panel.event2.setup.contact.update.hint": "Tap to update contact",
 
+    "panel.event2.detail.take_attendance.title": "Take Attendance",
+
     "panel.settings.manage_interests.instructions.format": "Toca el {{check_mark_icon}} para seguir las etiquetas que más te interesen",
     "panel.settings.manage_interests.list.following":"SIGUIENTE",
     "panel.settings.manage_interests.list.all_tags":"TODAS LAS ETIQUETAS",

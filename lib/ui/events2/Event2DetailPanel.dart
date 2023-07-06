@@ -183,6 +183,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_locationDetailWidget,
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
+      ...?_attendanceDetailWidget,
       ...?_contactsDetailWidget,
     ];
 
@@ -279,6 +280,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
   }
 
+  List<Widget>? get _attendanceDetailWidget => <Widget>[
+        InkWell(
+            onTap: _onTapTakeAttendance,
+            child: _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.take_attendance.title', 'Take Attendance'), 'qr', underlined: true)),
+        _detailSpacerWidget
+      ];
+
   List<Widget>? get _contactsDetailWidget{
     if(CollectionUtils.isEmpty(_event?.contacts))
       return null;
@@ -369,10 +377,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
-    bool iconVisible = true
+    bool iconVisible = true,
+    bool underlined = false
   }) =>
     _buildDetailWidget(
-      Text(text, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),),
+      Text(text, maxLines: 1, style: Styles().textStyles?.getTextStyle(underlined ? 'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular'),),
       iconKey,
       contentPadding: contentPadding,
       iconPadding: iconPadding,
@@ -508,6 +517,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         }
       );
     }
+  }
+
+  void _onTapTakeAttendance() {
+    Analytics().logSelect(target: 'Take Attendance');
+    //TBD: DD - implement
   }
 
   //loading

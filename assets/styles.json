@@ -403,7 +403,7 @@
 
     "widget.explore.card.detail.small": {"extends": "widget.card.detail.tiny.medium_fat"},
     "widget.explore.card.detail.regular": {"extends": "widget.item.small"},
-    "widget.explore.card.detail.regular.underline": {"extends": "widget.card.detail.small_variant2", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.explore.card.detail.regular.underline": {"extends": "widget.item.small", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.explore.card.detail.large": {"extends": "widget.card.detail.medium"},
     "widget.explore.card.title.regular":  {"extends": "widget.title.medium"},
     "widget.explore.card.title.regular.extra_fat":  {"extends":  "widget.title.medium.extra_fat"},
