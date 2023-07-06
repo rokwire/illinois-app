@@ -213,11 +213,10 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           RoundedButton(
             label: submitText,
             hint: '',
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             borderColor: Styles().colors?.fillColorSecondary,
             backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors?.fillColorPrimary,
-            fontSize: 16,
             onTap: () => _onSubmit(),
           ),
           ),

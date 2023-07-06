@@ -183,6 +183,10 @@ class Storage extends rokwire.Storage {
   bool? get debugUseSampleAppointments => getBoolWithName(debugUseSampleAppointmentsKey);
   set debugUseSampleAppointments(bool? value) => setBoolWithName(debugUseSampleAppointmentsKey, value);
 
+  static const String debugUseIdentityBbKey  = 'debug_mobile_icard_use_identity_bb';
+  bool? get debugUseIdentityBb => getBoolWithName(debugUseIdentityBbKey);
+  set debugUseIdentityBb(bool? value) => setBoolWithName(debugUseIdentityBbKey, value);
+
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
@@ -402,4 +406,41 @@ class Storage extends rokwire.Storage {
   bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
   set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
 
+  // Mobile Access
+  static const String mobileAccessBleRssiSensitivityKey = 'mobile_access_ble_rssi_sensitivity';
+  String? get mobileAccessBleRssiSensitivity => getStringWithName(mobileAccessBleRssiSensitivityKey);
+  set mobileAccessBleRssiSensitivity(String? value) => setStringWithName(mobileAccessBleRssiSensitivityKey, value);
+
+  static const String mobileAccessOpenTypeKey = 'mobile_access_open_type';
+  String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
+  set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
+
+  // Events2
+  static const String events2AttributesKey = 'events2_attributes';
+  Map<String, dynamic>? get events2Attributes => JsonUtils.decodeMap(getStringWithName(events2AttributesKey));
+  set events2Attributes(Map<String, dynamic>? value) => setStringWithName(events2AttributesKey, JsonUtils.encode(value));
+
+  static const String events2TypesKey = 'events2_types';
+  List<String>? get events2Types => getStringListWithName(events2TypesKey);
+  set events2Types(List<String>? value) => setStringListWithName(events2TypesKey, value);
+
+  static const String events2TimeKey = 'events2_time';
+  String? get events2Time => getStringWithName(events2TimeKey);
+  set events2Time(String? value) => setStringWithName(events2TimeKey, value);
+
+  static const String events2CustomStartTimeKey = 'events2_custom_start_time';
+  String? get events2CustomStartTime => getStringWithName(events2CustomStartTimeKey);
+  set events2CustomStartTime(String? value) => setStringWithName(events2CustomStartTimeKey, value);
+
+  static const String events2CustomEndTimeKey = 'events2_custom_end_time';
+  String? get events2CustomEndTime => getStringWithName(events2CustomEndTimeKey);
+  set events2CustomEndTime(String? value) => setStringWithName(events2CustomEndTimeKey, value);
+
+  static const String events2SortTypeKey = 'events2_sort_type';
+  String? get events2SortType => getStringWithName(events2SortTypeKey);
+  set events2SortType(String? value) => setStringWithName(events2SortTypeKey, value);
+
+  static const String events2SortOrderKey = 'events2_sort_order';
+  String? get events2SortOrder => getStringWithName(events2SortOrderKey);
+  set events2SortOrder(String? value) => setStringWithName(events2SortOrderKey, value);
 }

@@ -87,6 +87,7 @@ class FlexUI extends rokwire.FlexUI {
 
   bool get isSaferAvailable => hasFeature('safer');
   bool get isMTDBusPassAvailable => hasFeature('mtd_bus_pass');
+  bool get isIcardMobileAvailable => hasFeature('icard_mobile');
 
   // Local Build
 

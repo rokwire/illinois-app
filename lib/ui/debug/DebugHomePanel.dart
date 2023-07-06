@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -174,6 +175,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
                 ToggleRibbonButton(label: 'Canvas LMS', toggled: (Storage().debugUseCanvasLms == true), onTap: _onUseCanvasLms),
                 ToggleRibbonButton(label: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
+                ToggleRibbonButton(label: 'Sample Events2', toggled: (Storage().debugUseSampleEvents2 == true), onTap: _onUseSampleEvents2),
+                ToggleRibbonButton(label: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
                     
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
                 Container(color: Colors.white, child:
@@ -277,6 +280,16 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       onTap: _clearLastAppReview,
                     ),
                   ],)
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "Clear Account Prefs",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onTapClearAccountPrefs
+                  )
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
@@ -444,6 +457,19 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     )
                   )
                 ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: 'Mobile Access Keys',
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapMobileAccessKeys
+                    )
+                  ),
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
@@ -697,10 +723,27 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     });
   }
 
+  void _onUseSampleEvents2() {
+    setState(() {
+      Storage().debugUseSampleEvents2 = (Storage().debugUseSampleEvents2 != true);
+    });
+  }
+
+  void _onUseIdentityBb() {
+    setState(() {
+      Storage().debugUseIdentityBb = (Storage().debugUseIdentityBb != true);
+    });
+  }
+
   void _onUseDeviceLocalTimeZoneToggled() {
     setState(() {
       Storage().useDeviceLocalTimeZone = !Storage().useDeviceLocalTimeZone!;
     });
+  }
+
+  void _onTapClearAccountPrefs() {
+    Auth2().prefs?.clear(notify: true);
+    AppAlert.showDialogResult(context, 'Successfully cleared user account prefs.');
   }
 
   void _onTapClearVoting() {
@@ -875,6 +918,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapReviewApp() {
     InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
+  }
+
+  void _onTapMobileAccessKeys() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugMobileAccessHomePanel()));
   }
 
   void _onTapHttpProxy() {

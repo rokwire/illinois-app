@@ -17,4 +17,11 @@
 
 <resources>
     <string name="app_name">Illinois</string>
+
+    <!-- Mobile Access -->
+    <string name="mobile_access_notif_content_title">El acceso móvil se está ejecutando</string>
+    <string name="mobile_access_notif_big_content_title">El acceso móvil se está ejecutando</string>
+    <string name="mobile_access_notif_foreground_service_title">Ejecutando el servicio de escaneo en primer plano</string>
+    <string name="mobile_access_hce_service_description">Acceso móvil HCE</string>
+    <string name="mobile_access_hce_service_aid_group_description">Descripción del grupo AID de acceso móvil</string>
 </resources>

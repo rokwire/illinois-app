@@ -212,11 +212,10 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                       child: RoundedButton(
                         label: _continueButtonLabel,
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
-                        fontSize: 16,
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         backgroundColor: Styles().colors!.white,
                         borderColor: Styles().colors!.fillColorSecondaryVariant,
-                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: () => _goNext(context),
                       ),),
                     Container(height: 16,)

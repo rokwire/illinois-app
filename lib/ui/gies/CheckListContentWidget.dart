@@ -483,10 +483,8 @@ class _CheckListPageWidget extends StatelessWidget{
           buttonWidgets.add(
                 Semantics(container: true,
                   child: RoundedButton(label: title ?? '',
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                     backgroundColor: Styles().colors!.white,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies!.bold,
-                    fontSize: 16,
                     borderColor: Styles().colors!.fillColorSecondary,
                     borderWidth: 2,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -695,8 +693,8 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
           child:
         RoundedButton(
           label: Localization().getStringEx('widget.gies.notes.button.save', 'Save'),
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
           backgroundColor: Colors.transparent,
-          textColor: Styles().colors!.fillColorPrimary,
           borderColor: Styles().colors!.fillColorSecondary,
           borderWidth: 2,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

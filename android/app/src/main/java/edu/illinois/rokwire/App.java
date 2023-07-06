@@ -17,49 +17,17 @@
 package edu.illinois.rokwire;
 
 import android.app.Application;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.util.Log;
 
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.lifecycle.ProcessLifecycleOwner;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.view.FlutterMain;
 
-public class App extends Application implements LifecycleObserver, PluginRegistry.PluginRegistrantCallback {
-
-    private static final String CHANNEL_ID = "Notifications_Channel_ID";
-
-    public boolean inBackground = true;
+public class App extends Application implements PluginRegistry.PluginRegistrantCallback {
 
     @Override
     public void onCreate() {
         super.onCreate();
         FlutterMain.startInitialization(this);
         //FlutterFirebaseMessagingService.setPluginRegistrant(this);
-
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
-    }
-
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    public void onMoveToForeground() {
-        Log.d("App", "ON_START");
-        inBackground = false;
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    public void onMoveToBackground() {
-        Log.d("App", "ON_STOP");
-        inBackground = true;
     }
 
     @Override

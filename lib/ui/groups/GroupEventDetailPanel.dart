@@ -239,7 +239,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconKey = "location" ;
-    String? locationId = widget.event?.location?.locationId;
+    String? locationId = widget.event?.location?.id;
     String? locationText = _event?.getLongDisplayLocation(null); // if we need distance calculation - pass _locationData
     String? value = locationId ?? locationText;
     bool isValueVisible = StringUtils.isNotEmpty(value);
@@ -293,7 +293,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     String iconKey = "laptop";
     String? virtualUrl = widget.event?.virtualEventUrl;
     String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
-    String? locationId = widget.event?.location?.locationId;
+    String? locationId = widget.event?.location?.id;
     String? urlFromLocation = locationId ??  locationDescription;
     bool isLocationIdUrl = Uri.tryParse(urlFromLocation)?.isAbsolute ?? false;
     String value = virtualUrl ??
@@ -470,10 +470,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             RoundedButton(
               label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
               hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
               borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
               rightIcon: Styles().images?.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
-              textColor: Styles().colors!.fillColorPrimary,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: () {
                 Analytics().logSelect(target: 'Event website');
@@ -489,10 +489,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           RoundedButton(
             label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
             hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorSecondary,
             rightIcon: Styles().images?.getImage('external-link'),
-            textColor: Styles().colors!.fillColorPrimary,
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             onTap: () {
               _onTapRegistration(registrationUrl);
@@ -690,9 +690,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                 Container(height: 27,),
                 RoundedButton(
                   label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD "),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   backgroundColor: Colors.white,
                   borderColor: Styles().colors!.fillColorSecondary,
-                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: (){
                     Analytics().logSelect(target: 'Add');
                     setState(() {

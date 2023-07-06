@@ -61,11 +61,18 @@ import 'package:illinois/service/Polls.dart' as illinois;
 
 class GroupSectionTitle extends StatelessWidget {
   final String? title;
+  final TextStyle? titleTextStyle;
   final String? description;
+  final TextStyle? descriptionTextStyle;
   final bool? requiredMark;
+  final TextStyle? requiredMarkTextStyle;
   final EdgeInsetsGeometry margin;
 
-  GroupSectionTitle({Key? key, this.title, this.description, this.requiredMark, this.margin = const EdgeInsets.only(bottom: 8, top: 16)}) : super(key: key);
+  GroupSectionTitle({Key? key,
+    this.title, this.titleTextStyle,
+    this.description, this.descriptionTextStyle,
+    this.requiredMark, this.requiredMarkTextStyle,
+    this.margin = const EdgeInsets.only(bottom: 8, top: 16)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -73,15 +80,15 @@ class GroupSectionTitle extends StatelessWidget {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: title, hint: description, header: true, excludeSemantics: true, child:
           RichText(text:
-            TextSpan(text: title, style: Styles().textStyles?.getTextStyle("widget.title.tiny"),
+            TextSpan(text: title, style: titleTextStyle ?? Styles().textStyles?.getTextStyle("widget.title.tiny"),
               children: [
-                TextSpan(text: (requiredMark == true) ?  " *" : "", style: Styles().textStyles?.getTextStyle("widget.title.tiny.extra_fat"),
+                TextSpan(text: (requiredMark == true) ?  " *" : "", style: requiredMarkTextStyle ?? Styles().textStyles?.getTextStyle("widget.title.tiny.extra_fat"),
               )
             ],),
           ),
         ),
         (description != null) ? Container(padding: EdgeInsets.only(top: 2), child:
-          Text(description ?? "", semanticsLabel: "", style:  Styles().textStyles?.getTextStyle("widget.item.small.thin"),),
+          Text(description ?? "", semanticsLabel: "", style:  descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.item.small.thin"),),
         ) : Container(),
       ],)
     );
@@ -366,8 +373,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                       Expanded(child:
                         RoundedButton(
                           label: Localization().getStringEx('headerbar.back.title', "Back"),
-                          fontFamily: "ProximaNovaRegular",
-                          textColor: Styles().colors!.fillColorPrimary,
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.thin"),
                           borderColor: Styles().colors!.white,
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -380,8 +386,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                       Expanded(child:
                         RoundedButton(
                           label: buttonTitle ?? '',
-                          fontFamily: "ProximaNovaBold",
-                          textColor: Styles().colors!.fillColorPrimary,
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                           borderColor: Styles().colors!.fillColorSecondary,
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -730,17 +735,17 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
                               label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                               borderColor: Styles().colors!.fillColorSecondary,
                               backgroundColor: Styles().colors!.background,
-                              textColor: Styles().colors!.fillColorPrimary,
                               onTap: _onTapUseUrl)),
                       Padding(
                           padding: EdgeInsets.all(10),
                           child: RoundedButton(
                               label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from Device"),
+                              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                               borderColor: Styles().colors!.fillColorSecondary,
                               backgroundColor: Styles().colors!.background,
-                              textColor: Styles().colors!.fillColorPrimary,
                               progress: _showProgress,
                               onTap: _onTapChooseFromDevice)),
                     ]))
@@ -934,7 +939,7 @@ class _GroupCardState extends State<GroupCard> {
       wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    List<String>? attributesList = Groups().contentAttributes?.displayAttributeValuesListFromSelection(widget.group?.attributes,
+    List<String>? attributesList = Groups().contentAttributes?.displaySelectedLabelsFromSelection(widget.group?.attributes,
       usage: ContentAttributeUsage.label);
     if ((attributesList != null) && attributesList.isNotEmpty) {
       for (String attribute in attributesList) {
@@ -1012,7 +1017,7 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   Widget _buildCategories() {
-    List<String>? displayList = Groups().contentAttributes?.displayAttributeValuesListFromSelection(widget.group?.attributes,
+    List<String>? displayList = Groups().contentAttributes?.displaySelectedLabelsFromSelection(widget.group?.attributes,
       usage: ContentAttributeUsage.category);
     return (displayList?.isNotEmpty ?? false) ? Row(children: [
       Expanded(child:
@@ -1033,7 +1038,7 @@ class _GroupCardState extends State<GroupCard> {
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
         if (attribute.usage == ContentAttributeUsage.property) {
-          List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(groupAttributes);
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             propertiesList.add(_buildProperty("${attribute.displayTitle}: ", displayAttributeValues.join(', ')));
           }
@@ -1941,7 +1946,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           ),
           Visibility(
             visible: _showChangeButton,
-            child: RoundedButton(label: "Edit", onTap: _onTapEdit, textColor: Styles().colors!.fillColorSecondary!,conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
+            child: RoundedButton(label: "Edit", onTap: _onTapEdit, textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat.secondary"),conentAlignment: MainAxisAlignment.start, contentWeight: 0.33, padding: EdgeInsets.all(3), maxBorderRadius: 5,)
           )
         ],
       ),
@@ -2204,7 +2209,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
                       excludeSemantics: true,
                       child: RoundedButton(
                           label:StringUtils.isEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
-                          textColor: Styles().colors!.fillColorPrimary,
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                           contentWeight: 0.8,
                           onTap: (){ _onTapAddImage();}
                       )))):
@@ -2865,17 +2870,17 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
                   Expanded(
                   child: RoundedButton(
                       label: Localization().getStringEx("widget.groups.selection.button.send.label", "Send"),//TBD localize
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.white,
-                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: _onTapSelect
                   )),
                   Container(width: 16,),
                   Expanded(child:RoundedButton(
                       label: Localization().getStringEx("widget.groups.selection.button.cancel.label", "Cancel"),//TBD localize
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       borderColor: Styles().colors!.fillColorPrimary,
                       backgroundColor: Styles().colors!.white,
-                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: _onTapClose
                   ))
                 ],

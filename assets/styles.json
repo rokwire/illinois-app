@@ -51,7 +51,7 @@
     "blackTransparent06"                    :"#99000000",
     "blackTransparent018"                   :"#30000000",
     "blackTransparent038"                   :"#61000000",
-    "redTransparent01"                        :"#F44336FF",
+    "redTransparent01"                        :"#F4FF4336",
     "blueShade900"                              :"#0D47A1FF",
 
     "mediumGray"                            :"#717372",
@@ -176,6 +176,7 @@
     "widget.title.medium.extra_fat": {"font_family": "extra_bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.title.regular.fat": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular.semi_fat": {"font_family": "semi_bold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.title.regular.extra_fat": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular.medium_fat": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.regular": {"font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
@@ -183,7 +184,9 @@
     "widget.title.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.fat.spaced": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary", "letter_spacing": 1.0},
     "widget.title.tiny": {"font_family": "bold", "size": 12.0, "color": "fillColorPrimary"},
+    "widget.title.tiny.highlight": {"extends" : "widget.title.tiny", "color": "white"},
     "widget.title.tiny.extra_fat": {"font_family": "extra_bold", "size": 12.0, "color": "fillColorPrimary"},
+    "widget.title.tiny.extra_fat.highlight": {"extends": "widget.title.tiny.extra_fat", "color": "white"},
     "widget.title.light.medium_large.extra_fat": {"font_family": "extra_bold", "size": 22.0, "color": "textColorPrimary"},
     "widget.title.light.large.extra_fat": { "font_family": "extra_bold", "size": 20.0, "color": "textColorPrimary"},
     "widget.title.light.large.fat": { "font_family": "bold", "size": 20.0, "color": "textColorPrimary"},
@@ -225,6 +228,7 @@
     "widget.description.medium": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.description.regular.thin": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.regular": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.description.regular.highlight": { "extends": "widget.description.regular", "color": "white"},
     "widget.description.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.small": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small_underline": { "font_family": "medium", "size": 14.0, "decoration": "underline"},
@@ -250,7 +254,9 @@
     "widget.item.small.fat": { "font_family": "bold", "size": 14.0, "color": "textBackground"},
     "widget.item.small": { "font_family": "medium", "size": 14.0, "color": "textBackground"},
     "widget.item.small.thin": { "font_family": "regular", "size": 14.0, "color": "textBackground"},
+    "widget.item.small.thin.highlight": { "extends": "widget.item.small.thin", "color": "white" },
     "widget.item.small.thin.spaced": { "font_family": "regular", "size": 14.0, "color": "textBackground", "letter_spacing": 1.0},
+    "widget.item.small.thin.italic": { "font_family": "regular_italic", "size": 14.0, "color": "textBackground", "letter_spacing": 1.0},
     "widget.item.small.semi_fat": { "font_family": "semi_bold", "size": 14.0, "color": "textBackground"},
     "widget.item.tiny.extra_fat": { "font_family": "extra_bold", "size": 12.0, "color": "textBackground"},
     "widget.item.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "textBackground"},
@@ -263,7 +269,9 @@
     "widget.label.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorSecondary"},
     "widget.label.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
 
+    "widget.info.large": { "font_family": "regular", "size": 22.0, "color": "textSurface"},
     "widget.info.medium": { "font_family": "regular", "size": 18.0, "color": "textSurface"},
+    "widget.info.medium.underline": { "font_family": "regular", "size": 18.0, "color": "textSurface", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.info.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textSurface"},
     "widget.info.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textSurface"},
     "widget.info.regular": { "font_family": "medium", "size": 16.0, "color": "textSurface"},
@@ -277,8 +285,20 @@
     "widget.tab.selected": {"font_family": "extra_bold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.tab.not_selected": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
 
+    "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
+    "widget.button.disabled.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "surfaceAccent"},
+    "widget.button.disabled.title.large.fat.variant": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimaryTransparent03"},
+    "widget.button.disabled.title.large.fat.variant_two": { "font_family": "bold", "size": 20.0, "color": "disabledTextColorTwo"},
+    "widget.button.disabled.title.medium.fat.variant": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimaryTransparent03"},
+    "widget.button.disabled.title.medium.fat.variant_two": { "font_family": "bold", "size": 16.0, "color": "disabledTextColorTwo"},
+    "widget.button.disabled.title.small.fat": { "font_family": "bold", "size": 14.0, "color": "surfaceAccent"},
+
     "widget.button.title.extra_large": { "font_family": "bold", "size": 26.0, "color": "fillColorPrimary"},
     "widget.button.title.large.fat": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.button.title.large.fat.variant": { "font_family": "bold", "size": 20.0, "color": "fillColorPrimaryVariant"},
+    "widget.button.title.large.fat.variant2": { "font_family": "bold", "size": 20.0, "color": "surface"},
+    "widget.button.title.large.fat.secondary": { "font_family": "bold", "size": 20.0, "color": "fillColorSecondary"},
     "widget.button.title.large.thin": { "font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
     "widget.button.title.regular": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.regular.underline": { "font_family": "bold", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
@@ -286,15 +306,20 @@
     "widget.button.title.regular.thin.underline": { "font_family": "regular", "size": 18.0, "color": "fillColorPrimary", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.button.title.medium.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.medium.fat.variant": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "widget.button.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.medium.thin.secondary": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary"},
+    "widget.button.title.medium.fat.secondary": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
     "widget.button.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.button.title.medium.fat.underline": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary", "height":  1.61},
-    "widget.button.title.enabled": { "font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
-    "widget.button.title.disabled": { "font_family": "bold", "size": 16.0, "color": "surfaceAccent"},
+    "widget.button.title.medium.fat.underline.highlight": { "extends": "widget.button.title.medium.fat.underline", "color": "white", "decoration_color": "white" },
     "widget.button.title.small": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.button.title.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.button.title.small.underline": { "font_family": "regular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
-    "widget.button.title.small.semi_bold": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.button.title.small.semi_bold.underline": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.button.title.small.semi_fat": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.button.title.small.semi_fat.underline": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+
+    "widget.button.description.medium": { "font_family": "bold", "size": 16.0, "color": "textSurface"},
     "widget.button.description.small": { "font_family": "regular", "size": 14.0, "color": "textSurface"},
     "widget.button.description.tiny": { "font_family": "regular", "size": 12.0, "color": "textSurface"},
 
@@ -306,6 +331,7 @@
     "widget.button.light.title.medium.thin": { "font_family": "regular", "size": 16.0, "color": "textBackground"},
     "widget.button.light.title.medium.underline": { "font_family": "medium", "size": 16.0, "color": "textBackground",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
+    "widget.colourful_button.title.large.accent": { "font_family": "bold", "size": 20.0, "color": "white"},
     "widget.colourful_button.title.medium": { "font_family": "regular", "size": 18.0, "color": "white"},
     "widget.colourful_button.title.medium.accent": { "font_family": "bold", "size": 18.0, "color": "white"},
     "widget.colourful_button.title": { "font_family": "medium", "size": 16.0, "color": "white"},
@@ -378,7 +404,7 @@
 
     "widget.explore.card.detail.small": {"extends": "widget.card.detail.tiny.medium_fat"},
     "widget.explore.card.detail.regular": {"extends": "widget.item.small"},
-    "widget.explore.card.detail.regular.underline": {"extends": "widget.card.detail.small_variant2", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.explore.card.detail.regular.underline": {"extends": "widget.explore.card.detail.regular", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.explore.card.detail.large": {"extends": "widget.card.detail.medium"},
     "widget.explore.card.title.regular":  {"extends": "widget.title.medium"},
     "widget.explore.card.title.regular.extra_fat":  {"extends":  "widget.title.medium.extra_fat"},
@@ -437,6 +463,9 @@
 
     "widget.student_courses.title.extra_large": {"extends": "widget.title.extra_large", "letter_spacing": 1.0},
 
+    "widget.tab_bar.title.selected": {"font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
+    "widget.tab_bar.title.not_selected": {"font_family": "bold", "size": 12.0, "color": "mediumGray"},
+
     "panel.event_schedule.title": {"extends": "widget.title.large.extra_fat"},
     "panel.event_schedule.category": {"extends": "widget.detail.regular.extra_fat"},
     "panel.event_schedule.map.description": {"font_family": "medium", "size": 16.0, "color": "blackTransparent038"},
@@ -490,6 +519,8 @@
     "panel.wellness.resource.button.title.large": {"extends": "widget.button.title.regular"},
     "panel.wellness.resource.button.title.regular": {"extends": "widget.button.title.medium.fat"},
 
+    "panel.wellness.sections.health_screener.description": {"font_family": "regular", "size": 16.0, "color": "surface"},
+
     "panel.athletics.home.heading.regular": {"font_family": "regular", "size": 16.0, "color": "white",  "weight" :  "w900", "letter_spacing" :  1.0},
     "panel.athletics.home.title.large": {"font_family": "regular", "size": 20.0, "color": "fillColorPrimary",  "weight" :  "w900"},
     "panel.athletics.home.detail.medium": {"extends": "widget.item.regular"},
@@ -504,14 +535,18 @@
     "panel.mtd_bus.role": {"font_family": "medium", "size": 36.0, "color": "white"},
     "panel.mtd_bus.clock.time": {"font_family": "medium", "size": 48.0, "color": "white"},
 
+    "panel.icard.content.faqs.mobile_card.usage.question": {"font_family": "bold", "size": 16.0, "color": "fillColorPrimary"},
+
     "panel.id_card.close_button": {"font_family": "light", "size": 48.0, "color": "fillColorPrimary"},
-    "panel.id_card.heading.title": {"extends": "widget.heading.large.extra_fat"},
+    "panel.id_card.heading.title": {"extends": "widget.heading.large.extra_fat", "color":"fillColorSecondary"},
     "panel.id_card.detail.title.extra_large": {"font_family": "extra_bold", "size": 28.0, "color": "fillColorPrimary"},
     "panel.id_card.detail.title.large": {"extends": "widget.title.extra_large.extra_fat"},
     "panel.id_card.detail.title.regular": {"extends": "widget.title.large"},
     "panel.id_card.detail.title.medium": {"extends": "widget.title.large.fat"},
     "panel.id_card.detail.title.small": {"extends": "widget.title.regular"},
     "panel.id_card.detail.title.tiny": {"extends": "widget.title.small"},
+    "panel.id_card.detail.description.italic": {"font_family": "medium_italic", "size": 12.0, "color": "mediumGray"},
+    "panel.id_card.detail.description.medium.underline": {"font_family": "medium", "size": 14.0, "color": "mediumGray", "decoration": "underline", "decoration_thickness": 1.0, "decoration_color": "fillColorSecondary"},
 
     "panel.settings.heading.title.large": {"extends": "widget.title.extra_large.semi_fat"},
     "panel.settings.detail.title.regular": {"extends": "widget.item.regular.thin"},
@@ -704,8 +739,11 @@
     "phone": {"src": "images/icon-phone.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo":  "size"},
     "mail": {"src": "images/icon-mail.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo":  "size"},
     "person": {"src": "images/identiy-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size"},
+    "organization": {"src": "images/icon-organization.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},
     "key": {"src": "images/icon-login-grey.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo":  "size"},
     "check": {"src": "images/icon-check-simple.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 12, "todo": "size issue"},
+    "filters": {"src": "images/icon-filters.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size, color"},
+    "sort": {"src": "images/icon-sort.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size, color"},
 
     "clock": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "fillColorSecondary", "size": 18},
 
@@ -725,6 +763,7 @@
     "box-outline-gray": {"src": "images/deselected-checkbox.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "location-outline-gray": {"src": "images/tab-navigate.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "size"},
     "campus-tools-outline-gray": {"src": "images/tab-browse.png", "type": "flutter.asset", "color": "mediumGray", "size": 18, "todo": "size"},
+    "search-outline-gray": {"src": "images/icon-search.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
 
     "box-inside-gray": {"src": "images/disabled-checkbox.png", "type": "flutter.asset", "color": "mediumGray2", "size": 24},
     "box-inside-light-gray": {"src": "images/partial-selected-checkbox.png", "type": "flutter.asset", "color": "mediumGray2", "size": 24},
@@ -736,10 +775,15 @@
 
     "chevron-left-bold": {"src": "images/chevron-left.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
     "chevron-right-bold": {"src": "images/chevron-right.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
-
+    
+    "icon-up-orange": {"src": "images/icon-up.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
+    "icon-down-orange": {"src": "images/icon-down-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 14, "todo": "size issue?"},
+    "icon-up-blue": {"src": "images/icon-up.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 14, "todo": "size issue?"},
+    "icon-down-blue": {"src": "images/icon-down.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 14, "todo": "size issue?"},
 
     "plus-circle-large": {"src": "images/button-plus-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 34},
 
+    "close-circle": {"src": "images/close-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
     "close-circle-white": {"src": "images/close-white.png", "type": "flutter.asset", "color": "surface", "size": 24},
     "close-circle-white-large": {"src": "images/close-white-large.png", "type": "flutter.asset", "color": "surface", "size": 54},
     "more-white": {"src": "images/groups-more-inactive.png", "type": "flutter.asset", "color": "surface", "size": 24},
@@ -893,6 +937,12 @@
     "payment-credit-card": {"src": "images/icon-payment-type-credit-card.png", "type": "flutter.asset"},
     "payment-cash": {"src": "images/icon-payment-type-cache.png", "type": "flutter.asset"},
     "payment-google-pay": {"src": "images/icon-payment-type-google-pay.png", "type": "flutter.asset"},
-    "payment-apple-pay": {"src": "images/icon-payment-type-apple-pay.png", "type": "flutter.asset"}
+    "payment-apple-pay": {"src": "images/icon-payment-type-apple-pay.png", "type": "flutter.asset"},
+
+    "mobile-access-logo": {"src": "images/hid-logo.png", "type": "flutter.asset"},
+
+    "event-detail-default": {"src": "images/event-detail-default.png", "type": "flutter.asset"},
+    "event-save-to-calendar": {"src": "images/icon-save.png", "type": "flutter.asset"},
+    "event-filters-background": {"src": "images/event-filters-background.png", "type": "flutter.asset"}
   }
 }

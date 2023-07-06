@@ -5,6 +5,103 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.0.22] - 2023-07-06
+### Added
+- Added background image to Events2 filters panel [#3356](https://github.com/rokwire/illinois-app/issues/3356).
+### Removed
+- "Preview" survey button in Create Event panel [#3357](https://github.com/rokwire/illinois-app/issues/3357).
+### Changed
+- Events2 home panel text updates [#3361](https://github.com/rokwire/illinois-app/issues/3361).
+- Improved custom start and end time filter validation [#3361](https://github.com/rokwire/illinois-app/issues/3361).
+- Polished event date display [#3364](https://github.com/rokwire/illinois-app/issues/3364).
+- Do not launch directions from event card, show distance for inperson events [#3366](https://github.com/rokwire/illinois-app/issues/3366).
+
+## [5.0.21] - 2023-07-05
+### Added
+- Follow-Up survey details in Create Event panel [#3353](https://github.com/rokwire/illinois-app/issues/3353).
+- Sponsorship and Contacts in Create Event panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.20] - 2023-07-04
+### Changed
+- Updated event detail panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.19] - 2023-07-04
+### Added
+- Illinois Assistant query limits and feedback integration [#3349](https://github.com/rokwire/illinois-app/issues/3349).
+- Location picker utility in Create Event panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Changed
+- Initialize simplified default content for Favorites panel [#3346](https://github.com/rokwire/illinois-app/issues/3346).
+- Cleaned up registratio setup panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+- Updated event detail panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.18] - 2023-07-03
+### Changed
+- Do not initialize default content for Favorites panel [#3346](https://github.com/rokwire/illinois-app/issues/3346).
+- Preserve Home and Browse tout images aspect ratio while loading.
+- Update Event2DetailPanel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Added
+- Hooked up attendance details in create event panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.17] - 2023-06-30
+### Changed
+- Check for calendar admin permission to expose Create Event2 button [#3343](https://github.com/rokwire/illinois-app/issues/3343).
+### Added
+- Hooked up event registration in create event panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.16] - 2023-06-29
+### Changed
+- Hooked up first cut-off version of Create Event2 panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.15] - 2023-06-26
+### Added
+- Created Create Event2 panel, in progress [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.14] - 2023-06-23
+### Added
+- Added filters to Events2 map view and implemented list/map swtiching [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+- Added support for "events" fcm notification deep link [#3326](https://github.com/rokwire/illinois-app/issues/3326).
+### Changed
+- Expect yyyy-MM-dd date format for expiration date in student id [#2921](https://github.com/rokwire/illinois-app/issues/2921).
+
+## [5.0.13] - 2023-06-22
+### Added
+- Implemented gradual page loading of Events2 home panel content [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+- Implemented location based filters and sort in Events2 home panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+- Created Events2 map view [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+- Display user's 6-digit credential id in mobile access UI [#2921](https://github.com/rokwire/illinois-app/issues/2921).
+
+## [5.0.12] - 2023-06-20
+### Changed
+- Handled custom range Event Time filter in Events2 home panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Added
+- Added sort type and sort order capabilitues in Events2 home panel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.11] - 2023-06-19
+### Added
+- Added fcm notification deep link support for: Athletics/Team, Athletics/Tam/Roster and Guide/Article/Detail [#3326](https://github.com/rokwire/illinois-app/issues/3326).
+### Removed
+- "Twist And Go" from icard+ settings [#2921](https://github.com/rokwire/illinois-app/issues/2921).
+
+## [5.0.10] - 2023-06-16
+### Added
+- Added Event Time filter and related attribute updates [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.9] - 2023-06-15
+### Added
+- Added Event Types filter and related attribute updates [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Changed
+- Export button text styles to styles.json [#2932](https://github.com/rokwire/illinois-app/issues/2932).
+
+## [5.0.8] - 2023-06-12
+### Added
+- Illinois Assistant chatbot integration [#3220](https://github.com/rokwire/illinois-app/issues/3220).
+- Initial preview of new Events interface [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.7] - 2023-06-12
+### Added
+- Initial integration with HID / Origo sdk for mobile access [#2921](https://github.com/rokwire/illinois-app/issues/2921).
+- Health Screener looks and functions similar to skills assessment [#2988](https://github.com/rokwire/illinois-app/issues/2988).
+
 ## [5.0.6] - 2023-05-29
 ### Added
 - Add survey creation tool [#3295](https://github.com/rokwire/illinois-app/issues/3295).

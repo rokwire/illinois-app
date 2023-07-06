@@ -26,7 +26,9 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -63,6 +65,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
@@ -132,6 +135,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Inbox(),
       DeviceCalendar(),
       Events(),
+      Events2(),
       Groups(),
       CheckList(CheckList.giesOnboarding),
       CheckList(CheckList.uiucOnboarding),
@@ -146,6 +150,9 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       Appointments(),
       MTD(),
       OccupationMatching(),
+      SpeechToText(),
+    //Assistant(),
+      MobileAccess(),
     ]);
 
     ServiceError? serviceError = await illinois.Services().init();

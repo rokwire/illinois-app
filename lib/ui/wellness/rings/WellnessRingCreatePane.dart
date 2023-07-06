@@ -190,16 +190,16 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
                     RoundedButton(
                         label: Localization().getStringEx('panel.wellness.categories.manage.color.pick.cancel.button', 'Cancel'),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                         contentWeight: 0,
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                        fontSize: 16,
                         onTap: _onTapCancelColorSelection),
                     Container(width: 30),
                     RoundedButton(
                         label: Localization().getStringEx('panel.wellness.categories.manage.color.pick.select.button', 'Select'),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                         contentWeight: 0,
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                        fontSize: 16,
                         onTap: _onTapSelectColor)
                   ])))
         ]));
@@ -249,7 +249,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         padding: EdgeInsets.only(top: 30),
         child: RoundedButton(
             label: _continueButtonTitle,
-            fontSize: 16,
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
             contentWeight: 0,
             progress: _loadingSave,
             padding: EdgeInsets.symmetric(horizontal: 46, vertical: 6),
@@ -264,7 +264,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         padding: EdgeInsets.only(top: 30, right: 16),
         child: RoundedButton(
             label: Localization().getStringEx('panel.wellness.categories.delete.button', 'Delete'),
-            fontSize: 16,
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
             contentWeight: 0,
             progress: _loadingDelete,
             padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),

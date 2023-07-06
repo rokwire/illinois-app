@@ -261,9 +261,9 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                 Padding(padding: EdgeInsets.only(bottom: 8), child: RoundedButton(
                   label:  buttonTitle,
                   hint: buttonHint,
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapLogin,
                   backgroundColor: Styles().colors?.white,
-                  textColor: Styles().colors?.fillColorPrimary,
                   borderColor: Styles().colors?.fillColorSecondary,
                   progress: _isSiging,
                 ),),
@@ -272,9 +272,9 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                   Padding(padding: EdgeInsets.only(bottom: 8), child: RoundedButton(
                     label:  Localization().getStringEx("panel.onboarding2.email.button.link.cancel.label", "Cancel"),
                     hint: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.hint", ""),
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                     onTap: _onTapCancel,
                     backgroundColor: Styles().colors?.white,
-                    textColor: Styles().colors?.fillColorPrimary,
                     borderColor: Styles().colors?.fillColorSecondary,
                     progress: _isCanceling,
                   ),),

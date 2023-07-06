@@ -271,9 +271,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
               RoundedButton(
                 label: buttonTitle,
                 hint: buttonHint,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.background,
-                textColor: Styles().colors!.fillColorPrimary,
                 onTap: () => _onTapLogin()
               ),
             ),
@@ -283,9 +283,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
               RoundedButton(
                   label: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.label", "Cancel"),
                   hint: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.hint", ""),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   borderColor: Styles().colors!.fillColorSecondary,
                   backgroundColor: Styles().colors!.background,
-                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: () => _onTapCancel())
               ),
             )

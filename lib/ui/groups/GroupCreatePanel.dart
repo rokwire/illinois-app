@@ -295,7 +295,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       excludeSemantics: true,
                       child: RoundedButton(
                           label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
-                          textColor: Styles().colors!.fillColorPrimary,
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                           onTap: _onTapAddImage,
                           contentWeight: 0.8,
                     ))))
@@ -566,7 +566,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               description: _isResearchProject?
                 Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
                 Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
+              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired(contentAttributeRequirementsScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
           Container(width: 8),
@@ -574,8 +574,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             RoundedButton(
               label: Localization().getStringEx("panel.groups_create.button.attributes.title", "Edit"),
               hint: Localization().getStringEx("panel.groups_create.button.attributes.hint", ""),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapAttributes,
@@ -594,7 +594,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributes = attribute.displayAttributeValuesListFromSelection(groupAttributes, complete: true);
+        List<String>? displayAttributes = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
         if ((displayAttributes != null) && displayAttributes.isNotEmpty) {
           attributesList.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
@@ -623,6 +623,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Localization().getStringEx('panel.group.attributes.attributes.header.description', 'Choose one or more attributes that help describe this group.'),
       contentAttributes: Groups().contentAttributes,
       selection: _group?.attributes,
+      sortType: ContentAttributesSortType.alphabetical,
     ))).then((selection) {
       if ((selection != null) && mounted) {
         setState(() {
@@ -973,9 +974,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               label: (_group?.researchProject == true) ?
                 Localization().getStringEx("panel.groups_create.button.create.project.title", "Create Project") :
                 Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
+              textStyle: _canSave ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
               backgroundColor: Styles().colors!.white,
               borderColor: _canSave ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-              textColor: _canSave ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
               enabled: _canSave,
               progress:  _creating,
               onTap: _onTapCreate,

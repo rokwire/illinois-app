@@ -48,6 +48,7 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
   Map<String, dynamic> get secretCanvas => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
   Map<String, dynamic> get secretOnet => JsonUtils.mapValue(secretKeys['onet']) ?? {};
+  Map<String, dynamic> get secretAssistant => JsonUtils.mapValue(secretKeys['assistant']) ?? {};
 
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
@@ -80,6 +81,8 @@ class Config extends rokwire.Config {
 
   String? get onetUsername           => JsonUtils.stringValue(secretOnet['username']);
   String? get onetPassword           => JsonUtils.stringValue(secretOnet['password']);
+
+  String? get assistantAPIKey        => JsonUtils.stringValue(secretAssistant['api_key']);
 
   // Getters: Other University Services
   String? get shibbolethAuthTokenUrl => JsonUtils.stringValue(otherUniversityServices['shibboleth_auth_token_url']);
@@ -122,7 +125,11 @@ class Config extends rokwire.Config {
   String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);
   String? get wellnessUrl            => JsonUtils.stringValue(platformBuildingBlocks["wellness_url"]);
   String? get appointmentsUrl        => JsonUtils.stringValue(platformBuildingBlocks["appointments_url"]);
-  String? get skillsToJobsUrl        => "http://10.0.2.2:4000/skills-to-jobs/api";// JsonUtils.stringValue(platformBuildingBlocks["skills_to_jobs_url"]);
+
+  String? get skillsToJobsUrl        => JsonUtils.stringValue(platformBuildingBlocks["skills_to_jobs_url"]);
+
+  String? get assistantUrl           => JsonUtils.stringValue(platformBuildingBlocks["assistant_url"]);
+  String? get identityUrl            => JsonUtils.stringValue(platformBuildingBlocks["identity_url"]);
 
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);

@@ -90,8 +90,8 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                                 hint: Localization().getStringEx(
                                     'panel.onboarding.get_started.button.get_started.hint',
                                     ''),
+                                textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
                                 backgroundColor: Styles().colors!.fillColorPrimary,
-                                textColor: Styles().colors!.white,
                                 onTap: () => _goNext(context),
                                 borderColor: Styles().colors!.fillColorPrimary,
                                 secondaryBorderColor: Styles().colors!.white,

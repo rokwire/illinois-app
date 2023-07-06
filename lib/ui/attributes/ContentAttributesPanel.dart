@@ -13,15 +13,40 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+enum ContentAttributesSortType { native, explicit, alphabetical, }
 
 class ContentAttributesPanel extends StatefulWidget {
   final String? title;
+  final String? bgImageKey;
   final String? description;
+  final TextStyle? descriptionTextStyle;
+  final TextStyle? sectionTitleTextStyle;
+  final TextStyle? sectionDescriptionTextStyle;
+  final TextStyle? sectionRequiredMarkTextStyle;
+  final String? applyTitle;
+  final String? continueTitle;
+  final TextStyle? continueTextStyle;
+  
   final bool filtersMode;
+  final ContentAttributesSortType sortType;
   final Map<String, dynamic>? selection;
   final ContentAttributes? contentAttributes;
 
-  ContentAttributesPanel({Key? key, this.title, this.description, this.contentAttributes, this.selection, this.filtersMode = false }) : super(key: key);
+  final Future<bool?> Function({
+    required BuildContext context,
+    required ContentAttribute attribute,
+    required ContentAttributeValue value
+  })? handleAttributeValue;
+
+  ContentAttributesPanel({Key? key, this.title, this.bgImageKey,
+    this.description, this.descriptionTextStyle,
+    this.sectionTitleTextStyle, this.sectionDescriptionTextStyle, this.sectionRequiredMarkTextStyle,
+    this.applyTitle,
+    this.continueTitle, this.continueTextStyle,
+    this.contentAttributes, this.selection,
+    this.sortType = ContentAttributesSortType.native,
+    this.filtersMode = false, this.handleAttributeValue,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ContentAttributesPanelState();
@@ -29,12 +54,14 @@ class ContentAttributesPanel extends StatefulWidget {
 
 class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
-  Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
+  Map<String, LinkedHashSet<dynamic>> _selection = <String, LinkedHashSet<dynamic>>{};
+
+  int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsScopeFilter : contentAttributeRequirementsScopeCreate;
 
   @override
   void initState() {
     if (widget.selection != null) {
-      _selection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<String>>();
+      _selection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<dynamic>>();
     }
     super.initState();
   }
@@ -47,13 +74,20 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: widget.title),
+      appBar: HeaderBar(title: widget.title, actions: _headerBarActions),
       backgroundColor: Styles().colors?.background,
-      body: _buildContent(),
+      body: _buildScaffoldContent(),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildScaffoldContent() => (widget.bgImageKey != null) ?
+    Stack(children: [
+      _buildImageBackground(),
+      _buildPanelContent(),
+    ],) :
+      _buildPanelContent();
+
+  Widget _buildPanelContent() {
     List<ContentAttribute>? attributes = widget.contentAttributes?.attributes;
     return ((attributes != null) && attributes.isNotEmpty) ? Column(children: <Widget>[
       Expanded(child:
@@ -73,17 +107,17 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     if (StringUtils.isNotEmpty(widget.description)) {
       conentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-        Text(widget.description ?? '', style: Styles().textStyles?.getTextStyle("widget.description.regular")),
+        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
       ));
     }
 
     List<ContentAttribute>? attributes = ListUtils.from<ContentAttribute>(widget.contentAttributes?.attributes);
     if ((attributes != null) && attributes.isNotEmpty) {
-      attributes.sort((ContentAttribute attribute1, ContentAttribute attribute2) {
-        String attributeTitle1 = attribute1.displayTitle ?? '';
-        String attributeTitle2 = attribute2.displayTitle ?? '';
-        return attributeTitle1.compareTo(attributeTitle2);
-      });
+      switch(widget.sortType) {
+        case ContentAttributesSortType.alphabetical: attributes.sort((ContentAttribute attribute1, ContentAttribute attribute2) => attribute1.compareByTitle(attribute2)); break;
+        case ContentAttributesSortType.explicit: attributes.sort((ContentAttribute attribute1, ContentAttribute attribute2) => attribute1.compareBySortOrder(attribute2)); break;
+        case ContentAttributesSortType.native: break;
+      }
       for (ContentAttribute attribute in attributes) {
         Widget? attributeWidget;
         switch (attribute.widget) {
@@ -101,16 +135,14 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   Widget _buildAttributeDropDown(ContentAttribute attribute) {
-    LinkedHashSet<String>? attributeLabels = _selection[attribute.id];
-    bool hasSelection = ((attributeLabels != null) && attributeLabels.isNotEmpty);
-    LinkedHashSet<String>? displayAttributeLabels = (CollectionUtils.isEmpty(attributeLabels) && (attribute.nullValue is String)) ?
-      LinkedHashSet<String>.from([attribute.nullValue]) : attributeLabels;
+    LinkedHashSet<dynamic>? attributeRawValues = _selection[attribute.id];
+    bool hasSelection = ((attributeRawValues != null) && attributeRawValues.isNotEmpty);
 
     List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
     bool visible = (attributeValues?.isNotEmpty ?? false);
     bool enabled = (attributeValues?.isNotEmpty ?? false) && (hasSelection || (widget.contentAttributes?.requirements?.canSelectMoreCategories(_selection) ?? true));
 
-    String? title = _constructAttributeDropdownTitle(attribute, displayAttributeLabels);
+    String? title = _constructAttributeDropdownTitle(attribute, attributeRawValues);
     String? hint = widget.filtersMode ? (attribute.displaySemanticsFilterHint ?? attribute.displaySemanticsHint) : attribute.displaySemanticsHint;
     TextStyle? textStyle = Styles().textStyles?.getTextStyle(hasSelection ? 'widget.group.dropdown_button.value' : 'widget.group.dropdown_button.hint');
     void Function()? onTap = enabled ? () => _onAttributeDropdownTap(attribute: attribute, attributeValues: attributeValues) : null;
@@ -119,8 +151,11 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
           title: (attribute.displayLongTitle ?? attribute.displayTitle)?.toUpperCase(),
-          description: attribute.displayDescription,
-          requiredMark: !widget.filtersMode && attribute.isRequired,
+          titleTextStyle: widget.sectionTitleTextStyle,
+          description: !widget.filtersMode ? attribute.displayDescription : null,
+          descriptionTextStyle: widget.sectionDescriptionTextStyle,
+          requiredMark: !widget.filtersMode && attribute.isRequired(requirementsScope),
+          requiredMarkTextStyle: widget.sectionRequiredMarkTextStyle,
         ),
         _AttributeRibbonButton(
           title: title, hint: hint, textStyle: textStyle, onTap: onTap,
@@ -129,46 +164,54 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     );
   }
 
-  String? _constructAttributeDropdownTitle(ContentAttribute attribute, LinkedHashSet<String>? attributeLabels) {
-    if ((attributeLabels == null) || attributeLabels.isEmpty) {
-      return widget.filtersMode ? (attribute.displayEmptyFilterHint ?? attribute.displayEmptyHint) : attribute.displayEmptyHint;
-    }
-    else if (attributeLabels.length == 1) {
-      return attribute.displayString(attributeLabels.first);
+  String? _constructAttributeDropdownTitle(ContentAttribute attribute, LinkedHashSet<dynamic>? attributeRawValues) {
+
+    if (CollectionUtils.isEmpty(attributeRawValues) && (attribute.nullValue is String)) {
+      return attribute.displayString(attribute.nullValue);
     }
     else {
-      String title = '';
-      for (String attributeLabel in attributeLabels) {
-        String attributeName = attribute.displayString(attributeLabel) ?? attributeLabel;
-        if (attributeName.isNotEmpty) {
-          if (title.isNotEmpty) {
-            title += ', ';
-          }
-          title += attributeName;
-        }
+      List<String>? attributeLabels = attribute.displaySelectedLabelsFromRawValue(attributeRawValues);
+
+      if ((attributeLabels == null) || attributeLabels.isEmpty) {
+        return widget.filtersMode ? (attribute.displayEmptyFilterHint ?? attribute.displayEmptyHint) : attribute.displayEmptyHint;
       }
-      return title;
+      else if (attributeLabels.length == 1) {
+        return attribute.displayString(attributeLabels.first);
+      }
+      else {
+        String title = '';
+        for (String attributeLabel in attributeLabels) {
+          String attributeName = attribute.displayString(attributeLabel) ?? attributeLabel;
+          if (attributeName.isNotEmpty) {
+            if (title.isNotEmpty) {
+              title += ', ';
+            }
+            title += attributeName;
+          }
+        }
+        return title;
+      }
     }
+
   }
 
-  void _onAttributeDropdownTap({ContentAttribute? attribute, List<ContentAttributeValue>? attributeValues}) {
-    Analytics().logSelect(target: attribute?.title);
-    String? attributeId = attribute?.id;
+  void _onAttributeDropdownTap({required ContentAttribute attribute, List<ContentAttributeValue>? attributeValues}) {
+    Analytics().logSelect(target: attribute.title);
 
-    LinkedHashSet<String>? attributeLabels = _selection[attribute?.id];
-    LinkedHashSet<String>? displayAttributeLabels = (CollectionUtils.isEmpty(attributeLabels) && (attribute?.nullValue is String)) ?
-      LinkedHashSet<String>.from([attribute?.nullValue]) : attributeLabels;
+    String? attributeId = attribute.id;
+    LinkedHashSet<dynamic>? attributeRawValues = _selection[attributeId];
 
-    Navigator.push<LinkedHashSet<String>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
+    Navigator.push<LinkedHashSet<dynamic>?>(context, CupertinoPageRoute(builder: (context) => ContentAttributesCategoryPanel(
       attribute: attribute,
       attributeValues: attributeValues,
-      selection: displayAttributeLabels,
-      multipleSelection: widget.filtersMode || (attribute?.isMultipleSelection ?? false),
+      contentAttributes: widget.contentAttributes,
+      selection: attributeRawValues,
       filtersMode: widget.filtersMode,
-    ),)).then(((LinkedHashSet<String>? selection) {
+      handleAttributeValue: widget.handleAttributeValue,
+    ),)).then(((LinkedHashSet<dynamic>? selection) {
       if ((selection != null) && (attributeId != null)) {
-        if ((attribute?.nullValue is String) && selection.contains(attribute?.nullValue)) {
-          selection.remove(attribute?.nullValue);
+        if ((attribute.nullValue is String) && selection.contains(attribute.nullValue)) {
+          selection.remove(attribute.nullValue);
         }
         setStateIfMounted(() {
           _selection[attributeId] = selection;
@@ -185,9 +228,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
 
-    LinkedHashSet<String>? attributeLabels = _selection[attribute.id];
-    ContentAttributeValue? selectedAttributeValue = ((attributeLabels != null) && attributeLabels.isNotEmpty) ?
-      attribute.findValue(label: attributeLabels.first) : null;
+    LinkedHashSet<dynamic>? attributeRawValues = _selection[attribute.id];
+    ContentAttributeValue? selectedAttributeValue = ((attributeRawValues != null) && attributeRawValues.isNotEmpty) ?
+      attribute.findValue(value: attributeRawValues.first) : null;
     dynamic displayValue = selectedAttributeValue?.value ?? attribute.nullValue;
 
     bool visible = (attributeValues?.isNotEmpty ?? false);
@@ -212,8 +255,11 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
           title: (attribute.displayLongTitle ?? attribute.displayTitle)?.toUpperCase(),
+          titleTextStyle: widget.sectionTitleTextStyle,
           description: attribute.displayDescription,
-          requiredMark: !widget.filtersMode && attribute.isRequired,
+          descriptionTextStyle: widget.sectionDescriptionTextStyle,
+          requiredMark: !widget.filtersMode && attribute.isRequired(requirementsScope),
+          requiredMarkTextStyle: widget.sectionRequiredMarkTextStyle,
         ),
         Container (
           decoration: BoxDecoration(
@@ -243,9 +289,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     String? attributeId = attribute.id;
     if (attributeId != null) {
       List<ContentAttributeValue>? attributeValues = attribute.attributeValuesFromSelection(_selection);
-      LinkedHashSet<String> attributeLabels = _selection[attributeId] ??= LinkedHashSet<String>();
-      ContentAttributeValue? selectedAttributeValue = attributeLabels.isNotEmpty ?
-        ContentAttributeValue.findInList(attributeValues, label: attributeLabels.first) : null;
+      LinkedHashSet<dynamic> attributeRawValues = _selection[attributeId] ??= LinkedHashSet<dynamic>();
+      ContentAttributeValue? selectedAttributeValue = attributeRawValues.isNotEmpty ?
+        ContentAttributeValue.findInList(attributeValues, value: attributeRawValues.first) : null;
       
       dynamic selectedValue = selectedAttributeValue?.value;
       if (attribute.nullValue != null) {
@@ -260,27 +306,32 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       }
       selectedAttributeValue = (selectedValue != null) ? ContentAttributeValue.findInList(attributeValues, value: selectedValue) : null;
 
-      String? selectedLabel = selectedAttributeValue?.label;
-      Analytics().logSelect(target: selectedAttributeValue?.label, source: attribute.title);
+      dynamic selectedRawValue = selectedAttributeValue?.value;
+      Analytics().logSelect(target: selectedAttributeValue?.selectLabel, source: attribute.title);
       setStateIfMounted(() {
-        attributeLabels.clear();
-        if (selectedLabel != null) {
-          attributeLabels.add(selectedLabel);
+        attributeRawValues.clear();
+        if (selectedRawValue != null) {
+          attributeRawValues.add(selectedRawValue);
         }
       });
     }
-
-
   }
 
   bool get _isSelectionNotEmpty {
-    for (LinkedHashSet<String> attributeLabels in _selection.values) {
+    for (LinkedHashSet<dynamic> attributeLabels in _selection.values) {
       if (attributeLabels.isNotEmpty) {
         return true;
       }
     }
     return false;
   }
+
+  List<Widget>? get _headerBarActions => (widget.filtersMode && _isInitialSelectionNotEmpty) ? <Widget>[
+    _buildHeaderBarButton(
+      title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+      onTap: _onTapClear,
+    )
+  ] : null;
 
   bool get _isInitialSelectionNotEmpty {
 
@@ -298,40 +349,64 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return false;
   }
 
-  Widget _buildCommands() {
-    List<Widget> buttons = <Widget>[];
+  Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) =>
+    Semantics(label: title, button: true, excludeSemantics: true, child: 
+      InkWell(onTap: onTap, child:
+        Align(alignment: Alignment.center, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                child: Text(title ?? '',
+                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                ),
+              ),
+            ],)
+          ),
+        ),
+        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //),
+      ),
+    );
 
-    if (widget.filtersMode) {
-      bool canClear = _isInitialSelectionNotEmpty;
-      buttons.addAll(<Widget>[
-        Expanded(child: RoundedButton(
-          label: Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
-          textColor: canClear ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          borderColor: canClear ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
+  Widget _buildImageBackground() => Positioned.fill(child:
+    Styles().images?.getImage(widget.bgImageKey, excludeFromSemantics: true, fit: BoxFit.cover) ?? Container()
+  );
+
+  Widget _buildCommands() {
+    double bottomPadding = 16;
+    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
+    String applyTitle = widget.applyTitle ?? (widget.filtersMode ? 
+      Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter') :
+      Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes'));
+    List<Widget> commands = <Widget>[
+      Row(children: <Widget>[
+        Expanded(flex: 1, child: Container()),
+        Expanded(flex: 2, child: RoundedButton(
+          label: applyTitle,
+          textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+          borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
           backgroundColor: Styles().colors?.white,
-          enabled: canClear,
-          onTap: _onTapClear
+          enabled: canApply,
+          onTap: _onTapApply
+        )),
+        Expanded(flex: 1, child: Container()),
+      ],)
+    ];
+
+    if (widget.continueTitle != null) {
+      commands.add(InkWell(onTap: _onTapContinue, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+          Text(widget.continueTitle ?? '', style: widget.continueTextStyle ?? Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline'),)
         )
-      )]);
+      ,));
+
     }
 
-    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
-    String applyTitle = widget.filtersMode ? 
-      Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter') :
-      Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes');
-    buttons.add(Expanded(child:
-      RoundedButton(
-        label: applyTitle,
-        textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-        borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
-        backgroundColor: Styles().colors?.white,
-        enabled: canApply,
-        onTap: _onTapApply
-      )
-    ));
     return SafeArea(child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-        Row(children: buttons,)
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: bottomPadding), child:
+        Column(mainAxisSize: MainAxisSize.min, children: commands,)
       )
     );
   }
@@ -344,6 +419,11 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   void _onTapClear() {
     Analytics().logSelect(target: 'Clear');
     Navigator.of(context).pop(<String, dynamic>{});
+  }
+
+  void _onTapContinue() {
+    Analytics().logSelect(target: 'Continue');
+    Navigator.of(context).pop((widget.selection != null) ? Map<String, dynamic>.from(widget.selection!) : <String, dynamic>{});
   }
 }
 

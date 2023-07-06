@@ -125,9 +125,7 @@ class _SettingsAddIlliniCashPanelState
                       SliverHeaderBar(
                         leadingIconKey: widget.scrollController == null ? 'chevron-left-white' : 'chevron-left-bold',
                         title: Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
-                        textColor: widget.scrollController == null
-                            ? Styles().colors!.white
-                            : Styles().colors!.fillColorPrimary,
+                        textStyle:  widget.scrollController == null ? Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles?.getTextStyle("widget.title.regular.extra_fat"),
                       ),
                       SliverList(
                         delegate: SliverChildListDelegate([
@@ -583,9 +581,8 @@ class _SettingsAddIlliniCashPanelState
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.cancel.hint',
                                               ''),
+                                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                                           backgroundColor: Styles().colors!.white,
-                                          fontSize: 16.0,
-                                          textColor: Styles().colors!.fillColorPrimary,
                                           borderColor: Styles().colors!.fillColorPrimary,
                                           onTap: () {
                                             Analytics().logSelect(target: "Cancel");
@@ -604,9 +601,8 @@ class _SettingsAddIlliniCashPanelState
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.submit.hint',
                                               ''),
+                                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                                           backgroundColor: Styles().colors!.white,
-                                          fontSize: 16.0,
-                                          textColor: Styles().colors!.fillColorPrimary,
                                           borderColor: Styles().colors!.fillColorSecondary,
                                           onTap: _onSubmitIlliniCash,
                                         ),

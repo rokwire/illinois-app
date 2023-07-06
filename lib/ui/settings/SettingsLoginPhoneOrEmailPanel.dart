@@ -166,9 +166,9 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 RoundedButton(
                   label: buttonProceedTitle,
                   hint: buttonProceedHint,
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapProceed,
                   backgroundColor: Styles().colors?.white,
-                  textColor: Styles().colors?.fillColorPrimary,
                   borderColor: Styles().colors?.fillColorSecondary,
                   rightIcon: proceedRightIcon,
                   iconPadding: 16,
