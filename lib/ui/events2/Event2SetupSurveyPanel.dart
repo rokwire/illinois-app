@@ -162,23 +162,13 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
               ]),
               Visibility(
                   visible: (_selectedSurvey != null),
-                  child: Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Row(children: [
-                        Flexible(flex: 1, child: RoundedButton(
-                            label: Localization().getStringEx('panel.event2.setup.survey.preview.button', 'Preview'),
-                            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                            onTap: _onTapPreviewSurvey,
-                            backgroundColor: Styles().colors!.white,
-                            borderColor: Styles().colors!.fillColorSecondary)),
-                        Container(width: 26),
-                        Flexible(flex: 1, child: RoundedButton(
-                            label: Localization().getStringEx('panel.event2.setup.survey.save.button', 'Save'),
-                            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                            onTap: _onTapSaveSurvey,
-                            backgroundColor: Styles().colors!.white,
-                            borderColor: Styles().colors!.fillColorSecondary))
-                      ])))
+                  child: Padding(padding: EdgeInsets.only(top: 8), child: RoundedButton(
+                      label: Localization().getStringEx('panel.event2.setup.survey.apply.button', 'Apply'),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                      onTap: _onTapApplySurvey,
+                      backgroundColor: Styles().colors!.white,
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      contentWeight: 0.4)))
             ])));
   }
 
@@ -197,16 +187,12 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     Analytics().logSelect(target: "Survey: ${(survey != null) ? survey.title : 'null'}");
     setStateIfMounted(() {
       _selectedSurvey = survey;
+      //TBD: Preview selected survey
     });
   }
 
-  void _onTapPreviewSurvey() {
-    Analytics().logSelect(target: "Preview Survey: ${(_selectedSurvey != null) ? _selectedSurvey!.title : 'null'}");
-    //TBD: preview survey
-  }
-
-  void _onTapSaveSurvey() {
-    Analytics().logSelect(target: "Save Survey: ${(_selectedSurvey != null) ? _selectedSurvey!.title : 'null'}");
+  void _onTapApplySurvey() {
+    Analytics().logSelect(target: "Apply Survey: ${(_selectedSurvey != null) ? _selectedSurvey!.title : 'null'}");
     //TBD: save survey
   }
 
