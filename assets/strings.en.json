@@ -3552,6 +3552,7 @@
     "model.explore.time.at": "at",
     "model.explore.time.at.format": "{{day}} at {{time}}",
     "model.explore.time.all_day": "All day",
+    "model.explore.distance.format": "{{distance}} mi away",
 
 	"model.groups.member.status.pending": "Pending",
 	"model.groups.member.status.member": "Member",
