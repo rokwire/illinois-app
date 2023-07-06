@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
@@ -319,7 +320,16 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       String? details =  event2ContactToDisplayString(contact);
       if(StringUtils.isNotEmpty(details)){
       contactList.add(
-          _buildDetailWidget(Text(details?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_fat.underline')),
+          _buildDetailWidget(
+        // Text(details?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline')),
+              RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
+                TextSpan(style: Styles().textStyles?.getTextStyle("widget.explore.card.detail.regular"), children: <TextSpan>[
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.firstName)?"${contact?.firstName}, " : ""),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.lastName)?"${contact?.lastName}, " : ""),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.organization)?"${contact?.organization}, " : ""),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
+            ])),
             'person', iconVisible: false, contentPadding: EdgeInsets.zero));
       }
     }
@@ -576,6 +586,16 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onAddToCalendar(){
     //TBD
+  }
+
+  void _onContactEmail(String? email){
+    //TBD
+    AppToast.show("TBD send email to $email");
+  }
+
+  void _onContactPhone(String? phone){
+    //TBD
+    AppToast.show("TBD call to $phone");
   }
 
   void _onAdminSettings(){
