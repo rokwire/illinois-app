@@ -61,11 +61,18 @@ import 'package:illinois/service/Polls.dart' as illinois;
 
 class GroupSectionTitle extends StatelessWidget {
   final String? title;
+  final TextStyle? titleTextStyle;
   final String? description;
+  final TextStyle? descriptionTextStyle;
   final bool? requiredMark;
+  final TextStyle? requiredMarkTextStyle;
   final EdgeInsetsGeometry margin;
 
-  GroupSectionTitle({Key? key, this.title, this.description, this.requiredMark, this.margin = const EdgeInsets.only(bottom: 8, top: 16)}) : super(key: key);
+  GroupSectionTitle({Key? key,
+    this.title, this.titleTextStyle,
+    this.description, this.descriptionTextStyle,
+    this.requiredMark, this.requiredMarkTextStyle,
+    this.margin = const EdgeInsets.only(bottom: 8, top: 16)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -73,15 +80,15 @@ class GroupSectionTitle extends StatelessWidget {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: title, hint: description, header: true, excludeSemantics: true, child:
           RichText(text:
-            TextSpan(text: title, style: Styles().textStyles?.getTextStyle("widget.title.tiny"),
+            TextSpan(text: title, style: titleTextStyle ?? Styles().textStyles?.getTextStyle("widget.title.tiny"),
               children: [
-                TextSpan(text: (requiredMark == true) ?  " *" : "", style: Styles().textStyles?.getTextStyle("widget.title.tiny.extra_fat"),
+                TextSpan(text: (requiredMark == true) ?  " *" : "", style: requiredMarkTextStyle ?? Styles().textStyles?.getTextStyle("widget.title.tiny.extra_fat"),
               )
             ],),
           ),
         ),
         (description != null) ? Container(padding: EdgeInsets.only(top: 2), child:
-          Text(description ?? "", semanticsLabel: "", style:  Styles().textStyles?.getTextStyle("widget.item.small.thin"),),
+          Text(description ?? "", semanticsLabel: "", style:  descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.item.small.thin"),),
         ) : Container(),
       ],)
     );
