@@ -126,11 +126,16 @@ class Event2Card extends StatefulWidget {
 
 class _Event2CardState extends State<Event2Card>  implements NotificationsListener {
 
+  // Keep a copy of the user position in the State because it gets cleared somehow in the widget
+  // when sending the appliction to background in iOS.
+  Position? _userLocation; 
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoriteChanged,
     ]);
+    _userLocation = widget.userLocation;
     super.initState();
   }
 
@@ -281,7 +286,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         );
       }
 
-      String? distanceText = widget.event.getDisplayDistance(widget.userLocation);
+      String? distanceText = widget.event.getDisplayDistance(_userLocation);
       if (distanceText != null) {
         details.add(
           _buildDetailWidget(Text(distanceText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)

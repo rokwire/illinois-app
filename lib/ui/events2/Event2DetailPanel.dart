@@ -38,7 +38,12 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
 }
 
 class _Event2DetailPanelState extends State<Event2DetailPanel> implements NotificationsListener {
+
   Event2? _event;
+
+  // Keep a copy of the user position in the State because it gets cleared somehow in the widget
+  // when sending the appliction to background in iOS.
+  Position? _userLocation;
 
   bool _authLoading = false; //TBD visualize
   bool _eventLoading = false; //TBD visualize
@@ -49,7 +54,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
     ]);
-   _initEvent();
+    _initEvent();
+    _userLocation = widget.userLocation;
     super.initState();
   }
 
@@ -240,7 +246,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         );
       }
 
-      String? distanceText = _event?.getDisplayDistance(widget.userLocation);
+      String? distanceText = _event?.getDisplayDistance(_userLocation);
       if (distanceText != null) {
         details.add(
           _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
