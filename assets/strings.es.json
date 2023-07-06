@@ -1143,8 +1143,8 @@
     "panel.events2.home.bar.button.sort.hint": "Tap to sort events",
 	"panel.events2.home.attributes.filters.header.title": "Event Filters",
 	"panel.events2.home.attributes.filters.header.description": "Choose one or more attributes to filter the events",
-    "panel.events2.home.attributes.filters.label.title": "Filter by: ",
-	"panel.events2.home.attributes.sort.label.title": "Sort ",
+    "panel.events2.home.attributes.filter.label.title": "Filter: ",
+	"panel.events2.home.attributes.sort.label.title": "Sort: ",
 	"panel.events2.home.attributes.launch.header.title": "Events",
 	"panel.events2.home.attributes.launch.header.description": "Discover events across campus and around the world",
 	"panel.events2.home.attributes.launch.apply.title": "Explore",
@@ -3571,9 +3571,9 @@
 	"model.event2.sort_order.status.ascending": "Asc",
 	"model.event2.sort_order.status.descending": "Desc",
 
-    "model.event2.sort_type.status.date_time": "{{headning_start}}Sort by{{headning_end}} Date & Time {{sort_order}}",
-	"model.event2.sort_type.status.alphabetical": "{{headning_start}}Sort{{headning_end}} Alphabetically {{sort_order}}",
-	"model.event2.sort_type.status.proximity": "{{headning_start}}Sort by{{headning_end}} Proximity {{sort_order}}",
+    "model.event2.sort_type.status.date_time": "Date",
+	"model.event2.sort_type.status.alphabetical": "Alpha",
+	"model.event2.sort_type.status.proximity": "Proximity",
 
     "model.event2.event_type.free": "Free",
 	"model.event2.event_type.paid": "Paid",

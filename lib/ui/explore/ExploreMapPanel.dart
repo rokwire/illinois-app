@@ -900,7 +900,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
 
     if (descriptionList.isNotEmpty) {
-      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filters.label.title', 'Filter by: ') , style: boldStyle,));
+      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
 
