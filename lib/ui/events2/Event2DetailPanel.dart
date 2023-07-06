@@ -179,9 +179,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_dateDetailWidget,
       ...?_onlineDetailWidget,
       ...?_locationDetailWidget,
+      ...?_speakerDetailWidget,
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
       ...?_adminSettingsButtonWidget,
+      ...?_addToCalendarButton,
       ...?_contactsDetailWidget,
     ];
 
@@ -192,7 +194,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<Widget>? get _dateDetailWidget {
     String? dateTime = _event?.longDisplayDate;
-    return (dateTime != null) ? <Widget>[_buildTextDetailWidget(dateTime, 'calendar')] : null;
+    return (dateTime != null) ? <Widget>[
+        _buildTextDetailWidget(dateTime, 'calendar'),
+      _detailSpacerWidget
+    ] : null;
   }
 
   List<Widget>? get _onlineDetailWidget {
@@ -205,7 +210,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ];
 
       Widget onlineWidget = canLaunch ?
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_bold.underline'),) :
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_fat.underline'),) :
         Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
       details.add(
         InkWell(onTap: canLaunch ? _onOnline : null, child:
@@ -237,7 +242,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       );
       if (locationText != null) {
         Widget locationWidget = canLocation ?
-          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_bold.underline'),) :
+          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_fat.underline'),) :
           Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
         details.add(
           InkWell(onTap: canLocation ? _onLocation : null, child:
@@ -250,6 +255,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
     return null;
   }
+
+  List<Widget>? get _speakerDetailWidget => StringUtils.isNotEmpty(_event?.speaker) ? <Widget> [
+    _buildTextDetailWidget("${_event?.speaker} (speaker)", "person"),
+    _detailSpacerWidget
+  ] : null;
 
   List<Widget>? get _priceDetailWidget{
     bool isFree = _event?.free ?? false;
@@ -283,15 +293,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       return null;
 
     List<Widget> contactList = [];
-    contactList.add(Padding(
-        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
+    contactList.add(_buildTextDetailWidget("Contacts", "person"));
 
     for (Event2Contact? contact in _event!.contacts!) {
       String? details =  event2ContactToDisplayString(contact);
       if(StringUtils.isNotEmpty(details)){
-        contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child:
-          Text(details!, style: Styles().textStyles?.getTextStyle("widget.text.regular"))
-        ));
+      contactList.add(
+          _buildDetailWidget(Text(details?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_fat.underline')),
+            'person', iconVisible: false, contentPadding: EdgeInsets.zero));
       }
     }
 
@@ -305,6 +314,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
        _buildTextDetailWidget("Event Admin Settings", "settings", )),
     _detailSpacerWidget
   ] : null;
+
+  List<Widget>? get _addToCalendarButton => <Widget>[
+    InkWell(onTap: _onAddToCalendar, child:
+       _buildTextDetailWidget("Add to Calendar", "event-save-to-calendar", underlined: true)),
+    _detailSpacerWidget
+  ];
 
   Widget get _buttonsWidget {
     List<Widget> buttons = <Widget>[
@@ -325,7 +340,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       onTap: (){_onWebButton(_event?.eventUrl, analyticsName: 'Website');}
     )] : null;
 
-  List<Widget>? get _logInButtonWidget{//TBD localize
+  List<Widget>? get _logInButtonWidget{
     if(Auth2().isLoggedIn == true)
       return null;
 
@@ -337,7 +352,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     )] : null;
   }
 
-  List<Widget>? get _registrationButtonWidget{//TBD localize
+  List<Widget>? get _registrationButtonWidget{
     if(Auth2().isLoggedIn == false) //We can register only if logged in
       return null;
 
@@ -386,10 +401,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
-    bool iconVisible = true
+    bool iconVisible = true, bool underlined = false
   }) =>
     _buildDetailWidget(
-      Text(text, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),),
+      Text(text, maxLines: 1, style: underlined? Styles().textStyles?.getTextStyle('widget.info.medium.underline') : Styles().textStyles?.getTextStyle('widget.info.medium'),),
       iconKey,
       contentPadding: contentPadding,
       iconPadding: iconPadding,
@@ -537,6 +552,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         }
       );
     }
+  }
+
+  void _onAddToCalendar(){
+    //TBD
   }
 
   void _onAdminSettings(){
