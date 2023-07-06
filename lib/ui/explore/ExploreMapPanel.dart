@@ -836,7 +836,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       ])),
       Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
         LinkButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.list.title', 'List View'), 
+          title: Localization().getStringEx('panel.events2.home.bar.button.list.title', 'List'), 
           hint: Localization().getStringEx('panel.events2.home.bar.button.list.hint', 'Tap to view events as list'),
           onTap: _onEvent2ListView,
           padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),

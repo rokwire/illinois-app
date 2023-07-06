@@ -415,7 +415,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       ])),
       Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
         LinkButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map View'), 
+          title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
           hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
           onTap: _onMapView,
           padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
