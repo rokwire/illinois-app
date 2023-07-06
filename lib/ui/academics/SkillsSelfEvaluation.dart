@@ -15,7 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/OccupationMatching.dart';
+import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
@@ -291,7 +291,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   void _gotoResults(dynamic response) {
     if (response is SurveyResponse) {
-      OccupationMatching().postResults(surveyResponse: response);
+      Occupations().postResults(surveyResponse: response);
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
     }
   }

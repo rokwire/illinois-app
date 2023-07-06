@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Occupation.dart';
-import 'package:illinois/service/OccupationMatching.dart';
+import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -21,7 +21,7 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
       backgroundColor: Styles().colors?.background,
       appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_details.header.title', 'Skills Self-Evaluation')),
       body: FutureBuilder(
-          future: OccupationMatching().getOccupation(occupationCode: occupationMatch.occupation?.code ?? ""),
+          future: Occupations().getOccupation(occupationCode: occupationMatch.occupation?.code ?? ""),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return Center(child: CircularProgressIndicator());
@@ -130,24 +130,26 @@ class SkillsSelfEvaluationOccupationDetails extends StatelessWidget {
         iconColor: Styles().colors?.getColor('fillColorPrimary'),
         collapsedIconColor: Styles().colors?.getColor('fillColorPrimary'),
       )),
-      Padding(padding: const EdgeInsets.only(top: 16), child: InkWell(
-        child: Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: Localization().getStringEx('panel.skills_self_evaluation.occupation_details.learn_more.title', 'Learn More'),
-                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link'),
-              ),
-              WidgetSpan(
-                child: Padding(padding: const EdgeInsets.only(left: 4.0), child: Styles().images?.getImage('external-link', excludeFromSemantics: true)),
-              ),
-            ],
+      Center(
+        child: Padding(padding: const EdgeInsets.only(top: 16), child: InkWell(
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: Localization().getStringEx('panel.skills_self_evaluation.occupation_details.learn_more.title', 'Learn More'),
+                  style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link'),
+                ),
+                WidgetSpan(
+                  child: Padding(padding: const EdgeInsets.only(left: 4.0), child: Styles().images?.getImage('external-link', excludeFromSemantics: true)),
+                ),
+              ],
+            ),
           ),
-        ),
-        onTap: () {
-          launchUrlString('https://onetonline.org/link/summary/${occupation.code}', mode: LaunchMode.externalApplication);
-        },
-      ),),
+          onTap: () {
+            launchUrlString('https://onetonline.org/link/summary/${occupation.code}', mode: LaunchMode.externalApplication);
+          },
+        ),),
+      ),
     ];
   }
 

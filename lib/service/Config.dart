@@ -125,9 +125,7 @@ class Config extends rokwire.Config {
   String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);
   String? get wellnessUrl            => JsonUtils.stringValue(platformBuildingBlocks["wellness_url"]);
   String? get appointmentsUrl        => JsonUtils.stringValue(platformBuildingBlocks["appointments_url"]);
-
-  String? get skillsToJobsUrl        => JsonUtils.stringValue(platformBuildingBlocks["skills_to_jobs_url"]);
-
+  String? get occupationsUrl         => JsonUtils.stringValue(platformBuildingBlocks["occupations_url"]);
   String? get assistantUrl           => JsonUtils.stringValue(platformBuildingBlocks["assistant_url"]);
   String? get identityUrl            => JsonUtils.stringValue(platformBuildingBlocks["identity_url"]);
 

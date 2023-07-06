@@ -9,16 +9,16 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class OccupationMatching with Service {
-  static final OccupationMatching _instance = OccupationMatching._internal();
+class Occupations with Service {
+  static final Occupations _instance = Occupations._internal();
 
-  factory OccupationMatching() => _instance;
+  factory Occupations() => _instance;
 
-  OccupationMatching._internal();
+  Occupations._internal();
 
   Future<List<OccupationMatch>?> getAllOccupationMatches() async {
     if (enabled) {
-      String url = '${Config().skillsToJobsUrl}/user-match-results';
+      String url = '${Config().occupationsUrl}/user-match-results';
       Response? response = await Network().get(url, auth: Auth2());
       int responseCode = response?.statusCode ?? -1;
       String? responseBody = response?.body;
@@ -34,7 +34,7 @@ class OccupationMatching with Service {
 
   Future<Occupation?> getOccupation({required String occupationCode}) async {
     if (enabled) {
-      String url = '${Config().skillsToJobsUrl}/occupation/$occupationCode';
+      String url = '${Config().occupationsUrl}/occupation/$occupationCode';
       Response? response = await Network().get(url, auth: Auth2());
       int responseCode = response?.statusCode ?? -1;
       String? responseBody = response?.body;
@@ -59,7 +59,7 @@ class OccupationMatching with Service {
                 })
             .toList(),
       };
-      String url = '${Config().skillsToJobsUrl}/survey-data';
+      String url = '${Config().occupationsUrl}/survey-data';
       Network().post(url, auth: Auth2(), body: jsonEncode(surveyResult));
     }
   }
@@ -77,5 +77,5 @@ class OccupationMatching with Service {
   /////////////////////////
   // Enabled
 
-  bool get enabled => StringUtils.isNotEmpty(Config().skillsToJobsUrl);
+  bool get enabled => StringUtils.isNotEmpty(Config().occupationsUrl);
 }

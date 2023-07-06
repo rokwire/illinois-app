@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Occupation.dart';
-import 'package:illinois/service/OccupationMatching.dart';
+import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationOccupationDetails.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -113,7 +113,7 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
   List<Widget> _buildOccupationListView() {
     return [
       FutureBuilder(
-        future: OccupationMatching().getAllOccupationMatches(),
+        future: Occupations().getAllOccupationMatches(),
         initialData: [],
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
@@ -122,7 +122,7 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
           if (snapshot.data == null) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(top: 100, left: 32.0, right: 32.0),
                 child: Text(
                   Localization().getStringEx('panel.skills_self_evaluation.occupation_list.unavailable.message',
                       'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.'),
