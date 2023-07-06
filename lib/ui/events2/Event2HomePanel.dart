@@ -359,151 +359,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
   }
 
-  // Location Status and Position
-
-  Future<void> _initLocationServicesStatus() async {
-    setStateIfMounted(() {
-      _loadingLocationServicesStatus = true;
-    });
-    LocationServicesStatus? locationServicesStatus = await Event2HomePanel.getLocationServicesStatus();
-    if (locationServicesStatus != null) {
-      setStateIfMounted(() {
-        _locationServicesStatus = locationServicesStatus;
-        _loadingLocationServicesStatus = false;
-        _updateOnLocationServicesStatus();
-      });
-    }
-  }
-
-  Future<void> _updateLocationServicesStatus() async {
-    LocationServicesStatus? locationServicesStatus = await Event2HomePanel.getLocationServicesStatus();
-    if (_locationServicesStatus != locationServicesStatus) {
-      bool needsReload = false;
-      setStateIfMounted(() {
-        _locationServicesStatus = locationServicesStatus;
-        needsReload = _updateOnLocationServicesStatus();
-      });
-      if (needsReload) {
-        _reload();
-      }
-    }
-  }
-
-  bool _updateOnLocationServicesStatus() {
-    bool result = false;
-    bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
-    if (_types.contains(Event2TypeFilter.nearby) && locationNotAvailable) {
-      _types.remove(Event2TypeFilter.nearby);
-      result = true;
-    }
-    if ((_sortType == Event2SortType.proximity) && locationNotAvailable) {
-      _sortType = Event2SortType.dateTime;
-      result = true;
-    }
-    return result;
-  }
-
-  Future<Position?> _ensureCurrentLocation({ bool prompt = false}) async {
-    if (_currentLocation == null) {
-      if (prompt && (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined)) {
-        _locationServicesStatus = await LocationServices().requestPermission();
-        _updateOnLocationServicesStatus();
-      }
-      if (_locationServicesStatus == LocationServicesStatus.permissionAllowed) {
-        _currentLocation = await LocationServices().location;
-      }
-    }
-    return _currentLocation;
-  } 
-
-  // Event2 Query
-
-  bool get _queryNeedsLocation => (_types.contains(Event2TypeFilter.nearby) || (_sortType == Event2SortType.proximity));
-
-  Future<Events2Query> _queryParam({int offset = 0, int limit = eventsPageLength}) async {
-    if (_queryNeedsLocation) {
-      await _ensureCurrentLocation(prompt: true);
-    }
-    return Events2Query(
-      offset: offset,
-      limit: limit,
-      timeFilter: _timeFilter,
-      customStartTimeUtc: _customStartTime?.toUtc(),
-      customEndTimeUtc: _customEndTime?.toUtc(),
-      types: _types,
-      attributes: _attributes,
-      sortType: _sortType,
-      sortOrder: _sortOrder,
-      location: _currentLocation,
-    );
-  } 
-
-  Future<void> _reload({ int limit = eventsPageLength }) async {
-    if (!_loadingEvents && !_refreshingEvents) {
-      setStateIfMounted(() {
-        _loadingEvents = true;
-        _extendingEvents = false;
-      });
-
-      List<Event2>? events = await Events2().loadEvents(await _queryParam(limit: limit));
-
-      setStateIfMounted(() {
-        _events = (events != null) ? List<Event2>.from(events) : null;
-        _hasMoreEvents = (_events != null) ? (_events!.length >= limit) : null;
-        _loadingEvents = false;
-      });
-    }
-  }
-
-
-
-  Future<void> _refresh() async {
-
-    if (!_loadingEvents && !_refreshingEvents) {
-      setStateIfMounted(() {
-        _refreshingEvents = true;
-        _extendingEvents = false;
-      });
-
-      int limit = max(_events?.length ?? 0, eventsPageLength);
-      List<Event2>? events = await Events2().loadEvents(await _queryParam(limit: limit));
-
-      setStateIfMounted(() {
-        if (events != null) {
-          _events = List<Event2>.from(events);
-          _hasMoreEvents = (events.length >= limit);
-        }
-        _refreshingEvents = false;
-      });
-    }
-  }
-
-  Future<void> _extend() async {
-    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents) {
-      setStateIfMounted(() {
-        _extendingEvents = true;
-      });
-
-      List<Event2>? events = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: eventsPageLength));
-
-      if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
-        setState(() {
-          if (events != null) {
-            if (_events != null) {
-              _events?.addAll(events);
-            }
-            else {
-              _events = List<Event2>.from(events);
-            }
-            _hasMoreEvents = (events.length >= eventsPageLength);
-          }
-          _extendingEvents = false;
-        });
-      }
-
-    }
-  }
-
   // Widget
 
   @override
@@ -917,6 +772,151 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     
     _reload();
   }
+
+  // Location Status and Position
+
+  Future<void> _initLocationServicesStatus() async {
+    setStateIfMounted(() {
+      _loadingLocationServicesStatus = true;
+    });
+    LocationServicesStatus? locationServicesStatus = await Event2HomePanel.getLocationServicesStatus();
+    if (locationServicesStatus != null) {
+      setStateIfMounted(() {
+        _locationServicesStatus = locationServicesStatus;
+        _loadingLocationServicesStatus = false;
+        _updateOnLocationServicesStatus();
+      });
+    }
+  }
+
+  Future<void> _updateLocationServicesStatus() async {
+    LocationServicesStatus? locationServicesStatus = await Event2HomePanel.getLocationServicesStatus();
+    if (_locationServicesStatus != locationServicesStatus) {
+      bool needsReload = false;
+      setStateIfMounted(() {
+        _locationServicesStatus = locationServicesStatus;
+        needsReload = _updateOnLocationServicesStatus();
+      });
+      if (needsReload) {
+        _reload();
+      }
+    }
+  }
+
+  bool _updateOnLocationServicesStatus() {
+    bool result = false;
+    bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
+    if (_types.contains(Event2TypeFilter.nearby) && locationNotAvailable) {
+      _types.remove(Event2TypeFilter.nearby);
+      result = true;
+    }
+    if ((_sortType == Event2SortType.proximity) && locationNotAvailable) {
+      _sortType = Event2SortType.dateTime;
+      result = true;
+    }
+    return result;
+  }
+
+  Future<Position?> _ensureCurrentLocation({ bool prompt = false}) async {
+    if (_currentLocation == null) {
+      if (prompt && (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined)) {
+        _locationServicesStatus = await LocationServices().requestPermission();
+        _updateOnLocationServicesStatus();
+      }
+      if (_locationServicesStatus == LocationServicesStatus.permissionAllowed) {
+        _currentLocation = await LocationServices().location;
+      }
+    }
+    return _currentLocation;
+  } 
+
+  // Event2 Query
+
+  bool get _queryNeedsLocation => (_types.contains(Event2TypeFilter.nearby) || (_sortType == Event2SortType.proximity));
+
+  Future<Events2Query> _queryParam({int offset = 0, int limit = eventsPageLength}) async {
+    if (_queryNeedsLocation) {
+      await _ensureCurrentLocation(prompt: true);
+    }
+    return Events2Query(
+      offset: offset,
+      limit: limit,
+      timeFilter: _timeFilter,
+      customStartTimeUtc: _customStartTime?.toUtc(),
+      customEndTimeUtc: _customEndTime?.toUtc(),
+      types: _types,
+      attributes: _attributes,
+      sortType: _sortType,
+      sortOrder: _sortOrder,
+      location: _currentLocation,
+    );
+  } 
+
+  Future<void> _reload({ int limit = eventsPageLength }) async {
+    if (!_loadingEvents && !_refreshingEvents) {
+      setStateIfMounted(() {
+        _loadingEvents = true;
+        _extendingEvents = false;
+      });
+
+      List<Event2>? events = await Events2().loadEvents(await _queryParam(limit: limit));
+
+      setStateIfMounted(() {
+        _events = (events != null) ? List<Event2>.from(events) : null;
+        _hasMoreEvents = (_events != null) ? (_events!.length >= limit) : null;
+        _loadingEvents = false;
+      });
+    }
+  }
+
+  Future<void> _refresh() async {
+
+    if (!_loadingEvents && !_refreshingEvents) {
+      setStateIfMounted(() {
+        _refreshingEvents = true;
+        _extendingEvents = false;
+      });
+
+      int limit = max(_events?.length ?? 0, eventsPageLength);
+      List<Event2>? events = await Events2().loadEvents(await _queryParam(limit: limit));
+
+      setStateIfMounted(() {
+        if (events != null) {
+          _events = List<Event2>.from(events);
+          _hasMoreEvents = (events.length >= limit);
+        }
+        _refreshingEvents = false;
+      });
+    }
+  }
+
+  Future<void> _extend() async {
+    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents) {
+      setStateIfMounted(() {
+        _extendingEvents = true;
+      });
+
+      List<Event2>? events = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: eventsPageLength));
+
+      if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
+        setState(() {
+          if (events != null) {
+            if (_events != null) {
+              _events?.addAll(events);
+            }
+            else {
+              _events = List<Event2>.from(events);
+            }
+            _hasMoreEvents = (events.length >= eventsPageLength);
+          }
+          _extendingEvents = false;
+        });
+      }
+
+    }
+  }
+
+  // Command Handlers
 
   void _onSortType(Event2SortType? value) {
     Analytics().logSelect(target: 'Sort');
