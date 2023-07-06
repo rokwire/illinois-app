@@ -1269,6 +1269,16 @@
 
 	"panel.event2.detail.take_attendance.title": "Take Attendance",
 
+	"panel.event2.detail.attendance.header.title": "Event Attendance",
+	"panel.event2.detail.attendance.take_via_app.toggle.title": "TAKE ATTENDANCE VIA THE APP",
+	"panel.event2.detail.attendance.scan.toggle.title": "Scan Illini ID",
+	"panel.event2.detail.attendance.scan.toggle.description": "Does not require advance registration.",
+	"panel.event2.detail.attendance.manual.toggle.title": "Allow manual attendance check",
+	"panel.event2.detail.attendance.manual.toggle.description": "Requires advance registration.",
+	"panel.event2.detail.attendance.event.capacity.label.title": "EVENT CAPACITY:",
+	"panel.event2.detail.attendance.event.registrations.label.title": "TOTAL NUMBER OF REGISTRATIONS:",
+	"panel.event2.detail.attendance.event.attendees.label.title": "TOTAL NUMBER OF ATTENDEES:",
+
 	"panel.settings.manage_interests.instructions.format": "點按 {{check_mark_icon}} 以關注您最感興趣的標籤",
 	"panel.settings.manage_interests.list.following":"关注对象",
 	"panel.settings.manage_interests.list.all_tags":"所有标签",
