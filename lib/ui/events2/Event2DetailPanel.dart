@@ -8,6 +8,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -111,7 +112,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     );
   }
 
-  Widget get _badgeWidget => _event?.userRole == Event2UserRole.admin ?
+  Widget get _badgeWidget => _isAdmin ?
   Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
     Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
       Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
@@ -183,6 +184,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_locationDetailWidget,
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
+      ...?_adminSettingsButtonWidget,
       ...?_contactsDetailWidget,
     ];
 
@@ -301,6 +303,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return contactList;
   }
 
+  List<Widget>? get _adminSettingsButtonWidget => _isAdmin? <Widget>[
+    InkWell(onTap: _onAdminSettings, child:
+       _buildTextDetailWidget("Event Admin Settings", "settings", )),
+    _detailSpacerWidget
+  ] : null;
+
   Widget get _buttonsWidget {
     List<Widget> buttons = <Widget>[
       ...?_urlButtonWidget,
@@ -364,6 +372,18 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return null; //not required
   }
 
+  Widget get _adminSettingsWidget  =>
+      Padding(padding: EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _buildSettingButton(title: "Edit event", onTap: _onSettingEditEvent),
+          _buildSettingButton(title: "Promote this event", onTap: _onSettingPromote),
+          _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
+          _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
+          _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
+          _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
+        ],)
+    );
+
   Widget get _detailSpacerWidget => Container(height: 8,);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
@@ -424,7 +444,19 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           ),
         ),],)
       ) : Container();
+  
+  Widget _buildSettingButton({String? title, VoidCallback? onTap}) =>  StringUtils.isNotEmpty(title) ?
+    Padding(padding: EdgeInsets.only(bottom: 6),
+      child: RibbonButton(
+        label: title ?? "",
+        onTap: () {
+          Navigator.of(context).pop();
+          if(onTap!=null)
+            onTap();
+        }),
+    ) : Container();
 
+  //Actions
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions: ${_event?.name}");
     _event?.launchDirections();
@@ -510,6 +542,43 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }
 
+  void _onAdminSettings(){
+    Analytics().logSelect(target: "Admin settings");
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return _adminSettingsWidget;
+        });
+  }
+
+  void _onSettingEditEvent(){
+    //TBD
+  }
+
+  void _onSettingPromote(){
+    //TBD
+  }
+
+  void _onSettingEventRegistration(){
+    //TBD
+  }
+
+  void _onSettingAttendance(){
+    //TBD
+  }
+
+  void _onSettingSurvey(){
+    //TBD
+  }
+
+  void _onSettingDeleteEvent(){
+    //TBD
+  }
+
   //loading
   void _initEvent() async {
     _event = widget.event;
@@ -545,5 +614,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
     return null;
   }
+
+  //Event getters
+  bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
 
 }
