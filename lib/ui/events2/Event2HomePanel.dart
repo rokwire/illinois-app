@@ -405,7 +405,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       Padding(padding: EdgeInsets.only(left: 16)),
       Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         Event2FilterCommandButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.filters.title', 'Filters'),
+          title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
           leftIconKey: 'filters',
           rightIconKey: 'chevron-right',
           onTap: _onFilters,
