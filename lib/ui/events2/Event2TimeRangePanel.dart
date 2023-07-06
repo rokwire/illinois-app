@@ -312,13 +312,18 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, date, time, inclusive: inclusive);
 
   bool get _canApply {
+    TZDateTime now = TZDateTime.now(_timeZone);
     TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
     bool sameStartTime = ((startTime == null) && (widget.startTime == null)) ||
       ((startTime != null) && (widget.startTime != null) && (startTime == widget.startTime));
     TZDateTime? endTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
     bool sameEndTime = ((endTime == null) && (widget.endTime == null)) ||
       ((endTime != null) && (widget.endTime != null) && (endTime == widget.endTime));
-    return ((startTime != null) || (endTime != null)) && (!sameStartTime || !sameEndTime);
+    return (
+      (startTime != null) || (endTime != null)) &&
+      (!sameStartTime || !sameEndTime) &&
+      ((startTime == null) || startTime.isAfter(now)) &&
+      ((endTime == null) || endTime.isAfter(startTime ?? now));
   }
 
   void _onTapApply() {
