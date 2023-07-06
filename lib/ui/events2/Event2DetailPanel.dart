@@ -39,7 +39,12 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
 }
 
 class _Event2DetailPanelState extends State<Event2DetailPanel> implements NotificationsListener {
+
   Event2? _event;
+
+  // Keep a copy of the user position in the State because it gets cleared somehow in the widget
+  // when sending the appliction to background in iOS.
+  Position? _userLocation;
 
   bool _authLoading = false; //TBD visualize
   bool _eventLoading = false; //TBD visualize
@@ -50,7 +55,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
     ]);
-   _initEvent();
+    _initEvent();
+    _userLocation = widget.userLocation;
     super.initState();
   }
 
@@ -228,11 +234,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if (_event?.inPerson == true) {
 
       bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
+
+      TextStyle? textDetailStyle = Styles().textStyles?.getTextStyle(canLocation ?
+        'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular');
       
       List<Widget> details = <Widget>[
-        InkWell(onTap: canLocation ? _onLocation : null, child:
-          _buildTextDetailWidget('In Person', 'location'),
-        ),
+        _buildTextDetailWidget('In Person', 'location'),
       ];
 
       String? locationText = (
@@ -241,17 +248,30 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         _event?.location?.displayCoordinates
       );
       if (locationText != null) {
-        Widget locationWidget = canLocation ?
-          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_fat.underline'),) :
-          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
         details.add(
-          InkWell(onTap: canLocation ? _onLocation : null, child:
-            _buildDetailWidget(locationWidget, 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
-          )
+          _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
         );
-        details.add( _detailSpacerWidget);
       }
-      return details;
+
+      String? distanceText = _event?.getDisplayDistance(_userLocation);
+      if (distanceText != null) {
+        details.add(
+          _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
+        );
+      }
+
+      if (canLocation) {
+        return <Widget>[
+          InkWell(onTap: _onLocation, child:
+            Column(children: details,)
+          ),
+          _detailSpacerWidget
+        ];
+      }
+      else {
+        details.add(_detailSpacerWidget);
+        return details;
+      }
     }
     return null;
   }
