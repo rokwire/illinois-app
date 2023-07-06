@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Events2 home panel text updates [#3361](https://github.com/rokwire/illinois-app/issues/3361).
 - Improved custom start and end time filter validation [#3361](https://github.com/rokwire/illinois-app/issues/3361).
-
+- Polished event date display [#3364](https://github.com/rokwire/illinois-app/issues/3364).
 ## [5.0.21] - 2023-07-05
 ### Added
 - Follow-Up survey details in Create Event panel [#3353](https://github.com/rokwire/illinois-app/issues/3353).

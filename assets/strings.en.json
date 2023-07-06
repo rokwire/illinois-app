@@ -3550,6 +3550,7 @@
     "model.explore.time.today": "Today",
     "model.explore.time.tomorrow": "Tomorrow",
     "model.explore.time.at": "at",
+    "model.explore.time.at.format": "{{day}} at {{time}}",
     "model.explore.time.all_day": "All day",
 
 	"model.groups.member.status.pending": "Pending",
