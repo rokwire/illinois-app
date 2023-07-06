@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "Preview" survey button in Create Event panel [#3357](https://github.com/rokwire/illinois-app/issues/3357).
 ### Changed
 - Events2 home panel text updates [#3361](https://github.com/rokwire/illinois-app/issues/3361).
+- Improved custom start and end time filter validation [#3361](https://github.com/rokwire/illinois-app/issues/3361).
 
 ## [5.0.21] - 2023-07-05
 ### Added
