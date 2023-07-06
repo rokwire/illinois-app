@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Content.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -81,7 +80,49 @@ extension Event2Ext on Event2 {
     Analytics.LogAttributeLocation : location?.analyticsValue,
   };
 
-  String? get displayDate => AppDateTimeUtils.getDisplayDay(dateTimeUtc: startTimeUtc, allDay: allDay);
+  String? get shortDisplayDate => _buildDisplayDate(longFormat: false);
+  String? get longDisplayDate => _buildDisplayDate(longFormat: true);
+  
+  String? _buildDisplayDate({bool longFormat = false}) {
+    if (startTimeUtc != null) {
+      TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
+      TZDateTime dateTimeUni = startTimeUtc!.toUniOrLocal();
+      
+      TZDateTime nowMidnightUni = TZDateTimeUtils.dateOnly(nowUni);
+      TZDateTime dateTimeMidnightUni = TZDateTimeUtils.dateOnly(dateTimeUni);
+      int daysDiff = dateTimeMidnightUni.difference(nowMidnightUni).inDays;
+      if ((daysDiff == 0) || (daysDiff == 1)) {
+        String displayDay = (0 < daysDiff) ?
+          Localization().getStringEx('model.explore.time.today', 'Today') :
+          Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow');
+        if (allDay != true) {
+          String displayTime = DateFormat((dateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(dateTimeUni).toLowerCase();
+          return Localization().getStringEx('model.explore.time.at.format', '{{day}} at {{time}}').
+            replaceAll('{{day}}', displayDay).
+            replaceAll('{{time}}', displayTime);
+        }
+        else {
+          return displayDay;
+        }
+      }
+      else {
+        String dateFormat = longFormat ? 'EEEE, MMMM d' : 'MMM d';
+        bool showYear = (nowUni.year != dateTimeUni.year);
+        if (showYear) {
+          dateFormat += ', yyyy';
+        }
+        String displayDateTime = DateFormat(dateFormat).format(dateTimeUni);
+        if (allDay != true) {
+          displayDateTime += showYear ? ' ' : ', ';
+          displayDateTime += DateFormat((dateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(dateTimeUni).toLowerCase();
+        }
+        return displayDateTime;
+      }
+    }
+    else {
+      return null;
+    }
+  }
 }
 
 extension Event2ContactExt on Event2Contact {

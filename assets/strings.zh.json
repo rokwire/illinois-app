@@ -3547,6 +3547,7 @@
 	"model.explore.time.today":"今天",
 	"model.explore.time.tomorrow":"明天",
 	"model.explore.time.at":"在",
+	"model.explore.time.at.format": "{{day}} at {{time}}",
 	"model.explore.time.all_day": "一整天",
 	
 	"model.groups.member.status.pending": "Pending",
