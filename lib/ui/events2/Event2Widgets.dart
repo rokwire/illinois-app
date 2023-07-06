@@ -266,12 +266,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   List<Widget>? get _locationDetailWidget {
     if (widget.event.inPerson) {
 
-      bool canLocation = widget.event.location?.isLocationCoordinateValid ?? false;
-      
       List<Widget> details = <Widget>[
-        InkWell(onTap: canLocation ? _onLocation : null, child:
-          _buildTextDetailWidget('In Person', 'location'),
-        ),
+        _buildTextDetailWidget('In Person', 'location'),
       ];
 
       String? locationText = (
@@ -280,13 +276,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         widget.event.location?.displayCoordinates
       );
       if (locationText != null) {
-        Widget locationWidget = canLocation ?
-          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_bold.underline'),) :
-          Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
         details.add(
-          InkWell(onTap: canLocation ? _onLocation : null, child:
-            _buildDetailWidget(locationWidget, 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
-          )
+          _buildDetailWidget(Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
         );
       }
       return details;
@@ -327,11 +318,6 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     return Padding(padding: contentPadding, child:
       Row(children: contentList)
     );
-  }
-
-  void _onLocation() {
-    Analytics().logSelect(target: "Location Directions: ${widget.event.name}");
-    widget.event.launchDirections();
   }
 
   void _onFavorite() {
