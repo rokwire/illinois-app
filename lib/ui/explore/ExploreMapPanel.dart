@@ -826,7 +826,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       Padding(padding: EdgeInsets.only(left: 16)),
       Expanded(flex: 6, child: Wrap(spacing: 8, runSpacing: 8, children: [ //Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         Event2FilterCommandButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.filters.title', 'Filters'),
+          title: Localization().getStringEx('panel.events2.home.bar.button.filter.title', 'Filter'),
           leftIconKey: 'filters',
           rightIconKey: 'chevron-right',
           onTap: _onEvent2Filters,
@@ -836,7 +836,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       ])),
       Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
         LinkButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.list.title', 'List View'), 
+          title: Localization().getStringEx('panel.events2.home.bar.button.list.title', 'List'), 
           hint: Localization().getStringEx('panel.events2.home.bar.button.list.hint', 'Tap to view events as list'),
           onTap: _onEvent2ListView,
           padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
@@ -900,7 +900,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
 
     if (descriptionList.isNotEmpty) {
-      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filters.label.title', 'Filter by: ') , style: boldStyle,));
+      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
 

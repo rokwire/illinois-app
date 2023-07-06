@@ -115,9 +115,9 @@ String? event2SortTypeToDisplayString(Event2SortType? value) {
 
 String? event2SortTypeDisplayStatusString(Event2SortType? value) {
   switch (value) {
-    case Event2SortType.dateTime: return Localization().getStringEx('model.event2.sort_type.status.date_time', '{{headning_start}}Sort by{{headning_end}} Date & Time {{sort_order}}');
-    case Event2SortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.status.alphabetical', '{{headning_start}}Sort{{headning_end}} Alphabetically {{sort_order}}');
-    case Event2SortType.proximity: return Localization().getStringEx('model.event2.sort_type.status.proximity', '{{headning_start}}Sort by{{headning_end}} Proximity {{sort_order}}');
+    case Event2SortType.dateTime: return Localization().getStringEx('model.event2.sort_type.status.date_time', 'Date');
+    case Event2SortType.alphabetical: return Localization().getStringEx('model.event2.sort_type.status.alphabetical', 'Alpha');
+    case Event2SortType.proximity: return Localization().getStringEx('model.event2.sort_type.status.proximity', 'Proximity');
     default: return null;
   }
 }
