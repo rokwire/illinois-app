@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Events2 attendance detail panel - work in progress [#3360](https://github.com/rokwire/illinois-app/issues/3360).
 ### Deleted
 - Remove take attendance via the app switch [#3374](https://github.com/rokwire/illinois-app/issues/3374).
+- Remove sort order switch from Events2 UI [#3382](https://github.com/rokwire/illinois-app/issues/3382).
 
 ## [5.0.22] - 2023-07-06
 ### Added

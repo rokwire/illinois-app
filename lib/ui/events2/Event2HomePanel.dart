@@ -271,7 +271,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   late Map<String, dynamic> _attributes;
   
   late Event2SortType _sortType;
-  late Event2SortOrder _sortOrder;
   double? _sortDropdownWidth;
 
   LocationServicesStatus? _locationServicesStatus;
@@ -307,7 +306,6 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     _types = widget.types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
     _sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
-    _sortOrder = event2SortOrderFromString(Storage().events2SortOrder) ?? Event2SortOrder.ascending;
 
     _initLocationServicesStatus().then((_) {
       _ensureCurrentLocation();
@@ -461,7 +459,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     bool locationAvailable = ((_locationServicesStatus == LocationServicesStatus.permissionAllowed) || (_locationServicesStatus == LocationServicesStatus.permissionNotDetermined));
     for (Event2SortType sortType in Event2SortType.values) {
       if ((sortType != Event2SortType.proximity) || locationAvailable) {
-        String? displaySortType = _sortDropdownItemTitle(sortType, sortOrder: (_sortType == sortType) ? _sortOrder : null);
+        String? displaySortType = _sortDropdownItemTitle(sortType);
         items.add(DropdownMenuItem<Event2SortType>(
           value: sortType,
           child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
@@ -478,7 +476,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     for (Event2SortType sortType in Event2SortType.values) {
       final Size sizeFull = (TextPainter(
           text: TextSpan(
-            text: _sortDropdownItemTitle(sortType, sortOrder: Event2SortOrder.ascending),
+            text: _sortDropdownItemTitle(sortType),
             style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
           ),
           textScaleFactor: MediaQuery.of(context).textScaleFactor,
@@ -777,7 +775,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       types: _types,
       attributes: _attributes,
       sortType: _sortType,
-      sortOrder: _sortOrder,
+      sortOrder: Event2SortOrder.ascending,
       location: _currentLocation,
     );
   } 
@@ -851,20 +849,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   void _onSortType(Event2SortType? value) {
     Analytics().logSelect(target: 'Sort');
     if (value != null) {
-      setState(() {
-        if (_sortType != value) {
+      if (_sortType != value) {
+        setState(() {
           _sortType = value;
-          _sortOrder = Event2SortOrder.ascending;
-        }
-        else {
-          _sortOrder = (_sortOrder == Event2SortOrder.ascending) ? Event2SortOrder.descending : Event2SortOrder.ascending;
-        }
-      });
-
-      Storage().events2SortType = event2SortTypeToString(_sortType);
-      Storage().events2SortOrder = event2SortOrderToString(_sortOrder);
-
-      _reload();
+        });
+        Storage().events2SortType = event2SortTypeToString(_sortType);
+        _reload();
+      }
     }
   }
 
