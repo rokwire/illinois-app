@@ -20,13 +20,11 @@ class Event2SetupAttendancePanel extends StatefulWidget {
 
 class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>  {
 
-  late bool _takeAttendanceViaAppEnabled;
   late bool _scanningEnabled;
   late bool _manualCheckEnabled;
 
   @override
   void initState() {
-    _takeAttendanceViaAppEnabled = widget.details?.takeAttendanceViaAppEnabled ?? false;
     _scanningEnabled = widget.details?.scanningEnabled ?? false;
     _manualCheckEnabled = widget.details?.manualCheckEnabled ?? false;
     super.initState();
@@ -51,7 +49,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       Column(children: [
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildTakeViaAppSection(),
             _buildScanSection(),
             _buildManualSection(),
           ]),
@@ -66,33 +63,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   //EdgeInsetsGeometry get _toggleDescriptionPadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 5);
   //BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
   //BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
-
-  // Take Via App
-
-  Widget _buildTakeViaAppSection() =>
-    Padding(padding: Event2CreatePanel.sectionPadding, child:
-      _buildTakeViaAppToggle(),
-    );
-
-  Widget _buildTakeViaAppToggle() => Semantics(toggled: _takeAttendanceViaAppEnabled, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.setup.attendance.take_via_app.toggle.title", "TAKE ATTENDANCE VIA THE APP"),
-    hint: Localization().getStringEx("panel.event2.setup.attendance.take_via_app.toggle.hint", ""),
-    child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.attendance.take_via_app.toggle.title", "TAKE ATTENDANCE VIA THE APP"),
-      toggled: _takeAttendanceViaAppEnabled,
-      onTap: _onTapTakeViaApp,
-      //padding: _togglePadding,
-      //border: _toggleBorder,
-      //borderRadius: _toggleBorderRadius,
-    ));
-
-  void _onTapTakeViaApp() {
-    Analytics().logSelect(target: "Toggle Take Attendance Via The App");
-    Event2CreatePanel.hideKeyboard(context);
-    setStateIfMounted(() {
-      _takeAttendanceViaAppEnabled = !_takeAttendanceViaAppEnabled;
-    });
-  }
 
   // Scan
 
@@ -153,9 +123,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   // Submit
 
   void _onHeaderBack() {
-    Navigator.of(context).pop((_takeAttendanceViaAppEnabled || _scanningEnabled || _manualCheckEnabled) ? Event2AttendanceDetails(
-      attendanceRequired: widget.details?.attendanceRequired,
-      takeAttendanceViaAppEnabled: _takeAttendanceViaAppEnabled,
+    Navigator.of(context).pop((_scanningEnabled || _manualCheckEnabled) ? Event2AttendanceDetails(
       scanningEnabled: _scanningEnabled,
       manualCheckEnabled: _manualCheckEnabled,
     ) : null);
