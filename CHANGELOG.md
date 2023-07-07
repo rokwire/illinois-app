@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Include end time when displaying event time [#3379](https://github.com/rokwire/illinois-app/issues/3379).
 ### Added
 - Events2 attendance detail panel - work in progress [#3360](https://github.com/rokwire/illinois-app/issues/3360).
+- Display events count in Events2 home panel [#3384](https://github.com/rokwire/illinois-app/issues/3384).
 ### Deleted
 - Remove take attendance via the app switch [#3374](https://github.com/rokwire/illinois-app/issues/3374).
 - Remove sort order switch from Events2 UI [#3382](https://github.com/rokwire/illinois-app/issues/3382).
