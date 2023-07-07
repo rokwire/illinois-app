@@ -1225,8 +1225,6 @@
     "panel.event2.setup.registration.description.label.title": "Registration within the Illinois app requires the user to log in with a NetID.",
 
     "panel.event2.setup.attendance.header.title": "Event Attendance",
-	"panel.event2.setup.attendance.take_via_app.toggle.title": "TAKE ATTENDANCE VIA THE APP",
-	"panel.event2.setup.attendance.take_via_app.toggle.hint": "",
 	"panel.event2.setup.attendance.scan.toggle.title": "Scan Illini ID",
 	"panel.event2.setup.attendance.scan.toggle.hint": "",
 	"panel.event2.setup.attendance.scan.toggle.description": "Does not require advance registration.",
@@ -1269,7 +1267,6 @@
     "panel.event2.detail.take_attendance.title": "Take Attendance",
 
     "panel.event2.detail.attendance.header.title": "Event Attendance",
-    "panel.event2.detail.attendance.take_via_app.toggle.title": "TAKE ATTENDANCE VIA THE APP",
     "panel.event2.detail.attendance.scan.toggle.title": "Scan Illini ID",
     "panel.event2.detail.attendance.scan.toggle.description": "Does not require advance registration.",
     "panel.event2.detail.attendance.manual.toggle.title": "Allow manual attendance check",

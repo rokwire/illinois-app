@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Label in Follow-Up Survey panel [#3376](https://github.com/rokwire/illinois-app/issues/3376).
 ### Added
 - Events2 attendance detail panel - work in progress [#3360](https://github.com/rokwire/illinois-app/issues/3360).
+### Deleted
+- Remove take attendance via the app switch [#3374](https://github.com/rokwire/illinois-app/issues/3374).
 
 ## [5.0.22] - 2023-07-06
 ### Added
