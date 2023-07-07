@@ -42,6 +42,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   late bool _scanningEnabled;
   late bool _manualCheckEnabled;
+  final TextEditingController _attendeeNetIdsController = TextEditingController();
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   @override
   void dispose() {
+    _attendeeNetIdsController.dispose();
     super.dispose();
   }
 
@@ -185,6 +187,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   Widget _buildUploadAttendeesDescription() {
     TextStyle? mainStyle = Styles().textStyles?.getTextStyle('panel.event.attendance.detail.description.italic');
+    final Color defaultStyleColor = Colors.red;
     final String adminAppUrl = 'go.illinois.edu/ILappAdmin'; //TBD: DD - move it to config
     final String adminAppUrlMacro = '{{admin_app_url}}';
     String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
@@ -199,20 +202,20 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
               Expanded(
                   child: HtmlWidget(StringUtils.ensureNotEmpty(contentHtml),
                       onTapUrl: (url) {
-                        _onTapDescriptionLink(url);
+                        _onTapHtmlLink(url);
                         return true;
                       },
                       textStyle: mainStyle,
                       customStylesBuilder: (element) => (element.localName == "a")
                           ? {
-                              "color": ColorUtils.toHex(mainStyle?.color ?? Colors.red),
-                              "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? Colors.red)
+                              "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor),
+                              "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)
                             }
                           : null))
             ])));
   }
 
-  void _onTapDescriptionLink(String? url) {
+  void _onTapHtmlLink(String? url) {
     Analytics().logSelect(target: '($url)');
     UrlUtils.launchExternal(url);
   }
@@ -235,10 +238,62 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildImportAdditionalAttendeesContent() {
-    return Visibility(visible: _isEventAdmin, child: Container());
+    return Visibility(visible: _isEventAdmin, child: Padding(padding: EdgeInsets.only(top: 32), child: Column(children: [
+      Padding(padding: Event2CreatePanel.innerSectionPadding, child: _dividerWidget),
+      _buildAttendeesInputSection(),
+      _buildAttendeesInputDescriptionSection()
+    ])));
+  }
+
+  Widget _buildAttendeesInputSection() {
+    return Padding(padding: EdgeInsets.symmetric(horizontal: _mainHorizontalPadding), child: Event2CreatePanel.buildSectionWidget(
+        heading: Event2CreatePanel.buildSectionHeadingWidget(
+            Localization().getStringEx('panel.event2.detail.attendance.additional.netids.label', 'Netids for additional attendance takers:')),
+        body: Event2CreatePanel.buildTextEditWidget(_attendeeNetIdsController, keyboardType: TextInputType.text, maxLines: 1),
+        padding: EdgeInsets.only(bottom: 7)));
+  }
+
+  Widget _buildAttendeesInputDescriptionSection() {
+    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('panel.event.attendance.detail.description.italic');
+    final Color defaultStyleColor = Colors.red;
+    final String adminAppUrl = 'go.illinois.edu/ILappAdmin'; //TBD: DD - move it to config
+    final String adminAppUrlMacro = '{{admin_app_url}}';
+    String contentHtml = Localization()
+        .getStringEx('panel.event2.detail.attendance.attendees.netids.description', "Upload a list at <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.");
+    contentHtml = contentHtml.replaceAll(adminAppUrlMacro, adminAppUrl);
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: _mainHorizontalPadding),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(
+                child: HtmlWidget(StringUtils.ensureNotEmpty(contentHtml),
+                    onTapUrl: (url) {
+                      _onTapHtmlLink(url);
+                      return true;
+                    },
+                    textStyle: mainStyle,
+                    customStylesBuilder: (element) => (element.localName == "a")
+                        ? {
+                            "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor),
+                            "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)
+                          }
+                        : null))
+          ]),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 32),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.only(right: 8.8), child: Styles().images?.getImage('info')),
+                Expanded(
+                    child: Text(
+                        Localization().getStringEx('panel.event2.detail.attendance.attendees.checkin.description',
+                            'To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.'),
+                        style: mainStyle))
+              ]))
+        ]));
   }
 
   void _onTapBack() {
+    Analytics().logSelect(target: 'Back');
     Navigator.of(context).pop();
     //TBD: DD - implement
   }
