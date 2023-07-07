@@ -54,7 +54,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
-import 'package:illinois/service/Occupations.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
@@ -149,7 +148,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
       StudentCourses(),
       Appointments(),
       MTD(),
-      Occupations(),
       SpeechToText(),
     //Assistant(),
       MobileAccess(),

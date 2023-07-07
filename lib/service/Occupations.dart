@@ -6,10 +6,11 @@ import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/network.dart';
-import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Occupations with Service {
+// Occupations currently does rely on the common Service initialization API so
+// it does not need to extend Service interface and get registered in the app services list.
+class Occupations /* with Service */ {
   static final Occupations _instance = Occupations._internal();
 
   factory Occupations() => _instance;
