@@ -31,6 +31,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -492,7 +493,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     if (Connectivity().isNotOffline) {
       switch (_mapType) {
         case ExploreMapType.Events: return Events().loadEvents();
-        case ExploreMapType.Events2: return Events2().loadEvents(null);
+        case ExploreMapType.Events2: return _loadEvents2();
         case ExploreMapType.Dining: return _loadDinings();
         case ExploreMapType.Laundry: return _loadLaundry();
         case ExploreMapType.Buildings: return Gateway().loadBuildings();
@@ -506,6 +507,11 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
       }
     }
     return null;
+  }
+
+  Future<List<Explore>?> _loadEvents2() async {
+    Events2ListResult? loadResult = await Events2().loadEvents(null);
+    return loadResult?.events;
   }
 
   Future<List<Explore>?> _loadDinings() async {
