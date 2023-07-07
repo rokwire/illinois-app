@@ -440,10 +440,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
-    bool iconVisible = true, bool underlined = false
+    bool iconVisible = true, bool underlined = false, int maxLines = 1,
   }) =>
     _buildDetailWidget(
-      Text(text, maxLines: 1, style: underlined? Styles().textStyles?.getTextStyle('widget.info.medium.underline') : Styles().textStyles?.getTextStyle('widget.info.medium'),),
+      Text(text, style: underlined? Styles().textStyles?.getTextStyle('widget.info.medium.underline') : Styles().textStyles?.getTextStyle('widget.info.medium'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
       iconKey,
       contentPadding: contentPadding,
       iconPadding: iconPadding,
