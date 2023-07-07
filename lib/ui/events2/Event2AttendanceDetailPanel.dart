@@ -38,13 +38,11 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   static const double _mainHorizontalPadding = 25;
   static const double _mainVerticalPadding = 24;
 
-  late bool _takeAttendanceViaAppEnabled;
   late bool _scanningEnabled;
   late bool _manualCheckEnabled;
 
   @override
   void initState() {
-    _takeAttendanceViaAppEnabled = widget.event?.attendanceDetails?.takeAttendanceViaAppEnabled ?? false;
     _scanningEnabled = widget.event?.attendanceDetails?.scanningEnabled ?? false;
     _manualCheckEnabled = widget.event?.attendanceDetails?.manualCheckEnabled ?? false;
     super.initState();
@@ -75,32 +73,9 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
           padding: EdgeInsets.only(left: _mainHorizontalPadding, top: _mainVerticalPadding, right: _mainHorizontalPadding),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildTakeViaAppSection(), _buildScanSection(), _buildManualSection()])),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildScanSection(), _buildManualSection()])),
       _dividerWidget
     ]);
-  }
-
-  Widget _buildTakeViaAppSection() {
-    return Padding(
-        padding: Event2CreatePanel.sectionPadding,
-        child: Semantics(
-            toggled: _takeAttendanceViaAppEnabled,
-            excludeSemantics: true,
-            label: Localization().getStringEx('panel.event2.detail.attendance.take_via_app.toggle.title', 'TAKE ATTENDANCE VIA THE APP'),
-            hint: Localization().getStringEx("panel.event2.detail.attendance.take_via_app.toggle.hint", ''),
-            child: ToggleRibbonButton(
-                padding: EdgeInsets.zero,
-                label: Localization().getStringEx('panel.event2.detail.attendance.take_via_app.toggle.title', 'TAKE ATTENDANCE VIA THE APP'),
-                toggled: _takeAttendanceViaAppEnabled,
-                onTap: _onTapTakeViaApp)));
-  }
-
-  void _onTapTakeViaApp() {
-    Analytics().logSelect(target: 'Toggle Take Attendance Via The App');
-    Event2CreatePanel.hideKeyboard(context);
-    setStateIfMounted(() {
-      _takeAttendanceViaAppEnabled = !_takeAttendanceViaAppEnabled;
-    });
   }
 
   Widget _buildScanSection() {
