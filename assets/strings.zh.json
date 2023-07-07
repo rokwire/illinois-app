@@ -3575,6 +3575,7 @@
 	"model.explore.time.tomorrow":"明天",
 	"model.explore.time.at":"在",
 	"model.explore.time.at.format": "{{day}} at {{time}}",
+	"model.explore.time.from_to.format": "{{day}} from {{start_time}} to {{end_time}}",
 	"model.explore.time.all_day": "一整天",
 	"model.explore.distance.format": "{{distance}} mi away",
 	
