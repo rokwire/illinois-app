@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Assistant UI improvements [#3372](https://github.com/rokwire/illinois-app/issues/3372).
 - Label in Follow-Up Survey panel [#3376](https://github.com/rokwire/illinois-app/issues/3376).
+- Include end time when displaying event time [#3379](https://github.com/rokwire/illinois-app/issues/3379).
 ### Added
 - Events2 attendance detail panel - work in progress [#3360](https://github.com/rokwire/illinois-app/issues/3360).
 ### Deleted

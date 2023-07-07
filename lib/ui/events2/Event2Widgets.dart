@@ -301,10 +301,10 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
-    bool iconVisible = true
+    bool iconVisible = true, int maxLines = 1,
   }) =>
     _buildDetailWidget(
-      Text(text, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),),
+      Text(text, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
       iconKey,
       contentPadding: contentPadding,
       iconPadding: iconPadding,

@@ -87,35 +87,68 @@ extension Event2Ext on Event2 {
   String? _buildDisplayDate({bool longFormat = false}) {
     if (startTimeUtc != null) {
       TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
-      TZDateTime dateTimeUni = startTimeUtc!.toUniOrLocal();
-      
       TZDateTime nowMidnightUni = TZDateTimeUtils.dateOnly(nowUni);
-      TZDateTime dateTimeMidnightUni = TZDateTimeUtils.dateOnly(dateTimeUni);
-      int daysDiff = dateTimeMidnightUni.difference(nowMidnightUni).inDays;
-      if ((daysDiff == 0) || (daysDiff == 1)) {
-        String displayDay = (0 < daysDiff) ?
-          Localization().getStringEx('model.explore.time.today', 'Today') :
-          Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow');
+
+      TZDateTime startDateTimeUni = startTimeUtc!.toUniOrLocal();
+      TZDateTime startDateTimeMidnightUni = TZDateTimeUtils.dateOnly(startDateTimeUni);
+      int statDaysDiff = startDateTimeMidnightUni.difference(nowMidnightUni).inDays;
+
+      TZDateTime? endDateTimeUni = endTimeUtc?.toUniOrLocal();
+      TZDateTime? endDateTimeMidnightUni = (endDateTimeUni != null) ? TZDateTimeUtils.dateOnly(endDateTimeUni) : null;
+      int? endDaysDiff = (endDateTimeMidnightUni != null) ? endDateTimeMidnightUni.difference(nowMidnightUni).inDays : null;
+
+      bool differentStartAndEndDays = (statDaysDiff != endDaysDiff);
+
+      bool showStartYear = (nowUni.year != startDateTimeUni.year);
+      String startDateFormat = (longFormat ? 'EEE, MMM d' : 'MMM d') + (showStartYear ? ', yyyy' : '');
+
+      if ((endDaysDiff == null) || (endDaysDiff == statDaysDiff)) /* no end time or start date == end date */ {
+        
+        String displayDay;
+        switch(statDaysDiff) {
+          case 0: displayDay = Localization().getStringEx('model.explore.time.today', 'Today'); break;
+          case 1: displayDay = Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow'); break;
+          default: displayDay = DateFormat(startDateFormat).format(startDateTimeUni);
+        }
+
         if (allDay != true) {
-          String displayTime = DateFormat((dateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(dateTimeUni).toLowerCase();
-          return Localization().getStringEx('model.explore.time.at.format', '{{day}} at {{time}}').
-            replaceAll('{{day}}', displayDay).
-            replaceAll('{{time}}', displayTime);
+          String displayStartTime = DateFormat((startDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeUni).toLowerCase();
+          if ((endDateTimeUni != null) && (TimeOfDay.fromDateTime(startDateTimeUni) != TimeOfDay.fromDateTime(endDateTimeUni))) {
+           String displayEndTime = DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
+            return Localization().getStringEx('model.explore.time.from_to.format', '{{day}} from {{start_time}} to {{end_time}}').
+              replaceAll('{{day}}', displayDay).
+              replaceAll('{{start_time}}', displayStartTime).
+              replaceAll('{{end_time}}', displayEndTime);
+          }
+          else {
+            return Localization().getStringEx('model.explore.time.at.format', '{{day}} at {{time}}').
+              replaceAll('{{day}}', displayDay).
+              replaceAll('{{time}}', displayStartTime);
+          }
         }
         else {
           return displayDay;
         }
       }
       else {
-        String dateFormat = longFormat ? 'EEEE, MMMM d' : 'MMM d';
-        bool showYear = (nowUni.year != dateTimeUni.year);
-        if (showYear) {
-          dateFormat += ', yyyy';
-        }
-        String displayDateTime = DateFormat(dateFormat).format(dateTimeUni);
+        String displayDateTime = DateFormat(startDateFormat).format(startDateTimeUni);
         if (allDay != true) {
-          displayDateTime += showYear ? ' ' : ', ';
-          displayDateTime += DateFormat((dateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(dateTimeUni).toLowerCase();
+          displayDateTime += showStartYear ? ' ' : ', ';
+          displayDateTime += DateFormat((startDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeUni).toLowerCase();
+        }
+
+        if ((endDateTimeUni != null) && (differentStartAndEndDays || (allDay != true))) {
+          bool showEndYear = (nowUni.year != endDateTimeUni.year);
+          String endDateFormat = (longFormat ? 'EEE, MMM d' : 'MMM d') + (showEndYear ? ', yyyy' : '');
+
+          displayDateTime += ' - ';
+          if (differentStartAndEndDays) {
+            displayDateTime += DateFormat(endDateFormat).format(endDateTimeUni);
+          }
+          if (allDay != true) {
+            displayDateTime += differentStartAndEndDays ? ', ' : '';
+            displayDateTime += DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
+          }
         }
         return displayDateTime;
       }

@@ -3573,6 +3573,7 @@
     "model.explore.time.tomorrow": "Mañana",
     "model.explore.time.at": "a",
     "model.explore.time.at.format": "{{day}} at {{time}}",
+    "model.explore.time.from_to.format": "{{day}} from {{start_time}} to {{end_time}}",
     "model.explore.time.all_day": "Todo el dia",
     "model.explore.distance.format": "{{distance}} mi away",
 
