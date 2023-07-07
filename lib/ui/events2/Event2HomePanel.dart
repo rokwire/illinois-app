@@ -259,6 +259,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   List<Event2>? _events;
   bool? _hasMoreEvents;
+  int? _totalEventsCount;
   bool _loadingEvents = false;
   bool _refreshingEvents = false;
   bool _extendingEvents = false;
@@ -541,23 +542,34 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
     if (descriptionList.isNotEmpty) {
       descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
-      descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
 
-    if ((1 < (_events?.length ?? 0)) || _loadingEvents) {
+    if ((1 < (_events?.length ?? 0)) || _loadingEvents || _refreshingEvents) {
       if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ' ', style: regularStyle,),);
+        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
       }
 
       String? sortStatus = event2SortTypeDisplayStatusString(_sortType);
       if (sortStatus != null) {
         descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.sort.label.title', 'Sort: ') , style: boldStyle,));
         descriptionList.add(TextSpan(text: sortStatus, style: regularStyle,),);
-        descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
       }
     }
 
+    if ((_totalEventsCount != null) && !_loadingEvents && !_refreshingEvents) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+      }
+
+      String? sortStatus = event2SortTypeDisplayStatusString(_sortType);
+      if (sortStatus != null) {
+        descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.events.label.title', 'Events: ') , style: boldStyle,));
+        descriptionList.add(TextSpan(text: _totalEventsCount?.toString(), style: regularStyle,),);
+      }
+    } 
+
     if (descriptionList.isNotEmpty) {
+      descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
       return Padding(padding: EdgeInsets.only(top: 12), child:
         Container(decoration: _attributesDescriptionDecoration, padding: EdgeInsets.only(top: 12, left: 16, right: 16), child:
           Row(children: [ Expanded(child:
@@ -787,11 +799,13 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = false;
       });
 
-      List<Event2>? events = await Events2().loadEvents(await _queryParam(limit: limit));
+      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
+      List<Event2>? events = loadResult?.events;
 
       setStateIfMounted(() {
         _events = (events != null) ? List<Event2>.from(events) : null;
         _hasMoreEvents = (_events != null) ? (_events!.length >= limit) : null;
+        _totalEventsCount = loadResult?.totalCount;
         _loadingEvents = false;
       });
     }
@@ -806,12 +820,17 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       });
 
       int limit = max(_events?.length ?? 0, eventsPageLength);
-      List<Event2>? events = await Events2().loadEvents(await _queryParam(limit: limit));
+      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
+      List<Event2>? events = loadResult?.events;
+      int? totalCount = loadResult?.totalCount;
 
       setStateIfMounted(() {
         if (events != null) {
           _events = List<Event2>.from(events);
           _hasMoreEvents = (events.length >= limit);
+        }
+        if (totalCount != null) {
+          _totalEventsCount = totalCount;
         }
         _refreshingEvents = false;
       });
@@ -824,7 +843,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = true;
       });
 
-      List<Event2>? events = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: eventsPageLength));
+      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: eventsPageLength));
+      List<Event2>? events = loadResult?.events;
+      int? totalCount = loadResult?.totalCount;
 
       if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
         setState(() {
@@ -836,6 +857,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
               _events = List<Event2>.from(events);
             }
             _hasMoreEvents = (events.length >= eventsPageLength);
+          }
+          if (totalCount != null) {
+            _totalEventsCount = totalCount;
           }
           _extendingEvents = false;
         });
