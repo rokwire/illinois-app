@@ -129,6 +129,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         Column(children: [
           Expanded(child:
             SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
               controller: _scrollController,
               reverse: true,
               child: Padding(
