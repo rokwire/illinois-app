@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Assistant UI improvements [#3372](https://github.com/rokwire/illinois-app/issues/3372).
+- Label in Follow-Up Survey panel [#3376](https://github.com/rokwire/illinois-app/issues/3376).
 ### Added
 - Events2 attendance detail panel - work in progress [#3360](https://github.com/rokwire/illinois-app/issues/3360).
 
