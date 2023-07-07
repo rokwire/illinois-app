@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -23,6 +24,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2AttendanceDetailPanel extends StatefulWidget {
@@ -40,6 +42,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   late bool _scanningEnabled;
   late bool _manualCheckEnabled;
+  final TextEditingController _attendeeNetIdsController = TextEditingController();
 
   @override
   void initState() {
@@ -50,6 +53,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   @override
   void dispose() {
+    _attendeeNetIdsController.dispose();
     super.dispose();
   }
 
@@ -63,19 +67,21 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildPanelContent() {
-    return SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildSetupContent(), _buildEventDetails()]));
+    return SingleChildScrollView(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [_buildSetupContent(), _buildEventDetailsContent(), _buildImportAdditionalAttendeesContent()]));
   }
 
   Widget _buildSetupContent() {
-    if (!_isEventAdmin) {
-      return Container();
-    }
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
-          padding: EdgeInsets.only(left: _mainHorizontalPadding, top: _mainVerticalPadding, right: _mainHorizontalPadding),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildScanSection(), _buildManualSection()])),
-      _dividerWidget
-    ]);
+    return Visibility(
+        visible: _isEventAdmin,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+              padding: EdgeInsets.only(left: _mainHorizontalPadding, top: _mainVerticalPadding, right: _mainHorizontalPadding),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildScanSection(), _buildManualSection()])),
+          _dividerWidget
+        ]));
   }
 
   Widget _buildScanSection() {
@@ -91,10 +97,10 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                 label: Localization().getStringEx('panel.event2.detail.attendance.scan.toggle.title', 'Scan Illini ID'),
                 description: Localization().getStringEx('panel.event2.detail.attendance.scan.toggle.description', 'Does not require advance registration.'),
                 toggled: _scanningEnabled,
-                onTap: _onTapScan)));
+                onTap: _onTapScanToggle)));
   }
 
-  void _onTapScan() {
+  void _onTapScanToggle() {
     Analytics().logSelect(target: 'Toggle Scan Illini ID');
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
@@ -126,7 +132,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     });
   }
 
-  Widget _buildEventDetails() {
+  Widget _buildEventDetailsContent() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildEventDetailSection(
           label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'),
@@ -135,19 +141,10 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
           label: Localization().getStringEx('panel.event2.detail.attendance.event.registrations.label.title', 'TOTAL NUMBER OF REGISTRATIONS:'), value: null),//TBD: read registrations from event2 model
       _buildEventDetailSection(
           label: Localization().getStringEx('panel.event2.detail.attendance.event.attendees.label.title', 'TOTAL NUMBER OF ATTENDEES:'), value: null),//TBD: read attendees from event2 model
+      _buildAttendeesDropDown(),
+      _buildUploadAttendeesDescription(),
+      _buildScanIlliniIdButton()
     ]);
-  }
-
-  void _onTapBack() {
-    Navigator.of(context).pop();
-    //TBD: DD - implement
-    // Navigator.of(context).pop((_takeAttendanceViaAppEnabled || _scanningEnabled || _manualCheckEnabled)
-    //     ? Event2AttendanceDetails(
-    //         attendanceRequired: widget.event?.attendanceDetails?.attendanceRequired,
-    //         takeAttendanceViaAppEnabled: _takeAttendanceViaAppEnabled,
-    //         scanningEnabled: _scanningEnabled,
-    //         manualCheckEnabled: _manualCheckEnabled)
-    //     : null);
   }
 
   Widget _buildEventDetailSection({required String label, int? value}) {
@@ -167,6 +164,138 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   Widget _buildDetailNumber(int? number) {
     return Text(StringUtils.ensureNotEmpty(number?.toString(), defaultValue: '-'), style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'));
+  }
+
+  //TBD: DD - fill with proper data when we know where to retrieve it from. Handle drop-down item selection when we know what exactly to do.
+  Widget _buildAttendeesDropDown() {
+    return Padding(
+        padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 16, right: _mainHorizontalPadding),
+        child: Container(
+            decoration: Event2CreatePanel.dropdownButtonDecoration,
+            child: Padding(
+                padding: EdgeInsets.only(left: 12, right: 8),
+                child: DropdownButtonHideUnderline(
+                    child: DropdownButton<dynamic>(
+                        icon: Styles().images?.getImage('chevron-down'),
+                        isExpanded: true,
+                        style: Styles().textStyles?.getTextStyle('panel.create_event.dropdown_button.title.regular'),
+                        hint: Event2CreatePanel.buildSectionTitleWidget(
+                            Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'ATTENDEE LIST')),
+                        items: null,
+                        onChanged: null)))));
+  }
+
+  Widget _buildUploadAttendeesDescription() {
+    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('panel.event.attendance.detail.description.italic');
+    final Color defaultStyleColor = Colors.red;
+    final String adminAppUrl = 'go.illinois.edu/ILappAdmin'; //TBD: DD - move it to config
+    final String adminAppUrlMacro = '{{admin_app_url}}';
+    String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
+        "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.");
+    contentHtml = contentHtml.replaceAll(adminAppUrlMacro, adminAppUrl);
+    return Visibility(
+        visible: _isEventAdmin,
+        child: Padding(
+            padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 20, right: _mainHorizontalPadding),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(padding: EdgeInsets.only(right: 8.8), child: Styles().images?.getImage('info')),
+              Expanded(
+                  child: HtmlWidget(StringUtils.ensureNotEmpty(contentHtml),
+                      onTapUrl: (url) {
+                        _onTapHtmlLink(url);
+                        return true;
+                      },
+                      textStyle: mainStyle,
+                      customStylesBuilder: (element) => (element.localName == "a")
+                          ? {
+                              "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor),
+                              "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)
+                            }
+                          : null))
+            ])));
+  }
+
+  void _onTapHtmlLink(String? url) {
+    Analytics().logSelect(target: '($url)');
+    UrlUtils.launchExternal(url);
+  }
+
+  Widget _buildScanIlliniIdButton() {
+    return Padding(
+        padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 39, right: _mainHorizontalPadding),
+        child: RoundedButton(
+            label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+            onTap: _onTapScanButton,
+            backgroundColor: Styles().colors!.white,
+            borderColor: Styles().colors!.fillColorSecondary,
+            contentWeight: 0.5));
+  }
+
+  void _onTapScanButton() {
+    Analytics().logSelect(target: 'Scan Illini Id');
+    //TBD: DD - implement when we know what to do
+  }
+
+  Widget _buildImportAdditionalAttendeesContent() {
+    return Visibility(visible: _isEventAdmin, child: Padding(padding: EdgeInsets.only(top: 32), child: Column(children: [
+      Padding(padding: Event2CreatePanel.innerSectionPadding, child: _dividerWidget),
+      _buildAttendeesInputSection(),
+      _buildAttendeesInputDescriptionSection()
+    ])));
+  }
+
+  Widget _buildAttendeesInputSection() {
+    return Padding(padding: EdgeInsets.symmetric(horizontal: _mainHorizontalPadding), child: Event2CreatePanel.buildSectionWidget(
+        heading: Event2CreatePanel.buildSectionHeadingWidget(
+            Localization().getStringEx('panel.event2.detail.attendance.additional.netids.label', 'Netids for additional attendance takers:')),
+        body: Event2CreatePanel.buildTextEditWidget(_attendeeNetIdsController, keyboardType: TextInputType.text, maxLines: 1),
+        padding: EdgeInsets.only(bottom: 7)));
+  }
+
+  Widget _buildAttendeesInputDescriptionSection() {
+    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('panel.event.attendance.detail.description.italic');
+    final Color defaultStyleColor = Colors.red;
+    final String adminAppUrl = 'go.illinois.edu/ILappAdmin'; //TBD: DD - move it to config
+    final String adminAppUrlMacro = '{{admin_app_url}}';
+    String contentHtml = Localization()
+        .getStringEx('panel.event2.detail.attendance.attendees.netids.description', "Upload a list at <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.");
+    contentHtml = contentHtml.replaceAll(adminAppUrlMacro, adminAppUrl);
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: _mainHorizontalPadding),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(
+                child: HtmlWidget(StringUtils.ensureNotEmpty(contentHtml),
+                    onTapUrl: (url) {
+                      _onTapHtmlLink(url);
+                      return true;
+                    },
+                    textStyle: mainStyle,
+                    customStylesBuilder: (element) => (element.localName == "a")
+                        ? {
+                            "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor),
+                            "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)
+                          }
+                        : null))
+          ]),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 32),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.only(right: 8.8), child: Styles().images?.getImage('info')),
+                Expanded(
+                    child: Text(
+                        Localization().getStringEx('panel.event2.detail.attendance.attendees.checkin.description',
+                            'To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.'),
+                        style: mainStyle))
+              ]))
+        ]));
+  }
+
+  void _onTapBack() {
+    Analytics().logSelect(target: 'Back');
+    Navigator.of(context).pop();
+    //TBD: DD - implement
   }
 
   Widget get _dividerWidget => Divider(color: Styles().colors?.dividerLineAccent, thickness: 1);
