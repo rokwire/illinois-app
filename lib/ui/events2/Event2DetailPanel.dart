@@ -8,6 +8,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/events2/Event2AttendanceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -189,8 +190,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_speakerDetailWidget,
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
-      ...?_adminSettingsButtonWidget,
       ...?_addToCalendarButton,
+      ...?_adminSettingsButtonWidget,
+      ...?_attendanceDetailWidget,
       ...?_contactsDetailWidget,
     ];
 
@@ -308,6 +310,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
   }
+
+  List<Widget>? get _attendanceDetailWidget => <Widget>[
+        InkWell(
+            onTap: _onTapTakeAttendance,
+            child: _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.take_attendance.title', 'Take Attendance'), 'qr', underlined: true)),
+        _detailSpacerWidget
+      ];
 
   List<Widget>? get _contactsDetailWidget{
     if(CollectionUtils.isEmpty(_event?.contacts))
@@ -582,8 +591,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         }
       );
     }
-  }
-
+  }  
   void _onAddToCalendar(){
     //TBD
   }
@@ -633,6 +641,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingDeleteEvent(){
     //TBD
+  }
+
+  void _onTapTakeAttendance() {
+    Analytics().logSelect(target: 'Take Attendance');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AttendanceDetailPanel(event: _event)));
   }
 
   //loading
