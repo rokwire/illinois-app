@@ -1957,8 +1957,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  Future<List<Explore>?> _loadEvents2() async =>
-    await Events2().loadEvents(await _event2QueryParam());
+  Future<List<Explore>?> _loadEvents2() async {
+    Events2ListResult? loadResult = await Events2().loadEvents(await _event2QueryParam());
+    return loadResult?.events;
+  }
 
   Future<List<Explore>?> _loadDining(List<ExploreFilter>? selectedFilterList) async {
     String? workTime = _getSelectedWorkTime(selectedFilterList);
