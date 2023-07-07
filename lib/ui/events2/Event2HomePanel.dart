@@ -762,11 +762,11 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   bool get _queryNeedsLocation => (_types.contains(Event2TypeFilter.nearby) || (_sortType == Event2SortType.proximity));
 
-  Future<Events2LoadQuery> _queryParam({int offset = 0, int limit = eventsPageLength}) async {
+  Future<Events2Query> _queryParam({int offset = 0, int limit = eventsPageLength}) async {
     if (_queryNeedsLocation) {
       await _ensureCurrentLocation(prompt: true);
     }
-    return Events2LoadQuery(
+    return Events2Query(
       offset: offset,
       limit: limit,
       timeFilter: _timeFilter,

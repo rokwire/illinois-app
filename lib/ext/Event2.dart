@@ -268,7 +268,7 @@ String? event2TimeFilterToDisplayString(Event2TimeFilter? value) {
 String? event2TimeFilterDisplayInfo(Event2TimeFilter? value, { TZDateTime? customStartTime, TZDateTime? customEndTime }) {
   final String dateFormat = 'MM/dd';
   Map<String, dynamic> options = <String, dynamic>{};
-  Events2LoadQuery.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTime?.toUtc(), customEndTimeUtc: customEndTime?.toUtc());
+  Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTime?.toUtc(), customEndTimeUtc: customEndTime?.toUtc());
 
   int? startTimeEpoch = JsonUtils.intValue(options['end_time_after']);
   TZDateTime? startTimeUni = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? DateTimeUni.timezoneUniOrLocal, startTimeEpoch * 1000) : null;
