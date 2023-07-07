@@ -1276,6 +1276,7 @@
     "panel.event2.detail.attendance.event.attendees.label.title": "TOTAL NUMBER OF ATTENDEES:",
     "panel.event2.detail.attendance.attendees.drop_down.hint": "ATTENDEE LIST",
     "panel.event2.detail.attendance.scan.button": "Scan Illini ID",
+    "panel.event2.detail.attendance.attendees.description": "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.",
 
     "panel.settings.manage_interests.instructions.format": "Toca el {{check_mark_icon}} para seguir las etiquetas que más te interesen",
     "panel.settings.manage_interests.list.following":"SIGUIENTE",

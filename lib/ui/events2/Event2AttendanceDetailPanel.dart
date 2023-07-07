@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -64,19 +65,21 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildPanelContent() {
-    return SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildSetupContent(), _buildEventDetails()]));
+    return SingleChildScrollView(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [_buildSetupContent(), _buildEventDetailsContent(), _buildImportAdditionalAttendeesContent()]));
   }
 
   Widget _buildSetupContent() {
-    if (!_isEventAdmin) {
-      return Container();
-    }
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
-          padding: EdgeInsets.only(left: _mainHorizontalPadding, top: _mainVerticalPadding, right: _mainHorizontalPadding),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildScanSection(), _buildManualSection()])),
-      _dividerWidget
-    ]);
+    return Visibility(
+        visible: _isEventAdmin,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+              padding: EdgeInsets.only(left: _mainHorizontalPadding, top: _mainVerticalPadding, right: _mainHorizontalPadding),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildScanSection(), _buildManualSection()])),
+          _dividerWidget
+        ]));
   }
 
   Widget _buildScanSection() {
@@ -127,7 +130,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     });
   }
 
-  Widget _buildEventDetails() {
+  Widget _buildEventDetailsContent() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildEventDetailSection(
           label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'),
@@ -181,8 +184,37 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildUploadAttendeesDescription() {
-    //TBD: DD - implement
-    return Visibility(visible: _isEventAdmin, child: Container());
+    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('panel.event.attendance.detail.description.italic');
+    final String adminAppUrl = 'go.illinois.edu/ILappAdmin'; //TBD: DD - move it to config
+    final String adminAppUrlMacro = '{{admin_app_url}}';
+    String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
+        "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.");
+    contentHtml = contentHtml.replaceAll(adminAppUrlMacro, adminAppUrl);
+    return Visibility(
+        visible: _isEventAdmin,
+        child: Padding(
+            padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 20, right: _mainHorizontalPadding),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(padding: EdgeInsets.only(right: 8.8), child: Styles().images?.getImage('info')),
+              Expanded(
+                  child: HtmlWidget(StringUtils.ensureNotEmpty(contentHtml),
+                      onTapUrl: (url) {
+                        _onTapDescriptionLink(url);
+                        return true;
+                      },
+                      textStyle: mainStyle,
+                      customStylesBuilder: (element) => (element.localName == "a")
+                          ? {
+                              "color": ColorUtils.toHex(mainStyle?.color ?? Colors.red),
+                              "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? Colors.red)
+                            }
+                          : null))
+            ])));
+  }
+
+  void _onTapDescriptionLink(String? url) {
+    Analytics().logSelect(target: '($url)');
+    UrlUtils.launchExternal(url);
   }
 
   Widget _buildScanIlliniIdButton() {
@@ -200,6 +232,10 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   void _onTapScanButton() {
     Analytics().logSelect(target: 'Scan Illini Id');
     //TBD: DD - implement when we know what to do
+  }
+
+  Widget _buildImportAdditionalAttendeesContent() {
+    return Visibility(visible: _isEventAdmin, child: Container());
   }
 
   void _onTapBack() {
