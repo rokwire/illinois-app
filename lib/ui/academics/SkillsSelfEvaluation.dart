@@ -15,6 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Occupations.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
@@ -41,7 +42,7 @@ class SkillsSelfEvaluation extends StatefulWidget {
   _SkillsSelfEvaluationState createState() => _SkillsSelfEvaluationState();
 
   static Future<Map<String, Map<String, dynamic>>?> loadContentItems(List<String> categories) async {
-    Map<String, Map<String, dynamic>>? result; 
+    Map<String, Map<String, dynamic>>? result;
     Map<String, dynamic>? contentItems = await Content().loadContentItems(categories);
     if (contentItems != null) {
       result = <String, Map<String, dynamic>>{};
@@ -180,7 +181,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   void _loadContentItems() {
-    
+
     SkillsSelfEvaluation.loadContentItems(["bessi_info"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _infoContentItems.clear();
@@ -290,6 +291,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   void _gotoResults(dynamic response) {
     if (response is SurveyResponse) {
+      Occupations().postResults(surveyResponse: response);
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
     }
   }
@@ -447,4 +449,3 @@ class SkillsSelfEvaluationLink {
 
   bool get internal => params != null ? params!['internal'] ?? false : false;
 }
-
