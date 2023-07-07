@@ -258,7 +258,7 @@ class Event2HomePanel extends StatefulWidget {
 class _Event2HomePanelState extends State<Event2HomePanel> implements NotificationsListener {
 
   List<Event2>? _events;
-  bool? _hasMoreEvents;
+  bool? _lastPageLoadedAll;
   int? _totalEventsCount;
   bool _loadingEvents = false;
   bool _refreshingEvents = false;
@@ -804,12 +804,15 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
       setStateIfMounted(() {
         _events = (events != null) ? List<Event2>.from(events) : null;
-        _hasMoreEvents = (_events != null) ? (_events!.length >= limit) : null;
         _totalEventsCount = loadResult?.totalCount;
+        _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
         _loadingEvents = false;
       });
     }
   }
+
+  bool? get _hasMoreEvents => (_totalEventsCount != null) ?
+    ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;
 
   Future<void> _refresh() async {
 
@@ -827,7 +830,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       setStateIfMounted(() {
         if (events != null) {
           _events = List<Event2>.from(events);
-          _hasMoreEvents = (events.length >= limit);
+          _lastPageLoadedAll = (events.length >= limit);
         }
         if (totalCount != null) {
           _totalEventsCount = totalCount;
@@ -856,7 +859,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
             else {
               _events = List<Event2>.from(events);
             }
-            _hasMoreEvents = (events.length >= eventsPageLength);
+            _lastPageLoadedAll = (events.length >= eventsPageLength);
           }
           if (totalCount != null) {
             _totalEventsCount = totalCount;
