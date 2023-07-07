@@ -1274,6 +1274,8 @@
     "panel.event2.detail.attendance.event.capacity.label.title": "EVENT CAPACITY:",
     "panel.event2.detail.attendance.event.registrations.label.title": "TOTAL NUMBER OF REGISTRATIONS:",
     "panel.event2.detail.attendance.event.attendees.label.title": "TOTAL NUMBER OF ATTENDEES:",
+    "panel.event2.detail.attendance.attendees.drop_down.hint": "ATTENDEE LIST",
+    "panel.event2.detail.attendance.scan.button": "Scan Illini ID",
 
     "panel.settings.manage_interests.instructions.format": "Toca el {{check_mark_icon}} para seguir las etiquetas que más te interesen",
     "panel.settings.manage_interests.list.following":"SIGUIENTE",
