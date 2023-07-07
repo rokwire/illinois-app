@@ -24,7 +24,7 @@ class Assistant /* with Service */ {
 
   // Implementation
   
-  Future<Message?> sendQuery(String? query) async {
+  Future<Message?> sendQuery(String? query, {List<String>? context}) async {
     if (!isEnabled) {
       Log.w('Failed to send assistant query. Missing assistant url.');
       return null;
@@ -43,6 +43,9 @@ class Assistant /* with Service */ {
     Map<String, dynamic> body = {
       'question': query,
     };
+    if (context != null) {
+      body['context'] = context;
+    }
 
     String? json = JsonUtils.encode(body);
     Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json, timeout: 30);

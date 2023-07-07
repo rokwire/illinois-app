@@ -15,20 +15,25 @@ class SpeechToText with Service {
   SpeechToText._internal();
 
   stt.SpeechToText _speechToText = stt.SpeechToText();
+  bool _initialized = false;
 
-  bool get isEnabled => _speechToText.isAvailable;
+  bool get isEnabled => !_initialized || _speechToText.isAvailable;
   bool get isListening => _speechToText.isListening;
 
   @override
   Future<void> initService() async {
-    await _speechToText.initialize(
-      onError: _onError,
-      onStatus: _onStatus,
-    );
     await super.initService();
   }
 
   void listen({required Function(String, bool) onResult}) async {
+    if (!_initialized) {
+      await _speechToText.initialize(
+        onError: _onError,
+        onStatus: _onStatus,
+      );
+      _initialized = true;
+    }
+
     _speechToText.listen(
       onResult: (result) => _onSpeechResult(result, onResult),
       cancelOnError: true
