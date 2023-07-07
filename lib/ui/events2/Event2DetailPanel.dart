@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,6 +10,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
@@ -115,7 +117,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     );
   }
 
-  Widget get _badgeWidget => _event?.userRole == Event2UserRole.admin ?
+  Widget get _badgeWidget => _isAdmin ?
   Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
     Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
       Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
@@ -185,8 +187,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_dateDetailWidget,
       ...?_onlineDetailWidget,
       ...?_locationDetailWidget,
+      ...?_speakerDetailWidget,
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
+      ...?_addToCalendarButton,
+      ...?_adminSettingsButtonWidget,
       ...?_attendanceDetailWidget,
       ...?_contactsDetailWidget,
     ];
@@ -198,7 +203,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<Widget>? get _dateDetailWidget {
     String? dateTime = _event?.longDisplayDate;
-    return (dateTime != null) ? <Widget>[_buildTextDetailWidget(dateTime, 'calendar')] : null;
+    return (dateTime != null) ? <Widget>[
+        _buildTextDetailWidget(dateTime, 'calendar'),
+      _detailSpacerWidget
+    ] : null;
   }
 
   List<Widget>? get _onlineDetailWidget {
@@ -211,7 +219,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ];
 
       Widget onlineWidget = canLaunch ?
-        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_bold.underline'),) :
+        Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.small.semi_fat.underline'),) :
         Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
       details.add(
         InkWell(onTap: canLaunch ? _onOnline : null, child:
@@ -271,6 +279,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return null;
   }
 
+  List<Widget>? get _speakerDetailWidget => StringUtils.isNotEmpty(_event?.speaker) ? <Widget> [
+    _buildTextDetailWidget("${_event?.speaker} (speaker)", "person"),
+    _detailSpacerWidget
+  ] : null;
+
   List<Widget>? get _priceDetailWidget{
     bool isFree = _event?.free ?? false;
     String priceText =isFree? "Free" : (_event?.cost ?? "Free");
@@ -310,15 +323,23 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       return null;
 
     List<Widget> contactList = [];
-    contactList.add(Padding(
-        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
+    contactList.add(_buildTextDetailWidget("Contacts", "person"));
 
     for (Event2Contact? contact in _event!.contacts!) {
       String? details =  event2ContactToDisplayString(contact);
       if(StringUtils.isNotEmpty(details)){
-        contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child:
-          Text(details!, style: Styles().textStyles?.getTextStyle("widget.text.regular"))
-        ));
+      contactList.add(
+          _buildDetailWidget(
+        // Text(details?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline')),
+              RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
+                TextSpan(style: Styles().textStyles?.getTextStyle("widget.explore.card.detail.regular"), children: <TextSpan>[
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.firstName)?"${contact?.firstName}, " : ""),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.lastName)?"${contact?.lastName}, " : ""),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.organization)?"${contact?.organization}, " : ""),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
+                  TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
+            ])),
+            'person', iconVisible: false, contentPadding: EdgeInsets.zero));
       }
     }
 
@@ -326,6 +347,18 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     return contactList;
   }
+
+  List<Widget>? get _adminSettingsButtonWidget => _isAdmin? <Widget>[
+    InkWell(onTap: _onAdminSettings, child:
+       _buildTextDetailWidget("Event Admin Settings", "settings", )),
+    _detailSpacerWidget
+  ] : null;
+
+  List<Widget>? get _addToCalendarButton => <Widget>[
+    InkWell(onTap: _onAddToCalendar, child:
+       _buildTextDetailWidget("Add to Calendar", "event-save-to-calendar", underlined: true)),
+    _detailSpacerWidget
+  ];
 
   Widget get _buttonsWidget {
     List<Widget> buttons = <Widget>[
@@ -346,7 +379,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       onTap: (){_onWebButton(_event?.eventUrl, analyticsName: 'Website');}
     )] : null;
 
-  List<Widget>? get _logInButtonWidget{//TBD localize
+  List<Widget>? get _logInButtonWidget{
     if(Auth2().isLoggedIn == true)
       return null;
 
@@ -358,7 +391,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     )] : null;
   }
 
-  List<Widget>? get _registrationButtonWidget{//TBD localize
+  List<Widget>? get _registrationButtonWidget{
     if(Auth2().isLoggedIn == false) //We can register only if logged in
       return null;
 
@@ -390,16 +423,27 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return null; //not required
   }
 
+  Widget get _adminSettingsWidget  =>
+      Padding(padding: EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _buildSettingButton(title: "Edit event", onTap: _onSettingEditEvent),
+          _buildSettingButton(title: "Promote this event", onTap: _onSettingPromote),
+          _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
+          _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
+          _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
+          _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
+        ],)
+    );
+
   Widget get _detailSpacerWidget => Container(height: 8,);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
-    bool iconVisible = true,
-    bool underlined = false
+    bool iconVisible = true, bool underlined = false
   }) =>
     _buildDetailWidget(
-      Text(text, maxLines: 1, style: Styles().textStyles?.getTextStyle(underlined ? 'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular'),),
+      Text(text, maxLines: 1, style: underlined? Styles().textStyles?.getTextStyle('widget.info.medium.underline') : Styles().textStyles?.getTextStyle('widget.info.medium'),),
       iconKey,
       contentPadding: contentPadding,
       iconPadding: iconPadding,
@@ -451,7 +495,19 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           ),
         ),],)
       ) : Container();
+  
+  Widget _buildSettingButton({String? title, VoidCallback? onTap}) =>  StringUtils.isNotEmpty(title) ?
+    Padding(padding: EdgeInsets.only(bottom: 6),
+      child: RibbonButton(
+        label: title ?? "",
+        onTap: () {
+          Navigator.of(context).pop();
+          if(onTap!=null)
+            onTap();
+        }),
+    ) : Container();
 
+  //Actions
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions: ${_event?.name}");
     _event?.launchDirections();
@@ -535,6 +591,56 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         }
       );
     }
+  }  
+  void _onAddToCalendar(){
+    //TBD
+  }
+
+  void _onContactEmail(String? email){
+    //TBD
+    AppToast.show("TBD send email to $email");
+  }
+
+  void _onContactPhone(String? phone){
+    //TBD
+    AppToast.show("TBD call to $phone");
+  }
+
+  void _onAdminSettings(){
+    Analytics().logSelect(target: "Admin settings");
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return _adminSettingsWidget;
+        });
+  }
+
+  void _onSettingEditEvent(){
+    //TBD
+  }
+
+  void _onSettingPromote(){
+    //TBD
+  }
+
+  void _onSettingEventRegistration(){
+    //TBD
+  }
+
+  void _onSettingAttendance(){
+    //TBD
+  }
+
+  void _onSettingSurvey(){
+    //TBD
+  }
+
+  void _onSettingDeleteEvent(){
+    //TBD
   }
 
   void _onTapTakeAttendance() {
@@ -577,5 +683,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
     return null;
   }
+
+  //Event getters
+  bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
 
 }

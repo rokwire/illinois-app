@@ -272,6 +272,7 @@
 
     "widget.info.large": { "font_family": "regular", "size": 22.0, "color": "textSurface"},
     "widget.info.medium": { "font_family": "regular", "size": 18.0, "color": "textSurface"},
+    "widget.info.medium.underline": { "font_family": "regular", "size": 18.0, "color": "textSurface", "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.info.medium.fat": { "font_family": "bold", "size": 18.0, "color": "textSurface"},
     "widget.info.regular.thin": { "font_family": "regular", "size": 16.0, "color": "textSurface"},
     "widget.info.regular": { "font_family": "medium", "size": 16.0, "color": "textSurface"},
@@ -941,6 +942,7 @@
     "mobile-access-logo": {"src": "images/hid-logo.png", "type": "flutter.asset"},
 
     "event-detail-default": {"src": "images/event-detail-default.png", "type": "flutter.asset"},
+    "event-save-to-calendar": {"src": "images/icon-save.png", "type": "flutter.asset"},
     "event-filters-background": {"src": "images/event-filters-background.png", "type": "flutter.asset"}
   }
 }
