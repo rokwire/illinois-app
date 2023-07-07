@@ -515,6 +515,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onOnline() {
     Analytics().logSelect(target: "Online Url: ${_event?.name}");
+    String? url = _event?.onlineDetails?.url;
+    if(StringUtils.isNotEmpty(url)){
+      _onLaunchUrl(url);
+    }
   }
 
   void _onFavorite() {
@@ -525,7 +529,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   void _onLaunchUrl(String? url, {BuildContext? context}) {
     if (StringUtils.isNotEmpty(url)) {
       if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context ?? this.context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
@@ -546,28 +550,28 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onRegister(){
     if(_event?.id != null){
-      Events2().registerToEvent(_event!.id!).then((value){
-          if(value != null){ //success
-            String? errorMessage = JsonUtils.stringValue(value);
-            if(StringUtils.isNotEmpty(errorMessage)){
-              Log.e(errorMessage);
-            } else {
-              _refreshEvent();
-            }
+      Events2().registerToEvent(_event!.id!).then((errorMessage){
+        if(errorMessage == null){
+          _refreshEvent();
+        } else {
+          String? message = JsonUtils.stringValue(errorMessage);
+          if(StringUtils.isNotEmpty(message)){
+            Log.e(message);
           }
+        }
       });
     }
   }
 
   void _onUnregister(){
     if(_event?.id != null){
-      Events2().unregisterFromEvent(_event!.id!).then((value){
-        if(value != null){ //success
-          String? errorMessage = JsonUtils.stringValue(value);
-          if(StringUtils.isNotEmpty(errorMessage)){
-            Log.e(errorMessage);
-          } else {
-            _refreshEvent();
+      Events2().unregisterFromEvent(_event!.id!).then((errorMessage){
+        if(errorMessage == null){
+          _refreshEvent();
+        } else { //fail
+          String? message = JsonUtils.stringValue(errorMessage);
+          if(StringUtils.isNotEmpty(message)){
+            Log.e(message);
           }
         }
       });
@@ -640,7 +644,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onSettingDeleteEvent(){
-    //TBD
+    Analytics().logSelect(target: 'Take Attendance');
+    if(_eventId != null) {
+      _eventLoading = true;
+      Events2().deleteEvent(_eventId!).then((errorMessage) {
+        if(errorMessage == null){
+          setStateIfMounted(() {_eventLoading = false; });
+          Navigator.of(context).pop();
+        } else {
+          String? message = JsonUtils.stringValue(errorMessage);
+          if(StringUtils.isNotEmpty(message)){
+            Log.e(message);
+          }
+        }
+      });
+    }
   }
 
   void _onTapTakeAttendance() {
@@ -677,14 +695,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       // return Do we allow it?
     }
 
-    String? eventId = _event?.id ?? widget.eventId;
-    if(eventId != null) {
-      return Events2().loadEvent(eventId);
+    if(_eventId != null) {
+      return Events2().loadEvent(_eventId!);
     }
     return null;
   }
 
   //Event getters
   bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
+
+  String? get _eventId => _event?.id ?? widget.eventId;
 
 }
