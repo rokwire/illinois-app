@@ -150,8 +150,8 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildInnerSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = innerSectionHeadingPadding }) =>
     buildSectionHeadingWidget(title, required: required, prefixImageKey: prefixImageKey, suffixImageKey: suffixImageKey, padding : padding);
 
-  static Widget buildSectionTitleWidget(String title) =>
-    Text(title, style: headingTextStype);
+  static Widget buildSectionTitleWidget(String title, {int? maxLines}) =>
+    Text(title, style: headingTextStype, maxLines: maxLines);
 
   static Widget buildSectionSubTitleWidget(String subTitle) =>
     Text(subTitle, style: subTitleTextStype);

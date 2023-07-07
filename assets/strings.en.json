@@ -1238,7 +1238,7 @@
 
     "panel.event2.setup.survey.header.title": "Event Follow-Up Survey",
     "panel.event2.setup.survey.has_survey.toggle.title": "SEND FOLLOW-UP SURVEY",
-    "panel.event2.setup.survey.hours.title": "FOLLOW-UP SURVEY HOURS",
+    "panel.event2.setup.survey.hours.title": "How many hours after the event ends before sending this survey to attendees?",
     "panel.event2.setup.survey.survey.title": "SURVEY",
     "panel.event2.setup.survey.apply.button": "Apply",
     "panel.event2.setup.survey.hours.invalid.msg": "Please, fill valid non-negative number for hours.",

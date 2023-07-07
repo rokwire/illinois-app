@@ -67,7 +67,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.survey.header.title", "Event Follow-Up Survey"), onLeading: _onHeaderBack),
+        appBar: HeaderBar(title: Localization().getStringEx('panel.event2.setup.survey.header.title', 'Event Follow-Up Survey'), onLeading: _onHeaderBack),
         body: _buildPanelContent(),
         backgroundColor: Styles().colors!.white);
   }
@@ -112,11 +112,9 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       child: Padding(
           padding: Event2CreatePanel.sectionPadding,
           child: Row(children: [
-            Padding(
-                padding: EdgeInsets.only(right: 6),
-                child: Event2CreatePanel.buildSectionTitleWidget(
-                    Localization().getStringEx('panel.event2.setup.survey.hours.label.title', 'FOLLOW-UP SURVEY HOURS'))),
-            Expanded(child: Event2CreatePanel.buildTextEditWidget(_hoursController, keyboardType: TextInputType.number, maxLines: 1))
+            Flexible(flex: 3, child: Event2CreatePanel.buildSectionTitleWidget(
+                Localization().getStringEx('panel.event2.setup.survey.hours.title', 'How many hours after the event ends before sending this survey to attendees?'), maxLines: 4)),
+            Flexible(flex: 1, child: Padding(padding: EdgeInsets.only(left: 6), child: Event2CreatePanel.buildTextEditWidget(_hoursController, keyboardType: TextInputType.number, maxLines: 1)))
           ])));
 
   // Surveys
