@@ -4,8 +4,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Assistant.dart';
 import 'package:illinois/service/Assistant.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
@@ -558,7 +560,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       curve: Curves.fastOutSlowIn,
     );
 
-    Message? response = await Assistant().sendQuery(message);
+    Message? response = await Assistant().sendQuery(message, context: _getUserContext());
     if (mounted) {
       setState(() {
         if (response != null){
@@ -577,6 +579,32 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         _loadingResponse = false;
       });
     }
+  }
+
+  List<String>? _getUserContext() {
+    List<String> context = [];
+
+    String? name = Auth2().profile?.fullName;
+    if (name != null) {
+      context.add('My name is $name');
+    }
+
+    String? netID = Auth2().netId;
+    if (netID != null) {
+      context.add('My netID is $netID');
+    }
+
+    String? college = IlliniCash().studentClassification?.collegeName;
+    String? department = IlliniCash().studentClassification?.departmentName;
+    if (college != null && department != null) {
+      context.add('I am a student in the $department department in the $college college');
+    }
+    String? studentLevel = IlliniCash().studentClassification?.studentLevelDescription;
+    if (studentLevel != null) {
+      context.add('I have $studentLevel standing as a student');
+    }
+
+    return context.isNotEmpty ? context : null;
   }
 
   void _onTapSourceLink(String source) {
