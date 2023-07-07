@@ -31,14 +31,8 @@ class Assistant /* with Service */ {
     }
 
     String url = '${Config().assistantUrl}/query';
-    String? apiKey = Config().assistantAPIKey;
-    if (apiKey == null) {
-      Log.w('Failed to send assistant query. Missing assistant api key.');
-      return null;
-    }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'X-API-KEY': apiKey,
     };
     Map<String, dynamic> body = {
       'question': query,
@@ -48,7 +42,7 @@ class Assistant /* with Service */ {
     }
 
     String? json = JsonUtils.encode(body);
-    Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json, timeout: 30);
+    Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -71,14 +65,8 @@ class Assistant /* with Service */ {
     }
 
     String url = '${Config().assistantUrl}/feedback';
-    String? apiKey = Config().assistantAPIKey;
-    if (apiKey == null) {
-      Log.w('Failed to send assistant feedback. Missing assistant api key.');
-      return null;
-    }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'X-API-KEY': apiKey,
     };
     Map<String, dynamic> body = {
       'message_id': message.id,
@@ -111,14 +99,8 @@ class Assistant /* with Service */ {
     }
 
     String url = '${Config().assistantUrl}/query-limit';
-    String? apiKey = Config().assistantAPIKey;
-    if (apiKey == null) {
-      Log.w('Failed to get assistant query limit. Missing assistant api key.');
-      return null;
-    }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'X-API-KEY': apiKey,
     };
 
     Response? response = await Network().get(url, auth: Auth2(), headers: headers);
