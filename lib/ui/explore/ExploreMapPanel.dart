@@ -1783,11 +1783,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     return _currentLocation;
   } 
 
-  Future<Events2Query> _event2QueryParam() async {
+  Future<Events2LoadQuery> _event2QueryParam() async {
     if (_event2Types.contains(Event2TypeFilter.nearby)) {
       await _ensureCurrentLocation();
     }
-    return Events2Query(
+    return Events2LoadQuery(
       timeFilter: _event2TimeFilter,
       customStartTimeUtc: _event2CustomStartTime?.toUtc(),
       customEndTimeUtc: _event2CustomEndTime?.toUtc(),
