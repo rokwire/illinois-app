@@ -127,7 +127,8 @@
 			},
 			"privacy" : {
 				"connect"                         : 4,
-	
+				"tabbar.assistant"                : 5,
+
 				"settings.connected"              : 4,
 				"settings.link"                   : 4,
 				"settings.linked"                 : 4,

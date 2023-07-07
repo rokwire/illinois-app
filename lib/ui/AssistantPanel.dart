@@ -9,6 +9,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -51,9 +52,9 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     ]);
 
     _messages.add(Message(content: Localization().getStringEx('',
-        "Hey there! I'm the Illinois Assistant. "
-            "You can ask me anything about the University. "
-            "Type a question below to get started.",),
+        "Hello! I am the new Illinois Assistant in training. "
+            "Ask me anything about the University "
+            "--type a question below to get started.",),
         // sources: ["https://google.com", "https://illinois.edu", "https://grad.illinois.edu", "https://uillinois.edu"],
         user: false));
 
@@ -124,7 +125,6 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.assistant.label.title', 'Assistant')),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(children: [
-          _buildDisclaimer(),
           Expanded(child:
             SingleChildScrollView(
               controller: _scrollController,
@@ -146,6 +146,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
+    contentList.add(_buildDisclaimer());
+
     for (Message message in _messages) {
       contentList.add(_buildChatBubble(message));
       contentList.add(SizedBox(height: 16.0));
@@ -160,16 +162,13 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   }
 
   Widget _buildDisclaimer() {
-    return Container(
-      color: Styles().colors?.fillColorPrimary,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(Localization().getStringEx('',
-            'This is an experimental feature which may present inaccurate results. '
-                'Please verify all information with official University sources. '
-                'Your input will be recorded to improve the quality of results.'),
-          style: Styles().textStyles?.getTextStyle('widget.title.light.regular')
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+      child: Text(Localization().getStringEx('',
+          'As an in-progress experimental feature, the Illinois Assistant may present inaccurate results '
+              'requiring verification with other official university sources. '
+              'Your input will be recorded to help improve the Illinois Assistant.'),
+        style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic')
       ),
     );
   }
@@ -195,7 +194,13 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
             borderRadius: BorderRadius.circular(16.0),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: Text(uri.host, style: Styles().textStyles?.getTextStyle('widget.title.light.small')),
+              child: Row(mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(uri.host, style: Styles().textStyles?.getTextStyle('widget.title.light.small')),
+                  SizedBox(width: 8),
+                  Styles().images?.getImage('external-link') ?? Container(),
+                ],
+              ),
             )
           ),
         ));
@@ -248,7 +253,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                                         spacing: 8.0,
                                         runSpacing: 8.0,
                                         children: [
-                                          Text(Localization().getStringEx('', "Learn More: "),
+                                          Text(Localization().getStringEx('', "More from the web: "),
                                               style: Styles().textStyles?.getTextStyle('widget.title.light.small.fat')),
                                           ...sourceLinks
                                         ],
@@ -269,6 +274,11 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                 visible: message.acceptsFeedback,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.center,
                   children: [// TODO: Handle material icons in styles images
+                    IconButton(onPressed: _onTapFeedbackInfo,
+                        icon: Icon(Icons.info_outline,
+                            size: 24, color: Styles().colors?.fillColorPrimary),
+                        iconSize: 24,
+                        splashRadius: 24),
                     IconButton(onPressed: message.feedbackExplanation == null ? () {
                       _sendFeedback(message, true);
                     }: null,
@@ -295,6 +305,13 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         ))
       ],
     );
+  }
+
+  void _onTapFeedbackInfo() {
+    AppAlert.showDialogResult(context, Localization().getStringEx("", "Provide feedback on this response to help us improve the Illinois Assistant!"
+        "\n\nIf you found the response helpful and accurate give it a 'thumbs up' to let us know. "
+        "\n\nIf you noticed an issue with the response give it a 'thumbs down' and you will "
+        "be prompted to provide a brief explanation of the problem."));
   }
 
   void _sendFeedback(Message message, bool good) {
