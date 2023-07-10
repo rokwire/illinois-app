@@ -67,6 +67,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   bool _refreshingEvents = false;
   bool _extendingEvents = false;
   static const int _eventsPageLength = 16;
+  static const String _progressContentKey = '_progress_';
  
   LocationServicesStatus? _locationServicesStatus;
   bool _loadingLocationServicesStatus = false;
@@ -155,9 +156,6 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     if (_loadingEvents || _loadingLocationServicesStatus) {
       return HomeProgressWidget();
     }
-    else if (_refreshingEvents) {
-      return Container();
-    }
     else if (_events == null) {
       return HomeMessageCard(message: 'Failed to load events.');
     }
@@ -172,14 +170,27 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   Widget _buildEventsContent() {
     
     Widget contentWidget;
-    if (1 < (_events?.length ?? 0)) {
+    int eventsCount = _events?.length ?? 0;
+    if ((_hasMoreEvents != false) || (1 < eventsCount)) {
 
       List<Widget> pages = <Widget>[];
-      for (Event2 event in _events!) {
+      for (int index = 0; index < eventsCount; index++) {
+        Event2 event = _events![index];
+        String contentKey = "${event.id}-$index";
         pages.add(Padding(
-          key: _contentKeys[StringUtils.ensureNotEmpty(event.id)] ??= GlobalKey(),
+          key: _contentKeys[contentKey] ??= GlobalKey(),
           padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
           child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)));
+      }
+
+      if (_hasMoreEvents != false) {
+        pages.add(Padding(
+          key: _contentKeys[_progressContentKey] ??= GlobalKey(),
+          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+          child: HomeProgressWidget(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+          ),
+        ));
       }
 
       if (_pageController == null) {
@@ -195,6 +206,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
           estimatedPageSize: _pageHeight,
           allowImplicitScrolling: true,
           children: pages,
+          onPageChanged: _onPageChanged,
         ),
       );
     }
@@ -224,6 +236,15 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
       }
     }
     return minContentHeight ?? 0;
+  }
+
+  bool? get _hasMoreEvents => (_totalEventsCount != null) ?
+    ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;
+
+  void _onPageChanged(int index) {
+    if ((_events?.length ?? 0) < (index + 1) && (_hasMoreEvents != false) && !_extendingEvents && !_loadingEvents && !_refreshingEvents) {
+      _extend();
+    }
   }
 
   void _onTapEvent2(Event2 event) {
@@ -320,6 +341,8 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         _totalEventsCount = loadResult?.totalCount;
         _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
         _loadingEvents = false;
+        _pageViewKey = UniqueKey();
+        _contentKeys.clear();
       });
     }
   }
@@ -346,6 +369,8 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
           _totalEventsCount = totalCount;
         }
         _refreshingEvents = false;
+        _pageViewKey = UniqueKey();
+        _contentKeys.clear();
       });
     }
   }
@@ -377,7 +402,6 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
           _extendingEvents = false;
         });
       }
-
     }
   }
 }
