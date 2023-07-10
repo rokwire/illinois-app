@@ -366,5 +366,5 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   bool get _isAdmin => (widget.event?.userRole == Event2UserRole.admin);
 
-  bool get _isAttendanceTaker => (widget.event?.userRole == Event2UserRole.attendance_taker);
+  bool get _isAttendanceTaker => (widget.event?.userRole == Event2UserRole.attendanceTaker);
 }

@@ -710,7 +710,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   //Event getters
   bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
 
-  bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendance_taker;
+  bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendanceTaker;
 
   String? get _eventId => _event?.id ?? widget.eventId;
 
