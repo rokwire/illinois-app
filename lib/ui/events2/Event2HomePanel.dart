@@ -263,7 +263,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   bool _loadingEvents = false;
   bool _refreshingEvents = false;
   bool _extendingEvents = false;
-  static const int eventsPageLength = 16;
+  static const int _eventsPageLength = 16;
 
   late Event2TimeFilter _timeFilter;
   TZDateTime? _customStartTime;
@@ -774,7 +774,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   bool get _queryNeedsLocation => (_types.contains(Event2TypeFilter.nearby) || (_sortType == Event2SortType.proximity));
 
-  Future<Events2Query> _queryParam({int offset = 0, int limit = eventsPageLength}) async {
+  Future<Events2Query> _queryParam({int offset = 0, int limit = _eventsPageLength}) async {
     if (_queryNeedsLocation) {
       await _ensureCurrentLocation(prompt: true);
     }
@@ -792,7 +792,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     );
   } 
 
-  Future<void> _reload({ int limit = eventsPageLength }) async {
+  Future<void> _reload({ int limit = _eventsPageLength }) async {
     if (!_loadingEvents && !_refreshingEvents) {
       setStateIfMounted(() {
         _loadingEvents = true;
@@ -822,7 +822,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = false;
       });
 
-      int limit = max(_events?.length ?? 0, eventsPageLength);
+      int limit = max(_events?.length ?? 0, _eventsPageLength);
       Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
       List<Event2>? events = loadResult?.events;
       int? totalCount = loadResult?.totalCount;
@@ -846,7 +846,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = true;
       });
 
-      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: eventsPageLength));
+      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
       List<Event2>? events = loadResult?.events;
       int? totalCount = loadResult?.totalCount;
 
@@ -859,7 +859,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
             else {
               _events = List<Event2>.from(events);
             }
-            _lastPageLoadedAll = (events.length >= eventsPageLength);
+            _lastPageLoadedAll = (events.length >= _eventsPageLength);
           }
           if (totalCount != null) {
             _totalEventsCount = totalCount;
