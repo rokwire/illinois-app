@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show "Take Attendance" only to event admins and attendance takers [#3360](https://github.com/rokwire/illinois-app/issues/3360).
+### Fixed
+- Tap over the whole surface of the guide entry card [#3388](https://github.com/rokwire/illinois-app/issues/3388).
 
 ## [5.0.23] - 2023-07-07
 ### Changed
