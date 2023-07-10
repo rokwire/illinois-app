@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -98,7 +99,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),
       child: Stack(children: [
-        GestureDetector(onTap: _onTapEntry, child:
+        InkWell(onTap: _onTapEntry, child:
           Semantics(button: true, child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),
