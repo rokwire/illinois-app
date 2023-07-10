@@ -39,7 +39,7 @@ import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
-import 'package:illinois/ui/home/HomeEventFeedWidget.dart';
+import 'package:illinois/ui/home/HomeEvent2FeedWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeInboxWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
@@ -152,13 +152,13 @@ class HomePanel extends StatefulWidget {
         return HomeSuggestedEventsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'event_feed') {
+    else if (code == 'event2_feed') {
       if (title) {
-        return HomeEventFeedWidget.title;
+        return HomeEvent2FeedWidget.title;
       } else if (handle) {
-        return HomeEventFeedWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeEvent2FeedWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeEventFeedWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeEvent2FeedWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'recent_items') {

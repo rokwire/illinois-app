@@ -31,24 +31,24 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class HomeEventFeedWidget extends StatefulWidget {
+class HomeEvent2FeedWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeEventFeedWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeEvent2FeedWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.event_feed.label.header.title', 'Event Feed');
+  static String get title => Localization().getStringEx('widget.home.event2_feed.label.header.title', 'Event Feed');
 
-  State<HomeEventFeedWidget> createState() => _HomeEventFeedWidgetState();
+  State<HomeEvent2FeedWidget> createState() => _HomeEvent2FeedWidgetState();
 }
 
-class _HomeEventFeedWidgetState extends State<HomeEventFeedWidget> implements NotificationsListener {
+class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements NotificationsListener {
   List<Event2>? _events;
   DateTime? _pausedDateTime;
 
@@ -114,7 +114,7 @@ class _HomeEventFeedWidgetState extends State<HomeEventFeedWidget> implements No
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeEventFeedWidget.title,
+      title: HomeEvent2FeedWidget.title,
       titleIconKey: 'events',
       child: _buildContent(),
     );
@@ -123,7 +123,7 @@ class _HomeEventFeedWidgetState extends State<HomeEventFeedWidget> implements No
   Widget _buildContent() {
     if (CollectionUtils.isEmpty(_events)) {
       return HomeMessageCard(
-        message: Localization().getStringEx("widget.home.event_feed.text.empty.description", "There are no events available."));
+        message: Localization().getStringEx("widget.home.event2_feed.text.empty.description", "There are no events available."));
     }
     else {
       return _buildEventsContent();
@@ -172,8 +172,8 @@ class _HomeEventFeedWidgetState extends State<HomeEventFeedWidget> implements No
       contentWidget,
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
-        title: Localization().getStringEx('widget.home.event_feed.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.event_feed.button.all.hint', 'Tap to view all events'),
+        title: Localization().getStringEx('widget.home.event2_feed.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.event2_feed.button.all.hint', 'Tap to view all events'),
         onTap: _onTapViewAll,
       ),
     ]);

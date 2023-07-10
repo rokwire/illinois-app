@@ -363,7 +363,7 @@
 	"panel.browse.entry.dinings.my_dining.title": "我的用餐地點",
 	
 	"panel.browse.entry.events.suggested_events.title": "建議的活動",
-	"panel.browse.entry.events.event_feed.title": "活動提要",
+	"panel.browse.entry.events.event2_feed.title": "活動提要",
 	"panel.browse.entry.events.my_events.title": "我的活動",
 	
 	"panel.browse.entry.feeds.twitter.title": "推特",
@@ -3114,10 +3114,10 @@
 	"widget.home.recent_items.button.all.title":"查看全部",
 	"widget.home.recent_items.button.all.hint":"點擊查看所有項目",
 	
-	"widget.home.event_feed.label.header.title":"Event Feed",
-	"widget.home.event_feed.text.empty.description": "There are no events available.",
-	"widget.home.event_feed.button.all.title":"View All",
-	"widget.home.event_feed.button.all.hint":"Tap to view all events",
+	"widget.home.event2_feed.label.header.title":"Event Feed",
+	"widget.home.event2_feed.text.empty.description": "There are no events available.",
+	"widget.home.event2_feed.button.all.title":"View All",
+	"widget.home.event2_feed.button.all.hint":"Tap to view all events",
 	
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有組",

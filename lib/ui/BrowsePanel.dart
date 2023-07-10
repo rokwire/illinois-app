@@ -584,7 +584,7 @@ class _BrowseEntry extends StatelessWidget {
       case "dinings.my_dining":              _onTapMyDinings(context); break;
 
       case "events.suggested_events":        _onTapSuggestedEvents(context); break;
-      case "events.event_feed":              _onTapEventFeed(context); break;
+      case "events.event2_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
 
       case "feeds.twitter":                  _onTapTwitter(context); break;
