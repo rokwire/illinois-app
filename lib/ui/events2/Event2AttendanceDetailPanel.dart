@@ -75,7 +75,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   Widget _buildSetupContent() {
     return Visibility(
-        visible: _isEventAdmin,
+        visible: _isAdmin,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
               padding: EdgeInsets.only(left: _mainHorizontalPadding, top: _mainVerticalPadding, right: _mainHorizontalPadding),
@@ -133,7 +133,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildEventDetailsContent() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return Visibility(visible: (_isAdmin || _isAttendanceTaker), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildEventDetailSection(
           label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'),
           value: widget.event?.registrationDetails?.eventCapacity),
@@ -144,7 +144,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
       _buildAttendeesDropDown(),
       _buildUploadAttendeesDescription(),
       _buildScanIlliniIdButton()
-    ]);
+    ]));
   }
 
   Widget _buildEventDetailSection({required String label, int? value}) {
@@ -194,7 +194,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
         "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.");
     contentHtml = contentHtml.replaceAll(adminAppUrlMacro, adminAppUrl);
     return Visibility(
-        visible: _isEventAdmin,
+        visible: _isAdmin,
         child: Padding(
             padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 20, right: _mainHorizontalPadding),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -238,7 +238,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildImportAdditionalAttendeesContent() {
-    return Visibility(visible: _isEventAdmin, child: Padding(padding: EdgeInsets.only(top: 32), child: Column(children: [
+    return Visibility(visible: _isAdmin, child: Padding(padding: EdgeInsets.only(top: 32), child: Column(children: [
       Padding(padding: Event2CreatePanel.innerSectionPadding, child: _dividerWidget),
       _buildAttendeesInputSection(),
       _buildAttendeesInputDescriptionSection()
@@ -300,5 +300,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   Widget get _dividerWidget => Divider(color: Styles().colors?.dividerLineAccent, thickness: 1);
 
-  bool get _isEventAdmin => (widget.event?.userRole == Event2UserRole.admin);
+  bool get _isAdmin => (widget.event?.userRole == Event2UserRole.admin);
+
+  bool get _isAttendanceTaker => (widget.event?.userRole == Event2UserRole.attendance_taker);
 }

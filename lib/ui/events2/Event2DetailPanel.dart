@@ -311,12 +311,18 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
   }
 
-  List<Widget>? get _attendanceDetailWidget => <Widget>[
+  List<Widget>? get _attendanceDetailWidget {
+    if (_isAdmin || _isAttendanceTaker) {
+      return <Widget>[
         InkWell(
             onTap: _onTapTakeAttendance,
             child: _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.take_attendance.title', 'Take Attendance'), 'qr', underlined: true)),
         _detailSpacerWidget
       ];
+    } else {
+      return null;
+    }
+  }
 
   List<Widget>? get _contactsDetailWidget{
     if(CollectionUtils.isEmpty(_event?.contacts))
@@ -703,6 +709,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   //Event getters
   bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
+
+  bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendance_taker;
 
   String? get _eventId => _event?.id ?? widget.eventId;
 
