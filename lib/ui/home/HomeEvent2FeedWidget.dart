@@ -16,13 +16,14 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Content.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -83,6 +84,8 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
 
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
+      FlexUI.notifyChanged,
+      Events2.notifyChanged
     ]);
 
     if (widget.updateController != null) {
@@ -111,11 +114,15 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Content.notifyVideoTutorialsChanged) {
-      _refresh();
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _currentLocation = null;
+      _updateLocationServicesStatus();
+    }
+    else if (name == Events2.notifyChanged) {
+      _reload();
     }
   }
 
@@ -127,13 +134,12 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refresh();
+          _updateLocationServicesStatus().then((_) {
+            _refresh();
+          });
         }
       }
     }
-  }
-
-  void _refresh() {
   }
 
   @override
@@ -263,13 +269,6 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     return (locationNotAvailable && ((types?.contains(Event2TypeFilter.nearby) == true) || (sortType == Event2SortType.proximity)));
   }
 
-  Future<Position?> _ensureCurrentLocation() async {
-    if ((_currentLocation == null) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed)) {
-      _currentLocation = await LocationServices().location;
-    }
-    return _currentLocation;
-  } 
-
   // Event2 Query
 
   Future<Events2Query> _queryParam({int offset = 0, int limit = _eventsPageLength}) async {
@@ -322,6 +321,63 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
         _loadingEvents = false;
       });
+    }
+  }
+
+  Future<void> _refresh() async {
+
+    if (!_loadingEvents && !_refreshingEvents) {
+      setStateIfMounted(() {
+        _refreshingEvents = true;
+        _extendingEvents = false;
+      });
+
+      int limit = max(_events?.length ?? 0, _eventsPageLength);
+      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
+      List<Event2>? events = loadResult?.events;
+      int? totalCount = loadResult?.totalCount;
+
+      setStateIfMounted(() {
+        if (events != null) {
+          _events = List<Event2>.from(events);
+          _lastPageLoadedAll = (events.length >= limit);
+        }
+        if (totalCount != null) {
+          _totalEventsCount = totalCount;
+        }
+        _refreshingEvents = false;
+      });
+    }
+  }
+
+  Future<void> _extend() async {
+    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents) {
+      setStateIfMounted(() {
+        _extendingEvents = true;
+      });
+
+      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
+      List<Event2>? events = loadResult?.events;
+      int? totalCount = loadResult?.totalCount;
+
+      if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
+        setState(() {
+          if (events != null) {
+            if (_events != null) {
+              _events?.addAll(events);
+            }
+            else {
+              _events = List<Event2>.from(events);
+            }
+            _lastPageLoadedAll = (events.length >= _eventsPageLength);
+          }
+          if (totalCount != null) {
+            _totalEventsCount = totalCount;
+          }
+          _extendingEvents = false;
+        });
+      }
+
     }
   }
 }
