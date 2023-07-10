@@ -179,7 +179,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         pages.add(Padding(
           key: _contentKeys[StringUtils.ensureNotEmpty(event.id)] ??= GlobalKey(),
           padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
-          child: Event2Card(event, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)));
+          child: Event2Card(event, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)));
       }
 
       if (_pageController == null) {
@@ -200,7 +200,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-        Event2Card(_events!.first, onTap: () => _onTapEvent2(_events!.first))
+        Event2Card(_events!.first, displayMode: Event2CardDisplayMode.page, userLocation: _currentLocation, onTap: () => _onTapEvent2(_events!.first))
       );
     }
 

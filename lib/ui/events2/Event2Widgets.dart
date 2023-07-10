@@ -115,10 +115,11 @@ class Event2ImageCommandButton extends StatelessWidget {
 
 class Event2Card extends StatefulWidget {
   final Event2 event;
+  final Event2CardDisplayMode displayMode;
   final Position? userLocation;
   final void Function()? onTap;
   
-  Event2Card(this.event, { Key? key, this.userLocation, this.onTap}) : super(key: key);
+  Event2Card(this.event, { Key? key, required this.displayMode, this.userLocation, this.onTap}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CardState();
@@ -157,27 +158,62 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Semantics(label: _semanticsLabel, hint: _semanticsHint, button: true, child:
-      InkWell(onTap: widget.onTap, child:
-        Container(decoration: _contentDecoration, child:
-          ClipRRect(borderRadius: _contentBorderRadius, child: 
-            Column(mainAxisSize: MainAxisSize.min, children: [
-              _imageWidget,
-              _categoriesWidget,
-              Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-                Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  _titleWidget,
-                  _detailsWidget,
-                ]),
-              ),
+  Widget build(BuildContext context) => Semantics(label: _semanticsLabel, hint: _semanticsHint, button: true, child:
+    InkWell(onTap: widget.onTap, child:
+      _contentWidget
+    )
+  );
 
-            ],),
+  Widget get _contentWidget {
+    switch (widget.displayMode) {
+      case Event2CardDisplayMode.list: return _listContentWidget;
+      case Event2CardDisplayMode.page: return _pageContentWidget;
+    }
+  }
+
+  Widget get _listContentWidget =>
+    Container(decoration: _contentDecoration, child:
+      ClipRRect(borderRadius: _contentBorderRadius, child: 
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          _imageHeadingWidget,
+          _categoriesWidget,
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              _titleWidget,
+              _detailsWidget,
+            ]),
           ),
-        ),
+
+        ],),
       ),
     );
-  }
+
+  Widget get _pageContentWidget =>
+    Container(decoration: _contentDecoration, child:
+      ClipRRect(borderRadius: _contentBorderRadius, child: 
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          _pageHeadingWidget,
+          _categoriesWidget,
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Visibility(visible: true, child:
+                Expanded(flex: 3, child:
+                  Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    _titleWidget,
+                    _detailsWidget,
+                  ]),
+                ),
+              ),
+              Visibility(visible: _hasImage, child:
+                Expanded(flex: 1, child:
+                  _imageDetailWidget,
+                )
+              ),
+            ]),
+          ),
+        ],),
+      ),
+    );
 
   String get _semanticsLabel => 'TODO Label';
   String get _semanticsHint => 'TODO Hint';
@@ -186,22 +222,32 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     color: Styles().colors?.surface,
     borderRadius: _contentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-    boxShadow: [ BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
+    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
   );
 
   BorderRadiusGeometry get _contentBorderRadius => BorderRadius.all(Radius.circular(8));
 
-  Widget get _imageWidget => Visibility(visible: StringUtils.isNotEmpty(widget.event.imageUrl), child:
-    Container(decoration: _imageDecoration, child:
+  bool get _hasImage => StringUtils.isNotEmpty(widget.event.imageUrl);
+
+  Widget get _imageHeadingWidget => Visibility(visible: _hasImage, child:
+    Container(decoration: _imageHeadingDecoration, child:
       AspectRatio(aspectRatio: 2.5, child:
         Image.network(widget.event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
       ),
     )
   );
 
-  Decoration get _imageDecoration => BoxDecoration(
+  Decoration get _imageHeadingDecoration => BoxDecoration(
     border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1)),
   );
+
+  Widget get _pageHeadingWidget => Container(height: 7, color: widget.event.uiColor);
+
+  Widget get _imageDetailWidget =>
+    AspectRatio(aspectRatio: 1.3, child:
+      Image.network(widget.event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
+    );
+  
 
   Widget get _categoriesWidget => 
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -338,3 +384,5 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     Auth2().prefs?.toggleFavorite(widget.event);
   }
 }
+
+enum Event2CardDisplayMode { list, page }
