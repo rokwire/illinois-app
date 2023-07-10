@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -43,6 +44,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   late bool _scanningEnabled;
   late bool _manualCheckEnabled;
   final TextEditingController _attendeeNetIdsController = TextEditingController();
+  bool _scanning = false;
 
   @override
   void initState() {
@@ -75,7 +77,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   Widget _buildSetupContent() {
     return Visibility(
-        visible: _isEventAdmin,
+        visible: _isAdmin,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
               padding: EdgeInsets.only(left: _mainHorizontalPadding, top: _mainVerticalPadding, right: _mainHorizontalPadding),
@@ -133,7 +135,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildEventDetailsContent() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return Visibility(visible: (_isAdmin || _isAttendanceTaker), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildEventDetailSection(
           label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'),
           value: widget.event?.registrationDetails?.eventCapacity),
@@ -144,7 +146,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
       _buildAttendeesDropDown(),
       _buildUploadAttendeesDescription(),
       _buildScanIlliniIdButton()
-    ]);
+    ]));
   }
 
   Widget _buildEventDetailSection({required String label, int? value}) {
@@ -194,7 +196,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
         "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.");
     contentHtml = contentHtml.replaceAll(adminAppUrlMacro, adminAppUrl);
     return Visibility(
-        visible: _isEventAdmin,
+        visible: _isAdmin,
         child: Padding(
             padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 20, right: _mainHorizontalPadding),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -223,22 +225,84 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   Widget _buildScanIlliniIdButton() {
     return Padding(
         padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 39, right: _mainHorizontalPadding),
-        child: RoundedButton(
-            label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-            onTap: _onTapScanButton,
-            backgroundColor: Styles().colors!.white,
-            borderColor: Styles().colors!.fillColorSecondary,
-            contentWeight: 0.5));
+        child: Stack(alignment: Alignment.center, children: [
+          RoundedButton(
+              label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+              onTap: _onTapScanButton,
+              backgroundColor: Styles().colors!.white,
+              borderColor: Styles().colors!.fillColorSecondary,
+              contentWeight: 0.5),
+          Visibility(visible: _scanning, child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 1))
+        ]));
   }
 
   void _onTapScanButton() {
     Analytics().logSelect(target: 'Scan Illini Id');
-    //TBD: DD - implement when we know what to do
+    if (_scanning) {
+      return;
+    }
+    setStateIfMounted(() {
+      _scanning = true;
+    });
+    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors!.fillColorSecondary!)!,
+            Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
+        .then((scanResult) {
+      _onScanFinished(scanResult);
+      setStateIfMounted(() {
+        _scanning = false;
+      });
+    });
+  }
+
+  void _onScanFinished(String? scanResult) {
+    if (scanResult == '-1') {
+      // The user hit "Cancel button"
+      return;
+    }
+    String? uin = _extractUin(scanResult);
+    // There is no uin in the scanned QRcode
+    if (uin == null) {
+      AppAlert.showDialogResult(
+          context, Localization().getStringEx('panel.event2.detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
+      return;
+    }
+    //TBD: DD - check with backend team what we should do with the extracted UIN and implement it
+    AppAlert.showDialogResult(context, 'The UIN is: $uin.');
+  }
+
+  ///
+  /// Returns UIN number from string (uin or megTrack2), null - otherwise
+  ///
+  String? _extractUin(String? stringToCheck) {
+    if (StringUtils.isEmpty(stringToCheck)) {
+      return stringToCheck;
+    }
+    int stringSymbolsCount = stringToCheck!.length;
+    final int uinNumbersCount = 9;
+    final int megTrack2SymbolsCount = 28;
+    // Validate UIN in format 'XXXXXXXXX'
+    if (stringSymbolsCount == uinNumbersCount) {
+      RegExp uinRegEx = RegExp('[0-9]{$uinNumbersCount}');
+      bool uinMatch = uinRegEx.hasMatch(stringToCheck);
+      return uinMatch ? stringToCheck : null;
+    }
+    // Validate megTrack2 in format 'AAAAXXXXXXXXXAAA=AAAAAAAAAAA' where 'XXXXXXXXX' is the UIN
+    else if (stringSymbolsCount == megTrack2SymbolsCount) {
+      RegExp megTrack2RegEx = RegExp('[0-9]{4}[0-9]{$uinNumbersCount}[0-9]{3}=[0-9]{11}');
+      bool megTrackMatch = megTrack2RegEx.hasMatch(stringToCheck);
+      if (megTrackMatch) {
+        String uin = stringToCheck.substring(4, 13);
+        return uin;
+      } else {
+        return null;
+      }
+    }
+    return null;
   }
 
   Widget _buildImportAdditionalAttendeesContent() {
-    return Visibility(visible: _isEventAdmin, child: Padding(padding: EdgeInsets.only(top: 32), child: Column(children: [
+    return Visibility(visible: _isAdmin, child: Padding(padding: EdgeInsets.only(top: 32), child: Column(children: [
       Padding(padding: Event2CreatePanel.innerSectionPadding, child: _dividerWidget),
       _buildAttendeesInputSection(),
       _buildAttendeesInputDescriptionSection()
@@ -300,5 +364,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
 
   Widget get _dividerWidget => Divider(color: Styles().colors?.dividerLineAccent, thickness: 1);
 
-  bool get _isEventAdmin => (widget.event?.userRole == Event2UserRole.admin);
+  bool get _isAdmin => (widget.event?.userRole == Event2UserRole.admin);
+
+  bool get _isAttendanceTaker => (widget.event?.userRole == Event2UserRole.attendance_taker);
 }

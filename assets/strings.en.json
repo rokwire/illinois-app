@@ -1283,6 +1283,8 @@
     "panel.event2.detail.attendance.additional.netids.label": "Netids for additional attendance takers:",
     "panel.event2.detail.attendance.attendees.netids.description": "Upload a list at <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.",
     "panel.event2.detail.attendance.attendees.checkin.description": "To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.",
+    "panel.event2.detail.attendance.scan.cancel.button.title": "Cancel",
+    "panel.event2.detail.attendance.qr_code.uin.not_valid.msg": "This QR code does not contain valid UIN number.",
 
     "panel.settings.manage_interests.instructions.format": "Tap the {{check_mark_icon}} to follow the tags that interest you most",
     "panel.settings.manage_interests.list.following": "FOLLOWING",
