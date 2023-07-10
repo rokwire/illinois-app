@@ -15,21 +15,31 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Content.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 
 class HomeEvent2FeedWidget extends StatefulWidget {
 
@@ -50,6 +60,17 @@ class HomeEvent2FeedWidget extends StatefulWidget {
 
 class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements NotificationsListener {
   List<Event2>? _events;
+  bool? _lastPageLoadedAll;
+  int? _totalEventsCount;
+  bool _loadingEvents = false;
+  bool _refreshingEvents = false;
+  bool _extendingEvents = false;
+  static const int _eventsPageLength = 16;
+ 
+  LocationServicesStatus? _locationServicesStatus;
+  bool _loadingLocationServicesStatus = false;
+  Position? _currentLocation;
+
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
@@ -71,6 +92,10 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         }
       });
     }
+
+    _initLocationServicesStatus().then((_) {
+      _reload();
+    });
 
     super.initState();
   }
@@ -121,9 +146,17 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   }
 
   Widget _buildContent() {
-    if (CollectionUtils.isEmpty(_events)) {
-      return HomeMessageCard(
-        message: Localization().getStringEx("widget.home.event2_feed.text.empty.description", "There are no events available."));
+    if (_loadingEvents || _loadingLocationServicesStatus) {
+      return HomeProgressWidget();
+    }
+    else if (_refreshingEvents) {
+      return Container();
+    }
+    else if (_events == null) {
+      return HomeMessageCard(message: 'Failed to load events.');
+    }
+    else if (_events?.length == 0) {
+      return HomeMessageCard(message: 'There are no events matching the selected filters.');
     }
     else {
       return _buildEventsContent();
@@ -131,16 +164,16 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   }
 
   Widget _buildEventsContent() {
+    
     Widget contentWidget;
-    List<Widget> pages = <Widget>[];
+    if (1 < (_events?.length ?? 0)) {
 
-    int eventsCount = _events?.length ?? 0;
-    if (eventsCount > 1) {
+      List<Widget> pages = <Widget>[];
       for (Event2 event in _events!) {
         pages.add(Padding(
-            key: _contentKeys[StringUtils.ensureNotEmpty(event.id)] ??= GlobalKey(),
-            padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
-            child: _buildEventEntry(event)));
+          key: _contentKeys[StringUtils.ensureNotEmpty(event.id)] ??= GlobalKey(),
+          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+          child: Event2Card(event, userLocation: _currentLocation, onTap: () => _onTapEvent2(event),)));
       }
 
       if (_pageController == null) {
@@ -159,28 +192,21 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         ),
       );
     }
-    else if (eventsCount == 1) {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
-        _buildEventEntry(_events!.first)
-      );
-    }
     else {
-      contentWidget = Container();
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+        Event2Card(_events!.first, onTap: () => _onTapEvent2(_events!.first))
+      );
     }
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => (_events?.length ?? 0),),
       LinkButton(
         title: Localization().getStringEx('widget.home.event2_feed.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.event2_feed.button.all.hint', 'Tap to view all events'),
         onTap: _onTapViewAll,
       ),
     ]);
-  }
-
-  Widget _buildEventEntry(Event2 event) {
-    return Container(height: 80,);
   }
 
   double get _pageHeight {
@@ -194,7 +220,108 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     return minContentHeight ?? 0;
   }
 
+  void _onTapEvent2(Event2 event) {
+    Analytics().logSelect(target: "Event: '${event.name}'", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation,)));
+  }
+
   void _onTapViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
+  }
+
+  // Location Status and Position
+
+  Future<void> _initLocationServicesStatus() async {
+    setStateIfMounted(() {
+      _loadingLocationServicesStatus = true;
+    });
+    LocationServicesStatus? locationServicesStatus = await Event2HomePanel.getLocationServicesStatus();
+    if (locationServicesStatus != null) {
+      setStateIfMounted(() {
+        _locationServicesStatus = locationServicesStatus;
+        _loadingLocationServicesStatus = false;
+      });
+    }
+  }
+
+  Future<void> _updateLocationServicesStatus() async {
+    LocationServicesStatus? locationServicesStatus = await Event2HomePanel.getLocationServicesStatus();
+    if (_locationServicesStatus != locationServicesStatus) {
+      setStateIfMounted(() {
+        _locationServicesStatus = locationServicesStatus;
+      });
+      if (_needsUpdateOnLocationServicesStatus()) {
+        _reload();
+      }
+    }
+  }
+
+  bool _needsUpdateOnLocationServicesStatus() {
+    bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
+    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+    Event2SortType? sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    return (locationNotAvailable && ((types?.contains(Event2TypeFilter.nearby) == true) || (sortType == Event2SortType.proximity)));
+  }
+
+  Future<Position?> _ensureCurrentLocation() async {
+    if ((_currentLocation == null) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed)) {
+      _currentLocation = await LocationServices().location;
+    }
+    return _currentLocation;
+  } 
+
+  // Event2 Query
+
+  Future<Events2Query> _queryParam({int offset = 0, int limit = _eventsPageLength}) async {
+    Event2TimeFilter timeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
+    TZDateTime? customStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
+    TZDateTime? customEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
+    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+    Map<String, dynamic>? attributes = Storage().events2Attributes;
+    Event2SortType? sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+
+    bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
+    if ((types?.contains(Event2TypeFilter.nearby) == true) && locationNotAvailable) {
+      types?.remove(Event2TypeFilter.nearby);
+    }
+    if ((sortType == Event2SortType.proximity) && locationNotAvailable) {
+      sortType = Event2SortType.dateTime;
+    }
+
+    if (((types?.contains(Event2TypeFilter.nearby) == true) || (sortType == Event2SortType.proximity)) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed)) {
+      _currentLocation = await LocationServices().location;
+    }
+
+    return Events2Query(
+      offset: offset,
+      limit: limit,
+      timeFilter: timeFilter,
+      customStartTimeUtc: customStartTime?.toUtc(),
+      customEndTimeUtc: customEndTime?.toUtc(),
+      types: types,
+      attributes: attributes,
+      sortType: sortType,
+      sortOrder: Event2SortOrder.ascending,
+      location: _currentLocation,
+    );
+  }
+
+  Future<void> _reload({ int limit = _eventsPageLength }) async {
+    if (!_loadingEvents && !_refreshingEvents) {
+      setStateIfMounted(() {
+        _loadingEvents = true;
+        _extendingEvents = false;
+      });
+
+      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
+      List<Event2>? events = loadResult?.events;
+
+      setStateIfMounted(() {
+        _events = (events != null) ? List<Event2>.from(events) : null;
+        _totalEventsCount = loadResult?.totalCount;
+        _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+        _loadingEvents = false;
+      });
+    }
   }
 }
