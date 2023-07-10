@@ -172,8 +172,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   Widget get _listContentWidget =>
-    Container(decoration: _contentDecoration, child:
-      ClipRRect(borderRadius: _contentBorderRadius, child: 
+    Container(decoration: _listContentDecoration, child:
+      ClipRRect(borderRadius: _listContentBorderRadius, child: 
         Column(mainAxisSize: MainAxisSize.min, children: [
           _imageHeadingWidget,
           _categoriesWidget,
@@ -189,11 +189,12 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
 
   Widget get _pageContentWidget =>
-    Container(decoration: _contentDecoration, child:
-      ClipRRect(borderRadius: _contentBorderRadius, child: 
+    Stack(children: [
+      Container(decoration: _pageContentDecoration, child:
         Column(mainAxisSize: MainAxisSize.min, children: [
-          _pageHeadingWidget,
-          _categoriesWidget,
+          Padding(padding: EdgeInsets.only(top: _pageHeadingHeight), child:
+            _categoriesWidget,
+          ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Visibility(visible: true, child:
@@ -213,19 +214,29 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           ),
         ],),
       ),
-    );
+      _pageHeadingWidget,
+    ],);
 
   String get _semanticsLabel => 'TODO Label';
   String get _semanticsHint => 'TODO Hint';
 
-  Decoration get _contentDecoration => BoxDecoration(
+  Decoration get _listContentDecoration => BoxDecoration(
     color: Styles().colors?.surface,
-    borderRadius: _contentBorderRadius,
+    borderRadius: _listContentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
   );
 
-  BorderRadiusGeometry get _contentBorderRadius => BorderRadius.all(Radius.circular(8));
+  BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
+
+  Decoration get _pageContentDecoration => BoxDecoration(
+    color: Styles().colors?.surface,
+    borderRadius: _pageContentBorderRadius,
+    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
+  );
+
+  BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.vertical(bottom: Radius.circular(4));
 
   bool get _hasImage => StringUtils.isNotEmpty(widget.event.imageUrl);
 
@@ -241,7 +252,9 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1)),
   );
 
-  Widget get _pageHeadingWidget => Container(height: 7, color: widget.event.uiColor);
+  Widget get _pageHeadingWidget => Container(height: _pageHeadingHeight, color: widget.event.uiColor);
+
+  double get _pageHeadingHeight => 7;
 
   Widget get _imageDetailWidget =>
     AspectRatio(aspectRatio: 1.3, child:
