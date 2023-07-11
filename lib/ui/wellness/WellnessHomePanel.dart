@@ -285,7 +285,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     return ((contentItem != null) && contentItems!.contains(contentItem)) ? contentItem : null;
   }
 
-  WellnessContent? get _initialContentItem => widget.params[WellnessHomePanel.contentItemKey];
+  WellnessContent? get _initialContentItem => widget.params[WellnessHomePanel.contentItemKey] ?? widget.content;
 
   Widget get _contentWidget {
     switch (_selectedContent) {
