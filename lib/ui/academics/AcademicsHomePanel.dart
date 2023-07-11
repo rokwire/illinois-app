@@ -462,7 +462,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return ((contentItem != null) && (contentItem != AcademicsContent.my_illini) && contentItems!.contains(contentItem)) ? contentItem : null;
   }
 
-  AcademicsContent? get _initialContentItem => widget.params[AcademicsHomePanel.contentItemKey];
+  AcademicsContent? get _initialContentItem => widget.params[AcademicsHomePanel.contentItemKey] ?? widget.content;
 
   // NotificationsListener
 
