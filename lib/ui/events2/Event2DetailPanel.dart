@@ -7,6 +7,7 @@ import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -623,7 +624,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }  
   void _onAddToCalendar(){
-    //TBD
+      DeviceCalendar().addToCalendar(_event);
   }
 
   void _onContactEmail(String? email){
@@ -674,7 +675,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onSettingDeleteEvent(){
-    Analytics().logSelect(target: 'Take Attendance');
+    Analytics().logSelect(target: 'Delete Event');
     if(_eventId != null) {
       _eventLoading = true;
       Events2().deleteEvent(_eventId!).then((errorMessage) {
