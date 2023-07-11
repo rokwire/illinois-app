@@ -41,6 +41,7 @@ import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class HomeEvent2FeedWidget extends StatefulWidget {
 
@@ -59,6 +60,8 @@ class HomeEvent2FeedWidget extends StatefulWidget {
   State<HomeEvent2FeedWidget> createState() => _HomeEvent2FeedWidgetState();
 }
 
+enum _Staled { none, refresh, reload }
+
 class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements NotificationsListener {
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
@@ -74,8 +77,11 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   Position? _currentLocation;
 
   DateTime? _pausedDateTime;
+  bool _visible = false;
+  _Staled _stalled = _Staled.none;
 
   PageController? _pageController;
+  Key _visibilityDetectorKey = UniqueKey();
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   final double _pageSpacing = 16;
@@ -86,7 +92,8 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
-      Events2.notifyChanged
+      Storage.notifySettingChanged,
+      Events2.notifyChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -120,10 +127,19 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     }
     else if (name == FlexUI.notifyChanged) {
       _currentLocation = null;
-      _updateLocationServicesStatus();
+      _updateLocationServicesStatus(() {
+        if (_needsContentUpdateOnLocationServicesStatusUpdate()) {
+          _reloadIfVisible();
+        }
+      });
+    }
+    else if (name == Storage.notifySettingChanged) {
+      if ((param == Storage.events2TimeKey) || (param == Storage.events2TypesKey) || (param == Storage.events2AttributesKey) || (param == Storage.events2SortTypeKey)) {
+        _reloadIfVisible();
+      }
     }
     else if (name == Events2.notifyChanged) {
-      _reload();
+      _reloadIfVisible(); // or mark as needs refresh
     }
   }
 
@@ -136,7 +152,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _updateLocationServicesStatus().then((_) {
-            _refresh();
+            _refreshIfVisible();
           });
         }
       }
@@ -145,10 +161,12 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
 
   @override
   Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeEvent2FeedWidget.title,
-      titleIconKey: 'events',
-      child: _buildContent(),
+    return VisibilityDetector(key: _visibilityDetectorKey, onVisibilityChanged: _onVisibilityChanged, child:
+      HomeSlantWidget(favoriteId: widget.favoriteId,
+        title: HomeEvent2FeedWidget.title,
+        titleIconKey: 'events',
+        child: _buildContent(),
+      )
     );
   }
 
@@ -238,6 +256,10 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     return minContentHeight ?? 0;
   }
 
+  void _onVisibilityChanged(VisibilityInfo info) {
+    _updateInternalVisibility(!info.visibleBounds.isEmpty);
+  }
+
   bool? get _hasMoreEvents => (_totalEventsCount != null) ?
     ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;
 
@@ -254,6 +276,26 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
 
   void _onTapViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
+    Event2HomePanel.present(context);
+  }
+
+  // Visibility
+
+  void _updateInternalVisibility(bool visible) {
+    if (_visible != visible) {
+      _visible = visible;
+      _onInternalVisibilityChanged();
+    }
+  }
+
+  void _onInternalVisibilityChanged() {
+    if (_visible) {
+      switch(_stalled) {
+        case _Staled.none: break;
+        case _Staled.refresh: _refresh(); break;
+        case _Staled.reload: _reload(); break;
+      }
+    }
   }
 
   // Location Status and Position
@@ -271,19 +313,19 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     }
   }
 
-  Future<void> _updateLocationServicesStatus() async {
+  Future<void> _updateLocationServicesStatus([void Function()? onChanged]) async {
     LocationServicesStatus? locationServicesStatus = await Event2HomePanel.getLocationServicesStatus();
     if (_locationServicesStatus != locationServicesStatus) {
       setStateIfMounted(() {
         _locationServicesStatus = locationServicesStatus;
       });
-      if (_needsUpdateOnLocationServicesStatus()) {
-        _reload();
+      if (onChanged != null) {
+        onChanged();
       }
     }
   }
 
-  bool _needsUpdateOnLocationServicesStatus() {
+  bool _needsContentUpdateOnLocationServicesStatusUpdate() {
     bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
     LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
     Event2SortType? sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
@@ -326,6 +368,15 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     );
   }
 
+  Future<void> _reloadIfVisible({ int limit = _eventsPageLength }) async {
+    if (_visible) {
+      return _reload(limit: limit);
+    }
+    else if (_stalled.index < _Staled.reload.index) {
+      _stalled = _Staled.reload;
+    }
+  }
+
   Future<void> _reload({ int limit = _eventsPageLength }) async {
     if (!_loadingEvents && !_refreshingEvents) {
       setStateIfMounted(() {
@@ -341,9 +392,19 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         _totalEventsCount = loadResult?.totalCount;
         _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
         _loadingEvents = false;
+        _stalled = _Staled.none;
         _pageViewKey = UniqueKey();
         _contentKeys.clear();
       });
+    }
+  }
+
+  Future<void> _refreshIfVisible() async {
+    if (_visible) {
+      return _refresh();
+    }
+    else if (_stalled.index < _Staled.refresh.index) {
+      _stalled = _Staled.refresh;
     }
   }
 
@@ -369,6 +430,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
           _totalEventsCount = totalCount;
         }
         _refreshingEvents = false;
+        _stalled = _Staled.none;
         _pageViewKey = UniqueKey();
         _contentKeys.clear();
       });
@@ -400,6 +462,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
             _totalEventsCount = totalCount;
           }
           _extendingEvents = false;
+          _stalled = _Staled.none;
         });
       }
     }
