@@ -363,8 +363,9 @@
 	"panel.browse.entry.dinings.my_dining.title": "我的用餐地點",
 	
 	"panel.browse.entry.events.suggested_events.title": "建議的活動",
-	"panel.browse.entry.events.event_feed.title": "活動提要",
+	"panel.browse.entry.events.event2_feed.title": "活動提要",
 	"panel.browse.entry.events.my_events.title": "我的活動",
+	"panel.browse.entry.events.my_events2.title": "我的活動²",
 	
 	"panel.browse.entry.feeds.twitter.title": "推特",
 	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 調頻",
@@ -387,6 +388,7 @@
 	"panel.browse.entry.my.student_courses.title": "我的課程",
 	"panel.browse.entry.my.my_game_day.title": "我的比賽日",
 	"panel.browse.entry.my.my_events.title": "我的活動",
+	"panel.browse.entry.my.my_events2.title": "我的活動²",
 	"panel.browse.entry.my.my_dining.title": "我的用餐地點",
 	"panel.browse.entry.my.my_athletics.title": "我的田徑活動",
 	"panel.browse.entry.my.my_news.title": "我的田徑新聞",
@@ -1411,6 +1413,7 @@
 	
 	"panel.saved.header.label": "已保存",
 	"panel.saved.label.events": "My Events",
+	"panel.saved.label.events2": "My Events²",
 	"panel.saved.label.athletics": "My Athletics Events",
 	"panel.saved.label.reminders": "My Reminders",
 	"panel.saved.label.dining": "My Dining Locations",
@@ -3114,10 +3117,10 @@
 	"widget.home.recent_items.button.all.title":"查看全部",
 	"widget.home.recent_items.button.all.hint":"點擊查看所有項目",
 	
-	"widget.home.event_feed.label.header.title":"Event Feed",
-	"widget.home.event_feed.text.empty.description": "There are no events available.",
-	"widget.home.event_feed.button.all.title":"View All",
-	"widget.home.event_feed.button.all.hint":"Tap to view all events",
+	"widget.home.event2_feed.label.header.title":"Event Feed",
+	"widget.home.event2_feed.text.empty.description": "There are no events available.",
+	"widget.home.event2_feed.button.all.title":"View All",
+	"widget.home.event2_feed.button.all.hint":"Tap to view all events",
 	
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有組",
@@ -3281,6 +3284,7 @@
 	"widget.home.wellness.tips.title": "每日健康小貼士",
 	
 	"widget.home.favorites.title.events": "我的活動",
+	"widget.home.favorites.title.events2": "我的活動²",
 	"widget.home.favorites.title.dining": "我的用餐地點",
 	"widget.home.favorites.title.athletics": "我的田徑活動",
 	"widget.home.favorites.title.news": "我的田徑新聞",
@@ -3291,6 +3295,7 @@
 		"widget.home.favorites.title.appointments": "我的麥金萊約會",
 	
 	"widget.home.favorites.message.offline.events": "我的活動在離線時不可用。",
+	"widget.home.favorites.message.offline.events2": "我的活動²在離線時不可用",
 	"widget.home.favorites.message.offline.dining": "我的用餐地點在離線時不可用。",
 	"widget.home.favorites.message.offline.athletics": "我的田徑賽事在離線時不可用。",
 	"widget.home.favorites.message.offline.news": "我的田徑新聞在離線時不可用。",
@@ -3301,6 +3306,7 @@
 	"widget.home.favorites.message.offline.appointments": "我的 McKinley 約會在離線時不可用。",
 	
 	"widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
+	"widget.home.favorites.message.empty.events2": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Event Feed</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics Events</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",

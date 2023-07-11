@@ -57,7 +57,6 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
@@ -294,11 +293,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
       else if (param == Storage.debugMapShowLevelsKey) {
         setStateIfMounted(() { });
-      }
-      else if (param == rokwire.Storage.debugUseSampleEvents2Key) {
-        if ((_selectedMapType == ExploreMapType.Events2) && mounted) {
-          _refreshExplores();
-        }
       }
     }
     else if (name == Event2FilterParam.notifyChanged) {
@@ -1957,10 +1951,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
   }
 
-  Future<List<Explore>?> _loadEvents2() async {
-    Events2ListResult? loadResult = await Events2().loadEvents(await _event2QueryParam());
-    return loadResult?.events;
-  }
+  Future<List<Explore>?> _loadEvents2() async =>
+    await Events2().loadEventsList(await _event2QueryParam());
 
   Future<List<Explore>?> _loadDining(List<ExploreFilter>? selectedFilterList) async {
     String? workTime = _getSelectedWorkTime(selectedFilterList);
