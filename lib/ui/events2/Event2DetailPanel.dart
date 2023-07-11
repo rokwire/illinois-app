@@ -10,6 +10,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -655,7 +656,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onSettingEditEvent(){
-    //TBD
+    Analytics().logSelect(target: "Edit event");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event)));
   }
 
   void _onSettingPromote(){
