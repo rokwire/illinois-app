@@ -7,6 +7,7 @@ import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -48,8 +49,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   // when sending the appliction to background in iOS.
   Position? _userLocation;
 
-  bool _authLoading = false; //TBD visualize
-  bool _eventLoading = false; //TBD visualize
+  bool _authLoading = false;
+  bool _registrationLoading = false;
+  bool _eventLoading = false;
 
   @override
   void initState() {
@@ -74,7 +76,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() { });
     } else if(name == Auth2.notifyLoginChanged){
-      _refreshEvent();
+      _refreshEvent(visibleProgress: true);
     }
   }
   
@@ -82,40 +84,50 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget build(BuildContext context) {
     return Scaffold(body:
       Column(children: <Widget>[
-        Expanded(child:
-          CustomScrollView(slivers: <Widget>[
-            SliverToutHeaderBar(
-              flexImageUrl:  _event?.imageUrl,
-              flexImageKey: 'event-detail-default',
-              flexRightToLeftTriangleColor: Colors.white,
-            ),
-            SliverList(delegate:
-              SliverChildListDelegate([
-                Container(color: Styles().colors?.white, child:
-                  Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _badgeWidget,
-                    _categoriesWidget,
-                    Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-                      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        _titleWidget,
-                        _sponsorWidget,
-                        _detailsWidget,
-                      ])
-                    ),
-                  ]),
-                ),
-                Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-                  Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  _descriptionWidget,
-                  _buttonsWidget,
-               ]))
-              ], addSemanticIndexes:false)
-            ),
-          ])
-        ),
+        Expanded(child: _content),
       ])
     );
   }
+
+  Widget get _content => _eventLoading ? _loadingContent : _eventContent;
+
+  Widget get _loadingContent {
+      return Center(child:
+          SizedBox(width: 32, height: 32, child:
+            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary,)
+          )
+        );
+  }
+
+  Widget get _eventContent => CustomScrollView(slivers: <Widget>[
+    SliverToutHeaderBar(
+      flexImageUrl:  _event?.imageUrl,
+      flexImageKey: 'event-detail-default',
+      flexRightToLeftTriangleColor: Colors.white,
+    ),
+    SliverList(delegate:
+    SliverChildListDelegate([
+      Container(color: Styles().colors?.white, child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _badgeWidget,
+        _categoriesWidget,
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _titleWidget,
+          _sponsorWidget,
+          _detailsWidget,
+        ])
+        ),
+      ]),
+      ),
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _descriptionWidget,
+        _buttonsWidget,
+      ]))
+    ], addSemanticIndexes:false)
+    ),
+  ]);
 
   Widget get _badgeWidget => _isAdmin ?
   Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -378,8 +390,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ) : Container();
   }
 
-  List<Widget>? get _urlButtonWidget => //TBD check if this is the proper url for this button
-    StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildButtonWidget(
+  List<Widget>? get _urlButtonWidget =>
+    StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildButtonWidget(//TBD remove loading from here
       title: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
       hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
       onTap: (){_onWebButton(_event?.eventUrl, analyticsName: 'Website');}
@@ -393,7 +405,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Log In to Register'),
         onTap: _onLogIn,
         externalLink: false,
-        enabled: false
+        enabled: false,
+        progress: _authLoading
     )] : null;
   }
 
@@ -402,28 +415,30 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       return null;
 
     if (_event?.registrationDetails?.type == Event2RegistrationType.internal) { //Require App registration
-        if(_event?.userRole == Event2UserRole.participant){//Already registered
+        if( _event?.userRole == Event2UserRole.participant){//Already registered
           return <Widget>[_buildButtonWidget(
               title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Unregister me'),
               onTap: _onUnregister,
               externalLink: false,
-              enabled: false
+              enabled: false,
+              progress: _registrationLoading
           )];
         } else if (_event?.userRole == null){//Not registered yet
           return <Widget>[_buildButtonWidget(
               title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
               onTap: _onRegister,
-              externalLink: false
+              externalLink: false,
+              progress: _registrationLoading,
           )];
         }
     } else if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink)){// else external registration
-      if(_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
+      // if(_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
         return <Widget>[_buildButtonWidget(
             title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
             onTap: _onExternalRegistration,
             externalLink: true
         )];
-      }
+      // }
     }
 
     return null; //not required
@@ -482,7 +497,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     String? hint,
     bool enabled = true,
     bool externalLink = true,
-    void Function()? onTap
+    bool progress = false,
+    void Function()? onTap,
   }) => StringUtils.isNotEmpty(title) ?
     Padding(padding: EdgeInsets.only(bottom: 6), child:
       Row(children:<Widget>[
@@ -496,10 +512,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               rightIcon:externalLink? Styles().images?.getImage(enabled ? 'external-link' : 'external-link-dark' ) : null,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: onTap ?? (){},
+            progress: progress,
             contentWeight: 0.5,
-
           ),
-        ),],)
+        ),
+        ] )
       ) : Container();
   
   Widget _buildSettingButton({String? title, VoidCallback? onTap}) =>  StringUtils.isNotEmpty(title) ?
@@ -556,7 +573,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onRegister(){
     if(_event?.id != null){
+      setStateIfMounted(() { _registrationLoading = true;});
       Events2().registerToEvent(_event!.id!).then((errorMessage){
+        setStateIfMounted(() { _registrationLoading = false;});
         if(errorMessage == null){
           _refreshEvent();
         } else {
@@ -571,7 +590,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onUnregister(){
     if(_event?.id != null){
+      setStateIfMounted(() { _registrationLoading = true;});
       Events2().unregisterFromEvent(_event!.id!).then((errorMessage){
+        setStateIfMounted(() { _registrationLoading = false;});
         if(errorMessage == null){
           _refreshEvent();
         } else { //fail
@@ -603,17 +624,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }  
   void _onAddToCalendar(){
-    //TBD
+      DeviceCalendar().addToCalendar(_event);
   }
 
   void _onContactEmail(String? email){
-    //TBD
-    AppToast.show("TBD send email to $email");
+    if(StringUtils.isNotEmpty(email)) {
+      String link = "mailto:$email";
+      _onLaunchUrl(link);
+    }
   }
 
   void _onContactPhone(String? phone){
-    //TBD
-    AppToast.show("TBD call to $phone");
+    if(StringUtils.isNotEmpty(phone)) {
+      String link = "tel:$phone";
+      _onLaunchUrl(link);
+    }
   }
 
   void _onAdminSettings(){
@@ -650,7 +675,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onSettingDeleteEvent(){
-    Analytics().logSelect(target: 'Take Attendance');
+    Analytics().logSelect(target: 'Delete Event');
     if(_eventId != null) {
       _eventLoading = true;
       Events2().deleteEvent(_eventId!).then((errorMessage) {
@@ -676,7 +701,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   void _initEvent() async {
     _event = widget.event;
 
-    if(_event == null && StringUtils.isEmpty(widget.eventId!)) {
+    if(_event == null && StringUtils.isNotEmpty(widget.eventId!)) {
       _eventLoading = true;
       _loadEvent().then((event) {
         _eventLoading = false;
