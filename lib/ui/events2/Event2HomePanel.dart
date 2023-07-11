@@ -28,7 +28,6 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/storage.dart' as rokwire;
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
@@ -325,12 +324,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   @override
   void onNotification(String name, param) {
-    if (name == Storage.notifySettingChanged) {
-      if (param == rokwire.Storage.debugUseSampleEvents2Key) {
-        _reload();
-      }
-    }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
     else if (name == FlexUI.notifyChanged) {
