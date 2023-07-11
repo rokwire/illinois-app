@@ -378,7 +378,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ) : Container();
   }
 
-  List<Widget>? get _urlButtonWidget => //TBD check if this is the proper url for this button
+  List<Widget>? get _urlButtonWidget =>
     StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildButtonWidget(
       title: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
       hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
@@ -417,13 +417,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           )];
         }
     } else if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink)){// else external registration
-      if(_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
+      // if(_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
         return <Widget>[_buildButtonWidget(
             title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
             onTap: _onExternalRegistration,
             externalLink: true
         )];
-      }
+      // }
     }
 
     return null; //not required
@@ -607,13 +607,17 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onContactEmail(String? email){
-    //TBD
-    AppToast.show("TBD send email to $email");
+    if(StringUtils.isNotEmpty(email)) {
+      String link = "mailto:$email";
+      _onLaunchUrl(link);
+    }
   }
 
   void _onContactPhone(String? phone){
-    //TBD
-    AppToast.show("TBD call to $phone");
+    if(StringUtils.isNotEmpty(phone)) {
+      String link = "tel:$phone";
+      _onLaunchUrl(link);
+    }
   }
 
   void _onAdminSettings(){
