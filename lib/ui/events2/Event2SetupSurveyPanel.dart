@@ -25,7 +25,6 @@ import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2SetupSurveyPanel extends StatefulWidget {
@@ -40,7 +39,6 @@ class Event2SetupSurveyPanel extends StatefulWidget {
 class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   late bool _hasSurvey;
-  int? _hoursAfterEvent;
   final TextEditingController _hoursController = TextEditingController();
 
   List<Survey>? _surveys;
@@ -49,12 +47,9 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   @override
   void initState() {
-    _loadSurveys();
     _hasSurvey = widget.details?.hasSurvey ?? false;
-    _hoursAfterEvent = widget.details?.hoursAfterEvent ?? null;
-    if (_hoursAfterEvent != null) {
-      _hoursController.text = _hoursAfterEvent.toString();
-    }
+    _hoursController.text = widget.details?.hoursAfterEvent?.toString() ?? '';
+    _loadSurveys();
     super.initState();
   }
 
@@ -98,9 +93,8 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     Analytics().logSelect(target: "Toggle Send Follow-Up Survey");
     setStateIfMounted(() {
       _hasSurvey = !_hasSurvey;
-      if (!_hasSurvey && (_hoursAfterEvent != null)) {
-        // Clear hours if there is no survey
-        _hoursAfterEvent = null;
+      if (!_hasSurvey) {
+        _hoursController.text = '';
       }
     });
   }
@@ -158,15 +152,6 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
                                     items: _buildSurveyDropDownItems(),
                                     onChanged: _onSurveyChanged)))))
               ]),
-              Visibility(
-                  visible: (_selectedSurvey != null),
-                  child: Padding(padding: EdgeInsets.only(top: 8), child: RoundedButton(
-                      label: Localization().getStringEx('panel.event2.setup.survey.apply.button', 'Apply'),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                      onTap: _onTapApplySurvey,
-                      backgroundColor: Styles().colors!.white,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      contentWeight: 0.4)))
             ])));
   }
 
@@ -189,25 +174,22 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     });
   }
 
-  void _onTapApplySurvey() {
-    Analytics().logSelect(target: "Apply Survey: ${(_selectedSurvey != null) ? _selectedSurvey!.title : 'null'}");
-    //TBD: save survey
-  }
-
   // Submit
 
   void _onHeaderBack() {
     if (_hasSurvey) {
-      String hoursString = _hoursController.text;
-      int? hoursNumber = int.tryParse(hoursString);
+
+      int? hoursNumber = int.tryParse(_hoursController.text);
       if ((hoursNumber == null) || (hoursNumber < 0)) {
-        AppAlert.showDialogResult(
-            context, Localization().getStringEx('panel.event2.setup.survey.hours.invalid.msg', 'Please, fill valid non-negative number for hours.'));
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.setup.survey.hours.invalid.msg', 'Please, fill valid non-negative number for hours.'));
         return;
-      } else {
-        _hoursAfterEvent = hoursNumber;
       }
+      //TBD: Ackolwedge _selectedSurvey
+
+      Navigator.of(context).pop(Event2SurveyDetails(hasSurvey: true, hoursAfterEvent: hoursNumber));
     }
-    Navigator.of(context).pop((_hasSurvey) ? Event2SurveyDetails(hasSurvey: _hasSurvey, hoursAfterEvent: _hoursAfterEvent) : null);
+    else {
+      Navigator.of(context).pop(null);
+    }
   }
 }
