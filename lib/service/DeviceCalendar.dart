@@ -4,8 +4,10 @@ import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/device_calendar.dart' as rokwire;
@@ -55,6 +57,11 @@ class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsList
     }
   }
 
+  Future<bool> addToCalendar(dynamic event) async {
+    _DeviceCalendarEvent? deviceCalendarEvent = _DeviceCalendarEvent.from(event);
+    return deviceCalendarEvent != null ?  await super.addEvent(deviceCalendarEvent) : false;
+  }
+
   void _processFavorite(dynamic event) {
     _DeviceCalendarEvent? deviceCalendarEvent = _DeviceCalendarEvent.from(event);
     if(deviceCalendarEvent==null)
@@ -93,6 +100,9 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     if (data is ExploreEvent.Event) {
       return _DeviceCalendarEvent.fromEvent(data);
     }
+    if (data is Event2) {
+      return _DeviceCalendarEvent.fromEvent2(data);
+    }
     else if (data is Game){
       return _DeviceCalendarEvent.fromGame(data);
     }
@@ -116,6 +126,16 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
       startDate: event.startDateLocal,
       endDate: event.endDateLocal,
       deepLinkUrl: "${Events().eventDetailUrl}?event_id=${event.id}"
+    ) : null;
+  }
+
+  static _DeviceCalendarEvent? fromEvent2(Event2? event){
+    return (event != null) ? _DeviceCalendarEvent(
+        title: event.exploreTitle,
+        internalEventId: event.id,
+        startDate: AppDateTime().getUniLocalTimeFromUtcTime(event.startTimeUtc),
+        endDate: AppDateTime().getUniLocalTimeFromUtcTime(event.endTimeUtc),
+        deepLinkUrl: "${Events2().eventDetailUrl}?event_id=${event.id}"
     ) : null;
   }
 
