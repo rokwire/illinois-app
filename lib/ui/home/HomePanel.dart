@@ -39,7 +39,7 @@ import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
-import 'package:illinois/ui/home/HomeEventFeedWidget.dart';
+import 'package:illinois/ui/home/HomeEvent2FeedWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeInboxWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
@@ -60,6 +60,7 @@ import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -152,13 +153,13 @@ class HomePanel extends StatefulWidget {
         return HomeSuggestedEventsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'event_feed') {
+    else if (code == 'event2_feed') {
       if (title) {
-        return HomeEventFeedWidget.title;
+        return HomeEvent2FeedWidget.title;
       } else if (handle) {
-        return HomeEventFeedWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+        return HomeEvent2FeedWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
-        return HomeEventFeedWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+        return HomeEvent2FeedWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
     else if (code == 'recent_items') {
@@ -418,9 +419,18 @@ class HomePanel extends StatefulWidget {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: Event.favoriteKeyName);
       } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,favoriteKey: Event.favoriteKeyName, );
+        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Event.favoriteKeyName, );
       } else {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Event.favoriteKeyName);
+      }
+    }
+    else if (code == 'my_events2') {
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: Event2.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Event2.favoriteKeyName, );
+      } else {
+        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Event2.favoriteKeyName);
       }
     }
     else if (code == 'my_dining') {

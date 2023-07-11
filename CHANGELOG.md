@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Opening correct academics panel from Browse [#3393](https://github.com/rokwire/illinois-app/issues/3393).
+### Added
+- Implemented Events2 widgets for Favorites panel [#3390](https://github.com/rokwire/illinois-app/issues/3390).
 
 ## [5.0.24] - 2023-07-10
 ### Changed
