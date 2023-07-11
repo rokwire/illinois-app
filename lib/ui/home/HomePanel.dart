@@ -60,6 +60,7 @@ import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -418,9 +419,18 @@ class HomePanel extends StatefulWidget {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: Event.favoriteKeyName);
       } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,favoriteKey: Event.favoriteKeyName, );
+        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Event.favoriteKeyName, );
       } else {
         return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Event.favoriteKeyName);
+      }
+    }
+    else if (code == 'my_events2') {
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: Event2.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Event2.favoriteKeyName, );
+      } else {
+        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Event2.favoriteKeyName);
       }
     }
     else if (code == 'my_dining') {

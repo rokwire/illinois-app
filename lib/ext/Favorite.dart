@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Dining.dart';
@@ -16,6 +17,8 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
@@ -30,6 +33,7 @@ import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -74,6 +78,9 @@ extension FavoriteExt on Favorite {
     if (this is Event) {
       return (this as Event).displayDateTime;
     }
+    else if (this is Event2) {
+      return (this as Event2).shortDisplayDate;
+    }
     else if (this is Dining) {
       return (this as Dining).displayWorkTime;
     }
@@ -113,6 +120,9 @@ extension FavoriteExt on Favorite {
 
   Widget? get favoriteDetailIcon {
     if (this is Event) {
+      return Styles().images?.getImage('events', excludeFromSemantics: true);
+    }
+    else if (this is Event2) {
       return Styles().images?.getImage('events', excludeFromSemantics: true);
     }
     else if (this is Dining) {
@@ -179,6 +189,9 @@ extension FavoriteExt on Favorite {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,)));
       }
     }
+    else if (this is Event2) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: this as Event2,)));
+    }
     else if (this is Dining) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining,)));
     }
@@ -210,6 +223,9 @@ extension FavoriteExt on Favorite {
     String? lowerCaseKey = key?.toLowerCase();
     if (lowerCaseKey == Event.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
+    }
+    else if (lowerCaseKey == Event2.favoriteKeyName.toLowerCase()) {
+      Event2HomePanel.present(context);
     }
     else if (lowerCaseKey == Dining.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Dining); } ));

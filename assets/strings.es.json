@@ -365,6 +365,7 @@
     "panel.browse.entry.events.suggested_events.title": "Eventos sugeridos",
     "panel.browse.entry.events.event2_feed.title": "Fuente de eventos",
     "panel.browse.entry.events.my_events.title": "Mis eventos",
+    "panel.browse.entry.events.my_events2.title": "Mis eventos²",
 
     "panel.browse.entry.feeds.twitter.title": "Gorjeo",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
@@ -387,6 +388,7 @@
     "panel.browse.entry.my.student_courses.title": "Mis cursos",
     "panel.browse.entry.my.my_game_day.title": "Mi dia de juego",
     "panel.browse.entry.my.my_events.title": "Mis eventos",
+    "panel.browse.entry.my.my_events2.title": "Mis eventos²",
     "panel.browse.entry.my.my_dining.title": "Mis lugares para comer",
     "panel.browse.entry.my.my_athletics.title": "Mis eventos de atletismo",
     "panel.browse.entry.my.my_news.title": "Mis noticias de atletismo",
@@ -1410,6 +1412,7 @@
 
     "panel.saved.header.label": "Guardado",
     "panel.saved.label.events": "My Events",
+    "panel.saved.label.events2": "My Events²",
     "panel.saved.label.athletics": "My Athletics Events",
     "panel.saved.label.reminders": "My Reminders",
     "panel.saved.label.dining": "My Dining Locations",
@@ -3281,6 +3284,7 @@
     "widget.home.wellness.tips.title": "Consejo diario de bienestar",
 
     "widget.home.favorites.title.events": "Mis Eventos",
+    "widget.home.favorites.title.events2": "Mis Eventos²",
     "widget.home.favorites.title.dining": "Mis lugares para comer",
     "widget.home.favorites.title.athletics": "Mis eventos de atletismo",
     "widget.home.favorites.title.news": "Mis noticias de atletismo",
@@ -3291,6 +3295,7 @@
     "widget.home.favorites.title.appointments": "Mis citas de McKinley",
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
+    "widget.home.favorites.message.offline.events2": "Mis Eventos² no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.dining": "Mis ubicaciones para cenar no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.athletics": "Mis eventos de atletismo no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.news": "My Athletics News no está disponible sin conexión.",
@@ -3301,6 +3306,7 @@
     "widget.home.favorites.message.offline.appointments": "Mis citas de McKinley no están disponibles sin conexión.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.events2": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Event Feed</b></a> for quick access here.",
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
     "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
