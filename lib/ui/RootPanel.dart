@@ -667,23 +667,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onCalendarPromptMessage(dynamic data) {
-        AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: Text(Localization().getStringEx(
-            'prompt.device_calendar.msg.add_event',
-            'Do you want to save this event to your calendar?')),
-        actions: <Widget>[
-          TextButton(
-              child:
-              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
-              onPressed: () {
-                Navigator.of(context).pop();
-                DeviceCalendar().placeEvent(data);
-              }),
-          TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-              onPressed: () => Navigator.of(context).pop())
-        ]);
+        DeviceCalendarDialog.show(context: context);
   }
 
   void _showPanel(Map<String, dynamic> content) {

@@ -1,8 +1,11 @@
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -11,6 +14,8 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/device_calendar.dart' as rokwire;
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/model/event.dart' as ExploreEvent;
@@ -185,4 +190,86 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
             deepLinkUrl: "${Canvas().canvasEventDetailUrl}?event_id=${event.id}")
         : null;
   }
+}
+
+class DeviceCalendarDialog extends StatefulWidget {
+  final dynamic eventData;
+
+  const DeviceCalendarDialog({super.key, required this.eventData});
+
+  static void show({required BuildContext context, dynamic eventData}) => showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: DeviceCalendarDialog(eventData: eventData,)));
+
+  @override
+  State<StatefulWidget> createState() => _DeviceCalendarDialogState();
+}
+
+class _DeviceCalendarDialogState extends State<DeviceCalendarDialog>{
+
+  @override
+  Widget build(BuildContext context) =>
+     Dialog(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+                Padding( padding: EdgeInsets.all(8),
+                  child: Text(Localization().getStringEx('prompt.device_calendar.msg.add_event', 'Do you want to save this event to your calendar?'),
+                    style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(height: 8,),
+                Row(mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.all(8),
+                        child: RoundedButton(
+                          label: Localization().getStringEx("dialog.no.title","No"),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                          borderColor: Styles().colors!.fillColorPrimary,
+                          backgroundColor: Styles().colors!.white,
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          onTap: _onDecline
+                          ))),
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.all(8),
+                        child: RoundedButton(
+                          label: Localization().getStringEx("dialog.yes.title","Yes"),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                          borderColor: Styles().colors!.fillColorSecondary,
+                          backgroundColor: Styles().colors!.white,
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          onTap: (){
+                            Navigator.of(context).pop();
+                            _onConfirm();
+                          }))),
+                ]),
+                Container(height: 16,),
+                ToggleRibbonButton(
+                    label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events to calendar'),
+                    border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium"),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    toggled: Storage().calendarCanPrompt == true,
+                    onTap: _onPromptChange
+                ),
+                Container(height: 8,),
+            ]),
+        ));
+
+  void _onConfirm() {
+    Navigator.of(context).pop();
+    DeviceCalendar().placeEvent(widget.eventData);
+  }
+
+  void _onDecline() => Navigator.of(context).pop();
+
+  void _onPromptChange() =>
+    setStateIfMounted(() {
+      Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);
+    });
 }
