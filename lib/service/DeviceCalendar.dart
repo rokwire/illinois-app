@@ -215,7 +215,7 @@ class _DeviceCalendarDialogState extends State<DeviceCalendarDialog>{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
                 Padding( padding: EdgeInsets.all(8),
-                  child: Text(Localization().getStringEx('prompt.device_calendar.msg.add_event', 'Do you want to save this event to your calendar?'),
+                  child: Text(Localization().getStringEx('prompt.device_calendar.msg.add_event', 'Would you like to add this event to your device\'s calendar?'),
                     style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"),
                     textAlign: TextAlign.center,
                   ),
@@ -249,7 +249,7 @@ class _DeviceCalendarDialogState extends State<DeviceCalendarDialog>{
                 ]),
                 Container(height: 16,),
                 ToggleRibbonButton(
-                    label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events to calendar'),
+                    label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events or appointments to calendar'),
                     border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium"),

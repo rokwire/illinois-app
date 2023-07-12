@@ -1613,7 +1613,7 @@
     "panel.settings.notifications.header.inbox.label": "Notifications",
 
     "panel.settings.home.calendar.settings.add_events.label": "Add saved events to calendar",
-    "panel.settings.home.calendar.settings.prompt.label": "Prompt when saving events to calendar",
+    "panel.settings.home.calendar.settings.prompt.label": "Prompt when saving events or appointments to calendar",
     "panel.settings.home.calendar.on_campus.location_services.required.label": "requires location services",
     "panel.settings.home.calendar.on_campus.location_services.not_available.label": "not available",
     "panel.settings.home.calendar.on_campus.radio_button.auto.title": "Automatically detect when I am on Campus",
