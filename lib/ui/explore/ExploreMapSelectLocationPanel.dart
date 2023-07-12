@@ -492,7 +492,7 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
     if (Connectivity().isNotOffline) {
       switch (_mapType) {
         case ExploreMapType.Events: return Events().loadEvents();
-        case ExploreMapType.Events2: return Events2().loadEvents(null);
+        case ExploreMapType.Events2: return Events2().loadEventsList(Events2Query());
         case ExploreMapType.Dining: return _loadDinings();
         case ExploreMapType.Laundry: return _loadLaundry();
         case ExploreMapType.Buildings: return Gateway().loadBuildings();

@@ -38,8 +38,15 @@ import 'Event2SetupAttendancePanel.dart';
 
 class Event2CreatePanel extends StatefulWidget {
 
+  final Event2? event;
+
+  Event2CreatePanel({Key? key, this.event}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _Event2CreatePanelState();
+
+  bool get isUpdate => StringUtils.isNotEmpty(event?.id);
+  bool get isCreate => StringUtils.isEmpty(event?.id);
 
   // Shared Helpers
 
@@ -150,8 +157,8 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildInnerSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = innerSectionHeadingPadding }) =>
     buildSectionHeadingWidget(title, required: required, prefixImageKey: prefixImageKey, suffixImageKey: suffixImageKey, padding : padding);
 
-  static Widget buildSectionTitleWidget(String title) =>
-    Text(title, style: headingTextStype);
+  static Widget buildSectionTitleWidget(String title, {int? maxLines}) =>
+    Text(title, style: headingTextStype, maxLines: maxLines);
 
   static Widget buildSectionSubTitleWidget(String subTitle) =>
     Text(subTitle, style: subTitleTextStype);
@@ -355,9 +362,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   bool _allDay = false;
 
   Event2Type? _eventType;
-  _Event2Visibility _visibility = _Event2Visibility.public;
+  late _Event2Visibility _visibility;
   
-  bool _free = true;
+  late bool _free;
   
   Map<String, dynamic>? _attributes;
 
@@ -398,9 +405,59 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     _onlineUrlController.addListener(_updateErrorList);
     _locationLatitudeController.addListener(_updateErrorList);
     _locationLongitudeController.addListener(_updateErrorList);
+    
+    _titleController.text = widget.event?.name ?? '';
+    _descriptionController.text = widget.event?.description ?? '';
+    _imageUrl = widget.event?.imageUrl;
+    _websiteController.text = widget.event?.eventUrl ?? '';
 
-    _timeZone = DateTimeUni.timezoneUniOrLocal;
+    _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? DateTimeUni.timezoneUniOrLocal;
+    if (widget.event?.startTimeUtc != null) {
+      TZDateTime startTimeUni = TZDateTime.from(widget.event!.startTimeUtc!, _timeZone);
+      _startDate = TZDateTimeUtils.dateOnly(startTimeUni);
+      _startTime = TimeOfDay.fromDateTime(startTimeUni);
+    }
+    if (widget.event?.endTimeUtc != null) {
+      TZDateTime endTimeUni = TZDateTime.from(widget.event!.endTimeUtc!, _timeZone);
+      _endDate = TZDateTimeUtils.dateOnly(endTimeUni);
+      _endTime = TimeOfDay.fromDateTime(endTimeUni);
+    }
+    _allDay = (widget.event?.allDay == true);
+
+    _eventType = widget.event?.eventType;
+    _locationLatitudeController.text = _printLatLng(widget.event?.exploreLocation?.latitude);
+    _locationLongitudeController.text = _printLatLng(widget.event?.exploreLocation?.longitude);
+    _locationBuildingController.text = widget.event?.exploreLocation?.building ?? widget.event?.exploreLocation?.name ?? '';
+    _locationAddressController.text = widget.event?.exploreLocation?.address ?? widget.event?.exploreLocation?.description ?? '';
+
+    _onlineUrlController.text = widget.event?.onlineDetails?.url ?? '';
+    _onlineMeetingIdController.text = widget.event?.onlineDetails?.meetingId ?? '';
+    _onlinePasscodeController.text = widget.event?.onlineDetails?.meetingPasscode ?? '';
+
+    // TBD grouping
+    _attributes = widget.event?.attributes;
+    _visibility = _event2VisibilityFromPrivate(widget.event?.private) ?? _Event2Visibility.public;
+
+    //NA: canceled
+    //NA: userRole
+
+    _free = widget.event?.free ?? true;
+    _costController.text = widget.event?.cost ?? '';
+
+    _registrationDetails = widget.event?.registrationDetails;
+    _attendanceDetails = widget.event?.attendanceDetails;
+    _surveyDetails = widget.event?.surveyDetails;
+
+    _sponsor = widget.event?.sponsor ?? '';
+    _speaker = widget.event?.speaker ?? '';
+    _contacts = widget.event?.contacts;
+
+    _dateTimeSectionExpanded = widget.isUpdate;
+    _typeAndLocationSectionExpanded = widget.isUpdate;
+    _costSectionExpanded = widget.isUpdate;
+
     _errorList = _buildErrorList();
+
     super.initState();
   }
 
@@ -426,7 +483,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.create.header.title", "Create an Event"),),
+      appBar: HeaderBar(title: widget.isCreate ?
+        Localization().getStringEx("panel.event2.create.header.title", "Create an Event") :
+        Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
+      ),
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -1354,8 +1414,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   Widget _buildCreateEventButton() {
-    String buttonTitle = Localization().getStringEx("panel.event2.create.button.create.title", "Create Event");
-    String buttonHint = Localization().getStringEx("panel.event2.create.button.create.hint", "");
+    
+    String buttonTitle = widget.isCreate ?
+      Localization().getStringEx("panel.event2.create.button.create.title", "Create Event") :
+      Localization().getStringEx("panel.event2.update.button.update.title", "Update Event");
+    
+    String buttonHint = widget.isCreate ?
+      Localization().getStringEx("panel.event2.create.button.create.hint", "") :
+      Localization().getStringEx("panel.event2.update.button.update.hint", "");
+    
     bool buttonEnabled = _canCreateEvent();
 
     return Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
@@ -1451,12 +1518,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   void _onTapCreateEvent() {
-    Analytics().logSelect(target: "Create Event");
+    Analytics().logSelect(target: widget.isCreate ? "Create Event" : "Update Event");
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _creatingEvent = true;
     });
-    Events2().createEvent(_createEventFromData()).then((dynamic result) {
+    Future<dynamic> Function(Event2 source) serviceAPI = widget.isCreate ? Events2().createEvent : Events2().updateEvent;
+    serviceAPI(_createEventFromData()).then((dynamic result) {
       if (mounted) {
         setState(() {
           _creatingEvent = false;
@@ -1548,6 +1616,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Event2 _createEventFromData() =>
     Event2(
+      id: widget.event?.id,
+
       name: Event2CreatePanel.textFieldValue(_titleController),
       description: Event2CreatePanel.textFieldValue(_descriptionController),
       instructions: null,
@@ -1591,5 +1661,13 @@ String _event2VisibilityToDisplayString(_Event2Visibility value) {
   switch(value) {
     case _Event2Visibility.public: return Localization().getStringEx('model.event2.event_type.public', 'Public');
     case _Event2Visibility.private: return Localization().getStringEx('model.event2.event_type.private', 'Private');
+  }
+}
+
+_Event2Visibility? _event2VisibilityFromPrivate(bool? private) {
+  switch (private) {
+    case true: return _Event2Visibility.private;
+    case false: return _Event2Visibility.public;
+    default: return null;
   }
 }

@@ -409,6 +409,16 @@ extension StateExt on State {
   }
 
   @protected
+  void setStateDelayedIfMounted(VoidCallback fn, { Duration duration = Duration.zero }) {
+    Future.delayed(duration, () {
+      if (mounted) {
+        // ignore: invalid_use_of_protected_member
+        setState(fn);
+      }
+    });
+  }
+
+  @protected
   void applyStateIfMounted(VoidCallback fn) {
     if (mounted) {
       // ignore: invalid_use_of_protected_member
@@ -417,5 +427,18 @@ extension StateExt on State {
     else {
       fn();
     }
+  }
+
+  @protected
+  void applyStateDelayedIfMounted(VoidCallback fn, { Duration duration = Duration.zero }) {
+    Future.delayed(duration, () {
+      if (mounted) {
+        // ignore: invalid_use_of_protected_member
+        setState(fn);
+      }
+      else {
+        fn();
+      }
+    });
   }
 }

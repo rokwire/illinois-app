@@ -364,8 +364,9 @@
     "panel.browse.entry.dinings.my_dining.title": "My Dining Locations",
 
     "panel.browse.entry.events.suggested_events.title": "Suggested Events",
-    "panel.browse.entry.events.event_feed.title": "Event Feed",
+    "panel.browse.entry.events.event2_feed.title": "Event Feed",
     "panel.browse.entry.events.my_events.title": "My Events",
+    "panel.browse.entry.events.my_events2.title": "My Events²",
 
     "panel.browse.entry.feeds.twitter.title": "Twitter",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
@@ -388,6 +389,7 @@
     "panel.browse.entry.my.student_courses.title": "My Courses",
     "panel.browse.entry.my.my_game_day.title": "My Game Day",
     "panel.browse.entry.my.my_events.title": "My Events",
+    "panel.browse.entry.my.my_events2.title": "My Events²",
     "panel.browse.entry.my.my_dining.title": "My Dining Locations",
     "panel.browse.entry.my.my_athletics.title": "My Athletics Events",
     "panel.browse.entry.my.my_news.title": "My Athletics News",
@@ -416,7 +418,7 @@
     "panel.browse.entry.wallet.add_illini_cash.title": "Add Illini Cash",
     "panel.browse.entry.wallet.meal_plan_card.title": "Meal Plan",
     "panel.browse.entry.wallet.bus_pass_card.title": "Bus Pass",
-    "panel.browse.entry.wallet.illini_id_card.title": "i-card+",
+    "panel.browse.entry.wallet.illini_id_card.title": "Illini ID",
     "panel.browse.entry.wallet.library_card.title": "Library Card",
 
     "panel.browse.entry.wellness.wellness_rings.title": "Rings",
@@ -1147,6 +1149,7 @@
 	"panel.events2.home.attributes.filters.header.description": "Choose one or more attributes to filter the events",
     "panel.events2.home.attributes.filter.label.title": "Filter: ",
 	"panel.events2.home.attributes.sort.label.title": "Sort: ",
+	"panel.events2.home.attributes.events.label.title": "Events: ",
 	"panel.events2.home.attributes.launch.header.title": "Events",
 	"panel.events2.home.attributes.launch.header.description": "Discover events across campus and around the world",
 	"panel.events2.home.attributes.launch.apply.title": "Explore",
@@ -1163,6 +1166,7 @@
     "panel.event2.filters.header.title": "Event Filters",
 
     "panel.event2.create.header.title": "Create an Event",
+	"panel.event2.update.header.title": "Update Event",
     "panel.event2.create.section.title.title": "EVENT TITLE",
     "panel.event2.create.section.description.title": "EVENT DESCRIPTION",
     "panel.event2.create.section.date_and_time.title": "DATE AND TIME",
@@ -1205,6 +1209,8 @@
     "panel.event2.create.label.visibility.title": "EVENT VISIBILITY",
     "panel.event2.create.button.create.title": "Create Event",
     "panel.event2.create.button.create.hint": "",
+    "panel.event2.update.button.update.title": "Update Event",
+    "panel.event2.update.button.update.hint": "",
     "panel.event2.create.status.missing.heading": "Missing: ",
     "panel.event2.create.status.missing.name": "event name",
     "panel.event2.create.status.missing.date": "date and time",
@@ -1215,6 +1221,7 @@
     "panel.event2.create.status.missing.registration_link": "registration link",
     "panel.event2.create.message.succeeded.title": "Succeeded",
     "panel.event2.create.message.succeeded.message": "Successfully created \"{{event_name}}\" event.",
+    "panel.event2.update.message.succeeded.message": "Successfully updated \"{{event_name}}\" event.",
     "panel.event2.create.message.failed.title": "Failed",
 
     "panel.event2.setup.registration.header.title": "Event Registration",
@@ -1227,8 +1234,6 @@
     "panel.event2.setup.registration.description.label.title": "Registration within the Illinois app requires the user to log in with a NetID.",
 
 	"panel.event2.setup.attendance.header.title": "Event Attendance",
-	"panel.event2.setup.attendance.take_via_app.toggle.title": "TAKE ATTENDANCE VIA THE APP",
-	"panel.event2.setup.attendance.take_via_app.toggle.hint": "",
 	"panel.event2.setup.attendance.scan.toggle.title": "Scan Illini ID",
 	"panel.event2.setup.attendance.scan.toggle.hint": "",
 	"panel.event2.setup.attendance.scan.toggle.description": "Does not require advance registration.",
@@ -1238,7 +1243,7 @@
 
     "panel.event2.setup.survey.header.title": "Event Follow-Up Survey",
     "panel.event2.setup.survey.has_survey.toggle.title": "SEND FOLLOW-UP SURVEY",
-    "panel.event2.setup.survey.hours.title": "FOLLOW-UP SURVEY HOURS",
+    "panel.event2.setup.survey.hours.title": "How many hours after the event ends before sending this survey to attendees?",
     "panel.event2.setup.survey.survey.title": "SURVEY",
     "panel.event2.setup.survey.apply.button": "Apply",
     "panel.event2.setup.survey.hours.invalid.msg": "Please, fill valid non-negative number for hours.",
@@ -1267,6 +1272,25 @@
     "panel.event2.setup.contact.create.hint": "Tap to create contact",
     "panel.event2.setup.contact.update.title": "Update",
     "panel.event2.setup.contact.update.hint": "Tap to update contact",
+
+    "panel.event2.detail.take_attendance.title": "Take Attendance",
+
+    "panel.event2.detail.attendance.header.title": "Event Attendance",
+    "panel.event2.detail.attendance.scan.toggle.title": "Scan Illini ID",
+    "panel.event2.detail.attendance.scan.toggle.description": "Does not require advance registration.",
+    "panel.event2.detail.attendance.manual.toggle.title": "Allow manual attendance check",
+    "panel.event2.detail.attendance.manual.toggle.description": "Requires advance registration.",
+    "panel.event2.detail.attendance.event.capacity.label.title": "EVENT CAPACITY:",
+    "panel.event2.detail.attendance.event.registrations.label.title": "TOTAL NUMBER OF REGISTRATIONS:",
+    "panel.event2.detail.attendance.event.attendees.label.title": "TOTAL NUMBER OF ATTENDEES:",
+    "panel.event2.detail.attendance.attendees.drop_down.hint": "ATTENDEE LIST",
+    "panel.event2.detail.attendance.scan.button": "Scan Illini ID",
+    "panel.event2.detail.attendance.attendees.description": "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.",
+    "panel.event2.detail.attendance.additional.netids.label": "Netids for additional attendance takers:",
+    "panel.event2.detail.attendance.attendees.netids.description": "Upload a list at <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.",
+    "panel.event2.detail.attendance.attendees.checkin.description": "To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.",
+    "panel.event2.detail.attendance.scan.cancel.button.title": "Cancel",
+    "panel.event2.detail.attendance.qr_code.uin.not_valid.msg": "This QR code does not contain valid UIN number.",
 
     "panel.settings.manage_interests.instructions.format": "Tap the {{check_mark_icon}} to follow the tags that interest you most",
     "panel.settings.manage_interests.list.following": "FOLLOWING",
@@ -1394,6 +1418,7 @@
 
     "panel.saved.header.label": "Saved",
     "panel.saved.label.events": "My Events",
+    "panel.saved.label.events2": "My Events²",
     "panel.saved.label.athletics": "My Athletics Events",
     "panel.saved.label.reminders": "My Reminders",
     "panel.saved.label.dining": "My Dining Locations",
@@ -2854,6 +2879,22 @@
     "panel.skills_self_evaluation.results.delete_scores.message": "Are you sure you want to delete all of your scores?",
     "panel.skills_self_evaluation.results_detail.header.title": "Skills Self-Evaluation",
     "panel.skills_self_evaluation.results_detail.unavailable.message": "Detailed results content for this skill is currently unavailable.",
+    "panel.skills_self_evaluation.occupation_list.header.title": "Skills Self-Evaluation",
+    "panel.skills_self_evaluation.occupation_list.section.title": "Career Explorer",
+    "panel.skills_self_evaluation.occupation_list.occupation.title": "OCCUPATION",
+    "panel.skills_self_evaluation.occupation_list.match.title": "MATCH PERCENTAGE",
+    "panel.skills_self_evaluation.occupation_list.offline.error.msg": "Career Explorer not available while offline.",
+    "panel.skills_self_evaluation.occupation_list.unavailable.message": "You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.",
+    "panel.skills_self_evaluation.occupation_details.header.title": "Skills Self-Evaluation",
+    "panel.skills_self_evaluation.occupation_details.section.title": "Your Results",
+    "panel.skills_self_evaluation.occupation_details.work_styles.title": "Work Styles",
+    "panel.skills_self_evaluation.occupation_details.tech_skills.title": "Technology Skills",
+    "panel.skills_self_evaluation.occupation_details.learn_more.title": "Learn More",
+    "panel.skills_self_evaluation.occupation_details.work_style_name.title": "NAME",
+    "panel.skills_self_evaluation.occupation_details.survey_scores.title": "YOUR SCORE",
+    "panel.skills_self_evaluation.occupation_details.importance.title": "IMPORTANCE",
+    "panel.skills_self_evaluation.occupation_details.offline.error.msg": "Results not available while offline.",
+    "panel.skills_self_evaluation.occupation_details.unavailable.message": "Failed to get occupation data. Please retry.",
     "panel.skills_self_evaluation.auth_dialog.prefix": "You need to be signed in with your NetID to access Assessments.\n",
     "panel.skills_self_evaluation.auth_dialog.privacy": "Set your privacy level to 4 or 5.",
     "panel.skills_self_evaluation.auth_dialog.suffix": " Then, sign in with your NetID under Settings.",
@@ -2956,7 +2997,7 @@
     "panel.appointment.detail.cancel.prompt.message": "Cancel this appointment?",
 
     "panel.icard.home.title.label": "i-card",
-    "panel.icard.home.content.icard.label": "i-card+",
+    "panel.icard.home.content.icard.label": "Illini ID",
     "panel.icard.home.content.faqs.label": "FAQs",
 
     "panel.appointment.schedule.header.title": "Schedule Appointment",
@@ -3078,10 +3119,10 @@
     "widget.home.suggested_events.button.all.title":"View All",
     "widget.home.suggested_events.button.all.hint":"Tap to view all events",
 
-    "widget.home.event_feed.label.header.title":"Event Feed",
-    "widget.home.event_feed.text.empty.description": "There are no events available.",
-    "widget.home.event_feed.button.all.title": "View All",
-    "widget.home.event_feed.button.all.hint": "Tap to view all events",
+    "widget.home.event2_feed.label.header.title":"Event Feed",
+    "widget.home.event2_feed.text.empty.description": "There are no events available.",
+    "widget.home.event2_feed.button.all.title": "View All",
+    "widget.home.event2_feed.button.all.hint": "Tap to view all events",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.text.empty.description": "There are no recently viewed items available.",
@@ -3175,7 +3216,7 @@
     "widget.home.wallet.bus_pass.title": "MTD Bus Pass",
     "widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",
 
-    "widget.home.wallet.illini_id.title": "i-card+",
+    "widget.home.wallet.illini_id.title": "Illini ID",
 
     "widget.home.wallet.library_card.title": "Library Card",
 
@@ -3250,6 +3291,7 @@
     "widget.home.wellness.tips.title": "Daily Wellness Tip",
 
     "widget.home.favorites.title.events": "My Events",
+    "widget.home.favorites.title.events2": "My Events²",
     "widget.home.favorites.title.dining": "My Dining Locations",
     "widget.home.favorites.title.athletics": "My Athletics Events",
     "widget.home.favorites.title.news": "My Athletics News",
@@ -3260,6 +3302,7 @@
     "widget.home.favorites.title.appointments": "MyMcKinley Appointments",
 
     "widget.home.favorites.message.offline.events": "My Events is not available while offline.",
+    "widget.home.favorites.message.offline.events2": "My Events² is not available while offline.",
     "widget.home.favorites.message.offline.dining": "My Dining Locations is not available while offline.",
     "widget.home.favorites.message.offline.athletics": "My Athletics Events is not available while offline.",
     "widget.home.favorites.message.offline.news": "My Athletics News is not available while offline.",
@@ -3270,6 +3313,7 @@
     "widget.home.favorites.message.offline.appointments": "MyMcKinley Appointments is not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.events2": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Event Feed</b></a> for quick access here.",
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
     "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
@@ -3426,12 +3470,12 @@
     "widget.id_card.label.mobile_access.expires": "Expires: %s",
     "widget.id_card.button.mobile_access.request": "Request",
     "widget.id_card.button.mobile_access.renew": "Renew",
-    "widget.id_card.label.mobile_access.i_card.not_available": "Access various services and buildings on campus with your i-card+.",
+    "widget.id_card.label.mobile_access.i_card.not_available": "Access various services and buildings on campus with your Illini ID",
     "widget.id_card.label.mobile_access.permissions": "Set mobile access permissions",
-    "widget.id_card.dialog.text.renew_access": "Renewing your i-card+ access could take up to 30 minutes to complete. Your <b>building access will be temporarily disabled</b> while being renewed. <p>Would you still like to renew right now?</p>",
+    "widget.id_card.dialog.text.renew_access": "Renewing your Illini ID access could take up to 30 minutes to complete. Your <b>building access will be temporarily disabled</b> while being renewed. <p>Would you still like to renew right now?</p>",
     "widget.id_card.dialog.button.mobile_access.renew.cancel": "Cancel",
     "widget.id_card.dialog.button.mobile_access.renew_access": "Renew Access",
-    "widget.id_card.dialog.text.renew_access.done": "If your i-card+ does not work in 30 minutes, call <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, email <a href='mailto:{{mobile_access_email}}'>{{mobile_access_email}}</a>, or <a href='{{mobile_access_website_url}}'>visit the i-card website</a> <img src='asset:{{external_link_icon}}' alt=''/>",
+    "widget.id_card.dialog.text.renew_access.done": "If your Illini ID does not work in 30 minutes, call <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, email <a href='mailto:{{mobile_access_email}}'>{{mobile_access_email}}</a>, or <a href='{{mobile_access_website_url}}'>visit the i-card website</a> <img src='asset:{{external_link_icon}}' alt=''/>",
 
 	"widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",
@@ -3551,6 +3595,7 @@
     "model.explore.time.tomorrow": "Tomorrow",
     "model.explore.time.at": "at",
     "model.explore.time.at.format": "{{day}} at {{time}}",
+    "model.explore.time.from_to.format": "{{day}} from {{start_time}} to {{end_time}}",
     "model.explore.time.all_day": "All day",
     "model.explore.distance.format": "{{distance}} mi away",
 

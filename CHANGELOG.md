@@ -6,7 +6,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Assistant UI improvements [#3372](https://github.com/rokwire/illinois-app/issues/3372)
+- Renamed "i-card+" to "Illini ID" [#3399](https://github.com/rokwire/illinois-app/issues/3399).
+
+## [5.0.25] - 2023-07-11
+### Fixed
+- Opening correct academics panel from Browse [#3393](https://github.com/rokwire/illinois-app/issues/3393).
+### Added
+- Implemented Events2 widgets for Favorites panel [#3390](https://github.com/rokwire/illinois-app/issues/3390).
+### Changed
+- Handled edit event [#3396](https://github.com/rokwire/illinois-app/issues/3396).
+
+## [5.0.24] - 2023-07-10
+### Changed
+- Show "Take Attendance" only to event admins and attendance takers [#3360](https://github.com/rokwire/illinois-app/issues/3360).
+### Fixed
+- Tap over the whole surface of the guide entry card [#3388](https://github.com/rokwire/illinois-app/issues/3388).
+
+## [5.0.23] - 2023-07-07
+### Changed
+- Assistant UI improvements [#3372](https://github.com/rokwire/illinois-app/issues/3372).
+- Label in Follow-Up Survey panel [#3376](https://github.com/rokwire/illinois-app/issues/3376).
+- Include end time when displaying event time [#3379](https://github.com/rokwire/illinois-app/issues/3379).
+### Added
+- Events2 attendance detail panel - work in progress [#3360](https://github.com/rokwire/illinois-app/issues/3360).
+- Display events count in Events2 home panel [#3384](https://github.com/rokwire/illinois-app/issues/3384).
+### Deleted
+- Remove take attendance via the app switch [#3374](https://github.com/rokwire/illinois-app/issues/3374).
+- Remove sort order switch from Events2 UI [#3382](https://github.com/rokwire/illinois-app/issues/3382).
 
 ## [5.0.22] - 2023-07-06
 ### Added
