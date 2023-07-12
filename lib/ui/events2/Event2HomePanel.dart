@@ -14,6 +14,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
@@ -98,6 +99,10 @@ class Event2HomePanel extends StatefulWidget {
 
   static Future<LocationServicesStatus?> getLocationServicesStatus() async =>
     FlexUI().isLocationServicesAvailable ? await LocationServices().status : LocationServicesStatus.serviceDisabled;
+
+  static Future<Position?> getUserLocationIfAvailable() async =>
+    ((await Event2HomePanel.getLocationServicesStatus()) == LocationServicesStatus.permissionAllowed) ?
+      await LocationServices().location : null;
 
   // ContentAttributes + EventType filter
 
@@ -565,7 +570,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     if (descriptionList.isNotEmpty) {
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
       return Padding(padding: EdgeInsets.only(top: 12), child:
-        Container(decoration: _attributesDescriptionDecoration, padding: EdgeInsets.only(top: 12, left: 16, right: 16), child:
+        Container(decoration: _contentDescriptionDecoration, padding: EdgeInsets.only(top: 12, left: 16, right: 16), child:
           Row(children: [ Expanded(child:
             RichText(text: TextSpan(style: regularStyle, children: descriptionList))
           ),],)
@@ -576,7 +581,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
   }
 
-  Decoration get _attributesDescriptionDecoration => BoxDecoration(
+  Decoration get _contentDescriptionDecoration => BoxDecoration(
     color: Styles().colors?.white,
     border: Border(top: BorderSide(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1))
   );
@@ -603,7 +608,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     List<Widget> cardsList = <Widget>[];
     for (Event2 event in _events!) {
       cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
-        Event2Card(event, displayMode: Event2CardDisplayMode.list, userLocation: _currentLocation, onTap: () => _onEvent(event),),
+        Event2Card(event, userLocation: _currentLocation, onTap: () => _onEvent(event),),
       ),);
     }
     if (_extendingEvents) {
@@ -649,7 +654,10 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
   }
 
-  Future<void> _onRefresh() => _refresh();
+  Future<void> _onRefresh() {
+    Analytics().logSelect(target: 'Refresh');
+    return _refresh();
+  }
 
   void _onFilters() {
     Analytics().logSelect(target: 'Filters');
@@ -882,7 +890,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onSearch() {
     Analytics().logSelect(target: 'Search');
-    AppAlert.showDialogResult(context, 'TBD');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(userLocation: _currentLocation,)));
   }
 
   void _onCreate() {

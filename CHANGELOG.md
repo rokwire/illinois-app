@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Renamed "i-card+" to "Illini ID" [#3399](https://github.com/rokwire/illinois-app/issues/3399).
+### Added
+- Created and hooked up Event2SearchPanel [#3401](https://github.com/rokwire/illinois-app/issues/3401).
 
 ## [5.0.25] - 2023-07-11
 ### Fixed

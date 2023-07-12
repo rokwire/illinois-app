@@ -119,7 +119,7 @@ class Event2Card extends StatefulWidget {
   final Position? userLocation;
   final void Function()? onTap;
   
-  Event2Card(this.event, { Key? key, required this.displayMode, this.userLocation, this.onTap}) : super(key: key);
+  Event2Card(this.event, { Key? key, this.displayMode = Event2CardDisplayMode.list, this.userLocation, this.onTap}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CardState();

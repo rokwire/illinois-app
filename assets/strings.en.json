@@ -1292,6 +1292,12 @@
     "panel.event2.detail.attendance.scan.cancel.button.title": "Cancel",
     "panel.event2.detail.attendance.qr_code.uin.not_valid.msg": "This QR code does not contain valid UIN number.",
 
+    "panel.event2.search.header.title": "Search",
+	"panel.event2.search.search.label.title": "Search: ",
+	"panel.event2.search.events.label.title": "Events: ",
+	"panel.event2.search.failed.message": "Failed to search events.",
+	"panel.event2.search.empty.message": "There are no events matching the search text.",
+
     "panel.settings.manage_interests.instructions.format": "Tap the {{check_mark_icon}} to follow the tags that interest you most",
     "panel.settings.manage_interests.list.following": "FOLLOWING",
     "panel.settings.manage_interests.list.all_tags":"ALL TAGS",
