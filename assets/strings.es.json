@@ -1611,7 +1611,7 @@
     "panel.settings.notifications.header.inbox.label": "Notificaciones",
 
     "panel.settings.home.calendar.settings.add_events.label": "Agregar eventos guardados al calendario",
-    "panel.settings.home.calendar.settings.prompt.label": "Preguntar al guardar eventos en el calendario",
+    "panel.settings.home.calendar.settings.prompt.label": "Prompt when saving events or appointments to calendar",
     "panel.settings.home.calendar.on_campus.location_services.required.label": "requiere servicios de localización",
     "panel.settings.home.calendar.on_campus.location_services.not_available.label": "No disponible",
     "panel.settings.home.calendar.on_campus.radio_button.auto.title": "Detectar automáticamente cuando estoy en el Campus",

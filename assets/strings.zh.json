@@ -1612,7 +1612,7 @@
 	"panel.settings.notifications.header.inbox.label": "通知",
 	
 	"panel.settings.home.calendar.settings.add_events.label": "將保存的事件添加到日曆",
-	"panel.settings.home.calendar.settings.prompt.label": "將事件保存到日曆時提示",
+	"panel.settings.home.calendar.settings.prompt.label": "Prompt when saving events or appointments to calendar",
 	"panel.settings.home.calendar.on_campus.location_services.required.label": "需要定位服務",
 	"panel.settings.home.calendar.on_campus.location_services.not_available.label": "無法使用",
 	"panel.settings.home.calendar.on_campus.radio_button.auto.title": "當我在校園時自動檢測",
