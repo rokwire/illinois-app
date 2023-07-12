@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AssistantPanel extends StatefulWidget {
@@ -42,6 +43,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   Message? _feedbackMessage;
 
   int? _queryLimit = 5;
+
+  List<String>? _userContext;
 
   @override
   void initState() {
@@ -81,6 +84,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     _contentCodes = buildContentCodes();
 
     _onPullToRefresh();
+
+    _userContext = _getUserContext();
 
     super.initState();
   }
@@ -398,7 +403,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
         child: InkWell(
           borderRadius: BorderRadius.circular(8.0),
           onTap: () {
-            NotificationService().notify('${FirebaseMessaging.notifyBase}.${link.link}');
+            NotificationService().notify('${FirebaseMessaging.notifyBase}.${link.link}', link.params);
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -408,8 +413,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Styles().images?.getImage(link.iconKey ?? '') ?? Container(),
                 )),
-                Text(link.name, style: Styles().textStyles?.getTextStyle('widget.title.light.regular')),
-                Expanded(child: Container()),
+                Expanded(child: Text(link.name, style: Styles().textStyles?.getTextStyle('widget.title.light.regular'))),
                 Styles().images?.getImage('chevron-right-white') ?? Container(),
               ],
             ),
@@ -481,6 +485,8 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
               ],
             ),
             _buildQueryLimit(),
+            Visibility(visible: Auth2().isDebugManager,
+                child: _buildContextButton()),
           ],
         ),
       ),
@@ -509,6 +515,103 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           style: Styles().textStyles?.getTextStyle('widget.title.small'),
         ),
       ]),
+    );
+  }
+
+  Widget _buildContextButton() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: RoundedButton(
+        label: Localization().getStringEx('', 'Context'),
+        onTap: _showContext,
+      ),
+    );
+  }
+
+  Future<void> _showContext() {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        List<String>? userContext = _userContext;
+        return StatefulBuilder(
+          builder: (context, setStateForDialog) {
+          List<Widget> contextFields = [];
+          for (int i = 0; i < (_userContext?.length ?? 0); i++) {
+            String context = _userContext?[i] ?? '';
+            // TextEditingController controller = TextEditingController();
+            // controller.text = context;
+            contextFields.add(TextFormField(initialValue: context, onChanged: (value) {
+              userContext?[i] = value;
+            }));
+          }
+          return AlertDialog(
+            title: Text('User Context'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: contextFields,
+              ),
+            ),
+            actions: [
+              RoundedButton(
+                label: Localization().getStringEx('', 'Add'),
+                onTap: () {
+                  setStateForDialog(() {
+                    if (userContext == null) {
+                      userContext = [];
+                    }
+                    userContext?.add('');
+                  });
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: RoundedButton(
+                  label: Localization().getStringEx('', 'Profile 1'),
+                  onTap: () {
+                    _userContext = _getUserContext(
+                        name: 'John Doe',
+                        netID: 'jdoe',
+                        college: 'Media',
+                        department: 'Journalism',
+                        studentLevel: 'Sophomore'
+                    );
+                    Navigator.of(context).pop();
+                    _showContext();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: RoundedButton(
+                  label: Localization().getStringEx('', 'Profile 2'),
+                  onTap: () {
+                    _userContext = _getUserContext(
+                        name: 'Jane Smith',
+                        netID: 'jsmith',
+                        college: 'Grainger Engineering',
+                        department: 'Electrical and Computer Engineering',
+                        studentLevel: 'Senior'
+                    );
+                    Navigator.of(context).pop();
+                    _showContext();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: RoundedButton(
+                  label: Localization().getStringEx('', 'Save'),
+                  onTap: () {
+                    userContext?.removeWhere((element) => element.isEmpty);
+                    _userContext = userContext;
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ],
+          );
+        });
+      },
     );
   }
 
@@ -561,7 +664,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       curve: Curves.fastOutSlowIn,
     );
 
-    Message? response = await Assistant().sendQuery(message, context: _getUserContext());
+    Message? response = await Assistant().sendQuery(message, context: _userContext);
     if (mounted) {
       setState(() {
         if (response != null){
@@ -582,25 +685,25 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     }
   }
 
-  List<String>? _getUserContext() {
+  List<String>? _getUserContext({String? name, String? netID, String? college, String? department, String? studentLevel}) {
     List<String> context = [];
 
-    String? name = Auth2().profile?.fullName;
+    name ??= Auth2().profile?.fullName;
     if (name != null) {
       context.add('My name is $name');
     }
 
-    String? netID = Auth2().netId;
+    netID ??= Auth2().netId;
     if (netID != null) {
       context.add('My netID is $netID');
     }
 
-    String? college = IlliniCash().studentClassification?.collegeName;
-    String? department = IlliniCash().studentClassification?.departmentName;
+    college ??= IlliniCash().studentClassification?.collegeName;
+    department ??= IlliniCash().studentClassification?.departmentName;
     if (college != null && department != null) {
       context.add('I am a student in the $department department in the $college college');
     }
-    String? studentLevel = IlliniCash().studentClassification?.studentLevelDescription;
+    studentLevel ??= IlliniCash().studentClassification?.studentLevelDescription;
     if (studentLevel != null) {
       context.add('I have $studentLevel standing as a student');
     }

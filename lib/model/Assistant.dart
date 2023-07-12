@@ -111,14 +111,16 @@ class Link {
   final String name;
   final String link;
   final String? iconKey;
+  final Map<String, dynamic>? params;
 
-  Link({required this.name, required this.link, this.iconKey});
+  Link({required this.name, required this.link, this.iconKey, this.params});
 
   factory Link.fromJson(Map<String, dynamic> json) {
     return Link(
       name: JsonUtils.stringValue(json['name']) ?? '',
       link: JsonUtils.stringValue(json['link']) ?? '',
       iconKey: JsonUtils.stringValue(json['icon_key']),
+      params: JsonUtils.mapValue(json['params']),
     );
   }
 
