@@ -422,7 +422,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       _endDate = TZDateTimeUtils.dateOnly(endTimeUni);
       _endTime = TimeOfDay.fromDateTime(endTimeUni);
     }
-    _allDay = (widget.event?.allDay == true);
+    //_allDay = (widget.event?.allDay == true);
 
     _eventType = widget.event?.eventType;
     _locationLatitudeController.text = _printLatLng(widget.event?.exploreLocation?.latitude);
@@ -619,7 +619,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       time: _startTime,
       onDate: _onStartDate,
       onTime: _onStartTime,
-      hasTime: !_allDay,
+      hasTime: (_allDay != true),
       semanticsDateLabel: Localization().getStringEx("panel.create_event.date_time.start_date.title", "START DATE"),
       semanticsTimeLabel: Localization().getStringEx("panel.create_event.date_time.start_time.title",'START TIME'),
       dateLabel: Localization().getStringEx("panel.create_event.date_time.start_date.title", "START DATE"),
@@ -633,16 +633,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       time: _endTime,
       onDate: _onEndDate,
       onTime: _onEndTime,
-      hasTime: !_allDay,
+      hasTime: (_allDay != true),
       semanticsDateLabel: Localization().getStringEx("panel.create_event.date_time.end_date.title", "END DATE"),
       semanticsTimeLabel: Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
       dateLabel: Localization().getStringEx("panel.create_event.date_time.end_date.title", "END DATE"),
       timeLabel: Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
     ),
     
-    Padding(padding: EdgeInsets.only(bottom: 12)),
+    //Padding(padding: EdgeInsets.only(bottom: 12)),
 
-    _buildAllDayToggle(),
+    //_buildAllDayToggle(),
 
   ]);
 
@@ -755,6 +755,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
+  // ignore: unused_element
   Widget _buildAllDayToggle() => Semantics(toggled: _allDay, excludeSemantics: true, 
     label:Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
     hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""),
