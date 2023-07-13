@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.27] - 2023-07-13
 ### Changed
 - Hide/Disable "All Day Event" property [#3405](https://github.com/rokwire/illinois-app/issues/3405).
 - "View All" link moved between navigation controls for all Favroites widgets [#3407](https://github.com/rokwire/illinois-app/issues/3407).
