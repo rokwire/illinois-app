@@ -201,11 +201,12 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),
-        onTap: _onTapSeeAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),
+          onTap: _onTapSeeAll,
+        ),
       ),
     ]);
   }

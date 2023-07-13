@@ -263,12 +263,13 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Padding(padding: EdgeInsets.only(top: 8), child:
         contentWidget,
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount),
-      LinkButton(
-        title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
-        hint: _viewAllHint,
-        onTap: _onTapViewAll,
-      )      
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
+          hint: _viewAllHint,
+          onTap: _onTapViewAll,
+        )      
+      ),
     ]);
   }
 

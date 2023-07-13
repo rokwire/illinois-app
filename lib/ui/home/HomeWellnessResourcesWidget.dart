@@ -179,11 +179,12 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
     return Column(children: [
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.wellness_resources.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.wellness_resources.button.all.hint', 'Tap to view all wellness resources'),
-        onTap: _onViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.wellness_resources.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.wellness_resources.button.all.hint', 'Tap to view all wellness resources'),
+          onTap: _onViewAll,
+        ),
       ),
     ],);
   }
