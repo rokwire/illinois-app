@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Illinois Assistant chatbot integration [#3220](https://github.com/rokwire/illinois-app/issues/3220)
+- Recurring TODO list tasks [#3409](https://github.com/rokwire/illinois-app/issues/3409)
 
 ## [5.0.7] - 2023-06-12
 ### Added

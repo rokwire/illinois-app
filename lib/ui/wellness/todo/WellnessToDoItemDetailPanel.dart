@@ -71,6 +71,10 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   bool _categoriesDropDownVisible = false;
   int _loadingProgress = 0;
 
+  final List<String> _recurringTypes = ["Does not repeat", "Daily",
+    "Weekly", "Monthly", "Annually", "Weekdays"];
+  String? _selectedRecurringType = "Does not repeat";
+
   @override
   void initState() {
     super.initState();
@@ -118,6 +122,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             Stack(children: [
               Column(children: [
                 _buildDueDateContainer(),
+                _buildRecurringContainer(),
                 _buildDueTimeContainer(),
                 _buildSelectedReminderTypeContainer(),
                 Stack(children: [
@@ -266,6 +271,45 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                     Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
                   ])))
         ]));
+  }
+
+  Widget _buildRecurringContainer(){
+    return Visibility(
+      visible: (_dueDate != null),
+      child: Padding(
+        padding: EdgeInsets.only(top: 17),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+                padding: EdgeInsets.only(bottom: 5),
+                child: _buildFieldLabel(label: Localization().getStringEx('', 'RECURRENCE TYPE'))),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Styles().colors!.mediumGray!, width: 1),
+                color: Styles().colors!.white,
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(right: 5, left: 5),
+                child: DropdownButton(
+                    value: _selectedRecurringType,
+                    dropdownColor: Styles().colors!.white,
+                    isExpanded: true,
+                    icon: Styles().images?.getImage(_reminderTypeDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
+                    style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title"),
+                    items: DropdownBuilder.getItems(_recurringTypes, style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")),
+                    onChanged: (String? selected) {
+                      setState(() {
+                        _selectedRecurringType = selected;
+                      });
+                    }
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildDueTimeContainer() {
@@ -632,6 +676,11 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.item.empty.name.msg', 'Please, fill name.'));
       return;
     }
+
+    if(_dueDate == null || _dueTime == null){
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.item.empty.name.msg', 'Please, pick due date and time.'));
+      return;
+    }
     _increaseProgress();
     bool hasDueTime = false;
     if (_dueDate != null) {
@@ -653,6 +702,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         description: description,
         workDays: _formattedWorkDays,
         reminderType: _selectedReminderType,
+        recurrenceType: _generateCronExpressionFromString(),
         reminderDateTimeUtc: _reminderDateTime?.toUtc());
 
     Analytics().logWellnessToDo(
@@ -668,6 +718,109 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       Wellness().createToDoItem(itemToSave).then((success) {
         _onSaveCompleted(success);
       });
+    }
+  }
+
+  String _generateCronExpressionFromString(){
+    print(AppDateTime().getDisplayDateTime(_dueDate ?? DateTime.now()));
+    print(_dueDate?.day);
+    print(_dueDate?.month);
+    print(_dueDate?.year);
+    print(_dueDate?.weekday);
+      switch(_selectedRecurringType){
+        case "Daily":{
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + " ? * * *";
+        }
+        case "Does not repeat":{
+          return "none";
+        }
+        case "Weekly":{
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + " ? * " + (_getWeekdayFromCode(_dueDate?.weekday ?? 0)) + " *";
+        }
+        case "Monthly":{
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + (_dueDate?.day.toString() ?? "0") + " * ? *";
+        }
+        case "Annually":{
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + (_dueDate?.day.toString() ?? "0") + (_getMonthFromCode(_dueDate?.month ?? 0)) + " ? *";
+        }
+        case "Weekdays":{
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + "? *" + "MON,TUE,WED,THU,FRI " + "*";
+        }
+        default:{
+          return "0 0 0 ? * * *";
+        }
+      }
+
+  }
+
+  String _getWeekdayFromCode(int dayCode){
+    switch(dayCode){
+      case 1:{
+        return "MON";
+      }
+      case 2:{
+        return "TUE";
+      }
+      case 3:{
+        return "WED";
+      }
+      case 4:{
+        return "THU";
+      }
+      case 5:{
+        return "FRI";
+      }
+      case 6:{
+        return "SAT";
+      }
+      case 7:{
+        return "SUN";
+      }
+      default:
+        return "*";
+    }
+  }
+
+  String _getMonthFromCode(int dayCode){
+    switch(dayCode){
+      case 1:{
+        return "JAN";
+      }
+      case 2:{
+        return "FEB";
+      }
+      case 3:{
+        return "MAR";
+      }
+      case 4:{
+        return "APR";
+      }
+      case 5:{
+        return "MAY";
+      }
+      case 6:{
+        return "JUN";
+      }
+      case 7:{
+        return "JUL";
+      }
+      case 8:{
+        return "AUG";
+      }
+      case 9:{
+        return "SEP";
+      }
+      case 10:{
+        return "OCT";
+      }
+      case 11:{
+        return "NOV";
+      }
+      case 12:{
+        return "DEC";
+      }
+      default:
+        return "*";
     }
   }
 
@@ -827,5 +980,19 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     } else if (name == Wellness.notifyToDoCategoryDeleted) {
       _loadCategories();
     }
+  }
+}
+
+
+class DropdownBuilder {
+  static List<DropdownMenuItem<T>> getItems<T>(List<T> options, {String? nullOption, TextStyle? style}) {
+    List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
+    if (nullOption != null) {
+      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: style ?? Styles().textStyles?.getTextStyle("widget.detail.regular"))));
+    }
+    for (T option in options) {
+      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: style ?? Styles().textStyles?.getTextStyle("widget.detail.regular"))));
+    }
+    return dropDownItems;
   }
 }

@@ -34,6 +34,7 @@ class ToDoItem {
   final String? location;
   final String? description;
   bool isCompleted;
+  final String? recurrenceType;
 
   ToDoItem(
       {this.id,
@@ -46,7 +47,8 @@ class ToDoItem {
       this.workDays,
       this.location,
       this.description,
-      this.isCompleted = false});
+      this.isCompleted = false,
+      this.recurrenceType});
 
   static ToDoItem? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -63,6 +65,7 @@ class ToDoItem {
         workDays: JsonUtils.listStringsValue(json['work_days']),
         location: JsonUtils.stringValue(json['location']),
         description: JsonUtils.stringValue(json['description']),
+        recurrenceType: JsonUtils.stringValue(json['recurrence_type']),
         isCompleted: JsonUtils.boolValue(json['completed']) ?? false);
   }
 
@@ -78,7 +81,8 @@ class ToDoItem {
       'work_days': workDays,
       'location': location,
       'description': description,
-      'completed': isCompleted
+      'completed': isCompleted,
+      'recurrence_type' : recurrenceType,
     };
     json.removeWhere((key, value) => (value == null));
     return json;
