@@ -753,7 +753,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
 
     netID ??= Auth2().netId;
     if (netID != null) {
-      context['netID'] = netID;
+      context['net_id'] = netID;
     }
 
     college ??= IlliniCash().studentClassification?.collegeName;
