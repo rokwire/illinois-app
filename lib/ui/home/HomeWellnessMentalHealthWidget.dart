@@ -176,11 +176,12 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
     return Column(children: [
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.wellness_mental_health.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.wellness_mental_health.button.all.hint', 'Tap to view all mental heatlh resources'),
-        onTap: _onViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.wellness_mental_health.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.wellness_mental_health.button.all.hint', 'Tap to view all mental heatlh resources'),
+          onTap: _onViewAll,
+        ),
       ),
     ],);
   }

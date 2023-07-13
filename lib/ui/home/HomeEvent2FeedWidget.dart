@@ -236,11 +236,12 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => (_events?.length ?? 0),),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.event2_feed.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.event2_feed.button.all.hint', 'Tap to view all events'),
-        onTap: _onTapViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => (_events?.length ?? 0), centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.event2_feed.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.event2_feed.button.all.hint', 'Tap to view all events'),
+          onTap: _onTapViewAll,
+        ),
       ),
     ]);
   }

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Hide/Disable "All Day Event" property [#3405](https://github.com/rokwire/illinois-app/issues/3405).
+- "View All" link moved between navigation controls for all Favroites widgets [#3407](https://github.com/rokwire/illinois-app/issues/3407).
 
 ## [5.0.26] - 2023-07-12
 ### Changed

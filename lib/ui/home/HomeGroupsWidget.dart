@@ -200,11 +200,12 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
           allowImplicitScrolling : true,
         )
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
-        onTap: _onSeeAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
+          onTap: _onSeeAll,
+        ),
       ),
     ],);
 

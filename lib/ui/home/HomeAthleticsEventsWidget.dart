@@ -185,11 +185,12 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
-        onTap: _onTapSeeAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
+          onTap: _onTapSeeAll,
+        ),
       ),
     ],);
   }
