@@ -24,7 +24,7 @@ class Assistant /* with Service */ {
 
   // Implementation
   
-  Future<Message?> sendQuery(String? query, {List<String>? context}) async {
+  Future<Message?> sendQuery(String? query, {Map<String, String>? context}) async {
     if (!isEnabled) {
       Log.w('Failed to send assistant query. Missing assistant url.');
       return null;
