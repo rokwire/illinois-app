@@ -35,7 +35,6 @@ class MobileAccess with Service implements NotificationsListener {
   static const String _tag = 'MobileAccess';
 
   late MobileAccessOpenType _selectedOpenType;
-  bool _screenUnlocked = true; // When application is started up this means that the device is unlocked
   bool _isScanning = false;
 
   // Singleton
@@ -290,9 +289,6 @@ class MobileAccess with Service implements NotificationsListener {
       case "endpoint.register.finished":
         _onEndpointRegistrationFinished(call.arguments);
         break;
-      case "device.screen.unlocked":
-        _onScreenUnlocked(call.arguments);
-        break;
       case "device.scanning":
         _onScanning(call.arguments);
         break;
@@ -308,14 +304,6 @@ class MobileAccess with Service implements NotificationsListener {
       _shouldScan();
     }
     NotificationService().notify(notifyDeviceRegistrationFinished, arguments);
-  }
-
-  void _onScreenUnlocked(dynamic arguments) {
-    bool screenUnlocked = (arguments is bool) ? arguments : false;
-    if (screenUnlocked != _screenUnlocked) {
-      _screenUnlocked = screenUnlocked;
-      _shouldScan();
-    }
   }
 
   void _onScanning(dynamic arguments) {
@@ -353,8 +341,6 @@ class MobileAccess with Service implements NotificationsListener {
         return true;
       case MobileAccessOpenType.opened_app:
         return (AppLivecycle().state == AppLifecycleState.resumed);
-      case MobileAccessOpenType.unlocked_device:
-        return _screenUnlocked;
     }
   }
 
@@ -362,8 +348,6 @@ class MobileAccess with Service implements NotificationsListener {
     switch (value) {
       case 'opened_app':
         return MobileAccessOpenType.opened_app;
-      case 'unlocked_device':
-        return MobileAccessOpenType.unlocked_device;
       case 'always':
         return MobileAccessOpenType.always;
       default:
@@ -375,8 +359,6 @@ class MobileAccess with Service implements NotificationsListener {
     switch (type) {
       case MobileAccessOpenType.opened_app:
         return 'opened_app';
-      case MobileAccessOpenType.unlocked_device:
-        return 'unlocked_device';
       case MobileAccessOpenType.always:
         return 'always';
       default:
@@ -444,4 +426,4 @@ class MobileAccess with Service implements NotificationsListener {
 
 enum MobileAccessBleRssiSensitivity { high, normal, low }
 
-enum MobileAccessOpenType { opened_app, unlocked_device, always }
+enum MobileAccessOpenType { opened_app, always }

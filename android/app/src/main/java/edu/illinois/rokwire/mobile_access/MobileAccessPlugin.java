@@ -17,10 +17,7 @@
 package edu.illinois.rokwire.mobile_access;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.util.Log;
 
 import com.hid.origo.api.ble.OrigoRssiSensitivity;
@@ -49,8 +46,6 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     private final MobileAccessKeysApiFacade apiFacade;
     private final Context appContext;
 
-    private BroadcastReceiver screenBroadcastReceiver;
-
     //endregion
 
     //region Initialization
@@ -68,7 +63,6 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     //region Activity APIs
 
     public void onActivityCreate() {
-        registerScreenBroadcastReceiver();
         apiFacade.onActivityCreate();
     }
 
@@ -78,7 +72,6 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
 
     public void onActivityDestroy() {
         apiFacade.onActivityDestroy();
-        unregisterScreenBroadcastReceiver();
     }
 
     //endregion
@@ -352,36 +345,6 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     private static void invokeFlutterMethod(String methodName, Object arguments) {
         if ((methodChannel != null) && (methodName != null)) {
             methodChannel.invokeMethod(methodName, arguments);
-        }
-    }
-
-    //endregion
-
-    //region Screen BroadcastReceiver
-
-    private void registerScreenBroadcastReceiver() {
-        if (screenBroadcastReceiver == null) {
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(Intent.ACTION_SCREEN_OFF);
-            filter.addAction(Intent.ACTION_USER_PRESENT);
-            screenBroadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (Objects.equals(intent.getAction(), Intent.ACTION_SCREEN_OFF)) {
-                        invokeFlutterMethod(Constants.MOBILE_ACCESS_DEVICE_SCREEN_UNLOCKED_KEY, false);
-                    } else if (Objects.equals(intent.getAction(), Intent.ACTION_USER_PRESENT)) {
-                        invokeFlutterMethod(Constants.MOBILE_ACCESS_DEVICE_SCREEN_UNLOCKED_KEY, true);
-                    }
-                }
-            };
-            appContext.registerReceiver(screenBroadcastReceiver, filter);
-        }
-    }
-
-    private void unregisterScreenBroadcastReceiver() {
-        if (screenBroadcastReceiver != null) {
-            appContext.unregisterReceiver(screenBroadcastReceiver);
-            screenBroadcastReceiver = null;
         }
     }
 

@@ -64,13 +64,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
               onTap: () => _onTapMobileAccessType(MobileAccessOpenType.opened_app)),
           _buildDividerWidget(),
           _buildRadioButtonEntry(
-              title: Localization().getStringEx('panel.settings.icard.mobile_access.unlocked_device.title.label', 'Device is unlocked'),
-              description: Localization().getStringEx(
-                  'panel.settings.icard.mobile_access.unlocked_device.description.label', 'Open doors only when smartphone is unlocked.'),
-              selected: (MobileAccess().selectedOpenType == MobileAccessOpenType.unlocked_device),
-              onTap: () => _onTapMobileAccessType(MobileAccessOpenType.unlocked_device)),
-          _buildDividerWidget(),
-          _buildRadioButtonEntry(
               title: Localization().getStringEx('panel.settings.icard.mobile_access.always.title.label', 'Always'),
               description: Localization().getStringEx('panel.settings.icard.mobile_access.always.description.label',
                   'Open doors regardless of whether app is open or smartphone is unlocked.'),
@@ -99,7 +92,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                             borderRadius: BorderRadius.all(Radius.circular(4)),
                             onTap: _onTapVibrate)),
                   ]))),
-          Visibility(visible: _isAndroid, child: Padding(padding: EdgeInsets.only(top: 16), child: _buildNotificationDrawerWidget())),
           Visibility(visible: _isIOS, child: Padding(padding: EdgeInsets.only(top: 16), child: _buildOpenIOSSystemSettingsWidget()))
         ]));
   }
@@ -188,41 +180,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
         ]));
   }
 
-  Widget _buildNotificationDrawerWidget() {
-    bool notificationDrawerSelected = false; //TBD: DD - implement
-    return InkWell(
-        onTap: _onTapNotificationDrawer,
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Expanded(
-              child: Container(
-                  decoration: BoxDecoration(
-                      color: Styles().colors?.white,
-                      border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(4))),
-                  child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                        Expanded(
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(Localization().getStringEx('panel.settings.icard.notification_drawer.title.label', 'Notification ???'),
-                              style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.enabled')),
-                          Padding(
-                            padding: EdgeInsets.only(top: 5),
-                            child: Text(
-                                Localization().getStringEx(
-                                    'panel.settings.icard.notification_drawer.description.label', 'Unlock doors from notification drawer.'),
-                                maxLines: 4,
-                                style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.variant.enabled')),
-                          )
-                        ])),
-                        Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            // ignore: dead_code
-                            child: Styles().images?.getImage(notificationDrawerSelected ? 'toggle-on' : 'toggle-off'))
-                      ]))))
-        ]));
-  }
-
   void _loadUnlockVibrationEnabled() {
     MobileAccess().isUnlockVibrationEnabled().then((enabled) {
       setStateIfMounted(() {
@@ -301,10 +258,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
         _loadUnlockVibrationEnabled();
       }
     });
-  }
-
-  void _onTapNotificationDrawer() {
-    //TBD: DD - implement
   }
 
   void _onTapIOSSystemSettings() {
