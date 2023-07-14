@@ -9,11 +9,26 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
-class SkillsSelfEvaluationOccupationList extends StatelessWidget {
-  SkillsSelfEvaluationOccupationList({Key? key, required this.percentages}) : super(key: key);
+class SkillSelfEvaluationOccupationListPanel extends StatefulWidget {
+  final Map<String, num> percentages;
+
+  SkillSelfEvaluationOccupationListPanel({Key? key, required this.percentages}) : super(key: key);
+
+  @override
+  _SkillSelfEvaluationOccupationListState createState() => _SkillSelfEvaluationOccupationListState();
+}
+
+class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationOccupationListPanel> {
 
   final ScrollController _scrollController = ScrollController();
-  final Map<String, num> percentages;
+  Map<String, num> percentages = {};
+  bool sortMatchAsc = false;
+
+  @override
+  void initState() {
+    super.initState();
+    percentages = widget.percentages;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,20 +90,29 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Flexible(
-                  flex: 5,
-                  fit: FlexFit.tight,
-                  child: Text(
-                    Localization().getStringEx('panel.skills_self_evaluation.occupation_list.occupation.title', 'OCCUPATION'),
-                    style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
-                  )),
+                    flex: 5,
+                    fit: FlexFit.tight,
+                    child: Text(
+                      Localization().getStringEx('panel.skills_self_evaluation.occupation_list.occupation.title', 'OCCUPATION'),
+                      style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
+                    )),
                 Flexible(
-                  flex: 3,
-                  fit: FlexFit.tight,
-                  child: Text(
-                    Localization().getStringEx('panel.skills_self_evaluation.occupation_list.match.title', 'MATCH PERCENTAGE'),
-                    style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
-                  ),
-                ),
+                    flex: 5,
+                    fit: FlexFit.tight,
+                    child: InkWell(
+                      onTap: _onTapToggleSortMatchPercentage,
+                      child: Row(
+                        children: [
+                          Text(
+                            Localization().getStringEx('panel.skills_self_evaluation.occupation_list.match.title', 'MATCH PERCENTAGE'),
+                            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
+                          ),
+                          SizedBox(width: 8,),
+                          (sortMatchAsc ? Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
+                              : Styles().images?.getImage('chevron-up', excludeFromSemantics: true)) ?? Container(),
+                        ],
+                      ),
+                    ))
               ],
             ),
           ),
@@ -113,37 +137,43 @@ class SkillsSelfEvaluationOccupationList extends StatelessWidget {
   List<Widget> _buildOccupationListView() {
     return [
       FutureBuilder(
-        future: Occupations().getAllOccupationMatches(),
-        initialData: [],
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.data == null) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 100, left: 32.0, right: 32.0),
-                child: Text(
-                  Localization().getStringEx('panel.skills_self_evaluation.occupation_list.unavailable.message',
-                      'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.'),
-                  textAlign: TextAlign.center,
+          future: Occupations().getAllOccupationMatches(),
+          initialData: [],
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.data == null) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 100, left: 32.0, right: 32.0),
+                  child: Text(
+                    Localization().getStringEx('panel.skills_self_evaluation.occupation_list.unavailable.message',
+                        'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.'),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
+              );
+            }
+            List<OccupationMatch> occupationMatches = (snapshot.data as List).cast<OccupationMatch>();
+            return ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _scrollController,
+                shrinkWrap: true,
+                itemCount: occupationMatches.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return OccupationListTile(occupationMatch: occupationMatches[index], percentages: percentages,);
+                }
             );
           }
-          List<OccupationMatch> occupationMatches = (snapshot.data as List).cast<OccupationMatch>();
-          return ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _scrollController,
-            shrinkWrap: true,
-            itemCount: occupationMatches.length,
-            itemBuilder: (BuildContext context, int index) {
-              return OccupationListTile(occupationMatch: occupationMatches[index], percentages: percentages,);
-            }
-          );
-        }
       )
     ];
+  }
+
+  void _onTapToggleSortMatchPercentage() {
+    setState(() {
+      sortMatchAsc = !sortMatchAsc;
+    });
   }
 }
 
@@ -177,9 +207,9 @@ class OccupationListTile extends StatelessWidget {
                 ),
                 Spacer(),
                 Flexible(
-                  flex: 2,
-                  fit: FlexFit.tight,
-                  child: Text(occupationMatch.matchPercent?.toInt().toString() ?? '--', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)
+                    flex: 2,
+                    fit: FlexFit.tight,
+                    child: Text(occupationMatch.matchPercent?.toInt().toString() ?? '--', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)
                 ),
                 Flexible(
                     flex: 1,
@@ -195,4 +225,3 @@ class OccupationListTile extends StatelessWidget {
     );
   }
 }
-
