@@ -156,6 +156,12 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
               );
             }
             List<OccupationMatch> occupationMatches = (snapshot.data as List).cast<OccupationMatch>();
+            if (sortMatchAsc) {// ascending
+              occupationMatches.sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
+            } else {// descending
+              occupationMatches.sort((a, b) => (a.matchPercent ?? 0).compareTo(b.matchPercent ?? 0));
+            }
+
             return ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 controller: _scrollController,
