@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Update context for Illinois Assistant [#3410](https://github.com/rokwire/illinois-app/issues/3410)
+- Update context for Illinois Assistant [#3410](https://github.com/rokwire/illinois-app/issues/3410).
+### Removed
+- "Device is Unlocked" setting in icard [#2921](https://github.com/rokwire/illinois-app/issues/2921).
+- "Notification Drawer" setting in icard [#2921](https://github.com/rokwire/illinois-app/issues/2921).
 
 ## [5.0.27] - 2023-07-13
 ### Changed
