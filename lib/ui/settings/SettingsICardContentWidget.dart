@@ -64,13 +64,6 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
               onTap: () => _onTapMobileAccessType(MobileAccessOpenType.opened_app)),
           _buildDividerWidget(),
           _buildRadioButtonEntry(
-              title: Localization().getStringEx('panel.settings.icard.mobile_access.unlocked_device.title.label', 'Device is unlocked'),
-              description: Localization().getStringEx(
-                  'panel.settings.icard.mobile_access.unlocked_device.description.label', 'Open doors only when smartphone is unlocked.'),
-              selected: (MobileAccess().selectedOpenType == MobileAccessOpenType.unlocked_device),
-              onTap: () => _onTapMobileAccessType(MobileAccessOpenType.unlocked_device)),
-          _buildDividerWidget(),
-          _buildRadioButtonEntry(
               title: Localization().getStringEx('panel.settings.icard.mobile_access.always.title.label', 'Always'),
               description: Localization().getStringEx('panel.settings.icard.mobile_access.always.description.label',
                   'Open doors regardless of whether app is open or smartphone is unlocked.'),

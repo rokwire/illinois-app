@@ -1811,8 +1811,6 @@
 		"panel.settings.icard.mobile_access.label": "允許移動訪問時",
 		"panel.settings.icard.mobile_access.opened_app.title.label": "應用程序已打開",
 		"panel.settings.icard.mobile_access.opened_app.description.label": "僅當應用程序打開時才開門。",
-		"panel.settings.icard.mobile_access.unlocked_device.title.label": "設備已解鎖",
-		"panel.settings.icard.mobile_access.unlocked_device.description.label": "僅在智能手機解鎖時開門。",
 		"panel.settings.icard.mobile_access.always.title.label": "總是",
 		"panel.settings.icard.mobile_access.always.description.label": "無論應用程序是否打開或智能手機是否解鎖，都可以開門。",
 		"panel.settings.icard.bluetooth.sensitivity.label": "藍牙靈敏度",

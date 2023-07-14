@@ -1811,8 +1811,6 @@
     "panel.settings.icard.mobile_access.label": "Allow mobile access when",
     "panel.settings.icard.mobile_access.opened_app.title.label": "App is open",
     "panel.settings.icard.mobile_access.opened_app.description.label": "Open doors only when app is open.",
-    "panel.settings.icard.mobile_access.unlocked_device.title.label": "Device is unlocked",
-    "panel.settings.icard.mobile_access.unlocked_device.description.label": "Open doors only when smartphone is unlocked.",
     "panel.settings.icard.mobile_access.always.title.label": "Always",
     "panel.settings.icard.mobile_access.always.description.label": "Open doors regardless of whether app is open or smartphone is unlocked.",
     "panel.settings.icard.bluetooth.sensitivity.label": "Bluetooth sensitivity",
