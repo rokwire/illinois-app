@@ -59,6 +59,7 @@ class Guide with Service implements NotificationsListener {
   void createService() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
+      Storage.notifySettingChanged,
       AppLivecycle.notifyStateChanged,
       DeepLink.notifyUri,
     ]);
@@ -121,6 +122,10 @@ class Guide with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
       _initDefaultFavorites();
+    } else if (name == Storage.notifySettingChanged) {
+      if (param == Storage.onBoardingPassedKey) {
+        _initDefaultFavorites();
+      }
     } else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == DeepLink.notifyUri) {
@@ -479,7 +484,7 @@ class Guide with Service implements NotificationsListener {
 
   void _initDefaultFavorites() {
 
-    if (_contentList != null) {
+    if ((Storage().onBoardingPassed == true) && (_contentList != null)) {
       Set<String> modifiedFavoriteKeys = <String>{};
       Map<String, LinkedHashSet<String>> favorites = <String, LinkedHashSet<String>>{};
       for (dynamic contentEntry in _contentList!) {
