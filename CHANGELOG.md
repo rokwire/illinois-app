@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update context for Illinois Assistant [#3410](https://github.com/rokwire/illinois-app/issues/3410).
+- Show mobile key external id instead of mobile credential id [#2921](https://github.com/rokwire/illinois-app/issues/2921).
 ### Fixed
 - Preserve user favorites stored in Core account data [#3412](https://github.com/rokwire/calendar-building-block/issues/3412).
 ### Removed
