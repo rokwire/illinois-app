@@ -21,6 +21,7 @@ class SkillSelfEvaluationOccupationListPanel extends StatefulWidget {
 class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationOccupationListPanel> {
 
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
   Map<String, num> percentages = {};
   bool sortMatchAsc = false;
 
@@ -31,20 +32,25 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_list.header.title', 'Skills Self-Evaluation')),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: SectionSlantHeader(
-          headerWidget: _buildHeader(),
-          slantColor: Styles().colors?.gradientColorPrimary,
-          slantPainterHeadingHeight: 0,
-          backgroundColor: Styles().colors?.background,
-          children: Connectivity().isOffline ? _buildOfflineMessage() : _buildOccupationListView(),
-          childrenPadding: EdgeInsets.zero,
-          allowOverlap: !Connectivity().isOffline,
-        ),
+      body: SectionSlantHeader(
+        scrollController: _scrollController,
+        headerWidget: _buildHeader(),
+        slantColor: Styles().colors?.gradientColorPrimary,
+        slantPainterHeadingHeight: 0,
+        backgroundColor: Styles().colors?.background,
+        children: Connectivity().isOffline ? _buildOfflineMessage() : _buildOccupationListView(),
+        childrenPadding: EdgeInsets.zero,
+        allowOverlap: !Connectivity().isOffline,
       ),
     );
   }
@@ -83,6 +89,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          _buildSearchBar(),
           Divider(color: Styles().colors?.surface, thickness: 2),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -174,6 +181,40 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
           }
       )
     ];
+  }
+
+  Widget _buildSearchBar() {
+    return Semantics(
+      textField: true,
+      excludeSemantics: true,
+      value: _searchController.text,
+      child: TextField(
+        controller: _searchController,
+        // focusNode: _searchFocusNode,
+        textInputAction: TextInputAction.search,
+        autofocus: true,
+        autocorrect: false,
+        // style: AppTextStyles.widgetItemRegularThin,
+        onSubmitted: (_) => {},
+        decoration: InputDecoration(
+            suffixIcon: Row(mainAxisSize: MainAxisSize.min,
+              children: [
+                Visibility(
+                  visible: _searchController.text.isNotEmpty,
+                  child: IconButton(onPressed: () => {},
+                      icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container()),
+                ),
+                IconButton(onPressed: () => {},
+                    icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container()),
+              ],
+            ),
+            // labelStyle: AppTextStyles.widgetItemRegularThin,
+            labelText: Localization().getStringEx('', 'Search'),
+            filled: true,
+            fillColor: Styles().colors?.getColor('surface'),
+            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors?.getColor('surface') ?? Colors.white, width: 2.0, style: BorderStyle.solid)),
+            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors?.getColor('fillColorSecondary') ?? Colors.black, width: 2.0))),
+      ),);
   }
 
   void _onTapToggleSortMatchPercentage() {
