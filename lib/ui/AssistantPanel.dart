@@ -44,7 +44,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
 
   int? _queryLimit = 5;
 
-  List<String>? _userContext;
+  Map<String, String>? _userContext;
 
   @override
   void initState() {
@@ -529,20 +529,42 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   }
 
   Future<void> _showContext() {
+
+    List<String> userContextKeys = _userContext?.keys.toList() ?? [];
+    List<String> userContextVals = _userContext?.values.toList() ?? [];
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        List<String>? userContext = _userContext;
+
         return StatefulBuilder(
           builder: (context, setStateForDialog) {
           List<Widget> contextFields = [];
-          for (int i = 0; i < (_userContext?.length ?? 0); i++) {
-            String context = _userContext?[i] ?? '';
-            // TextEditingController controller = TextEditingController();
+          for (int i = 0; i < userContextKeys.length; i++) {
+            String key = userContextKeys[i];
+            String val = userContextVals[i];            // TextEditingController controller = TextEditingController();
             // controller.text = context;
-            contextFields.add(TextFormField(initialValue: context, onChanged: (value) {
-              userContext?[i] = value;
-            }));
+            contextFields.add(Row(mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: key,
+                    onChanged: (value) {
+                      userContextKeys[i] = value;
+                    }
+                  ),
+                ),
+                SizedBox(width: 8.0),
+                Expanded(
+                  child: TextFormField(
+                    initialValue: val,
+                    onChanged: (value) {
+                      userContextVals[i] = value;
+                    }
+                  ),
+                ),
+              ],
+            )
+            );
           }
           return AlertDialog(
             title: Text('User Context'),
@@ -552,58 +574,94 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
               ),
             ),
             actions: [
-              RoundedButton(
-                label: Localization().getStringEx('', 'Add'),
-                onTap: () {
-                  setStateForDialog(() {
-                    if (userContext == null) {
-                      userContext = [];
-                    }
-                    userContext?.add('');
-                  });
-                },
+              Row(mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: RoundedButton(
+                      label: Localization().getStringEx('', 'Add'),
+                      onTap: () {
+                        setStateForDialog(() {
+                          userContextKeys.add('');
+                          userContextVals.add('');
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 8.0,),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: RoundedButton(
+                        label: Localization().getStringEx('', 'Default'),
+                        onTap: () {
+                          _userContext = _getUserContext();
+                          Navigator.of(context).pop();
+                          _showContext();
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: RoundedButton(
-                  label: Localization().getStringEx('', 'Profile 1'),
-                  onTap: () {
-                    _userContext = _getUserContext(
-                        name: 'John Doe',
-                        netID: 'jdoe',
-                        college: 'Media',
-                        department: 'Journalism',
-                        studentLevel: 'Sophomore'
-                    );
-                    Navigator.of(context).pop();
-                    _showContext();
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: RoundedButton(
-                  label: Localization().getStringEx('', 'Profile 2'),
-                  onTap: () {
-                    _userContext = _getUserContext(
-                        name: 'Jane Smith',
-                        netID: 'jsmith',
-                        college: 'Grainger Engineering',
-                        department: 'Electrical and Computer Engineering',
-                        studentLevel: 'Senior'
-                    );
-                    Navigator.of(context).pop();
-                    _showContext();
-                  },
-                ),
+              Row(mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: RoundedButton(
+                        label: Localization().getStringEx('', 'Profile 1'),
+                        onTap: () {
+                          _userContext = _getUserContext(
+                              name: 'John Doe',
+                              netID: 'jdoe',
+                              college: 'Media',
+                              department: 'Journalism',
+                              studentLevel: 'Sophomore'
+                          );
+                          Navigator.of(context).pop();
+                          _showContext();
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.0,),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: RoundedButton(
+                        label: Localization().getStringEx('', 'Profile 2'),
+                        onTap: () {
+                          _userContext = _getUserContext(
+                              name: 'Jane Smith',
+                              netID: 'jsmith',
+                              college: 'Grainger Engineering',
+                              department: 'Electrical and Computer Engineering',
+                              studentLevel: 'Senior'
+                          );
+                          Navigator.of(context).pop();
+                          _showContext();
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: RoundedButton(
                   label: Localization().getStringEx('', 'Save'),
                   onTap: () {
-                    userContext?.removeWhere((element) => element.isEmpty);
-                    _userContext = userContext;
+                    _userContext = {};
+                    for (int i = 0; i < userContextKeys.length; i++) {
+                      String key = userContextKeys[i];
+                      String val = userContextVals[i];
+                      if (key.isNotEmpty && val.isNotEmpty) {
+                        _userContext?[key] = val;
+                      }
+                    }
+                    if (_userContext?.isEmpty ?? false) {
+                      _userContext = null;
+                    }
                     Navigator.of(context).pop();
                   },
                 ),
@@ -685,27 +743,29 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     }
   }
 
-  List<String>? _getUserContext({String? name, String? netID, String? college, String? department, String? studentLevel}) {
-    List<String> context = [];
+  Map<String, String>? _getUserContext({String? name, String? netID, String? college, String? department, String? studentLevel}) {
+    Map<String, String> context = {};
 
     name ??= Auth2().profile?.fullName;
     if (name != null) {
-      context.add('My name is $name');
+      context['name'] = name;
     }
 
     netID ??= Auth2().netId;
     if (netID != null) {
-      context.add('My netID is $netID');
+      context['net_id'] = netID;
     }
 
     college ??= IlliniCash().studentClassification?.collegeName;
     department ??= IlliniCash().studentClassification?.departmentName;
     if (college != null && department != null) {
-      context.add('I am a student in the $department department in the $college college');
+      context['college'] = college;
+      context['department'] = department;
     }
+
     studentLevel ??= IlliniCash().studentClassification?.studentLevelDescription;
     if (studentLevel != null) {
-      context.add('I have $studentLevel standing as a student');
+      context['level'] = studentLevel;
     }
 
     return context.isNotEmpty ? context : null;
