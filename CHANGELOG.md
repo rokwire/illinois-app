@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Query best and worst matches by changing the sort order and find a secific job by searching [#3415](https://github.com/rokwire/illinois-app/issues/3415)
+
 ## [5.0.28] - 2023-07-14
 ### Changed
 - Update context for Illinois Assistant [#3410](https://github.com/rokwire/illinois-app/issues/3410).
