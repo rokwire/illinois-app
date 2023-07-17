@@ -22,13 +22,17 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
 
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
-  Map<String, num> percentages = {};
-  bool sortMatchAsc = false;
+  Map<String, num> _percentages = {};
+  bool _sortMatchAsc = false;
+  String? _searchTerm;
+  List<OccupationMatch>? _occupationMatches = [];
+  List<OccupationMatch> _occupationMatchesFiltered = [];
 
   @override
   void initState() {
     super.initState();
-    percentages = widget.percentages;
+    _percentages = widget.percentages;
+    _loadOccupationMatches();
   }
 
   @override
@@ -43,7 +47,6 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_list.header.title', 'Skills Self-Evaluation')),
       body: SectionSlantHeader(
-        scrollController: _scrollController,
         headerWidget: _buildHeader(),
         slantColor: Styles().colors?.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
@@ -115,7 +118,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
                             style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
                           ),
                           SizedBox(width: 8,),
-                          (sortMatchAsc ? Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
+                          (_sortMatchAsc ? Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
                               : Styles().images?.getImage('chevron-up', excludeFromSemantics: true)) ?? Container(),
                         ],
                       ),
@@ -143,44 +146,13 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
 
   List<Widget> _buildOccupationListView() {
     return [
-      FutureBuilder(
-          future: Occupations().getAllOccupationMatches(),
-          initialData: [],
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.data == null) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 100, left: 32.0, right: 32.0),
-                  child: Text(
-                    Localization().getStringEx('panel.skills_self_evaluation.occupation_list.unavailable.message',
-                        'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.'),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
-            }
-            List<OccupationMatch> occupationMatches = (snapshot.data as List).cast<OccupationMatch>();
-            if (sortMatchAsc) {// ascending
-              occupationMatches.sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
-            } else {// descending
-              occupationMatches.sort((a, b) => (a.matchPercent ?? 0).compareTo(b.matchPercent ?? 0));
-            }
-
-            return ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: _scrollController,
-                shrinkWrap: true,
-                itemCount: occupationMatches.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return OccupationListTile(occupationMatch: occupationMatches[index], percentages: percentages,);
-                }
-            );
-          }
-      )
-    ];
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Container(
+          height: 400,
+          child: _buildOccupationList()
+        ),
+      ),];
   }
 
   Widget _buildSearchBar() {
@@ -194,21 +166,34 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
         textInputAction: TextInputAction.search,
         autofocus: true,
         autocorrect: false,
-        // style: AppTextStyles.widgetItemRegularThin,
-        onSubmitted: (_) => {},
+        style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+        onSubmitted: (str) {
+          setState(() {
+            _searchTerm = str;
+            _filterOccupationList();
+          });
+        },
         decoration: InputDecoration(
             suffixIcon: Row(mainAxisSize: MainAxisSize.min,
               children: [
                 Visibility(
                   visible: _searchController.text.isNotEmpty,
-                  child: IconButton(onPressed: () => {},
-                      icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container()),
+                  child: IconButton(onPressed: () {
+                    setState(() {
+                      _searchController.clear();
+                      _searchTerm = null;
+                      _filterOccupationList();
+                    });
+                  }, icon: Styles().images?.getImage('close', excludeFromSemantics: true) ?? Container()),
                 ),
-                IconButton(onPressed: () => {},
+                IconButton(onPressed: () => setState(() {
+                  _searchTerm = _searchController.text;
+                  _filterOccupationList();
+                }),
                     icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container()),
               ],
             ),
-            // labelStyle: AppTextStyles.widgetItemRegularThin,
+            labelStyle: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
             labelText: Localization().getStringEx('', 'Search'),
             filled: true,
             fillColor: Styles().colors?.getColor('surface'),
@@ -217,9 +202,61 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
       ),);
   }
 
+  Widget _buildOccupationList() {
+    if (_occupationMatches == null) {// Displayed after loading error
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 100, left: 32.0, right: 32.0),
+          child: Text(
+            Localization().getStringEx('panel.skills_self_evaluation.occupation_list.unavailable.message',
+                'You do not have any matched occupations currently. Please take the survey first and wait for results to be processed.'),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    if (_occupationMatchesFiltered.isEmpty) {// Displayed when loading occupations
+      return Center(child: CircularProgressIndicator());
+    }
+
+    return ListView.builder(
+    // physics: const NeverScrollableScrollPhysics(),
+      controller: _scrollController,
+      // shrinkWrap: true,
+      itemCount: _occupationMatchesFiltered.length,
+      itemBuilder: (BuildContext context, int index) {
+        return OccupationListTile(occupationMatch: _occupationMatchesFiltered[index], percentages: _percentages,);
+      }
+    );
+  }
+
+  void _filterOccupationList() {
+    if (_searchTerm != null) {// use regex to filter based on search
+      RegExp pattern = RegExp('$_searchTerm', caseSensitive: false);
+      _occupationMatchesFiltered = _occupationMatches?.where((item) => pattern.hasMatch(item.occupation?.name ?? '')).toList() ?? [];
+    } else {
+      _occupationMatchesFiltered = _occupationMatches ?? [];
+    }
+
+    if (_sortMatchAsc) {// ascending
+      _occupationMatchesFiltered.sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
+    } else {// descending
+      _occupationMatchesFiltered.sort((a, b) => (a.matchPercent ?? 0).compareTo(b.matchPercent ?? 0));
+    }
+  }
+
   void _onTapToggleSortMatchPercentage() {
     setState(() {
-      sortMatchAsc = !sortMatchAsc;
+      _sortMatchAsc = !_sortMatchAsc;
+      _filterOccupationList();
+    });
+  }
+
+  void _loadOccupationMatches() async {
+    _occupationMatches = await Occupations().getAllOccupationMatches();
+    setState(() {
+      _filterOccupationList();
     });
   }
 }
