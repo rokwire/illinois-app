@@ -467,7 +467,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         setState(() { _isLoading = true; });
 
         if (!_link) {
-          Auth2().authenticateWithEmail(widget.email, password).then((Auth2EmailSignInResult result) {
+          Auth2().authenticateWithEmail(widget.email, password, scope: Onboarding2().loginAccountScope).then((Auth2EmailSignInResult result) {
             _trySignInCallback(result);
           });
         } else {
