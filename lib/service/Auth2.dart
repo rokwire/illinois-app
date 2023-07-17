@@ -148,7 +148,7 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   @override
-  Future<void> applyLogin(Auth2Account account, Auth2Token token, { Map<String, dynamic>? params }) async {
+  Future<void> applyLogin(Auth2Account account, Auth2Token token, { Auth2AccountScope? scope, Map<String, dynamic>? params }) async {
 
     Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
     Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
@@ -163,7 +163,7 @@ class Auth2 extends rokwire.Auth2 {
       await _loadAuthPictureFromNet(accountId: account.id, token: token) : null;
     await _saveAuthPictureToCache(_authPicture);
 
-    await super.applyLogin(account, token, params: params);
+    await super.applyLogin(account, token, scope: scope, params: params);
     
     NotificationService().notify(notifyCardChanged);
     NotificationService().notify(notifyPictureChanged);
