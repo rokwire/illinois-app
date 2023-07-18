@@ -252,6 +252,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       externalLink: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_linkController) : null,
       label: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_labelController) : null,
       eventCapacity: (_registrationType == Event2RegistrationType.internal) ? Event2CreatePanel.textFieldIntValue(_capacityController) : null,
+      registrants: ListUtils.from(widget.details?.registrants),
     ));
   }
 }
