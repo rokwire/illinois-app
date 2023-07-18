@@ -1205,7 +1205,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     Analytics().logSelect(target: "Event Registration");
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2RegistrationDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
-      details: _registrationDetails,
+      registrationDetails: _registrationDetails,
     ))).then((Event2RegistrationDetails? result) {
       setStateIfMounted(() {
         _registrationDetails = result;
