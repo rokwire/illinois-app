@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.0.29] - 2023-07-17
+### Changed
+- Transfer only affected profile prefs when login from onboarding [#3416](https://github.com/rokwire/illinois-app/issues/3416).
 
 ### Added
 - Query best and worst matches for the career explorer by changing the sort order and find a specific job by searching [#3415](https://github.com/rokwire/illinois-app/issues/3415)
