@@ -1221,6 +1221,8 @@
 	"panel.event2.create.message.succeeded.title": "Succeeded",
 	"panel.event2.create.message.succeeded.message": "Successfully created \"{{event_name}}\" event.",
   "panel.event2.update.message.succeeded.message": "Successfully updated \"{{event_name}}\" event.",
+  "panel.event2.update.registration.message.succeeded.message": "Successfully updated \"{{event_name}}\" registration.",
+	"panel.event2.update.attendance.message.succeeded.message": "Successfully updated \"{{event_name}}\" attendance.",
 	"panel.event2.create.message.failed.title": "Failed",
 
 	"panel.event2.setup.registration.header.title": "Event Registration",

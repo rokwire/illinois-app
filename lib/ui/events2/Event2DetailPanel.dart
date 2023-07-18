@@ -11,6 +11,7 @@ import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -665,7 +666,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onSettingEventRegistration(){
-    //TBD
+    Analytics().logSelect(target: "Event Registration");
+    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
+      event: widget.event,
+    ))).then((Event2? event) {
+      if (event != null)
+      setStateIfMounted(() {
+        _event = event;
+      });
+    });
   }
 
   void _onSettingAttendance(){
@@ -706,9 +715,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if(_event == null && StringUtils.isNotEmpty(widget.eventId!)) {
       _eventLoading = true;
       _loadEvent().then((event) {
-        _eventLoading = false;
-        _event = event;
-        setStateIfMounted(() { });
+        setStateIfMounted(() {
+          _eventLoading = false;
+          _event = event;
+        });
       });
     }
   }

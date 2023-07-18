@@ -5,18 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Event2SetupRegistrationPanel extends StatefulWidget {
-  final Event2RegistrationDetails? details;
+  final Event2? event;
+  final Event2RegistrationDetails? registrationDetails;
   
-  Event2SetupRegistrationPanel({Key? key, this.details}) : super(key: key);
+  Event2SetupRegistrationPanel({Key? key, this.event, this.registrationDetails}) : super(key: key);
+
+  Event2RegistrationDetails? get details => (event?.id != null) ? event?.registrationDetails : registrationDetails;
   
   @override
   State<StatefulWidget> createState() => _Event2SetupRegistrationPanelState();
@@ -29,6 +34,8 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   final TextEditingController _labelController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
+
+  bool _updatingRegistration = false;
 
   @override
   void initState() {
@@ -50,7 +57,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.registration.header.title", "Event Registration"), onLeading: _onHeaderBack,),
+      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.registration.header.title", "Event Registration"), leadingWidget: _headerBarLeading,),
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -246,12 +253,81 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     }
   }
 
+  // HeaderBar
+
+  Widget get _headerBarLeading => _updatingRegistration ?
+    _headerBarBackProgress : _headerBarBackButton;
+
+  Widget get _headerBarBackButton {
+    String leadingLabel = Localization().getStringEx('headerbar.back.title', 'Back');
+    String leadingHint = Localization().getStringEx('headerbar.back.hint', '');
+    return Semantics(label: leadingLabel, hint: leadingHint, button: true, excludeSemantics: true, child:
+      IconButton(icon: Styles().images?.getImage(HeaderBar.defaultLeadingIconKey, excludeFromSemantics: true) ?? Container(), onPressed: () => _onHeaderBack())
+    );
+  }
+
+  Widget get _headerBarBackProgress =>
+    Padding(padding: EdgeInsets.all(20), child:
+        SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(color: Styles().colors?.white, strokeWidth: 3,)
+        )
+    );
+
+  // For new registration details we must return non-zero instance, for update we 
+  Event2RegistrationDetails _buildRegistrationDetails() => Event2RegistrationDetails(
+    type: _registrationType,
+    externalLink: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_linkController) : null,
+    label: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_labelController) : null,
+    eventCapacity: (_registrationType == Event2RegistrationType.internal) ? Event2CreatePanel.textFieldIntValue(_capacityController) : null,
+    registrants: ListUtils.from(widget.details?.registrants),
+  );
+
+  void _updateEventRegistrationDetails(Event2RegistrationDetails? registrationDetails) {
+    if (_updatingRegistration != true) {
+      setState(() {
+        _updatingRegistration = true;
+      });
+      Events2().updateEventRegistration(widget.event?.id ?? '', registrationDetails).then((result) {
+        if (mounted) {
+          setState(() {
+            _updatingRegistration = false;
+          });
+        }
+        String? title, message;
+        if (result is Event2) {
+          title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
+          message = Localization().getStringEx('panel.event2.update.registration.message.succeeded.message', 'Successfully updated \"{{event_name}}\" registration.').replaceAll('{{event_name}}', result.name ?? '');
+        }
+        else if (result is String) {
+          title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
+          message = result;
+        }
+
+        if (title != null) {
+          Event2Popup.showMessage(context, title, message).then((_) {
+            if (result is Event2) {
+              Navigator.of(context).pop(result);
+            }
+          });
+        }
+      });
+    }
+  }
+
+
   void _onHeaderBack() {
-    Navigator.of(context).pop(Event2RegistrationDetails(
-      type: _registrationType,
-      externalLink: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_linkController) : null,
-      label: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_labelController) : null,
-      eventCapacity: (_registrationType == Event2RegistrationType.internal) ? Event2CreatePanel.textFieldIntValue(_capacityController) : null,
-    ));
+    Event2RegistrationDetails registrationDetails = _buildRegistrationDetails();
+    if (widget.event?.id != null) {
+      Event2RegistrationDetails? eventRegistrationDetails = (registrationDetails.type != Event2RegistrationType.none) ? registrationDetails : null;
+      if (widget.event?.registrationDetails != eventRegistrationDetails) {
+        _updateEventRegistrationDetails(eventRegistrationDetails);
+      }
+      else {
+        Navigator.of(context).pop(null);
+      }
+    }
+    else {
+      Navigator.of(context).pop(registrationDetails);
+    }
   }
 }
