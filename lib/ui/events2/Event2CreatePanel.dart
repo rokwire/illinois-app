@@ -14,6 +14,7 @@ import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -1495,28 +1496,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
-  Future<void> _showPopup(String title, String? message) {
-    return showDialog(context: context, builder: (BuildContext context) => AlertDialog(
-      content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),),
-        (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
-          Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
-        ) : Container()
-      ],),
-      actions: <Widget>[
-        TextButton(
-          child: Text(Localization().getStringEx("dialog.ok.title", "OK"), style:
-            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
-          ),
-          onPressed: () {
-            Analytics().logAlert(text: message, selection: "OK");
-            Navigator.pop(context);
-          }
-        )
-      ],
-
-    ));
-  }
+  Future<void> _showPopup(String title, String? message) =>
+    Event2Popup.showMessage(context, title, message);
 
   void _onTapCreateEvent() {
     Analytics().logSelect(target: widget.isCreate ? "Create Event" : "Update Event");

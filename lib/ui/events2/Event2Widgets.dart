@@ -399,3 +399,27 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 }
 
 enum Event2CardDisplayMode { list, page }
+
+class Event2Popup {
+  static Future<void> showMessage(BuildContext context, String title, String? message) =>
+    showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),),
+        (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
+          Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
+        ) : Container()
+      ],),
+      actions: <Widget>[
+        TextButton(
+          child: Text(Localization().getStringEx("dialog.ok.title", "OK"), style:
+            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+          ),
+          onPressed: () {
+            Analytics().logAlert(text: message, selection: "OK");
+            Navigator.pop(context);
+          }
+        )
+      ],
+    ));
+
+}
