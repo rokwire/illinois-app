@@ -1230,6 +1230,8 @@
 	"panel.event2.setup.registration.require.toggle.title": "REQUIRE REGISTRATION VIA THE APP",
 	"panel.event2.setup.registration.require.toggle.hint": "",
 	"panel.event2.setup.registration.capacity.label.title": "EVENT CAPACITY",
+	"panel.event2.setup.registration.registrants.label.title": "NETIDS FOR ADDITIONAL REGISTRANTS",
+	"panel.event2.setup.registration.registrants.label.description": "A space or comma separated list of Net IDs.",
 	"panel.event2.setup.registration.label.label.title": "ADD REGISTRATION LABEL",
 	"panel.event2.setup.registration.link.label.title": "ADD EXTERNAL LINK FOR REGISTRATION",
 	"panel.event2.setup.registration.description.label.title": "Registration within the Illinois app requires the user to log in with a NetID.",

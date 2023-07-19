@@ -34,6 +34,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   final TextEditingController _labelController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
+  final TextEditingController _registrantsController = TextEditingController();
 
   bool _updatingRegistration = false;
 
@@ -43,6 +44,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     _labelController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.label != null)) ? '${widget.details?.label}' : '';
     _linkController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.externalLink != null)) ? '${widget.details?.externalLink}' : '';
     _capacityController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.eventCapacity != null)) ? '${widget.details?.eventCapacity}' : '';
+    _registrantsController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.registrants != null)) ? (widget.details?.registrants?.join(' ') ?? '')  : '';
     super.initState();
   }
 
@@ -51,6 +53,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     _labelController.dispose();
     _linkController.dispose();
     _capacityController.dispose();
+    _registrantsController.dispose();
     super.dispose();
   }
 
@@ -170,6 +173,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       Container(decoration: Event2CreatePanel.sectionSplitterDecoration, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(children: [
          _buildCapacitySection(),
+         _buildRegistrantsSection(),
         ],),
       ),
     );
@@ -190,6 +194,23 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         ],)
       ),
     );
+
+  // Event Registrants
+
+  Widget _buildRegistrantsSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'NETIDS FOR ADDITIONAL REGISTRANTS')),
+    body: Event2CreatePanel.buildTextEditWidget(_registrantsController, keyboardType: TextInputType.text, maxLines: null),
+    trailing: _buildRegistrantsDescription(),
+  );
+
+  Widget _buildRegistrantsDescription() => Padding(padding: EdgeInsets.only(top: 2), child:
+    Row(children: [
+      Expanded(child:
+        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.description', 'A space or comma separated list of Net IDs.'), style: _descriptionTextStype,),
+      )
+    ],),
+  );
+
 
   // External Details
 
@@ -279,7 +300,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     externalLink: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_linkController) : null,
     label: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_labelController) : null,
     eventCapacity: (_registrationType == Event2RegistrationType.internal) ? Event2CreatePanel.textFieldIntValue(_capacityController) : null,
-    registrants: ListUtils.from(widget.details?.registrants),
+    registrants: (_registrationType == Event2RegistrationType.internal) ? _registrantsController.text.split('[\s,;]+') : null,
   );
 
   void _updateEventRegistrationDetails(Event2RegistrationDetails? registrationDetails) {
