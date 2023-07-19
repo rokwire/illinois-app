@@ -41,10 +41,13 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   @override
   void initState() {
     _registrationType = widget.details?.type ?? Event2RegistrationType.none;
+    
     _labelController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.label != null)) ? '${widget.details?.label}' : '';
     _linkController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.externalLink != null)) ? '${widget.details?.externalLink}' : '';
     _capacityController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.eventCapacity != null)) ? '${widget.details?.eventCapacity}' : '';
     _registrantsController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.registrants != null)) ? (widget.details?.registrants?.join(' ') ?? '')  : '';
+
+    
     super.initState();
   }
 
@@ -60,7 +63,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.registration.header.title", "Event Registration"), leadingWidget: _headerBarLeading,),
+      appBar: _headerBar,
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -276,23 +279,21 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   // HeaderBar
 
-  Widget get _headerBarLeading => _updatingRegistration ?
-    _headerBarBackProgress : _headerBarBackButton;
+  bool get _isEditing => StringUtils.isNotEmpty(widget.event?.id);
 
-  Widget get _headerBarBackButton {
-    String leadingLabel = Localization().getStringEx('headerbar.back.title', 'Back');
-    String leadingHint = Localization().getStringEx('headerbar.back.hint', '');
-    return Semantics(label: leadingLabel, hint: leadingHint, button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage(HeaderBar.defaultLeadingIconKey, excludeFromSemantics: true) ?? Container(), onPressed: () => _onHeaderBack())
-    );
-  }
+  PreferredSizeWidget get _headerBar => HeaderBar(
+    title: Localization().getStringEx("panel.event2.setup.registration.header.title", "Event Registration"),
+    onLeading: _onHeaderBarBack,
+    actions: _headerBarActions,
+  );
 
-  Widget get _headerBarBackProgress =>
-    Padding(padding: EdgeInsets.all(20), child:
-        SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors?.white, strokeWidth: 3,)
-        )
-    );
+  List<Widget>? get _headerBarActions => _isEditing ? [ _updatingRegistration ?
+    Event2CreatePanel.buildHeaderBarActionProgress() :
+    Event2CreatePanel.buildHeaderBarActionButton(
+      title: Localization().getStringEx('dialog.apply.title', 'Apply'),
+      onTap: _onHeaderBarApply,
+    )
+  ] : null;
 
   // For new registration details we must return non-zero instance, for update we 
   Event2RegistrationDetails _buildRegistrationDetails() => Event2RegistrationDetails(
@@ -304,7 +305,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   );
 
   void _updateEventRegistrationDetails(Event2RegistrationDetails? registrationDetails) {
-    if (_updatingRegistration != true) {
+    if (_isEditing && (_updatingRegistration != true)) {
       setState(() {
         _updatingRegistration = true;
       });
@@ -338,20 +339,13 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     }
   }
 
+  void _onHeaderBarApply() {
+    Analytics().logSelect(target: 'HeaderBar: Apply');
+    _updateEventRegistrationDetails((_registrationType != Event2RegistrationType.none) ? _buildRegistrationDetails() : null);
+  }
 
-  void _onHeaderBack() {
-    Event2RegistrationDetails registrationDetails = _buildRegistrationDetails();
-    if (widget.event?.id != null) {
-      Event2RegistrationDetails? eventRegistrationDetails = (registrationDetails.type != Event2RegistrationType.none) ? registrationDetails : null;
-      if (widget.event?.registrationDetails != eventRegistrationDetails) {
-        _updateEventRegistrationDetails(eventRegistrationDetails);
-      }
-      else {
-        Navigator.of(context).pop(null);
-      }
-    }
-    else {
-      Navigator.of(context).pop(registrationDetails);
-    }
+  void _onHeaderBarBack() {
+    Analytics().logSelect(target: 'HeaderBar: Back');
+    Navigator.of(context).pop(_isEditing ? null : _buildRegistrationDetails());
   }
 }

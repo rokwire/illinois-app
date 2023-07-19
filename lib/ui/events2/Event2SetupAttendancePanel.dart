@@ -51,7 +51,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"), leadingWidget: _headerBarLeading,),
+      appBar: _headerBar,
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -183,23 +183,21 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   // HeaderBar
 
-  Widget get _headerBarLeading => _updatingAttendance ?
-    _headerBarBackProgress : _headerBarBackButton;
+  bool get _isEditing => StringUtils.isNotEmpty(widget.event?.id);
 
-  Widget get _headerBarBackButton {
-    String leadingLabel = Localization().getStringEx('headerbar.back.title', 'Back');
-    String leadingHint = Localization().getStringEx('headerbar.back.hint', '');
-    return Semantics(label: leadingLabel, hint: leadingHint, button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage(HeaderBar.defaultLeadingIconKey, excludeFromSemantics: true) ?? Container(), onPressed: () => _onHeaderBack())
-    );
-  }
+  PreferredSizeWidget get _headerBar => HeaderBar(
+    title: Localization().getStringEx("panel.event2.setup.registration.header.title", "Event Registration"),
+    onLeading: _onHeaderBarBack,
+    actions: _headerBarActions,
+  );
 
-  Widget get _headerBarBackProgress =>
-    Padding(padding: EdgeInsets.all(20), child:
-        SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors?.white, strokeWidth: 3,)
-        )
-    );
+  List<Widget>? get _headerBarActions => _isEditing ? [ _updatingAttendance ?
+    Event2CreatePanel.buildHeaderBarActionProgress() :
+    Event2CreatePanel.buildHeaderBarActionButton(
+      title: Localization().getStringEx('dialog.apply.title', 'Apply'),
+      onTap: _onHeaderBarApply,
+    )
+  ] : null;
 
   // For new registration details we must return non-zero instance, for update we 
   Event2AttendanceDetails _buildAttendanceDetails() => Event2AttendanceDetails(
@@ -243,19 +241,13 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
-  void _onHeaderBack() {
+  void _onHeaderBarApply() {
+    Analytics().logSelect(target: 'HeaderBar: Apply');
     Event2AttendanceDetails attendanceDetails = _buildAttendanceDetails();
-    if (widget.event?.id != null) {
-      Event2AttendanceDetails? eventAttendanceDetails = attendanceDetails.isNotEmpty ? attendanceDetails : null;
-      if (widget.event?.attendanceDetails != eventAttendanceDetails) {
-        _updateEventAttendanceDetails(attendanceDetails);
-      }
-      else {
-        Navigator.of(context).pop(null);
-      }
-    }
-    else {
-      Navigator.of(context).pop(attendanceDetails);
-    }
+    _updateEventAttendanceDetails(attendanceDetails.isNotEmpty ? attendanceDetails : null);
+  }
+
+  void _onHeaderBarBack() {
+    Navigator.of(context).pop(_isEditing ? null : _buildAttendanceDetails());
   }
 }

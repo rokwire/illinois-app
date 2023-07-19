@@ -361,6 +361,38 @@ class Event2CreatePanel extends StatefulWidget {
   static void hideKeyboard(BuildContext context) {
     FocusScope.of(context).unfocus();
   }
+
+  // HeaderBar actions
+
+  static Widget buildHeaderBarActionButton({ String? title, void Function()? onTap, EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12)}) {
+    return Semantics(label: title, button: true, excludeSemantics: true, child: 
+      InkWell(onTap: onTap, child:
+        Align(alignment: Alignment.center, child:
+          Padding(padding: padding, child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                child: Text(title ?? '',
+                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                ),
+              ),
+            ],)
+          ),
+        ),
+        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //),
+      ),
+    );
+  }
+
+  static Widget buildHeaderBarActionProgress({ EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 20) }) =>
+    Padding(padding: padding, child:
+        SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(color: Styles().colors?.white, strokeWidth: 3,)
+        )
+    );
+
 }
 
 class _Event2CreatePanelState extends State<Event2CreatePanel>  {
