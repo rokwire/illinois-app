@@ -229,7 +229,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   
   Widget _buildLabelSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.label.label.title', 'ADD REGISTRATION LABEL')),
-    body: Event2CreatePanel.buildTextEditWidget(_labelController, keyboardType: TextInputType.text, maxLines: null),
+    body: Event2CreatePanel.buildTextEditWidget(_labelController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true),
   );
 
   // External Link

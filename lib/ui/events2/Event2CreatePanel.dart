@@ -286,7 +286,10 @@ class Event2CreatePanel extends StatefulWidget {
   // Text Edit
 
   static Widget buildTextEditWidget(TextEditingController controller, {
-    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = textEditContentPadding,
+    TextInputType? keyboardType,
+    int? maxLines = 1,
+    bool autocorrect = false,
+    EdgeInsetsGeometry padding = textEditContentPadding,
     void Function()? onChanged,
   }) =>
     TextField(
@@ -295,14 +298,18 @@ class Event2CreatePanel extends StatefulWidget {
       style: textEditStyle,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      autocorrect: autocorrect,
       onChanged: (onChanged != null) ? ((_) => onChanged) : null,
     );
 
   static Widget buildInnerTextEditWidget(TextEditingController controller, {
-    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = innerTextEditContentPadding,
+    TextInputType? keyboardType,
+    int? maxLines = 1,
+    bool autocorrect = false,
+    EdgeInsetsGeometry padding = innerTextEditContentPadding,
     void Function()? onChanged,
   }) =>
-    buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, padding: padding, onChanged: onChanged);
+    buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, autocorrect: autocorrect, padding: padding, onChanged: onChanged);
 
 
   // Confirm URL
@@ -573,12 +580,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.title.title', 'EVENT TITLE'), required: true),
-    body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null),
+    body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true),
   );
 
   Widget _buildDescriptionSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION')),
-    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null),
+    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true),
   );
 
   Widget _buildWebsiteSection() => Event2CreatePanel.buildSectionWidget(
@@ -965,12 +972,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildLocationBuildingInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.building.title', 'LOCATION BUILDING')),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text, autocorrect: true),
   );
 
   Widget _buildLocationAddressInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.address.title', 'LOCATION ADDRESS')),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text, autocorrect: true),
   );
 
   Widget _buildLocationLatitudeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
