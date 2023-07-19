@@ -300,7 +300,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     externalLink: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_linkController) : null,
     label: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_labelController) : null,
     eventCapacity: (_registrationType == Event2RegistrationType.internal) ? Event2CreatePanel.textFieldIntValue(_capacityController) : null,
-    registrants: (_registrationType == Event2RegistrationType.internal) ? ListUtils.notEmpty(_registrantsController.text.split('[\s,;]+')) : null,
+    registrants: (_registrationType == Event2RegistrationType.internal) ? ListUtils.notEmpty(ListUtils.stripEmptyStrings(_registrantsController.text.split(RegExp(r'[\s,;]+')))) : null,
   );
 
   void _updateEventRegistrationDetails(Event2RegistrationDetails? registrationDetails) {

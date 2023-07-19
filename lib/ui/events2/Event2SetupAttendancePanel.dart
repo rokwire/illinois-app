@@ -177,7 +177,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Event2AttendanceDetails _buildAttendanceDetails() => Event2AttendanceDetails(
       scanningEnabled: _scanningEnabled,
       manualCheckEnabled: _manualCheckEnabled,
-      attendanceTakers: ListUtils.notEmpty(_attendanceTakersController.text.split('[\s,;]+')),
+      attendanceTakers: ListUtils.notEmpty(ListUtils.stripEmptyStrings(_attendanceTakersController.text.split(RegExp(r'[\s,;]+')))),
   );
 
   void _updateEventAttendanceDetails(Event2AttendanceDetails? attendanceDetails) {
