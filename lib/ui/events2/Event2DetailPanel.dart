@@ -9,7 +9,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/events2/Event2AttendanceDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
@@ -714,7 +714,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onTapTakeAttendance() {
     Analytics().logSelect(target: 'Take Attendance');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AttendanceDetailPanel(event: _event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AttendanceTakerPanel(_event)));
   }
 
   //loading

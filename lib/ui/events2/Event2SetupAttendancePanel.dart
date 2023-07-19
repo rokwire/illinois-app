@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -59,11 +60,12 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildPanelContent() {
     return SingleChildScrollView(child:
       Column(children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildScanSection(),
-            _buildManualSection(),
-            _buildAttendanceTakersSection(),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
+            (widget.event?.id != null) ? _buildAttendanceTakerSection() : Container(),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
           ]),
         )
 
@@ -131,6 +133,20 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     setStateIfMounted(() {
       _manualCheckEnabled = !_manualCheckEnabled;
     });
+  }
+
+  // Attendance Taker
+
+  Widget _buildAttendanceTakerSection() {
+    return Padding(padding: Event2CreatePanel.sectionPadding, child:
+      Column(children: [
+        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
+          Event2AttendanceTakerWidget(widget.event),
+        ),
+        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+      ],),
+    );
   }
 
   // Attendance Takers

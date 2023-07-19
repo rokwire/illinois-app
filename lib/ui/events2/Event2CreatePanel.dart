@@ -169,24 +169,29 @@ class Event2CreatePanel extends StatefulWidget {
 
   // Sections / Dropdown Section
 
-  static Widget buildDropdownSectionWidget({ required Widget heading, required Widget body, bool expanded = false,
+  static Widget buildDropdownSectionWidget({
+    required Widget heading, required Widget body, Widget? trailing,
+    bool expanded = false,
     EdgeInsetsGeometry padding = sectionPadding,
-    EdgeInsetsGeometry bodyPadding = sectionBodyContentPadding
+    EdgeInsetsGeometry bodyPadding = sectionBodyContentPadding,
   }) {
+
     return Padding(padding: padding, child:
-      Container(decoration: sectionDecoration, child:
-        Column(children: [
-          heading,
-          Visibility(visible: expanded, child:
-            Container(decoration: sectionSplitterDecoration, child:
-              Padding(padding: bodyPadding, child:
-                body,
+      Column(children: <Widget>[
+        Container(decoration: sectionDecoration, child:
+          Column(children: <Widget>[
+            heading,
+            Visibility(visible: expanded, child:
+              Container(decoration: sectionSplitterDecoration, child:
+                Padding(padding: bodyPadding, child:
+                  body,
+                ),
               ),
             ),
-          )
-        ],),
-
-      ),
+          ],),
+        ),
+        trailing ?? Container()
+      ]),
     );
   }
 
