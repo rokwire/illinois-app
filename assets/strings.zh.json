@@ -1243,6 +1243,8 @@
 	"panel.event2.setup.attendance.manual.toggle.title": "Allow manual attendance check",
 	"panel.event2.setup.attendance.manual.toggle.hint": "",
 	"panel.event2.setup.attendance.manual.toggle.description": "Requires advance registration.",
+	"panel.event2.setup.attendance.takers.label.title": "Netids for additional attendance takers:",
+	"panel.event2.setup.attendance.takers.label.description": "A space or comma separated list of Net IDs.",
 
 	"panel.event2.setup.survey.header.title": "Event Follow-Up Survey",
 	"panel.event2.setup.survey.has_survey.toggle.title": "SEND FOLLOW-UP SURVEY",

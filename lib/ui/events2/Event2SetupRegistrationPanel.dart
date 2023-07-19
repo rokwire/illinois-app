@@ -300,7 +300,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     externalLink: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_linkController) : null,
     label: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_labelController) : null,
     eventCapacity: (_registrationType == Event2RegistrationType.internal) ? Event2CreatePanel.textFieldIntValue(_capacityController) : null,
-    registrants: (_registrationType == Event2RegistrationType.internal) ? _registrantsController.text.split('[\s,;]+') : null,
+    registrants: (_registrationType == Event2RegistrationType.internal) ? ListUtils.notEmpty(_registrantsController.text.split('[\s,;]+')) : null,
   );
 
   void _updateEventRegistrationDetails(Event2RegistrationDetails? registrationDetails) {
@@ -308,7 +308,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       setState(() {
         _updatingRegistration = true;
       });
-      Events2().updateEventRegistration(widget.event?.id ?? '', registrationDetails).then((result) {
+      Events2().updateEventRegistrationDetails(widget.event?.id ?? '', registrationDetails).then((result) {
         if (mounted) {
           setState(() {
             _updatingRegistration = false;
@@ -316,8 +316,8 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         }
         String? title, message;
         if (result is Event2) {
-          title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
-          message = Localization().getStringEx('panel.event2.update.registration.message.succeeded.message', 'Successfully updated \"{{event_name}}\" registration.').replaceAll('{{event_name}}', result.name ?? '');
+          //title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
+          //message = Localization().getStringEx('panel.event2.update.registration.message.succeeded.message', 'Successfully updated \"{{event_name}}\" registration.').replaceAll('{{event_name}}', result.name ?? '');
         }
         else if (result is String) {
           title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
@@ -330,6 +330,9 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
               Navigator.of(context).pop(result);
             }
           });
+        }
+        else if (result is Event2) {
+          Navigator.of(context).pop(result);
         }
       });
     }

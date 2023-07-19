@@ -2,18 +2,24 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
-  final Event2AttendanceDetails? details;
+  final Event2? event;
+  final Event2AttendanceDetails? attendanceDetails;
   
-  Event2SetupAttendancePanel({Key? key, this.details}) : super(key: key);
+  Event2SetupAttendancePanel({Key? key, this.event, this.attendanceDetails}) : super(key: key);
   
+  Event2AttendanceDetails? get details => (event?.id != null) ? event?.attendanceDetails : attendanceDetails;
+
   @override
   State<StatefulWidget> createState() => _Event2SetupAttendancePanelState();
 }
@@ -22,23 +28,29 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   late bool _scanningEnabled;
   late bool _manualCheckEnabled;
+  
+  final TextEditingController _attendanceTakersController = TextEditingController();
+
+  bool _updatingAttendance = false;
 
   @override
   void initState() {
     _scanningEnabled = widget.details?.scanningEnabled ?? false;
     _manualCheckEnabled = widget.details?.manualCheckEnabled ?? false;
+    _attendanceTakersController.text = widget.details?.attendanceTakers?.join(' ') ?? '';
     super.initState();
   }
 
   @override
   void dispose() {
+    _attendanceTakersController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"), onLeading: _onHeaderBack,),
+      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"), leadingWidget: _headerBarLeading,),
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -51,6 +63,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             _buildScanSection(),
             _buildManualSection(),
+            _buildAttendanceTakersSection(),
           ]),
         )
 
@@ -120,12 +133,101 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     });
   }
 
-  // Submit
+  // Attendance Takers
 
-  void _onHeaderBack() {
-    Navigator.of(context).pop((_scanningEnabled || _manualCheckEnabled) ? Event2AttendanceDetails(
+  Widget _buildAttendanceTakersSection() => Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    Event2CreatePanel.buildSectionWidget(
+      heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.attendance.takers.label.title', 'Netids for additional attendance takers:')),
+      body: Event2CreatePanel.buildTextEditWidget(_attendanceTakersController, keyboardType: TextInputType.text, maxLines: null),
+      trailing: _buildAttendanceTakersDescription(),
+    ),
+  );
+
+  Widget _buildAttendanceTakersDescription() => Padding(padding: EdgeInsets.only(top: 2), child:
+    Row(children: [
+      Expanded(child:
+        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.description', 'A space or comma separated list of Net IDs.'), style: _descriptionTextStype,),
+      )
+    ],),
+  );
+
+  TextStyle? get _descriptionTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+
+  // HeaderBar
+
+  Widget get _headerBarLeading => _updatingAttendance ?
+    _headerBarBackProgress : _headerBarBackButton;
+
+  Widget get _headerBarBackButton {
+    String leadingLabel = Localization().getStringEx('headerbar.back.title', 'Back');
+    String leadingHint = Localization().getStringEx('headerbar.back.hint', '');
+    return Semantics(label: leadingLabel, hint: leadingHint, button: true, excludeSemantics: true, child:
+      IconButton(icon: Styles().images?.getImage(HeaderBar.defaultLeadingIconKey, excludeFromSemantics: true) ?? Container(), onPressed: () => _onHeaderBack())
+    );
+  }
+
+  Widget get _headerBarBackProgress =>
+    Padding(padding: EdgeInsets.all(20), child:
+        SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(color: Styles().colors?.white, strokeWidth: 3,)
+        )
+    );
+
+  // For new registration details we must return non-zero instance, for update we 
+  Event2AttendanceDetails _buildAttendanceDetails() => Event2AttendanceDetails(
       scanningEnabled: _scanningEnabled,
       manualCheckEnabled: _manualCheckEnabled,
-    ) : null);
+      attendanceTakers: ListUtils.notEmpty(_attendanceTakersController.text.split('[\s,;]+')),
+  );
+
+  void _updateEventAttendanceDetails(Event2AttendanceDetails? attendanceDetails) {
+    if (_updatingAttendance != true) {
+      setState(() {
+        _updatingAttendance = true;
+      });
+      Events2().updateEventAttendanceDetails(widget.event?.id ?? '', attendanceDetails).then((result) {
+        if (mounted) {
+          setState(() {
+            _updatingAttendance = false;
+          });
+        }
+        String? title, message;
+        if (result is Event2) {
+          //title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
+          //message = Localization().getStringEx('panel.event2.update.attendance.message.succeeded.message', 'Successfully updated \"{{event_name}}\" attendance.').replaceAll('{{event_name}}', result.name ?? '');
+        }
+        else if (result is String) {
+          title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
+          message = result;
+        }
+
+        if (title != null) {
+          Event2Popup.showMessage(context, title, message).then((_) {
+            if (result is Event2) {
+              Navigator.of(context).pop(result);
+            }
+          });
+        }
+        else if (result is Event2) {
+          Navigator.of(context).pop(result);
+        }
+      });
+    }
+  }
+
+  void _onHeaderBack() {
+    Event2AttendanceDetails attendanceDetails = _buildAttendanceDetails();
+    if (widget.event?.id != null) {
+      Event2AttendanceDetails? eventAttendanceDetails = attendanceDetails.isNotEmpty ? attendanceDetails : null;
+      if (widget.event?.attendanceDetails != eventAttendanceDetails) {
+        _updateEventAttendanceDetails(attendanceDetails);
+      }
+      else {
+        Navigator.of(context).pop(null);
+      }
+    }
+    else {
+      Navigator.of(context).pop(attendanceDetails);
+    }
   }
 }

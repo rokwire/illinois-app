@@ -1228,7 +1228,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(details: _attendanceDetails
+    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
     ))).then((Event2AttendanceDetails? result) {
       setStateIfMounted(() {
         _attendanceDetails = result;
