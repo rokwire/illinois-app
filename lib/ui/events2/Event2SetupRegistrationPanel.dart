@@ -34,15 +34,20 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   final TextEditingController _labelController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
+  final TextEditingController _registrantsController = TextEditingController();
 
   bool _updatingRegistration = false;
 
   @override
   void initState() {
     _registrationType = widget.details?.type ?? Event2RegistrationType.none;
+    
     _labelController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.label != null)) ? '${widget.details?.label}' : '';
     _linkController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.externalLink != null)) ? '${widget.details?.externalLink}' : '';
     _capacityController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.eventCapacity != null)) ? '${widget.details?.eventCapacity}' : '';
+    _registrantsController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.registrants != null)) ? (widget.details?.registrants?.join(' ') ?? '')  : '';
+
+    
     super.initState();
   }
 
@@ -51,13 +56,14 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     _labelController.dispose();
     _linkController.dispose();
     _capacityController.dispose();
+    _registrantsController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.registration.header.title", "Event Registration"), leadingWidget: _headerBarLeading,),
+      appBar: _headerBar,
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -151,7 +157,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         Padding(padding: EdgeInsets.only(top: 12), child:
           Row(children: [
             Expanded(child:
-              Text(description, style: _descriptionTextStype,),
+              Text(description, style: _infoTextStype,),
             )
           ],)
         ),
@@ -160,7 +166,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
 
-  TextStyle? get _descriptionTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
 
 
   // Internal Details
@@ -170,6 +176,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       Container(decoration: Event2CreatePanel.sectionSplitterDecoration, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(children: [
          _buildCapacitySection(),
+         _buildRegistrantsSection(),
         ],),
       ),
     );
@@ -191,6 +198,23 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       ),
     );
 
+  // Event Registrants
+
+  Widget _buildRegistrantsSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'NETIDS FOR ADDITIONAL REGISTRANTS')),
+    body: Event2CreatePanel.buildTextEditWidget(_registrantsController, keyboardType: TextInputType.text, maxLines: null),
+    trailing: _buildRegistrantsHint(),
+  );
+
+  Widget _buildRegistrantsHint() => Padding(padding: EdgeInsets.only(top: 2), child:
+    Row(children: [
+      Expanded(child:
+        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype,),
+      )
+    ],),
+  );
+
+
   // External Details
 
   Widget _buildExternalSection() {
@@ -208,7 +232,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   
   Widget _buildLabelSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.label.label.title', 'ADD REGISTRATION LABEL')),
-    body: Event2CreatePanel.buildTextEditWidget(_labelController, keyboardType: TextInputType.text, maxLines: null),
+    body: Event2CreatePanel.buildTextEditWidget(_labelController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true),
   );
 
   // External Link
@@ -255,23 +279,21 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   // HeaderBar
 
-  Widget get _headerBarLeading => _updatingRegistration ?
-    _headerBarBackProgress : _headerBarBackButton;
+  bool get _isEditing => StringUtils.isNotEmpty(widget.event?.id);
 
-  Widget get _headerBarBackButton {
-    String leadingLabel = Localization().getStringEx('headerbar.back.title', 'Back');
-    String leadingHint = Localization().getStringEx('headerbar.back.hint', '');
-    return Semantics(label: leadingLabel, hint: leadingHint, button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage(HeaderBar.defaultLeadingIconKey, excludeFromSemantics: true) ?? Container(), onPressed: () => _onHeaderBack())
-    );
-  }
+  PreferredSizeWidget get _headerBar => HeaderBar(
+    title: Localization().getStringEx("panel.event2.setup.registration.header.title", "Event Registration"),
+    onLeading: _onHeaderBarBack,
+    actions: _headerBarActions,
+  );
 
-  Widget get _headerBarBackProgress =>
-    Padding(padding: EdgeInsets.all(20), child:
-        SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors?.white, strokeWidth: 3,)
-        )
-    );
+  List<Widget>? get _headerBarActions => _isEditing ? [ _updatingRegistration ?
+    Event2CreatePanel.buildHeaderBarActionProgress() :
+    Event2CreatePanel.buildHeaderBarActionButton(
+      title: Localization().getStringEx('dialog.apply.title', 'Apply'),
+      onTap: _onHeaderBarApply,
+    )
+  ] : null;
 
   // For new registration details we must return non-zero instance, for update we 
   Event2RegistrationDetails _buildRegistrationDetails() => Event2RegistrationDetails(
@@ -279,15 +301,15 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     externalLink: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_linkController) : null,
     label: (_registrationType == Event2RegistrationType.external) ? Event2CreatePanel.textFieldValue(_labelController) : null,
     eventCapacity: (_registrationType == Event2RegistrationType.internal) ? Event2CreatePanel.textFieldIntValue(_capacityController) : null,
-    registrants: ListUtils.from(widget.details?.registrants),
+    registrants: (_registrationType == Event2RegistrationType.internal) ? ListUtils.notEmpty(ListUtils.stripEmptyStrings(_registrantsController.text.split(RegExp(r'[\s,;]+')))) : null,
   );
 
   void _updateEventRegistrationDetails(Event2RegistrationDetails? registrationDetails) {
-    if (_updatingRegistration != true) {
+    if (_isEditing && (_updatingRegistration != true)) {
       setState(() {
         _updatingRegistration = true;
       });
-      Events2().updateEventRegistration(widget.event?.id ?? '', registrationDetails).then((result) {
+      Events2().updateEventRegistrationDetails(widget.event?.id ?? '', registrationDetails).then((result) {
         if (mounted) {
           setState(() {
             _updatingRegistration = false;
@@ -295,8 +317,8 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         }
         String? title, message;
         if (result is Event2) {
-          title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
-          message = Localization().getStringEx('panel.event2.update.registration.message.succeeded.message', 'Successfully updated \"{{event_name}}\" registration.').replaceAll('{{event_name}}', result.name ?? '');
+          //title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
+          //message = Localization().getStringEx('panel.event2.update.registration.message.succeeded.message', 'Successfully updated \"{{event_name}}\" registration.').replaceAll('{{event_name}}', result.name ?? '');
         }
         else if (result is String) {
           title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
@@ -310,24 +332,20 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
             }
           });
         }
+        else if (result is Event2) {
+          Navigator.of(context).pop(result);
+        }
       });
     }
   }
 
+  void _onHeaderBarApply() {
+    Analytics().logSelect(target: 'HeaderBar: Apply');
+    _updateEventRegistrationDetails((_registrationType != Event2RegistrationType.none) ? _buildRegistrationDetails() : null);
+  }
 
-  void _onHeaderBack() {
-    Event2RegistrationDetails registrationDetails = _buildRegistrationDetails();
-    if (widget.event?.id != null) {
-      Event2RegistrationDetails? eventRegistrationDetails = (registrationDetails.type != Event2RegistrationType.none) ? registrationDetails : null;
-      if (widget.event?.registrationDetails != eventRegistrationDetails) {
-        _updateEventRegistrationDetails(eventRegistrationDetails);
-      }
-      else {
-        Navigator.of(context).pop(null);
-      }
-    }
-    else {
-      Navigator.of(context).pop(registrationDetails);
-    }
+  void _onHeaderBarBack() {
+    Analytics().logSelect(target: 'HeaderBar: Back');
+    Navigator.of(context).pop(_isEditing ? null : _buildRegistrationDetails());
   }
 }

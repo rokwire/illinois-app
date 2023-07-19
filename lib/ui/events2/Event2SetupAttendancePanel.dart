@@ -1,19 +1,26 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
-  final Event2AttendanceDetails? details;
+  final Event2? event;
+  final Event2AttendanceDetails? attendanceDetails;
   
-  Event2SetupAttendancePanel({Key? key, this.details}) : super(key: key);
+  Event2SetupAttendancePanel({Key? key, this.event, this.attendanceDetails}) : super(key: key);
   
+  Event2AttendanceDetails? get details => (event?.id != null) ? event?.attendanceDetails : attendanceDetails;
+
   @override
   State<StatefulWidget> createState() => _Event2SetupAttendancePanelState();
 }
@@ -22,23 +29,29 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   late bool _scanningEnabled;
   late bool _manualCheckEnabled;
+  
+  final TextEditingController _attendanceTakersController = TextEditingController();
+
+  bool _updatingAttendance = false;
 
   @override
   void initState() {
     _scanningEnabled = widget.details?.scanningEnabled ?? false;
     _manualCheckEnabled = widget.details?.manualCheckEnabled ?? false;
+    _attendanceTakersController.text = widget.details?.attendanceTakers?.join(' ') ?? '';
     super.initState();
   }
 
   @override
   void dispose() {
+    _attendanceTakersController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"), onLeading: _onHeaderBack,),
+      appBar: _headerBar,
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -47,10 +60,12 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildPanelContent() {
     return SingleChildScrollView(child:
       Column(children: [
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _buildScanSection(),
-            _buildManualSection(),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
+            (widget.event?.id != null) ? _buildAttendanceTakerSection() : Container(),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
           ]),
         )
 
@@ -79,7 +94,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       description: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.description", "Does not require advance registration."),
       toggled: _scanningEnabled,
       onTap: _onTapScan,
-      //padding: _toggleDescriptionPadding,
+      padding: EdgeInsets.zero,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
     ));
@@ -107,7 +122,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       description: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.description", "Requires advance registration."),
       toggled: _manualCheckEnabled,
       onTap: _onTapManual,
-      //padding: _toggleDescriptionPadding,
+      padding: EdgeInsets.zero,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
     ));
@@ -120,12 +135,119 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     });
   }
 
-  // Submit
+  // Attendance Taker
 
-  void _onHeaderBack() {
-    Navigator.of(context).pop((_scanningEnabled || _manualCheckEnabled) ? Event2AttendanceDetails(
+  Widget _buildAttendanceTakerSection() {
+    return Padding(padding: Event2CreatePanel.sectionPadding, child:
+      Column(children: [
+        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
+          Event2AttendanceTakerWidget(widget.event),
+        ),
+        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+      ],),
+    );
+  }
+
+  // Attendance Takers
+
+  Widget _buildAttendanceTakersSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.attendance.takers.label.title', 'Netids for additional attendance takers:')),
+    body: Event2CreatePanel.buildTextEditWidget(_attendanceTakersController, keyboardType: TextInputType.text, maxLines: null),
+    trailing: Column(children: [
+      _buildAttendanceTakersHint(),
+      _buildAttendanceTakersInfo(),
+    ]),
+  );
+
+  Widget _buildAttendanceTakersHint() => Padding(padding: EdgeInsets.only(top: 2), child:
+    Row(children: [
+      Expanded(child:
+        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype,),
+      )
+    ],),
+  );
+
+  Widget _buildAttendanceTakersInfo() => Padding(padding: EdgeInsets.only(top: 12), child:
+    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Styles().images?.getImage('info') ?? Container(),
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(left: 6), child:
+          Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.info', 'To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.'), style: _infoTextStype,)
+        ),
+      ),
+    ],),
+  );
+
+  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+
+  // HeaderBar
+
+  bool get _isEditing => StringUtils.isNotEmpty(widget.event?.id);
+
+  PreferredSizeWidget get _headerBar => HeaderBar(
+    title: Localization().getStringEx("panel.event2.setup.registration.header.title", "Event Registration"),
+    onLeading: _onHeaderBarBack,
+    actions: _headerBarActions,
+  );
+
+  List<Widget>? get _headerBarActions => _isEditing ? [ _updatingAttendance ?
+    Event2CreatePanel.buildHeaderBarActionProgress() :
+    Event2CreatePanel.buildHeaderBarActionButton(
+      title: Localization().getStringEx('dialog.apply.title', 'Apply'),
+      onTap: _onHeaderBarApply,
+    )
+  ] : null;
+
+  // For new registration details we must return non-zero instance, for update we 
+  Event2AttendanceDetails _buildAttendanceDetails() => Event2AttendanceDetails(
       scanningEnabled: _scanningEnabled,
       manualCheckEnabled: _manualCheckEnabled,
-    ) : null);
+      attendanceTakers: ListUtils.notEmpty(ListUtils.stripEmptyStrings(_attendanceTakersController.text.split(RegExp(r'[\s,;]+')))),
+  );
+
+  void _updateEventAttendanceDetails(Event2AttendanceDetails? attendanceDetails) {
+    if (_updatingAttendance != true) {
+      setState(() {
+        _updatingAttendance = true;
+      });
+      Events2().updateEventAttendanceDetails(widget.event?.id ?? '', attendanceDetails).then((result) {
+        if (mounted) {
+          setState(() {
+            _updatingAttendance = false;
+          });
+        }
+        String? title, message;
+        if (result is Event2) {
+          //title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
+          //message = Localization().getStringEx('panel.event2.update.attendance.message.succeeded.message', 'Successfully updated \"{{event_name}}\" attendance.').replaceAll('{{event_name}}', result.name ?? '');
+        }
+        else if (result is String) {
+          title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
+          message = result;
+        }
+
+        if (title != null) {
+          Event2Popup.showMessage(context, title, message).then((_) {
+            if (result is Event2) {
+              Navigator.of(context).pop(result);
+            }
+          });
+        }
+        else if (result is Event2) {
+          Navigator.of(context).pop(result);
+        }
+      });
+    }
+  }
+
+  void _onHeaderBarApply() {
+    Analytics().logSelect(target: 'HeaderBar: Apply');
+    Event2AttendanceDetails attendanceDetails = _buildAttendanceDetails();
+    _updateEventAttendanceDetails(attendanceDetails.isNotEmpty ? attendanceDetails : null);
+  }
+
+  void _onHeaderBarBack() {
+    Navigator.of(context).pop(_isEditing ? null : _buildAttendanceDetails());
   }
 }

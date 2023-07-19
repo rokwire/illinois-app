@@ -159,7 +159,7 @@ class _Event2SetupContactPanelState extends State<Event2SetupContactPanel>  {
   
   Widget _buildOrganizationSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.contact.organization.label.title', 'ORGANIZATION'),),
-    body: Event2CreatePanel.buildTextEditWidget(_organizationController, keyboardType: TextInputType.text),
+    body: Event2CreatePanel.buildTextEditWidget(_organizationController, keyboardType: TextInputType.text, autocorrect: true),
   );
 
   // Submit

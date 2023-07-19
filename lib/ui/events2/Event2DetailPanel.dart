@@ -9,8 +9,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/events2/Event2AttendanceDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -668,7 +669,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   void _onSettingEventRegistration(){
     Analytics().logSelect(target: "Event Registration");
     Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
-      event: widget.event,
+      event: _event,
     ))).then((Event2? event) {
       if (event != null)
       setStateIfMounted(() {
@@ -678,7 +679,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onSettingAttendance(){
-    //TBD
+    Analytics().logSelect(target: "Event Attendance");
+    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
+      event: _event,
+    ))).then((Event2? event) {
+      if (event != null)
+      setStateIfMounted(() {
+        _event = event;
+      });
+    });
   }
 
   void _onSettingSurvey(){
@@ -705,7 +714,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onTapTakeAttendance() {
     Analytics().logSelect(target: 'Take Attendance');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AttendanceDetailPanel(event: _event)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AttendanceTakerPanel(_event)));
   }
 
   //loading
