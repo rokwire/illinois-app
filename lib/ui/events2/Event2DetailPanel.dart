@@ -669,7 +669,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   void _onSettingEventRegistration(){
     Analytics().logSelect(target: "Event Registration");
     Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
-      event: widget.event,
+      event: _event,
     ))).then((Event2? event) {
       if (event != null)
       setStateIfMounted(() {
@@ -681,7 +681,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   void _onSettingAttendance(){
     Analytics().logSelect(target: "Event Attendance");
     Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(
-      event: widget.event,
+      event: _event,
     ))).then((Event2? event) {
       if (event != null)
       setStateIfMounted(() {
