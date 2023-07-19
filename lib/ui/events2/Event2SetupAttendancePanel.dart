@@ -92,7 +92,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       description: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.description", "Does not require advance registration."),
       toggled: _scanningEnabled,
       onTap: _onTapScan,
-      //padding: _toggleDescriptionPadding,
+      padding: EdgeInsets.zero,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
     ));
@@ -120,7 +120,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       description: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.description", "Requires advance registration."),
       toggled: _manualCheckEnabled,
       onTap: _onTapManual,
-      //padding: _toggleDescriptionPadding,
+      padding: EdgeInsets.zero,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
     ));
@@ -135,23 +135,35 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   // Attendance Takers
 
-  Widget _buildAttendanceTakersSection() => Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-    Event2CreatePanel.buildSectionWidget(
-      heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.attendance.takers.label.title', 'Netids for additional attendance takers:')),
-      body: Event2CreatePanel.buildTextEditWidget(_attendanceTakersController, keyboardType: TextInputType.text, maxLines: null),
-      trailing: _buildAttendanceTakersDescription(),
-    ),
+  Widget _buildAttendanceTakersSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.attendance.takers.label.title', 'Netids for additional attendance takers:')),
+    body: Event2CreatePanel.buildTextEditWidget(_attendanceTakersController, keyboardType: TextInputType.text, maxLines: null),
+    trailing: Column(children: [
+      _buildAttendanceTakersHint(),
+      _buildAttendanceTakersInfo(),
+    ]),
   );
 
-  Widget _buildAttendanceTakersDescription() => Padding(padding: EdgeInsets.only(top: 2), child:
+  Widget _buildAttendanceTakersHint() => Padding(padding: EdgeInsets.only(top: 2), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.description', 'A space or comma separated list of Net IDs.'), style: _descriptionTextStype,),
+        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype,),
       )
     ],),
   );
 
-  TextStyle? get _descriptionTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  Widget _buildAttendanceTakersInfo() => Padding(padding: EdgeInsets.only(top: 12), child:
+    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Styles().images?.getImage('info') ?? Container(),
+      Expanded(child:
+        Padding(padding: EdgeInsets.only(left: 6), child:
+          Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.info', 'To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.'), style: _infoTextStype,)
+        ),
+      ),
+    ],),
+  );
+
+  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
 
   // HeaderBar
 

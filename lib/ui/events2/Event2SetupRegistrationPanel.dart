@@ -154,7 +154,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         Padding(padding: EdgeInsets.only(top: 12), child:
           Row(children: [
             Expanded(child:
-              Text(description, style: _descriptionTextStype,),
+              Text(description, style: _infoTextStype,),
             )
           ],)
         ),
@@ -163,7 +163,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
 
-  TextStyle? get _descriptionTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
 
 
   // Internal Details
@@ -200,13 +200,13 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildRegistrantsSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'NETIDS FOR ADDITIONAL REGISTRANTS')),
     body: Event2CreatePanel.buildTextEditWidget(_registrantsController, keyboardType: TextInputType.text, maxLines: null),
-    trailing: _buildRegistrantsDescription(),
+    trailing: _buildRegistrantsHint(),
   );
 
-  Widget _buildRegistrantsDescription() => Padding(padding: EdgeInsets.only(top: 2), child:
+  Widget _buildRegistrantsHint() => Padding(padding: EdgeInsets.only(top: 2), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.description', 'A space or comma separated list of Net IDs.'), style: _descriptionTextStype,),
+        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype,),
       )
     ],),
   );
