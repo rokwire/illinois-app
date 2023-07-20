@@ -1,3 +1,4 @@
+//import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -39,8 +40,8 @@ class Event2AttendanceTakerWidget extends StatefulWidget {
 
 class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidget> {
   
-  List<Event2Person>? _registrants;
-  List<Event2Person>? _attendees;
+  Event2PersonsResult? _persons;
+  List<Event2Person> _displayList = <Event2Person>[];
   Set<String> _atendeesNetIds = <String>{};
   Set<String> _processingNetIds = <String>{};
   String? _errorMessage;
@@ -59,8 +60,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
           if (result is Event2PersonsResult) {
             setState(() {
               _loadingPeople = false;
-              _registrants = result.registrants;
-              _attendees = result.attendees;
+              _persons = result;
+              _displayList = result.buildDisplayList();
               _atendeesNetIds = Event2Person.netIdsFromList(result.attendees) ?? <String>{};
             });
           }
@@ -84,9 +85,6 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     super.dispose();
   }
 
-  int? get _capacityNum => widget.event?.registrationDetails?.eventCapacity;
-  int? get _registrationsNum => _registrants?.length;
-  int? get _attendeesNum => _attendees?.length;
   bool get _hasError => (_errorMessage != null);
   bool get _isAdmin => (widget.event?.userRole == Event2UserRole.admin);
   String get _internalErrorString => Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured');
@@ -102,9 +100,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   Widget _buildEventDetailsSection() => Event2CreatePanel.buildSectionWidget(
     body: Column(children: [
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'), value: _capacityNum),
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.registrations.label.title', 'TOTAL NUMBER OF REGISTRATIONS:'), value: _registrationsNum, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.attendees.label.title', 'TOTAL NUMBER OF ATTENDEES:'), value: _attendeesNum, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
+      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'), value: widget.event?.registrationDetails?.eventCapacity),
+      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.registrations.label.title', 'TOTAL NUMBER OF REGISTRATIONS:'), value: _persons?.registrants?.length, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
+      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.attendees.label.title', 'TOTAL NUMBER OF ATTENDEES:'), value: (_persons?.attendees != null) ? _atendeesNetIds.length : null, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
       StringUtils.isNotEmpty(_errorMessage) ? _buildErrorStatus(_errorMessage ?? '') : Container(),
     ],),
   );
@@ -160,17 +158,15 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   Widget _buildAttendeesListSectionBody() {
     List<Widget> contentList = <Widget>[];
-    if (_registrants != null) {
-      for (Event2Person registrant in _registrants!) {
-        if (contentList.isNotEmpty) {
-          contentList.add(Divider(color: Styles().colors?.dividerLineAccent, thickness: 1, height: 1,));
-        }
-        contentList.add(_RegistrantWidget(registrant,
-          selected: _atendeesNetIds.contains(registrant.identifier?.netId),
-          processing: _processingNetIds.contains(registrant.identifier?.netId),
-          onTap: () => _onTapRegistrant(registrant),
-        ));
+    for (Event2Person displayPerson in _displayList) {
+      if (contentList.isNotEmpty) {
+        contentList.add(Divider(color: Styles().colors?.dividerLineAccent, thickness: 1, height: 1,));
       }
+      contentList.add(_AttendeeListItemWidget(displayPerson,
+        selected: _atendeesNetIds.contains(displayPerson.identifier?.netId),
+        processing: _processingNetIds.contains(displayPerson.identifier?.netId),
+        onTap: () => _onTapAttendeeListItem(displayPerson),
+      ));
     }
     return (0 < contentList.length) ? Column(mainAxisSize: MainAxisSize.max, children: contentList,) :
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
@@ -182,24 +178,23 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       );
   }
 
-  void _onTapRegistrant(Event2Person registrant) {
-    Analytics().logSelect(target: "Toggle Registrant");
+  void _onTapAttendeeListItem(Event2Person person) {
+    Analytics().logSelect(target: "Toggle Attendee");
     String? eventId = widget.event?.id;
-    String? registrantNetId = registrant.identifier?.netId;
-    if ((eventId != null) && (registrantNetId != null) && !_processingNetIds.contains(registrantNetId))  {
+    String? personNetId = person.identifier?.netId;
+    if ((eventId != null) && (personNetId != null) && !_processingNetIds.contains(personNetId))  {
 
       setState(() {
-        _processingNetIds.add(registrantNetId);
+        _processingNetIds.add(personNetId);
       });
 
-      if (_atendeesNetIds.contains(registrantNetId)) {
-        Events2().registrantUnattendsEvent(eventId, registrant).then((dynamic result) {
+      if (_atendeesNetIds.contains(personNetId)) {
+        Events2().unattendEvent(eventId, person: person).then((dynamic result) {
           if (mounted) {
             if (result == true) {
               setState(() {
-                Event2Person.removeInList(_attendees, netId: registrantNetId);
-                _atendeesNetIds.remove(registrantNetId);
-                _processingNetIds.remove(registrantNetId);
+                _atendeesNetIds.remove(personNetId);
+                _processingNetIds.remove(personNetId);
               });
             }
             else {
@@ -211,15 +206,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         });
       }
       else {
-        Events2().registrantAttendsEvent(eventId, registrant).then((dynamic result) {
+        Events2().attendEvent(eventId, person: person).then((dynamic result) {
           if (mounted) {
             if (result is Event2Person) {
               setState(() {
-                if (!_atendeesNetIds.contains(registrantNetId)) {
-                  _atendeesNetIds.add(registrantNetId);
-                  _attendees?.add(result);
-                }
-                _processingNetIds.remove(registrantNetId);
+                _atendeesNetIds.add(personNetId);
+                _processingNetIds.remove(personNetId);
               });
             }
             else {
@@ -230,15 +222,6 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
           }
         });
       }
-
-      setState(() {
-        if (_atendeesNetIds.contains(registrantNetId)) {
-          _atendeesNetIds.remove(registrantNetId);
-        }
-        else {
-          _atendeesNetIds.add(registrantNetId);
-        }
-      });
     }
   }
 
@@ -291,7 +274,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       /* TMP Future.delayed(Duration(seconds: 1)).then((_) {
         int uin = 100000000 + Random().nextInt(900000000);
         _onScanFinished("$uin");
-      }); */
+      });*/
       
       String lineColor = UiColors.toHex(Styles().colors?.fillColorSecondary) ?? '#E84A27';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
@@ -326,14 +309,23 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         );
       }
       else {
-        Events2().personAttendsEvent(eventId, uin).then((result) {
+        Events2().attendEvent(eventId, uin: uin).then((result) {
           if (mounted) {
             String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
             if (attendeeNetId != null) {
+
+              List<Event2Person>? displayList;
+              if (!Event2Person.containsInList(_displayList, netId: attendeeNetId)) {
+                displayList = List.from(_displayList);
+                displayList.add(result);
+                displayList.sort((Event2Person person1, Event2Person person2) =>
+                  SortUtils.compare(person1.identifier?.netId, person2.identifier?.netId));
+              }
+
               setState(() {
-                if (!_atendeesNetIds.contains(attendeeNetId)) {
-                  _atendeesNetIds.add(attendeeNetId);
-                  _attendees?.add(result);
+                _atendeesNetIds.add(attendeeNetId);
+                if (displayList != null) {
+                  _displayList = displayList;
                 }
                 _scanning = false;
               });
@@ -384,13 +376,13 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 }
 
-class _RegistrantWidget extends StatelessWidget {
+class _AttendeeListItemWidget extends StatelessWidget {
   final Event2Person registrant;
   final bool? selected;
   final bool? processing;
   final void Function()? onTap;
   
-  _RegistrantWidget(this.registrant, { Key? key, this.selected, this.processing, this.onTap }) : super(key: key);
+  _AttendeeListItemWidget(this.registrant, { Key? key, this.selected, this.processing, this.onTap }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -428,3 +420,34 @@ class _RegistrantWidget extends StatelessWidget {
   );
 }
 
+extension Event2PersonsResultExt on Event2PersonsResult {
+  List<Event2Person> buildDisplayList() {
+    List<Event2Person> displayList = <Event2Person>[];
+    Set<String> displayNetIds  = <String>{};
+
+    if (registrants != null) {
+      for (Event2Person registrant in registrants!) {
+        String? registrantNetId = registrant.identifier?.netId;
+        if ((registrantNetId != null) && !displayNetIds.contains(registrantNetId)) {
+          displayList.add(registrant);
+          displayNetIds.add(registrantNetId);
+        }
+      }
+    }
+
+    if (attendees != null) {
+      for (Event2Person attendee in attendees!) {
+        String? attendeeNetId = attendee.identifier?.netId;
+        if ((attendeeNetId != null) && !displayNetIds.contains(attendeeNetId)) {
+          displayList.add(attendee);
+          displayNetIds.add(attendeeNetId);
+        }
+      }
+    }
+
+    displayList.sort((Event2Person person1, Event2Person person2) =>
+      SortUtils.compare(person1.identifier?.netId, person2.identifier?.netId));
+
+    return displayList;
+  }
+}
