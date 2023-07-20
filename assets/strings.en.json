@@ -1291,6 +1291,7 @@
     "panel.event2.detail.attendance.event.registrations.label.title": "TOTAL NUMBER OF REGISTRATIONS:",
     "panel.event2.detail.attendance.event.attendees.label.title": "TOTAL NUMBER OF ATTENDEES:",
     "panel.event2.detail.attendance.attendees.drop_down.hint": "ATTENDEE LIST",
+    "panel.event2.detail.attendance.attendees.empty.text": "There are no users registered for this event yet.",
     "panel.event2.detail.attendance.scan.button": "Scan Illini ID",
     "panel.event2.detail.attendance.attendees.description": "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.",
     "panel.event2.detail.attendance.additional.netids.label": "Netids for additional attendance takers:",
@@ -3701,6 +3702,7 @@
     "logic.calendar.create_event_failed": "Failed to create event.",
     "logic.calendar.permission_denied": "Unable to save event to calendar. Permissions not granted.",
 
+    "logic.general.error": "Error",
     "logic.general.internal_error": "Internal Error Occurred",
     "logic.general.unknown_error": "Unknown Error Occurred",
     "logic.general.invalid_response": "Invalid Server Response",
