@@ -3701,6 +3701,7 @@
     "logic.calendar.create_event_failed": "Failed to create event.",
     "logic.calendar.permission_denied": "Unable to save event to calendar. Permissions not granted.",
 
+    "logic.general.error": "Error",
     "logic.general.internal_error": "Internal Error Occurred",
     "logic.general.unknown_error": "Unknown Error Occurred",
     "logic.general.invalid_response": "Invalid Server Response",
