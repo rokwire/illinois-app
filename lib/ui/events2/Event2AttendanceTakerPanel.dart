@@ -216,8 +216,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             if (result is Event2Person) {
               setState(() {
                 if (!_atendeesNetIds.contains(registrantNetId)) {
-                  _attendees?.add(result);
                   _atendeesNetIds.add(registrantNetId);
+                  _attendees?.add(result);
                 }
                 _processingNetIds.remove(registrantNetId);
               });
@@ -287,14 +287,16 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       setState(() {
         _scanning = true;
       });
+
+      /* TMP Future.delayed(Duration(seconds: 1)).then((_) {
+        int uin = 100000000 + Random().nextInt(900000000);
+        _onScanFinished("$uin");
+      }); */
       
       String lineColor = UiColors.toHex(Styles().colors?.fillColorSecondary) ?? '#E84A27';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
       FlutterBarcodeScanner.scanBarcode(lineColor, cancelButtonTitle, true, ScanMode.QR).then((String scanResult) {
         if (mounted) {
-          setState(() {
-            _scanning = false;
-          });
           _onScanFinished(scanResult);
         }
       });
@@ -304,11 +306,49 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   void _onScanFinished(String scanResult) {
     if (scanResult != '-1') { // The user did not hit "Cancel button"
       String? uin = _extractUin(scanResult);
-      if (uin != null) {
-        AppAlert.showDialogResult(context, 'Scanned UIN: $uin.');
+      String? eventId = widget.event?.id;
+      if (uin == null) {
+        setState(() {
+          _scanning = false;
+        });
+        Event2Popup.showMessage(context, 
+          Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
+          Localization().getStringEx('panel.event2.detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.')
+        );
+      }
+      else if (eventId == null) {
+        setState(() {
+          _scanning = false;
+        });
+        Event2Popup.showMessage(context, 
+          Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
+          _internalErrorString
+        );
       }
       else {
-        AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
+        Events2().personAttendsEvent(eventId, uin).then((result) {
+          if (mounted) {
+            String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
+            if (attendeeNetId != null) {
+              setState(() {
+                if (!_atendeesNetIds.contains(attendeeNetId)) {
+                  _atendeesNetIds.add(attendeeNetId);
+                  _attendees?.add(result);
+                }
+                _scanning = false;
+              });
+            }
+            else {
+              setState(() {
+                _scanning = false;
+              });
+              Event2Popup.showMessage(context, 
+                Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
+                (result is String) ? result : _internalErrorString
+              );
+            }
+          }
+        });
       }
     }
   }
