@@ -169,7 +169,14 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         ));
       }
     }
-    return Column(mainAxisSize: MainAxisSize.max, children: contentList,);
+    return (0 < contentList.length) ? Column(mainAxisSize: MainAxisSize.max, children: contentList,) :
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Row(children: [
+          Expanded(child:
+            Text(Localization().getStringEx("panel.event2.detail.attendance.attendees.empty.text", "There are no users registered for this event yet."), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
+          )
+        ],)
+      );
   }
 
   void _onTapRegistrant(Event2Person registrant) {
@@ -325,7 +332,7 @@ class _RegistrantWidget extends StatelessWidget {
   }
 
   Widget get _checkMarkWidget {
-    return Styles().images?.getImage((selected == true) ? 'check-circle-filled' : 'circle-outline') ?? Container();
+    return Styles().images?.getImage((selected == true) ? 'check-circle-filled' : 'circle-outline-gray') ?? Container();
   }
 }
 
