@@ -10,6 +10,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
@@ -1558,8 +1559,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
         String? title, message;
         if (result is Event2) {
-          title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
-          message = Localization().getStringEx('panel.event2.create.message.succeeded.message', 'Successfully created {{event_name}} event').replaceAll('{{event_name}}', result.name ?? '');
+          //title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
+          //message = widget.isCreate ? 
+          //  Localization().getStringEx('panel.event2.create.message.succeeded.message', 'Successfully created {{event_name}} event').replaceAll('{{event_name}}', result.name ?? '') :
+          //  Localization().getStringEx('panel.event2.update.message.succeeded.message', 'Successfully updated {{event_name}} event').replaceAll('{{event_name}}', result.name ?? '');
+          if (widget.isCreate) {
+            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
+          }
+          else {
+            Navigator.of(context).pop();
+          }
         }
         else if (result is String) {
           title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
@@ -1569,7 +1578,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         if (title != null) {
           _showPopup(title, message).then((_) {
             if (result is Event2) {
-              Navigator.of(context).pop();
+              if (widget.isCreate) {
+                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
+              }
+              else {
+                Navigator.of(context).pop();
+              }
             }
           });
         }
