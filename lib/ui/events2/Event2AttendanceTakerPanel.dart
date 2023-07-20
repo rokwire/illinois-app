@@ -3,6 +3,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -41,6 +42,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   List<Event2Person>? _registrants;
   List<Event2Person>? _attendees;
   Set<String> _atendeesNetIds = <String>{};
+  Set<String> _processingNetIds = <String>{};
   String? _errorMessage;
 
   bool _scanning = false;
@@ -165,6 +167,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         }
         contentList.add(_RegistrantWidget(registrant,
           selected: _atendeesNetIds.contains(registrant.identifier?.netId),
+          processing: _processingNetIds.contains(registrant.identifier?.netId),
           onTap: () => _onTapRegistrant(registrant),
         ));
       }
@@ -181,8 +184,53 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   void _onTapRegistrant(Event2Person registrant) {
     Analytics().logSelect(target: "Toggle Registrant");
+    String? eventId = widget.event?.id;
     String? registrantNetId = registrant.identifier?.netId;
-    if (registrantNetId != null) {
+    if ((eventId != null) && (registrantNetId != null) && !_processingNetIds.contains(registrantNetId))  {
+
+      setState(() {
+        _processingNetIds.add(registrantNetId);
+      });
+
+      if (_atendeesNetIds.contains(registrantNetId)) {
+        Events2().registrantUnattendsEvent(eventId, registrant).then((dynamic result) {
+          if (mounted) {
+            if (result == true) {
+              setState(() {
+                Event2Person.removeInList(_attendees, netId: registrantNetId);
+                _atendeesNetIds.remove(registrantNetId);
+                _processingNetIds.remove(registrantNetId);
+              });
+            }
+            else {
+              String title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
+              String message = (result is String) ? result : _internalErrorString;
+              Event2Popup.showMessage(context, title, message);
+            }
+          }
+        });
+      }
+      else {
+        Events2().registrantAttendsEvent(eventId, registrant).then((dynamic result) {
+          if (mounted) {
+            if (result is Event2Person) {
+              setState(() {
+                if (!_atendeesNetIds.contains(registrantNetId)) {
+                  _attendees?.add(result);
+                  _atendeesNetIds.add(registrantNetId);
+                }
+                _processingNetIds.remove(registrantNetId);
+              });
+            }
+            else {
+              String title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
+              String message = (result is String) ? result : _internalErrorString;
+              Event2Popup.showMessage(context, title, message);
+            }
+          }
+        });
+      }
+
       setState(() {
         if (_atendeesNetIds.contains(registrantNetId)) {
           _atendeesNetIds.remove(registrantNetId);
@@ -299,9 +347,10 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 class _RegistrantWidget extends StatelessWidget {
   final Event2Person registrant;
   final bool? selected;
+  final bool? processing;
   final void Function()? onTap;
   
-  _RegistrantWidget(this.registrant, { Key? key, this.selected, this.onTap }) : super(key: key);
+  _RegistrantWidget(this.registrant, { Key? key, this.selected, this.processing, this.onTap }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -311,11 +360,8 @@ class _RegistrantWidget extends StatelessWidget {
           _nameWidget
         )
       ),
-      InkWell(onTap: onTap, child:
-        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-          _checkMarkWidget
-        ),
-      )
+      
+      (processing != true) ? InkWell(onTap: onTap, child: _checkMarkWidget) : _progressMarkWidget,
     ],);
 
   }
@@ -331,8 +377,14 @@ class _RegistrantWidget extends StatelessWidget {
     return RichText(text: TextSpan(style: regularStyle, children: descriptionList));
   }
 
-  Widget get _checkMarkWidget {
-    return Styles().images?.getImage((selected == true) ? 'check-circle-filled' : 'circle-outline-gray') ?? Container();
-  }
+  Widget get _checkMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+    Styles().images?.getImage((selected == true) ? 'check-circle-filled' : 'circle-outline-gray') ?? Container()
+  );
+
+  Widget get _progressMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18), child:
+    SizedBox(width: 20, height: 20, child:
+      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,)
+    )
+  );
 }
 
