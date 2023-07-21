@@ -140,8 +140,10 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             Event2CreatePanel.buildSectionTitleWidget(label)
           ),
           (loading == true) ?
-            SizedBox(width: 16, height: 16, child:
-              CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+            Padding(padding: EdgeInsets.all(2.5), child:
+              SizedBox(width: 16, height: 16, child:
+                CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+              ),
             ) :
             Text(value?.toString() ?? defaultValue, style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'))
         ])
@@ -194,8 +196,20 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         onTap: () => _onTapAttendeeListItem(displayPerson),
       ));
     }
-    return (0 < contentList.length) ? Column(mainAxisSize: MainAxisSize.max, children: contentList,) :
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+    if (_loadingPeople) {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Center(child:
+          SizedBox(width: 24, height: 24, child:
+            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,)
+          ),
+        ),
+      );
+    }
+    if (0 < contentList.length) {
+      return Column(mainAxisSize: MainAxisSize.max, children: contentList,);
+    }
+    else {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Row(children: [
           Expanded(child:
             Text(_hasError ?
@@ -205,6 +219,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
           )
         ],)
       );
+    }
   }
 
   void _onTapAttendeeListItem(Event2Person person) {
