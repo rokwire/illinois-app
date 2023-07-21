@@ -189,7 +189,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       });
 
       if (_atendeesNetIds.contains(personNetId)) {
-        Events2().unattendEvent(eventId, person: person).then((dynamic result) {
+        Events2().unattendEvent(eventId, personIdentifier: person.identifier).then((dynamic result) {
           if (mounted) {
             if (result == true) {
               setState(() {
@@ -206,7 +206,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         });
       }
       else {
-        Events2().attendEvent(eventId, person: person).then((dynamic result) {
+        Events2().attendEvent(eventId, personIdentifier: person.identifier).then((dynamic result) {
           if (mounted) {
             if (result is Event2Person) {
               setState(() {
