@@ -109,35 +109,37 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         );
   }
 
-  Widget get _eventContent => CustomScrollView(slivers: <Widget>[
-    SliverToutHeaderBar(
-      flexImageUrl:  _event?.imageUrl,
-      flexImageKey: 'event-detail-default',
-      flexRightToLeftTriangleColor: Colors.white,
-    ),
-    SliverList(delegate:
-    SliverChildListDelegate([
-      Container(color: Styles().colors?.white, child:
-      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _badgeWidget,
-        _categoriesWidget,
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _titleWidget,
-          _sponsorWidget,
-          _detailsWidget,
-        ])
-        ),
-      ]),
+  Widget get _eventContent =>
+  RefreshIndicator(onRefresh: _refreshEvent, child:
+    CustomScrollView(slivers: <Widget>[
+      SliverToutHeaderBar(
+        flexImageUrl:  _event?.imageUrl,
+        flexImageKey: 'event-detail-default',
+        flexRightToLeftTriangleColor: Colors.white,
       ),
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _descriptionWidget,
-        _buttonsWidget,
-      ]))
-    ], addSemanticIndexes:false)
-    ),
-  ]);
+      SliverList(delegate:
+      SliverChildListDelegate([
+        Container(color: Styles().colors?.white, child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _badgeWidget,
+          _categoriesWidget,
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+          Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _titleWidget,
+            _sponsorWidget,
+            _detailsWidget,
+          ])
+          ),
+        ]),
+        ),
+        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _descriptionWidget,
+          _buttonsWidget,
+        ]))
+      ], addSemanticIndexes:false)
+      ),
+    ]));
 
   Widget get _badgeWidget => _isAdmin ?
   Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
