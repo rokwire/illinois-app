@@ -1,4 +1,6 @@
 //import 'dart:math';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -44,6 +46,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   List<Event2Person> _displayList = <Event2Person>[];
   Set<String> _atendeesNetIds = <String>{};
   Set<String> _processingNetIds = <String>{};
+  String? _processedNetId;
+  Timer? _processedTimer;
   String? _errorMessage;
 
   bool _scanning = false;
@@ -82,6 +86,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   @override
   void dispose() {
+    _processedTimer?.cancel();
+    _processedTimer = null;
     super.dispose();
   }
 
@@ -165,6 +171,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       contentList.add(_AttendeeListItemWidget(displayPerson,
         selected: _atendeesNetIds.contains(displayPerson.identifier?.netId),
         processing: _processingNetIds.contains(displayPerson.identifier?.netId),
+        highlighted: (_processedNetId == displayPerson.identifier?.netId),
         onTap: () => _onTapAttendeeListItem(displayPerson),
       ));
     }
@@ -201,6 +208,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             if (result == true) {
               setState(() {
                 _atendeesNetIds.remove(personNetId);
+                if (personNetId == _processedNetId) {
+                  _processedNetId = null;
+                }
               });
             }
             else {
@@ -278,7 +288,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       /* TMP Future.delayed(Duration(seconds: 1)).then((_) {
         int uin = 100000000 + Random().nextInt(900000000);
         _onScanFinished("$uin");
-      });*/
+      }); */
       
       String lineColor = UiColors.toHex(Styles().colors?.fillColorSecondary) ?? '#E84A27';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
@@ -330,7 +340,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
                 if (displayList != null) {
                   _displayList = displayList;
                 }
+                _processedNetId = attendeeNetId;
               });
+              _setupProcessedTimer();
             }
             else {
               Event2Popup.showErrorResult(context, result);
@@ -370,15 +382,30 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     }
     return null;
   }
+
+  void _setupProcessedTimer() {
+    if (_processedTimer != null) {
+      _processedTimer?.cancel();
+    }
+    _processedTimer = Timer(Duration(seconds: 5), (){
+      _processedTimer = null;
+      if (mounted) {
+        setState(() {
+          _processedNetId = null;
+        });
+      }
+    });
+  }
 }
 
 class _AttendeeListItemWidget extends StatelessWidget {
   final Event2Person registrant;
   final bool? selected;
   final bool? processing;
+  final bool? highlighted;
   final void Function()? onTap;
   
-  _AttendeeListItemWidget(this.registrant, { Key? key, this.selected, this.processing, this.onTap }) : super(key: key);
+  _AttendeeListItemWidget(this.registrant, { Key? key, this.selected, this.processing, this.highlighted, this.onTap }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -395,19 +422,25 @@ class _AttendeeListItemWidget extends StatelessWidget {
   }
 
   Widget get _nameWidget {
-    List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.small.fat");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.title.small");
     String? registrantNetId = registrant.identifier?.netId;
-    if (registrantNetId != null) {
-      descriptionList.add(TextSpan(text: registrantNetId, style: boldStyle,));
-    }
-    return RichText(text: TextSpan(style: regularStyle, children: descriptionList));
+    return Text(registrantNetId ?? '', style: Styles().textStyles?.getTextStyle((highlighted == true) ? "widget.label.regular.fat" : "widget.card.title.small.fat"));
   }
 
   Widget get _checkMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-    Styles().images?.getImage((selected == true) ? 'check-circle-filled' : 'circle-outline-gray') ?? Container()
+    Styles().images?.getImage(_checkMarkImageKey) ?? Container()
   );
+
+  String get _checkMarkImageKey {
+    if (highlighted == true) {
+      return 'check-circle-outline';
+    }
+    else if (selected == true) {
+      return 'check-circle-filled';
+    }
+    else {
+      return 'circle-outline-gray';
+    }
+  }
 
   Widget get _progressMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18), child:
     SizedBox(width: 20, height: 20, child:
