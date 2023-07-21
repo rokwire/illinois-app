@@ -13,6 +13,7 @@ import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -22,7 +23,6 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/auth2.dart' as pluginAuth;
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -62,8 +62,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
     ]);
-    _initEvent();
+    
+    _event = widget.event;
+    if ((_event == null) && StringUtils.isNotEmpty(widget.eventId)) {
+      _refreshEvent(visibleProgress: true);
+    }
+
     _userLocation = widget.userLocation;
+    // TBD: load user location if not supplied but available
+
     super.initState();
   }
 
@@ -574,34 +581,37 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }
 
-  void _onRegister(){
-    if(_event?.id != null){
-      setStateIfMounted(() { _registrationLoading = true;});
-      Events2().registerToEvent(_event!.id!).then((errorMessage){
-        setStateIfMounted(() { _registrationLoading = false;});
-        if(errorMessage == null){
-          _refreshEvent();
-        } else {
-          String? message = JsonUtils.stringValue(errorMessage);
-          if(StringUtils.isNotEmpty(message)){
-            Log.e(message);
-          }
-        }
-      });
-    }
+  void _onRegister() {
+    Analytics().logSelect(target: 'Register me');
+    _invokeEventsAPI(Events2().registerToEvent, onUpdateProgress: (bool value) => (_registrationLoading = value));
   }
 
-  void _onUnregister(){
-    if(_event?.id != null){
-      setStateIfMounted(() { _registrationLoading = true;});
-      Events2().unregisterFromEvent(_event!.id!).then((errorMessage){
-        setStateIfMounted(() { _registrationLoading = false;});
-        if(errorMessage == null){
-          _refreshEvent();
-        } else { //fail
-          String? message = JsonUtils.stringValue(errorMessage);
-          if(StringUtils.isNotEmpty(message)){
-            Log.e(message);
+  void _onUnregister() {
+    Analytics().logSelect(target: 'Unregister me');
+    _invokeEventsAPI(Events2().unregisterFromEvent, onUpdateProgress: (bool value) => (_registrationLoading = value));
+  }
+
+  void _invokeEventsAPI(Future<dynamic> Function(String eventId) api, { void Function(bool)? onUpdateProgress }) {
+    if (_eventId != null) {
+      if (onUpdateProgress != null) {
+        setStateIfMounted(() {
+          onUpdateProgress(true);
+        });
+      }
+
+      Events2().registerToEvent(_eventId!).then((result) {
+        if (mounted) {
+          if (onUpdateProgress != null) {
+            setState(() {
+              onUpdateProgress(false);
+            });
+          }
+            
+          if (result == true) {
+            _refreshEvent();
+          }
+          else {
+            Event2Popup.showErrorResult(context, result);
           }
         }
       });
@@ -609,6 +619,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onExternalRegistration(){
+    Analytics().logSelect(target: 'Register me');
     if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink))
        _onLaunchUrl(_event?.registrationDetails?.externalLink);
   }
@@ -696,20 +707,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingDeleteEvent(){
     Analytics().logSelect(target: 'Delete Event');
-    if(_eventId != null) {
-      _eventLoading = true;
-      Events2().deleteEvent(_eventId!).then((errorMessage) {
-        if(errorMessage == null){
-          setStateIfMounted(() {_eventLoading = false; });
-          Navigator.of(context).pop();
-        } else {
-          String? message = JsonUtils.stringValue(errorMessage);
-          if(StringUtils.isNotEmpty(message)){
-            Log.e(message);
-          }
-        }
-      });
-    }
+    _invokeEventsAPI(Events2().deleteEvent, onUpdateProgress: (bool value) => (_eventLoading = value));
   }
 
   void _onTapTakeAttendance() {
@@ -718,46 +716,31 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   //loading
-  void _initEvent() async {
-    _event = widget.event;
 
-    if(_event == null && StringUtils.isNotEmpty(widget.eventId!)) {
-      _eventLoading = true;
-      _loadEvent().then((event) {
+  Future<void> _refreshEvent({bool visibleProgress = false}) async {
+    if (_eventId != null) {
+      if (visibleProgress) {
         setStateIfMounted(() {
-          _eventLoading = false;
-          _event = event;
+          _eventLoading = true;
         });
+      }
+
+      Event2? event = await Events2().loadEvent(_eventId!);
+
+      setStateIfMounted(() {
+        if (visibleProgress) {
+          _eventLoading = true;
+        }
+        if (event != null) {
+          _event = event;
+        }
       });
     }
   }
 
-  void _refreshEvent({bool visibleProgress = false}){
-    _eventLoading = visibleProgress;
-
-    _loadEvent().then((event) {
-      _eventLoading = false;
-      _event = event;
-      setStateIfMounted(() { });
-    });
-  }
-
-  Future<Event2?> _loadEvent() async {
-    if(_eventLoading){
-      // return Do we allow it?
-    }
-
-    if(_eventId != null) {
-      return Events2().loadEvent(_eventId!);
-    }
-    return null;
-  }
-
   //Event getters
   bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
-
   bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendanceTaker;
-
-  String? get _eventId => _event?.id ?? widget.eventId;
+  String? get _eventId => widget.event?.id ?? widget.eventId;
 
 }
