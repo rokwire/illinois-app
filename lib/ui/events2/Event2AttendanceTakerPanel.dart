@@ -18,23 +18,35 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2AttendanceTakerPanel extends StatelessWidget {
   final Event2? event;
+  final StreamController<String> _updateController = StreamController.broadcast();
 
   Event2AttendanceTakerPanel(this.event, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Event Attendance')),
-    body: Padding(padding: EdgeInsets.all(16), child:
-      Event2AttendanceTakerWidget(event),
+    body: RefreshIndicator(onRefresh: _onRefresh, child:
+      SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Event2AttendanceTakerWidget(event, updateController: _updateController,),
+        ),
+      ),
     ),
     backgroundColor: Styles().colors!.white,
   );
+
+  Future<void> _onRefresh() async {
+    _updateController.add(Event2AttendanceTakerWidget.notifyRefresh);
+  }
 }
 
 class Event2AttendanceTakerWidget extends StatefulWidget {
-  final Event2? event;
+  static const String notifyRefresh = "edu.illinois.rokwire.event2.attendance_taker.refresh";
 
-  Event2AttendanceTakerWidget(this.event, {Key? key}) : super(key: key);
+  final Event2? event;
+  final StreamController<String>? updateController;
+
+  Event2AttendanceTakerWidget(this.event, { Key? key, this.updateController }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2AttendanceTakerWidgetState();
@@ -57,9 +69,16 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   @override
   void initState() {
 
-    if (widget.event?.id != null) {
+    widget.updateController?.stream.listen((String command) {
+      if (command == Event2AttendanceTakerWidget.notifyRefresh) {
+        _refresh();
+      }
+    });
+
+    String? eventId = widget.event?.id;
+    if (eventId != null) {
       _loadingPeople = true;
-      Events2().loadEventPeople(widget.event!.id!).then((result) {
+      Events2().loadEventPeople(eventId).then((result) {
         if (mounted) {
           if (result is Event2PersonsResult) {
             setState(() {
@@ -395,6 +414,32 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         });
       }
     });
+  }
+
+  Future<void> _refresh() async {
+    String? eventId = widget.event?.id;
+    if (eventId != null) {
+      setStateIfMounted(() {
+        _loadingPeople = true;
+      });
+      dynamic result = await Events2().loadEventPeople(eventId);
+      if (mounted) {
+        if (result is Event2PersonsResult) {
+          setState(() {
+            _loadingPeople = false;
+            _persons = result;
+            _displayList = result.buildDisplayList();
+            _atendeesNetIds = Event2Person.netIdsFromList(result.attendees) ?? <String>{};
+          });
+        }
+        else {
+          setState(() {
+            _loadingPeople = false;
+            _errorMessage = StringUtils.isNotEmptyString(result) ? result : _internalErrorString;
+          });
+        }
+      }
+    }
   }
 }
 

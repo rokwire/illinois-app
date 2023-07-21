@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
@@ -32,6 +34,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   
   final TextEditingController _attendanceTakersController = TextEditingController();
 
+  final StreamController<String> _updateController = StreamController.broadcast();
+
   bool _updatingAttendance = false;
 
   @override
@@ -58,19 +62,20 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   }
 
   Widget _buildPanelContent() {
-    return SingleChildScrollView(child:
-      Column(children: [
-        Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
-            (widget.event?.id != null) ? _buildAttendanceTakerSection() : Container(),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
-          ]),
-        )
+    return RefreshIndicator(onRefresh: _onRefresh, child:
+      SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+        Column(children: [
+          Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
+              (widget.event?.id != null) ? _buildAttendanceTakerSection() : Container(),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
+            ]),
+          )
 
-      ],)
-
+        ],),
+      )
     );
   }
 
@@ -142,7 +147,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       Column(children: [
         Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
-          Event2AttendanceTakerWidget(widget.event),
+          Event2AttendanceTakerWidget(widget.event, updateController: _updateController,),
         ),
         Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
       ],),
@@ -180,6 +185,10 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   );
 
   TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+
+  Future<void> _onRefresh() async {
+    _updateController.add(Event2AttendanceTakerWidget.notifyRefresh);
+  }
 
   // HeaderBar
 
