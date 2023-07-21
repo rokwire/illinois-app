@@ -172,7 +172,10 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Row(children: [
           Expanded(child:
-            Text(Localization().getStringEx("panel.event2.detail.attendance.attendees.empty.text", "There are no users registered for this event yet."), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
+            Text(_hasError ?
+              Localization().getStringEx("panel.event2.detail.attendance.attendees.failed.text", "Failed to load attendees list.") :
+              Localization().getStringEx("panel.event2.detail.attendance.attendees.empty.text", "There are no users registered or attending for this event yet."),
+              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
           )
         ],)
       );
