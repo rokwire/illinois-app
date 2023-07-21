@@ -1,4 +1,6 @@
 //import 'dart:math';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -16,23 +18,35 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2AttendanceTakerPanel extends StatelessWidget {
   final Event2? event;
+  final StreamController<String> _updateController = StreamController.broadcast();
 
   Event2AttendanceTakerPanel(this.event, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Event Attendance')),
-    body: Padding(padding: EdgeInsets.all(16), child:
-      Event2AttendanceTakerWidget(event),
+    body: RefreshIndicator(onRefresh: _onRefresh, child:
+      SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Event2AttendanceTakerWidget(event, updateController: _updateController,),
+        ),
+      ),
     ),
     backgroundColor: Styles().colors!.white,
   );
+
+  Future<void> _onRefresh() async {
+    _updateController.add(Event2AttendanceTakerWidget.notifyRefresh);
+  }
 }
 
 class Event2AttendanceTakerWidget extends StatefulWidget {
-  final Event2? event;
+  static const String notifyRefresh = "edu.illinois.rokwire.event2.attendance_taker.refresh";
 
-  Event2AttendanceTakerWidget(this.event, {Key? key}) : super(key: key);
+  final Event2? event;
+  final StreamController<String>? updateController;
+
+  Event2AttendanceTakerWidget(this.event, { Key? key, this.updateController }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2AttendanceTakerWidgetState();
@@ -44,6 +58,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   List<Event2Person> _displayList = <Event2Person>[];
   Set<String> _atendeesNetIds = <String>{};
   Set<String> _processingNetIds = <String>{};
+  String? _processedNetId;
+  Timer? _processedTimer;
   String? _errorMessage;
 
   bool _scanning = false;
@@ -53,9 +69,16 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   @override
   void initState() {
 
-    if (widget.event?.id != null) {
+    widget.updateController?.stream.listen((String command) {
+      if (command == Event2AttendanceTakerWidget.notifyRefresh) {
+        _refresh();
+      }
+    });
+
+    String? eventId = widget.event?.id;
+    if (eventId != null) {
       _loadingPeople = true;
-      Events2().loadEventPeople(widget.event!.id!).then((result) {
+      Events2().loadEventPeople(eventId).then((result) {
         if (mounted) {
           if (result is Event2PersonsResult) {
             setState(() {
@@ -68,7 +91,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
           else {
             setState(() {
               _loadingPeople = false;
-              _errorMessage = (result is String) ? result : _internalErrorString;
+              _errorMessage = StringUtils.isNotEmptyString(result) ? result : _internalErrorString;
             });
           }
         }
@@ -82,6 +105,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   @override
   void dispose() {
+    _processedTimer?.cancel();
+    _processedTimer = null;
     super.dispose();
   }
 
@@ -115,8 +140,10 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
             Event2CreatePanel.buildSectionTitleWidget(label)
           ),
           (loading == true) ?
-            SizedBox(width: 16, height: 16, child:
-              CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+            Padding(padding: EdgeInsets.all(2.5), child:
+              SizedBox(width: 16, height: 16, child:
+                CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+              ),
             ) :
             Text(value?.toString() ?? defaultValue, style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'))
         ])
@@ -165,17 +192,34 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       contentList.add(_AttendeeListItemWidget(displayPerson,
         selected: _atendeesNetIds.contains(displayPerson.identifier?.netId),
         processing: _processingNetIds.contains(displayPerson.identifier?.netId),
+        highlighted: (_processedNetId == displayPerson.identifier?.netId),
         onTap: () => _onTapAttendeeListItem(displayPerson),
       ));
     }
-    return (0 < contentList.length) ? Column(mainAxisSize: MainAxisSize.max, children: contentList,) :
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+    if (_loadingPeople) {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Center(child:
+          SizedBox(width: 24, height: 24, child:
+            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,)
+          ),
+        ),
+      );
+    }
+    if (0 < contentList.length) {
+      return Column(mainAxisSize: MainAxisSize.max, children: contentList,);
+    }
+    else {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Row(children: [
           Expanded(child:
-            Text(Localization().getStringEx("panel.event2.detail.attendance.attendees.empty.text", "There are no users registered for this event yet."), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
+            Text(_hasError ?
+              Localization().getStringEx("panel.event2.detail.attendance.attendees.failed.text", "Failed to load attendees list.") :
+              Localization().getStringEx("panel.event2.detail.attendance.attendees.empty.text", "There are no users registered or attending for this event yet."),
+              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
           )
         ],)
       );
+    }
   }
 
   void _onTapAttendeeListItem(Event2Person person) {
@@ -189,35 +233,39 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       });
 
       if (_atendeesNetIds.contains(personNetId)) {
-        Events2().unattendEvent(eventId, person: person).then((dynamic result) {
+        Events2().unattendEvent(eventId, personIdentifier: person.identifier).then((dynamic result) {
           if (mounted) {
+              setState(() {
+                _processingNetIds.remove(personNetId);
+              });
+
             if (result == true) {
               setState(() {
                 _atendeesNetIds.remove(personNetId);
-                _processingNetIds.remove(personNetId);
+                if (personNetId == _processedNetId) {
+                  _processedNetId = null;
+                }
               });
             }
             else {
-              String title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
-              String message = (result is String) ? result : _internalErrorString;
-              Event2Popup.showMessage(context, title, message);
+              Event2Popup.showErrorResult(context, result);
             }
           }
         });
       }
       else {
-        Events2().attendEvent(eventId, person: person).then((dynamic result) {
+        Events2().attendEvent(eventId, personIdentifier: person.identifier).then((dynamic result) {
           if (mounted) {
+            setState(() {
+              _processingNetIds.remove(personNetId);
+            });
             if (result is Event2Person) {
               setState(() {
                 _atendeesNetIds.add(personNetId);
-                _processingNetIds.remove(personNetId);
               });
             }
             else {
-              String title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
-              String message = (result is String) ? result : _internalErrorString;
-              Event2Popup.showMessage(context, title, message);
+              Event2Popup.showErrorResult(context, result);
             }
           }
         });
@@ -274,7 +322,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       /* TMP Future.delayed(Duration(seconds: 1)).then((_) {
         int uin = 100000000 + Random().nextInt(900000000);
         _onScanFinished("$uin");
-      });*/
+      }); */
       
       String lineColor = UiColors.toHex(Styles().colors?.fillColorSecondary) ?? '#E84A27';
       String cancelButtonTitle = Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel');
@@ -294,23 +342,22 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         setState(() {
           _scanning = false;
         });
-        Event2Popup.showMessage(context, 
-          Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
-          Localization().getStringEx('panel.event2.detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.')
-        );
+        Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
       }
       else if (eventId == null) {
         setState(() {
           _scanning = false;
         });
-        Event2Popup.showMessage(context, 
-          Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
-          _internalErrorString
-        );
+
+        Event2Popup.showErrorResult(context, _internalErrorString);
       }
       else {
         Events2().attendEvent(eventId, uin: uin).then((result) {
           if (mounted) {
+            setState(() {
+              _scanning = false;
+            });
+
             String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
             if (attendeeNetId != null) {
 
@@ -327,17 +374,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
                 if (displayList != null) {
                   _displayList = displayList;
                 }
-                _scanning = false;
+                _processedNetId = attendeeNetId;
               });
+              _setupProcessedTimer();
             }
             else {
-              setState(() {
-                _scanning = false;
-              });
-              Event2Popup.showMessage(context, 
-                Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
-                (result is String) ? result : _internalErrorString
-              );
+              Event2Popup.showErrorResult(context, result);
             }
           }
         });
@@ -374,15 +416,56 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     }
     return null;
   }
+
+  void _setupProcessedTimer() {
+    if (_processedTimer != null) {
+      _processedTimer?.cancel();
+    }
+    _processedTimer = Timer(Duration(seconds: 5), (){
+      _processedTimer = null;
+      if (mounted) {
+        setState(() {
+          _processedNetId = null;
+        });
+      }
+    });
+  }
+
+  Future<void> _refresh() async {
+    String? eventId = widget.event?.id;
+    if (eventId != null) {
+      setStateIfMounted(() {
+        _loadingPeople = true;
+      });
+      dynamic result = await Events2().loadEventPeople(eventId);
+      if (mounted) {
+        if (result is Event2PersonsResult) {
+          setState(() {
+            _loadingPeople = false;
+            _persons = result;
+            _displayList = result.buildDisplayList();
+            _atendeesNetIds = Event2Person.netIdsFromList(result.attendees) ?? <String>{};
+          });
+        }
+        else {
+          setState(() {
+            _loadingPeople = false;
+            _errorMessage = StringUtils.isNotEmptyString(result) ? result : _internalErrorString;
+          });
+        }
+      }
+    }
+  }
 }
 
 class _AttendeeListItemWidget extends StatelessWidget {
   final Event2Person registrant;
   final bool? selected;
   final bool? processing;
+  final bool? highlighted;
   final void Function()? onTap;
   
-  _AttendeeListItemWidget(this.registrant, { Key? key, this.selected, this.processing, this.onTap }) : super(key: key);
+  _AttendeeListItemWidget(this.registrant, { Key? key, this.selected, this.processing, this.highlighted, this.onTap }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -399,19 +482,25 @@ class _AttendeeListItemWidget extends StatelessWidget {
   }
 
   Widget get _nameWidget {
-    List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.small.fat");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.title.small");
     String? registrantNetId = registrant.identifier?.netId;
-    if (registrantNetId != null) {
-      descriptionList.add(TextSpan(text: registrantNetId, style: boldStyle,));
-    }
-    return RichText(text: TextSpan(style: regularStyle, children: descriptionList));
+    return Text(registrantNetId ?? '', style: Styles().textStyles?.getTextStyle((highlighted == true) ? "widget.label.regular.fat" : "widget.card.title.small.fat"));
   }
 
   Widget get _checkMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-    Styles().images?.getImage((selected == true) ? 'check-circle-filled' : 'circle-outline-gray') ?? Container()
+    Styles().images?.getImage(_checkMarkImageKey) ?? Container()
   );
+
+  String get _checkMarkImageKey {
+    if (highlighted == true) {
+      return 'check-circle-outline';
+    }
+    else if (selected == true) {
+      return 'check-circle-filled';
+    }
+    else {
+      return 'circle-outline-gray';
+    }
+  }
 
   Widget get _progressMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18), child:
     SizedBox(width: 20, height: 20, child:

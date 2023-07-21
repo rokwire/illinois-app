@@ -315,26 +315,14 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
             _updatingRegistration = false;
           });
         }
-        String? title, message;
-        if (result is Event2) {
-          //title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
-          //message = Localization().getStringEx('panel.event2.update.registration.message.succeeded.message', 'Successfully updated \"{{event_name}}\" registration.').replaceAll('{{event_name}}', result.name ?? '');
-        }
-        else if (result is String) {
-          title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
-          message = result;
-        }
 
-        if (title != null) {
-          Event2Popup.showMessage(context, title, message).then((_) {
-            if (result is Event2) {
-              Navigator.of(context).pop(result);
-            }
-          });
-        }
-        else if (result is Event2) {
+        if (result is Event2) {
           Navigator.of(context).pop(result);
         }
+        else {
+          Event2Popup.showErrorResult(context, result);
+        }
+
       });
     }
   }
