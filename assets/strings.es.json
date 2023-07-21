@@ -1289,6 +1289,7 @@
     "panel.event2.detail.attendance.event.registrations.label.title": "TOTAL NUMBER OF REGISTRATIONS:",
     "panel.event2.detail.attendance.event.attendees.label.title": "TOTAL NUMBER OF ATTENDEES:",
     "panel.event2.detail.attendance.attendees.drop_down.hint": "ATTENDEE LIST",
+    "panel.event2.detail.attendance.attendees.empty.text": "There are no users registered for this event yet.",
     "panel.event2.detail.attendance.scan.button": "Scan Illini ID",
     "panel.event2.detail.attendance.attendees.description": "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.",
     "panel.event2.detail.attendance.additional.netids.label": "Netids for additional attendance takers:",
@@ -3698,6 +3699,7 @@
     "logic.calendar.create_event_failed": "No se pudo crear el evento.",
     "logic.calendar.permission_denied": "No se puede guardar el evento en el calendario. Permisos no concedidos.",
 
+    "logic.general.error": "Error",
     "logic.general.internal_error": "Error interno ocurrido",
     "logic.general.unknown_error": "Ocurrió un error desconocido",
     "logic.general.invalid_response": "Servidor inválido",
