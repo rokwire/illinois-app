@@ -59,7 +59,7 @@ class Event2FilterCommandButton extends StatelessWidget {
 
     if (StringUtils.isNotEmpty(title)) {
       contentList.add(
-        Text(title ?? '', style: Styles().textStyles?.getTextStyle(titleTextStyleKey),)
+        Text(title ?? '', style: Styles().textStyles?.getTextStyle(titleTextStyleKey), semanticsLabel: "",)
       );
     }
 
@@ -160,7 +160,9 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   @override
   Widget build(BuildContext context) => Semantics(label: _semanticsLabel, hint: _semanticsHint, button: true, child:
     InkWell(onTap: widget.onTap, child:
-      _contentWidget
+       Semantics(excludeSemantics: StringUtils.isNotEmpty(_semanticsLabel), child:
+        _contentWidget
+      )
     )
   );
 
@@ -217,8 +219,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       _pageHeadingWidget,
     ],);
 
-  String get _semanticsLabel => 'TODO Label';
-  String get _semanticsHint => 'TODO Hint';
+  String get _semanticsLabel => '';//'''TODO custom label if needed';
+  String get _semanticsHint => '';//'''TODO custom hint if needed';
 
   Decoration get _listContentDecoration => BoxDecoration(
     color: Styles().colors?.surface,
