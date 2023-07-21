@@ -217,25 +217,11 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
             _updatingAttendance = false;
           });
         }
-        String? title, message;
         if (result is Event2) {
-          //title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
-          //message = Localization().getStringEx('panel.event2.update.attendance.message.succeeded.message', 'Successfully updated \"{{event_name}}\" attendance.').replaceAll('{{event_name}}', result.name ?? '');
-        }
-        else if (result is String) {
-          title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
-          message = result;
-        }
-
-        if (title != null) {
-          Event2Popup.showMessage(context, title, message).then((_) {
-            if (result is Event2) {
-              Navigator.of(context).pop(result);
-            }
-          });
-        }
-        else if (result is Event2) {
           Navigator.of(context).pop(result);
+        }
+        else {
+          Event2Popup.showErrorResult(context, result);
         }
       });
     }

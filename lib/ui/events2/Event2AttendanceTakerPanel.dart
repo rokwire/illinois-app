@@ -68,7 +68,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
           else {
             setState(() {
               _loadingPeople = false;
-              _errorMessage = (result is String) ? result : _internalErrorString;
+              _errorMessage = StringUtils.isNotEmptyString(result) ? result : _internalErrorString;
             });
           }
         }
@@ -201,9 +201,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
               });
             }
             else {
-              String title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
-              String message = (result is String) ? result : _internalErrorString;
-              Event2Popup.showMessage(context, title, message);
+              Event2Popup.showErrorResult(context, result);
             }
           }
         });
@@ -220,9 +218,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
               });
             }
             else {
-              String title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
-              String message = (result is String) ? result : _internalErrorString;
-              Event2Popup.showMessage(context, title, message);
+              Event2Popup.showErrorResult(context, result);
             }
           }
         });
@@ -299,23 +295,22 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         setState(() {
           _scanning = false;
         });
-        Event2Popup.showMessage(context, 
-          Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
-          Localization().getStringEx('panel.event2.detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.')
-        );
+        Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
       }
       else if (eventId == null) {
         setState(() {
           _scanning = false;
         });
-        Event2Popup.showMessage(context, 
-          Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
-          _internalErrorString
-        );
+
+        Event2Popup.showErrorResult(context, _internalErrorString);
       }
       else {
         Events2().attendEvent(eventId, uin: uin).then((result) {
           if (mounted) {
+            setState(() {
+              _scanning = false;
+            });
+
             String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
             if (attendeeNetId != null) {
 
@@ -332,17 +327,10 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
                 if (displayList != null) {
                   _displayList = displayList;
                 }
-                _scanning = false;
               });
             }
             else {
-              setState(() {
-                _scanning = false;
-              });
-              Event2Popup.showMessage(context, 
-                Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
-                (result is String) ? result : _internalErrorString
-              );
+              Event2Popup.showErrorResult(context, result);
             }
           }
         });
