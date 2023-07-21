@@ -11,6 +11,7 @@ import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -68,8 +69,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       _refreshEvent(visibleProgress: true);
     }
 
-    _userLocation = widget.userLocation;
-    // TBD: load user location if not supplied but available
+    if ((_userLocation = widget.userLocation) == null) {
+      Event2HomePanel.getUserLocationIfAvailable().then((Position? userLocation) {
+        setStateIfMounted(() {
+          _userLocation = userLocation;
+        });
+      });
+    }
 
     super.initState();
   }
