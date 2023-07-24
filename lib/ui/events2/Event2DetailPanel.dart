@@ -14,6 +14,7 @@ import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
+import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -56,6 +57,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool _authLoading = false;
   bool _registrationLoading = false;
   bool _eventLoading = false;
+  bool _eventProcessing = false;
 
   @override
   void initState() {
@@ -66,7 +68,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     
     _event = widget.event;
     if ((_event == null) && StringUtils.isNotEmpty(widget.eventId)) {
-      _refreshEvent(visibleProgress: true);
+      _refreshEvent(progress: (bool value) => (_eventLoading = value));
     }
 
     if ((_userLocation = widget.userLocation) == null) {
@@ -92,7 +94,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() { });
     } else if(name == Auth2.notifyLoginChanged){
-      _refreshEvent(visibleProgress: true);
+      _refreshEvent(progress: (bool value) => (_eventProcessing = value));
     }
   }
   
@@ -162,7 +164,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
         ),
       ),
-      _favoriteButton
+      Stack(children: [
+        _favoriteButton,
+        _processingWidget,
+      ],)
     ]);
 
   List<String>? get _displayCategories =>
@@ -170,7 +175,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Widget get _favoriteButton {
     bool isFavorite = Auth2().isFavorite(_event);
-    return Opacity(opacity: Auth2().canFavorite ? 1 : 0, child:
+    return Opacity(opacity: (Auth2().canFavorite && !_eventProcessing) ? 1 : 0, child:
       Semantics(container: true,
         child: Semantics(
           label: isFavorite ?
@@ -189,6 +194,16 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       )
     );
   }
+
+  Widget get _processingWidget => Visibility(visible: _eventProcessing, child:
+    Positioned.fill(child:
+      Center(child:
+        SizedBox(width: 18, height: 18, child:
+          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+        ),
+      ),
+    ),
+  );
 
   Widget get _titleWidget => Row(children: [
     Expanded(child: 
@@ -591,34 +606,64 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onRegister() {
     Analytics().logSelect(target: 'Register me');
-    _invokeEventsAPI(Events2().registerToEvent, onUpdateProgress: (bool value) => (_registrationLoading = value));
+
+    if ((_eventId != null) && !_registrationLoading) {
+        setStateIfMounted(() {
+          _registrationLoading = true;
+        });
+
+      Events2().registerToEvent(_eventId!).then((result) {
+        if (mounted) {
+            
+          if (result == true) {
+            Events2().loadEvent(_eventId!).then((Event2? event) {
+              if (mounted) {
+                setState(() {
+                  if (event != null) {
+                    _event = event;
+                  }
+                  _registrationLoading = false;
+                });
+              }
+            });
+          }
+          else {
+            setState(() {
+              _registrationLoading = false;
+            });
+            Event2Popup.showErrorResult(context, result);
+          }
+        }
+      });
+    }
   }
 
   void _onUnregister() {
     Analytics().logSelect(target: 'Unregister me');
-    _invokeEventsAPI(Events2().unregisterFromEvent, onUpdateProgress: (bool value) => (_registrationLoading = value));
-  }
-
-  void _invokeEventsAPI(Future<dynamic> Function(String eventId) api, { void Function(bool)? onUpdateProgress }) {
-    if (_eventId != null) {
-      if (onUpdateProgress != null) {
+    if ((_eventId != null) && !_registrationLoading) {
         setStateIfMounted(() {
-          onUpdateProgress(true);
+          _registrationLoading = true;
         });
-      }
 
-      Events2().registerToEvent(_eventId!).then((result) {
+      Events2().unregisterFromEvent(_eventId!).then((result) {
         if (mounted) {
-          if (onUpdateProgress != null) {
-            setState(() {
-              onUpdateProgress(false);
-            });
-          }
             
           if (result == true) {
-            _refreshEvent();
+            Events2().loadEvent(_eventId!).then((Event2? event) {
+              if (mounted) {
+                setState(() {
+                  if (event != null) {
+                    _event = event;
+                  }
+                  _registrationLoading = false;
+                });
+              }
+            });
           }
           else {
+            setState(() {
+              _registrationLoading = false;
+            });
             Event2Popup.showErrorResult(context, result);
           }
         }
@@ -682,7 +727,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onSettingPromote(){
-    //TBD
   }
 
   void _onSettingEventRegistration(){
@@ -710,12 +754,47 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onSettingSurvey(){
-    //TBD
+    Analytics().logSelect(target: "Event Survey");
+    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+      event: _event,
+    ))).then((Event2? event) {
+      if (event != null)
+      setStateIfMounted(() {
+        _event = event;
+      });
+    });
   }
 
   void _onSettingDeleteEvent(){
     Analytics().logSelect(target: 'Delete Event');
-    _invokeEventsAPI(Events2().deleteEvent, onUpdateProgress: (bool value) => (_eventLoading = value));
+
+    if (_eventId != null) {
+      Event2Popup.showPrompt(context,
+        Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
+        Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
+      ).then((bool? result) {
+        if (result == true) {
+          setStateIfMounted(() {
+            _eventProcessing = true;
+          });
+
+          Events2().deleteEvent(_eventId!).then((result) {
+            if (mounted) {
+              setState(() {
+                _eventProcessing = false;
+              });
+                
+              if (result == true) {
+                Navigator.pop(context);
+              }
+              else {
+                Event2Popup.showErrorResult(context, result);
+              }
+            }
+          });
+        }
+      });
+    }
   }
 
   void _onTapTakeAttendance() {
@@ -725,19 +804,19 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   //loading
 
-  Future<void> _refreshEvent({bool visibleProgress = false}) async {
+  Future<void> _refreshEvent({void Function(bool)? progress}) async {
     if (_eventId != null) {
-      if (visibleProgress) {
+      if (progress != null) {
         setStateIfMounted(() {
-          _eventLoading = true;
+          progress(true);
         });
       }
 
       Event2? event = await Events2().loadEvent(_eventId!);
 
       setStateIfMounted(() {
-        if (visibleProgress) {
-          _eventLoading = true;
+        if (progress != null) {
+          progress(false);
         }
         if (event != null) {
           _event = event;

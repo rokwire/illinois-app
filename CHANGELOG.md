@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed register/unregister/delete in Event2DetailPanel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Changed
+- Prompt before deleting an Event2 [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Added
+- Hooked up follow-up survery in Event2DetailPanel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
 ## [5.0.33] - 2023-07-21
 ### Changed
 - Attendance taking UI improvements [#3300](https://github.com/rokwire/illinois-app/issues/3300).
