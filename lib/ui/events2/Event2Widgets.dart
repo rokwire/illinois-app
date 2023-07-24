@@ -431,4 +431,37 @@ class Event2Popup {
       StringUtils.isNotEmptyString(result) ? result : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
     );
 
+  static Future<bool?> showPrompt(BuildContext context, String title, String? message, {
+    String? positiveButtonTitle, String? positiveAnalyticsTitle,
+    String? negativeButtonTitle, String? negativeAnalyticsTitle,
+  }) async {
+    return showDialog<bool?>(context: context, builder: (BuildContext context) => AlertDialog(
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),),
+        (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
+          Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
+        ) : Container()
+      ],),
+      actions: <Widget>[
+        TextButton(
+          child: Text(positiveButtonTitle ?? Localization().getStringEx("dialog.ok.title", "OK"), style:
+            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+          ),
+          onPressed: () {
+            Analytics().logAlert(text: message, selection: positiveAnalyticsTitle ?? positiveButtonTitle ?? "OK");
+            Navigator.pop(context, true);
+          }
+        ),
+        TextButton(
+          child: Text(negativeButtonTitle ?? Localization().getStringEx("dialog.cancel.title", "Cancel"), style:
+            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+          ),
+          onPressed: () {
+            Analytics().logAlert(text: message, selection: negativeAnalyticsTitle ?? negativeButtonTitle ?? "Cancel");
+            Navigator.pop(context, false);
+          }
+        )
+      ],
+    ));
+  }
 }

@@ -36,18 +36,31 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   final TextEditingController _capacityController = TextEditingController();
   final TextEditingController _registrantsController = TextEditingController();
 
-  bool _updatingRegistration = false;
+  late Event2RegistrationType _initialRegistrationType;
+  late String _initialLabel;
+  late String _initialLink;
+  late String _initialCapacity;
+  late String _initialRegistrants;
 
+  bool _modified = false;
+  bool _updatingRegistration = false;
+  
   @override
   void initState() {
-    _registrationType = widget.details?.type ?? Event2RegistrationType.none;
+    _registrationType = _initialRegistrationType = widget.details?.type ?? Event2RegistrationType.none;
     
-    _labelController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.label != null)) ? '${widget.details?.label}' : '';
-    _linkController.text = ((_registrationType == Event2RegistrationType.external) && (widget.details?.externalLink != null)) ? '${widget.details?.externalLink}' : '';
-    _capacityController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.eventCapacity != null)) ? '${widget.details?.eventCapacity}' : '';
-    _registrantsController.text = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.registrants != null)) ? (widget.details?.registrants?.join(' ') ?? '')  : '';
+    _labelController.text = _initialLabel = ((_registrationType == Event2RegistrationType.external) && (widget.details?.label != null)) ? '${widget.details?.label}' : '';
+    _linkController.text = _initialLink = ((_registrationType == Event2RegistrationType.external) && (widget.details?.externalLink != null)) ? '${widget.details?.externalLink}' : '';
+    _capacityController.text = _initialCapacity = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.eventCapacity != null)) ? '${widget.details?.eventCapacity}' : '';
+    _registrantsController.text = _initialRegistrants = ((_registrationType == Event2RegistrationType.internal) && (widget.details?.registrants != null)) ? (widget.details?.registrants?.join(' ') ?? '')  : '';
 
-    
+    if (_isEditing) {
+      _labelController.addListener(_checkModified);
+      _linkController.addListener(_checkModified);
+      _capacityController.addListener(_checkModified);
+      _registrantsController.addListener(_checkModified);
+    }
+
     super.initState();
   }
 
@@ -142,6 +155,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       setState(() {
         _registrationType = value;
       });
+      _checkModified();
     }
   }
 
@@ -192,7 +206,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
             Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY')),
           ),
           Expanded(child:
-            Event2CreatePanel.buildTextEditWidget(_capacityController),
+            Event2CreatePanel.buildTextEditWidget(_capacityController, keyboardType: TextInputType.number),
           )
         ],)
       ),
@@ -287,13 +301,41 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     actions: _headerBarActions,
   );
 
-  List<Widget>? get _headerBarActions => _isEditing ? [ _updatingRegistration ?
-    Event2CreatePanel.buildHeaderBarActionProgress() :
-    Event2CreatePanel.buildHeaderBarActionButton(
-      title: Localization().getStringEx('dialog.apply.title', 'Apply'),
-      onTap: _onHeaderBarApply,
-    )
-  ] : null;
+  List<Widget>? get _headerBarActions {
+    if (_updatingRegistration) {
+      return [Event2CreatePanel.buildHeaderBarActionProgress()];
+    }
+    else if (_isEditing && _modified) {
+      return [Event2CreatePanel.buildHeaderBarActionButton(
+        title: Localization().getStringEx('dialog.apply.title', 'Apply'),
+        onTap: _onHeaderBarApply,
+      )];
+    }
+    else {
+      return null;
+    }
+  }
+  
+  void _checkModified() {
+    if (_isEditing && mounted) {
+      String currentLabel = (_registrationType == Event2RegistrationType.external) ? _labelController.text : '';
+      String currentLink = (_registrationType == Event2RegistrationType.external) ? _linkController.text : '';
+      String currentCapacity = (_registrationType == Event2RegistrationType.internal) ? _capacityController.text : '';
+      String currentRegistrants = (_registrationType == Event2RegistrationType.internal) ? _registrantsController.text : '';
+      
+      bool modified = (_registrationType != _initialRegistrationType) ||
+        (currentLabel != _initialLabel) ||
+        (currentLink != _initialLink) ||
+        (currentCapacity != _initialCapacity) ||
+        (currentRegistrants != _initialRegistrants);
+
+      if (_modified != modified) {
+        setState(() {
+          _modified = modified;
+        });
+      }
+    }
+  }
 
   // For new registration details we must return non-zero instance, for update we 
   Event2RegistrationDetails _buildRegistrationDetails() => Event2RegistrationDetails(
