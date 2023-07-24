@@ -192,7 +192,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
             Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY')),
           ),
           Expanded(child:
-            Event2CreatePanel.buildTextEditWidget(_capacityController),
+            Event2CreatePanel.buildTextEditWidget(_capacityController, keyboardType: TextInputType.number),
           )
         ],)
       ),
