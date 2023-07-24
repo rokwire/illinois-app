@@ -1252,9 +1252,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     Navigator.push<Event2RegistrationDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
       registrationDetails: _registrationDetails,
     ))).then((Event2RegistrationDetails? result) {
-      setStateIfMounted(() {
-        _registrationDetails = result;
-      });
+      if ((result != null) && mounted) {
+        setState(() {
+          _registrationDetails = result;
+        });
+      }
     });
   }
 
@@ -1275,9 +1277,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
     ))).then((Event2AttendanceDetails? result) {
-      setStateIfMounted(() {
-        _attendanceDetails = result;
-      });
+      if ((result != null) && mounted) {
+        setState(() {
+          _attendanceDetails = result;
+        });
+      }
     });
   }
 
@@ -1286,7 +1290,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Widget  _buildSurveyButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.survey.title', 'EVENT FOLLOW-UP SURVEY'),
-      subTitle: Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event'),
+      subTitle: (_surveyDetails?.isNotEmpty ?? false) ?
+        Localization().getStringEx('panel.event2.create.button.survey.confirmation', 'Follow-up survey set up.') :
+        Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event'),
       onTap: _onEventSurvey,
     ),
   );
@@ -1294,11 +1300,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventSurvey() {
     Analytics().logSelect(target: "Event Follow-Up Survey");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(details: _surveyDetails
+    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(surveyDetails: _surveyDetails
     ))).then((Event2SurveyDetails? result) {
-      setStateIfMounted(() {
-        _surveyDetails = result;
-      });
+      if ((result != null) && mounted) {
+        setState(() {
+          _surveyDetails = result;
+        });
+      }
     });
   }
 
@@ -1663,7 +1671,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
       registrationDetails: (_registrationDetails?.type != Event2RegistrationType.none) ? _registrationDetails : null,
       attendanceDetails: (_attendanceDetails?.isNotEmpty ?? false) ? _attendanceDetails : null,
-      surveyDetails: (_surveyDetails?.hasSurvey == true) ? _surveyDetails : null,
+      surveyDetails: (_surveyDetails?.isNotEmpty ?? false) ? _surveyDetails : null,
 
       sponsor: _sponsor,
       speaker: _speaker,

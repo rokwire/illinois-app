@@ -14,6 +14,7 @@ import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
+import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -753,7 +754,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onSettingSurvey(){
-    //TBD
+    Analytics().logSelect(target: "Event Survey");
+    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+      event: _event,
+    ))).then((Event2? event) {
+      if (event != null)
+      setStateIfMounted(() {
+        _event = event;
+      });
+    });
   }
 
   void _onSettingDeleteEvent(){
