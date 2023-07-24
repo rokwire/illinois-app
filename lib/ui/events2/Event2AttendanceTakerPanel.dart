@@ -421,7 +421,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     if (_processedTimer != null) {
       _processedTimer?.cancel();
     }
-    _processedTimer = Timer(Duration(seconds: 5), (){
+    _processedTimer = Timer(Duration(seconds: 3), (){
       _processedTimer = null;
       if (mounted) {
         setState(() {
