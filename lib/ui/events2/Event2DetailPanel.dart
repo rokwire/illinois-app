@@ -760,22 +760,29 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Analytics().logSelect(target: 'Delete Event');
 
     if (_eventId != null) {
-        setStateIfMounted(() {
-          _eventProcessing = true;
-        });
-
-      Events2().deleteEvent(_eventId!).then((result) {
-        if (mounted) {
-          setState(() {
-            _eventProcessing = false;
+      Event2Popup.showPrompt(context,
+        Localization().getStringEx('panel.event2.detail.general.prompt.delete.title', 'Delete'),
+        Localization().getStringEx('panel.event2.detail.general.prompt.delete.message', 'Are you sure you want to delete this event and all data associated with it? This action cannot be undone.'),
+      ).then((bool? result) {
+        if (result == true) {
+          setStateIfMounted(() {
+            _eventProcessing = true;
           });
-            
-          if (result == true) {
-            Navigator.pop(context);
-          }
-          else {
-            Event2Popup.showErrorResult(context, result);
-          }
+
+          Events2().deleteEvent(_eventId!).then((result) {
+            if (mounted) {
+              setState(() {
+                _eventProcessing = false;
+              });
+                
+              if (result == true) {
+                Navigator.pop(context);
+              }
+              else {
+                Event2Popup.showErrorResult(context, result);
+              }
+            }
+          });
         }
       });
     }
