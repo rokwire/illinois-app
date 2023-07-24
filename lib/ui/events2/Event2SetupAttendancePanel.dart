@@ -34,15 +34,23 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   
   final TextEditingController _attendanceTakersController = TextEditingController();
 
+  late bool _initialScanningEnabled;
+  late bool _initialManualCheckEnabled;
+  late String _initialAttendanceTakers;
+
   final StreamController<String> _updateController = StreamController.broadcast();
 
+  bool _modified = false;
   bool _updatingAttendance = false;
 
   @override
   void initState() {
-    _scanningEnabled = widget.details?.scanningEnabled ?? false;
-    _manualCheckEnabled = widget.details?.manualCheckEnabled ?? false;
-    _attendanceTakersController.text = widget.details?.attendanceTakers?.join(' ') ?? '';
+    _scanningEnabled = _initialScanningEnabled = widget.details?.scanningEnabled ?? false;
+    _manualCheckEnabled = _initialManualCheckEnabled = widget.details?.manualCheckEnabled ?? false;
+    _attendanceTakersController.text = _initialAttendanceTakers = widget.details?.attendanceTakers?.join(' ') ?? '';
+    if (_isEditing) {
+      _attendanceTakersController.addListener(_checkModified);
+    }
     super.initState();
   }
 
@@ -110,6 +118,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     setStateIfMounted(() {
       _scanningEnabled = !_scanningEnabled;
     });
+    _checkModified();
   }
 
   // Manual
@@ -138,6 +147,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     setStateIfMounted(() {
       _manualCheckEnabled = !_manualCheckEnabled;
     });
+    _checkModified();
   }
 
   // Attendance Taker
@@ -200,13 +210,35 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     actions: _headerBarActions,
   );
 
-  List<Widget>? get _headerBarActions => _isEditing ? [ _updatingAttendance ?
-    Event2CreatePanel.buildHeaderBarActionProgress() :
-    Event2CreatePanel.buildHeaderBarActionButton(
-      title: Localization().getStringEx('dialog.apply.title', 'Apply'),
-      onTap: _onHeaderBarApply,
-    )
-  ] : null;
+  List<Widget>? get _headerBarActions {
+    if (_updatingAttendance) {
+      return [Event2CreatePanel.buildHeaderBarActionProgress()];  
+    }
+    else if (_isEditing && _modified) {
+      return [Event2CreatePanel.buildHeaderBarActionButton(
+        title: Localization().getStringEx('dialog.apply.title', 'Apply'),
+        onTap: _onHeaderBarApply,
+      )];
+    }
+    else {
+      return null;
+    }
+  }
+  
+  void _checkModified() {
+    if (_isEditing && mounted) {
+      
+      bool modified = (_scanningEnabled != _initialScanningEnabled) ||
+        (_manualCheckEnabled != _initialManualCheckEnabled) ||
+        (_attendanceTakersController.text != _initialAttendanceTakers);
+
+      if (_modified != modified) {
+        setState(() {
+          _modified = modified;
+        });
+      }
+    }
+  }
 
   // For new registration details we must return non-zero instance, for update we 
   Event2AttendanceDetails _buildAttendanceDetails() => Event2AttendanceDetails(
