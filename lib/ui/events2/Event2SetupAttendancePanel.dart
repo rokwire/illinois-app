@@ -195,7 +195,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   bool get _isEditing => StringUtils.isNotEmpty(widget.event?.id);
 
   PreferredSizeWidget get _headerBar => HeaderBar(
-    title: Localization().getStringEx("panel.event2.setup.registration.header.title", "Event Registration"),
+    title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"),
     onLeading: _onHeaderBarBack,
     actions: _headerBarActions,
   );
