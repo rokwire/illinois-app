@@ -1541,9 +1541,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
-  Future<void> _showPopup(String title, String? message) =>
-    Event2Popup.showMessage(context, title, message);
-
   void _onTapCreateEvent() {
     Analytics().logSelect(target: widget.isCreate ? "Create Event" : "Update Event");
     Event2CreatePanel.hideKeyboard(context);
@@ -1557,12 +1554,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           _creatingEvent = false;
         });
 
-        String? title, message;
         if (result is Event2) {
-          //title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
-          //message = widget.isCreate ? 
-          //  Localization().getStringEx('panel.event2.create.message.succeeded.message', 'Successfully created {{event_name}} event').replaceAll('{{event_name}}', result.name ?? '') :
-          //  Localization().getStringEx('panel.event2.update.message.succeeded.message', 'Successfully updated {{event_name}} event').replaceAll('{{event_name}}', result.name ?? '');
           if (widget.isCreate) {
             Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
           }
@@ -1570,22 +1562,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             Navigator.of(context).pop();
           }
         }
-        else if (result is String) {
-          title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
-          message = result;
-        }
-
-        if (title != null) {
-          _showPopup(title, message).then((_) {
-            if (result is Event2) {
-              if (widget.isCreate) {
-                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
-              }
-              else {
-                Navigator.of(context).pop();
-              }
-            }
-          });
+        else  {
+          Event2Popup.showErrorResult(context, result);
         }
       }
     });

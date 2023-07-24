@@ -403,6 +403,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 enum Event2CardDisplayMode { list, page }
 
 class Event2Popup {
+  
   static Future<void> showMessage(BuildContext context, String title, String? message) =>
     showDialog(context: context, builder: (BuildContext context) => AlertDialog(
       content: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -423,5 +424,11 @@ class Event2Popup {
         )
       ],
     ));
+
+  static Future<void> showErrorResult(BuildContext context, dynamic result) =>
+    showMessage(context,
+      Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
+      StringUtils.isNotEmptyString(result) ? result : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
+    );
 
 }
