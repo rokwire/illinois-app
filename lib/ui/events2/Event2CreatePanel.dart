@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -26,10 +27,12 @@ import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -416,11 +419,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Event2RegistrationDetails? _registrationDetails;
   Event2AttendanceDetails? _attendanceDetails;
+  Event2SurveyDetails? _surveyDetails;
 
   String? _sponsor;
   String? _speaker;
   List<Event2Contact>? _contacts;
-  Event2SurveyDetails? _surveyDetails;
   // Explore? _locationExplore;
 
   late List<String> _errorList;
@@ -444,6 +447,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   bool _dateTimeSectionExpanded = false;
   bool _typeAndLocationSectionExpanded = false;
   bool _costSectionExpanded = false;
+
+  List<Survey> _surveysCache = <Survey>[];
 
   @override
   void initState() {
@@ -503,6 +508,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     _costSectionExpanded = widget.isUpdate;
 
     _errorList = _buildErrorList();
+
+    if (_surveyDetails?.surveyId != null) {
+      Surveys().loadSurveys().then((List<Survey>? surveys) {
+        if (surveys != null) {
+          setState(() {
+           _surveysCache = surveys;
+          });
+        }
+      });
+    }
 
     super.initState();
   }
@@ -832,8 +847,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = now;
     DateTime maxDate = ((_endDate != null) && now.isBefore(_endDate!)) ? _endDate! : now.add(Duration(days: 366));
+    DateTime selectedDate = (_startDate != null) ? DateTimeUtils.min(DateTimeUtils.max(_startDate!, minDate), maxDate) : minDate;
     showDatePicker(context: context,
-      initialDate: _startDate ?? minDate,
+      initialDate: selectedDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
@@ -865,8 +881,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = (_startDate != null) ? DateTimeUtils.max(_startDate!, now) : now;
     DateTime maxDate = minDate.add(Duration(days: 366));
+    DateTime selectedDate = (_endDate != null) ? DateTimeUtils.min(DateTimeUtils.max(_endDate!, minDate), maxDate) : minDate;
     showDatePicker(context: context,
-      initialDate: _endDate ?? minDate,
+      initialDate: selectedDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
@@ -1287,20 +1304,32 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Follow-Up Survey
 
-  Widget  _buildSurveyButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
-    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.button.survey.title', 'EVENT FOLLOW-UP SURVEY'),
-      subTitle: (_surveyDetails?.isNotEmpty ?? false) ?
-        Localization().getStringEx('panel.event2.create.button.survey.confirmation', 'Follow-up survey set up.') :
-        Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event'),
-      onTap: _onEventSurvey,
-    ),
-  );
+  Widget  _buildSurveyButtonSection() {
+    String? subTitle;
+    if (_surveyDetails?.isEmpty ?? true) {
+      subTitle = Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event');
+    }
+    else {
+      String? surveyName = _surveysCache.isNotEmpty ? Survey.findInList(_surveysCache, id: _surveyDetails?.surveyId)?.displayTitle : null;
+      subTitle = ((surveyName != null) && surveyName.isNotEmpty) ?
+        Localization().getStringEx('panel.event2.create.button.survey.confirmation2', 'Follow-up survey: {{survey_name}}.').replaceAll('{{survey_name}}', surveyName) :
+        Localization().getStringEx('panel.event2.create.button.survey.confirmation', 'Follow-up survey set up.');
+    }
+    return Event2CreatePanel.buildButtonSectionWidget(
+      heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+        title: Localization().getStringEx('panel.event2.create.button.survey.title', 'EVENT FOLLOW-UP SURVEY'),
+        subTitle: subTitle,
+        onTap: _onEventSurvey,
+      ),
+    );
+  }
 
   void _onEventSurvey() {
     Analytics().logSelect(target: "Event Follow-Up Survey");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(surveyDetails: _surveyDetails
+    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+      surveyDetails: _surveyDetails,
+      surveysCache: _surveysCache,
     ))).then((Event2SurveyDetails? result) {
       if ((result != null) && mounted) {
         setState(() {
@@ -1567,7 +1596,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
           }
           else {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(result);
           }
         }
         else  {
