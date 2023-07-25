@@ -1189,6 +1189,7 @@
     "panel.event2.create.button.survey.title": "EVENT FOLLOW-UP SURVEY",
     "panel.event2.create.button.survey.description": "Receive feedback about your event.",
     "panel.event2.create.button.survey.confirmation": "Follow-up survey set up.",
+    "panel.event2.create.button.survey.confirmation2": "Follow-up survey: {{survey_name}}.",
     "panel.event2.create.label.event_type.title": "EVENT TYPE",
     "panel.event2.create.online_details.url.title": "ONLINE URL",
     "panel.event2.create.online_details.meeting_id.title": "MEETING ID",
@@ -1253,6 +1254,9 @@
     "panel.event2.setup.survey.survey.title": "SURVEY",
     "panel.event2.setup.survey.apply.button": "Apply",
     "panel.event2.setup.survey.hours.invalid.msg": "Please, fill valid non-negative number for hours.",
+    "panel.event2.setup.survey.surveys.failed.msg": "Failed to load available surveys.",
+    "panel.event2.setup.survey.surveys.empty.msg": "There are no surveys available.",
+    "panel.event2.setup.survey.no_survey.title": "---",
 
     "panel.event2.attributes.attributes.header.title": "Event Attributes",
 	"panel.event2.attributes.attributes.header.description": "Choose one or more attributes that help describe this event",
