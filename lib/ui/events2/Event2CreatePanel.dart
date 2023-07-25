@@ -847,8 +847,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = now;
     DateTime maxDate = ((_endDate != null) && now.isBefore(_endDate!)) ? _endDate! : now.add(Duration(days: 366));
+    DateTime selectedDate = (_startDate != null) ? DateTimeUtils.min(DateTimeUtils.max(_startDate!, minDate), maxDate) : minDate;
     showDatePicker(context: context,
-      initialDate: _startDate ?? minDate,
+      initialDate: selectedDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
@@ -880,8 +881,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = (_startDate != null) ? DateTimeUtils.max(_startDate!, now) : now;
     DateTime maxDate = minDate.add(Duration(days: 366));
+    DateTime selectedDate = (_endDate != null) ? DateTimeUtils.min(DateTimeUtils.max(_endDate!, minDate), maxDate) : minDate;
     showDatePicker(context: context,
-      initialDate: _endDate ?? minDate,
+      initialDate: selectedDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
