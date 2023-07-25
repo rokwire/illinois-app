@@ -1189,6 +1189,7 @@
     "panel.event2.create.button.survey.title": "EVENT FOLLOW-UP SURVEY",
     "panel.event2.create.button.survey.description": "Receive feedback about your event.",
     "panel.event2.create.button.survey.confirmation": "Follow-up survey set up.",
+    "panel.event2.create.button.survey.confirmation2": "Follow-up survey: {{survey_name}}.",
     "panel.event2.create.label.event_type.title": "EVENT TYPE",
     "panel.event2.create.online_details.url.title": "ONLINE URL",
     "panel.event2.create.online_details.meeting_id.title": "MEETING ID",

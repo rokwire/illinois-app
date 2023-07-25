@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -31,8 +32,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Event2SetupSurveyPanel extends StatefulWidget {
   final Event2? event;
   final Event2SurveyDetails? surveyDetails;
+  final List<Survey>? surveysCache;
 
-  Event2SetupSurveyPanel({Key? key, this.event, this.surveyDetails}) : super(key: key);
+  Event2SetupSurveyPanel({Key? key, this.event, this.surveyDetails, this.surveysCache}) : super(key: key);
 
   Event2SurveyDetails? get details => (event?.id != null) ? event?.surveyDetails : surveyDetails;
 
@@ -56,21 +58,33 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   @override
   void initState() {
+    
     _initialSurveyId = widget.details?.surveyId;
+    
     _hoursController.text = _initialHours = widget.details?.hoursAfterEvent?.toString() ?? '';
     if (_isEditing) {
       _hoursController.addListener(_checkModified);
     }
 
-    _loadingSurveys = true;
-    Surveys().loadSurveys().then((surveys) {
-      setStateIfMounted(() {
-        _surveys = surveys;
-        _survey = ((_surveys != null) && (_initialSurveyId != null)) ? Survey.findInList(_surveys, id: _initialSurveyId) : null;
-        _loadingSurveys = false;
-      });
+    if ((widget.surveysCache != null) && (widget.surveysCache?.isNotEmpty == true)) {
+      _surveys = widget.surveysCache;
+      _survey = (_initialSurveyId != null) ? Survey.findInList(_surveys, id: _initialSurveyId) : null;
       _checkModified();
-    });
+    }
+    else {
+      _loadingSurveys = true;
+      Surveys().loadSurveys().then((List<Survey>? surveys) {
+        if ((widget.surveysCache != null) && (widget.surveysCache?.isEmpty == true) && (surveys != null)) {
+          widget.surveysCache?.addAll(surveys);
+        }
+        setStateIfMounted(() {
+          _surveys = surveys;
+          _survey = ((_surveys != null) && (_initialSurveyId != null)) ? Survey.findInList(_surveys, id: _initialSurveyId) : null;
+          _loadingSurveys = false;
+        });
+        _checkModified();
+      });
+    }
 
     super.initState();
   }
@@ -322,20 +336,6 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       if (_checkSurveyDetails(surveyDetails)) {
         Navigator.of(context).pop(surveyDetails);
       }
-    }
-  }
-}
-
-extension SurveyExt on Survey {
-  String? get displayTitle {
-    if (StringUtils.isNotEmpty(title)) {
-      return title;
-    }
-    else if (StringUtils.isNotEmpty(id)) {
-      return id;
-    }
-    else {
-      return null;
     }
   }
 }
