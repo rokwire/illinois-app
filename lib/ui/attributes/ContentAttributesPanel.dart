@@ -107,8 +107,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     if (StringUtils.isNotEmpty(widget.description)) {
       conentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
-      ));
+        Semantics(header: true, child:
+          Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
+      )));
     }
 
     List<ContentAttribute>? attributes = ListUtils.from<ContentAttribute>(widget.contentAttributes?.attributes);
@@ -350,7 +351,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) =>
-    Semantics(label: title, button: true, excludeSemantics: true, child: 
+    Semantics(label: title, button: true, child:
       InkWell(onTap: onTap, child:
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
@@ -358,7 +359,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
               Container(
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat"),
+                  semanticsLabel: "",
                 ),
               ),
             ],)
@@ -383,14 +385,16 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     List<Widget> commands = <Widget>[
       Row(children: <Widget>[
         Expanded(flex: 1, child: Container()),
-        Expanded(flex: 2, child: RoundedButton(
-          label: applyTitle,
-          textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
-          backgroundColor: Styles().colors?.white,
-          enabled: canApply,
-          onTap: _onTapApply
-        )),
+        Expanded(flex: 2, child:
+          Semantics(button: true, child: //Fix default focus goes to Filter button when open panel
+            RoundedButton(
+              label: applyTitle,
+              textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+              borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
+              backgroundColor: Styles().colors?.white,
+              enabled: canApply,
+              onTap: _onTapApply
+        ))),
         Expanded(flex: 1, child: Container()),
       ],)
     ];
@@ -406,9 +410,10 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     return SafeArea(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: bottomPadding), child:
-        Column(mainAxisSize: MainAxisSize.min, children: commands,)
+        Semantics(container: true, child:  //Fix default focus goes to Filter button when open panel
+          Column(mainAxisSize: MainAxisSize.min, children: commands,)
       )
-    );
+    ));
   }
 
   void _onTapApply() {
