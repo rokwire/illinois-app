@@ -1594,7 +1594,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
           }
           else {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(result);
           }
         }
         else  {

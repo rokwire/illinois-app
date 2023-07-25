@@ -723,7 +723,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingEditEvent(){
     Analytics().logSelect(target: "Edit event");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event)));
+    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event))).then((Event2? result) {
+      if ((result != null) && mounted) {
+        setState(() {
+          _event = result;
+        });
+      }
+    });
   }
 
   void _onSettingPromote(){
