@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/MobileAccess.dart';
@@ -72,7 +74,8 @@ class _DebugMobileAccessHomePanelState extends State<DebugMobileAccessHomePanel>
                                 textColor: Styles().colors!.fillColorPrimary,
                                 borderColor: Styles().colors!.fillColorPrimary,
                                 onTap: _onTapLockServiceCodes)),
-                        Padding(padding: EdgeInsets.all(16), child: _buildTwistAndGoWidget()),
+                        Visibility(visible: Platform.isAndroid, child:
+                          Padding(padding: EdgeInsets.all(16), child: _buildTwistAndGoWidget())),
                         Container(height: 16)
                       ]))))
         ]));

@@ -122,11 +122,11 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 			result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"enableTwistAndGo"]) {
-			//TBD: implement
+			// Not available in iOS
 			result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"isTwistAndGoEnabled"]) {
-			//TBD: implement
+			// Not available in iOS
 			result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"enableUnlockVibration"]) {
