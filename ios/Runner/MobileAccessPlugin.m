@@ -104,46 +104,46 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	else if ([call.method isEqualToString:@"isEndpointRegistered"]) {
 		result([NSNumber numberWithBool:self.isEndpointRegistered]);
 	}
-    else if ([call.method isEqualToString:@"setRssiSensitivity"]) {
-        //TBD: implement
-        result([NSNumber numberWithBool:false]);
-    }
-    else if ([call.method isEqualToString:@"getLockServiceCodes"]) {
-        //TBD: implement
-        result(nil);
-    }
-    else if ([call.method isEqualToString:@"setLockServiceCodes"]) {
-        //TBD: implement
-        result([NSNumber numberWithBool:false]);
-    }
-    else if ([call.method isEqualToString:@"enableTwistAndGo"]) {
-        //TBD: implement
-        result([NSNumber numberWithBool:false]);
-    }
-    else if ([call.method isEqualToString:@"isTwistAndGoEnabled"]) {
-        //TBD: implement
-        result([NSNumber numberWithBool:false]);
-    }
-    else if ([call.method isEqualToString:@"enableUnlockVibration"]) {
-        //TBD: implement
-        result([NSNumber numberWithBool:false]);
-    }
-    else if ([call.method isEqualToString:@"isUnlockVibrationEnabled"]) {
-        //TBD: implement
-        result([NSNumber numberWithBool:false]);
-    }
-    else if ([call.method isEqualToString:@"enableUnlockSound"]) {
-        //TBD: implement
-        result([NSNumber numberWithBool:false]);
-    }
-    else if ([call.method isEqualToString:@"isUnlockSoundEnabled"]) {
-        //TBD: implement
-        result([NSNumber numberWithBool:false]);
-    }
-    else if ([call.method isEqualToString:@"allowScanning"]) {
-        //TBD: implement
-        result([NSNumber numberWithBool:false]);
-    }
+	else if ([call.method isEqualToString:@"setRssiSensitivity"]) {
+		// Not available in iOS
+		result([NSNumber numberWithBool:false]);
+	}
+	else if ([call.method isEqualToString:@"getLockServiceCodes"]) {
+			//TBD: implement
+			result(nil);
+	}
+	else if ([call.method isEqualToString:@"setLockServiceCodes"]) {
+			//TBD: implement
+			result([NSNumber numberWithBool:false]);
+	}
+	else if ([call.method isEqualToString:@"enableTwistAndGo"]) {
+			//TBD: implement
+			result([NSNumber numberWithBool:false]);
+	}
+	else if ([call.method isEqualToString:@"isTwistAndGoEnabled"]) {
+			//TBD: implement
+			result([NSNumber numberWithBool:false]);
+	}
+	else if ([call.method isEqualToString:@"enableUnlockVibration"]) {
+			//TBD: implement
+			result([NSNumber numberWithBool:false]);
+	}
+	else if ([call.method isEqualToString:@"isUnlockVibrationEnabled"]) {
+			//TBD: implement
+			result([NSNumber numberWithBool:false]);
+	}
+	else if ([call.method isEqualToString:@"enableUnlockSound"]) {
+			//TBD: implement
+			result([NSNumber numberWithBool:false]);
+	}
+	else if ([call.method isEqualToString:@"isUnlockSoundEnabled"]) {
+			//TBD: implement
+			result([NSNumber numberWithBool:false]);
+	}
+	else if ([call.method isEqualToString:@"allowScanning"]) {
+			//TBD: implement
+			result([NSNumber numberWithBool:false]);
+	}
 }
 
 // Implementation
