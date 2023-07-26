@@ -69,29 +69,31 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                   'Open doors regardless of whether app is open or smartphone is unlocked.'),
               selected: (MobileAccess().selectedOpenType == MobileAccessOpenType.always),
               onTap: () => _onTapMobileAccessType(MobileAccessOpenType.always)),
-          Visibility(
-              visible: _isAndroid,
-              child: Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _buildRssiContentWidget(),
-                    Padding(
-                        padding: EdgeInsets.only(top: 16),
-                        child: ToggleRibbonButton(
-                            label: Localization().getStringEx('panel.settings.icard.play_sound.button', 'Play sound when unlocking'),
-                            toggled: _soundEnabled,
-                            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            onTap: _onTapPlaySound)),
-                    Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: ToggleRibbonButton(
-                            label: Localization().getStringEx('panel.settings.icard.vibrate.button', 'Vibrate when unlocking'),
-                            toggled: _vibrationEnabled,
-                            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            onTap: _onTapVibrate)),
-                  ]))),
+          Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Visibility(visible: _isAndroid, child:
+                    Padding(padding: EdgeInsets.only(bottom: 16), child:
+                      _buildRssiContentWidget(),
+                    )
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: ToggleRibbonButton(
+                          label: Localization().getStringEx('panel.settings.icard.play_sound.button', 'Play sound when unlocking'),
+                          toggled: _soundEnabled,
+                          border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          onTap: _onTapPlaySound)),
+                  Padding(
+                      padding: EdgeInsets.zero,
+                      child: ToggleRibbonButton(
+                          label: Localization().getStringEx('panel.settings.icard.vibrate.button', 'Vibrate when unlocking'),
+                          toggled: _vibrationEnabled,
+                          border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          onTap: _onTapVibrate)),
+                ])),
           Visibility(visible: _isIOS, child: Padding(padding: EdgeInsets.only(top: 16), child: _buildOpenIOSSystemSettingsWidget()))
         ]));
   }

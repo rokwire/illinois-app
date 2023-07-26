@@ -21,8 +21,11 @@
 
 #import "NSDictionary+InaTypedValue.h"
 #import "NSDate+InaUtils.h"
+#import "NSUserDefaults+InaUtils.h"
 
 #import <OrigoSDK/OrigoSDK.h>
+#import <AudioToolbox/AudioToolbox.h>
+#import <AudioToolbox/AudioServices.h>
 
 static NSString *const kMobileAccessMethodChannel = @"edu.illinois.rokwire/mobile_access";
 
@@ -30,6 +33,10 @@ static NSString *const kMobileAccessErrorDomain = @"edu.illinois.rokwire.mobile_
 
 static const int LOCK_SERVICE_CODE_AAMK = 1;
 static const int LOCK_SERVICE_CODE_HID = 2;
+
+static NSString *const kUnlockVibrationKey = @"edu.illinois.rokwire.mobile_access.unlock.vibration";
+static NSString *const kUnlockSoundKey = @"edu.illinois.rokwire.mobile_access.unlock.sound";
+
 
 @interface MobileAccessPlugin()<OrigoKeysManagerDelegate>
 @property (nonatomic, strong) FlutterMethodChannel* channel;
@@ -63,6 +70,10 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 ///////////////////////////////////////////
 // MobileAccessPlugin
 
+@interface MobileAccessPlugin()
+@property (nonatomic, assign) SystemSoundID soundId;
+@end
+
 @implementation MobileAccessPlugin
 
 + (instancetype)sharedInstance {
@@ -83,6 +94,10 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 
 - (instancetype)init {
 	if (self = [super init]) {
+		NSURL* audioUrl = [[NSBundle mainBundle] URLForResource:@"hid-unlock" withExtension:@"wav"];
+		if (audioUrl != nil) {
+			AudioServicesCreateSystemSoundID((__bridge CFURLRef)audioUrl, &_soundId);
+		}
 	}
 	return self;
 }
@@ -112,42 +127,48 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 		result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"getLockServiceCodes"]) {
-			result(@[
-				[NSNumber numberWithInt:LOCK_SERVICE_CODE_AAMK],
-				[NSNumber numberWithInt:LOCK_SERVICE_CODE_HID],
-			]);
+		result(@[
+			[NSNumber numberWithInt:LOCK_SERVICE_CODE_AAMK],
+			[NSNumber numberWithInt:LOCK_SERVICE_CODE_HID],
+		]);
 	}
 	else if ([call.method isEqualToString:@"setLockServiceCodes"]) {
-			// Not available in iOS
-			result([NSNumber numberWithBool:false]);
+		// Not available in iOS
+		result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"enableTwistAndGo"]) {
-			// Not available in iOS
-			result([NSNumber numberWithBool:false]);
+		// Not available in iOS
+		result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"isTwistAndGoEnabled"]) {
-			// Not available in iOS
-			result([NSNumber numberWithBool:false]);
+		// Not available in iOS
+		result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"enableUnlockVibration"]) {
-			//TBD: implement
-			result([NSNumber numberWithBool:false]);
+		NSNumber* value = [call.arguments isKindOfClass:[NSNumber class]] ? call.arguments : nil;
+		[[NSUserDefaults standardUserDefaults] inaSetBool:value.boolValue forKey:kUnlockVibrationKey];
+		if (value.boolValue) {
+			[self vibrate];
+		}
+		result([NSNumber numberWithBool:true]);
 	}
 	else if ([call.method isEqualToString:@"isUnlockVibrationEnabled"]) {
-			//TBD: implement
-			result([NSNumber numberWithBool:false]);
+		result([NSNumber numberWithBool:[[NSUserDefaults standardUserDefaults] inaBoolForKey:kUnlockVibrationKey]]);
 	}
 	else if ([call.method isEqualToString:@"enableUnlockSound"]) {
-			//TBD: implement
-			result([NSNumber numberWithBool:false]);
+		NSNumber* value = [call.arguments isKindOfClass:[NSNumber class]] ? call.arguments : nil;
+		[[NSUserDefaults standardUserDefaults] inaSetBool:value.boolValue forKey:kUnlockSoundKey];
+		if (value.boolValue) {
+			[self sound];
+		}
+		result([NSNumber numberWithBool:true]);
 	}
 	else if ([call.method isEqualToString:@"isUnlockSoundEnabled"]) {
-			//TBD: implement
-			result([NSNumber numberWithBool:false]);
+		result([NSNumber numberWithBool:[[NSUserDefaults standardUserDefaults] inaBoolForKey:kUnlockSoundKey]]);
 	}
 	else if ([call.method isEqualToString:@"allowScanning"]) {
-			//TBD: implement
-			result([NSNumber numberWithBool:false]);
+		//TBD: implement
+		result([NSNumber numberWithBool:false]);
 	}
 }
 
@@ -288,6 +309,23 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	}
 }
 
+// Helpers
+
+- (void)initSound {
+
+}
+
+- (void)sound {
+	if (_soundId != 0) {
+		AudioServicesPlaySystemSound(_soundId);
+	}
+}
+
+- (void)vibrate {
+	[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium] impactOccurred];
+}
+
+
 #pragma mark OrigoKeysManagerDelegate
 
 - (void)origoKeysDidStartup {
@@ -313,6 +351,16 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 - (void)origoKeysDidTerminateEndpoint {
 	[self didUnregisterEndpointWithError:nil];
 }
+
+- (void)origoKeysDidConnectToReader:(OrigoKeysReader *)reader openingType:(OrigoKeysOpeningType)type {
+	if ([[NSUserDefaults standardUserDefaults] inaBoolForKey:kUnlockVibrationKey]) {
+		[self vibrate];
+	}
+	if ([[NSUserDefaults standardUserDefaults] inaBoolForKey:kUnlockSoundKey]) {
+		[self sound];
+	}
+}
+
 
 @end
 
