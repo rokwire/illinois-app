@@ -25,6 +25,7 @@
 
 - (void)startWithAppId:(NSString*)appId;
 - (void)startWithAppId:(NSString*)appId completion:(void (^)(NSError* error))completion;
+- (void)stop;
 
 @end
 

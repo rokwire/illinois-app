@@ -74,8 +74,7 @@ class _DebugMobileAccessHomePanelState extends State<DebugMobileAccessHomePanel>
                                 textColor: Styles().colors!.fillColorPrimary,
                                 borderColor: Styles().colors!.fillColorPrimary,
                                 onTap: _onTapLockServiceCodes)),
-                        Visibility(visible: Platform.isAndroid, child:
-                          Padding(padding: EdgeInsets.all(16), child: _buildTwistAndGoWidget())),
+                        Padding(padding: EdgeInsets.all(16), child: _buildTwistAndGoWidget()),
                         Container(height: 16)
                       ]))))
         ]));
