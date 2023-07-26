@@ -26,6 +26,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class MobileAccess with Service implements NotificationsListener {
   static const String notifyDeviceRegistrationFinished  = "edu.illinois.rokwire.mobile_access.device.registration.finished";
@@ -128,13 +129,12 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   Future<List<int>?> getLockServiceCodes() async {
-    List<int>? result;
     try {
-      result = await _methodChannel.invokeMethod('getLockServiceCodes', null);
+      return JsonUtils.listIntsValue(await _methodChannel.invokeMethod('getLockServiceCodes', null));
     } catch (e) {
       print(e.toString());
     }
-    return result;
+    return null;
   }
 
   Future<bool> setLockServiceCodes(List<int> lockServiceCodes) async {

@@ -28,6 +28,9 @@ static NSString *const kMobileAccessMethodChannel = @"edu.illinois.rokwire/mobil
 
 static NSString *const kMobileAccessErrorDomain = @"edu.illinois.rokwire.mobile_access";
 
+static const int LOCK_SERVICE_CODE_AAMK = 1;
+static const int LOCK_SERVICE_CODE_HID = 2;
+
 @interface MobileAccessPlugin()<OrigoKeysManagerDelegate>
 @property (nonatomic, strong) FlutterMethodChannel* channel;
 
@@ -109,11 +112,13 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 		result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"getLockServiceCodes"]) {
-			//TBD: implement
-			result(nil);
+			result(@[
+				[NSNumber numberWithInt:LOCK_SERVICE_CODE_AAMK],
+				[NSNumber numberWithInt:LOCK_SERVICE_CODE_HID],
+			]);
 	}
 	else if ([call.method isEqualToString:@"setLockServiceCodes"]) {
-			//TBD: implement
+			// Not available in iOS
 			result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"enableTwistAndGo"]) {
