@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Query best and worst matches for the career explorer by changing the sort order and find a specific job by searching [#3415](https://github.com/rokwire/illinois-app/issues/3415).
+- Handled HID Origo support for iOS [#2921](https://github.com/rokwire/illinois-app/issues/2921).
 
 ## [5.0.35] - 2023-07-25
 ### Changed
