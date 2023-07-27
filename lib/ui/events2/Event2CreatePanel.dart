@@ -6,14 +6,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
 import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -24,10 +27,12 @@ import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -168,24 +173,29 @@ class Event2CreatePanel extends StatefulWidget {
 
   // Sections / Dropdown Section
 
-  static Widget buildDropdownSectionWidget({ required Widget heading, required Widget body, bool expanded = false,
+  static Widget buildDropdownSectionWidget({
+    required Widget heading, required Widget body, Widget? trailing,
+    bool expanded = false,
     EdgeInsetsGeometry padding = sectionPadding,
-    EdgeInsetsGeometry bodyPadding = sectionBodyContentPadding
+    EdgeInsetsGeometry bodyPadding = sectionBodyContentPadding,
   }) {
+
     return Padding(padding: padding, child:
-      Container(decoration: sectionDecoration, child:
-        Column(children: [
-          heading,
-          Visibility(visible: expanded, child:
-            Container(decoration: sectionSplitterDecoration, child:
-              Padding(padding: bodyPadding, child:
-                body,
+      Column(children: <Widget>[
+        Container(decoration: sectionDecoration, child:
+          Column(children: <Widget>[
+            heading,
+            Visibility(visible: expanded, child:
+              Container(decoration: sectionSplitterDecoration, child:
+                Padding(padding: bodyPadding, child:
+                  body,
+                ),
               ),
             ),
-          )
-        ],),
-
-      ),
+          ],),
+        ),
+        trailing ?? Container()
+      ]),
     );
   }
 
@@ -285,7 +295,10 @@ class Event2CreatePanel extends StatefulWidget {
   // Text Edit
 
   static Widget buildTextEditWidget(TextEditingController controller, {
-    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = textEditContentPadding,
+    TextInputType? keyboardType,
+    int? maxLines = 1,
+    bool autocorrect = false,
+    EdgeInsetsGeometry padding = textEditContentPadding,
     void Function()? onChanged,
   }) =>
     TextField(
@@ -294,14 +307,18 @@ class Event2CreatePanel extends StatefulWidget {
       style: textEditStyle,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      autocorrect: autocorrect,
       onChanged: (onChanged != null) ? ((_) => onChanged) : null,
     );
 
   static Widget buildInnerTextEditWidget(TextEditingController controller, {
-    TextInputType? keyboardType, int? maxLines = 1, EdgeInsetsGeometry padding = innerTextEditContentPadding,
+    TextInputType? keyboardType,
+    int? maxLines = 1,
+    bool autocorrect = false,
+    EdgeInsetsGeometry padding = innerTextEditContentPadding,
     void Function()? onChanged,
   }) =>
-    buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, padding: padding, onChanged: onChanged);
+    buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, autocorrect: autocorrect, padding: padding, onChanged: onChanged);
 
 
   // Confirm URL
@@ -348,6 +365,38 @@ class Event2CreatePanel extends StatefulWidget {
   static void hideKeyboard(BuildContext context) {
     FocusScope.of(context).unfocus();
   }
+
+  // HeaderBar actions
+
+  static Widget buildHeaderBarActionButton({ String? title, void Function()? onTap, EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12)}) {
+    return Semantics(label: title, button: true, excludeSemantics: true, child: 
+      InkWell(onTap: onTap, child:
+        Align(alignment: Alignment.center, child:
+          Padding(padding: padding, child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                child: Text(title ?? '',
+                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                ),
+              ),
+            ],)
+          ),
+        ),
+        //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //),
+      ),
+    );
+  }
+
+  static Widget buildHeaderBarActionProgress({ EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 20) }) =>
+    Padding(padding: padding, child:
+        SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(color: Styles().colors?.white, strokeWidth: 3,)
+        )
+    );
+
 }
 
 class _Event2CreatePanelState extends State<Event2CreatePanel>  {
@@ -370,11 +419,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Event2RegistrationDetails? _registrationDetails;
   Event2AttendanceDetails? _attendanceDetails;
+  Event2SurveyDetails? _surveyDetails;
 
   String? _sponsor;
   String? _speaker;
   List<Event2Contact>? _contacts;
-  Event2SurveyDetails? _surveyDetails;
   // Explore? _locationExplore;
 
   late List<String> _errorList;
@@ -398,6 +447,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   bool _dateTimeSectionExpanded = false;
   bool _typeAndLocationSectionExpanded = false;
   bool _costSectionExpanded = false;
+
+  List<Survey> _surveysCache = <Survey>[];
 
   @override
   void initState() {
@@ -457,6 +508,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     _costSectionExpanded = widget.isUpdate;
 
     _errorList = _buildErrorList();
+
+    if (_surveyDetails?.surveyId != null) {
+      Surveys().loadSurveys().then((List<Survey>? surveys) {
+        if (surveys != null) {
+          setState(() {
+           _surveysCache = surveys;
+          });
+        }
+      });
+    }
 
     super.initState();
   }
@@ -572,12 +633,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.title.title', 'EVENT TITLE'), required: true),
-    body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null),
+    body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true),
   );
 
   Widget _buildDescriptionSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION')),
-    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null),
+    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true),
   );
 
   Widget _buildWebsiteSection() => Event2CreatePanel.buildSectionWidget(
@@ -786,8 +847,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = now;
     DateTime maxDate = ((_endDate != null) && now.isBefore(_endDate!)) ? _endDate! : now.add(Duration(days: 366));
+    DateTime selectedDate = (_startDate != null) ? DateTimeUtils.min(DateTimeUtils.max(_startDate!, minDate), maxDate) : minDate;
     showDatePicker(context: context,
-      initialDate: _startDate ?? minDate,
+      initialDate: selectedDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
@@ -819,8 +881,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     DateTime now = DateUtils.dateOnly(DateTime.now());
     DateTime minDate = (_startDate != null) ? DateTimeUtils.max(_startDate!, now) : now;
     DateTime maxDate = minDate.add(Duration(days: 366));
+    DateTime selectedDate = (_endDate != null) ? DateTimeUtils.min(DateTimeUtils.max(_endDate!, minDate), maxDate) : minDate;
     showDatePicker(context: context,
-      initialDate: _endDate ?? minDate,
+      initialDate: selectedDate,
       firstDate: minDate,
       lastDate: maxDate,
       currentDate: now,
@@ -964,12 +1027,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildLocationBuildingInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.building.title', 'LOCATION BUILDING')),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text, autocorrect: true),
   );
 
   Widget _buildLocationAddressInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.address.title', 'LOCATION ADDRESS')),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text, autocorrect: true),
   );
 
   Widget _buildLocationLatitudeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
@@ -1204,11 +1267,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     Analytics().logSelect(target: "Event Registration");
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2RegistrationDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupRegistrationPanel(
-      details: _registrationDetails,
+      registrationDetails: _registrationDetails,
     ))).then((Event2RegistrationDetails? result) {
-      setStateIfMounted(() {
-        _registrationDetails = result;
-      });
+      if ((result != null) && mounted) {
+        setState(() {
+          _registrationDetails = result;
+        });
+      }
     });
   }
 
@@ -1227,32 +1292,50 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(details: _attendanceDetails
+    Navigator.push<Event2AttendanceDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupAttendancePanel(attendanceDetails: _attendanceDetails
     ))).then((Event2AttendanceDetails? result) {
-      setStateIfMounted(() {
-        _attendanceDetails = result;
-      });
+      if ((result != null) && mounted) {
+        setState(() {
+          _attendanceDetails = result;
+        });
+      }
     });
   }
 
   // Follow-Up Survey
 
-  Widget  _buildSurveyButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
-    heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.button.survey.title', 'EVENT FOLLOW-UP SURVEY'),
-      subTitle: Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event'),
-      onTap: _onEventSurvey,
-    ),
-  );
+  Widget  _buildSurveyButtonSection() {
+    String? subTitle;
+    if (_surveyDetails?.isEmpty ?? true) {
+      subTitle = Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event');
+    }
+    else {
+      String? surveyName = _surveysCache.isNotEmpty ? Survey.findInList(_surveysCache, id: _surveyDetails?.surveyId)?.displayTitle : null;
+      subTitle = ((surveyName != null) && surveyName.isNotEmpty) ?
+        Localization().getStringEx('panel.event2.create.button.survey.confirmation2', 'Follow-up survey: {{survey_name}}.').replaceAll('{{survey_name}}', surveyName) :
+        Localization().getStringEx('panel.event2.create.button.survey.confirmation', 'Follow-up survey set up.');
+    }
+    return Event2CreatePanel.buildButtonSectionWidget(
+      heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
+        title: Localization().getStringEx('panel.event2.create.button.survey.title', 'EVENT FOLLOW-UP SURVEY'),
+        subTitle: subTitle,
+        onTap: _onEventSurvey,
+      ),
+    );
+  }
 
   void _onEventSurvey() {
     Analytics().logSelect(target: "Event Follow-Up Survey");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(details: _surveyDetails
+    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+      surveyDetails: _surveyDetails,
+      surveysCache: _surveysCache,
     ))).then((Event2SurveyDetails? result) {
-      setStateIfMounted(() {
-        _surveyDetails = result;
-      });
+      if ((result != null) && mounted) {
+        setState(() {
+          _surveyDetails = result;
+        });
+      }
     });
   }
 
@@ -1495,29 +1578,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
-  Future<void> _showPopup(String title, String? message) {
-    return showDialog(context: context, builder: (BuildContext context) => AlertDialog(
-      content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),),
-        (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
-          Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
-        ) : Container()
-      ],),
-      actions: <Widget>[
-        TextButton(
-          child: Text(Localization().getStringEx("dialog.ok.title", "OK"), style:
-            Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
-          ),
-          onPressed: () {
-            Analytics().logAlert(text: message, selection: "OK");
-            Navigator.pop(context);
-          }
-        )
-      ],
-
-    ));
-  }
-
   void _onTapCreateEvent() {
     Analytics().logSelect(target: widget.isCreate ? "Create Event" : "Update Event");
     Event2CreatePanel.hideKeyboard(context);
@@ -1531,22 +1591,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           _creatingEvent = false;
         });
 
-        String? title, message;
         if (result is Event2) {
-          title = Localization().getStringEx('panel.event2.create.message.succeeded.title', 'Succeeded');
-          message = Localization().getStringEx('panel.event2.create.message.succeeded.message', 'Successfully created {{event_name}} event').replaceAll('{{event_name}}', result.name ?? '');
+          if (widget.isCreate) {
+            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
+          }
+          else {
+            Navigator.of(context).pop(result);
+          }
         }
-        else if (result is String) {
-          title = Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed');
-          message = result;
-        }
-
-        if (title != null) {
-          _showPopup(title, message).then((_) {
-            if (result is Event2) {
-              Navigator.of(context).pop();
-            }
-          });
+        else  {
+          Event2Popup.showErrorResult(context, result);
         }
       }
     });
@@ -1646,7 +1700,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
       registrationDetails: (_registrationDetails?.type != Event2RegistrationType.none) ? _registrationDetails : null,
       attendanceDetails: (_attendanceDetails?.isNotEmpty ?? false) ? _attendanceDetails : null,
-      surveyDetails: (_surveyDetails?.hasSurvey == true) ? _surveyDetails : null,
+      surveyDetails: (_surveyDetails?.isNotEmpty ?? false) ? _surveyDetails : null,
 
       sponsor: _sponsor,
       speaker: _speaker,

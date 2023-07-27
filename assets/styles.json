@@ -757,6 +757,7 @@
     "check-circle-filled": {"src": "images/deselected-dark.png", "type": "flutter.asset", "color-todo": "fillColorPrimary", "size": 24, "todo": "color issue"},
 
     "circle-outline": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
+    "check-circle-outline": {"src": "images/deselected.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
     "location-outline": {"src": "images/icon-map-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size issue"},
     "list-outline": {"src": "images/icon-list-view.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 16, "todo": "size issue"},
 

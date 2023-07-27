@@ -5,6 +5,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.35] - 2023-07-25
+### Changed
+- Updated follow-up survey details UI [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+- Polish and fixing UI tweaks [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.34] - 2023-07-24
+### Fixed
+- Fixed register/unregister/delete in Event2DetailPanel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Changed
+- Prompt before deleting an Event2 [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+### Added
+- Hooked up follow-up survery in Event2DetailPanel [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.33] - 2023-07-21
+### Changed
+- Attendance taking UI improvements [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.32] - 2023-07-20
+### Changed
+- Acknowledged /event/id/users API from Calendar BB. Hooked up attendace updates with dummy APIs for now [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.31] - 2023-07-19
+### Changed
+- Hooked up "Event Attendance" from Event2 detail admin settings [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
+## [5.0.30] - 2023-07-18
+### Changed
+- Hooked up "Event Registration" from Event2 detail admin settings [#3300](https://github.com/rokwire/illinois-app/issues/3300).
+
 ## [5.0.29] - 2023-07-17
 ### Changed
 - Transfer only affected profile prefs when login from onboarding [#3416](https://github.com/rokwire/illinois-app/issues/3416).
