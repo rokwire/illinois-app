@@ -27,6 +27,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/ui/widgets/survey.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2SetupSurveyPanel extends StatefulWidget {
@@ -48,39 +49,45 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   Survey? _survey;
   String? _initialSurveyId;
-  
+
   final TextEditingController _hoursController = TextEditingController();
   late String _initialHours;
 
   bool _modified = false;
-  bool _loadingSurveys = false;
+  int _loadingSurveys = 0;
   bool _updatingSurvey = false;
 
   @override
   void initState() {
-    
-    _initialSurveyId = widget.details?.surveyId;
-    
     _hoursController.text = _initialHours = widget.details?.hoursAfterEvent?.toString() ?? '';
     if (_isEditing) {
       _hoursController.addListener(_checkModified);
+      _loadingSurveys++;
+      Surveys().loadSurveys(calendarEventID: widget.event?.id).then((List<Survey>? surveys) {
+        if ((surveys?.length ?? 0) == 1) {
+          setStateIfMounted(() {
+            _survey = surveys![0];
+            _initialSurveyId = _survey?.id;
+            _loadingSurveys--;
+          });
+        }
+        _checkModified();
+      });
     }
 
-    if ((widget.surveysCache != null) && (widget.surveysCache?.isNotEmpty == true)) {
+    if (CollectionUtils.isNotEmpty(widget.surveysCache)) {
       _surveys = widget.surveysCache;
-      _survey = (_initialSurveyId != null) ? Survey.findInList(_surveys, id: _initialSurveyId) : null;
       _checkModified();
     }
     else {
-      _loadingSurveys = true;
-      Surveys().loadSurveys().then((List<Survey>? surveys) {
+      _loadingSurveys++;
+      Surveys().loadSurveys(types: [Survey.templateSurveyPrefix+Event2.followUpSurveyType]).then((List<Survey>? surveys) {
         if ((widget.surveysCache != null) && (widget.surveysCache?.isEmpty == true) && (surveys != null)) {
           widget.surveysCache?.addAll(surveys);
         }
         setStateIfMounted(() {
           _surveys = surveys;
-          _survey = ((_surveys != null) && (_initialSurveyId != null)) ? Survey.findInList(_surveys, id: _initialSurveyId) : null;
-          _loadingSurveys = false;
+          _loadingSurveys--;
         });
         _checkModified();
       });
@@ -104,7 +111,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   }
 
   Widget _buildScaffoldContent() {
-    if (_loadingSurveys) {
+    if (_loadingSurveys > 0) {
       return _buildLoadingContent();
     }
     else if (_surveys == null) {
@@ -124,6 +131,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _buildSurveysSection(),
           _buildHoursSection(),
+          _buildSurveyPreviewSection(),
         ])
       )
     );
@@ -164,9 +172,10 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
               ]),
             ),
           ),
-          Expanded(flex: 3, child:
-            _surveysDropdownWidget
-          ),
+          Expanded(flex: 3, child: Visibility(
+            visible: _initialSurveyId == null,
+            child: _surveysDropdownWidget
+          )),
         ]),
       ),
 
@@ -217,6 +226,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     if ((_survey != survey) && mounted) {
       setState(() {
         _survey = survey;
+        _survey?.replaceKey('event_name', widget.event?.name);
       });
       _checkModified();
       //TBD: Preview selected survey
@@ -242,6 +252,13 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     )
   );
 
+  // Survey Preview
+
+  Widget _buildSurveyPreviewSection() => Visibility(visible: (_survey != null), child:
+    Padding(padding: Event2CreatePanel.sectionPadding, child:
+      SurveyWidget(survey: _survey)
+    )
+  );
 
   // HeaderBar
 
@@ -283,7 +300,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   }
 
   Event2SurveyDetails _buildSurveyDetail() => Event2SurveyDetails(
-    surveyId: _survey?.id,
+    survey: _initialSurveyId == null && StringUtils.isNotEmpty(_survey?.id) ? _survey : null,
     hoursAfterEvent: Event2CreatePanel.textFieldIntValue(_hoursController),
   );
 
@@ -300,7 +317,9 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       setState(() {
         _updatingSurvey = true;
       });
-      Events2().updateEventSurveyDetails(widget.event?.id ?? '', surveyDetails).then((result) {
+      Events2()
+          .updateEventSurveyDetails(widget.event?.id ?? '', surveyDetails)
+          .then((result) {
         if (mounted) {
           setState(() {
             _updatingSurvey = false;
@@ -313,7 +332,6 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         else {
           Event2Popup.showErrorResult(context, result);
         }
-
       });
     }
   }

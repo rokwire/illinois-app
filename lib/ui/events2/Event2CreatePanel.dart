@@ -509,15 +509,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
     _errorList = _buildErrorList();
 
-    if (_surveyDetails?.surveyId != null) {
-      Surveys().loadSurveys().then((List<Survey>? surveys) {
-        if (surveys != null) {
-          setState(() {
-           _surveysCache = surveys;
-          });
-        }
-      });
-    }
+    Surveys().loadSurveys(types: [Survey.templateSurveyPrefix+Event2.followUpSurveyType]).then((List<Survey>? surveys) {
+      if (surveys != null) {
+        setState(() {
+          _surveysCache = surveys;
+        });
+      }
+    });
 
     super.initState();
   }
@@ -1304,13 +1302,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   // Follow-Up Survey
 
-  Widget  _buildSurveyButtonSection() {
+  Widget _buildSurveyButtonSection() {
     String? subTitle;
     if (_surveyDetails?.isEmpty ?? true) {
       subTitle = Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event');
     }
     else {
-      String? surveyName = _surveysCache.isNotEmpty ? Survey.findInList(_surveysCache, id: _surveyDetails?.surveyId)?.displayTitle : null;
+      String? surveyName = _surveysCache.isNotEmpty ? Survey.findInList(_surveysCache, calendarEventId: widget.event?.id)?.displayTitle : null;
       subTitle = ((surveyName != null) && surveyName.isNotEmpty) ?
         Localization().getStringEx('panel.event2.create.button.survey.confirmation2', 'Follow-up survey: {{survey_name}}.').replaceAll('{{survey_name}}', surveyName) :
         Localization().getStringEx('panel.event2.create.button.survey.confirmation', 'Follow-up survey set up.');
@@ -1328,6 +1326,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     Analytics().logSelect(target: "Event Follow-Up Survey");
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+      event: widget.event,
       surveyDetails: _surveyDetails,
       surveysCache: _surveysCache,
     ))).then((Event2SurveyDetails? result) {
@@ -1593,7 +1592,18 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
         if (result is Event2) {
           if (widget.isCreate) {
-            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
+            if (_surveyDetails?.survey != null) {
+              _surveyDetails!.survey!.calendarEventId = result.id;
+              setStateIfMounted(() {
+                _creatingEvent = true;
+              });
+              Surveys().createSurvey(_surveyDetails!.survey!).then((bool? success) {
+                setStateIfMounted(() {
+                  _creatingEvent = false;
+                });
+                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
+              });
+            }
           }
           else {
             Navigator.of(context).pop(result);
