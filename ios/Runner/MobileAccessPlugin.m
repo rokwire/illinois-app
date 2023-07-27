@@ -48,6 +48,7 @@ static NSString *const kUnlockSoundKey = @"edu.illinois.rokwire.mobile_access.un
 
 @property (nonatomic, strong) NSMutableSet* startCompletions;
 @property (nonatomic, assign) bool isStarted;
+@property (nonatomic, assign) bool scanAllowed;
 
 @property (nonatomic, strong) void (^registerEndpointCompletion)(NSError* error);
 @property (nonatomic, strong) void (^unregisterEndpointCompletion)(NSError* error);
@@ -127,9 +128,12 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 		result(self.mobileKeys);
 	}
 	else if ([call.method isEqualToString:@"registerEndpoint"]) {
+		__weak typeof(self) weakSelf = self;
 		NSString* invitationCode = [call.arguments isKindOfClass:[NSString class]] ? call.arguments : nil;
 		[self registerEndpointWithInvitationCode:invitationCode completion:^(NSError *error) {
-			result([NSNumber numberWithBool:(error == nil)]);
+			NSNumber *resultValue = [NSNumber numberWithBool:(error == nil)];
+			result(resultValue);
+			[weakSelf.channel invokeMethod:@"endpoint.register.finished" arguments:resultValue];
 		}];
 	}
 	else if ([call.method isEqualToString:@"unregisterEndpoint"]) {
