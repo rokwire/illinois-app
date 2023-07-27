@@ -36,19 +36,22 @@ static const int LOCK_SERVICE_CODE_HID = 2;
 
 static NSString *const kPreviouslyLaunchedKey = @"edu.illinois.rokwire.mobile_access.previously_launched";
 static NSString *const kSupportedOpeningTypesKey = @"edu.illinois.rokwire.mobile_access.opeining_types";
+static NSString *const kLockServiceCodesKey = @"edu.illinois.rokwire.mobile_access.lock_service_codes";
 static NSString *const kUnlockVibrationKey = @"edu.illinois.rokwire.mobile_access.unlock.vibration";
 static NSString *const kUnlockSoundKey = @"edu.illinois.rokwire.mobile_access.unlock.sound";
 
 
-@interface MobileAccessPlugin()<OrigoKeysManagerDelegate>
+@interface MobileAccessPlugin()<OrigoKeysManagerDelegate> {
+  bool _scanAllowed;
+}
 @property (nonatomic, strong) FlutterMethodChannel* channel;
 
 @property (nonatomic, strong) OrigoKeysManager* origoKeysManager;
 @property (nonatomic, retain) NSMutableSet<NSNumber*>* supportedOpeningTypes;
+@property (nonatomic, retain) NSArray<NSNumber*>* lockServiceCodes;
 
 @property (nonatomic, strong) NSMutableSet* startCompletions;
 @property (nonatomic, assign) bool isStarted;
-@property (nonatomic, assign) bool scanAllowed;
 
 @property (nonatomic, strong) void (^registerEndpointCompletion)(NSError* error);
 @property (nonatomic, strong) void (^unregisterEndpointCompletion)(NSError* error);
@@ -108,6 +111,8 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 		
 		NSArray<NSNumber*>* supportedOpenningTypes = [[NSUserDefaults standardUserDefaults] objectForKey:kSupportedOpeningTypesKey] ?: self.class.defaultOpeningTypes;
 		_supportedOpeningTypes = [NSMutableSet<NSNumber*> setWithArray:supportedOpenningTypes];
+		
+		_lockServiceCodes = [[NSUserDefaults standardUserDefaults] objectForKey:kLockServiceCodesKey] ?: self.class.defaultLockServiceCodes;
 	}
 	return self;
 }
@@ -144,16 +149,26 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	else if ([call.method isEqualToString:@"isEndpointRegistered"]) {
 		result([NSNumber numberWithBool:self.isEndpointRegistered]);
 	}
+	else if ([call.method isEqualToString:@"allowScanning"]) {
+		NSNumber* value = [call.arguments isKindOfClass:[NSNumber class]] ? call.arguments : nil;
+		if (value != nil) {
+			self.scanAllowed = [value boolValue];
+		}
+		result([NSNumber numberWithBool:(value != nil)]);
+	}
 	else if ([call.method isEqualToString:@"setRssiSensitivity"]) {
 		// Not available in iOS
 		result([NSNumber numberWithBool:false]);
 	}
 	else if ([call.method isEqualToString:@"getLockServiceCodes"]) {
-		result(self.class.lockServiceCodes);
+		result(_lockServiceCodes);
 	}
 	else if ([call.method isEqualToString:@"setLockServiceCodes"]) {
-		// Not available in iOS
-		result([NSNumber numberWithBool:false]);
+		NSArray* value = [call.arguments isKindOfClass:[NSArray class]] ? call.arguments : nil;
+		if (value != nil) {
+			[[NSUserDefaults standardUserDefaults] setObject:(_lockServiceCodes = value) forKey:kLockServiceCodesKey];
+		}
+		result([NSNumber numberWithBool:(value != nil)]);
 	}
 	else if ([call.method isEqualToString:@"isTwistAndGoEnabled"]) {
 		result([NSNumber numberWithBool:self.twistAndGoEnabled]);
@@ -184,10 +199,6 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 			self.unlockSoundEnabled = value.boolValue;
 		}
 		result([NSNumber numberWithBool:(value != nil)]);
-	}
-	else if ([call.method isEqualToString:@"allowScanning"]) {
-		//TBD: implement
-		result([NSNumber numberWithBool:false]);
 	}
 }
 
@@ -261,7 +272,7 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	if (_isStarted) {
 		[_origoKeysManager setSupportedOpeningTypes:_supportedOpeningTypes.allObjects];
 		
-		if ([_origoKeysManager isEndpointSetup:NULL]) {
+		if (self.isEndpointSetup) {
 			[self updateEndpointWithCompletion:^(NSError *error) {
 			}];
 		}
@@ -279,13 +290,9 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	}
 }
 
-- (void)stop {
-
-}
-
 - (NSArray*)mobileKeys {
 	NSMutableArray* result = nil;
-	if ([_origoKeysManager isEndpointSetup:NULL]) {
+	if (self.isEndpointSetup) {
 		NSArray<OrigoKeysKey*>* oregoKeys = [_origoKeysManager listMobileKeys: NULL];
 		if (oregoKeys != nil) {
 			result = [[NSMutableArray alloc] init];
@@ -298,7 +305,7 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 }
 
 - (bool)isEndpointRegistered {
-	return (_origoKeysManager != nil) && _isStarted && [_origoKeysManager isEndpointSetup:NULL];
+	return (_origoKeysManager != nil) && _isStarted && self.isEndpointSetup;
 }
 
 - (void)registerEndpointWithInvitationCode:(NSString*)invitationCode completion:(void (^)(NSError* error))completion {
@@ -306,9 +313,9 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	if ((_origoKeysManager == nil) || !_isStarted) {
 		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_NotInitialized userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
 	}
-	else if ([_origoKeysManager isEndpointSetup:NULL]) {
-		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingAlreadySetup userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint already setup", nil) }];
-	}
+	//else if (self.isEndpointSetup) {
+	//	errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingAlreadySetup userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint already setup", nil) }];
+	//}
 	else if (_registerEndpointCompletion != nil) {
 		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingBeingSetup userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently setup", nil) }];
 	}
@@ -335,7 +342,7 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	if ((_origoKeysManager == nil) || !_isStarted) {
 		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_NotInitialized userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
 	}
-	else if (![_origoKeysManager isEndpointSetup:NULL]) {
+	else if (!self.isEndpointSetup) {
 		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingNotSetup userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint not setup", nil) }];
 	}
 	else if (_unregisterEndpointCompletion != nil) {
@@ -364,7 +371,7 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	if ((_origoKeysManager == nil) || !_isStarted) {
 		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_NotInitialized userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
 	}
-	else if (![_origoKeysManager isEndpointSetup:NULL]) {
+	else if (!self.isEndpointSetup) {
 		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingNotSetup userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint not setup", nil) }];
 	}
 	else if (_updateEndpointCompletion != nil) {
@@ -388,7 +395,54 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	}
 }
 
-+ (NSArray*)lockServiceCodes {
+- (bool)scanAllowed {
+	return _scanAllowed;
+}
+
+- (void)setScanAllowed:(bool)scanAllowed {
+	_scanAllowed = scanAllowed;
+
+	if (self.canScan) {
+		if (!self.isScanning) {
+			[self startScan];
+		}
+	}
+	else {
+		if (self.isScanning) {
+			[self stopScan];
+		}
+	}
+}
+
+- (bool)canScan {
+	return _isStarted && _scanAllowed && self.isEndpointSetup && self.hasMobileKeys;
+}
+
+- (bool)isScanning {
+	return [_origoKeysManager isScanning];
+}
+
+- (bool)isEndpointSetup {
+	return [_origoKeysManager isEndpointSetup:NULL];
+}
+
+- (bool)hasMobileKeys {
+	return [_origoKeysManager listMobileKeys: NULL].count > 0;
+}
+
+- (void)startScan {
+	[_origoKeysManager startReaderScanInMode:OrigoKeysScanModeOptimizePowerConsumption supportedOpeningTypes:_supportedOpeningTypes.allObjects lockServiceCodes:_lockServiceCodes error:nil];
+}
+
+- (void)stopScan {
+	[_origoKeysManager stopReaderScan];
+}
+
+- (void)notifyScanning:(bool)scanning {
+	[self.channel invokeMethod:@"device.scanning" arguments:[NSNumber numberWithBool:scanning]];
+}
+
++ (NSArray*)defaultLockServiceCodes {
 	return @[
 		[NSNumber numberWithInt:LOCK_SERVICE_CODE_AAMK],
 		[NSNumber numberWithInt:LOCK_SERVICE_CODE_HID],
@@ -504,7 +558,17 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	if ([[NSUserDefaults standardUserDefaults] inaBoolForKey:kUnlockSoundKey]) {
 		[self sound];
 	}
+	[self notifyScanning:true];
 }
+
+- (void)origoKeysDidFailToConnectToReader:(OrigoKeysReader *)reader openingType:(OrigoKeysOpeningType)type openingStatus:(OrigoKeysOpeningStatusType)status {
+	[self notifyScanning:false];
+}
+
+- (void)origoKeysDidDisconnectFromReader:(OrigoKeysReader *)reader openingType:(OrigoKeysOpeningType)type openingResult:(OrigoKeysOpeningResult *)result {
+	[self notifyScanning:false];
+}
+
 
 
 @end
