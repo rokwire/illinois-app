@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -55,15 +53,14 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
         body: SafeArea(
             child: Column(children: <Widget>[
           Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.all(16), child: _buildContent()))),
-          Visibility(visible: Platform.isAndroid, child:
           Padding(
               padding: EdgeInsets.all(16),
               child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
                 RoundedButton(
                     label: "Change",
-                    enabled: !_loading && Platform.isAndroid,
-                    textColor: (!_loading && Platform.isAndroid) ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor,
-                    borderColor: (!_loading && Platform.isAndroid) ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
+                    enabled: !_loading,
+                    textColor: (!_loading) ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor,
+                    borderColor: (!_loading) ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
                     backgroundColor: Styles().colors!.white,
                     fontFamily: Styles().fontFamilies!.bold,
                     contentWeight: 0.0,
@@ -71,7 +68,7 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
                     borderWidth: 2,
                     progress: _loading,
                     onTap: _onTapChange)
-              ])))
+              ]))
         ])),
         backgroundColor: Styles().colors!.background);
   }
@@ -89,12 +86,10 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
               child: Container(
                   color: Styles().colors!.white,
                   child: TextField(
-                      readOnly: !Platform.isAndroid,
                       maxLines: 2,
                       controller: _codesController,
                       decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
                       style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground)))),
-          Visibility(visible: Platform.isAndroid, child:
           Align(
               alignment: Alignment.topRight,
               child: Semantics(
@@ -115,7 +110,7 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
                                       style: TextStyle(
                                           fontFamily: Styles().fontFamilies!.regular,
                                           fontSize: 16,
-                                          color: Styles().colors!.fillColorPrimary)))))))))
+                                          color: Styles().colors!.fillColorPrimary))))))))
         ])
       ])
     ]);
@@ -140,7 +135,7 @@ class _DebugMobileAccessLockServicesCodesPanelState extends State<DebugMobileAcc
   }
 
   void _onTapChange() {
-    if (_loading || !Platform.isAndroid) {
+    if (_loading) {
       return;
     }
     String codesStringValue = _codesController.text.trim();
