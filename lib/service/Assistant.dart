@@ -41,19 +41,24 @@ class Assistant /* with Service */ {
       body['context'] = context;
     }
 
-    String? json = JsonUtils.encode(body);
-    Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
-      Map<String, dynamic>? answerJson = responseJson?['answer'];
-      if (answerJson != null) {
-        return Message.fromAnswerJson(answerJson);
+    try {
+      String? json = JsonUtils.encode(body);
+      Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json);
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+        Map<String, dynamic>? answerJson = responseJson?['answer'];
+        if (answerJson != null) {
+          return Message.fromAnswerJson(answerJson);
+        }
+        return null;
+      } else {
+        Log.w('Failed to load assistant response. Response:\n$responseCode: $responseString');
+        return null;
       }
-      return null;
-    } else {
-      Log.w('Failed to load assistant response. Response:\n$responseCode: $responseString');
+    } catch(e) {
+      Log.e('Failed to load assistant response. Response: $e');
       return null;
     }
   }
@@ -74,19 +79,24 @@ class Assistant /* with Service */ {
       'explanation': message.feedbackExplanation,
     };
 
-    String? json = JsonUtils.encode(body);
-    Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json, timeout: 30);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
-      Map<String, dynamic>? answerJson = responseJson?['answer'];
-      if (answerJson != null) {
-        return Message.fromAnswerJson(answerJson);
+    try {
+      String? json = JsonUtils.encode(body);
+      Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json, timeout: 30);
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+        Map<String, dynamic>? answerJson = responseJson?['answer'];
+        if (answerJson != null) {
+          return Message.fromAnswerJson(answerJson);
+        }
+        return null;
+      } else {
+        Log.w('Failed to load assistant feedback response. Response:\n$responseCode: $responseString');
+        return null;
       }
-      return null;
-    } else {
-      Log.w('Failed to load assistant feedback response. Response:\n$responseCode: $responseString');
+    } catch(e) {
+      Log.e('Failed to load assistant response. Response: $e');
       return null;
     }
   }

@@ -8,6 +8,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class SkillSelfEvaluationOccupationListPanel extends StatefulWidget {
   final Map<String, num> percentages;
@@ -46,21 +47,25 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.occupation_list.header.title', 'Skills Self-Evaluation')),
-      body: SectionSlantHeader(
-        headerWidget: _buildHeader(),
-        slantColor: Styles().colors?.gradientColorPrimary,
-        slantPainterHeadingHeight: 0,
-        backgroundColor: Styles().colors?.background,
-        children: Connectivity().isOffline ? _buildOfflineMessage() : _buildOccupationListView(),
-        childrenPadding: EdgeInsets.zero,
-        allowOverlap: !Connectivity().isOffline,
-      ),
+      body: Column(children: [
+        _buildHeader(),
+        Expanded(
+          child: Stack(
+            children: [
+              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.gradientColorPrimary, horzDir: TriangleHorzDirection.leftToRight, vertDir: TriangleVertDirection.bottomToTop), child:
+                Container(height: 64),
+              ),
+              Connectivity().isOffline ? _buildOfflineMessage() : _buildOccupationList(),
+            ],
+          ),
+        ),
+      ]),
     );
   }
 
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.only(top: 40),
+      padding: EdgeInsets.only(top: 40, bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -93,7 +98,10 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildSearchBar(),
-          Divider(color: Styles().colors?.surface, thickness: 2),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Divider(color: Styles().colors?.surface, thickness: 2),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
@@ -118,8 +126,8 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
                             style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
                           ),
                           SizedBox(width: 8,),
-                          (_sortMatchAsc ? Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
-                              : Styles().images?.getImage('chevron-up', excludeFromSemantics: true)) ?? Container(),
+                          (_sortMatchAsc ? Styles().images?.getImage('chevron-up', excludeFromSemantics: true)
+                              : Styles().images?.getImage('chevron-down', excludeFromSemantics: true)) ?? Container(),
                         ],
                       ),
                     ))
@@ -131,28 +139,15 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
     );
   }
 
-  List<Widget> _buildOfflineMessage() {
-    return [
-      Padding(
-        padding: EdgeInsets.all(28),
-        child: Center(
-            child: Text(
-                Localization().getStringEx('panel.skills_self_evaluation.occupation_list.offline.error.msg', 'Career Explorer not available while offline.'),
-                textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
-      ),
-    ];
-  }
-
-  List<Widget> _buildOccupationListView() {
-    return [
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Container(
-          height: 400,
-          child: _buildOccupationList()
-        ),
-      ),];
+  Widget _buildOfflineMessage() {
+    return Padding(
+      padding: EdgeInsets.all(28),
+      child: Center(
+          child: Text(
+              Localization().getStringEx('panel.skills_self_evaluation.occupation_list.offline.error.msg', 'Career Explorer not available while offline.'),
+              textAlign: TextAlign.center,
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
+    );
   }
 
   Widget _buildSearchBar() {
@@ -164,9 +159,15 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
         controller: _searchController,
         // focusNode: _searchFocusNode,
         textInputAction: TextInputAction.search,
-        autofocus: true,
+        autofocus: false,
         autocorrect: false,
         style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+        onChanged: (str) {
+          setState(() {
+            _searchTerm = str;
+            _filterOccupationList();
+          });
+        },
         onSubmitted: (str) {
           setState(() {
             _searchTerm = str;
@@ -174,31 +175,31 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
           });
         },
         decoration: InputDecoration(
-            suffixIcon: Row(mainAxisSize: MainAxisSize.min,
-              children: [
-                Visibility(
-                  visible: _searchController.text.isNotEmpty,
-                  child: IconButton(onPressed: () {
-                    setState(() {
-                      _searchController.clear();
-                      _searchTerm = null;
-                      _filterOccupationList();
-                    });
-                  }, icon: Styles().images?.getImage('close', excludeFromSemantics: true) ?? Container()),
-                ),
-                IconButton(onPressed: () => setState(() {
-                  _searchTerm = _searchController.text;
-                  _filterOccupationList();
-                }),
-                    icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container()),
-              ],
-            ),
-            labelStyle: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
-            labelText: Localization().getStringEx('', 'Search'),
-            filled: true,
-            fillColor: Styles().colors?.getColor('surface'),
-            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors?.getColor('surface') ?? Colors.white, width: 2.0, style: BorderStyle.solid)),
-            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors?.getColor('fillColorSecondary') ?? Colors.black, width: 2.0))),
+          suffixIcon: Row(mainAxisSize: MainAxisSize.min,
+            children: [
+              Visibility(
+                visible: _searchController.text.isNotEmpty,
+                child: IconButton(onPressed: () {
+                  setState(() {
+                    _searchController.clear();
+                    _searchTerm = null;
+                    _filterOccupationList();
+                  });
+                }, icon: Styles().images?.getImage('close', excludeFromSemantics: true) ?? Container()),
+              ),
+              IconButton(onPressed: () => setState(() {
+                _searchTerm = _searchController.text;
+                _filterOccupationList();
+              }),
+              icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container()),
+            ],
+          ),
+          labelStyle: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+          labelText: Localization().getStringEx('', 'Search'),
+          filled: true,
+          fillColor: Styles().colors?.getColor('surface'),
+          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors?.getColor('surface') ?? Colors.white, width: 2.0, style: BorderStyle.solid)),
+          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors?.getColor('fillColorSecondary') ?? Colors.black, width: 2.0))),
       ),);
   }
 
@@ -240,9 +241,9 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
     }
 
     if (_sortMatchAsc) {// ascending
-      _occupationMatchesFiltered.sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
-    } else {// descending
       _occupationMatchesFiltered.sort((a, b) => (a.matchPercent ?? 0).compareTo(b.matchPercent ?? 0));
+    } else {// descending
+      _occupationMatchesFiltered.sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
     }
   }
 
