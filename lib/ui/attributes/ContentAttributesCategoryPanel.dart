@@ -217,27 +217,32 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         (isSelected ? "check-circle-filled" : "circle-outline-gray")
       ) : null;
 
-    return Semantics(button: true, selected: isSelected, inMutuallyExclusiveGroup: !multipleSelection, child:
-        InkWell(onTap: () => _onTapAttributeValue(attributeValue), child:
-      Container(color: (Colors.white), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-        Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-          Flexible(child:
-            Padding(padding: const EdgeInsets.only(right: 8), child:
-              Text(title ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
-            )
-          ),
+    String? semanticsValue = isSelected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
 
-          Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            Visibility(visible: StringUtils.isNotEmpty(info), child:
-              Padding(padding: const EdgeInsets.only(right: 8), child:
-                Text(info ?? attributeValue.info ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
-              )
-            ),
-            
-            Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
-          ]),
-        ]),
-      )
+    return Semantics(button: true, inMutuallyExclusiveGroup: !multipleSelection, value: semanticsValue,  child:
+        InkWell(onTap: (){
+            _onTapAttributeValue(attributeValue);
+            AppSemantics.announceCheckBoxStateChange(context, !isSelected, title);
+          }, child:
+          Container(color: (Colors.white), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+              Flexible(child:
+                Padding(padding: const EdgeInsets.only(right: 8), child:
+                  Text(title ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+                )
+              ),
+
+              Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Visibility(visible: StringUtils.isNotEmpty(info), child:
+                  Padding(padding: const EdgeInsets.only(right: 8), child:
+                    Text(info ?? attributeValue.info ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+                  )
+                ),
+
+                Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
+              ]),
+            ]),
+          )
     ));
   }
 
