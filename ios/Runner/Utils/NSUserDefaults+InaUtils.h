@@ -21,9 +21,28 @@
 #import <Foundation/Foundation.h>
 
 @interface NSUserDefaults(InaUtils)
+- (NSString*)inaStringForKey:(NSString *)defaultName;
 - (NSString*)inaStringForKey:(NSString *)defaultName defaults:(NSString*)defaultValue;
+- (void)inaSetString:(NSString *)value forKey:(NSString *)defaultName;
+
+- (NSString*)inaNumberForKey:(NSString *)defaultName;
 - (NSString*)inaNumberForKey:(NSString *)defaultName defaults:(NSNumber*)defaultValue;
+- (void)inaSetNumber:(NSNumber*)value forKey:(NSString *)defaultName;
+
+- (NSInteger)inaIntegerForKey:(NSString *)defaultName;
 - (NSInteger)inaIntegerForKey:(NSString *)defaultName defaults:(NSInteger)defaultValue;
+- (void)inaSetInteger:(NSInteger)value forKey:(NSString *)defaultName;
+
+- (bool)inaBoolForKey:(NSString *)defaultName;
 - (bool)inaBoolForKey:(NSString *)defaultName defaults:(bool)defaultValue;
+- (void)inaSetBool:(bool)value forKey:(NSString *)defaultName;
+
+- (double)inaDoubleForKey:(NSString *)defaultName;
 - (double)inaDoubleForKey:(NSString *)defaultName defaults:(double)defaultValue;
+- (void)inaSetDouble:(double)value forKey:(NSString *)defaultName;
+
+- (float)inaFloatForKey:(NSString *)defaultName;
+- (float)inaFloatForKey:(NSString *)defaultName defaults:(float)defaultValue;
+- (void)inaSetFloat:(float)value forKey:(NSString *)defaultName;
+
 @end
