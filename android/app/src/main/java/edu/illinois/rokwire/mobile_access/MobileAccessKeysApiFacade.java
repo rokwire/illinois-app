@@ -84,6 +84,7 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
 
     private boolean isAllowedToScan = false;
     private boolean isScanning = false;
+    private boolean isStarted = false;
 
     public MobileAccessKeysApiFacade(Activity activity, OrigoKeysApiFactory apiFactory) {
         this.activity = activity;
@@ -167,6 +168,10 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
             }
         }
         return null;
+    }
+
+    public boolean isStarted() {
+        return isStarted;
     }
 
     public boolean changeRssiSensitivity(OrigoRssiSensitivity rssiSensitivity) {
@@ -360,12 +365,16 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysStartupCallBack: handleMobileKeysTransactionCompleted");
+            isStarted = true;
+            MobileAccessPlugin.invokeStartFinishedMethod(true);
             onStartUpComplete();
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysStartupCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
+            isStarted = false;
+            MobileAccessPlugin.invokeStartFinishedMethod(false);
         }
     };
 
@@ -373,14 +382,14 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionCompleted");
-            MobileAccessPlugin.invokeEndpointSetupFinishedMethod(true);
+            MobileAccessPlugin.invokeStartFinishedMethod(true);
             onEndpointSetUpComplete();
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
-            MobileAccessPlugin.invokeEndpointSetupFinishedMethod(false);
+            MobileAccessPlugin.invokeStartFinishedMethod(false);
         }
     };
 

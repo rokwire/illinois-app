@@ -83,6 +83,12 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
         String method = call.method;
         try {
             switch (method) {
+                case Constants.MOBILE_ACCESS_START_KEY:
+                    result.success(true);
+                    if (apiFacade.isStarted()) {
+                        MobileAccessPlugin.invokeStartFinishedMethod(true);
+                    }
+                    break;
                 case Constants.MOBILE_ACCESS_AVAILABLE_KEYS_KEY:
                     List<HashMap<String, Object>> keys = handleMobileAccessKeys();
                     result.success(keys);
@@ -332,6 +338,10 @@ public class MobileAccessPlugin implements MethodChannel.MethodCallHandler, Flut
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         methodChannel.setMethodCallHandler(null);
         methodChannel = null;
+    }
+
+    public static void invokeStartFinishedMethod(boolean result) {
+        invokeFlutterMethod(Constants.MOBILE_ACCESS_START_FINISHED_KEY, result);
     }
 
     public static void invokeEndpointSetupFinishedMethod(boolean result) {

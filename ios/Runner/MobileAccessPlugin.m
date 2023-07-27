@@ -34,6 +34,7 @@ static NSString *const kMobileAccessErrorDomain = @"edu.illinois.rokwire.mobile_
 static const int LOCK_SERVICE_CODE_AAMK = 1;
 static const int LOCK_SERVICE_CODE_HID = 2;
 
+static NSString *const kPreviouslyLaunchedKey = @"edu.illinois.rokwire.mobile_access.previously_launched";
 static NSString *const kSupportedOpeningTypesKey = @"edu.illinois.rokwire.mobile_access.opeining_types";
 static NSString *const kUnlockVibrationKey = @"edu.illinois.rokwire.mobile_access.unlock.vibration";
 static NSString *const kUnlockSoundKey = @"edu.illinois.rokwire.mobile_access.unlock.sound";
@@ -43,12 +44,16 @@ static NSString *const kUnlockSoundKey = @"edu.illinois.rokwire.mobile_access.un
 @property (nonatomic, strong) FlutterMethodChannel* channel;
 
 @property (nonatomic, strong) OrigoKeysManager* origoKeysManager;
+@property (nonatomic, retain) NSMutableSet<NSNumber*>* supportedOpeningTypes;
 
 @property (nonatomic, strong) NSMutableSet* startCompletions;
 @property (nonatomic, assign) bool isStarted;
 
 @property (nonatomic, strong) void (^registerEndpointCompletion)(NSError* error);
 @property (nonatomic, strong) void (^unregisterEndpointCompletion)(NSError* error);
+@property (nonatomic, strong) void (^updateEndpointCompletion)(NSError* error);
+
+@property (nonatomic, assign) SystemSoundID soundId;
 @end
 
 @interface OrigoKeysKey(UIUC)
@@ -56,7 +61,9 @@ static NSString *const kUnlockSoundKey = @"edu.illinois.rokwire.mobile_access.un
 @end
 
 typedef NS_ENUM(NSInteger, MobileAccessError) {
-	MobileAccessError_InitializeFailed = 1,
+	MobileAccessError_NotAvailable = 1,
+	MobileAccessError_InitializeSkipped,
+	MobileAccessError_InitializeFailed,
 	MobileAccessError_NotInitialized,
 
 	MobileAccessError_EndpoingAlreadySetup,
@@ -64,18 +71,13 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 
 	MobileAccessError_EndpoingNotSetup,
 	MobileAccessError_EndpoingBeingUnregister,
+	MobileAccessError_EndpoingBeingUpdated,
 };
 
 
 
 ///////////////////////////////////////////
 // MobileAccessPlugin
-
-@interface MobileAccessPlugin()
-@property (nonatomic, assign) SystemSoundID soundId;
-@property (nonatomic, retain) NSMutableSet<NSNumber*>* supportedOpeningTypes;
-
-@end
 
 @implementation MobileAccessPlugin
 
@@ -112,7 +114,16 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 #pragma mark MethodCall
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result{
-	if ([call.method isEqualToString:@"availableKeys"]) {
+	if ([call.method isEqualToString:@"start"]) {
+		__weak typeof(self) weakSelf = self;
+		NSNumber* value = [call.arguments isKindOfClass:[NSNumber class]] ? call.arguments : nil;
+		[self startForced:value.boolValue completion:^(NSError *error) {
+			NSNumber *resultValue = [NSNumber numberWithBool:(error == nil)];
+			result(resultValue);
+			[weakSelf.channel invokeMethod:@"start.finished" arguments:resultValue];
+		}];
+	}
+	else if ([call.method isEqualToString:@"availableKeys"]) {
 		result(self.mobileKeys);
 	}
 	else if ([call.method isEqualToString:@"registerEndpoint"]) {
@@ -178,63 +189,83 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 
 // Implementation
 
-
-- (void)startWithAppId:(NSString*)appId {
-	[self startWithAppId:appId completion:nil];
+- (void)startForced:(bool)forced completion:(void (^)(NSError* error))completion {
+	if (forced || [[NSUserDefaults standardUserDefaults] inaBoolForKey:kPreviouslyLaunchedKey]) {
+		[self _startWithCompletion:completion];
+	}
+	else if (completion != nil) {
+		completion([NSError errorWithDomain:kMobileAccessErrorDomain code: MobileAccessError_InitializeSkipped userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Initialize skipped.", nil) }]);
+	}
 }
 
-- (void)startWithAppId:(NSString*)appId completion:(void (^)(NSError* error))completion {
-
-	NSDictionary *bundleInfo = [[NSBundle mainBundle] infoDictionary];
-	NSString *version = [NSString stringWithFormat:@"%@-%@ (%@)", appId,
-		[bundleInfo inaStringForKey:@"CFBundleShortVersionString"],
-		[bundleInfo inaStringForKey:@"CFBundleVersion"]
-	];
+- (void)_startWithCompletion:(void (^)(NSError* error))completion {
+	if (0 < _origoAppId.length) {
 	
-	@try {
-		_origoKeysManager = [[OrigoKeysManager alloc] initWithDelegate:self options:@{
-			OrigoKeysOptionApplicationId: appId,
-			OrigoKeysOptionVersion: version,
-			OrigoKeysOptionSuppressApplePay: [NSNumber numberWithBool:TRUE],
-		//OrigoKeysOptionBeaconUUID: @"...",
-		}];
-	}
-	@catch (NSException *exception) {
-		NSLog(@"Failed to initialize OrigoKeysManager: %@", exception);
-	}
+		if (_origoKeysManager == nil) {
+			NSDictionary *bundleInfo = [[NSBundle mainBundle] infoDictionary];
+			NSString *version = [NSString stringWithFormat:@"%@-%@ (%@)", _origoAppId,
+				[bundleInfo inaStringForKey:@"CFBundleShortVersionString"],
+				[bundleInfo inaStringForKey:@"CFBundleVersion"]
+			];
+			
+			@try {
+				_origoKeysManager = [[OrigoKeysManager alloc] initWithDelegate:self options:@{
+					OrigoKeysOptionApplicationId: _origoAppId,
+					OrigoKeysOptionVersion: version,
+					OrigoKeysOptionSuppressApplePay: [NSNumber numberWithBool:TRUE],
+				//OrigoKeysOptionBeaconUUID: @"...",
+				}];
+			}
+			@catch (NSException *exception) {
+				NSLog(@"Failed to initialize OrigoKeysManager: %@", exception);
+			}
+		}
 
-	if (_origoKeysManager == nil) {
-		if (completion != nil) {
-			completion([NSError errorWithDomain:kMobileAccessErrorDomain code: MobileAccessError_InitializeFailed userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }]);
+		if (_origoKeysManager == nil) {
+			if (completion != nil) {
+				completion([NSError errorWithDomain:kMobileAccessErrorDomain code: MobileAccessError_InitializeFailed userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }]);
+			}
+		}
+		else if (_isStarted) {
+			if (completion != nil) {
+				completion(nil);
+			}
+		}
+		else if (_startCompletions != nil) {
+			if (completion != nil) {
+				[_startCompletions addObject:completion];
+			}
+		}
+		else {
+			[[NSUserDefaults standardUserDefaults] inaSetBool: true forKey:kPreviouslyLaunchedKey];
+
+			_startCompletions = [[NSMutableSet alloc] init];
+			if (completion != nil) {
+				[_startCompletions addObject:completion];
+			}
+			
+			[_origoKeysManager startup];
 		}
 	}
-	else if (_isStarted) {
-		if (completion != nil) {
-			completion(nil);
-		}
-	}
-	else if (_startCompletions != nil) {
-		if (completion != nil) {
-			[_startCompletions addObject:completion];
-		}
-	}
-	else {
-		_startCompletions = [[NSMutableSet alloc] init];
-		if (completion != nil) {
-			[_startCompletions addObject:completion];
-		}
-		
-		[_origoKeysManager startup];
+	else if (completion != nil) {
+		completion([NSError errorWithDomain:kMobileAccessErrorDomain code: MobileAccessError_NotAvailable userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo App Id not available.", nil) }]);
 	}
 }
 
 - (void)didStartupWithError:(NSError*)error {
 	_isStarted = (error == nil);
-	
 	if (_isStarted) {
 		[_origoKeysManager setSupportedOpeningTypes:_supportedOpeningTypes.allObjects];
+		
+		if ([_origoKeysManager isEndpointSetup:NULL]) {
+			[self updateEndpointWithCompletion:^(NSError *error) {
+			}];
+		}
 	}
+	[self notifyStartupCompleteWithError: error];
+}
 
+- (void)notifyStartupCompleteWithError:(NSError*)error {
 	if (_startCompletions != nil) {
 		NSSet *startCompletions = _startCompletions;
 		_startCompletions = nil;
@@ -250,7 +281,7 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 
 - (NSArray*)mobileKeys {
 	NSMutableArray* result = nil;
-	if ([_origoKeysManager isEndpointSetup: NULL]) {
+	if ([_origoKeysManager isEndpointSetup:NULL]) {
 		NSArray<OrigoKeysKey*>* oregoKeys = [_origoKeysManager listMobileKeys: NULL];
 		if (oregoKeys != nil) {
 			result = [[NSMutableArray alloc] init];
@@ -320,6 +351,35 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	if (_unregisterEndpointCompletion != nil) {
 		void (^ completion)(NSError* error) = _unregisterEndpointCompletion;
 		_unregisterEndpointCompletion = nil;
+		completion(error);
+	}
+}
+
+- (void)updateEndpointWithCompletion:(void (^)(NSError* error))completion {
+	NSError *errorResult = nil;
+	if ((_origoKeysManager == nil) || !_isStarted) {
+		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_NotInitialized userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Origo Controller not initialized.", nil) }];
+	}
+	else if (![_origoKeysManager isEndpointSetup:NULL]) {
+		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingNotSetup userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint not setup", nil) }];
+	}
+	else if (_updateEndpointCompletion != nil) {
+		errorResult = [NSError errorWithDomain:kMobileAccessErrorDomain code:MobileAccessError_EndpoingBeingUpdated userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Endpoint currently updated", nil) }];
+	}
+	else {
+		_updateEndpointCompletion = completion;
+		[_origoKeysManager updateEndpoint];
+	}
+
+	if ((errorResult != nil) && (completion != nil)) {
+		completion(errorResult);
+	}
+}
+
+- (void)didUpdateEndpointWithError:(NSError*)error {
+	if (_updateEndpointCompletion != nil) {
+		void (^ completion)(NSError* error) = _updateEndpointCompletion;
+		_updateEndpointCompletion = nil;
 		completion(error);
 	}
 }
@@ -417,9 +477,17 @@ typedef NS_ENUM(NSInteger, MobileAccessError) {
 	[self didRegisterEndpointWithError:error];
 }
 
-- (void)origoKeysDidUpdateEndpoint {}
-- (void)origoKeysDidUpdateEndpointWithSummary:(OrigoKeysEndpointUpdateSummary *)endpointUpdateSummary {}
-- (void)origoKeysDidFailToUpdateEndpoint:(NSError *)error {}
+- (void)origoKeysDidUpdateEndpoint {
+	[self didUpdateEndpointWithError:nil];
+}
+
+- (void)origoKeysDidUpdateEndpointWithSummary:(OrigoKeysEndpointUpdateSummary *)endpointUpdateSummary {
+	[self didUpdateEndpointWithError:nil];
+}
+
+- (void)origoKeysDidFailToUpdateEndpoint:(NSError *)error {
+	[self didUpdateEndpointWithError:error];
+}
 
 - (void)origoKeysDidTerminateEndpoint {
 	[self didUnregisterEndpointWithError:nil];

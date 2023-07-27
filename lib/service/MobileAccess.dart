@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class MobileAccess with Service implements NotificationsListener {
+  static const String notifyStartFinished  = "edu.illinois.rokwire.mobile_access.start.finished";
   static const String notifyDeviceRegistrationFinished  = "edu.illinois.rokwire.mobile_access.device.registration.finished";
 
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/mobile_access');
@@ -36,6 +37,7 @@ class MobileAccess with Service implements NotificationsListener {
   static const String _tag = 'MobileAccess';
 
   late MobileAccessOpenType _selectedOpenType;
+  bool _isStarted = false;
   bool _isScanning = false;
 
   // Singleton
@@ -60,6 +62,7 @@ class MobileAccess with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _selectedOpenType = _openTypeFromString(Storage().mobileAccessOpenType) ?? MobileAccessOpenType.opened_app;
+    _startSilently();
     _shouldScan();
     _checkNeedsRegistration();
     await super.initService();
@@ -77,6 +80,24 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   // APIs
+
+  bool get isStarted => _isStarted;
+
+  Future<bool> startIfNeeded() async =>
+    _isStarted || await _start(force: true);
+
+  Future<bool> _startSilently() async =>
+    _isStarted || await _start(force: false);
+
+  Future<bool> _start({ required bool force }) async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('start', force);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
 
   Future<List<dynamic>?> getAvailableKeys() async {
     List<dynamic>? mobileAccessKeys;
@@ -219,7 +240,7 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   void _shouldScan() {
-    bool allowScan = _canHaveMobileIcard && _isAllowedToOpenDoors;
+    bool allowScan = _canHaveMobileIcard && _isAllowedToOpenDoors && _isStarted;
     if (_isScanning != allowScan) {
       _allowScanning(allowScan);
     }
@@ -286,6 +307,9 @@ class MobileAccess with Service implements NotificationsListener {
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
+      case "start.finished":
+        _onStartFinished(call.arguments);
+        break;
       case "endpoint.register.finished":
         _onEndpointRegistrationFinished(call.arguments);
         break;
@@ -296,6 +320,15 @@ class MobileAccess with Service implements NotificationsListener {
         break;
     }
     return null;
+  }
+
+  void _onStartFinished(dynamic arguments) {
+    bool? success = (arguments is bool) ? arguments : null;
+    if (success == true) {
+      _isStarted = true;
+      NotificationService().notify(notifyStartFinished);
+      _shouldScan();
+    }
   }
 
   void _onEndpointRegistrationFinished(dynamic arguments) {

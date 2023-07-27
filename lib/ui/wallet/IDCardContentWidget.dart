@@ -80,7 +80,10 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     NotificationService().subscribe(this, [
       Auth2.notifyCardChanged,
       FlexUI.notifyChanged,
+      MobileAccess.notifyStartFinished,
     ]);
+
+    MobileAccess().startIfNeeded();
     
     _animationController = AnimationController(duration: Duration(milliseconds: 1500), lowerBound: 0, upperBound: 2 * math.pi, animationBehavior: AnimationBehavior.preserve, vsync: this)
     ..addListener(() {
@@ -184,6 +187,10 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       });
     }
     else if (name == FlexUI.notifyChanged) {
+      _checkIcarMobileAvailable();
+      setStateIfMounted(() { });
+    }
+    else if (name == MobileAccess.notifyStartFinished) {
       _checkIcarMobileAvailable();
       setStateIfMounted(() { });
     }
@@ -585,8 +592,9 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   }
 
   void _checkIcarMobileAvailable() {
-    if (_isIcardMobileAvailable != FlexUI().isIcardMobileAvailable) {
-      _isIcardMobileAvailable = FlexUI().isIcardMobileAvailable;
+    bool isIcardMobileAvailable = FlexUI().isIcardMobileAvailable && MobileAccess().isStarted;
+    if (_isIcardMobileAvailable != isIcardMobileAvailable) {
+      _isIcardMobileAvailable = isIcardMobileAvailable;
       _loadMobileAccess();
     }
   }
