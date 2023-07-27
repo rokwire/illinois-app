@@ -7,7 +7,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class SkillSelfEvaluationOccupationListPanel extends StatefulWidget {
