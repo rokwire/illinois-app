@@ -382,14 +382,14 @@ public class MobileAccessKeysApiFacade implements OrigoKeysApiFacade, PluginRegi
         @Override
         public void handleMobileKeysTransactionCompleted() {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionCompleted");
-            MobileAccessPlugin.invokeStartFinishedMethod(true);
+            MobileAccessPlugin.invokeEndpointSetupFinishedMethod(true);
             onEndpointSetUpComplete();
         }
 
         @Override
         public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
             Log.d(TAG, "mobileKeysEndpointSetupCallBack: handleMobileKeysTransactionFailed: " + e.getErrorCode(), e);
-            MobileAccessPlugin.invokeStartFinishedMethod(false);
+            MobileAccessPlugin.invokeEndpointSetupFinishedMethod(false);
         }
     };
 
