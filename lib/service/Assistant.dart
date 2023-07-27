@@ -48,7 +48,7 @@ class Assistant /* with Service */ {
       String? responseString = response?.body;
       if (responseCode == 200) {
         Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
-        Map<String, dynamic>? answerJson = responseJson?['answer'];
+        Map<String, dynamic>? answerJson = JsonUtils.mapValue(responseJson?['answer']) ;
         if (answerJson != null) {
           return Message.fromAnswerJson(answerJson);
         }
@@ -86,7 +86,7 @@ class Assistant /* with Service */ {
       String? responseString = response?.body;
       if (responseCode == 200) {
         Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
-        Map<String, dynamic>? answerJson = responseJson?['answer'];
+        Map<String, dynamic>? answerJson = JsonUtils.mapValue(responseJson?['answer']);
         if (answerJson != null) {
           return Message.fromAnswerJson(answerJson);
         }
