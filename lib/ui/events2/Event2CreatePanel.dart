@@ -82,6 +82,8 @@ class Event2CreatePanel extends StatefulWidget {
   );
 
   static InputDecoration textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
+    fillColor: Styles().colors?.surface,
+    filled: true,
     border: OutlineInputBorder(
       borderSide: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
       borderRadius: BorderRadius.circular(8)
@@ -90,6 +92,7 @@ class Event2CreatePanel extends StatefulWidget {
   );
 
   static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
+    color: Styles().colors?.surface,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );

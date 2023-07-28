@@ -57,6 +57,8 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   int _loadingSurveys = 0;
   bool _updatingSurvey = false;
 
+  late final SurveyWidgetController _surveyController = SurveyWidgetController();
+
   @override
   void initState() {
     _hoursController.text = _initialHours = widget.details?.hoursAfterEvent?.toString() ?? '';
@@ -107,7 +109,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Scaffold(
         appBar: _headerBar,
         body: _buildScaffoldContent(),
-        backgroundColor: Styles().colors!.white);
+        backgroundColor: Styles().colors?.background);
   }
 
   Widget _buildScaffoldContent() {
@@ -254,9 +256,14 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   // Survey Preview
 
-  Widget _buildSurveyPreviewSection() => Visibility(visible: (_survey != null), child:
+  Widget _buildSurveyPreviewSection() => Visibility(visible: true, child:
     Padding(padding: Event2CreatePanel.sectionPadding, child:
-      SurveyWidget(survey: _survey)
+      Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat')),
+          SurveyWidget(survey: _survey, controller: _surveyController, summarizeResultRules: true),
+        ],
+      )
     )
   );
 
