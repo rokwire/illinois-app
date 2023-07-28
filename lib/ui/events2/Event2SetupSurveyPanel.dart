@@ -32,10 +32,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2SetupSurveyPanel extends StatefulWidget {
   final Event2? event;
+  final String? eventName;
   final Event2SurveyDetails? surveyDetails;
   final List<Survey>? surveysCache;
 
-  Event2SetupSurveyPanel({Key? key, this.event, this.surveyDetails, this.surveysCache}) : super(key: key);
+  Event2SetupSurveyPanel({Key? key, this.event, this.eventName, this.surveyDetails, this.surveysCache}) : super(key: key);
 
   Event2SurveyDetails? get details => (event?.id != null) ? event?.surveyDetails : surveyDetails;
 
@@ -48,6 +49,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   List<Survey>? _surveys;
 
   Survey? _survey;
+  Survey? _displaySurvey;
   String? _initialSurveyId;
 
   final TextEditingController _hoursController = TextEditingController();
@@ -61,6 +63,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   @override
   void initState() {
+    _selectSurvey(widget.details?.survey);
     _hoursController.text = _initialHours = widget.details?.hoursAfterEvent?.toString() ?? '';
     if (_isEditing) {
       _hoursController.addListener(_checkModified);
@@ -131,6 +134,9 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return SingleChildScrollView(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(Localization().getStringEx('panel.event2.setup.survey.explanation.title', 'Choose a survey template to be sent to attendees of this event after it completes.'),
+              style: Styles().textStyles?.getTextStyle('widget.description.regular')),
+          SizedBox(height: 16.0),
           _buildSurveysSection(),
           _buildHoursSection(),
           _buildSurveyPreviewSection(),
@@ -227,19 +233,24 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     Analytics().logSelect(target: "Survey: ${(survey != null) ? survey.title : 'null'}");
     if ((_survey != survey) && mounted) {
       setState(() {
-        _survey = survey;
-        _survey?.replaceKey('event_name', widget.event?.name);
+        _selectSurvey(survey);
       });
       _checkModified();
       //TBD: Preview selected survey
     }
   }
 
+  void _selectSurvey(Survey? survey) {
+    _survey = survey;
+    _displaySurvey = survey != null ? Survey.fromOther(survey) : null;
+    _displaySurvey?.replaceKey('event_name', widget.eventName ?? widget.event?.name);
+  }
+
   String get nullSurveyTitle => Localization().getStringEx('panel.event2.setup.survey.no_survey.title', '---');
 
   // Hours
 
-  Widget _buildHoursSection() => Visibility(visible: (_survey != null), child:
+  Widget _buildHoursSection() => Visibility(visible: (_displaySurvey != null), child:
     Padding(padding: Event2CreatePanel.sectionPadding, child:
       Row(children: [
         Flexible(flex: 3, child:
@@ -256,12 +267,12 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   // Survey Preview
 
-  Widget _buildSurveyPreviewSection() => Visibility(visible: true, child:
+  Widget _buildSurveyPreviewSection() => Visibility(visible: _survey != null, child:
     Padding(padding: Event2CreatePanel.sectionPadding, child:
       Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat')),
-          SurveyWidget(survey: _survey, controller: _surveyController, summarizeResultRules: true),
+          SurveyWidget(survey: _displaySurvey, controller: _surveyController, summarizeResultRules: true),
         ],
       )
     )

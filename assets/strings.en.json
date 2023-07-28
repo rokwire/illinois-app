@@ -1309,6 +1309,7 @@
     "panel.event2.detail.attendance.attendees.checkin.description": "To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.",
     "panel.event2.detail.attendance.scan.cancel.button.title": "Cancel",
     "panel.event2.detail.attendance.qr_code.uin.not_valid.msg": "This QR code does not contain valid UIN number.",
+    "panel.event2_detail.button.follow_up_survey.title": "Take Survey",
 
     "panel.event2.search.header.title": "Search",
 	"panel.event2.search.search.label.title": "Search: ",

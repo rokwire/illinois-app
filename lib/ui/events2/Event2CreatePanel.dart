@@ -1330,6 +1330,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
       event: widget.event,
+      eventName: _titleController.text,
       surveyDetails: _surveyDetails,
       surveysCache: _surveysCache,
     ))).then((Event2SurveyDetails? result) {
@@ -1597,6 +1598,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           if (widget.isCreate) {
             if (_surveyDetails?.survey != null) {
               _surveyDetails!.survey!.calendarEventId = result.id;
+              _surveyDetails!.survey!.replaceKey('event_name', result.name);
               setStateIfMounted(() {
                 _creatingEvent = true;
               });
