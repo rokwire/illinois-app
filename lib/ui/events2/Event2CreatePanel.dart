@@ -44,8 +44,9 @@ import 'Event2SetupAttendancePanel.dart';
 class Event2CreatePanel extends StatefulWidget {
 
   final Event2? event;
+  final Survey? survey;
 
-  Event2CreatePanel({Key? key, this.event}) : super(key: key);
+  Event2CreatePanel({Key? key, this.event, this.survey}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CreatePanelState();
@@ -423,6 +424,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   Event2RegistrationDetails? _registrationDetails;
   Event2AttendanceDetails? _attendanceDetails;
   Event2SurveyDetails? _surveyDetails;
+  Survey? _survey;
 
   String? _sponsor;
   String? _speaker;
@@ -501,6 +503,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     _registrationDetails = widget.event?.registrationDetails;
     _attendanceDetails = widget.event?.attendanceDetails;
     _surveyDetails = widget.event?.surveyDetails;
+    _survey = widget.survey;
 
     _sponsor = widget.event?.sponsor ?? '';
     _speaker = widget.event?.speaker ?? '';
@@ -511,14 +514,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     _costSectionExpanded = widget.isUpdate;
 
     _errorList = _buildErrorList();
-
-    Surveys().loadSurveys(types: [Survey.templateSurveyPrefix+Event2.followUpSurveyType]).then((List<Survey>? surveys) {
-      if (surveys != null) {
-        setState(() {
-          _surveysCache = surveys;
-        });
-      }
-    });
 
     super.initState();
   }
@@ -1307,13 +1302,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildSurveyButtonSection() {
     String? subTitle;
-    if (_surveyDetails?.isEmpty ?? true) {
+    if (StringUtils.isEmpty(_survey?.id)) {
       subTitle = Localization().getStringEx('panel.event2.create.button.survey.description', 'Receive feedback about your event');
     }
     else {
-      String? surveyName = _surveysCache.isNotEmpty ? Survey.findInList(_surveysCache, calendarEventId: widget.event?.id)?.displayTitle : null;
+      String? surveyName = _survey?.title;
       subTitle = ((surveyName != null) && surveyName.isNotEmpty) ?
-        Localization().getStringEx('panel.event2.create.button.survey.confirmation2', 'Follow-up survey: {{survey_name}}.').replaceAll('{{survey_name}}', surveyName) :
+        surveyName /* Localization().getStringEx('panel.event2.create.button.survey.confirmation2', 'Follow-up survey: {{survey_name}}.').replaceAll('{{survey_name}}' ,surveyName) */ :
         Localization().getStringEx('panel.event2.create.button.survey.confirmation', 'Follow-up survey set up.');
     }
     return Event2CreatePanel.buildButtonSectionWidget(
@@ -1328,15 +1323,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   void _onEventSurvey() {
     Analytics().logSelect(target: "Event Follow-Up Survey");
     Event2CreatePanel.hideKeyboard(context);
-    Navigator.push<Event2SurveyDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
-      event: widget.event,
+    Navigator.push<Event2SetupSurveyParam>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+      surveyParam: Event2SetupSurveyParam(
+        event: widget.event,
+        details: _surveyDetails,
+        survey: _survey,
+      ),
       eventName: _titleController.text,
-      surveyDetails: _surveyDetails,
       surveysCache: _surveysCache,
-    ))).then((Event2SurveyDetails? result) {
+    ))).then((Event2SetupSurveyParam? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _surveyDetails = result;
+          _survey = result.survey;
+          _surveyDetails = result.details;
         });
       }
     });
@@ -1590,31 +1589,34 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     Future<dynamic> Function(Event2 source) serviceAPI = widget.isCreate ? Events2().createEvent : Events2().updateEvent;
     serviceAPI(_createEventFromData()).then((dynamic result) {
       if (mounted) {
-        setState(() {
-          _creatingEvent = false;
-        });
 
         if (result is Event2) {
-          if (widget.isCreate) {
-            if (_surveyDetails?.survey != null) {
-              _surveyDetails!.survey!.calendarEventId = result.id;
-              _surveyDetails!.survey!.replaceKey('event_name', result.name);
+          if (widget.isCreate && (_survey != null)) {
+            Surveys().createEvent2Survey(_survey!, result).then((bool? success) {
               setStateIfMounted(() {
-                _creatingEvent = true;
+                _creatingEvent = false;
               });
-              Surveys().createSurvey(_surveyDetails!.survey!).then((bool? success) {
-                setStateIfMounted(() {
-                  _creatingEvent = false;
-                });
-                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: result,)));
-              });
-            }
+              if (success == true) {
+                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                  event: result,
+                )));
+              }
+              else {
+                Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.message.failed.title', 'Failed to create event survey.'));
+              }
+            });
           }
           else {
+            setState(() {
+              _creatingEvent = false;
+            });
             Navigator.of(context).pop(result);
           }
         }
         else  {
+          setState(() {
+            _creatingEvent = false;
+          });
           Event2Popup.showErrorResult(context, result);
         }
       }
@@ -1715,7 +1717,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
       registrationDetails: (_registrationDetails?.type != Event2RegistrationType.none) ? _registrationDetails : null,
       attendanceDetails: (_attendanceDetails?.isNotEmpty ?? false) ? _attendanceDetails : null,
-      surveyDetails: (_surveyDetails?.isNotEmpty ?? false) ? _surveyDetails : null,
+      surveyDetails: (StringUtils.isNotEmpty(_survey?.id)) ? _surveyDetails : null,
 
       sponsor: _sponsor,
       speaker: _speaker,
