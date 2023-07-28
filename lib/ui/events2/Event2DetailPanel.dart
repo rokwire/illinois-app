@@ -484,17 +484,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _followUpSurveyButtonWidget{
-    if (Auth2().isLoggedIn && _event?.userRole == Event2UserRole.participant && _survey != null &&
-      (_event?.endTimeUtc?.add(Duration(hours: _event?.surveyDetails?.hoursAfterEvent ?? 0)).isBefore(DateTime.now()) ?? true)) {//Already registered
+    if (Auth2().isLoggedIn && (_event?.userRole == Event2UserRole.participant) && (_survey != null) && (_event?.isSurveyAvailable ?? false)) {
       return <Widget>[_buildButtonWidget(
           title: Localization().getStringEx('panel.event2_detail.button.follow_up_survey.title', 'Take Survey'),
           onTap: _onFollowUpSurvey,
           externalLink: false,
-          progress: _registrationLoading
       )];
     }
 
-    return null; //not required
+    return null;
   }
 
   Widget get _adminSettingsWidget  =>

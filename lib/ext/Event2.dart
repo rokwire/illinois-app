@@ -173,6 +173,12 @@ extension Event2Ext on Event2 {
       return null;
     }
   }
+
+  bool get isSurveyAvailable {
+    int? hours = surveyDetails?.hoursAfterEvent ?? 0;
+    DateTime? eventTimeUtc = endTimeUtc ?? startTimeUtc;
+    return (eventTimeUtc == null) || eventTimeUtc.add(Duration(hours: hours)).isBefore(DateTime.now().toUtc());
+  }
 }
 
 extension Event2ContactExt on Event2Contact {
