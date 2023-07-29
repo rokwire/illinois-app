@@ -699,7 +699,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Analytics().logSelect(target: "Follow up survey");
     Surveys().loadSurveyResponses(surveyIDs: [_survey!.id]).then((List<SurveyResponse>? responses) {
       if (CollectionUtils.isEmpty(responses)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: _survey)));
+        Survey displaySurvey = Survey.fromOther(_survey!);
+        displaySurvey.replaceKey('event_name', _event?.name);
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: displaySurvey)));
       }
     });
   }

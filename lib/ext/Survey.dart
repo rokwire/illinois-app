@@ -30,7 +30,9 @@ extension Event2SurveysExt on Surveys {
   Future<bool?> createEvent2Survey(Survey template, Event2 event) async {
     Survey survey = Survey.fromOther(template);
     survey.calendarEventId = event.id;
-    survey.replaceKey('event_name', event.name);
+    // this will cause problems when updating an event name after creating the survey
+    // instead, the event_name key should be replaced with the current event name when an event attendee begins the survey
+    // survey.replaceKey('event_name', event.name);
     return createSurvey(survey);
   }
 }

@@ -1258,6 +1258,8 @@
 	"panel.event2.setup.survey.hours.invalid.msg": "Please, fill valid non-negative number for hours.",
 	"panel.event2.setup.survey.surveys.failed.msg": "Failed to load available surveys.",
 	"panel.event2.setup.survey.update.failed.msg": "Failed to update event survey.",
+	"panel.event2.setup.survey.update.already_available.msg": "This survey is already available to attendees, so it will not be updated.",
+	"panel.event2.setup.survey.update.event_missing.msg": "Failed to find associated event.",
 	"panel.event2.setup.survey.surveys.empty.msg": "There are no surveys available.",
 	"panel.event2.setup.survey.no_survey.title": "---",
 
