@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated Event2 onboarding UI [#3445](https://github.com/rokwire/illinois-app/issues/3445).
 - Use extended error messaging for Events2 content [#3447](https://github.com/rokwire/illinois-app/issues/3447).
+- Refresh Events2 home widget content on user login/logout [#3300](https://github.com/rokwire/illinois-app/issues/3300).
 
 ## [5.0.36] - 2023-07-27
 ### Added

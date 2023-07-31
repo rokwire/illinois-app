@@ -22,6 +22,7 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
@@ -95,6 +96,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
       FlexUI.notifyChanged,
       Storage.notifySettingChanged,
       Events2.notifyChanged,
+      Auth2.notifyLoginChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -140,6 +142,9 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
       }
     }
     else if (name == Events2.notifyChanged) {
+      _reloadIfVisible(); // or mark as needs refresh
+    }
+    else if (name == Auth2.notifyLoginChanged) {
       _reloadIfVisible(); // or mark as needs refresh
     }
   }
