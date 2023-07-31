@@ -55,22 +55,16 @@ class Event2HomePanel extends StatefulWidget {
   // Filters onboarding
 
   static void present(BuildContext context) {
-    if (Storage().events2Attributes != null) {
+    if (Storage().events2Attributes != null && false) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel()));
     }
     else {
       getLocationServicesStatus().then((LocationServicesStatus? status) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
           title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
-          bgImageKey: 'event-filters-background',
           description: Localization().getStringEx('panel.events2.home.attributes.launch.header.description', 'Discover events across campus and around the world'),
-          descriptionTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular.highlight'),
-          sectionTitleTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.highlight'),
-          sectionDescriptionTextStyle: Styles().textStyles?.getTextStyle('widget.item.small.thin.highlight'),
-          sectionRequiredMarkTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.extra_fat.highlight'),
           applyTitle: Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Explore'),
           continueTitle: Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Not right now'),
-          continueTextStyle: Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline.highlight'),
           contentAttributes: buildContentAttributesV1(status: status),
           sortType: ContentAttributesSortType.native,
           filtersMode: true,
@@ -193,12 +187,7 @@ class Event2HomePanel extends StatefulWidget {
 
       dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
-        bgImageKey: 'event-filters-background',
         description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
-        descriptionTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular.highlight'),
-        sectionTitleTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.highlight'),
-        sectionDescriptionTextStyle: Styles().textStyles?.getTextStyle('widget.item.small.thin.highlight'),
-        sectionRequiredMarkTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.extra_fat.highlight'),
         contentAttributes: contentAttributes,
         selection: selection,
         sortType: ContentAttributesSortType.native,

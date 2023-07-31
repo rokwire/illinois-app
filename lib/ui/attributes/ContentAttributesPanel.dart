@@ -17,15 +17,9 @@ enum ContentAttributesSortType { native, explicit, alphabetical, }
 
 class ContentAttributesPanel extends StatefulWidget {
   final String? title;
-  final String? bgImageKey;
   final String? description;
-  final TextStyle? descriptionTextStyle;
-  final TextStyle? sectionTitleTextStyle;
-  final TextStyle? sectionDescriptionTextStyle;
-  final TextStyle? sectionRequiredMarkTextStyle;
   final String? applyTitle;
   final String? continueTitle;
-  final TextStyle? continueTextStyle;
   
   final bool filtersMode;
   final ContentAttributesSortType sortType;
@@ -38,11 +32,7 @@ class ContentAttributesPanel extends StatefulWidget {
     required ContentAttributeValue value
   })? handleAttributeValue;
 
-  ContentAttributesPanel({Key? key, this.title, this.bgImageKey,
-    this.description, this.descriptionTextStyle,
-    this.sectionTitleTextStyle, this.sectionDescriptionTextStyle, this.sectionRequiredMarkTextStyle,
-    this.applyTitle,
-    this.continueTitle, this.continueTextStyle,
+  ContentAttributesPanel({Key? key, this.title, this.description, this.applyTitle, this.continueTitle,
     this.contentAttributes, this.selection,
     this.sortType = ContentAttributesSortType.native,
     this.filtersMode = false, this.handleAttributeValue,
@@ -76,18 +66,11 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return Scaffold(
       appBar: HeaderBar(title: widget.title, actions: _headerBarActions),
       backgroundColor: Styles().colors?.background,
-      body: _buildScaffoldContent(),
+      body: _buildContent(),
     );
   }
 
-  Widget _buildScaffoldContent() => (widget.bgImageKey != null) ?
-    Stack(children: [
-      _buildImageBackground(),
-      _buildPanelContent(),
-    ],) :
-      _buildPanelContent();
-
-  Widget _buildPanelContent() {
+  Widget _buildContent() {
     List<ContentAttribute>? attributes = widget.contentAttributes?.attributes;
     return ((attributes != null) && attributes.isNotEmpty) ? Column(children: <Widget>[
       Expanded(child:
@@ -107,7 +90,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     if (StringUtils.isNotEmpty(widget.description)) {
       conentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
+        Text(widget.description ?? '', style: Styles().textStyles?.getTextStyle("widget.description.regular")),
       ));
     }
 
@@ -151,11 +134,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
           title: (attribute.displayLongTitle ?? attribute.displayTitle)?.toUpperCase(),
-          titleTextStyle: widget.sectionTitleTextStyle,
           description: !widget.filtersMode ? attribute.displayDescription : null,
-          descriptionTextStyle: widget.sectionDescriptionTextStyle,
           requiredMark: !widget.filtersMode && attribute.isRequired(requirementsScope),
-          requiredMarkTextStyle: widget.sectionRequiredMarkTextStyle,
         ),
         _AttributeRibbonButton(
           title: title, hint: hint, textStyle: textStyle, onTap: onTap,
@@ -255,11 +235,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         GroupSectionTitle(
           title: (attribute.displayLongTitle ?? attribute.displayTitle)?.toUpperCase(),
-          titleTextStyle: widget.sectionTitleTextStyle,
           description: attribute.displayDescription,
-          descriptionTextStyle: widget.sectionDescriptionTextStyle,
           requiredMark: !widget.filtersMode && attribute.isRequired(requirementsScope),
-          requiredMarkTextStyle: widget.sectionRequiredMarkTextStyle,
         ),
         Container (
           decoration: BoxDecoration(
@@ -370,10 +347,6 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       ),
     );
 
-  Widget _buildImageBackground() => Positioned.fill(child:
-    Styles().images?.getImage(widget.bgImageKey, excludeFromSemantics: true, fit: BoxFit.cover) ?? Container()
-  );
-
   Widget _buildCommands() {
     double bottomPadding = 16;
     bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
@@ -398,7 +371,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     if (widget.continueTitle != null) {
       commands.add(InkWell(onTap: _onTapContinue, child:
         Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-          Text(widget.continueTitle ?? '', style: widget.continueTextStyle ?? Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline'),)
+          Text(widget.continueTitle ?? '', style: Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline'),)
         )
       ,));
 
