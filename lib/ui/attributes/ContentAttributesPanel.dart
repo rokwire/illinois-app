@@ -19,11 +19,13 @@ class ContentAttributesPanel extends StatefulWidget {
   final String? title;
   final String? bgImageKey;
   final String? description;
+  final Widget Function(BuildContext context)? descriptionBuilder;
   final TextStyle? descriptionTextStyle;
   final TextStyle? sectionTitleTextStyle;
   final TextStyle? sectionDescriptionTextStyle;
   final TextStyle? sectionRequiredMarkTextStyle;
   final String? applyTitle;
+  final Widget Function(BuildContext context, bool enabled, void Function() onTap)? applyBuilder;
   final String? continueTitle;
   final TextStyle? continueTextStyle;
   
@@ -39,9 +41,9 @@ class ContentAttributesPanel extends StatefulWidget {
   })? handleAttributeValue;
 
   ContentAttributesPanel({Key? key, this.title, this.bgImageKey,
-    this.description, this.descriptionTextStyle,
+    this.description, this.descriptionBuilder, this.descriptionTextStyle,
     this.sectionTitleTextStyle, this.sectionDescriptionTextStyle, this.sectionRequiredMarkTextStyle,
-    this.applyTitle,
+    this.applyTitle, this.applyBuilder,
     this.continueTitle, this.continueTextStyle,
     this.contentAttributes, this.selection,
     this.sortType = ContentAttributesSortType.native,
@@ -103,10 +105,14 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   Widget _buildAttributesContent() {
-    List<Widget> conentList = <Widget>[];
+    List<Widget> contentList = <Widget>[];
 
+    Widget? descriptionWidget = _buildDescriptionWidget();
+    if (descriptionWidget != null) {
+      contentList.add(descriptionWidget);
+    }
     if (StringUtils.isNotEmpty(widget.description)) {
-      conentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
+      contentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
         Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
       ));
     }
@@ -126,12 +132,26 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           default: break;
         }
         if (attributeWidget != null) {
-          conentList.add(attributeWidget);
+          contentList.add(attributeWidget);
         }
       }
     }
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: conentList,); 
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,); 
+  }
+
+  Widget? _buildDescriptionWidget() {
+    if (widget.descriptionBuilder != null) {
+      return widget.descriptionBuilder!(context);
+    }
+    else if (StringUtils.isNotEmpty(widget.description)) {
+      return Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
+        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
+      );
+    }
+    else {
+      return null;
+    }
   }
 
   Widget _buildAttributeDropDown(ContentAttribute attribute) {
@@ -375,24 +395,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   );
 
   Widget _buildCommands() {
-    double bottomPadding = 16;
-    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
-    String applyTitle = widget.applyTitle ?? (widget.filtersMode ? 
-      Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter') :
-      Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes'));
     List<Widget> commands = <Widget>[
-      Row(children: <Widget>[
-        Expanded(flex: 1, child: Container()),
-        Expanded(flex: 2, child: RoundedButton(
-          label: applyTitle,
-          textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent ,
-          backgroundColor: Styles().colors?.white,
-          enabled: canApply,
-          onTap: _onTapApply
-        )),
-        Expanded(flex: 1, child: Container()),
-      ],)
+      _buildApply(),
     ];
 
     if (widget.continueTitle != null) {
@@ -405,11 +409,32 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     }
 
     return SafeArea(child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: bottomPadding), child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
         Column(mainAxisSize: MainAxisSize.min, children: commands,)
       )
     );
   }
+
+  Widget _buildApply() {
+    bool canApply = (widget.filtersMode && _isSelectionNotEmpty) || (!widget.filtersMode && (widget.contentAttributes?.isSelectionValid(_selection) ?? false));
+    return  (widget.applyBuilder != null) ? widget.applyBuilder!(context, canApply, _onTapApply) :
+      Row(children: <Widget>[
+        Expanded(flex: 1, child: Container()),
+        Expanded(flex: 2, child: RoundedButton(
+          label: widget.applyTitle ?? _applyTitle,
+          textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+          borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
+          backgroundColor: Styles().colors?.white,
+          enabled: canApply,
+          onTap: _onTapApply
+        )),
+        Expanded(flex: 1, child: Container()),
+      ],);
+  }
+
+  String get _applyTitle => widget.filtersMode ? 
+    Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter') :
+    Localization().getStringEx('panel.content.attributes.button.apply.title', 'Apply Attributes');
 
   void _onTapApply() {
     Analytics().logSelect(target: 'Apply');
