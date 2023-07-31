@@ -169,7 +169,7 @@ class Event2CreatePanel extends StatefulWidget {
     Text(subTitle, style: subTitleTextStype);
 
   static Widget buildSectionRequiredWidget() => 
-    Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),);
+    Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"), semanticsLabel: ", required",);
 
   // Sections / Dropdown Section
 
@@ -300,16 +300,24 @@ class Event2CreatePanel extends StatefulWidget {
     bool autocorrect = false,
     EdgeInsetsGeometry padding = textEditContentPadding,
     void Function()? onChanged,
+    String? semanticsLabel,
+    String? semanticsHint,
   }) =>
-    TextField(
-      controller: controller,
-      decoration: textEditDecoration(padding: padding),
-      style: textEditStyle,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      autocorrect: autocorrect,
-      onChanged: (onChanged != null) ? ((_) => onChanged) : null,
-    );
+    Semantics(
+      label: semanticsLabel,
+      hint: semanticsHint,
+      textField: true,
+      excludeSemantics: true,
+      value: controller.text,
+      child: TextField(
+        controller: controller,
+        decoration: textEditDecoration(padding: padding),
+        style: textEditStyle,
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+        autocorrect: autocorrect,
+        onChanged: (onChanged != null) ? ((_) => onChanged) : null,
+    ));
 
   static Widget buildInnerTextEditWidget(TextEditingController controller, {
     TextInputType? keyboardType,
@@ -317,8 +325,10 @@ class Event2CreatePanel extends StatefulWidget {
     bool autocorrect = false,
     EdgeInsetsGeometry padding = innerTextEditContentPadding,
     void Function()? onChanged,
+    String? semanticsLabel,
+    String? semanticsHint,
   }) =>
-    buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, autocorrect: autocorrect, padding: padding, onChanged: onChanged);
+    buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, autocorrect: autocorrect, padding: padding, onChanged: onChanged, semanticsLabel: semanticsLabel, semanticsHint: semanticsHint);
 
 
   // Confirm URL
@@ -633,17 +643,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildTitleSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.title.title', 'EVENT TITLE'), required: true),
-    body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true),
+    body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
   );
 
   Widget _buildDescriptionSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION')),
-    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true),
+    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.description.field.title', 'DESCRIPTION FIELD')),
   );
 
   Widget _buildWebsiteSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.website.title', 'ADD EVENT WEBSITE LINK'), suffixImageKey: 'external-link'),
-    body: Event2CreatePanel.buildTextEditWidget(_websiteController, keyboardType: TextInputType.url),
+    body: Event2CreatePanel.buildTextEditWidget(_websiteController, keyboardType: TextInputType.url, semanticsLabel: Localization().getStringEx('panel.event2.create.section.website.field.title', 'WEBSITE LINK FIELD')),
     trailing: Event2CreatePanel.buildConfirmUrlLink(onTap: (_onConfirmWebsiteLink)),
     padding: const EdgeInsets.only(bottom: 8), // Link button tapable area
   );
@@ -741,7 +751,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       if (name.startsWith('US/')) {
         menuItems.add(DropdownMenuItem<Location>(
           value: location,
-          child: Text(name,),
+          child: Semantics(label: name, excludeSemantics: true, container:true, child: Text(name,)),
         ));
         }
     });
@@ -963,12 +973,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   Widget _buildEventTypeDropdown(){
-    return Semantics(container: true, child:
+    String? title = Localization().getStringEx("panel.event2.create.label.event_type.title", "EVENT TYPE");
+    return Semantics(label: "$title, required", container: true, child:
       Row(children: <Widget>[
         Expanded(flex: 3, child:
           RichText(text:
-            TextSpan(text: Localization().getStringEx("panel.event2.create.label.event_type.title", "EVENT TYPE"), style: Event2CreatePanel.headingTextStype, children: <InlineSpan>[
-              TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'),),
+            TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: "", children: <InlineSpan>[
+              TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
             ])
           )
         ),
@@ -1027,22 +1038,22 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildLocationBuildingInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.building.title', 'LOCATION BUILDING')),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text, autocorrect: true),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationBuildingController, keyboardType: TextInputType.text, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.location.building.field', 'LOCATION BUILDING FIELD')),
   );
 
   Widget _buildLocationAddressInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.address.title', 'LOCATION ADDRESS')),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text, autocorrect: true),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationAddressController, keyboardType: TextInputType.text, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.location.address.field', 'LOCATION ADDRESS FIELD')),
   );
 
   Widget _buildLocationLatitudeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.latitude.title', 'LOCATION LATITUDE'), required: true),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationLatitudeController, keyboardType: TextInputType.number, semanticsLabel: Localization().getStringEx('panel.event2.create.location.latitude.field', 'LOCATION LATITUDE FIELD')),
   );
 
   Widget _buildLocationLongitudeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.location.longitude.title', 'LOCATION LONGITUDE'), required: true),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_locationLongitudeController, keyboardType: TextInputType.number),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_locationLongitudeController, keyboardType: TextInputType.number, semanticsLabel: Localization().getStringEx('panel.event2.create.location.longitude.field', 'LOCATION LONGITUDE FIELD')),
   );
 
   Widget _buildSelectLocationButton() {
@@ -1065,17 +1076,17 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   Widget _buildOnlineUrlInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.url.title', 'ONLINE URL'), required: true),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_onlineUrlController, keyboardType: TextInputType.url),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_onlineUrlController, keyboardType: TextInputType.url, semanticsLabel: Localization().getStringEx('panel.event2.create.online_details.url.field', 'ONLINE URL FIELD')),
   );
 
   Widget _buildOnlineMeetingIdInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.meeting_id.title', 'MEETING ID')),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_onlineMeetingIdController, keyboardType: TextInputType.text),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_onlineMeetingIdController, keyboardType: TextInputType.text, semanticsLabel: Localization().getStringEx('panel.event2.create.online_details.meeting_id.field', 'MEETING ID FIELD')),
   );
 
   Widget _buildOnlinePasscodeInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.passcode.title', 'PASSCODE')),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_onlinePasscodeController, keyboardType: TextInputType.text),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_onlinePasscodeController, keyboardType: TextInputType.text, semanticsLabel: Localization().getStringEx('panel.event2.create.online_details.passcode.field', 'PASSCODE FIELD')),
   );
 
   void _onTapSelectLocation() {
@@ -1509,7 +1520,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     
     bool buttonEnabled = _canCreateEvent();
 
-    return Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
+    return Semantics(label: buttonTitle, hint: buttonHint, button: true, enabled: buttonEnabled, excludeSemantics: true, child:
       RoundedButton(
         label: buttonTitle,
         textStyle: buttonEnabled ? Styles().textStyles?.getTextStyle('widget.button.title.large.fat') : Styles().textStyles?.getTextStyle('widget.button.disabled.title.large.fat'),
