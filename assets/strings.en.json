@@ -1227,6 +1227,7 @@
     "panel.event2.update.registration.message.succeeded.message": "Successfully updated \"{{event_name}}\" registration.",
     "panel.event2.update.attendance.message.succeeded.message": "Successfully updated \"{{event_name}}\" attendance.",
     "panel.event2.create.message.failed.title": "Failed",
+    "panel.event2.create.survey.message.failed.title": "Failed to create event survey.",
 
     "panel.event2.setup.registration.header.title": "Event Registration",
     "panel.event2.setup.registration.type.title": "REQUIRE REGISTRATION",
@@ -1253,11 +1254,15 @@
     "panel.event2.setup.survey.header.title": "Event Follow-Up Survey",
     "panel.event2.setup.survey.has_survey.toggle.title": "SEND FOLLOW-UP SURVEY",
     "panel.event2.setup.survey.hours.title": "How many hours after the event ends before sending this survey to attendees?",
+    "panel.event2.setup.survey.preview.title": "Survey Preview",
     "panel.event2.setup.survey.survey.title": "SURVEY",
     "panel.event2.setup.survey.apply.button": "Apply",
     "panel.event2.setup.survey.hours.invalid.msg": "Please, fill valid non-negative number for hours.",
     "panel.event2.setup.survey.surveys.failed.msg": "Failed to load available surveys.",
     "panel.event2.setup.survey.surveys.empty.msg": "There are no surveys available.",
+    "panel.event2.setup.survey.update.failed.msg": "Failed to update event survey.",
+    "panel.event2.setup.survey.update.already_available.msg": "This survey is already available to attendees, so it will not be updated.",
+    "panel.event2.setup.survey.update.event_missing.msg": "Failed to find associated event.",
     "panel.event2.setup.survey.no_survey.title": "---",
 
     "panel.event2.attributes.attributes.header.title": "Event Attributes",
@@ -1308,6 +1313,7 @@
     "panel.event2.detail.attendance.attendees.checkin.description": "To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.",
     "panel.event2.detail.attendance.scan.cancel.button.title": "Cancel",
     "panel.event2.detail.attendance.qr_code.uin.not_valid.msg": "This QR code does not contain valid UIN number.",
+    "panel.event2_detail.button.follow_up_survey.title": "Take Survey",
 
     "panel.event2.search.header.title": "Search",
 	"panel.event2.search.search.label.title": "Search: ",

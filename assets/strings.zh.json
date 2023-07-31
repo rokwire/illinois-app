@@ -1226,6 +1226,7 @@
   "panel.event2.update.registration.message.succeeded.message": "Successfully updated \"{{event_name}}\" registration.",
 	"panel.event2.update.attendance.message.succeeded.message": "Successfully updated \"{{event_name}}\" attendance.",
 	"panel.event2.create.message.failed.title": "Failed",
+	"panel.event2.create.survey.message.failed.title": "Failed to create event survey.",
 
 	"panel.event2.setup.registration.header.title": "Event Registration",
 	"panel.event2.setup.registration.type.title": "REQUIRE REGISTRATION",
@@ -1256,6 +1257,9 @@
 	"panel.event2.setup.survey.apply.button": "Apply",
 	"panel.event2.setup.survey.hours.invalid.msg": "Please, fill valid non-negative number for hours.",
 	"panel.event2.setup.survey.surveys.failed.msg": "Failed to load available surveys.",
+	"panel.event2.setup.survey.update.failed.msg": "Failed to update event survey.",
+	"panel.event2.setup.survey.update.already_available.msg": "This survey is already available to attendees, so it will not be updated.",
+	"panel.event2.setup.survey.update.event_missing.msg": "Failed to find associated event.",
 	"panel.event2.setup.survey.surveys.empty.msg": "There are no surveys available.",
 	"panel.event2.setup.survey.no_survey.title": "---",
 
