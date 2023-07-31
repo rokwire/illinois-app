@@ -206,7 +206,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
             Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.registration.capacity.label.title', 'EVENT CAPACITY')),
           ),
           Expanded(child:
-            Event2CreatePanel.buildTextEditWidget(_capacityController, keyboardType: TextInputType.number),
+            Event2CreatePanel.buildTextEditWidget(_capacityController, keyboardType: TextInputType.number, semanticsLabel: Localization().getStringEx("panel.event2.setup.registration.capacity.field.label", "EVENT CAPACITY FIELD",)),
           )
         ],)
       ),
@@ -216,14 +216,17 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   Widget _buildRegistrantsSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'NETIDS FOR ADDITIONAL REGISTRANTS')),
-    body: Event2CreatePanel.buildTextEditWidget(_registrantsController, keyboardType: TextInputType.text, maxLines: null),
+    body: Event2CreatePanel.buildTextEditWidget(_registrantsController, keyboardType: TextInputType.text, maxLines: null,
+      semanticsLabel: Localization().getStringEx('panel.event2.setup.registration.link.field.label', 'NETIDS FOR ADDITIONAL REGISTRANTS FIELD'),
+      semanticsHint: Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space or comma separated list of Net IDs.')
+    ),
     trailing: _buildRegistrantsHint(),
   );
 
   Widget _buildRegistrantsHint() => Padding(padding: EdgeInsets.only(top: 2), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype,),
+        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype, semanticsLabel: "",),
       )
     ],),
   );
@@ -246,14 +249,14 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   
   Widget _buildLabelSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.label.label.title', 'ADD REGISTRATION LABEL')),
-    body: Event2CreatePanel.buildTextEditWidget(_labelController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true),
+    body: Event2CreatePanel.buildTextEditWidget(_labelController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx("panel.event2.setup.registration.label.field.label", "ADD REGISTRATION LABEL FIELD",)),
   );
 
   // External Link
   
   Widget _buildLinkSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.link.label.title', 'ADD EXTERNAL LINK FOR REGISTRATION'), suffixImageKey: 'external-link'),
-    body: Event2CreatePanel.buildTextEditWidget(_linkController, keyboardType: TextInputType.url, maxLines: 1),
+    body: Event2CreatePanel.buildTextEditWidget(_linkController, keyboardType: TextInputType.url, maxLines: 1, semanticsHint: Localization().getStringEx("panel.event2.setup.registration.link.field.label", "ADD EXTERNAL LINK FOR REGISTRATION FIELD",)),
     trailing: _buildConfirmUrlLink(onTap: (_onConfirmLink)),
     padding: EdgeInsets.zero
   );
