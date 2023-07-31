@@ -71,9 +71,9 @@ class Event2HomePanel extends StatefulWidget {
           sectionTitleTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.highlight'),
           sectionDescriptionTextStyle: Styles().textStyles?.getTextStyle('widget.item.small.thin.highlight'),
           sectionRequiredMarkTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.extra_fat.highlight'),
-          applyTitle: Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Explore'),
-          continueTitle: Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Not right now'),
-          continueTextStyle: Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline.highlight'),
+          applyBuilder: _buildOnboardingApply,
+          continueTitle: Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Set Up Later'),
+          continueTextStyle: Styles().textStyles?.getTextStyle('widget.button.title.medium.underline.highlight'),
           contentAttributes: buildContentAttributesV1(status: status),
           sortType: ContentAttributesSortType.native,
           filtersMode: true,
@@ -116,8 +116,6 @@ class Event2HomePanel extends StatefulWidget {
         ),
       ],)
     );
-    
-    //    descriptionTextStyle: ,
   }
 
   static String url = "${DeepLink().appUrl}/events2";
@@ -138,6 +136,24 @@ class Event2HomePanel extends StatefulWidget {
     return false;
   }
 
+  static Widget _buildOnboardingApply(BuildContext context, bool enabled, void Function() onTap) {
+    String applyTitle = Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Event Feed');
+    TextStyle? applyTextStyle = Styles().textStyles?.getTextStyle(enabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
+    Color? borderColor = enabled ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimaryVariant;
+    Decoration? applyDecoration = BoxDecoration(
+      color: Styles().colors!.white,
+      border: Border.all(color: borderColor ?? Colors.transparent, width: 1),
+      borderRadius: BorderRadius.all(Radius.circular(16))
+    );
+    return InkWell(onTap: onTap, child:
+      Container(decoration: applyDecoration, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), child:
+          Text(applyTitle, style: applyTextStyle, textAlign: TextAlign.center, maxLines: null,),
+        )
+      ),
+    );
+  }
+  
   // Location Services
 
   static Future<LocationServicesStatus?> getLocationServicesStatus() async =>
