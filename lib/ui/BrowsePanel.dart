@@ -64,7 +64,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -584,10 +583,8 @@ class _BrowseEntry extends StatelessWidget {
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
       case "dinings.my_dining":              _onTapMyDinings(context); break;
 
-      case "events.suggested_events":        _onTapSuggestedEvents(context); break;
-      case "events.event2_feed":             _onTapEventFeed(context); break;
+      case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
-      case "events.my_events2":              _onTapMyEvents2(context); break;
 
       case "feeds.twitter":                  _onTapTwitter(context); break;
       case "feeds.daily_illini":             _onTapDailyIllini(context); break;
@@ -605,7 +602,6 @@ class _BrowseEntry extends StatelessWidget {
       case "my.student_courses":             _onTapStudentCourses(context); break;
       case "my.my_dining":                   _onTapMyDinings(context); break;
       case "my.my_events":                   _onTapMyEvents(context); break;
-      case "my.my_events2":                  _onTapMyEvents2(context); break;
       case "my.my_game_day":                 _onTapMyGameDay(context); break;
       case "my.canvas_courses":              _onTapCanvasCourses(context); break;
       case "my.my_groups":                   _onTapMyGroups(context); break;
@@ -964,15 +960,15 @@ class _BrowseEntry extends StatelessWidget {
     SettingsNotificationsContentPanel.present(context, content: isUnread ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
 
-  void _onTapSuggestedEvents(BuildContext context) {
-    Analytics().logSelect(target: "Suggested Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
-  }
-
   void _onTapEventFeed(BuildContext context) {
     Analytics().logSelect(target: "Event Feed");
     Event2HomePanel.present(context);
   }
+
+  /*void _onTapSuggestedEvents(BuildContext context) {
+    Analytics().logSelect(target: "Suggested Events");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
+  }*/
 
   void _onTapTwitter(BuildContext context) {
     Analytics().logSelect(target: "Twitter");
@@ -1016,12 +1012,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMyEvents(BuildContext context) {
     Analytics().logSelect(target: "My Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event.favoriteKeyName]); } ));
-  }
-
-  void _onTapMyEvents2(BuildContext context) {
-    Analytics().logSelect(target: "My Events2");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event2.favoriteKeyName]); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event2.favoriteKeyName]); } )); // Event.favoriteKeyName
   }
 
   void _onTapMyDinings(BuildContext context) {
