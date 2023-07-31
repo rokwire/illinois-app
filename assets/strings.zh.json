@@ -362,10 +362,8 @@
 	"panel.browse.entry.dinings.dinings_open.title": "宿舍餐廳現在開放",
 	"panel.browse.entry.dinings.my_dining.title": "我的用餐地點",
 	
-	"panel.browse.entry.events.suggested_events.title": "建議的活動",
-	"panel.browse.entry.events.event2_feed.title": "活動提要",
+	"panel.browse.entry.events.event_feed.title": "活動提要",
 	"panel.browse.entry.events.my_events.title": "我的活動",
-	"panel.browse.entry.events.my_events2.title": "我的活動²",
 	
 	"panel.browse.entry.feeds.twitter.title": "推特",
 	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 調頻",
@@ -388,7 +386,6 @@
 	"panel.browse.entry.my.student_courses.title": "我的課程",
 	"panel.browse.entry.my.my_game_day.title": "我的比賽日",
 	"panel.browse.entry.my.my_events.title": "我的活動",
-	"panel.browse.entry.my.my_events2.title": "我的活動²",
 	"panel.browse.entry.my.my_dining.title": "我的用餐地點",
 	"panel.browse.entry.my.my_athletics.title": "我的田徑活動",
 	"panel.browse.entry.my.my_news.title": "我的田徑新聞",
