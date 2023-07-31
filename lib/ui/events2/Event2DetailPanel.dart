@@ -16,6 +16,7 @@ import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
+import 'package:illinois/ui/events2/Event2SurveyResponsesPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -503,6 +504,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
           _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
+          _buildSettingButton(title: "Event follow-up survey responses", onTap: _onSettingSurveyResponses),
           _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
@@ -805,6 +807,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         });
       }
     });
+  }
+
+  void _onSettingSurveyResponses() {
+    Analytics().logSelect(target: "Event Survey Responses");
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SurveyResponsesPanel(
+      surveyId: _survey?.id,
+    )));
   }
 
   void _onSettingDeleteEvent(){
