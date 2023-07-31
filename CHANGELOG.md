@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Event follow up survey preview and entry point [#3439](https://github.com/rokwire/illinois-app/issues/3439).
 ### Deleted
 - Removed Events2 attributes image background [#3442](https://github.com/rokwire/illinois-app/issues/3442).
+### Changed
 - Updated Event2 onboarding UI [#3445](https://github.com/rokwire/illinois-app/issues/3445).
+- Use extended error messaging for Events2 content [#3447](https://github.com/rokwire/illinois-app/issues/3447).
 
 ## [5.0.36] - 2023-07-27
 ### Added

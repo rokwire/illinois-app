@@ -1161,6 +1161,8 @@
   "panel.events2.home.attributes.event_time.hint": "Choose the date & time your events can be filtered by.",
   "panel.events2.home.attributes.event_time.hint.empty": "Select an date & time...",
   "panel.events2.home.attributes.event_time.hint.semantics": "Double type to show date & time options.",
+	"panel.events2.home.message.failed.title": "Failed",
+	"panel.events2.home.message.empty.description": "There are no events matching the selected filters.",
 	
 	"panel.event2.filters.header.title": "Event Filters",
 	

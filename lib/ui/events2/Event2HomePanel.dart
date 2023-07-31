@@ -318,6 +318,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
+  String? _eventsErrorText;
   bool _loadingEvents = false;
   bool _refreshingEvents = false;
   bool _extendingEvents = false;
@@ -428,7 +429,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       _buildCommandBar(),
       Expanded(child:
         RefreshIndicator(onRefresh: _onRefresh, child:
-          SingleChildScrollView(controller: _scrollController, child:
+          SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
             _buildEventsContent(),
           )
         )
@@ -648,10 +649,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       return Container();
     }
     else if (_events == null) {
-      return _buildMessageContent('Failed to load events.');
+      return _buildMessageContent(_eventsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
+        title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed')
+      );
     }
     else if (_events?.length == 0) {
-      return _buildMessageContent('There are no events matching the selected filters.');
+      return _buildMessageContent(Localization().getStringEx('panel.events2.home.message.empty.description', 'There are no events matching the selected filters.'));
     }
     else {
       return _buildEventsList();
@@ -675,15 +678,17 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     );
   }
 
-  Widget _buildMessageContent(String message) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    return Column(children: [
-      Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: screenHeight / 4), child:
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
-      ),
-      Container(height: screenHeight / 2,)
-    ],);
-  }
+  double get _screenHeight => MediaQuery.of(context).size.height;
+
+  Widget _buildMessageContent(String message, { String? title }) =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
+      Column(children: [
+        (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        ) : Container(),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+      ],),
+    );
 
   Widget _buildLoadingContent() {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -855,13 +860,16 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = false;
       });
 
-      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
-      List<Event2>? events = loadResult?.events;
+      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      String? errorTextResult = (result is String) ? result : null;
 
       setStateIfMounted(() {
         _events = (events != null) ? List<Event2>.from(events) : null;
-        _totalEventsCount = loadResult?.totalCount;
+        _totalEventsCount = listResult?.totalCount;
         _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+        _eventsErrorText = errorTextResult;
         _loadingEvents = false;
       });
     }
@@ -879,14 +887,21 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       });
 
       int limit = max(_events?.length ?? 0, _eventsPageLength);
-      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
-      List<Event2>? events = loadResult?.events;
-      int? totalCount = loadResult?.totalCount;
+      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      int? totalCount = listResult?.totalCount;
+      String? errorTextResult = (result is String) ? result : null;
 
       setStateIfMounted(() {
         if (events != null) {
           _events = List<Event2>.from(events);
           _lastPageLoadedAll = (events.length >= limit);
+          _eventsErrorText = null;
+        }
+        else if (_events == null) {
+          // If there was events content, preserve it. Otherwise, show the error
+          _eventsErrorText = errorTextResult;
         }
         if (totalCount != null) {
           _totalEventsCount = totalCount;
@@ -902,9 +917,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = true;
       });
 
-      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
-      List<Event2>? events = loadResult?.events;
-      int? totalCount = loadResult?.totalCount;
+      Events2ListResult? listResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
+      List<Event2>? events = listResult?.events;
+      int? totalCount = listResult?.totalCount;
 
       if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
         setState(() {
