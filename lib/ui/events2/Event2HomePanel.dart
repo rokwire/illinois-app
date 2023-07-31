@@ -193,12 +193,7 @@ class Event2HomePanel extends StatefulWidget {
 
       dynamic result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
         title: Localization().getStringEx('panel.events2.home.attributes.filters.header.title', 'Event Filters'),
-        bgImageKey: 'event-filters-background',
         description: Localization().getStringEx('panel.events2.home.attributes.filters.header.description', 'Choose one or more attributes to filter the events.'),
-        descriptionTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular.highlight'),
-        sectionTitleTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.highlight'),
-        sectionDescriptionTextStyle: Styles().textStyles?.getTextStyle('widget.item.small.thin.highlight'),
-        sectionRequiredMarkTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.extra_fat.highlight'),
         contentAttributes: contentAttributes,
         selection: selection,
         sortType: ContentAttributesSortType.native,
