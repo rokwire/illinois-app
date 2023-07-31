@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Deleted
 - Removed Events2 attributes image background [#3442](https://github.com/rokwire/illinois-app/issues/3442).
+- Updated Event2 onboarding UI [#3445](https://github.com/rokwire/illinois-app/issues/3445).
 
 ## [5.0.36] - 2023-07-27
 ### Added
