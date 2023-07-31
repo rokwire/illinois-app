@@ -19,6 +19,7 @@ class ContentAttributesPanel extends StatefulWidget {
   final String? title;
   final String? bgImageKey;
   final String? description;
+  final Widget Function(BuildContext context)? descriptionBuilder;
   final TextStyle? descriptionTextStyle;
   final TextStyle? sectionTitleTextStyle;
   final TextStyle? sectionDescriptionTextStyle;
@@ -39,7 +40,7 @@ class ContentAttributesPanel extends StatefulWidget {
   })? handleAttributeValue;
 
   ContentAttributesPanel({Key? key, this.title, this.bgImageKey,
-    this.description, this.descriptionTextStyle,
+    this.description, this.descriptionBuilder, this.descriptionTextStyle,
     this.sectionTitleTextStyle, this.sectionDescriptionTextStyle, this.sectionRequiredMarkTextStyle,
     this.applyTitle,
     this.continueTitle, this.continueTextStyle,
@@ -103,10 +104,14 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   Widget _buildAttributesContent() {
-    List<Widget> conentList = <Widget>[];
+    List<Widget> contentList = <Widget>[];
 
+    Widget? descriptionWidget = _buildDescriptionWidget();
+    if (descriptionWidget != null) {
+      contentList.add(descriptionWidget);
+    }
     if (StringUtils.isNotEmpty(widget.description)) {
-      conentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
+      contentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
         Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
       ));
     }
@@ -126,12 +131,26 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
           default: break;
         }
         if (attributeWidget != null) {
-          conentList.add(attributeWidget);
+          contentList.add(attributeWidget);
         }
       }
     }
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: conentList,); 
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,); 
+  }
+
+  Widget? _buildDescriptionWidget() {
+    if (widget.descriptionBuilder != null) {
+      return widget.descriptionBuilder!(context);
+    }
+    else if (StringUtils.isNotEmpty(widget.description)) {
+      return Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
+        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
+      );
+    }
+    else {
+      return null;
+    }
   }
 
   Widget _buildAttributeDropDown(ContentAttribute attribute) {

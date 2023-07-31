@@ -1,14 +1,17 @@
 
 import 'dart:collection';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -32,6 +35,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Event2HomePanel extends StatefulWidget {
 
@@ -63,8 +67,7 @@ class Event2HomePanel extends StatefulWidget {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
           title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
           bgImageKey: 'event-filters-background',
-          description: Localization().getStringEx('panel.events2.home.attributes.launch.header.description', 'Discover events across campus and around the world'),
-          descriptionTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular.highlight'),
+          descriptionBuilder: _buildOnboardingDescription,
           sectionTitleTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.highlight'),
           sectionDescriptionTextStyle: Styles().textStyles?.getTextStyle('widget.item.small.thin.highlight'),
           sectionRequiredMarkTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.extra_fat.highlight'),
@@ -93,6 +96,46 @@ class Event2HomePanel extends StatefulWidget {
         });
       });
     }
+  }
+
+  static Widget _buildOnboardingDescription(BuildContext context) {
+    String decriptionHtml = Localization().getStringEx("panel.events2.home.attributes.launch.header.description", "Customize your event feed by setting the below filters or <a href='{{events2_url}}'>view all events now<a> and choose your event filters later.").
+      replaceAll('{{events2_url}}', url);
+    TextStyle? descriptionTextStyle = Styles().textStyles?.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.white);
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(mainAxisSize: MainAxisSize.min, children: [
+        Padding(padding: EdgeInsets.only(top: 32), child:
+          Styles().images?.getImage('event-onboarding-header') ?? Container(),
+        ),
+        Padding(padding: EdgeInsets.only(top: 24, bottom: 8), child:
+          HtmlWidget("<div style=text-align:center>$decriptionHtml</div>",
+            onTapUrl: (url) => _onTapLinkUrl(context, url),
+            textStyle: descriptionTextStyle,
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(descriptionTextStyle?.color ?? Colors.white)} : null
+          ),
+        ),
+      ],)
+    );
+    
+    //    descriptionTextStyle: ,
+  }
+
+  static String url = "${DeepLink().appUrl}/events2";
+
+  static Future<bool> _onTapLinkUrl(BuildContext context, String urlParam) async {
+    if (urlParam == url) {
+      Navigator.of(context).pop(<String, dynamic>{});
+      return true;
+    }
+    else {
+      Uri? uri = Uri.tryParse(urlParam);
+      if ((uri != null) && (await canLaunchUrl(uri))) {
+        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
+        launchUrl(uri, mode: launchMode);
+        return true;
+      }
+    }
+    return false;
   }
 
   // Location Services
