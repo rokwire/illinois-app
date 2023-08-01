@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.38] - 2023-08-01
+### Changed
+- Attendance taker widget obeys attendance details settings [#3453](https://github.com/rokwire/illinois-app/issues/3453).
+### Added
+- Added info description for participants of events with surveys [#3456](https://github.com/rokwire/illinois-app/issues/3456).
+### Fixed
+- Get rid of completely from "Events²" title [#3459](https://github.com/rokwire/illinois-app/issues/3459).
+- Accessibility improvements for Events panels [#3421](https://github.com/rokwire/illinois-app/issues/3421).
+
 ## [5.0.37] - 2023-07-31
 ### Added
 - Event follow up survey preview and entry point [#3439](https://github.com/rokwire/illinois-app/issues/3439).

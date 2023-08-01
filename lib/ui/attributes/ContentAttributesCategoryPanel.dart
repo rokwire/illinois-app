@@ -131,7 +131,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 
   Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) {
-    return Semantics(label: title, button: true, excludeSemantics: true, child: 
+    return Semantics(label: title, button: true, child:
       InkWell(onTap: onTap, child:
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
@@ -139,7 +139,8 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
               Container(
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat"),
+                  semanticsLabel: '',
                 ),
               ),
             ],)
@@ -181,12 +182,13 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         color: Styles().colors!.fillColorPrimary,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))
       ),
-      child: Semantics(label: title, button: false, child: 
+      child: Semantics(label: title, header: true, child:
         Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
           Row(children: <Widget>[
             Expanded(child:
               Text(title, textAlign: TextAlign.left, style:
-                Styles().textStyles?.getTextStyle("panel.settings.food_filter.title")
+                Styles().textStyles?.getTextStyle("panel.settings.food_filter.title"),
+                semanticsLabel: '',
               ),
             )
           ],),
@@ -215,27 +217,33 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         (isSelected ? "check-circle-filled" : "circle-outline-gray")
       ) : null;
 
-    return InkWell(onTap: () => _onTapAttributeValue(attributeValue), child:
-      Container(color: (Colors.white), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-        Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-          Flexible(child:
-            Padding(padding: const EdgeInsets.only(right: 8), child:
-              Text(title ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
-            )
-          ),
+    String? semanticsValue = isSelected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked");
 
-          Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            Visibility(visible: StringUtils.isNotEmpty(info), child:
-              Padding(padding: const EdgeInsets.only(right: 8), child:
-                Text(info ?? attributeValue.info ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
-              )
-            ),
-            
-            Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
-          ]),
-        ]),
-      )
-    );
+    return Semantics(button: true, inMutuallyExclusiveGroup: !multipleSelection, value: semanticsValue,  child:
+        InkWell(onTap: (){
+            _onTapAttributeValue(attributeValue);
+            AppSemantics.announceCheckBoxStateChange(context, !isSelected, title);
+          }, child:
+          Container(color: (Colors.white), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+              Flexible(child:
+                Padding(padding: const EdgeInsets.only(right: 8), child:
+                  Text(title ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+                )
+              ),
+
+              Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Visibility(visible: StringUtils.isNotEmpty(info), child:
+                  Padding(padding: const EdgeInsets.only(right: 8), child:
+                    Text(info ?? attributeValue.info ?? '', overflow: TextOverflow.ellipsis, style: textStyle,),
+                  )
+                ),
+
+                Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
+              ]),
+            ]),
+          )
+    ));
   }
 
   void _onTapAttributeValue(ContentAttributeValue attributeValue) {

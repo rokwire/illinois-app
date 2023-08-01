@@ -1290,6 +1290,7 @@
 	"panel.event2.detail.general.prompt.delete.message": "Are you sure you want to delete this event and all data associated with it? This action cannot be undone.",
 
     "panel.event2.detail.take_attendance.title": "Take Attendance",
+    "panel.event2.detail.survey.description": "You will receive a notification with a follow up survey after this event.",
 
     "panel.event2.detail.attendance.header.title": "Event Attendance",
     "panel.event2.detail.attendance.scan.toggle.title": "Scan Illini ID",
@@ -1303,6 +1304,9 @@
     "panel.event2.detail.attendance.attendees.empty.text": "There are no users registered or attending for this event yet.",
     "panel.event2.detail.attendance.attendees.failed.text": "Failed to load attendees list.",
     "panel.event2.detail.attendance.scan.button": "Scan Illini ID",
+    "panel.event2.detail.attendance.message.not_available.title": "Not Available",
+	"panel.event2.detail.attendance.manual_check.disabled": "Manual check is not enabled for this event.",
+	"panel.event2.detail.attendance.scan.disabled": "Scanning Illini ID is not enabled for this event.",
     "panel.event2.detail.attendance.attendees.description": "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.",
     "panel.event2.detail.attendance.additional.netids.label": "Netids for additional attendance takers:",
     "panel.event2.detail.attendance.attendees.netids.description": "Upload a list at <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.",
@@ -1442,7 +1446,7 @@
 
     "panel.saved.header.label": "Guardado",
     "panel.saved.label.events": "My Events",
-    "panel.saved.label.events2": "My Events²",
+    "panel.saved.label.events2": "My Events",
     "panel.saved.label.athletics": "My Athletics Events",
     "panel.saved.label.reminders": "My Reminders",
     "panel.saved.label.dining": "My Dining Locations",
@@ -3310,7 +3314,7 @@
     "widget.home.wellness.tips.title": "Consejo diario de bienestar",
 
     "widget.home.favorites.title.events": "Mis Eventos",
-    "widget.home.favorites.title.events2": "Mis Eventos²",
+    "widget.home.favorites.title.events2": "Mis Eventos",
     "widget.home.favorites.title.dining": "Mis lugares para comer",
     "widget.home.favorites.title.athletics": "Mis eventos de atletismo",
     "widget.home.favorites.title.news": "Mis noticias de atletismo",
@@ -3321,7 +3325,7 @@
     "widget.home.favorites.title.appointments": "Mis citas de McKinley",
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
-    "widget.home.favorites.message.offline.events2": "Mis Eventos² no están disponibles sin conexión.",
+    "widget.home.favorites.message.offline.events2": "Mis Eventos no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.dining": "Mis ubicaciones para cenar no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.athletics": "Mis eventos de atletismo no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.news": "My Athletics News no está disponible sin conexión.",

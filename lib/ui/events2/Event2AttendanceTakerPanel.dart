@@ -48,6 +48,9 @@ class Event2AttendanceTakerWidget extends StatefulWidget {
 
   Event2AttendanceTakerWidget(this.event, { Key? key, this.updateController }) : super(key: key);
 
+  bool get scanEnabled => event?.attendanceDetails?.scanningEnabled ?? false;
+  bool get manualCheckEnabled => event?.attendanceDetails?.manualCheckEnabled ?? false;
+
   @override
   State<StatefulWidget> createState() => _Event2AttendanceTakerWidgetState();
 }
@@ -133,8 +136,11 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   );
   
   Widget _buildEventDetail({required String label, int? value, bool? loading, String defaultValue = ''}) {
+    String valueLabel = value?.toString() ?? defaultValue;
+    String semanticsLabel = "$label: $valueLabel";
+
     return Padding(padding: Event2CreatePanel.innerSectionPadding, child:
-      Semantics(label: label, header: true, excludeSemantics: true, child:
+      Semantics(label: semanticsLabel, excludeSemantics: true, child:
         Row(children: [
           Expanded(child:
             Event2CreatePanel.buildSectionTitleWidget(label)
@@ -145,7 +151,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
                 CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
               ),
             ) :
-            Text(value?.toString() ?? defaultValue, style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'))
+            Text(valueLabel, style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'),)
         ])
       )
     );
@@ -190,6 +196,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         contentList.add(Divider(color: Styles().colors?.dividerLineAccent, thickness: 1, height: 1,));
       }
       contentList.add(_AttendeeListItemWidget(displayPerson,
+        enabled: widget.manualCheckEnabled,
         selected: _atendeesNetIds.contains(displayPerson.identifier?.netId),
         processing: _processingNetIds.contains(displayPerson.identifier?.netId),
         highlighted: (_processedNetId == displayPerson.identifier?.netId),
@@ -226,7 +233,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     Analytics().logSelect(target: "Toggle Attendee");
     String? eventId = widget.event?.id;
     String? personNetId = person.identifier?.netId;
-    if ((eventId != null) && (personNetId != null) && !_processingNetIds.contains(personNetId))  {
+    if (widget.manualCheckEnabled != true) {
+      Event2Popup.showMessage(context,
+        Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
+        Localization().getStringEx("panel.event2.detail.attendance.manual_check.disabled", "Manual check is not enabled for this event."));
+    }
+    else if ((eventId != null) && (personNetId != null) && !_processingNetIds.contains(personNetId))  {
 
       setState(() {
         _processingNetIds.add(personNetId);
@@ -300,21 +312,25 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     return true;
   }
 
-  Widget _buildScanIlliniIdSection() => Event2CreatePanel.buildSectionWidget(
-    body: RoundedButton(
+  Widget _buildScanIlliniIdSection() => Event2CreatePanel.buildSectionWidget(body:
+    RoundedButton(
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
-      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-      onTap: _onTapScanButton,
+      textStyle: Styles().textStyles?.getTextStyle(widget.scanEnabled ? 'widget.button.title.large.fat' : 'widget.button.title.large.fat.variant3'),
+      borderColor: widget.scanEnabled ? Styles().colors!.fillColorSecondary : Styles().colors?.surfaceAccent,
       backgroundColor: Styles().colors!.white,
-      borderColor: Styles().colors!.fillColorSecondary,
+      onTap: _onTapScanButton,
       contentWeight: 0.5,
       progress: _scanning,
-    ),
-  );
+    ),);
 
   void _onTapScanButton() {
     Analytics().logSelect(target: 'Scan Illini Id');
-    if (!_scanning) {
+    if (widget.scanEnabled != true) {
+      Event2Popup.showMessage(context,
+        Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
+        Localization().getStringEx("panel.event2.detail.attendance.scan.disabled", "Scanning Illini ID is not enabled for this event."));
+    }
+    else if (!_scanning) {
       setState(() {
         _scanning = true;
       });
@@ -460,12 +476,13 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
 class _AttendeeListItemWidget extends StatelessWidget {
   final Event2Person registrant;
-  final bool? selected;
-  final bool? processing;
-  final bool? highlighted;
+  final bool enabled;
+  final bool selected;
+  final bool processing;
+  final bool highlighted;
   final void Function()? onTap;
   
-  _AttendeeListItemWidget(this.registrant, { Key? key, this.selected, this.processing, this.highlighted, this.onTap }) : super(key: key);
+  _AttendeeListItemWidget(this.registrant, { Key? key, this.enabled = true, this.selected = false, this.processing = false, this.highlighted = false, this.onTap }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -483,7 +500,8 @@ class _AttendeeListItemWidget extends StatelessWidget {
 
   Widget get _nameWidget {
     String? registrantNetId = registrant.identifier?.netId;
-    return Text(registrantNetId ?? '', style: Styles().textStyles?.getTextStyle((highlighted == true) ? "widget.label.regular.fat" : "widget.card.title.small.fat"));
+    String textStyleKey = (enabled ? (highlighted ? 'widget.label.regular.fat' : 'widget.card.title.small.fat') : 'widget.card.title.small.fat.variant3');
+    return Text(registrantNetId ?? '', style: Styles().textStyles?.getTextStyle(textStyleKey));
   }
 
   Widget get _checkMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
@@ -491,15 +509,15 @@ class _AttendeeListItemWidget extends StatelessWidget {
   );
 
   String get _checkMarkImageKey {
-    if (highlighted == true) {
-      return 'check-circle-outline';
+    if (enabled) {
+      if (highlighted == true) {
+        return 'check-circle-outline';
+      }
+      else if (selected == true) {
+        return 'check-circle-filled';
+      }
     }
-    else if (selected == true) {
-      return 'check-circle-filled';
-    }
-    else {
-      return 'circle-outline-gray';
-    }
+    return 'circle-outline-gray';
   }
 
   Widget get _progressMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18), child:

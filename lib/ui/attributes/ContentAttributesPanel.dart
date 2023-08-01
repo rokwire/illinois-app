@@ -111,11 +111,6 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     if (descriptionWidget != null) {
       contentList.add(descriptionWidget);
     }
-    if (StringUtils.isNotEmpty(widget.description)) {
-      contentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
-      ));
-    }
 
     List<ContentAttribute>? attributes = ListUtils.from<ContentAttribute>(widget.contentAttributes?.attributes);
     if ((attributes != null) && attributes.isNotEmpty) {
@@ -370,7 +365,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   }
 
   Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) =>
-    Semantics(label: title, button: true, excludeSemantics: true, child: 
+    Semantics(label: title, button: true, child:
       InkWell(onTap: onTap, child:
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
@@ -378,7 +373,8 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
               Container(
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat"),
+                  semanticsLabel: "",
                 ),
               ),
             ],)
