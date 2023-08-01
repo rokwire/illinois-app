@@ -377,7 +377,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   String? _favoriteCategoryTitle(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName:         return Localization().getStringEx('panel.saved.label.events', 'My Events');
-      case Event2.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.events2', 'My Events²');
+      case Event2.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.events2', 'My Events');
       case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining Locations");
       case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
       case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
