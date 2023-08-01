@@ -348,6 +348,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       FlexUI.notifyChanged,
       Event2FilterParam.notifyChanged,
       Events2.notifyChanged,
+      Events2.notifyUpdated,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -398,6 +399,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     }
     else if (name == Events2.notifyChanged) {
       _reload();
+    }
+    else if (name == Events2.notifyUpdated) {
+      _updateEventIfNeeded(param);
     }
   }
 
@@ -939,6 +943,16 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         });
       }
 
+    }
+  }
+
+  void _updateEventIfNeeded(Event2? event) {
+    if ((event != null) && (event.id != null) && mounted) {
+      int? index = Event2.indexInList(_events, id: event.id);
+      if (index != null)
+      setState(() {
+       _events?[index] = event;
+      });
     }
   }
 
