@@ -303,7 +303,10 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
           progress(true);
         }
       });
-      Events2().updateEventAttendanceDetails(widget.eventId ?? '', attendanceDetails.isNotEmpty ? attendanceDetails : null).then((result) {
+      // https://github.com/rokwire/calendar-building-block/issues/235
+      // Temporarily pass empty non-null attendance details until this gets fixed on the backend:
+      // attendanceDetails.isNotEmpty ? attendanceDetails : null
+      Events2().updateEventAttendanceDetails(widget.eventId ?? '', attendanceDetails).then((result) {
         if (mounted) {
           setState(() {
             _updatingAttendance = false;
