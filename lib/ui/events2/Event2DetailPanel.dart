@@ -70,6 +70,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
+      Events2.notifyUpdated,
     ]);
 
     _event = widget.event;
@@ -101,8 +102,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     } else if (name == Auth2.notifyLoginChanged){
       _refreshEvent(progress: (bool value) => (_eventProcessing = value));
     }
+    else if (name == Events2.notifyUpdated) {
+      _updateEventIfNeeded(param);
+    }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body:
@@ -909,6 +913,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         if (survey != null) {
           _survey = survey;
         }
+      });
+    }
+  }
+
+  void _updateEventIfNeeded(Event2? event) {
+    if ((event != null) && (event.id == _eventId) && mounted) {
+      setState(() {
+        _event = event;
       });
     }
   }
