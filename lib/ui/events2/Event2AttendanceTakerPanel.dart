@@ -136,8 +136,11 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   );
   
   Widget _buildEventDetail({required String label, int? value, bool? loading, String defaultValue = ''}) {
+    String valueLabel = value?.toString() ?? defaultValue;
+    String semanticsLabel = "$label: $valueLabel";
+
     return Padding(padding: Event2CreatePanel.innerSectionPadding, child:
-      Semantics(label: label, header: true, excludeSemantics: true, child:
+      Semantics(label: semanticsLabel, excludeSemantics: true, child:
         Row(children: [
           Expanded(child:
             Event2CreatePanel.buildSectionTitleWidget(label)
@@ -148,7 +151,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
                 CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
               ),
             ) :
-            Text(value?.toString() ?? defaultValue, style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'))
+            Text(valueLabel, style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'),)
         ])
       )
     );
