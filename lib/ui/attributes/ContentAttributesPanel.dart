@@ -111,11 +111,6 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     if (descriptionWidget != null) {
       contentList.add(descriptionWidget);
     }
-    if (StringUtils.isNotEmpty(widget.description)) {
-      contentList.add(Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
-        Text(widget.description ?? '', style: widget.descriptionTextStyle ?? Styles().textStyles?.getTextStyle("widget.description.regular")),
-      ));
-    }
 
     List<ContentAttribute>? attributes = ListUtils.from<ContentAttribute>(widget.contentAttributes?.attributes);
     if ((attributes != null) && attributes.isNotEmpty) {
