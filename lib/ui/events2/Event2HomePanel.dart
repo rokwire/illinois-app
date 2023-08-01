@@ -1,14 +1,17 @@
 
 import 'dart:collection';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -32,6 +35,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Event2HomePanel extends StatefulWidget {
 
@@ -63,14 +67,13 @@ class Event2HomePanel extends StatefulWidget {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ContentAttributesPanel(
           title: Localization().getStringEx('panel.events2.home.attributes.launch.header.title', 'Events'),
           bgImageKey: 'event-filters-background',
-          description: Localization().getStringEx('panel.events2.home.attributes.launch.header.description', 'Discover events across campus and around the world'),
-          descriptionTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular.highlight'),
+          descriptionBuilder: _buildOnboardingDescription,
           sectionTitleTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.highlight'),
           sectionDescriptionTextStyle: Styles().textStyles?.getTextStyle('widget.item.small.thin.highlight'),
           sectionRequiredMarkTextStyle: Styles().textStyles?.getTextStyle('widget.title.tiny.extra_fat.highlight'),
-          applyTitle: Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Explore'),
-          continueTitle: Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Not right now'),
-          continueTextStyle: Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline.highlight'),
+          applyBuilder: _buildOnboardingApply,
+          continueTitle: Localization().getStringEx('panel.events2.home.attributes.launch.continue.title', 'Set Up Later'),
+          continueTextStyle: Styles().textStyles?.getTextStyle('widget.button.title.medium.underline.highlight'),
           contentAttributes: buildContentAttributesV1(status: status),
           sortType: ContentAttributesSortType.native,
           filtersMode: true,
@@ -95,6 +98,62 @@ class Event2HomePanel extends StatefulWidget {
     }
   }
 
+  static Widget _buildOnboardingDescription(BuildContext context) {
+    String decriptionHtml = Localization().getStringEx("panel.events2.home.attributes.launch.header.description", "Customize your event feed by setting the below filters or <a href='{{events2_url}}'>view all events now<a> and choose your event filters later.").
+      replaceAll('{{events2_url}}', url);
+    TextStyle? descriptionTextStyle = Styles().textStyles?.getTextStyle('widget.description.medium.fat.highlight'); // TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.white);
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(mainAxisSize: MainAxisSize.min, children: [
+        Padding(padding: EdgeInsets.only(top: 32), child:
+          Styles().images?.getImage('event-onboarding-header') ?? Container(),
+        ),
+        Padding(padding: EdgeInsets.only(top: 24, bottom: 8), child:
+          HtmlWidget("<div style=text-align:center>$decriptionHtml</div>",
+            onTapUrl: (url) => _onTapLinkUrl(context, url),
+            textStyle: descriptionTextStyle,
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(descriptionTextStyle?.color ?? Colors.white)} : null
+          ),
+        ),
+      ],)
+    );
+  }
+
+  static String url = "${DeepLink().appUrl}/events2";
+
+  static Future<bool> _onTapLinkUrl(BuildContext context, String urlParam) async {
+    if (urlParam == url) {
+      Navigator.of(context).pop(<String, dynamic>{});
+      return true;
+    }
+    else {
+      Uri? uri = Uri.tryParse(urlParam);
+      if ((uri != null) && (await canLaunchUrl(uri))) {
+        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
+        launchUrl(uri, mode: launchMode);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static Widget _buildOnboardingApply(BuildContext context, bool enabled, void Function() onTap) {
+    String applyTitle = Localization().getStringEx('panel.events2.home.attributes.launch.apply.title', 'Create My Event Feed');
+    TextStyle? applyTextStyle = Styles().textStyles?.getTextStyle(enabled ? 'widget.button.title.medium.fat' : 'widget.button.title.regular.variant3');
+    Color? borderColor = enabled ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimaryVariant;
+    Decoration? applyDecoration = BoxDecoration(
+      color: Styles().colors!.white,
+      border: Border.all(color: borderColor ?? Colors.transparent, width: 1),
+      borderRadius: BorderRadius.all(Radius.circular(16))
+    );
+    return InkWell(onTap: onTap, child:
+      Container(decoration: applyDecoration, child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), child:
+          Text(applyTitle, style: applyTextStyle, textAlign: TextAlign.center, maxLines: null,),
+        )
+      ),
+    );
+  }
+  
   // Location Services
 
   static Future<LocationServicesStatus?> getLocationServicesStatus() async =>
@@ -259,6 +318,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
+  String? _eventsErrorText;
   bool _loadingEvents = false;
   bool _refreshingEvents = false;
   bool _extendingEvents = false;
@@ -288,6 +348,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       FlexUI.notifyChanged,
       Event2FilterParam.notifyChanged,
       Events2.notifyChanged,
+      Events2.notifyUpdated,
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -339,6 +400,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     else if (name == Events2.notifyChanged) {
       _reload();
     }
+    else if (name == Events2.notifyUpdated) {
+      _updateEventIfNeeded(param);
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -369,7 +433,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       _buildCommandBar(),
       Expanded(child:
         RefreshIndicator(onRefresh: _onRefresh, child:
-          SingleChildScrollView(controller: _scrollController, child:
+          SingleChildScrollView(controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
             _buildEventsContent(),
           )
         )
@@ -591,10 +655,12 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       return Container();
     }
     else if (_events == null) {
-      return _buildMessageContent('Failed to load events.');
+      return _buildMessageContent(_eventsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
+        title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed')
+      );
     }
     else if (_events?.length == 0) {
-      return _buildMessageContent('There are no events matching the selected filters.');
+      return _buildMessageContent(Localization().getStringEx('panel.events2.home.message.empty.description', 'There are no events matching the selected filters.'));
     }
     else {
       return _buildEventsList();
@@ -618,15 +684,17 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     );
   }
 
-  Widget _buildMessageContent(String message) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    return Column(children: [
-      Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: screenHeight / 4), child:
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
-      ),
-      Container(height: screenHeight / 2,)
-    ],);
-  }
+  double get _screenHeight => MediaQuery.of(context).size.height;
+
+  Widget _buildMessageContent(String message, { String? title }) =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
+      Column(children: [
+        (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        ) : Container(),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+      ],),
+    );
 
   Widget _buildLoadingContent() {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -798,13 +866,16 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = false;
       });
 
-      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
-      List<Event2>? events = loadResult?.events;
+      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      String? errorTextResult = (result is String) ? result : null;
 
       setStateIfMounted(() {
         _events = (events != null) ? List<Event2>.from(events) : null;
-        _totalEventsCount = loadResult?.totalCount;
+        _totalEventsCount = listResult?.totalCount;
         _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+        _eventsErrorText = errorTextResult;
         _loadingEvents = false;
       });
     }
@@ -822,14 +893,21 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       });
 
       int limit = max(_events?.length ?? 0, _eventsPageLength);
-      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
-      List<Event2>? events = loadResult?.events;
-      int? totalCount = loadResult?.totalCount;
+      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      int? totalCount = listResult?.totalCount;
+      String? errorTextResult = (result is String) ? result : null;
 
       setStateIfMounted(() {
         if (events != null) {
           _events = List<Event2>.from(events);
           _lastPageLoadedAll = (events.length >= limit);
+          _eventsErrorText = null;
+        }
+        else if (_events == null) {
+          // If there was events content, preserve it. Otherwise, show the error
+          _eventsErrorText = errorTextResult;
         }
         if (totalCount != null) {
           _totalEventsCount = totalCount;
@@ -845,9 +923,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         _extendingEvents = true;
       });
 
-      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
-      List<Event2>? events = loadResult?.events;
-      int? totalCount = loadResult?.totalCount;
+      Events2ListResult? listResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
+      List<Event2>? events = listResult?.events;
+      int? totalCount = listResult?.totalCount;
 
       if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
         setState(() {
@@ -867,6 +945,16 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         });
       }
 
+    }
+  }
+
+  void _updateEventIfNeeded(Event2? event) {
+    if ((event != null) && (event.id != null) && mounted) {
+      int? index = Event2.indexInList(_events, id: event.id);
+      if (index != null)
+      setState(() {
+       _events?[index] = event;
+      });
     }
   }
 

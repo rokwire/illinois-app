@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -27,16 +28,17 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/ui/widgets/survey.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2SetupSurveyPanel extends StatefulWidget {
-  final Event2? event;
-  final Event2SurveyDetails? surveyDetails;
+  final Event2SetupSurveyParam surveyParam;
   final List<Survey>? surveysCache;
+  final String? eventName;
 
-  Event2SetupSurveyPanel({Key? key, this.event, this.surveyDetails, this.surveysCache}) : super(key: key);
+  Event2SetupSurveyPanel({Key? key, required this.surveyParam, this.eventName, this.surveysCache}) : super(key: key);
 
-  Event2SurveyDetails? get details => (event?.id != null) ? event?.surveyDetails : surveyDetails;
+  Event2SurveyDetails? get details => (surveyParam.event?.id != null) ? surveyParam.event?.surveyDetails : surveyParam.details;
 
   @override
   State<StatefulWidget> createState() => _Event2SetupSurveyPanelState();
@@ -47,8 +49,9 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   List<Survey>? _surveys;
 
   Survey? _survey;
-  String? _initialSurveyId;
-  
+  Survey? _displaySurvey;
+  Survey? _initialSurvey;
+
   final TextEditingController _hoursController = TextEditingController();
   late String _initialHours;
 
@@ -56,11 +59,11 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   bool _loadingSurveys = false;
   bool _updatingSurvey = false;
 
+  late final SurveyWidgetController _surveyController = SurveyWidgetController();
+
   @override
   void initState() {
-    
-    _initialSurveyId = widget.details?.surveyId;
-    
+
     _hoursController.text = _initialHours = widget.details?.hoursAfterEvent?.toString() ?? '';
     if (_isEditing) {
       _hoursController.addListener(_checkModified);
@@ -68,23 +71,25 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
     if ((widget.surveysCache != null) && (widget.surveysCache?.isNotEmpty == true)) {
       _surveys = widget.surveysCache;
-      _survey = (_initialSurveyId != null) ? Survey.findInList(_surveys, id: _initialSurveyId) : null;
-      _checkModified();
+      _initialSurvey = Survey.findInList(_surveys, title: widget.surveyParam.survey?.title);
+      _selectSurvey(_initialSurvey);
     }
     else {
       _loadingSurveys = true;
-      Surveys().loadSurveys().then((List<Survey>? surveys) {
+      Surveys().loadEvent2SurveyTemplates().then((List<Survey>? surveys) {
         if ((widget.surveysCache != null) && (widget.surveysCache?.isEmpty == true) && (surveys != null)) {
           widget.surveysCache?.addAll(surveys);
         }
         setStateIfMounted(() {
           _surveys = surveys;
-          _survey = ((_surveys != null) && (_initialSurveyId != null)) ? Survey.findInList(_surveys, id: _initialSurveyId) : null;
+          _initialSurvey = Survey.findInList(_surveys, title: widget.surveyParam.survey?.title);
+          _selectSurvey(_initialSurvey);
           _loadingSurveys = false;
         });
-        _checkModified();
       });
     }
+
+    _checkModified();
 
     super.initState();
   }
@@ -100,7 +105,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Scaffold(
         appBar: _headerBar,
         body: _buildScaffoldContent(),
-        backgroundColor: Styles().colors!.white);
+        backgroundColor: Styles().colors?.background);
   }
 
   Widget _buildScaffoldContent() {
@@ -122,8 +127,12 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return SingleChildScrollView(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(Localization().getStringEx('panel.event2.setup.survey.explanation.title', 'Choose a survey template to be sent to attendees of this event after it completes.'),
+              style: Styles().textStyles?.getTextStyle('widget.description.regular')),
+          SizedBox(height: 16.0),
           _buildSurveysSection(),
           _buildHoursSection(),
+          _buildSurveyPreviewSection(),
         ])
       )
     );
@@ -153,7 +162,6 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   Widget _buildSurveysSection() {
     String title = Localization().getStringEx('panel.event2.setup.survey.survey.title', 'SURVEY');
-    title = "SURVEY";
     return Padding(padding: Event2CreatePanel.sectionPadding, child:
       Semantics(container: true, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -164,9 +172,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
               ]),
             ),
           ),
-          Expanded(flex: 3, child:
-            _surveysDropdownWidget
-          ),
+          Expanded(flex: 3, child: _surveysDropdownWidget),
         ]),
       ),
 
@@ -216,18 +222,24 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     Analytics().logSelect(target: "Survey: ${(survey != null) ? survey.title : 'null'}");
     if ((_survey != survey) && mounted) {
       setState(() {
-        _survey = survey;
+        _selectSurvey(survey);
       });
       _checkModified();
       //TBD: Preview selected survey
     }
   }
 
+  void _selectSurvey(Survey? survey) {
+    _survey = survey;
+    _displaySurvey = survey != null ? Survey.fromOther(survey) : null;
+    _displaySurvey?.replaceKey('event_name', widget.eventName ?? widget.surveyParam.event?.name);
+  }
+
   String get nullSurveyTitle => Localization().getStringEx('panel.event2.setup.survey.no_survey.title', '---');
 
   // Hours
 
-  Widget _buildHoursSection() => Visibility(visible: (_survey != null), child:
+  Widget _buildHoursSection() => Visibility(visible: (_displaySurvey != null), child:
     Padding(padding: Event2CreatePanel.sectionPadding, child:
       Row(children: [
         Flexible(flex: 3, child:
@@ -242,10 +254,20 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     )
   );
 
+  // Survey Preview
+
+  Widget _buildSurveyPreviewSection() => Visibility(visible: _survey != null, child:
+    Column(crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat')),
+        SurveyWidget(survey: _displaySurvey, controller: _surveyController, summarizeResultRules: true),
+      ],
+    )
+  );
 
   // HeaderBar
 
-  bool get _isEditing => StringUtils.isNotEmpty(widget.event?.id);
+  bool get _isEditing => StringUtils.isNotEmpty(widget.surveyParam.event?.id);
 
   PreferredSizeWidget get _headerBar => HeaderBar(
     title: Localization().getStringEx('panel.event2.setup.survey.header.title', 'Event Follow-Up Survey'),
@@ -271,7 +293,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   void _checkModified() {
     if (_isEditing && mounted) {
       
-      bool modified = (_survey?.id != _initialSurveyId) ||
+      bool modified = (_survey?.id != _initialSurvey?.id) ||
         (_hoursController.text != _initialHours);
 
       if (_modified != modified) {
@@ -282,47 +304,100 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     }
   }
 
-  Event2SurveyDetails _buildSurveyDetail() => Event2SurveyDetails(
-    surveyId: _survey?.id,
-    hoursAfterEvent: Event2CreatePanel.textFieldIntValue(_hoursController),
+  Event2SetupSurveyParam _buildSurveyParam() => Event2SetupSurveyParam(
+    survey: _survey != null ? Survey.fromOther(_survey!, id: widget.surveyParam.survey?.id) : null,
+    details: _survey != null ? Event2SurveyDetails(
+      hoursAfterEvent: Event2CreatePanel.textFieldIntValue(_hoursController),
+    ) : null,
   );
 
-  bool _checkSurveyDetails(Event2SurveyDetails surveyDetails) {
-    if ((_survey?.id != null) && ((surveyDetails.hoursAfterEvent == null) || ((surveyDetails.hoursAfterEvent ?? 0) < 0))) {
+  bool _checkSurveyResult(Event2SetupSurveyParam surveyParam) {
+    if ((surveyParam.survey?.id != null) && ((surveyParam.details?.hoursAfterEvent == null) || ((surveyParam.details?.hoursAfterEvent ?? 0) < 0))) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.setup.survey.hours.invalid.msg', 'Please, fill valid non-negative number for hours.'));
       return false;
     }
     return true;
   }
 
-  void _updateEventSurveyDetails(Event2SurveyDetails? surveyDetails) {
-    if (_isEditing && (_updatingSurvey != true)) {
+  Future<void> _updateEventSurveyDetails(Event2SetupSurveyParam? surveyParam) async {
+    String? eventId = widget.surveyParam.event?.id;
+    if ((eventId != null) && eventId.isNotEmpty && (_updatingSurvey != true)) {
       setState(() {
         _updatingSurvey = true;
       });
-      Events2().updateEventSurveyDetails(widget.event?.id ?? '', surveyDetails).then((result) {
-        if (mounted) {
-          setState(() {
-            _updatingSurvey = false;
-          });
+
+      Event2? event = widget.surveyParam.event;
+      if (event?.isSurveyAvailable == false) {
+        if (surveyParam?.details != widget.surveyParam.details) {
+          dynamic result = await Events2().updateEventSurveyDetails(eventId, surveyParam?.details);
+          if (mounted) {
+            if (result is Event2) {
+              event = result;
+            }
+            else {
+              setState(() {
+                _updatingSurvey = false;
+              });
+              Event2Popup.showErrorResult(context, result);
+              return;
+            }
+          }
         }
 
-        if (result is Event2) {
-          Navigator.of(context).pop(result);
+        bool surveyUpdateResult = true;
+        Survey? survey = widget.surveyParam.survey;
+        if (_survey?.id != _initialSurvey?.id) {
+          // a different template than the initially selected template is now selected and the survey is not available to attendees yet
+          if (StringUtils.isNotEmpty(surveyParam?.survey?.id)) { // this will match the ID of the existing follow up survey if a non-null template is selected
+            if (StringUtils.isEmpty(surveyParam?.survey?.calendarEventId)) { // set calendarEventId in survey if it is missing
+              surveyParam!.survey!.calendarEventId = eventId;
+            }
+            // if there is no previously selected survey, then create a copy of the template, otherwise update the existing survey
+            if (_initialSurvey == null) {
+              surveyUpdateResult = await Surveys().createEvent2Survey(_survey!, event!) ?? false;
+            } else {
+              surveyUpdateResult = await Surveys().updateSurvey(surveyParam!.survey!) ?? false;
+            }
+          } else if (StringUtils.isNotEmpty(survey?.id)) { // the null template is selected, so delete the existing follow up survey if it exists
+            surveyUpdateResult = await Surveys().deleteSurvey(survey!.id) ?? false;
+          }
+          if (surveyUpdateResult) {
+            survey = await Surveys().loadEvent2Survey(eventId);
+          }
+        }
+
+        setState(() {
+          _updatingSurvey = false;
+        });
+
+        if (surveyUpdateResult) {
+          Navigator.of(context).pop(Event2SetupSurveyParam(
+            event: event,
+            survey: survey,
+          ));
         }
         else {
-          Event2Popup.showErrorResult(context, result);
+          Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.failed.msg', 'Failed to update event survey.'));
         }
-
+      } else {
+        setState(() {
+          _updatingSurvey = false;
+        });
+        Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.already_available.msg', 'This survey is already available to attendees, so it will not be updated.'));
+      }
+    } else {
+      setState(() {
+        _updatingSurvey = false;
       });
+      Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.event_missing.msg', 'Failed to find associated event.'));
     }
   }
 
   void _onHeaderBarApply() {
     Analytics().logSelect(target: 'HeaderBar: Apply');
-    Event2SurveyDetails surveyDetails = _buildSurveyDetail();
-    if (_checkSurveyDetails(surveyDetails)) {
-      _updateEventSurveyDetails(surveyDetails);
+    Event2SetupSurveyParam surveyParam = _buildSurveyParam();
+    if (_checkSurveyResult(surveyParam)) {
+      _updateEventSurveyDetails(surveyParam);
     }
   }
 
@@ -332,10 +407,17 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       Navigator.of(context).pop(null);
     }
     else {
-      Event2SurveyDetails surveyDetails = _buildSurveyDetail();
-      if (_checkSurveyDetails(surveyDetails)) {
-        Navigator.of(context).pop(surveyDetails);
+      Event2SetupSurveyParam surveyParam = _buildSurveyParam();
+      if (_checkSurveyResult(surveyParam)) {
+        Navigator.of(context).pop(surveyParam);
       }
     }
   }
+}
+
+class Event2SetupSurveyParam {
+  final Event2? event;
+  final Survey? survey;
+  final Event2SurveyDetails? details;
+  Event2SetupSurveyParam({this.event, this.survey, this.details});
 }

@@ -5,6 +5,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -22,20 +23,24 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/auth2.dart' as pluginAuth;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final String? eventId;
   final Event2? event;
+  final String? eventId;
+  final Survey? survey;
   final Position? userLocation;
-  Event2DetailPanel({ this.event, this.eventId, this.userLocation});
+  Event2DetailPanel({ this.event, this.eventId, this.survey, this.userLocation});
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();
@@ -49,6 +54,7 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
 class _Event2DetailPanelState extends State<Event2DetailPanel> implements NotificationsListener {
 
   Event2? _event;
+  Survey? _survey;
 
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
   // when sending the appliction to background in iOS.
@@ -64,12 +70,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
+      Events2.notifyUpdated,
     ]);
-    
+
     _event = widget.event;
-    if ((_event == null) && StringUtils.isNotEmpty(widget.eventId)) {
-      _refreshEvent(progress: (bool value) => (_eventLoading = value));
-    }
+    _survey = widget.survey;
+    _initEvent();
 
     if ((_userLocation = widget.userLocation) == null) {
       Event2HomePanel.getUserLocationIfAvailable().then((Position? userLocation) {
@@ -93,11 +99,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() { });
-    } else if(name == Auth2.notifyLoginChanged){
+    } else if (name == Auth2.notifyLoginChanged){
       _refreshEvent(progress: (bool value) => (_eventProcessing = value));
     }
+    else if (name == Events2.notifyUpdated) {
+      _updateEventIfNeeded(param);
+    }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body:
@@ -413,9 +422,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Widget get _buttonsWidget {
     List<Widget> buttons = <Widget>[
+      ...?_followUpSurveyButtonWidget,
       ...?_urlButtonWidget,
       ...?_registrationButtonWidget,
-      ...?_logInButtonWidget
+      ...?_logInButtonWidget,
     ];
 
     return buttons.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 16), child:
@@ -475,6 +485,18 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
 
     return null; //not required
+  }
+
+  List<Widget>? get _followUpSurveyButtonWidget{
+    if (Auth2().isLoggedIn && (_event?.userRole == Event2UserRole.participant) && (_survey != null) && (_event?.isSurveyAvailable ?? false)) {
+      return <Widget>[_buildButtonWidget(
+          title: Localization().getStringEx('panel.event2_detail.button.follow_up_survey.title', 'Take Survey'),
+          onTap: _onFollowUpSurvey,
+          externalLink: false,
+      )];
+    }
+
+    return null;
   }
 
   Widget get _adminSettingsWidget  =>
@@ -677,6 +699,17 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
        _onLaunchUrl(_event?.registrationDetails?.externalLink);
   }
 
+  void _onFollowUpSurvey(){
+    Analytics().logSelect(target: "Follow up survey");
+    Surveys().loadSurveyResponses(surveyIDs: [_survey!.id]).then((List<SurveyResponse>? responses) {
+      if (CollectionUtils.isEmpty(responses)) {
+        Survey displaySurvey = Survey.fromOther(_survey!);
+        displaySurvey.replaceKey('event_name', _event?.name);
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: displaySurvey)));
+      }
+    });
+  }
+
   void _onLogIn(){
     Analytics().logSelect(target: "Log in");
     if (_authLoading != true) {
@@ -723,7 +756,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingEditEvent(){
     Analytics().logSelect(target: "Edit event");
-    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event))).then((Event2? result) {
+    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey,))).then((Event2? result) {
       if ((result != null) && mounted) {
         setState(() {
           _event = result;
@@ -761,13 +794,20 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingSurvey(){
     Analytics().logSelect(target: "Event Survey");
-    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
-      event: _event,
-    ))).then((Event2? event) {
-      if (event != null)
-      setStateIfMounted(() {
-        _event = event;
-      });
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
+      surveyParam: Event2SetupSurveyParam(
+        event: _event,
+        survey: _survey,
+      ),
+    ))).then((Event2SetupSurveyParam? surveyParam) {
+      if (surveyParam != null) {
+        setStateIfMounted(() {
+          if (surveyParam.event != null) {
+            _event = surveyParam.event;
+          }
+          _survey = surveyParam.survey;
+        });
+      }
     });
   }
 
@@ -810,15 +850,58 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   //loading
 
+  Future<void> _initEvent() async {
+    
+    Event2? event;
+    if ((_event == null) && StringUtils.isNotEmpty(widget.eventId) && mounted) {
+      setState(() {
+        _eventLoading = true;
+      });
+      event = await Events2().loadEvent(widget.eventId!);
+    }
+
+    Survey? survey;
+    Event2? workEvent = event ?? _event;
+    if ((_survey == null) && (workEvent?.surveyDetails?.isNotEmpty ?? false) && StringUtils.isNotEmpty(workEvent?.id) && mounted) {
+      setState(() {
+        _eventLoading = true;
+      });
+      survey = await Surveys().loadEvent2Survey(workEvent!.id!);
+    }
+
+    setStateIfMounted(() {
+      _eventLoading = false;
+      if (event != null) {
+        _event = event;
+      }
+      if (survey != null) {
+        _survey = survey;
+      }
+    });
+  }
+
   Future<void> _refreshEvent({void Function(bool)? progress}) async {
-    if (_eventId != null) {
+    if ((_eventId != null) && mounted) {
       if (progress != null) {
-        setStateIfMounted(() {
+        setState(() {
           progress(true);
         });
       }
 
-      Event2? event = await Events2().loadEvent(_eventId!);
+      List<Future<dynamic>> futures = [
+        Events2().loadEvent(_eventId!)
+      ];
+      if (_event?.surveyDetails?.isNotEmpty ?? false) {
+        futures.add(Surveys().loadEvent2Survey(_eventId!));
+      }
+      List<dynamic> results = await Future.wait(futures);
+      Event2? event = ((0 < results.length) && (results[0] is Event2)) ? results[0] : null;
+      Survey? survey = ((1 < results.length) && (results[1] is Survey)) ? results[1] : null;
+
+      // Handle the case if after refreshing event the surveyDetails get not empty
+      if ((event?.surveyDetails?.isNotEmpty ?? false) && (results.length < 2)) {
+        survey = await Surveys().loadEvent2Survey(_eventId!);
+      }
 
       setStateIfMounted(() {
         if (progress != null) {
@@ -827,6 +910,17 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         if (event != null) {
           _event = event;
         }
+        if (survey != null) {
+          _survey = survey;
+        }
+      });
+    }
+  }
+
+  void _updateEventIfNeeded(Event2? event) {
+    if ((event != null) && (event.id == _eventId) && mounted) {
+      setState(() {
+        _event = event;
       });
     }
   }

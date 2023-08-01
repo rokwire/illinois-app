@@ -54,6 +54,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
 
   String? _searchText;
   List<Event2>? _events;
+  String? _eventsErrorText;
   int? _totalEventsCount;
   bool? _lastPageLoadedAll;
   static const int _eventsPageLength = 8;
@@ -190,7 +191,9 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
       return Container();
     }
     else if (_events == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.event2.search.failed.message', 'Failed to search events.'));
+      return _buildMessageContent(_eventsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
+        title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed')
+      );
     }
     else if (_events?.length == 0) {
       return _buildMessageContent(Localization().getStringEx('panel.event2.search.empty.message', 'There are no events matching the search text.'));
@@ -228,9 +231,15 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
     ),
   );
 
-  Widget _buildMessageContent(String message) => Padding(padding: EdgeInsets.only(left: 32, right: 32, top: _screenHeight / 4, bottom: 3 * _screenHeight / 4), child:
-    Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
-  );
+  Widget _buildMessageContent(String message, { String? title }) =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
+      Column(children: [
+        (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        ) : Container(),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+      ],),
+    );
 
   double get _screenHeight => MediaQuery.of(context).size.height;
 
@@ -246,6 +255,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
         _totalEventsCount = null;
         _lastPageLoadedAll = null;
         _events = null;
+        _eventsErrorText = null;
       });
     }
   }
@@ -263,6 +273,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
         _totalEventsCount = null;
         _lastPageLoadedAll = null;
         _events = null;
+        _eventsErrorText = null;
       });
     }
   }
@@ -301,20 +312,23 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
         _refreshClient = _extendClient = null;
       });
 
-      Events2ListResult? result = await Events2().loadEvents(Events2Query(
+      dynamic result = await Events2().loadEventsEx(Events2Query(
         searchText: searchText,
         offset: 0,
         limit: limit,
         location: _userLocation
       ), client: _extendClient);
-      List<Event2>? events = result?.events;
-      int? totalEventsCount = result?.totalCount;
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      int? totalEventsCount = listResult?.totalCount;
+      String? errorTextResult = (result is String) ? result : null;
 
       if (identical(_searchClient, client)) {
         setStateIfMounted(() {
           _events = (events != null) ? List<Event2>.from(events) : null;
           _totalEventsCount = totalEventsCount;
           _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+          _eventsErrorText = errorTextResult;
           _searchClient = null;
         });
       }
@@ -335,20 +349,27 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
       });
 
       int limit = max(_events?.length ?? 0, _eventsPageLength);
-      Events2ListResult? result = await Events2().loadEvents(Events2Query(
+      dynamic result = await Events2().loadEventsEx(Events2Query(
         searchText: _searchText,
         offset: 0,
         limit: limit,
         location: _userLocation
       ), client: _extendClient);
-      List<Event2>? events = result?.events;
-      int? totalEventsCount = result?.totalCount;
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      int? totalEventsCount = listResult?.totalCount;
+      String? errorTextResult = (result is String) ? result : null;
 
       if (mounted && identical(_refreshClient, client)) {
         setState(() {
           if (events != null) {
             _events = List<Event2>.from(events);
             _lastPageLoadedAll = (events.length >= limit);
+            _eventsErrorText = null;
+          }
+          else if (_events == null) {
+            // If there was events content, preserve it. Otherwise, show the error
+            _eventsErrorText = errorTextResult;
           }
           if (totalEventsCount != null) {
             _totalEventsCount = totalEventsCount;
@@ -372,14 +393,14 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
         _searchClient = _refreshClient = null;
       });
 
-      Events2ListResult? result = await Events2().loadEvents(Events2Query(
+      Events2ListResult? listResult = await Events2().loadEvents(Events2Query(
         searchText: _searchText,
         offset: _events?.length ?? 0,
         limit: _eventsPageLength,
         location: _userLocation
       ), client: _extendClient);
-      List<Event2>? events = result?.events;
-      int? totalEventsCount = result?.totalCount;
+      List<Event2>? events = listResult?.events;
+      int? totalEventsCount = listResult?.totalCount;
 
       if (mounted && identical(_extendClient, client)) {
         setState(() {

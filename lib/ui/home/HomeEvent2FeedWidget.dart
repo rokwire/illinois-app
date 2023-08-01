@@ -22,6 +22,7 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
@@ -66,6 +67,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
+  String? _eventsErrorText;
   bool _loadingEvents = false;
   bool _refreshingEvents = false;
   bool _extendingEvents = false;
@@ -94,6 +96,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
       FlexUI.notifyChanged,
       Storage.notifySettingChanged,
       Events2.notifyChanged,
+      Auth2.notifyLoginChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -141,6 +144,9 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     else if (name == Events2.notifyChanged) {
       _reloadIfVisible(); // or mark as needs refresh
     }
+    else if (name == Auth2.notifyLoginChanged) {
+      _reloadIfVisible(); // or mark as needs refresh
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState state) {
@@ -175,10 +181,13 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
       return HomeProgressWidget();
     }
     else if (_events == null) {
-      return HomeMessageCard(message: 'Failed to load events.');
+      return HomeMessageCard(
+        title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed'),
+        message: _eventsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred')
+      );
     }
     else if (_events?.length == 0) {
-      return HomeMessageCard(message: 'There are no events matching the selected filters.');
+      return HomeMessageCard(message: Localization().getStringEx('panel.events2.home.message.empty.description', 'There are no events matching the selected filters.'));
     }
     else {
       return _buildEventsContent();
@@ -385,13 +394,16 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
         _extendingEvents = false;
       });
 
-      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
-      List<Event2>? events = loadResult?.events;
+      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      String? errorTextResult = (result is String) ? result : null;
 
       setStateIfMounted(() {
         _events = (events != null) ? List<Event2>.from(events) : null;
-        _totalEventsCount = loadResult?.totalCount;
+        _totalEventsCount = listResult?.totalCount;
         _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+        _eventsErrorText = errorTextResult;
         _loadingEvents = false;
         _stalled = _Staled.none;
         _pageViewKey = UniqueKey();
@@ -418,14 +430,21 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
       });
 
       int limit = max(_events?.length ?? 0, _eventsPageLength);
-      Events2ListResult? loadResult = await Events2().loadEvents(await _queryParam(limit: limit));
-      List<Event2>? events = loadResult?.events;
-      int? totalCount = loadResult?.totalCount;
+      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      int? totalCount = listResult?.totalCount;
+      String? errorTextResult = (result is String) ? result : null;
 
       setStateIfMounted(() {
         if (events != null) {
           _events = List<Event2>.from(events);
           _lastPageLoadedAll = (events.length >= limit);
+          _eventsErrorText = null;
+        }
+        else if (_events == null) {
+          // If there was events content, preserve it. Otherwise, show the error
+          _eventsErrorText = errorTextResult;
         }
         if (totalCount != null) {
           _totalEventsCount = totalCount;

@@ -21,7 +21,8 @@ class Event2SetupAttendancePanel extends StatefulWidget {
   
   Event2SetupAttendancePanel({Key? key, this.event, this.attendanceDetails}) : super(key: key);
   
-  Event2AttendanceDetails? get details => (event?.id != null) ? event?.attendanceDetails : attendanceDetails;
+  String? get eventId => event?.id;
+  Event2AttendanceDetails? get details => (eventId != null) ? event?.attendanceDetails : attendanceDetails;
 
   @override
   State<StatefulWidget> createState() => _Event2SetupAttendancePanelState();
@@ -31,13 +32,19 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   late bool _scanningEnabled;
   late bool _manualCheckEnabled;
+
+  bool _scanningProgress = false;
+  bool _manualCheckProgress = false;
+  bool _applyProgress = false;
   
   final TextEditingController _attendanceTakersController = TextEditingController();
 
   late bool _initialScanningEnabled;
   late bool _initialManualCheckEnabled;
-  late String _initialAttendanceTakers;
+  List<String>? _initialAttendanceTakers;
+  late String _initialAttendanceTakersDisplayString;
 
+  Event2? _event;
   final StreamController<String> _updateController = StreamController.broadcast();
 
   bool _modified = false;
@@ -45,9 +52,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   @override
   void initState() {
-    _scanningEnabled = _initialScanningEnabled = widget.details?.scanningEnabled ?? false;
-    _manualCheckEnabled = _initialManualCheckEnabled = widget.details?.manualCheckEnabled ?? false;
-    _attendanceTakersController.text = _initialAttendanceTakers = widget.details?.attendanceTakers?.join(' ') ?? '';
+    _event = widget.event;
+    _initDetails(widget.details);
     if (_isEditing) {
       _attendanceTakersController.addListener(_checkModified);
     }
@@ -77,7 +83,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
-              (widget.event?.id != null) ? _buildAttendanceTakerSection() : Container(),
+              _isEditing ? _buildAttendanceTakerSection() : Container(),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
             ]),
           )
@@ -108,6 +114,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       toggled: _scanningEnabled,
       onTap: _onTapScan,
       padding: EdgeInsets.zero,
+      progress: _scanningProgress,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
     ));
@@ -115,10 +122,22 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   void _onTapScan() {
     Analytics().logSelect(target: "Toggle Scan Illini ID");
     Event2CreatePanel.hideKeyboard(context);
-    setStateIfMounted(() {
-      _scanningEnabled = !_scanningEnabled;
-    });
-    _checkModified();
+    if (_isCreating) {
+      setStateIfMounted(() {
+        _scanningEnabled = !_scanningEnabled;
+      });
+    }
+    else {
+      _updateEventAttendanceDetails(
+        attendanceDetails: Event2AttendanceDetails(
+          scanningEnabled: !_scanningEnabled,
+          manualCheckEnabled: _manualCheckEnabled,
+          attendanceTakers: _initialAttendanceTakers
+        ),
+        progress: (bool value) => (_scanningProgress = value),
+        success: (Event2 event) => _applyEventDetails(event)
+      );
+    }
   }
 
   // Manual
@@ -137,6 +156,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       toggled: _manualCheckEnabled,
       onTap: _onTapManual,
       padding: EdgeInsets.zero,
+      progress: _manualCheckProgress,
       //border: _toggleBorder,
       //borderRadius: _toggleBorderRadius,
     ));
@@ -144,10 +164,23 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   void _onTapManual() {
     Analytics().logSelect(target: "Toggle Manual Check");
     Event2CreatePanel.hideKeyboard(context);
-    setStateIfMounted(() {
-      _manualCheckEnabled = !_manualCheckEnabled;
-    });
-    _checkModified();
+
+    if (_isCreating) {
+      setStateIfMounted(() {
+        _manualCheckEnabled = !_manualCheckEnabled;
+      });
+    }
+    else {
+      _updateEventAttendanceDetails(
+        attendanceDetails: Event2AttendanceDetails(
+          scanningEnabled: _scanningEnabled,
+          manualCheckEnabled: !_manualCheckEnabled,
+          attendanceTakers: _initialAttendanceTakers
+        ),
+        progress: (bool value) => (_manualCheckProgress = value),
+        success: (Event2 event) => _applyEventDetails(event)
+      );
+    }
   }
 
   // Attendance Taker
@@ -157,7 +190,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       Column(children: [
         Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
-          Event2AttendanceTakerWidget(widget.event, updateController: _updateController,),
+          Event2AttendanceTakerWidget(_event, updateController: _updateController,),
         ),
         Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
       ],),
@@ -202,7 +235,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   // HeaderBar
 
-  bool get _isEditing => StringUtils.isNotEmpty(widget.event?.id);
+  bool get _isEditing => StringUtils.isNotEmpty(widget.eventId);
+  bool get _isCreating => StringUtils.isEmpty(widget.eventId);
 
   PreferredSizeWidget get _headerBar => HeaderBar(
     title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"),
@@ -211,26 +245,40 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   );
 
   List<Widget>? get _headerBarActions {
-    if (_updatingAttendance) {
+    if (_applyProgress) {
       return [Event2CreatePanel.buildHeaderBarActionProgress()];  
     }
     else if (_isEditing && _modified) {
       return [Event2CreatePanel.buildHeaderBarActionButton(
         title: Localization().getStringEx('dialog.apply.title', 'Apply'),
-        onTap: _onHeaderBarApply,
+        onTap: _onTapApply,
       )];
     }
     else {
       return null;
     }
   }
+
+  void _initDetails(Event2AttendanceDetails? details) {
+    _scanningEnabled = _initialScanningEnabled = details?.scanningEnabled ?? false;
+    _manualCheckEnabled = _initialManualCheckEnabled = details?.manualCheckEnabled ?? false;
+    _initialAttendanceTakers = details?.attendanceTakers;
+    _attendanceTakersController.text = _initialAttendanceTakersDisplayString = details?.attendanceTakers?.join(' ') ?? '';
+    _modified = false;
+  }
+
+  void _applyEventDetails(Event2 event) =>
+    setStateIfMounted(() {
+      _event = event;
+      _initDetails(event.attendanceDetails);
+    });
   
   void _checkModified() {
     if (_isEditing && mounted) {
       
       bool modified = (_scanningEnabled != _initialScanningEnabled) ||
         (_manualCheckEnabled != _initialManualCheckEnabled) ||
-        (_attendanceTakersController.text != _initialAttendanceTakers);
+        (_attendanceTakersController.text != _initialAttendanceTakersDisplayString);
 
       if (_modified != modified) {
         setState(() {
@@ -247,19 +295,30 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       attendanceTakers: ListUtils.notEmpty(ListUtils.stripEmptyStrings(_attendanceTakersController.text.split(RegExp(r'[\s,;]+')))),
   );
 
-  void _updateEventAttendanceDetails(Event2AttendanceDetails? attendanceDetails) {
-    if (_updatingAttendance != true) {
+  void _updateEventAttendanceDetails({required Event2AttendanceDetails attendanceDetails, void Function(bool)? progress, void Function(Event2)? success }) {
+    if ((_updatingAttendance != true) && mounted) {
       setState(() {
         _updatingAttendance = true;
+        if (progress != null) {
+          progress(true);
+        }
       });
-      Events2().updateEventAttendanceDetails(widget.event?.id ?? '', attendanceDetails).then((result) {
+      // https://github.com/rokwire/calendar-building-block/issues/235
+      // Temporarily pass empty non-null attendance details until this gets fixed on the backend:
+      // attendanceDetails.isNotEmpty ? attendanceDetails : null
+      Events2().updateEventAttendanceDetails(widget.eventId ?? '', attendanceDetails).then((result) {
         if (mounted) {
           setState(() {
             _updatingAttendance = false;
+            if (progress != null) {
+              progress(false);
+            }
           });
         }
         if (result is Event2) {
-          Navigator.of(context).pop(result);
+          if (success != null) {
+            success(result);
+          }
         }
         else {
           Event2Popup.showErrorResult(context, result);
@@ -268,13 +327,16 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
-  void _onHeaderBarApply() {
+  void _onTapApply() {
     Analytics().logSelect(target: 'HeaderBar: Apply');
-    Event2AttendanceDetails attendanceDetails = _buildAttendanceDetails();
-    _updateEventAttendanceDetails(attendanceDetails.isNotEmpty ? attendanceDetails : null);
+    _updateEventAttendanceDetails(
+      attendanceDetails: _buildAttendanceDetails(),
+      progress: (bool value) => (_applyProgress = value),
+      success: (Event2 event) => _applyEventDetails(event)
+    );
   }
 
   void _onHeaderBarBack() {
-    Navigator.of(context).pop(_isEditing ? null : _buildAttendanceDetails());
+    Navigator.of(context).pop(_isCreating ? _buildAttendanceDetails() : null);
   }
 }
