@@ -402,7 +402,6 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   }
 
   void _onHeaderBarBack() {
-    //TODO: check this function for clearing selected survey in dropdown
     Analytics().logSelect(target: 'HeaderBar: Back');
     if (_isEditing) {
       Navigator.of(context).pop(null);
