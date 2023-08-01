@@ -381,7 +381,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _surveyDetailWidget {
-    if (_isParticipant && _hasSurvey || true /*TMP */) {
+    if (_isParticipant && _hasSurvey) {
       return <Widget>[
         _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.description', 'You will receive a notification with a follow up survey after this event.'), 'info',
           textStyle: 'widget.info.regular.thin.italic', iconPadding: const EdgeInsets.only(right: 6),
