@@ -406,9 +406,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
     return SafeArea(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-        Column(mainAxisSize: MainAxisSize.min, children: commands,)
-      )
-    );
+        Semantics(container: true, child:  //Fix default focus goes to Filter button when open panel
+          Column(mainAxisSize: MainAxisSize.min, children: commands,)
+    )));
   }
 
   Widget _buildApply() {
@@ -416,14 +416,16 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return  (widget.applyBuilder != null) ? widget.applyBuilder!(context, canApply, _onTapApply) :
       Row(children: <Widget>[
         Expanded(flex: 1, child: Container()),
-        Expanded(flex: 2, child: RoundedButton(
-          label: widget.applyTitle ?? _applyTitle,
-          textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
-          backgroundColor: Styles().colors?.white,
-          enabled: canApply,
-          onTap: _onTapApply
-        )),
+        Expanded(flex: 2, child:
+        Semantics(button: true, child: //Fix default focus goes to Filter button when open panel
+          RoundedButton(
+            label: widget.applyTitle ?? _applyTitle,
+            textColor: canApply ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+            borderColor: canApply ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
+            backgroundColor: Styles().colors?.white,
+            enabled: canApply,
+            onTap: _onTapApply
+        ))),
         Expanded(flex: 1, child: Container()),
       ],);
   }
