@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Attendance taker widget obeys attendance details settings [#3453](https://github.com/rokwire/illinois-app/issues/3453).
+### Added
+- Added info description for participants of events with surveys [#3456](https://github.com/rokwire/illinois-app/issues/3456).
+### Fixed
+- Get rid of completely from "Events²" title [#3459](https://github.com/rokwire/illinois-app/issues/3459).
+- Accessibility improvements for Events panels [#3421](https://github.com/rokwire/illinois-app/issues/3421).
 
 ## [5.0.37] - 2023-07-31
 ### Added

@@ -147,6 +147,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
             _detailsWidget,
           ])
           ),
+          Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
         ]),
         ),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
@@ -248,6 +249,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_adminSettingsButtonWidget,
       ...?_attendanceDetailWidget,
       ...?_contactsDetailWidget,
+      ...?_surveyDetailWidget,
     ];
 
     return detailWidgets.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 16), child:
@@ -277,7 +279,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         Text(_event?.onlineDetails?.url ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),);
       details.add(
         InkWell(onTap: canLaunch ? _onOnline : null, child:
-          _buildDetailWidget(onlineWidget, 'laptop', iconVisible: false, contentPadding: EdgeInsets.zero)
+          _buildDetailWidget(onlineWidget, 'laptop', iconVisible: false, detailPadding: EdgeInsets.zero)
         )
       );
       details.add( _detailSpacerWidget);
@@ -306,14 +308,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       );
       if (locationText != null) {
         details.add(
-          _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
+          _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location', iconVisible: false, detailPadding: EdgeInsets.zero)
         );
       }
 
       String? distanceText = _event?.getDisplayDistance(_userLocation);
       if (distanceText != null) {
         details.add(
-          _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
+          _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location', iconVisible: false, detailPadding: EdgeInsets.zero)
         );
       }
 
@@ -378,6 +380,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }
 
+  List<Widget>? get _surveyDetailWidget {
+    if (_isParticipant && _hasSurvey) {
+      return <Widget>[
+        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.description', 'You will receive a notification with a follow up survey after this event.'), 'info',
+          textStyle: 'widget.info.regular.thin.italic', iconPadding: const EdgeInsets.only(right: 6),
+          maxLines: 3,
+        ),
+        _detailSpacerWidget
+      ];
+    } else {
+      return null;
+    }
+  }
+  
+
   List<Widget>? get _contactsDetailWidget{
     if(CollectionUtils.isEmpty(_event?.contacts))
       return null;
@@ -399,7 +416,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
                   TextSpan(text: StringUtils.isNotEmpty(contact?.email)?"${contact?.email}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactEmail(contact?.email),),
                   TextSpan(text: StringUtils.isNotEmpty(contact?.phone)?"${contact?.phone}, " : "", style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline'), recognizer: TapGestureRecognizer()..onTap = () => _onContactPhone(contact?.phone),),
             ])),
-            'person', iconVisible: false, contentPadding: EdgeInsets.zero));
+            'person', iconVisible: false, detailPadding: EdgeInsets.zero));
       }
     }
 
@@ -514,28 +531,33 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _detailSpacerWidget => Container(height: 8,);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
-    EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
-    EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
+    String textStyle = 'widget.info.medium',
+    EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
+    EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
     bool iconVisible = true, bool underlined = false, int maxLines = 1,
   }) =>
     _buildDetailWidget(
-      Text(text, style: underlined? Styles().textStyles?.getTextStyle('widget.info.medium.underline') : Styles().textStyles?.getTextStyle('widget.info.medium'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
+      Text(text,
+        style: Styles().textStyles?.getTextStyle(underlined ? '$textStyle.underline' : textStyle),
+        maxLines: maxLines,
+        overflow: TextOverflow.ellipsis,
+      ),
       iconKey,
-      contentPadding: contentPadding,
+      detailPadding: detailPadding,
       iconPadding: iconPadding,
       iconVisible: iconVisible
     );
 
   Widget _buildDetailWidget(Widget contentWidget, String iconKey, {
-    EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
-    EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6),
+    EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
+    EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
     bool iconVisible = true
   }) {
     List<Widget> contentList = <Widget>[];
     Widget? iconWidget = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
     if (iconWidget != null) {
-      contentList.add(Padding(padding: iconPadding, child:
-        Opacity(opacity: iconVisible ? 1 : 0, child:
+      contentList.add(Opacity(opacity: iconVisible ? 1 : 0, child:
+        Padding(padding: iconPadding, child:
           iconWidget,
         )
       ));
@@ -543,8 +565,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     contentList.add(Expanded(child:
       contentWidget
     ),);
-    return Padding(padding: contentPadding, child:
-      Row(children: contentList)
+    return Padding(padding: detailPadding, child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: contentList)
     );
   }
 
@@ -928,6 +950,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   //Event getters
   bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
   bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendanceTaker;
+  bool get _isParticipant =>  _event?.userRole == Event2UserRole.participant;
+
+  bool get _hasSurvey => (_survey != null);
+  
   String? get _eventId => widget.event?.id ?? widget.eventId;
 
 }
