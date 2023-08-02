@@ -28,6 +28,7 @@ import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
@@ -107,6 +108,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventsNotification,
       FirebaseMessaging.notifyEventDetail,
+      FirebaseMessaging.notifyEventAttendeeSurveyInvitation,
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
       FirebaseMessaging.notifyAthleticsTeam,
@@ -236,6 +238,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyEventDetail) {
       _onFirebaseEventDetail(param);
+    }
+    else if (name == FirebaseMessaging.notifyEventAttendeeSurveyInvitation) {
+      _onFirebaseEventAttendeeSurveyInvitation(param);
     }
     else if (name == FirebaseMessaging.notifyGameDetail) {
       _onFirebaseGameDetail(param);
@@ -711,10 +716,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
     String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     if (StringUtils.isNotEmpty(eventId)) {
-      ExplorePanel.presentDetailPanel(context, eventId: eventId);
+      //ExplorePanel.presentDetailPanel(context, eventId: eventId);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
     }
   }
 
+  void _onFirebaseEventAttendeeSurveyInvitation(Map<String, dynamic>? content) {
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['entity_id']) : null;
+    if (StringUtils.isNotEmpty(eventId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
+    }
+  }
   
   Future<void> _onFirebaseGameDetail(Map<String, dynamic>? content) async {
     String? gameId = (content != null) ? JsonUtils.stringValue(content['game_id']) : null;

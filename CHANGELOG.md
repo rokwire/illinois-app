@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated info description for participants of events with surveys [#3463](https://github.com/rokwire/illinois-app/issues/3463).
+- Handled follow-up survey notification for event attendees [#3465](https://github.com/rokwire/illinois-app/issues/3465).
 
 ## [5.0.38] - 2023-08-01
 ### Changed
