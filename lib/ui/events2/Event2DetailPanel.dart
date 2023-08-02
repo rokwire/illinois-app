@@ -382,8 +382,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<Widget>? get _surveyDetailWidget {
     if (_isParticipant && _hasSurvey) {
+      String description;
+      int hours = _event?.surveyDetails?.hoursAfterEvent ?? 0;
+      switch (hours) {
+        case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.none', 'You will receive a notification with a follow up survey after this event.'); break;
+        case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.single', 'You will receive a notification with a follow up survey 1 hour after this event.'); break;
+        default: description = Localization().getStringEx('panel.event2.detail.survey.description.multi', 'You will receive a notification with a follow up survey {{hours}} hours after this event.').replaceAll('{{hours}}', hours.toString()); break;
+      }
       return <Widget>[
-        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.description', 'You will receive a notification with a follow up survey after this event.'), 'info',
+        _buildTextDetailWidget(description, 'info',
           textStyle: 'widget.info.regular.thin.italic', iconPadding: const EdgeInsets.only(right: 6),
           maxLines: 3,
         ),
