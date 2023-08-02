@@ -153,7 +153,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   List<Widget> _buildInfoAndSettings(Widget? accessWidget, bool showHistory) {
-    bool saveEnabled = Storage().assessmentsSaveResultsMap?['bessi'] != false;
+    bool saveEnabled = Storage().assessmentsSaveResultsMap?[_healthScreenerSurveyType] != false;
     return <Widget>[
       RibbonButton(
         leftIconKey: "info",

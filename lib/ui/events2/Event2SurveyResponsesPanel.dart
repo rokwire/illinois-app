@@ -24,12 +24,12 @@ import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/widget_builders/scroll_pager.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
-import 'package:rokwire_plugin/ui/widgets/survey.dart';
 
 class Event2SurveyResponsesPanel extends StatefulWidget {
   final String? surveyId;
+  final String? eventName;
 
-  Event2SurveyResponsesPanel({Key? key, this.surveyId}) : super(key: key);
+  Event2SurveyResponsesPanel({Key? key, this.surveyId, this.eventName}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2SurveyResponsesPanelState();
@@ -62,7 +62,7 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _headerBar,
-        body: _buildContent(),
+        body: SingleChildScrollView(controller: _scrollController, child: _buildContent()),
         backgroundColor: Styles().colors?.background);
   }
 
@@ -84,9 +84,11 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
 
   List<Widget> _buildResponseWidgets() {
     List<Widget> content = [];
-    for(SurveyResponse response in _surveyResponses) {
-      Widget widget = SurveyBuilder.surveyResponseCard(context, response);
-      content.add(widget);
+    for(int i = 0; i < _surveyResponses.length; i++) {
+      SurveyResponse response = _surveyResponses[i];
+      response.survey.replaceKey('event_name', widget.eventName);
+      Widget responseCard = SurveyBuilder.surveyResponseCard(context, response, title: 'Response ${i+1}');
+      content.add(responseCard);
       content.add(Container(height: 16.0));
     }
 
@@ -200,7 +202,7 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
   // HeaderBar
 
   PreferredSizeWidget get _headerBar => HeaderBar(
-    title: Localization().getStringEx('panel.event2.survey.responses.header.title', 'Event Follow-Up Survey Responses'),
+    title: Localization().getStringEx('panel.event2.survey.responses.header.title', '{{event_name}} Survey Responses').replaceAll('{{event_name}}', widget.eventName ?? 'Event'),
     onLeading: _onHeaderBarBack,
   );
 

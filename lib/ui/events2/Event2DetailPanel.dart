@@ -847,6 +847,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Analytics().logSelect(target: "Event Survey Responses");
     Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2SurveyResponsesPanel(
       surveyId: _survey?.id,
+      eventName: _event?.name,
     )));
   }
 
