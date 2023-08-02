@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -44,6 +45,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
       MobileAccess.notifyStartFinished,
     ]);
     MobileAccess().startIfNeeded();
@@ -65,6 +67,9 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   void onNotification(String name, dynamic param) {
     if (name == MobileAccess.notifyStartFinished) {
       setStateIfMounted(() { });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      MobileAccess().startIfNeeded();
     }
   }
 

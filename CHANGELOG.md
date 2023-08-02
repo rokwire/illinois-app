@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [5.0.39] - 2023-08-02
+### Changed
+- Updated info description for participants of events with surveys [#3463](https://github.com/rokwire/illinois-app/issues/3463).
+- Handled follow-up survey notification for event attendees [#3465](https://github.com/rokwire/illinois-app/issues/3465).
+### Fixed
+- Make sure not to start Mobile Access service if it is not available for the particular user [#3467](https://github.com/rokwire/illinois-app/issues/3467).
+
 ## [5.0.38] - 2023-08-01
 ### Changed
 - Attendance taker widget obeys attendance details settings [#3453](https://github.com/rokwire/illinois-app/issues/3453).
