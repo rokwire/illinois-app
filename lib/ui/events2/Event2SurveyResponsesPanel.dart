@@ -21,7 +21,6 @@ import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
-import 'package:rokwire_plugin/ui/widget_builders/scroll_pager.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 
@@ -62,24 +61,20 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _headerBar,
-        body: SingleChildScrollView(controller: _scrollController, child: _buildContent()),
+        body: _buildContent(),
         backgroundColor: Styles().colors?.background);
   }
 
   Widget _buildContent() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // TODO: _buildFiltersWidget(), (for start, end dates)
-          // TODO: _buildSortWidget(),
-          SizedBox(height: 16.0),
-          ..._buildResponseWidgets(),
-          ScrollPagerBuilder.buildScrollPagerFooter(_scrollPagerController) ?? Container(),
-        ]
-      ),
-    );
+    return ScrollPager(controller: _scrollPagerController, padding: const EdgeInsets.all(16.0), child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // TODO: _buildFiltersWidget(), (for start, end dates)
+        // TODO: _buildSortWidget(),
+        SizedBox(height: 16.0),
+        ..._buildResponseWidgets(),
+      ]
+    ));
   }
 
   List<Widget> _buildResponseWidgets() {
@@ -100,7 +95,6 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
 
   List<Widget> _buildEmptyResponsesContent() {
     return <Widget>[
-      Expanded(flex: 1, child: Container(),),
       Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
         Text(
             Localization().getStringEx('panel.event2.survey.responses.surveys.empty.msg', 'There are no survey responses available.'),
@@ -108,13 +102,11 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18)
         ),
       ),
-      Expanded(flex: 2, child: Container(),),
     ];
   }
 
   Future<int> _loadResponses({required int offset, required int limit}) async {
-    List<SurveyResponse>? responses = widget.surveyId != null ? await Surveys().loadSurveyResponses(surveyIDs: [widget.surveyId!],
-        /*startDate: _selectedStartDate,*/ limit: limit, offset: offset) : null;
+    List<SurveyResponse>? responses = widget.surveyId != null ? await Surveys().loadSurveyResponses(surveyIDs: [widget.surveyId!], limit: limit, offset: offset) : null;
     if (responses != null) {
       setState(() {
         _surveyResponses.addAll(responses);

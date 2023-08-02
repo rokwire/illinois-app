@@ -67,6 +67,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
     super.initState();
     NotificationService().subscribe(this, [
+      Storage.notifySettingChanged,
       Surveys.notifySurveyResponseCreated,
       FlexUI.notifyChanged
     ]);
@@ -394,6 +395,8 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     if (name == Surveys.notifySurveyResponseCreated) {
       _refreshHistory();
     } else if (name == FlexUI.notifyChanged) {
+      setState(() {});
+    } else if (name == Storage.notifySettingChanged && param == Storage().assessmentsEnableSaveKey && mounted) {
       setState(() {});
     }
   }

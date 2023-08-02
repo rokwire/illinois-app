@@ -533,7 +533,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
           _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
-          _buildSettingButton(title: "Event follow-up survey responses", onTap: _onSettingSurveyResponses),
+          _buildSettingButton(title: _survey != null ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
           _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
