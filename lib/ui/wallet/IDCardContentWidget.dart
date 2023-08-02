@@ -187,6 +187,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       });
     }
     else if (name == FlexUI.notifyChanged) {
+      MobileAccess().startIfNeeded();
       _checkIcarMobileAvailable();
       setStateIfMounted(() { });
     }
