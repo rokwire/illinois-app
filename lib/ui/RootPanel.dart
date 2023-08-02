@@ -716,7 +716,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
     String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     if (StringUtils.isNotEmpty(eventId)) {
-      ExplorePanel.presentDetailPanel(context, eventId: eventId);
+      //ExplorePanel.presentDetailPanel(context, eventId: eventId);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
     }
   }
 
