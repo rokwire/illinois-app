@@ -1337,7 +1337,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2SetupSurveyParam>(context, CupertinoPageRoute(builder: (context) => Event2SetupSurveyPanel(
       surveyParam: Event2SetupSurveyParam(
-        event: widget.event,
         details: _surveyDetails,
         survey: _survey,
       ),
