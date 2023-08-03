@@ -1239,7 +1239,7 @@
     "panel.event2.create.message.failed.title": "Failed",
     "panel.event2.create.survey.message.failed.title": "Failed to create event survey.",
     "panel.event2.create.exit.prompt.title": "Exit",
-    "panel.event2.create.exit.prompt.message": "Exit and loose your changes?",
+    "panel.event2.create.exit.prompt.message": "Exit and lose your changes?",
 
     "panel.event2.setup.registration.header.title": "Event Registration",
     "panel.event2.setup.registration.type.title": "REQUIRE REGISTRATION",

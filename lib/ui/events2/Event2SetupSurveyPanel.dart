@@ -102,10 +102,13 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: _headerBar,
-        body: _buildScaffoldContent(),
-        backgroundColor: Styles().colors?.background);
+    return WillPopScope(
+      onWillPop: () => AppPopScope.back(_onHeaderBarBack),
+      child: Scaffold(
+          appBar: _headerBar,
+          body: _buildScaffoldContent(),
+          backgroundColor: Styles().colors?.background),
+    );
   }
 
   Widget _buildScaffoldContent() {
@@ -293,7 +296,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   void _checkModified() {
     if (_isEditing && mounted) {
       
-      bool modified = (_survey?.id != _initialSurvey?.id) ||
+      bool modified = (_survey?.title != _initialSurvey?.title) ||
         (_hoursController.text != _initialHours);
 
       if (_modified != modified) {
@@ -304,12 +307,21 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     }
   }
 
-  Event2SetupSurveyParam _buildSurveyParam() => Event2SetupSurveyParam(
-    survey: _survey != null ? Survey.fromOther(_survey!, id: widget.surveyParam.survey?.id) : null,
-    details: _survey != null ? Event2SurveyDetails(
-      hoursAfterEvent: Event2CreatePanel.textFieldIntValue(_hoursController),
-    ) : null,
-  );
+  Event2SetupSurveyParam _buildSurveyParam() {
+    Survey? survey = _survey != null ? Survey.fromOther(_survey!, id: widget.surveyParam.survey?.id) : null;
+
+    // set calendarEventId in survey if it is missing
+    if (survey != null && StringUtils.isEmpty(survey.calendarEventId)) {
+      survey.calendarEventId = widget.surveyParam.event?.id;
+    }
+
+    return Event2SetupSurveyParam(
+      survey: survey,
+      details: Event2SurveyDetails(
+        hoursAfterEvent: _survey != null ? Event2CreatePanel.textFieldIntValue(_hoursController) : null,
+      ),
+    );
+  }
 
   bool _checkSurveyResult(Event2SetupSurveyParam surveyParam) {
     if ((surveyParam.survey?.id != null) && ((surveyParam.details?.hoursAfterEvent == null) || ((surveyParam.details?.hoursAfterEvent ?? 0) < 0))) {
@@ -328,7 +340,8 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
       Event2? event = widget.surveyParam.event;
       if (event?.isSurveyAvailable == false) {
-        if (surveyParam?.details != widget.surveyParam.details) {
+        // the survey is not available to attendees yet
+        if (surveyParam?.details != widget.details) {
           dynamic result = await Events2().updateEventSurveyDetails(eventId, surveyParam?.details);
           if (mounted) {
             if (result is Event2) {
@@ -346,20 +359,17 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
         bool surveyUpdateResult = true;
         Survey? survey = widget.surveyParam.survey;
-        if (_survey?.id != _initialSurvey?.id) {
-          // a different template than the initially selected template is now selected and the survey is not available to attendees yet
-          if (StringUtils.isNotEmpty(surveyParam?.survey?.id)) { // this will match the ID of the existing follow up survey if a non-null template is selected
-            if (StringUtils.isEmpty(surveyParam?.survey?.calendarEventId)) { // set calendarEventId in survey if it is missing
-              surveyParam!.survey!.calendarEventId = eventId;
-            }
-            // if there is no previously selected survey, then create a copy of the template, otherwise update the existing survey
-            if (_initialSurvey == null) {
-              surveyUpdateResult = await Surveys().createEvent2Survey(_survey!, event!) ?? false;
-            } else {
-              surveyUpdateResult = await Surveys().updateSurvey(surveyParam!.survey!) ?? false;
-            }
-          } else if (StringUtils.isNotEmpty(survey?.id)) { // the null template is selected, so delete the existing follow up survey if it exists
-            surveyUpdateResult = await Surveys().deleteSurvey(survey!.id) ?? false;
+        if (surveyParam?.survey?.title != survey?.title) {
+          // a different template than the initially selected template is now selected
+          if (survey == null) {
+            // the null template was initially selected (no survey exists), so create a new survey
+            surveyUpdateResult = await Surveys().createEvent2Survey(surveyParam!.survey!, event!) ?? false;
+          } else if (surveyParam?.survey == null) {
+            // the null template is now selected, so delete the existing survey
+            surveyUpdateResult = await Surveys().deleteSurvey(survey.id) ?? false;
+          } else {
+            // a survey already exists and the template has been changed, so update the existing survey
+            surveyUpdateResult = await Surveys().updateSurvey(surveyParam!.survey!) ?? false;
           }
           if (surveyUpdateResult) {
             survey = await Surveys().loadEvent2Survey(eventId);

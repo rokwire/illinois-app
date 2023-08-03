@@ -12,6 +12,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSurveyPanel.dart';
@@ -38,8 +39,6 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'Event2SetupAttendancePanel.dart';
 
 class Event2CreatePanel extends StatefulWidget {
 
@@ -467,11 +466,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   @override
   void initState() {
-    _titleController.addListener(_updateErrorList);
-    _onlineUrlController.addListener(_updateErrorList);
-    _locationLatitudeController.addListener(_updateErrorList);
-    _locationLongitudeController.addListener(_updateErrorList);
-    
     _titleController.text = widget.event?.name ?? '';
     _descriptionController.text = widget.event?.description ?? '';
     _imageUrl = widget.event?.imageUrl;
@@ -525,6 +519,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
     _errorList = _buildErrorList();
 
+    _titleController.addListener(_updateErrorList);
+    _onlineUrlController.addListener(_updateErrorList);
+    _locationLatitudeController.addListener(_updateErrorList);
+    _locationLongitudeController.addListener(_updateErrorList);
+
     super.initState();
   }
 
@@ -549,13 +548,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(title: widget.isCreate ?
-        Localization().getStringEx("panel.event2.create.header.title", "Create an Event") :
-        Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
-        onLeading: _onHeaderBack,),
-      body: _buildPanelContent(),
-      backgroundColor: Styles().colors!.white,
+    return WillPopScope(
+      onWillPop: () => AppPopScope.back(_onHeaderBack),
+      child: Scaffold(
+        appBar: HeaderBar(title: widget.isCreate ?
+          Localization().getStringEx("panel.event2.create.header.title", "Create an Event") :
+          Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
+          onLeading: _onHeaderBack,),
+        body: _buildPanelContent(),
+        backgroundColor: Styles().colors!.white,
+      ),
     );
   }
 
@@ -1596,54 +1598,77 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     );
   }
 
-  void _onTapCreateEvent() {
+  void _onTapCreateEvent() async {
     Analytics().logSelect(target: widget.isCreate ? "Create Event" : "Update Event");
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _creatingEvent = true;
     });
     Future<dynamic> Function(Event2 source) serviceAPI = widget.isCreate ? Events2().createEvent : Events2().updateEvent;
-    serviceAPI(_createEventFromData()).then((dynamic result) {
-      if (mounted) {
+    dynamic result = await serviceAPI(_createEventFromData());
 
-        if (result is Event2) {
-          if (widget.isCreate) {
-            if (_survey != null) {
-              Surveys().createEvent2Survey(_survey!, result).then((bool? success) {
-                setStateIfMounted(() {
-                  _creatingEvent = false;
-                });
-                if (success == true) {
-                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-                    event: result,
-                  )));
-                }
-                else {
-                  Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.message.failed.title', 'Failed to create event survey.'));
-                }
-              });
-            }
-            else {
+    if (mounted) {
+      if (result is Event2) {
+        Survey? survey = widget.survey;
+        if (widget.isCreate) {
+          if (_survey != null) {
+            bool? success = await Surveys().createEvent2Survey(_survey!, result);
+
+            setStateIfMounted(() {
+              _creatingEvent = false;
+            });
+            if (success == true && result.id != null) {
+              survey = await Surveys().loadEvent2Survey(result.id!);
               Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
                 event: result,
+                survey: survey,
               )));
+            }
+            else {
+              Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.message.failed.title', 'Failed to create event survey.'));
             }
           }
           else {
-            setState(() {
-              _creatingEvent = false;
-            });
-            Navigator.of(context).pop(result);
+            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+              event: result,
+            )));
           }
         }
-        else  {
+        else if (result.isSurveyAvailable == false) {
+          // the survey is not available to attendees yet
+          bool surveyUpdateResult = true;
+          if (_survey?.title != survey?.title) {
+            // a different template than the initially selected template was selected
+            if (survey == null) {
+              // the null template was initially selected (no survey exists), so create a new survey
+              surveyUpdateResult = await Surveys().createEvent2Survey(_survey!, result) ?? false;
+            } else if (_survey == null) {
+              // the null template is now selected, so delete the existing survey
+              surveyUpdateResult = await Surveys().deleteSurvey(survey.id) ?? false;
+            } else {
+              // a survey already exists and the template has been changed, so update the existing survey
+              surveyUpdateResult = await Surveys().updateSurvey(_survey!) ?? false;
+            }
+            if (surveyUpdateResult && result.id != null) {
+              survey = await Surveys().loadEvent2Survey(result.id!);
+            }
+          }
           setState(() {
             _creatingEvent = false;
           });
-          Event2Popup.showErrorResult(context, result);
+          Navigator.of(context).pop(Event2SetupSurveyParam(
+            event: result,
+            survey: survey,
+          ));
         }
       }
-    });
+      else  {
+        setState(() {
+          _creatingEvent = false;
+        });
+        Event2Popup.showErrorResult(context, result);
+      }
+    }
   }
 
   bool get _onlineEventType => (_eventType == Event2Type.online) ||  (_eventType == Event2Type.hybrid);
@@ -1780,7 +1805,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     if (modified) {
       Event2Popup.showPrompt(context,
         Localization().getStringEx('panel.event2.create.exit.prompt.title', 'Exit'),
-        Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and loose your changes?'),
+        Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and lose your changes?'),
       ).then((bool? result) {
         if (result == true) {
           Navigator.of(context).pop();

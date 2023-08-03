@@ -68,10 +68,13 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _headerBar,
-      body: _buildPanelContent(),
-      backgroundColor: Styles().colors!.white,
+    return WillPopScope(
+      onWillPop: () => AppPopScope.back(_onHeaderBarBack),
+      child: Scaffold(
+        appBar: _headerBar,
+        body: _buildPanelContent(),
+        backgroundColor: Styles().colors!.white,
+      ),
     );
   }
 

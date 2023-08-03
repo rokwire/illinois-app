@@ -544,7 +544,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _followUpSurveyButtonWidget{
-    if (Auth2().isLoggedIn && _isAttendee && (_survey != null) && (_event?.isSurveyAvailable ?? false)) {
+    bool loggedIn = Auth2().isLoggedIn;
+    bool attendee = _isAttendee;
+    bool surveyAvailable = _event?.isSurveyAvailable ?? false;
+    if (loggedIn && attendee && (_survey != null) && (surveyAvailable)) {
       return <Widget>[_buildButtonWidget(
           title: Localization().getStringEx('panel.event2_detail.button.follow_up_survey.title', 'Take Survey'),
           onTap: _onFollowUpSurvey,
@@ -786,10 +789,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingEditEvent(){
     Analytics().logSelect(target: "Edit event");
-    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey,))).then((Event2? result) {
-      if ((result != null) && mounted) {
-        setState(() {
-          _event = result;
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey,))).then((Event2SetupSurveyParam? result) {
+      if (result != null) {
+        setStateIfMounted(() {
+          if (result.event != null) {
+            _event = result.event;
+          }
+          _survey = result.survey;
         });
       }
     });
@@ -899,7 +905,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       theEvent = _event;
     }
     else if (StringUtils.isNotEmpty(widget.eventId) && mounted) {
-      setState(() {
+      setStateIfMounted(() {
         _eventLoading = true;
       });
       theEvent = event = await Events2().loadEvent(widget.eventId!);
@@ -910,7 +916,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
          (theEvent?.registrationDetails?.type == Event2RegistrationType.internal) ||
          (theEvent?.attendanceDetails?.isNotEmpty ?? false)
         ) && mounted) {
-      setState(() {
+      setStateIfMounted(() {
         _eventLoading = true;
       });
       persons = await Events2().loadEventPeople(eventId);
@@ -921,23 +927,23 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         (theEvent?.surveyDetails?.isNotEmpty ?? false) &&
         mounted
     ) {
-      setState(() {
+      setStateIfMounted(() {
         _eventLoading = true;
       });
       survey = await Surveys().loadEvent2Survey(eventId);
     }
 
+    if (event != null) {
+      _event = event;
+    }
+    if (persons != null) {
+      _persons = persons;
+    }
+    if (survey != null) {
+      _survey = survey;
+    }
     setStateIfMounted(() {
       _eventLoading = false;
-      if (event != null) {
-        _event = event;
-      }
-      if (persons != null) {
-        _persons = persons;
-      }
-      if (survey != null) {
-        _survey = survey;
-      }
     });
   }
 

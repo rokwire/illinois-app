@@ -44,10 +44,13 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Sponsorship And Contacts"), onLeading: _onHeaderBack,),
-      body: _buildPanelContent(),
-      backgroundColor: Styles().colors!.white,
+    return WillPopScope(
+      onWillPop: () => AppPopScope.back(_onHeaderBack),
+      child: Scaffold(
+        appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Sponsorship And Contacts"), onLeading: _onHeaderBack,),
+        body: _buildPanelContent(),
+        backgroundColor: Styles().colors!.white,
+      ),
     );
   }
 
