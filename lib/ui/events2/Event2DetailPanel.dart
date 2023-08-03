@@ -388,7 +388,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     String? description;
     bool hasRegistration = _event?.registrationDetails?.requiresRegistration ?? false;
     bool hasAttendance = _event?.attendanceDetails?.isNotEmpty ?? false;
-    bool hasSurvey = _isParticipant && hasAttendance && (_survey != null);
+    bool hasSurvey = (_isParticipant || _isAttendee) && hasAttendance && (_survey != null);
     int surveyHours = _event?.surveyDetails?.hoursAfterEvent ?? 0;
 
     if (hasRegistration) {
