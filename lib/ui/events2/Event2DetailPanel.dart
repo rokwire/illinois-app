@@ -520,7 +520,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Unregister me'),
               onTap: _onUnregister,
               externalLink: false,
-              enabled: false,
               progress: _registrationLoading
           )];
         } else if (_event?.userRole == null){//Not registered yet
@@ -691,58 +690,26 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onRegister() {
     Analytics().logSelect(target: 'Register me');
-
-    if ((_eventId != null) && !_registrationLoading) {
-        setStateIfMounted(() {
-          _registrationLoading = true;
-        });
-
-      Events2().registerToEvent(_eventId!).then((result) {
-        if (mounted) {
-            
-          if (result == true) {
-            Events2().loadEvent(_eventId!).then((Event2? event) {
-              if (mounted) {
-                setState(() {
-                  if (event != null) {
-                    _event = event;
-                  }
-                  _registrationLoading = false;
-                });
-              }
-            });
-          }
-          else {
-            setState(() {
-              _registrationLoading = false;
-            });
-            Event2Popup.showErrorResult(context, result);
-          }
-        }
-      });
-    }
+    _performRegistration(Events2().registerToEvent);
   }
 
   void _onUnregister() {
     Analytics().logSelect(target: 'Unregister me');
+    _performRegistration(Events2().unregisterFromEvent);
+  }
+
+  void _performRegistration(Future<dynamic> Function(String eventId) registrationApi) {
     if ((_eventId != null) && !_registrationLoading) {
         setStateIfMounted(() {
           _registrationLoading = true;
         });
 
-      Events2().unregisterFromEvent(_eventId!).then((result) {
+      registrationApi(_eventId!).then((result) {
         if (mounted) {
-            
-          if (result == true) {
-            Events2().loadEvent(_eventId!).then((Event2? event) {
-              if (mounted) {
-                setState(() {
-                  if (event != null) {
-                    _event = event;
-                  }
-                  _registrationLoading = false;
-                });
-              }
+          if (result is Event2) {
+            setState(() {
+              _event = result;
+              _registrationLoading = false;
             });
           }
           else {
