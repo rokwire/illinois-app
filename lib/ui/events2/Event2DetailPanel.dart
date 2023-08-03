@@ -885,7 +885,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onTapTakeAttendance() {
     Analytics().logSelect(target: 'Take Attendance');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AttendanceTakerPanel(_event, personsCache: _persons,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2AttendanceTakerPanel(_event)));
   }
 
   //loading

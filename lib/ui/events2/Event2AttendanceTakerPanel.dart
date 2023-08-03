@@ -18,10 +18,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Event2AttendanceTakerPanel extends StatelessWidget {
   final Event2? event;
-  final Event2PersonsResult? personsCache;
   final StreamController<String> _updateController = StreamController.broadcast();
 
-  Event2AttendanceTakerPanel(this.event, {Key? key, this.personsCache}) : super(key: key);
+  Event2AttendanceTakerPanel(this.event, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -29,7 +28,7 @@ class Event2AttendanceTakerPanel extends StatelessWidget {
     body: RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child:
         Padding(padding: EdgeInsets.all(16), child:
-          Event2AttendanceTakerWidget(event, personsCache: personsCache, updateController: _updateController,),
+          Event2AttendanceTakerWidget(event, updateController: _updateController,),
         ),
       ),
     ),
@@ -45,10 +44,9 @@ class Event2AttendanceTakerWidget extends StatefulWidget {
   static const String notifyRefresh = "edu.illinois.rokwire.event2.attendance_taker.refresh";
 
   final Event2? event;
-  final Event2PersonsResult? personsCache;
   final StreamController<String>? updateController;
 
-  Event2AttendanceTakerWidget(this.event, { Key? key, this.personsCache, this.updateController }) : super(key: key);
+  Event2AttendanceTakerWidget(this.event, { Key? key, this.updateController }) : super(key: key);
 
   bool get scanEnabled => event?.attendanceDetails?.scanningEnabled ?? false;
   bool get manualCheckEnabled => event?.attendanceDetails?.manualCheckEnabled ?? false;
@@ -81,8 +79,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     });
 
     String? eventId = widget.event?.id;
-    _persons = widget.personsCache;
-    if (eventId != null && _persons == null) {
+    if (eventId != null) {
       _loadingPeople = true;
       Events2().loadEventPeople(eventId).then((result) {
         if (mounted) {
