@@ -1304,6 +1304,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       if ((result != null) && mounted) {
         setState(() {
           _attendanceDetails = result;
+          _errorList = _buildErrorList();
         });
       }
     });
@@ -1347,6 +1348,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         setState(() {
           _survey = result.survey;
           _surveyDetails = result.details;
+          _errorList = _buildErrorList();
         });
       }
     });
@@ -1563,6 +1565,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.registration_link', 'registration link'));
     }
     
+    if (_hasSurvey && !_hasAttendanceDetails) {
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.survey_attendance_details', 'attendance (required for survey)'));
+    }
+
     return errorList;
   }
 
@@ -1669,6 +1675,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     ) : null;
 
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
+  bool get _hasAttendanceDetails => _attendanceDetails?.isNotEmpty ?? false;
 
   DateTime? get _startDateTimeUtc =>
     (_startDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime).toUtc() : null;
@@ -1678,6 +1685,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   bool get _private => (_visibility == _Event2Visibility.private);
 
+  bool get _hasSurvey => (_survey != null) || (_surveyDetails?.isNotEmpty ?? false);
+
   bool _canCreateEvent() => (
     _titleController.text.isNotEmpty &&
     (_startDate != null) &&
@@ -1685,7 +1694,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     (!_inPersonEventType || _hasLocation) &&
     (!_onlineEventType || _hasOnlineDetails) &&
     (Events2().contentAttributes?.isAttributesSelectionValid(_attributes) ?? false) &&
-    ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false))
+    ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
+    (!_hasSurvey || _hasAttendanceDetails)
   );
 
   void _updateErrorList() {

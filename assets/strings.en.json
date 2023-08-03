@@ -1230,6 +1230,7 @@
     "panel.event2.create.status.missing.online_url": "online URL",
     "panel.event2.create.status.missing.attributes": "event attributes",
     "panel.event2.create.status.missing.registration_link": "registration link",
+    "panel.event2.create.status.missing.survey_attendance_details": "attendance (required for survey)",
     "panel.event2.create.message.succeeded.title": "Succeeded",
     "panel.event2.create.message.succeeded.message": "Successfully created \"{{event_name}}\" event.",
     "panel.event2.update.message.succeeded.message": "Successfully updated \"{{event_name}}\" event.",
