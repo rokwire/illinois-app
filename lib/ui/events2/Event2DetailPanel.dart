@@ -979,7 +979,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       futures.clear();
 
       // Handle the case if after refreshing event the registrationDetails/attendanceDetails require loading persons
-      int? peopleIndex2 = ((peopleIndex == null) && ((_event?.registrationDetails?.type == Event2RegistrationType.internal) || (_event?.attendanceDetails?.isNotEmpty ?? false))) ? futures.length : null;
+      int? peopleIndex2 = ((peopleIndex == null) && ((event?.registrationDetails?.type == Event2RegistrationType.internal) || (event?.attendanceDetails?.isNotEmpty ?? false))) ? futures.length : null;
       if (peopleIndex2 != null) {
         futures.add(Events2().loadEventPeople(eventId));
       }
