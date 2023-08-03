@@ -1608,20 +1608,27 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       if (mounted) {
 
         if (result is Event2) {
-          if (widget.isCreate && (_survey != null)) {
-            Surveys().createEvent2Survey(_survey!, result).then((bool? success) {
-              setStateIfMounted(() {
-                _creatingEvent = false;
+          if (widget.isCreate) {
+            if (_survey != null) {
+              Surveys().createEvent2Survey(_survey!, result).then((bool? success) {
+                setStateIfMounted(() {
+                  _creatingEvent = false;
+                });
+                if (success == true) {
+                  Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                    event: result,
+                  )));
+                }
+                else {
+                  Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.message.failed.title', 'Failed to create event survey.'));
+                }
               });
-              if (success == true) {
-                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-                  event: result,
-                )));
-              }
-              else {
-                Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.message.failed.title', 'Failed to create event survey.'));
-              }
-            });
+            }
+            else {
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                event: result,
+              )));
+            }
           }
           else {
             setState(() {
