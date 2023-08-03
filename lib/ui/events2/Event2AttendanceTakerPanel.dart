@@ -81,7 +81,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingPeople = true;
-      Events2().loadEventPeople(eventId).then((result) {
+      Events2().loadEventPeopleEx(eventId).then((result) {
         if (mounted) {
           if (result is Event2PersonsResult) {
             setState(() {
@@ -453,7 +453,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       setStateIfMounted(() {
         _loadingPeople = true;
       });
-      dynamic result = await Events2().loadEventPeople(eventId);
+      dynamic result = await Events2().loadEventPeopleEx(eventId);
       if (mounted) {
         if (result is Event2PersonsResult) {
           setState(() {
