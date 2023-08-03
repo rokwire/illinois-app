@@ -252,7 +252,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_adminSettingsButtonWidget,
       ...?_attendanceDetailWidget,
       ...?_contactsDetailWidget,
-      ...?_surveyDetailWidget,
+      ...?_detailsInfoWidget,
     ];
 
     return detailWidgets.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 16), child:
@@ -383,27 +383,57 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }
 
-  List<Widget>? get _surveyDetailWidget {
-    if (_isParticipant && _hasSurvey) {
-      String description;
-      int hours = _event?.surveyDetails?.hoursAfterEvent ?? 0;
-      switch (hours) {
-        case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.none', 'You will receive a notification with a follow up survey after this event.'); break;
-        case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.single', 'You will receive a notification with a follow up survey 1 hour after this event.'); break;
-        default: description = Localization().getStringEx('panel.event2.detail.survey.description.multi', 'You will receive a notification with a follow up survey {{hours}} hours after this event.').replaceAll('{{hours}}', hours.toString()); break;
+  List<Widget>? get _detailsInfoWidget {
+    
+    String? description;
+    bool hasRegistration = _event?.registrationDetails?.requiresRegistration ?? false;
+    bool hasAttendance = _event?.attendanceDetails?.isNotEmpty ?? false;
+    bool hasSurvey = _isParticipant && hasAttendance && (_survey != null);
+    int surveyHours = _event?.surveyDetails?.hoursAfterEvent ?? 0;
+
+    if (hasRegistration) {
+      if (hasAttendance) {
+        if (hasSurvey) {
+          switch (surveyHours) {
+            case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.none', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey after this event.'); break;
+            case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.single', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey 1 hour after this event.'); break;
+            default: description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.multi', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey {{hours}} hours after this event.').replaceAll('{{hours}}', surveyHours.toString()); break;
+          }
+        }
+        else {
+          description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att', 'This event requires Registering and Attendance will be taken.'); 
+        }
       }
-      return <Widget>[
-        _buildTextDetailWidget(description, 'info',
-          textStyle: 'widget.info.regular.thin.italic', iconPadding: const EdgeInsets.only(right: 6),
-          maxLines: 3,
-        ),
-        _detailSpacerWidget
-      ];
-    } else {
-      return null;
+      else {
+        description = Localization().getStringEx('panel.event2.detail.survey.description.reg', 'Registration is required for this event.'); 
+      }
     }
+    else {
+      if (hasAttendance) {
+        if (hasSurvey) {
+          switch (surveyHours) {
+            case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.none', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey after this event.'); break;
+            case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.single', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey 1 hour after this event.'); break;
+            default: description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.multi', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey {{hours}} hours after this event.').replaceAll('{{hours}}', surveyHours.toString()); break;
+          }
+        }
+        else {
+          description = Localization().getStringEx('panel.event2.detail.survey.description.att', 'Attendance will be taken at this event.'); 
+        }
+      }
+      else {
+        // No registration or attendance
+      }
+    }
+
+    return (description != null) ?<Widget>[
+      _buildTextDetailWidget(description, 'info',
+        textStyle: 'widget.info.regular.thin.italic', iconPadding: const EdgeInsets.only(right: 6),
+        maxLines: 3,
+      ),
+      _detailSpacerWidget
+    ] : null;
   }
-  
 
   List<Widget>? get _contactsDetailWidget{
     if(CollectionUtils.isEmpty(_event?.contacts))
@@ -1028,8 +1058,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool get _isParticipant =>  _event?.userRole == Event2UserRole.participant;
   bool get _isAttendee => (_persons?.attendees?.indexWhere((person) => person.identifier?.accountId == Auth2().accountId) ?? -1) > -1;
 
-  bool get _hasSurvey => (_survey != null);
-  
   String? get _eventId => widget.event?.id ?? widget.eventId;
 
 }

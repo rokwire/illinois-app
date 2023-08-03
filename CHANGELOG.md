@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Event follow-up survey responses [#3452](https://github.com/rokwire/illinois-app/issues/3452).
 - Promote event functionality [#3474](https://github.com/rokwire/illinois-app/issues/3474).
+### Changed
+- Display extended information about registration, attendance and survey [#3475](https://github.com/rokwire/illinois-app/issues/3475).
+- Require attendance setup if survey is specified in Create/Update Event2 panel [#3475](https://github.com/rokwire/illinois-app/issues/3475).
+- Prompt before exiting modified content in Create/Update Event2 panel [#3475](https://github.com/rokwire/illinois-app/issues/3475).
 
 ## [5.0.39] - 2023-08-02
 ### Changed

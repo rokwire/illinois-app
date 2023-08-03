@@ -515,8 +515,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     _surveyDetails = widget.event?.surveyDetails;
     _survey = widget.survey;
 
-    _sponsor = widget.event?.sponsor ?? '';
-    _speaker = widget.event?.speaker ?? '';
+    _sponsor = widget.event?.sponsor;
+    _speaker = widget.event?.speaker;
     _contacts = widget.event?.contacts;
 
     _dateTimeSectionExpanded = widget.isUpdate;
@@ -553,7 +553,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       appBar: HeaderBar(title: widget.isCreate ?
         Localization().getStringEx("panel.event2.create.header.title", "Create an Event") :
         Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
-      ),
+        onLeading: _onHeaderBack,),
       body: _buildPanelContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -1304,6 +1304,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       if ((result != null) && mounted) {
         setState(() {
           _attendanceDetails = result;
+          _errorList = _buildErrorList();
         });
       }
     });
@@ -1347,6 +1348,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
         setState(() {
           _survey = result.survey;
           _surveyDetails = result.details;
+          _errorList = _buildErrorList();
         });
       }
     });
@@ -1433,9 +1435,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     )))).then((Event2SponsorshipAndContactsDetails? result) {
       if ((result != null) && mounted) {
         setState(() {
-          _sponsor = result.sponsor;
-          _speaker = result.speaker;
-          _contacts = result.contacts;
+          _sponsor = (result.sponsor?.isNotEmpty ?? false) ? result.sponsor : null;
+          _speaker = (result.speaker?.isNotEmpty ?? false) ? result.speaker : null;
+          _contacts = (result.contacts?.isNotEmpty ?? false) ? result.contacts : null;
         });
       }
     });
@@ -1563,6 +1565,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.registration_link', 'registration link'));
     }
     
+    if (_hasSurvey && !_hasAttendanceDetails) {
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.survey_attendance_details', 'attendance (required for survey)'));
+    }
+
     return errorList;
   }
 
@@ -1669,6 +1675,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     ) : null;
 
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
+  bool get _hasAttendanceDetails => _attendanceDetails?.isNotEmpty ?? false;
+  bool get _hasRegistrationDetails => _registrationDetails?.requiresRegistration ?? false;
 
   DateTime? get _startDateTimeUtc =>
     (_startDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime).toUtc() : null;
@@ -1678,6 +1686,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   bool get _private => (_visibility == _Event2Visibility.private);
 
+  bool get _hasSurvey => (_survey != null) || (_surveyDetails?.isNotEmpty ?? false);
+
   bool _canCreateEvent() => (
     _titleController.text.isNotEmpty &&
     (_startDate != null) &&
@@ -1685,7 +1695,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     (!_inPersonEventType || _hasLocation) &&
     (!_onlineEventType || _hasOnlineDetails) &&
     (Events2().contentAttributes?.isAttributesSelectionValid(_attributes) ?? false) &&
-    ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false))
+    ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
+    (!_hasSurvey || _hasAttendanceDetails)
   );
 
   void _updateErrorList() {
@@ -1694,6 +1705,84 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       setStateIfMounted(() {
         _errorList = errorList;
       });
+    }
+  }
+
+  void _onHeaderBack() {
+    bool modified = false;
+    if (widget.isCreate) {
+      modified = _titleController.text.isNotEmpty ||
+        _descriptionController.text.isNotEmpty ||
+        _websiteController.text.isNotEmpty ||
+        (_imageUrl != null) ||
+        
+        (_startDate != null) || (_startTime != null) ||
+        (_endDate != null) || (_endTime != null) ||
+        
+        (_eventType != null) ||
+        _locationLatitudeController.text.isNotEmpty ||
+        _locationLongitudeController.text.isNotEmpty ||
+
+        _hasOnlineDetails ||
+        (_attributes?.isNotEmpty ?? false) ||
+        (_private == true) ||
+        (_free == false) ||
+        _costController.text.isNotEmpty ||
+
+        _hasRegistrationDetails ||
+        _hasAttendanceDetails ||
+        _hasSurvey ||
+        
+        (_sponsor != null) ||
+        (_speaker != null) ||
+        (_contacts?.isNotEmpty ?? false);
+    }
+    else {
+      modified = ((widget.event?.name ?? '') != _titleController.text) ||
+        ((widget.event?.description ?? '')  != _descriptionController.text) ||
+        ((widget.event?.eventUrl ?? '') != _websiteController.text) ||
+        (widget.event?.imageUrl != widget.event?.imageUrl) ||
+        
+        (widget.event?.startTimeUtc != _startDateTimeUtc) ||
+        (widget.event?.endTimeUtc != _endDateTimeUtc) ||
+        
+        (widget.event?.eventType != _eventType) ||
+        (_printLatLng(widget.event?.exploreLocation?.latitude) != _locationLatitudeController.text) ||
+        (_printLatLng(widget.event?.exploreLocation?.longitude) != _locationLongitudeController.text) ||
+        ((widget.event?.exploreLocation?.building ?? widget.event?.exploreLocation?.name ?? '') != _locationBuildingController.text) ||
+        ((widget.event?.exploreLocation?.address ?? widget.event?.exploreLocation?.description ?? '') != _locationAddressController.text) ||
+
+        ((widget.event?.onlineDetails?.url ?? '') != _onlineUrlController.text) ||
+        ((widget.event?.onlineDetails?.meetingId ?? '') != _onlineMeetingIdController.text) ||
+        ((widget.event?.onlineDetails?.meetingPasscode ?? '') != _onlinePasscodeController.text) ||
+
+        !DeepCollectionEquality().equals(widget.event?.attributes, _attributes) ||
+        ((_event2VisibilityFromPrivate(widget.event?.private) ?? _Event2Visibility.public) != _visibility) ||
+        ((widget.event?.free ?? true) != _free) ||
+        ((widget.event?.cost ?? '') != _costController.text) ||
+
+        (widget.event?.registrationDetails != _registrationDetails) ||
+        (widget.event?.attendanceDetails != _attendanceDetails) ||
+        (widget.event?.surveyDetails != _surveyDetails) ||
+        (widget.survey != _survey) ||
+
+        ((widget.event?.sponsor ?? '') != _sponsor) ||
+        ((widget.event?.speaker ?? '') != _speaker) ||
+        !DeepCollectionEquality().equals(widget.event?.contacts, _contacts);
+    }
+
+    if (modified) {
+      Event2Popup.showPrompt(context,
+        Localization().getStringEx('panel.event2.create.exit.prompt.title', 'Exit'),
+        Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and loose your changes?'),
+      ).then((bool? result) {
+        if (result == true) {
+          Navigator.of(context).pop();
+        }
+      });
+    }
+    else {
+      Navigator.of(context).pop();
     }
   }
 
