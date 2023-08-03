@@ -48,6 +48,7 @@ import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/polls.dart';
@@ -187,6 +188,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
       ExploreMapPanel.notifySelect,
+      Events2.notifyLaunchDetail
     ]);
 
     _tabs = _getTabs();
@@ -251,6 +253,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onLocalNotification(param);
     }
     else if (name == Events.notifyEventDetail) {
+      _onFirebaseEventDetail(param);
+    }
+    else if (name == Events2.notifyLaunchDetail) {
       _onFirebaseEventDetail(param);
     }
     else if (name == Sports.notifyGameDetail) {
