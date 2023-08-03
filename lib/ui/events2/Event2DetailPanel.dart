@@ -924,7 +924,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       setState(() {
         _eventLoading = true;
       });
-      survey = await Surveys().loadEvent2Survey(theEvent!.id!);
+      survey = await Surveys().loadEvent2Survey(eventId);
     }
 
     setStateIfMounted(() {
