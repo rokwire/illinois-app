@@ -1,7 +1,7 @@
 {
 	"": {
 		"content": {
-			"tabbar": ["assistant", "favorites", "browse", "maps", "academics", "wellness"],
+			"tabbar": ["favorites", "browse", "maps", "academics", "wellness", "assistant"],
 			"tabbar.default": "favorites",
 
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
@@ -70,6 +70,8 @@
 			"wellness.health_screener": ["history"],
 			"wellness.health_screener.features": ["student", "authentication", "netid_login"],
 
+			"assistant.features": ["assistant"],
+
 			"polls.features": ["authentication", "netid_login"],
 
 			"explore.list": ["events", "dining"],
@@ -92,7 +94,7 @@
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
 			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
-				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "icard_mobile", "student", "netid_login"],
+				"gies", "new_student", "canvas", "safer", "mtd_bus_pass", "icard_mobile", "student", "netid_login", "assistant", "assistant_personalization"],
 			
 			"launch":["emergency"]
 			
@@ -125,31 +127,32 @@
 			},
 			"locations": {
 			},
-			"privacy" : {
-				"connect"                         : 4,
-				"tabbar.assistant"                : 5,
+			"privacy": {
+				"connect"                         	  : 4,
 
-				"settings.connected"              : 4,
-				"settings.link"                   : 4,
-				"settings.linked"                 : 4,
+				"settings.connected"              	  : 4,
+				"settings.link"                   	  : 4,
+				"settings.linked"                 	  : 4,
 	
-				"onboarding.notifications_auth"   : 4,
-				"onboarding.location_auth"        : 2,
-				"onboarding.roles"                : 3,
-				"onboarding.login_netid"          : 4,
-				"onboarding.login_phone"          : 4,
-				"onboarding.verify_phone"         : 4,
-				"onboarding.confirm_phone"        : 4,
-				"onboarding.sport_prefs"          : 3,
-				"onboarding.research_questionnaire": 4,
+				"onboarding.notifications_auth"   	  : 4,
+				"onboarding.location_auth"        	  : 2,
+				"onboarding.roles"                	  : 3,
+				"onboarding.login_netid"          	  : 4,
+				"onboarding.login_phone"          	  : 4,
+				"onboarding.verify_phone"         	  : 4,
+				"onboarding.confirm_phone"        	  : 4,
+				"onboarding.sport_prefs"          	  : 3,
+				"onboarding.research_questionnaire"   : 4,
 	
-				"features.analytics"              : 2,
-				"features.location_services"      : 2,
-				"features.personalization"        : 3,
-				"features.notifications"          : 4,
-				"features.payment_information"    : 4,
-				"features.authentication"         : 4,
-				"features.sharing"                : 5
+				"features.analytics"              	  : 2,
+				"features.location_services"      	  : 2,
+				"features.personalization"        	  : 3,
+				"features.notifications"          	  : 4,
+				"features.payment_information"    	  : 4,
+				"features.authentication"         	  : 4,
+				"features.sharing"                	  : 5,
+				"features.assistant"  				  : 4,
+				"features.assistant_personalization"  : 5
 			},
 			"auth": {
 				"connect"                             : { "loggedIn": false },

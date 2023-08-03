@@ -194,7 +194,7 @@ class _SkillSelfEvaluationOccupationListState extends State<SkillSelfEvaluationO
             ],
           ),
           labelStyle: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
-          labelText: Localization().getStringEx('', 'Search'),
+          labelText: Localization().getStringEx('panel.skills_self_evaluation.search.title', 'Search'),
           filled: true,
           fillColor: Styles().colors?.getColor('surface'),
           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors?.getColor('surface') ?? Colors.white, width: 2.0, style: BorderStyle.solid)),
