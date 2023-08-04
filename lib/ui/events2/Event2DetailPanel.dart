@@ -388,7 +388,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     String? description;
     bool hasRegistration = _event?.registrationDetails?.requiresRegistration ?? false;
     bool hasAttendance = _event?.attendanceDetails?.isNotEmpty ?? false;
-    bool hasSurvey = (_isParticipant || _isAttendee) && hasAttendance && (_survey != null);
+    bool hasSurvey = _isAttendee && hasAttendance && (_survey != null);
     int surveyHours = _event?.surveyDetails?.hoursAfterEvent ?? 0;
 
     if (hasRegistration) {
@@ -1028,7 +1028,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   //Event getters
   bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
   bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendanceTaker;
-  bool get _isParticipant =>  _event?.userRole == Event2UserRole.participant;
+  //bool get _isParticipant =>  _event?.userRole == Event2UserRole.participant;
   bool get _isAttendee => (_persons?.attendees?.indexWhere((person) => person.identifier?.accountId == Auth2().accountId) ?? -1) > -1;
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
