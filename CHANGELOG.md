@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Illinois Assistant Wording Updates [#3462](https://github.com/rokwire/illinois-app/issues/3462)
 - Survey description does not depend on registration status [#3487](https://github.com/rokwire/illinois-app/issues/3487)
+- Optimized event detail initialization - do not load persons and survey if event has no survey [#3487](https://github.com/rokwire/illinois-app/issues/3487).
 
 ## [5.0.40] - 2023-08-03
 ### Added
