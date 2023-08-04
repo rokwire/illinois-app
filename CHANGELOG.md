@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Event Survey panel wrongly shows Apply button when invoked from Create/Update panel [#3481](https://github.com/rokwire/illinois-app/issues/3481).
+### Changed
+- Illinois Assistant Wording Updates [#3462](https://github.com/rokwire/illinois-app/issues/3462)
 
 ## [5.0.40] - 2023-08-03
 ### Added

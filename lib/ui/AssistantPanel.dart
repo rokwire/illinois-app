@@ -9,6 +9,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/SpeechToText.dart';
+import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TypingIndicator.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -30,6 +31,7 @@ class AssistantPanel extends StatefulWidget {
 }
 
 class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAliveClientMixin<AssistantPanel> implements NotificationsListener {
+  static final String resourceName = 'assistant';
 
   List<String>? _contentCodes;
   TextEditingController _inputController = TextEditingController();
@@ -56,26 +58,12 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       SpeechToText.notifyError,
     ]);
 
-    _messages.add(Message(content: Localization().getStringEx('',
-        "Hello! I am the new Illinois Assistant in training. "
-            "Ask me anything about the University "
-            "--type a question below to get started.",),
+    _messages.add(Message(content: Localization().getStringEx('panel.assistant.label.welcome_message.title',
+        "You can ask anything about the University of Illinois Urbana-Champaign. Type a question below to get started.",),
         // sources: ["https://google.com", "https://illinois.edu", "https://grad.illinois.edu", "https://uillinois.edu"],
         user: false));
 
-    // _messages.add(Message(content: Localization().getStringEx('',
-    //     "Where can I find out more about the resources available on campus?"),
-    //     user: true,
-    // ));
-
-    // _messages.add(Message(content: Localization().getStringEx('',
-    //     "There are many resources available for students on campus. "
-    //         "Try checking out the Campus Guide for more information."),
-    //     user: false,
-    //     link: Link(name: "Campus Guide", link: '${DeepLink().appUrl}/guide',
-    //         iconKey: 'guide')));
-
-    _messages.add(Message(content: Localization().getStringEx('',
+    _messages.add(Message(content: Localization().getStringEx('panel.assistant.label.example.question.title',
         "How many students attend UIUC?"),
       user: true,
       example: true
@@ -128,23 +116,29 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   Widget build(BuildContext context) {
     super.build(context);
 
+    Widget? accessWidget = AccessCard.builder(resource: resourceName);
     return Scaffold(
-      appBar: RootHeaderBar(title: Localization().getStringEx('panel.assistant.label.title', 'Assistant')),
-      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
-        Column(children: [
-          Expanded(child:
-            SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              controller: _scrollController,
-              reverse: true,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(children: _buildContentList(),),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.assistant.header.title', 'Assistant')),
+      body: accessWidget != null ?
+        Column(children: [Padding(
+          padding: const EdgeInsets.only(top: 16.0),
+          child: accessWidget,
+        )]) :
+        RefreshIndicator(onRefresh: _onPullToRefresh, child:
+          Column(children: [
+            Expanded(child:
+              SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                controller: _scrollController,
+                reverse: true,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(children: _buildContentList(),),
+                )
               )
-            )
-          ),
-          _buildChatBar(),
-        ]),
+            ),
+            _buildChatBar(),
+          ]),
       ),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: null,
@@ -172,10 +166,10 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   Widget _buildDisclaimer() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
-      child: Text(Localization().getStringEx('',
-          'As an in-progress experimental feature, the Illinois Assistant may present inaccurate results '
-              'requiring verification with other official university sources. '
-              'Your input will be recorded to help improve the Illinois Assistant.'),
+      child: Text(Localization().getStringEx('panel.assistant.label.disclaimer.title',
+          'The Illinois Assistant is an experimental feature. Some results may be inaccurate; '
+              'verify the answer information with other official university sources. '
+              'Your questions and feedback will be stored and analyzed to improve quality.'),
         style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic')
       ),
     );
@@ -242,7 +236,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               message.example ?
-                                Text(Localization().getStringEx('', "eg. ") + message.content,
+                                Text(Localization().getStringEx('panel.assistant.label.example.eg.title', "eg. ") + message.content,
                                   style: message.user ? Styles().textStyles?.getTextStyle('widget.title.regular') :
                                   Styles().textStyles?.getTextStyle('widget.title.light.regular'))
                                   : SelectableText(message.content,
@@ -261,7 +255,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                                         spacing: 8.0,
                                         runSpacing: 8.0,
                                         children: [
-                                          Text(Localization().getStringEx('', "More from the web: "),
+                                          Text(Localization().getStringEx('panel.assistant.label.sources.title', "More from the web: "),
                                               style: Styles().textStyles?.getTextStyle('widget.title.light.small.fat')),
                                           ...sourceLinks
                                         ],
@@ -316,7 +310,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   }
 
   void _onTapFeedbackInfo() {
-    AppAlert.showDialogResult(context, Localization().getStringEx("", "Provide feedback on this response to help us improve the Illinois Assistant!"
+    AppAlert.showDialogResult(context, Localization().getStringEx("panel.assistant.label.feedback.info.description", "Provide feedback on this response to help us improve the Illinois Assistant!"
         "\n\nIf you found the response helpful and accurate give it a 'thumbs up' to let us know. "
         "\n\nIf you noticed an issue with the response give it a 'thumbs down' and you will "
         "be prompted to provide a brief explanation of the problem."));
@@ -341,7 +335,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           message.feedback = null;
         } else {
           message.feedback = MessageFeedback.bad;
-          _messages.add(Message(content: Localization().getStringEx('',
+          _messages.add(Message(content: Localization().getStringEx('panel.assistant.label.feedback.negative.prompt.title',
               "Thank you for providing feedback! Could you please explain "
                   "the issue with my response?"),
               user: false));
@@ -464,11 +458,12 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: _feedbackMessage == null ?
-                            enabled ? Localization().getStringEx('', 'Type your question here...') :
-                              Localization().getStringEx(
-                                '', 'Sorry you are out of questions for today. '
-                                'Please check back tomorrow to ask more questions!')
-                            : Localization().getStringEx('', 'Type your feedback here...'),
+                            enabled ? Localization().getStringEx('panel.assistant.field.question.title',
+                                  'Type your question here...') :
+                              Localization().getStringEx('panel.assistant.label.queries.limit.title',
+                                  'Sorry you are out of questions for today. Please check back tomorrow to ask more questions!')
+                            : Localization().getStringEx('panel.assistant.field.feedback.title',
+                                  'Type your feedback here...'),
                         ),
                         style: Styles().textStyles?.getTextStyle('widget.title.regular')
                       ),
@@ -485,7 +480,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
               ],
             ),
             _buildQueryLimit(),
-            Visibility(visible: Auth2().isDebugManager,
+            Visibility(visible: Auth2().isDebugManager && FlexUI().hasFeature('assistant_personalization'),
                 child: _buildContextButton()),
           ],
         ),
@@ -510,7 +505,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           ),
         ),
         SizedBox(width: 8),
-        Text(Localization().getStringEx('', "{{query_limit}} questions remaining today")
+        Text(Localization().getStringEx('panel.assistant.label.queries.remaining.title', "{{query_limit}} questions remaining today")
             .replaceAll('{{query_limit}}', _queryLimit.toString()),
           style: Styles().textStyles?.getTextStyle('widget.title.small'),
         ),
@@ -522,7 +517,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: RoundedButton(
-        label: Localization().getStringEx('', 'Context'),
+        label: Localization().getStringEx('panel.assistant.button.context.title', 'Context'),
         onTap: _showContext,
       ),
     );
@@ -567,7 +562,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
             );
           }
           return AlertDialog(
-            title: Text('User Context'),
+            title: Text(Localization().getStringEx('panel.assistant.dialog.context.title', 'User Context')),
             content: SingleChildScrollView(
               child: ListBody(
                 children: contextFields,
@@ -578,7 +573,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                 children: [
                   Expanded(
                     child: RoundedButton(
-                      label: Localization().getStringEx('', 'Add'),
+                      label: Localization().getStringEx('panel.assistant.dialog.context.button.add.title', 'Add'),
                       onTap: () {
                         setStateForDialog(() {
                           userContextKeys.add('');
@@ -592,7 +587,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: RoundedButton(
-                        label: Localization().getStringEx('', 'Default'),
+                        label: Localization().getStringEx('panel.assistant.dialog.context.button.default.title', 'Default'),
                         onTap: () {
                           _userContext = _getUserContext();
                           Navigator.of(context).pop();
@@ -609,7 +604,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: RoundedButton(
-                        label: Localization().getStringEx('', 'Profile 1'),
+                        label: Localization().getStringEx('panel.assistant.dialog.context.button.profile1.title', 'Profile 1'),
                         onTap: () {
                           _userContext = _getUserContext(
                               name: 'John Doe',
@@ -629,7 +624,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: RoundedButton(
-                        label: Localization().getStringEx('', 'Profile 2'),
+                        label: Localization().getStringEx('panel.assistant.dialog.context.button.profile2.title', 'Profile 2'),
                         onTap: () {
                           _userContext = _getUserContext(
                               name: 'Jane Smith',
@@ -649,7 +644,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: RoundedButton(
-                  label: Localization().getStringEx('', 'Save'),
+                  label: Localization().getStringEx('panel.assistant.dialog.context.button.save.title', 'Save'),
                   onTap: () {
                     _userContext = {};
                     for (int i = 0; i < userContextKeys.length; i++) {
@@ -694,7 +689,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
           _messages.add(response);
         } else {
           _messages.add(Message(
-              content: Localization().getStringEx('', 'Thank you for the explanation! '
+              content: Localization().getStringEx('panel.assistant.label.feedback.thank_you.title', 'Thank you for the explanation! '
                   'Your response has been recorded and will be used to improve results in the future.'),
               user: false));
         }
@@ -709,7 +704,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       setState(() {
         _messages.add(Message(
             content: Localization().getStringEx(
-                '', 'Sorry you are out of questions for today. '
+                'panel.assistant.label.queries.limit.title', 'Sorry you are out of questions for today. '
                 'Please check back tomorrow to ask more questions!'),
             user: false));
       });
@@ -722,7 +717,10 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
       curve: Curves.fastOutSlowIn,
     );
 
-    Message? response = await Assistant().sendQuery(message, context: _userContext);
+    Map<String, String>? context = FlexUI().hasFeature('assistant_personalization') ?
+        _userContext : null;
+
+    Message? response = await Assistant().sendQuery(message, context: context);
     if (mounted) {
       setState(() {
         if (response != null){
@@ -735,7 +733,7 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
             }
           }
         } else {
-          _messages.add(Message(content: Localization().getStringEx('', 'Sorry something went wrong! Please try asking your question again.'), user: false));
+          _messages.add(Message(content: Localization().getStringEx('panel.assistant.label.error.title', 'Sorry something went wrong! Please try asking your question again.'), user: false));
           _inputController.text = message;
         }
         _loadingResponse = false;
@@ -746,15 +744,15 @@ class _AssistantPanelState extends State<AssistantPanel> with AutomaticKeepAlive
   Map<String, String>? _getUserContext({String? name, String? netID, String? college, String? department, String? studentLevel}) {
     Map<String, String> context = {};
 
-    name ??= Auth2().profile?.fullName;
-    if (name != null) {
-      context['name'] = name;
-    }
-
-    netID ??= Auth2().netId;
-    if (netID != null) {
-      context['net_id'] = netID;
-    }
+    // name ??= Auth2().profile?.fullName;
+    // if (name != null) {
+    //   context['name'] = name;
+    // }
+    //
+    // netID ??= Auth2().netId;
+    // if (netID != null) {
+    //   context['net_id'] = netID;
+    // }
 
     college ??= IlliniCash().studentClassification?.collegeName;
     department ??= IlliniCash().studentClassification?.departmentName;
