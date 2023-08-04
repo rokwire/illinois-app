@@ -905,7 +905,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       theEvent = _event;
     }
     else if (StringUtils.isNotEmpty(widget.eventId) && mounted) {
-      setStateIfMounted(() {
+      setState(() {
         _eventLoading = true;
       });
       theEvent = event = await Events2().loadEvent(widget.eventId!);
@@ -916,7 +916,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
          (theEvent?.registrationDetails?.type == Event2RegistrationType.internal) ||
          (theEvent?.attendanceDetails?.isNotEmpty ?? false)
         ) && mounted) {
-      setStateIfMounted(() {
+      setState(() {
         _eventLoading = true;
       });
       persons = await Events2().loadEventPeople(eventId);
@@ -927,23 +927,23 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         (theEvent?.surveyDetails?.isNotEmpty ?? false) &&
         mounted
     ) {
-      setStateIfMounted(() {
+      setState(() {
         _eventLoading = true;
       });
       survey = await Surveys().loadEvent2Survey(eventId);
     }
 
-    if (event != null) {
-      _event = event;
-    }
-    if (persons != null) {
-      _persons = persons;
-    }
-    if (survey != null) {
-      _survey = survey;
-    }
     setStateIfMounted(() {
       _eventLoading = false;
+      if (event != null) {
+        _event = event;
+      }
+      if (persons != null) {
+        _persons = persons;
+      }
+      if (survey != null) {
+        _survey = survey;
+      }
     });
   }
 
