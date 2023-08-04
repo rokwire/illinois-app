@@ -1341,6 +1341,7 @@
     "panel.event2.detail.attendance.attendees.drop_down.hint": "ATTENDEE LIST",
     "panel.event2.detail.attendance.attendees.empty.text": "There are no users registered or attending for this event yet.",
     "panel.event2.detail.attendance.attendees.failed.text": "Failed to load attendees list.",
+    "panel.event2.detail.attendance.manual.netid.label": "Net ID for manual attendance check:",
     "panel.event2.detail.attendance.scan.button": "Scan Illini ID",
     "panel.event2.detail.attendance.message.not_available.title": "Not Available",
 	"panel.event2.detail.attendance.manual_check.disabled": "Manual check is not enabled for this event.",
