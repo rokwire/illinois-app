@@ -519,7 +519,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _registrationButtonWidget{
-    if(Auth2().isLoggedIn == false) //We can register only if logged in
+    if (Auth2().isLoggedIn == false) //We can register only if logged in
+      return null;
+
+    //Do not register/unregoster to past events
+    DateTime? startTimeUtc = _event?.startTimeUtc;
+    if ((startTimeUtc != null) && DateTime.now().toUtc().isAfter(startTimeUtc))
       return null;
 
     if (_event?.registrationDetails?.type == Event2RegistrationType.internal) { //Require App registration
