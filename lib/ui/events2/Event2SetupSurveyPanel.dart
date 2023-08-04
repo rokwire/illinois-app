@@ -376,18 +376,20 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
           }
         }
 
-        setState(() {
-          _updatingSurvey = false;
-        });
+        if (mounted) {
+          setState(() {
+            _updatingSurvey = false;
+          });
 
-        if (surveyUpdateResult) {
-          Navigator.of(context).pop(Event2SetupSurveyParam(
-            event: event,
-            survey: survey,
-          ));
-        }
-        else {
-          Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.failed.msg', 'Failed to update event survey.'));
+          if (surveyUpdateResult) {
+            Navigator.of(context).pop(Event2SetupSurveyParam(
+              event: event,
+              survey: survey,
+            ));
+          }
+          else {
+            Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.failed.msg', 'Failed to update event survey.'));
+          }
         }
       } else {
         setState(() {
