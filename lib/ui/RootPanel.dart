@@ -539,6 +539,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
 
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+        Analytics().logMapHide();
+      }
+
       if (mounted) {
         setState(() {
           _currentTabIndex = tabIndex;
@@ -550,6 +554,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
       Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
       Analytics().logPage(name: tabPanel?.runtimeType.toString());
+
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+        Analytics().logMapShow();
+      }
 
       RootTab? rootTab = getRootTabByIndex(tabIndex);
       NotificationService().notify(RootPanel.notifyTabChanged, rootTab);
