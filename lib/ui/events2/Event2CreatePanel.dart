@@ -20,6 +20,7 @@ import 'package:illinois/ui/events2/Event2TimeRangePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreMapSelectLocationPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -548,18 +549,22 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _canGoBack,
-      child: Scaffold(
-        appBar: HeaderBar(title: widget.isCreate ?
-          Localization().getStringEx("panel.event2.create.header.title", "Create an Event") :
-          Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
-          onLeading: _onHeaderBack,),
-        body: _buildPanelContent(),
-        backgroundColor: Styles().colors!.white,
-      ),
+    return WillPopScope(onWillPop: _canGoBack, child: Platform.isIOS ?
+      BackGestureDetector(onBack: _onHeaderBack, child:
+        _buildScaffoldContent(),
+      ) :
+      _buildScaffoldContent(),
     );
   }
+
+  Widget _buildScaffoldContent() => Scaffold(
+    appBar: HeaderBar(title: widget.isCreate ?
+      Localization().getStringEx("panel.event2.create.header.title", "Create an Event") :
+      Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
+      onLeading: _onHeaderBack,),
+    body: _buildPanelContent(),
+    backgroundColor: Styles().colors!.white,
+  );
 
   Widget _buildPanelContent() {
     return SingleChildScrollView(child:

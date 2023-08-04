@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -5,6 +7,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupContactPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -44,15 +47,19 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => AppPopScope.back(_onHeaderBack),
-      child: Scaffold(
-        appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Sponsorship And Contacts"), onLeading: _onHeaderBack,),
-        body: _buildPanelContent(),
-        backgroundColor: Styles().colors!.white,
-      ),
+    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBack), child: Platform.isIOS ?
+      BackGestureDetector(onBack: _onHeaderBack, child:
+        _buildScaffoldContent(),
+      ) :
+      _buildScaffoldContent()
     );
   }
+
+  Widget _buildScaffoldContent() => Scaffold(
+    appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Sponsorship And Contacts"), onLeading: _onHeaderBack,),
+    body: _buildPanelContent(),
+    backgroundColor: Styles().colors!.white,
+  );
 
   Widget _buildPanelContent() {
     return SingleChildScrollView(child:

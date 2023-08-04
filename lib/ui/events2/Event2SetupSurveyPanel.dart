@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -102,16 +105,21 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => AppPopScope.back(_onHeaderBarBack),
-      child: Scaffold(
-          appBar: _headerBar,
-          body: _buildScaffoldContent(),
-          backgroundColor: Styles().colors?.background),
+    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
+      BackGestureDetector(onBack: _onHeaderBarBack, child:
+        _buildScaffoldContent(),
+      ) :
+      _buildScaffoldContent()
     );
   }
 
-  Widget _buildScaffoldContent() {
+  Widget _buildScaffoldContent() => Scaffold(
+    appBar: _headerBar,
+    body: _buildPanelContent(),
+    backgroundColor: Styles().colors?.background
+  );
+
+  Widget _buildPanelContent() {
     if (_loadingSurveys) {
       return _buildLoadingContent();
     }
@@ -122,11 +130,11 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       return _buildMessageContent(Localization().getStringEx('panel.event2.setup.survey.surveys.empty.msg', 'There are no surveys available.'));
     }
     else {
-      return _buildPanelContent();
+      return _buildSurveyContent();
     }
   }
 
-  Widget _buildPanelContent() {
+  Widget _buildSurveyContent() {
     return SingleChildScrollView(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

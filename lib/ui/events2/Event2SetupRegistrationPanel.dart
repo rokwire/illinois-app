@@ -6,6 +6,7 @@ import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -76,15 +77,19 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => AppPopScope.back(_onHeaderBarBack),
-      child: Scaffold(
-        appBar: _headerBar,
-        body: _buildPanelContent(),
-        backgroundColor: Styles().colors!.white,
-      ),
+    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
+      BackGestureDetector(onBack: _onHeaderBarBack, child:
+        _buildScaffoldContent(),
+      ) :
+      _buildScaffoldContent()
     );
   }
+
+  Widget _buildScaffoldContent() => Scaffold(
+    appBar: _headerBar,
+    body: _buildPanelContent(),
+    backgroundColor: Styles().colors!.white,
+  );
 
   Widget _buildPanelContent() {
     return SingleChildScrollView(child:
@@ -300,6 +305,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   // HeaderBar
 
+  bool get _isCreating => StringUtils.isEmpty(widget.event?.id);
   bool get _isEditing => StringUtils.isNotEmpty(widget.event?.id);
 
   PreferredSizeWidget get _headerBar => HeaderBar(
@@ -383,6 +389,6 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   void _onHeaderBarBack() {
     Analytics().logSelect(target: 'HeaderBar: Back');
-    Navigator.of(context).pop(_isEditing ? null : _buildRegistrationDetails());
+    Navigator.of(context).pop(_isCreating ? _buildRegistrationDetails() : null);
   }
 }
