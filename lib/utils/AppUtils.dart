@@ -399,6 +399,13 @@ class AppPrivacyPolicy {
   }
 }
 
+class AppPopScope {
+  static Future<bool> back(Function? fn) {
+    fn?.call();
+    return Future.value(false);
+  }
+}
+
 extension StateExt on State {
   @protected
   void setStateIfMounted(VoidCallback fn) {

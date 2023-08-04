@@ -544,7 +544,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _followUpSurveyButtonWidget{
-    if (Auth2().isLoggedIn && _isAttendee && (_survey != null) && (_event?.isSurveyAvailable ?? false)) {
+    bool loggedIn = Auth2().isLoggedIn;
+    bool attendee = _isAttendee;
+    bool surveyAvailable = _event?.isSurveyAvailable ?? false;
+    if (loggedIn && attendee && (_survey != null) && (surveyAvailable)) {
       return <Widget>[_buildButtonWidget(
           title: Localization().getStringEx('panel.event2_detail.button.follow_up_survey.title', 'Take Survey'),
           onTap: _onFollowUpSurvey,
@@ -786,10 +789,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onSettingEditEvent(){
     Analytics().logSelect(target: "Edit event");
-    Navigator.push<Event2?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey,))).then((Event2? result) {
-      if ((result != null) && mounted) {
-        setState(() {
-          _event = result;
+    Navigator.push<Event2SetupSurveyParam?>(context, CupertinoPageRoute(builder: (context) => Event2CreatePanel(event: _event, survey: _survey,))).then((Event2SetupSurveyParam? result) {
+      if (result != null) {
+        setStateIfMounted(() {
+          if (result.event != null) {
+            _event = result.event;
+          }
+          _survey = result.survey;
         });
       }
     });
@@ -973,7 +979,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       futures.clear();
 
       // Handle the case if after refreshing event the registrationDetails/attendanceDetails require loading persons
-      int? peopleIndex2 = ((peopleIndex == null) && ((_event?.registrationDetails?.type == Event2RegistrationType.internal) || (_event?.attendanceDetails?.isNotEmpty ?? false))) ? futures.length : null;
+      int? peopleIndex2 = ((peopleIndex == null) && ((event?.registrationDetails?.type == Event2RegistrationType.internal) || (event?.attendanceDetails?.isNotEmpty ?? false))) ? futures.length : null;
       if (peopleIndex2 != null) {
         futures.add(Events2().loadEventPeople(eventId));
       }

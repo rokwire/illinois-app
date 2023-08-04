@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Survey.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -102,13 +105,21 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: _headerBar,
-        body: _buildScaffoldContent(),
-        backgroundColor: Styles().colors?.background);
+    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
+      BackGestureDetector(onBack: _onHeaderBarBack, child:
+        _buildScaffoldContent(),
+      ) :
+      _buildScaffoldContent()
+    );
   }
 
-  Widget _buildScaffoldContent() {
+  Widget _buildScaffoldContent() => Scaffold(
+    appBar: _headerBar,
+    body: _buildPanelContent(),
+    backgroundColor: Styles().colors?.background
+  );
+
+  Widget _buildPanelContent() {
     if (_loadingSurveys) {
       return _buildLoadingContent();
     }
@@ -119,11 +130,11 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       return _buildMessageContent(Localization().getStringEx('panel.event2.setup.survey.surveys.empty.msg', 'There are no surveys available.'));
     }
     else {
-      return _buildPanelContent();
+      return _buildSurveyContent();
     }
   }
 
-  Widget _buildPanelContent() {
+  Widget _buildSurveyContent() {
     return SingleChildScrollView(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -293,7 +304,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   void _checkModified() {
     if (_isEditing && mounted) {
       
-      bool modified = (_survey?.id != _initialSurvey?.id) ||
+      bool modified = (_survey?.title != _initialSurvey?.title) ||
         (_hoursController.text != _initialHours);
 
       if (_modified != modified) {
@@ -304,12 +315,21 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     }
   }
 
-  Event2SetupSurveyParam _buildSurveyParam() => Event2SetupSurveyParam(
-    survey: _survey != null ? Survey.fromOther(_survey!, id: widget.surveyParam.survey?.id) : null,
-    details: _survey != null ? Event2SurveyDetails(
-      hoursAfterEvent: Event2CreatePanel.textFieldIntValue(_hoursController),
-    ) : null,
-  );
+  Event2SetupSurveyParam _buildSurveyParam() {
+    Survey? survey = _survey != null ? Survey.fromOther(_survey!, id: widget.surveyParam.survey?.id) : null;
+
+    // set calendarEventId in survey if it is missing
+    if (survey != null && StringUtils.isEmpty(survey.calendarEventId)) {
+      survey.calendarEventId = widget.surveyParam.event?.id;
+    }
+
+    return Event2SetupSurveyParam(
+      survey: survey,
+      details: Event2SurveyDetails(
+        hoursAfterEvent: _survey != null ? Event2CreatePanel.textFieldIntValue(_hoursController) : null,
+      ),
+    );
+  }
 
   bool _checkSurveyResult(Event2SetupSurveyParam surveyParam) {
     if ((surveyParam.survey?.id != null) && ((surveyParam.details?.hoursAfterEvent == null) || ((surveyParam.details?.hoursAfterEvent ?? 0) < 0))) {
@@ -322,13 +342,15 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Future<void> _updateEventSurveyDetails(Event2SetupSurveyParam? surveyParam) async {
     String? eventId = widget.surveyParam.event?.id;
     if ((eventId != null) && eventId.isNotEmpty && (_updatingSurvey != true)) {
-      setState(() {
-        _updatingSurvey = true;
-      });
 
       Event2? event = widget.surveyParam.event;
       if (event?.isSurveyAvailable == false) {
-        if (surveyParam?.details != widget.surveyParam.details) {
+        setState(() {
+          _updatingSurvey = true;
+        });
+
+        // the survey is not available to attendees yet
+        if (surveyParam?.details != widget.details) {
           dynamic result = await Events2().updateEventSurveyDetails(eventId, surveyParam?.details);
           if (mounted) {
             if (result is Event2) {
@@ -346,49 +368,42 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
         bool surveyUpdateResult = true;
         Survey? survey = widget.surveyParam.survey;
-        if (_survey?.id != _initialSurvey?.id) {
-          // a different template than the initially selected template is now selected and the survey is not available to attendees yet
-          if (StringUtils.isNotEmpty(surveyParam?.survey?.id)) { // this will match the ID of the existing follow up survey if a non-null template is selected
-            if (StringUtils.isEmpty(surveyParam?.survey?.calendarEventId)) { // set calendarEventId in survey if it is missing
-              surveyParam!.survey!.calendarEventId = eventId;
-            }
-            // if there is no previously selected survey, then create a copy of the template, otherwise update the existing survey
-            if (_initialSurvey == null) {
-              surveyUpdateResult = await Surveys().createEvent2Survey(_survey!, event!) ?? false;
-            } else {
-              surveyUpdateResult = await Surveys().updateSurvey(surveyParam!.survey!) ?? false;
-            }
-          } else if (StringUtils.isNotEmpty(survey?.id)) { // the null template is selected, so delete the existing follow up survey if it exists
-            surveyUpdateResult = await Surveys().deleteSurvey(survey!.id) ?? false;
+        if (surveyParam?.survey?.title != survey?.title) {
+          // a different template than the initially selected template is now selected
+          if (survey == null) {
+            // the null template was initially selected (no survey exists), so create a new survey
+            surveyUpdateResult = await Surveys().createEvent2Survey(surveyParam!.survey!, event!) ?? false;
+          } else if (surveyParam?.survey == null) {
+            // the null template is now selected, so delete the existing survey
+            surveyUpdateResult = await Surveys().deleteSurvey(survey.id) ?? false;
+          } else {
+            // a survey already exists and the template has been changed, so update the existing survey
+            surveyUpdateResult = await Surveys().updateSurvey(surveyParam!.survey!) ?? false;
           }
           if (surveyUpdateResult) {
             survey = await Surveys().loadEvent2Survey(eventId);
           }
         }
 
-        setState(() {
-          _updatingSurvey = false;
-        });
+        if (mounted) {
+          setState(() {
+            _updatingSurvey = false;
+          });
 
-        if (surveyUpdateResult) {
-          Navigator.of(context).pop(Event2SetupSurveyParam(
-            event: event,
-            survey: survey,
-          ));
-        }
-        else {
-          Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.failed.msg', 'Failed to update event survey.'));
+          if (surveyUpdateResult) {
+            Navigator.of(context).pop(Event2SetupSurveyParam(
+              event: event,
+              survey: survey,
+            ));
+          }
+          else {
+            Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.failed.msg', 'Failed to update event survey.'));
+          }
         }
       } else {
-        setState(() {
-          _updatingSurvey = false;
-        });
         Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.already_available.msg', 'This survey is already available to attendees, so it will not be updated.'));
       }
     } else {
-      setState(() {
-        _updatingSurvey = false;
-      });
       Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.event_missing.msg', 'Failed to find associated event.'));
     }
   }

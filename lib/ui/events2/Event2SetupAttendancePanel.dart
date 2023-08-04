@@ -1,11 +1,13 @@
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/widgets/GestureDetector.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -68,12 +70,19 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _headerBar,
-      body: _buildPanelContent(),
-      backgroundColor: Styles().colors!.white,
+    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
+      BackGestureDetector(onBack: _onHeaderBarBack, child:
+        _buildScaffoldContent(),
+      ) :
+      _buildScaffoldContent()
     );
   }
+
+  Widget _buildScaffoldContent() => Scaffold(
+    appBar: _headerBar,
+    body: _buildPanelContent(),
+    backgroundColor: Styles().colors!.white,
+  );
 
   Widget _buildPanelContent() {
     return RefreshIndicator(onRefresh: _onRefresh, child:
@@ -337,6 +346,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   }
 
   void _onHeaderBarBack() {
+    Analytics().logSelect(target: 'HeaderBar: Back');
     Navigator.of(context).pop(_isCreating ? _buildAttendanceDetails() : null);
   }
 }
