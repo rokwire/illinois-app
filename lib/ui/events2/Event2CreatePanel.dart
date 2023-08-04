@@ -1634,23 +1634,25 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             )));
           }
         }
-        else if (result.isSurveyAvailable == false) {
-          // the survey is not available to attendees yet
-          bool surveyUpdateResult = true;
-          if (_survey?.title != survey?.title) {
-            // a different template than the initially selected template was selected
-            if (survey == null) {
-              // the null template was initially selected (no survey exists), so create a new survey
-              surveyUpdateResult = await Surveys().createEvent2Survey(_survey!, result) ?? false;
-            } else if (_survey == null) {
-              // the null template is now selected, so delete the existing survey
-              surveyUpdateResult = await Surveys().deleteSurvey(survey.id) ?? false;
-            } else {
-              // a survey already exists and the template has been changed, so update the existing survey
-              surveyUpdateResult = await Surveys().updateSurvey(_survey!) ?? false;
-            }
-            if (surveyUpdateResult && result.id != null) {
-              survey = await Surveys().loadEvent2Survey(result.id!);
+        else {
+          // we have a survey and it is not available to attendees yet
+          if ((_survey != null) || (survey != null) && (result.isSurveyAvailable == false)) {
+            bool surveyUpdateResult = true;
+            if (_survey?.title != survey?.title) {
+              // a different template than the initially selected template was selected
+              if (survey == null) {
+                // the null template was initially selected (no survey exists), so create a new survey
+                surveyUpdateResult = await Surveys().createEvent2Survey(_survey!, result) ?? false;
+              } else if (_survey == null) {
+                // the null template is now selected, so delete the existing survey
+                surveyUpdateResult = await Surveys().deleteSurvey(survey.id) ?? false;
+              } else {
+                // a survey already exists and the template has been changed, so update the existing survey
+                surveyUpdateResult = await Surveys().updateSurvey(_survey!) ?? false;
+              }
+              if (surveyUpdateResult && result.id != null) {
+                survey = await Surveys().loadEvent2Survey(result.id!);
+              }
             }
           }
           setState(() {
