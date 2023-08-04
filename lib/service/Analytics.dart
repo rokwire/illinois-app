@@ -203,6 +203,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogMapDisplayShowActionName        = "show";
   static const String   LogMapDisplayHideActionName        = "hide";
 
+  static const String   LogMapSelectEventName             = "map_select";
+  static const String   LogMapSelectTarget                = "target";
+
   // GeoFence Regions
   static const String   LogGeoFenceRegionEventName         = "geofence_region";
   static const String   LogGeoFenceRegionAction            = "action";
@@ -909,6 +912,14 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent({
       LogEventName             : LogMapDisplayEventName,
       LogMapDisplayAction      : action
+    });
+  }
+
+  void logMapSelect({String? target}) {
+    
+    logEvent({
+      LogEventName             : LogMapSelectEventName,
+      LogMapSelectTarget       : target
     });
   }
 

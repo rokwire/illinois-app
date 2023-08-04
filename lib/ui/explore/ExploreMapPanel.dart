@@ -679,6 +679,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     else {
       _pinMapExplore(null);
     }
+    _logAnalyticsSelect(explore);
   }
 
   Future<void> _pinMapExplore(Explore? explore) async {
@@ -703,6 +704,17 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
         });
       }
     }
+  }
+
+  void _logAnalyticsSelect(dynamic explore) {
+    String? exploreTarget;
+    if (explore is Explore) {
+      exploreTarget = explore.exploreTitle ?? explore.exploreLocation?.name ?? explore.exploreLocation?.displayAddress ?? explore.exploreLocation?.displayCoordinates;
+    }
+    else if (explore is List<Explore>) {
+      exploreTarget = '${explore.length} ${ExploreExt.getExploresListDisplayTitle(explore, language: 'en')}';
+    }
+    Analytics().logMapSelect(target: exploreTarget);
   }
 
   Widget? _buildExploreBarStopDescription() {

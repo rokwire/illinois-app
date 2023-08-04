@@ -107,7 +107,7 @@ extension ExploreExt on Explore {
     return null;
   }
 
-  static String? getExploresListDisplayTitle(List<Explore>? exploresList) {
+  static String? getExploresListDisplayTitle(List<Explore>? exploresList, {String? language}) {
     String? exploresType;
     if (exploresList != null) {
       for (Explore explore in exploresList) {
@@ -123,34 +123,34 @@ extension ExploreExt on Explore {
     }
 
     if ((exploresType == "event") || (exploresType == "event2")) {
-      return Localization().getStringEx('panel.explore.item.events.name', 'Events');
+      return Localization().getStringEx('panel.explore.item.events.name', 'Events', language: language);
     }
     else if (exploresType == "dining") {
-      return Localization().getStringEx('panel.explore.item.dinings.name', 'Dining Locations');
+      return Localization().getStringEx('panel.explore.item.dinings.name', 'Dining Locations', language: language);
     }
     else if (exploresType == "laundryroom") {
-      return Localization().getStringEx('panel.explore.item.laundry.name', 'Laundry Rooms');
+      return Localization().getStringEx('panel.explore.item.laundry.name', 'Laundry Rooms', language: language);
     }
     else if (exploresType == "game") {
-      return Localization().getStringEx('panel.explore.item.games.name', 'Game Locations');
+      return Localization().getStringEx('panel.explore.item.games.name', 'Game Locations', language: language);
     }
     else if (exploresType == "building") {
-      return Localization().getStringEx('panel.explore.item.buildings.name', 'Buildings');
+      return Localization().getStringEx('panel.explore.item.buildings.name', 'Buildings', language: language);
     }
     else if (exploresType == "wellnessbuilding") {
-      return Localization().getStringEx('panel.explore.item.wellnessbuildings.name', 'Therapist Locations');
+      return Localization().getStringEx('panel.explore.item.wellnessbuildings.name', 'Therapist Locations', language: language);
     }
     else if (exploresType == "mtdstop") {
-      return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'Bus Stops');
+      return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'Bus Stops', language: language);
     }
     else if (exploresType == "studentcourse") {
-      return Localization().getStringEx('panel.explore.item.courses.name', 'Course Locations');
+      return Localization().getStringEx('panel.explore.item.courses.name', 'Course Locations', language: language);
     }
     else if (exploresType == "appointment") {
-      return Localization().getStringEx('panel.explore.item.appointments.name', 'Appointment Locations');
+      return Localization().getStringEx('panel.explore.item.appointments.name', 'Appointment Locations', language: language);
     }
     else if (exploresType == "explorepoi") {
-      return Localization().getStringEx('panel.explore.item.pois.name', 'MTD Destinations');
+      return Localization().getStringEx('panel.explore.item.pois.name', 'MTD Destinations', language: language);
     }
     else {
       return Localization().getStringEx('panel.explore.item.unknown.name', 'Explores');
