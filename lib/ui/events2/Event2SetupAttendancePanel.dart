@@ -340,6 +340,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   }
 
   void _onHeaderBarBack() {
+    Analytics().logSelect(target: 'HeaderBar: Back');
     Navigator.of(context).pop(_isCreating ? _buildAttendanceDetails() : null);
   }
 }

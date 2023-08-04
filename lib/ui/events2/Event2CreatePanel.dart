@@ -1742,6 +1742,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   void _onHeaderBack() {
+    Analytics().logSelect(target: 'HeaderBar: Back');
     _canGoBack().then((bool result) {
       if (result) {
         Navigator.of(context).pop();

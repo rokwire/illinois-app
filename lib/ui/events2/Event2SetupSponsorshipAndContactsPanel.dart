@@ -191,6 +191,7 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   // Return Value
 
   void _onHeaderBack() {
+    Analytics().logSelect(target: 'HeaderBar: Back');
     Navigator.of(context).pop(Event2SponsorshipAndContactsDetails(
       sponsor: Event2CreatePanel.textFieldValue(_sponsorController),
       speaker: Event2CreatePanel.textFieldValue(_speakerController),
