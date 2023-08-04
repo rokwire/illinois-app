@@ -388,12 +388,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     String? description;
     bool hasRegistration = _event?.registrationDetails?.requiresRegistration ?? false;
     bool hasAttendance = _event?.attendanceDetails?.isNotEmpty ?? false;
-    bool hasSurvey = _isAttendee && hasAttendance && (_survey != null);
+    bool hasSurvey = (_event?.surveyDetails?.isNotEmpty ?? false) && (_survey != null);
+    bool showSurvey = (_isAttendee || _isAdmin) && hasAttendance && hasSurvey;
     int surveyHours = _event?.surveyDetails?.hoursAfterEvent ?? 0;
 
     if (hasRegistration) {
       if (hasAttendance) {
-        if (hasSurvey) {
+        if (showSurvey) {
           switch (surveyHours) {
             case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.none', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey after this event.'); break;
             case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.single', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey 1 hour after this event.'); break;
@@ -410,7 +411,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
     else {
       if (hasAttendance) {
-        if (hasSurvey) {
+        if (showSurvey) {
           switch (surveyHours) {
             case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.none', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey after this event.'); break;
             case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.single', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey 1 hour after this event.'); break;
@@ -428,7 +429,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     return (description != null) ?<Widget>[
       _buildTextDetailWidget(description, 'info',
-        textStyle: 'widget.info.regular.thin.italic', iconPadding: const EdgeInsets.only(right: 6),
+        textStyle: 'widget.info.regular.thin.italic',
+        iconPadding: const EdgeInsets.only(right: 6),
         maxLines: 3,
       ),
       _detailSpacerWidget
