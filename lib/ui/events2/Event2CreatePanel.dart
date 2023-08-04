@@ -549,7 +549,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => AppPopScope.back(_onHeaderBack),
+      onWillPop: _canGoBack,
       child: Scaffold(
         appBar: HeaderBar(title: widget.isCreate ?
           Localization().getStringEx("panel.event2.create.header.title", "Create an Event") :
@@ -1742,6 +1742,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   void _onHeaderBack() {
+    _canGoBack().then((bool result) {
+      if (result) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
+  Future<bool> _canGoBack() async {
     bool modified = false;
     if (widget.isCreate) {
       modified = _titleController.text.isNotEmpty ||
@@ -1805,17 +1813,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     }
 
     if (modified) {
-      Event2Popup.showPrompt(context,
+      bool? result = await Event2Popup.showPrompt(context,
         Localization().getStringEx('panel.event2.create.exit.prompt.title', 'Exit'),
-        Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and lose your changes?'),
-      ).then((bool? result) {
-        if (result == true) {
-          Navigator.of(context).pop();
-        }
-      });
+        Localization().getStringEx('panel.event2.create.exit.prompt.message', 'Exit and loose your changes?'),
+      );
+      return (result == true);
     }
     else {
-      Navigator.of(context).pop();
+      return true;
     }
   }
 
