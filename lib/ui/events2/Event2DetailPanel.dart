@@ -395,7 +395,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if (hasRegistration) {
       if (hasAttendance) {
         if (showSurvey) {
-          switch (surveyHours) {
+          if (_isAdmin) {
+            description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.admin', 'This event requires Registering, Attendance will be taken and a Follow up Survey is set.');
+          }
+          else switch (surveyHours) {
             case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.none', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey after this event.'); break;
             case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.single', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey 1 hour after this event.'); break;
             default: description = Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.multi', 'This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey {{hours}} hours after this event.').replaceAll('{{hours}}', surveyHours.toString()); break;
@@ -412,7 +415,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     else {
       if (hasAttendance) {
         if (showSurvey) {
-          switch (surveyHours) {
+          if (_isAdmin) {
+            description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.admin', 'Attendance will be taken at this event and a Follow up Survey is set.');
+          }
+          else switch (surveyHours) {
             case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.none', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey after this event.'); break;
             case 1:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.single', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey 1 hour after this event.'); break;
             default: description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.multi', 'Attendance will be taken at this event and you will receive a Notification with a Follow up Survey {{hours}} hours after this event.').replaceAll('{{hours}}', surveyHours.toString()); break;
@@ -431,7 +437,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       _buildTextDetailWidget(description, 'info',
         textStyle: 'widget.info.regular.thin.italic',
         iconPadding: const EdgeInsets.only(right: 6),
-        maxLines: 3,
+        maxLines: 5,
       ),
       _detailSpacerWidget
     ] : null;
