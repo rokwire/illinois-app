@@ -334,12 +334,13 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Future<void> _updateEventSurveyDetails(Event2SetupSurveyParam? surveyParam) async {
     String? eventId = widget.surveyParam.event?.id;
     if ((eventId != null) && eventId.isNotEmpty && (_updatingSurvey != true)) {
-      setState(() {
-        _updatingSurvey = true;
-      });
 
       Event2? event = widget.surveyParam.event;
       if (event?.isSurveyAvailable == false) {
+        setState(() {
+          _updatingSurvey = true;
+        });
+
         // the survey is not available to attendees yet
         if (surveyParam?.details != widget.details) {
           dynamic result = await Events2().updateEventSurveyDetails(eventId, surveyParam?.details);
@@ -392,15 +393,9 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
           }
         }
       } else {
-        setState(() {
-          _updatingSurvey = false;
-        });
         Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.already_available.msg', 'This survey is already available to attendees, so it will not be updated.'));
       }
     } else {
-      setState(() {
-        _updatingSurvey = false;
-      });
       Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.event_missing.msg', 'Failed to find associated event.'));
     }
   }
