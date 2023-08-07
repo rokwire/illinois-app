@@ -961,7 +961,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapEventFeed(BuildContext context) {
-    Analytics().logSelect(target: "Event Feed");
+    Analytics().logSelect(target: "Events Feed");
     Event2HomePanel.present(context);
   }
 
