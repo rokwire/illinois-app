@@ -83,11 +83,13 @@ class MobileAccess with Service implements NotificationsListener {
 
   bool get isStarted => _isStarted;
 
+  bool get canStart => FlexUI().isIcardMobileAvailable;
+
   Future<bool> startIfNeeded() async =>
-    _isStarted || await _start(force: true);
+    isStarted || (canStart && await _start(force: true));
 
   Future<bool> _startSilently() async =>
-    _isStarted || await _start(force: false);
+    isStarted || (canStart && await _start(force: false));
 
   Future<bool> _start({ required bool force }) async {
     bool result = false;

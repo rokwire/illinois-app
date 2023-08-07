@@ -67,6 +67,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
     super.initState();
     NotificationService().subscribe(this, [
+      Storage.notifySettingChanged,
       Surveys.notifySurveyResponseCreated,
       FlexUI.notifyChanged
     ]);
@@ -153,7 +154,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   List<Widget> _buildInfoAndSettings(Widget? accessWidget, bool showHistory) {
-    bool saveEnabled = Storage().assessmentsSaveResultsMap?['bessi'] != false;
+    bool saveEnabled = Storage().assessmentsSaveResultsMap?[_healthScreenerSurveyType] != false;
     return <Widget>[
       RibbonButton(
         leftIconKey: "info",
@@ -394,6 +395,8 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     if (name == Surveys.notifySurveyResponseCreated) {
       _refreshHistory();
     } else if (name == FlexUI.notifyChanged) {
+      setState(() {});
+    } else if (name == Storage.notifySettingChanged && param == Storage().assessmentsEnableSaveKey && mounted) {
       setState(() {});
     }
   }

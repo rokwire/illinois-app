@@ -345,6 +345,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     NotificationService().subscribe(this, [
       Storage.notifySettingChanged,
       AppLivecycle.notifyStateChanged,
+      Auth2.notifyLoginChanged,
       FlexUI.notifyChanged,
       Event2FilterParam.notifyChanged,
       Events2.notifyChanged,
@@ -387,6 +388,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   void onNotification(String name, param) {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      setStateIfMounted(() { });
     }
     else if (name == FlexUI.notifyChanged) {
       _currentLocation = null;

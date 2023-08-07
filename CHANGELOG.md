@@ -5,6 +5,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.41] - 2023-08-04
+### Fixed
+- Event Survey panel wrongly shows Apply button when invoked from Create/Update panel [#3481](https://github.com/rokwire/illinois-app/issues/3481).
+### Changed
+- Illinois Assistant Wording Updates [#3462](https://github.com/rokwire/illinois-app/issues/3462)
+- Survey description does not depend on registration status [#3487](https://github.com/rokwire/illinois-app/issues/3487)
+- Optimized event detail initialization - do not load persons and survey if event has no survey [#3487](https://github.com/rokwire/illinois-app/issues/3487).
+- Updated event content attributes [#3495](https://github.com/rokwire/illinois-app/issues/3495).
+### Added
+- Added manual attendee input by Net ID [#3489](https://github.com/rokwire/illinois-app/issues/3489).
+- Added analytics log of map items selection [#3497](https://github.com/rokwire/illinois-app/issues/3497).
+
+## [5.0.40] - 2023-08-03
+### Added
+- Event follow-up survey responses [#3452](https://github.com/rokwire/illinois-app/issues/3452).
+### Changed
+- Display extended information about registration, attendance and survey [#3475](https://github.com/rokwire/illinois-app/issues/3475).
+- Require attendance setup if survey is specified in Create/Update Event2 panel [#3475](https://github.com/rokwire/illinois-app/issues/3475).
+- Prompt before exiting modified content in Create/Update Event2 panel [#3475](https://github.com/rokwire/illinois-app/issues/3475).
+### Fixed
+- Fixed registration API responses and their processing [#3479](https://github.com/rokwire/illinois-app/issues/3479).
+- Fixed updating survey details [#3481](https://github.com/rokwire/illinois-app/issues/3481).
+
+## [5.0.39] - 2023-08-02
+### Changed
+- Updated info description for participants of events with surveys [#3463](https://github.com/rokwire/illinois-app/issues/3463).
+- Handled follow-up survey notification for event attendees [#3465](https://github.com/rokwire/illinois-app/issues/3465).
+### Fixed
+- Make sure not to start Mobile Access service if it is not available for the particular user [#3467](https://github.com/rokwire/illinois-app/issues/3467).
+
+## [5.0.38] - 2023-08-01
 ### Changed
 - Attendance taker widget obeys attendance details settings [#3453](https://github.com/rokwire/illinois-app/issues/3453).
 ### Added

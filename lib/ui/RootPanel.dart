@@ -28,6 +28,7 @@ import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
@@ -47,6 +48,7 @@ import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/polls.dart';
@@ -59,7 +61,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -107,6 +108,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventsNotification,
       FirebaseMessaging.notifyEventDetail,
+      FirebaseMessaging.notifyEventAttendeeSurveyInvitation,
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
       FirebaseMessaging.notifyAthleticsTeam,
@@ -186,6 +188,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
       ExploreMapPanel.notifySelect,
+      Events2.notifyLaunchDetail
     ]);
 
     _tabs = _getTabs();
@@ -237,6 +240,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyEventDetail) {
       _onFirebaseEventDetail(param);
     }
+    else if (name == FirebaseMessaging.notifyEventAttendeeSurveyInvitation) {
+      _onFirebaseEventAttendeeSurveyInvitation(param);
+    }
     else if (name == FirebaseMessaging.notifyGameDetail) {
       _onFirebaseGameDetail(param);
     }
@@ -247,6 +253,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onLocalNotification(param);
     }
     else if (name == Events.notifyEventDetail) {
+      _onFirebaseEventDetail(param);
+    }
+    else if (name == Events2.notifyLaunchDetail) {
       _onFirebaseEventDetail(param);
     }
     else if (name == Sports.notifyGameDetail) {
@@ -530,6 +539,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
 
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+        Analytics().logMapHide();
+      }
+
       if (mounted) {
         setState(() {
           _currentTabIndex = tabIndex;
@@ -541,6 +554,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
       Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
       Analytics().logPage(name: tabPanel?.runtimeType.toString());
+
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+        Analytics().logMapShow();
+      }
 
       RootTab? rootTab = getRootTabByIndex(tabIndex);
       NotificationService().notify(RootPanel.notifyTabChanged, rootTab);
@@ -711,10 +728,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
     String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     if (StringUtils.isNotEmpty(eventId)) {
-      ExplorePanel.presentDetailPanel(context, eventId: eventId);
+      //ExplorePanel.presentDetailPanel(context, eventId: eventId);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
     }
   }
 
+  void _onFirebaseEventAttendeeSurveyInvitation(Map<String, dynamic>? content) {
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['entity_id']) : null;
+    if (StringUtils.isNotEmpty(eventId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
+    }
+  }
   
   Future<void> _onFirebaseGameDetail(Map<String, dynamic>? content) async {
     String? gameId = (content != null) ? JsonUtils.stringValue(content['game_id']) : null;

@@ -66,8 +66,13 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   String? _errorMessage;
 
   bool _scanning = false;
+  bool _manualInputProgress = false;
   bool _loadingPeople = false;
   bool _attendeesSectionExpanded = false;
+
+  final GlobalKey _manualNetIdKey = GlobalKey();
+  final TextEditingController _manualNetIdController = TextEditingController();
+  final FocusNode _manualNetIdFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -81,7 +86,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     String? eventId = widget.event?.id;
     if (eventId != null) {
       _loadingPeople = true;
-      Events2().loadEventPeople(eventId).then((result) {
+      Events2().loadEventPeopleEx(eventId).then((result) {
         if (mounted) {
           if (result is Event2PersonsResult) {
             setState(() {
@@ -108,6 +113,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   @override
   void dispose() {
+    _manualNetIdController.dispose();
+    _manualNetIdFocusNode.dispose();
     _processedTimer?.cancel();
     _processedTimer = null;
     super.dispose();
@@ -122,6 +129,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _buildEventDetailsSection(),
       _buildAttendeesListDropDownSection(),
+      _buildManualNetIdInputSection(),
       _buildScanIlliniIdSection()
     ]);
   }
@@ -231,6 +239,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   void _onTapAttendeeListItem(Event2Person person) {
     Analytics().logSelect(target: "Toggle Attendee");
+    Event2CreatePanel.hideKeyboard(context);
     String? eventId = widget.event?.id;
     String? personNetId = person.identifier?.netId;
     if (widget.manualCheckEnabled != true) {
@@ -312,6 +321,95 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     return true;
   }
 
+  Widget _buildManualNetIdInputSection() => Event2CreatePanel.buildSectionWidget(
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.manual.netid.label', 'Net ID for manual attendance check:')),
+    body: _buildManualNetIdInputWidget() ,
+  );
+
+  Widget _buildManualNetIdInputWidget() => Container(decoration: Event2CreatePanel.sectionDecoration, padding: const EdgeInsets.only(left: 12), child:
+    Row(children: [
+      Expanded(child:
+        Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
+          TextField(
+            key: _manualNetIdKey,
+            controller: _manualNetIdController,
+            focusNode: _manualNetIdFocusNode,
+            decoration: InputDecoration(border: InputBorder.none),
+            style: Event2CreatePanel.textEditStyle,
+            maxLines: 1,
+            keyboardType: TextInputType.text,
+            autocorrect: false,
+            onEditingComplete: _onTapManualNetIdAdd,
+          )
+        )
+      ),
+      InkWell(onTap: _onTapManualNetIdAdd, child:
+        Padding(padding: EdgeInsets.all(16), child:
+          _manualInputProgress ? Padding(padding: EdgeInsets.all(2), child:
+            SizedBox(width: 14, height: 14, child:
+              CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,)
+            )
+          ) : Styles().images?.getImage('plus-circle')
+        ),
+      )
+    ],)
+  //Event2CreatePanel.buildTextEditWidget(_attendanceTakersController, keyboardType: TextInputType.text, maxLines: null)
+  );
+
+  void _onTapManualNetIdAdd() {
+    String netId = _manualNetIdController.text.trim();
+    String? eventId = widget.event?.id;
+    if (netId.isNotEmpty && (eventId != null) && (_manualInputProgress == false)) {
+      setState(() {
+        _manualInputProgress = true;
+      });
+      Events2().attendEvent(eventId, personIdentifier: Event2PersonIdentifier(accountId: "", exteralId: netId)).then((result) {
+        if (mounted) {
+          setState(() {
+            _manualInputProgress = false;
+          });
+
+          String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
+          if (attendeeNetId != null) {
+
+            List<Event2Person>? displayList;
+            if (!Event2Person.containsInList(_displayList, netId: attendeeNetId)) {
+              displayList = List.from(_displayList);
+              displayList.add(result);
+              displayList.sort((Event2Person person1, Event2Person person2) =>
+                SortUtils.compare(person1.identifier?.netId, person2.identifier?.netId));
+            }
+
+            setState(() {
+              _atendeesNetIds.add(attendeeNetId);
+              if (displayList != null) {
+                _displayList = displayList;
+              }
+              _processedNetId = attendeeNetId;
+              _attendeesSectionExpanded = true;
+            });
+            _manualNetIdController.text = '';
+            _setupProcessedTimer();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _ensureVisibleManualNetIdInput();
+              _manualNetIdFocusNode.requestFocus();
+            });
+          }
+          else {
+            Event2Popup.showErrorResult(context, result);
+          }
+        }
+      });
+    }
+  }
+
+  void _ensureVisibleManualNetIdInput() {
+    BuildContext? manualNetIdContext = _manualNetIdKey.currentContext;
+    if (manualNetIdContext != null) {
+      Scrollable.ensureVisible(manualNetIdContext, duration: Duration(milliseconds: 10));
+    }
+  }
+
   Widget _buildScanIlliniIdSection() => Event2CreatePanel.buildSectionWidget(body:
     RoundedButton(
       label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
@@ -325,6 +423,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   void _onTapScanButton() {
     Analytics().logSelect(target: 'Scan Illini Id');
+    Event2CreatePanel.hideKeyboard(context);
+
     if (widget.scanEnabled != true) {
       Event2Popup.showMessage(context,
         Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
@@ -453,7 +553,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       setStateIfMounted(() {
         _loadingPeople = true;
       });
-      dynamic result = await Events2().loadEventPeople(eventId);
+      dynamic result = await Events2().loadEventPeopleEx(eventId);
       if (mounted) {
         if (result is Event2PersonsResult) {
           setState(() {
