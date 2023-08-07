@@ -1404,7 +1404,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   static String? _exploreItemName(ExploreMapType? exploreItem) {
     switch (exploreItem) {
       case ExploreMapType.Events:              return Localization().getStringEx('panel.explore.button.events.title', 'Events');
-      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.button.events2.title', 'Event Feed');
+      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.button.events2.title', 'Events Feed');
       case ExploreMapType.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
       case ExploreMapType.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
       case ExploreMapType.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
@@ -1807,8 +1807,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   /*String? get _offlineContentMessage {
     switch (_selectedMapType) {
-      case ExploreMapType.Events:              return Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..');
-      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.state.offline.empty.events2', 'No upcoming events available while offline..');
+      case ExploreMapType.Events:              return Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline.');
+      case ExploreMapType.Events2:             return Localization().getStringEx('panel.explore.state.offline.empty.events2', 'No events feed is available while offline.');
       case ExploreMapType.Dining:              return Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.');
       case ExploreMapType.Laundry:             return Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.');
       case ExploreMapType.Buildings:           return Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.');
@@ -1825,7 +1825,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   String? get _emptyContentMessage {
     switch (_selectedMapType) {
       case ExploreMapType.Events: return Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.');
-      case ExploreMapType.Events2: return Localization().getStringEx('panel.explore.state.online.empty.events2', 'No upcoming events.');
+      case ExploreMapType.Events2: return Localization().getStringEx('panel.explore.state.online.empty.events2', 'No events feed is available.');
       case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
       case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
       case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
@@ -1842,7 +1842,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   String? get _failedContentMessage {
     switch (_selectedMapType) {
       case ExploreMapType.Events: return Localization().getStringEx('panel.explore.state.failed.events', 'Failed to load upcoming events.');
-      case ExploreMapType.Events2: return Localization().getStringEx('panel.explore.state.failed.events2', 'Failed to load event feed.');
+      case ExploreMapType.Events2: return Localization().getStringEx('panel.explore.state.failed.events2', 'Failed to load events feed.');
       case ExploreMapType.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
       case ExploreMapType.Laundry: return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
       case ExploreMapType.Buildings: return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
