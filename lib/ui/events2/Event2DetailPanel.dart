@@ -67,6 +67,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool _registrationLoading = false;
   bool _eventLoading = false;
   bool _eventProcessing = false;
+  bool? _hasSurveyResponse;
 
   @override
   void initState() {
@@ -557,15 +558,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _followUpSurveyButtonWidget{
-    bool loggedIn = Auth2().isLoggedIn;
-    bool attendee = _isAttendee;
-    bool surveyAvailable = _event?.isSurveyAvailable ?? false;
-    if (loggedIn && attendee && (_survey != null) && (surveyAvailable)) {
-      return <Widget>[_buildButtonWidget(
-          title: Localization().getStringEx('panel.event2_detail.button.follow_up_survey.title', 'Take Survey'),
+    if (Auth2().isLoggedIn && _isAttendee && (_survey != null) && (_event?.isSurveyAvailable ?? false)) {
+      return <Widget>[_hasSurveyResponse == false ? _buildButtonWidget(
+          title: Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.title', 'Take Survey'),
           onTap: _onFollowUpSurvey,
           externalLink: false,
-      )];
+      ) : _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.completed.message', 'You have completed this event\'s survey'), 'check')];
     }
 
     return null;
@@ -747,12 +745,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onFollowUpSurvey(){
     Analytics().logSelect(target: "Follow up survey");
-    Surveys().loadSurveyResponses(surveyIDs: [_survey!.id]).then((List<SurveyResponse>? responses) {
-      if (CollectionUtils.isEmpty(responses)) {
-        Survey displaySurvey = Survey.fromOther(_survey!);
-        displaySurvey.replaceKey('event_name', _event?.name);
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: displaySurvey)));
-      }
+    Survey displaySurvey = Survey.fromOther(_survey!);
+    displaySurvey.replaceKey('event_name', _event?.name);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: displaySurvey))).then((result) {
+      setStateIfMounted(() {
+        _hasSurveyResponse = true;
+      });
     });
   }
 
@@ -948,6 +946,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       }
 
       if (futures.isNotEmpty) {
+        setState(() {
+          _eventLoading = true;
+        });
         List<dynamic> results = await Future.wait(futures);
         Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
         Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
@@ -960,6 +961,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
             _survey = survey;
           }
         });
+
+        _checkForSurveyResponses(survey);
       }
     }
   }
@@ -1031,6 +1034,30 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           _survey = survey;
         }
       });
+
+      _checkForSurveyResponses(survey);
+    }
+  }
+
+  void _checkForSurveyResponses(Survey? survey) async {
+    if (survey != null) {
+      List<Future<dynamic>> futures = [];
+      int? surveyResponseIndex = (_hasSurveyResponse == null) ? futures.length : null;
+      if (surveyResponseIndex != null) {
+        futures.add(Surveys().loadSurveyResponses(surveyIDs: [survey.id]));
+      }
+
+      if (futures.isNotEmpty) {
+        setState(() {
+          _eventLoading = true;
+        });
+        List<dynamic> results = await Future.wait(futures);
+        List<SurveyResponse>? responses = ((surveyResponseIndex != null) && (surveyResponseIndex < results.length) && (results[surveyResponseIndex] is List<SurveyResponse>)) ? results[surveyResponseIndex] : null;
+        setStateIfMounted(() {
+          _eventLoading = false;
+          _hasSurveyResponse = CollectionUtils.isNotEmpty(responses);
+        });
+      }
     }
   }
 

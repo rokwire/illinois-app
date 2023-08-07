@@ -1329,6 +1329,8 @@
 	"panel.event2.detail.survey.description.reg.att.svy.single": "This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey 1 hour after this event.",
 	"panel.event2.detail.survey.description.reg.att.svy.none": "This event requires Registering, Attendance will be taken and you will receive a Notification with a Follow up Survey after this event.",
 	"panel.event2.detail.survey.description.reg.att.svy.admin": "This event requires Registering, Attendance will be taken and a Follow up Survey is set.",
+    "panel.event2.detail.survey.button.follow_up_survey.title": "Take Survey",
+    "panel.event2.detail.survey.button.follow_up_survey.completed.message": "You have completed this event's survey",
 
     "panel.event2.detail.attendance.header.title": "Event Attendance",
     "panel.event2.detail.attendance.scan.toggle.title": "Scan Illini ID",

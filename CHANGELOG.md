@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use "Events Feed" term instead of "Event Feed" [#3486](https://github.com/rokwire/illinois-app/issues/3486)
+- Improve event survey UI [#3500](https://github.com/rokwire/illinois-app/issues/3500).
 
 ## [5.0.41] - 2023-08-04
 ### Fixed
