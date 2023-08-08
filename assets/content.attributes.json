@@ -1110,7 +1110,8 @@
 			{ "label": "No", "value" : false }
 		]
 	}],
-	"requirements": {
-		"min-selected-count": 1
-	}
+	"requirements": [{
+		"min-selected-count": 1,
+		"scope":["groups"]
+	}]
 }

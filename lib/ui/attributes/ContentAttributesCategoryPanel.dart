@@ -37,10 +37,10 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   List<dynamic> _contentList = <dynamic>[];
   LinkedHashSet<dynamic> _selection = LinkedHashSet<dynamic>();
 
-  int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsScopeFilter : contentAttributeRequirementsScopeCreate;
+  int get requirementsFunctionalScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
 
-  bool get singleSelection => widget.attribute.isSingleSelection(requirementsScope);
-  bool get multipleSelection => widget.attribute.isMultipleSelection(requirementsScope);
+  bool get singleSelection => widget.attribute.isSingleSelection(requirementsFunctionalScope);
+  bool get multipleSelection => widget.attribute.isMultipleSelection(requirementsFunctionalScope);
   bool get multipleValueGroups => widget.attribute.hasMultipleValueGroups;
 
   @override
@@ -286,7 +286,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       _selection.clear();
     }
 
-    if (widget.attribute.requirements?.hasScope(requirementsScope) ?? false) {
+    if (widget.attribute.requirements?.hasFunctionalScope(requirementsFunctionalScope) ?? false) {
       widget.attribute.validateAttributeValuesSelection(_selection);
     }
 
