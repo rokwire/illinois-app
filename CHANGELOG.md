@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Use "Events Feed" term instead of "Event Feed" [#3486](https://github.com/rokwire/illinois-app/issues/3486)
 - Improve event survey UI [#3500](https://github.com/rokwire/illinois-app/issues/3500).
+
+## [5.0.42] - 2023-08-08
+### Changed
+- Use "Events Feed" term instead of "Event Feed" [#3486](https://github.com/rokwire/illinois-app/issues/3486).
+- Do not require attributes selection for calendar events [#3502](https://github.com/rokwire/illinois-app/issues/3502).
+- Reworked attributes Apply & Clear control [#3504](https://github.com/rokwire/illinois-app/issues/3504).
 
 ## [5.0.41] - 2023-08-04
 ### Fixed

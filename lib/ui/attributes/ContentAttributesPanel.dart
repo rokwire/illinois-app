@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -57,13 +58,15 @@ class ContentAttributesPanel extends StatefulWidget {
 class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   Map<String, LinkedHashSet<dynamic>> _selection = <String, LinkedHashSet<dynamic>>{};
+  Map<String, LinkedHashSet<dynamic>> _initialSelection = <String, LinkedHashSet<dynamic>>{};
 
-  int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsScopeFilter : contentAttributeRequirementsScopeCreate;
+  int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
 
   @override
   void initState() {
     if (widget.selection != null) {
       _selection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<dynamic>>();
+      _initialSelection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<dynamic>>();
     }
     super.initState();
   }
@@ -100,7 +103,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         ),
       ),
       // Container(height: 1, color: Styles().colors?.surfaceAccent),
-      _buildCommands(),
+      SafeArea(child:
+        _buildCommands(),
+      ),
     ]) : Container();
   }
 
@@ -132,7 +137,9 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       }
     }
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,); 
+    return Padding(padding: EdgeInsets.only(bottom: 24), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,)
+    ); 
   }
 
   Widget? _buildDescriptionWidget() {
@@ -332,8 +339,12 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     }
   }
 
-  bool get _isSelectionNotEmpty {
-    for (LinkedHashSet<dynamic> attributeLabels in _selection.values) {
+  bool get _isSelectionNotEmpty => _isSelectionNotEmptyA(_selection);
+
+  bool get _isInitialSelectionNotEmpty => _isSelectionNotEmptyA(_initialSelection);
+
+  static bool _isSelectionNotEmptyA(Map<String, LinkedHashSet<dynamic>> selection) {
+    for (LinkedHashSet<dynamic> attributeLabels in selection.values) {
       if (attributeLabels.isNotEmpty) {
         return true;
       }
@@ -341,34 +352,36 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
     return false;
   }
 
-  List<Widget>? get _headerBarActions => (widget.filtersMode && _isInitialSelectionNotEmpty) ? <Widget>[
-    _buildHeaderBarButton(
-      title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
-      onTap: _onTapClear,
-    )
-  ] : null;
+  bool get _isSelectionValid => widget.contentAttributes?.isSelectionValid(_selection) ?? false;
 
-  bool get _isInitialSelectionNotEmpty {
 
-    Iterable<dynamic>? selectionValues = widget.selection?.values;
-    if (selectionValues != null) {
-      for (dynamic attributeLabels in selectionValues) {
-        if (((attributeLabels is String)) ||
-            ((attributeLabels is List) && attributeLabels.isNotEmpty))
-        {
-          return true;
-        }
+  List<Widget>? get _headerBarActions {
+    List<Widget> actions = <Widget>[];
+    if (!_isOnboardingMode) {
+      if (!DeepCollectionEquality().equals(_initialSelection, _selection) && (widget.filtersMode ? _isSelectionNotEmpty : _isSelectionValid)) {
+        actions.add(_buildHeaderBarButton(
+          title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
+          onTap: _onTapApply,
+        ));
+      }
+      else if (_isInitialSelectionNotEmpty && _isSelectionNotEmpty) {
+        actions.add(_buildHeaderBarButton(
+          title:  Localization().getStringEx('panel.content.attributes.button.clear.title', 'Clear'),
+          onTap: _onTapClear,
+        ));
       }
     }
-
-    return false;
+    
+    return actions;
   }
 
-  Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) =>
+  bool get _isOnboardingMode => (widget.applyBuilder != null) || (widget.continueTitle != null);
+
+  Widget _buildHeaderBarButton({String? title, void Function()? onTap}) =>
     Semantics(label: title, button: true, child:
       InkWell(onTap: onTap, child:
         Align(alignment: Alignment.center, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
@@ -391,24 +404,20 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   );
 
   Widget _buildCommands() {
-    List<Widget> commands = <Widget>[
-      _buildApply(),
-    ];
+    List<Widget> commands = <Widget>[];
 
-    if (widget.continueTitle != null) {
-      commands.add(InkWell(onTap: _onTapContinue, child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-          Text(widget.continueTitle ?? '', style: widget.continueTextStyle ?? Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline'),)
-        )
-      ,));
-
+    if ((widget.applyBuilder != null)) {
+      commands.add(_buildApply());
     }
 
-    return SafeArea(child:
+    if (widget.continueTitle != null) {
+      commands.add(_buildContinue());
+    }
+
+    return commands.isNotEmpty ?
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
         Column(mainAxisSize: MainAxisSize.min, children: commands,)
-      )
-    );
+      ) : Container();
   }
 
   Widget _buildApply() {
@@ -427,6 +436,13 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
         Expanded(flex: 1, child: Container()),
       ],);
   }
+
+  Widget _buildContinue() => InkWell(onTap: _onTapContinue, child:
+    Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+      Text(widget.continueTitle ?? '', style: widget.continueTextStyle ?? Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline'),)
+    )
+  ,);
+
 
   String get _applyTitle => widget.filtersMode ? 
     Localization().getStringEx('panel.content.attributes.button.filter.title', 'Filter') :

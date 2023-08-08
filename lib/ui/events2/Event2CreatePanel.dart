@@ -1199,7 +1199,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.attributes.title', 'EVENT ATTRIBUTES'),
       subTitle: (_attributes?.isEmpty ?? true) ? Localization().getStringEx('panel.event2.create.button.attributes.description', 'Choose attributes related to your event.') : null,
-      required: Events2().contentAttributes?.hasRequired(contentAttributeRequirementsScopeCreate) ?? false,
+      required: Events2().contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false,
       onTap: _onEventAttributes,
     ),
     body: _buildAttributesSectionBody(),

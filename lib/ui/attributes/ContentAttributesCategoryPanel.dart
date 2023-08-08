@@ -37,10 +37,10 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   List<dynamic> _contentList = <dynamic>[];
   LinkedHashSet<dynamic> _selection = LinkedHashSet<dynamic>();
 
-  int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsScopeFilter : contentAttributeRequirementsScopeCreate;
+  int get requirementsFunctionalScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
 
-  bool get singleSelection => widget.attribute.isSingleSelection(requirementsScope);
-  bool get multipleSelection => widget.attribute.isMultipleSelection(requirementsScope);
+  bool get singleSelection => widget.attribute.isSingleSelection(requirementsFunctionalScope);
+  bool get multipleSelection => widget.attribute.isMultipleSelection(requirementsFunctionalScope);
   bool get multipleValueGroups => widget.attribute.hasMultipleValueGroups;
 
   @override
@@ -98,24 +98,8 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   Widget build(BuildContext context) {
     String? title = widget.attribute.displayTitle;
 
-    List<Widget> actions = <Widget>[];
-
-
-    if ((multipleSelection || multipleValueGroups) && !DeepCollectionEquality().equals(widget.selection ?? LinkedHashSet<dynamic>(), _selection)) {
-      actions.add(_buildHeaderBarButton(
-        title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
-        onTap: _onTapApply,
-      ));
-    }
-    else if ((0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(_selection, widget.emptySelection)) {
-      actions.add(_buildHeaderBarButton(
-        title:  Localization().getStringEx('dialog.clear.title', 'Clear'),
-        onTap: _onTapClear,
-      ));
-    }
-
     return Scaffold(
-      appBar: HeaderBar(title: title, actions: actions,),
+      appBar: HeaderBar(title: title, actions: _headerBarActions,),
       backgroundColor: Styles().colors?.background,
       body: Column(children: [
         Expanded(child:
@@ -130,11 +114,32 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     );
   }
 
-  Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) {
+  List<Widget>? get _headerBarActions {
+
+    List<Widget> actions = <Widget>[];
+    LinkedHashSet<dynamic> emptySelection = widget.emptySelection;
+
+    if ((multipleSelection || multipleValueGroups) && !DeepCollectionEquality().equals(widget.selection ?? emptySelection, _selection)) {
+      actions.add(_buildHeaderBarButton(
+        title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
+        onTap: _onTapApply,
+      ));
+    }
+    else if ((0 < (widget.attributeValues?.length ?? 0)) && !DeepCollectionEquality().equals(widget.selection ?? emptySelection, emptySelection)) {
+      actions.add(_buildHeaderBarButton(
+        title:  Localization().getStringEx('dialog.clear.title', 'Clear'),
+        onTap: _onTapClear,
+      ));
+    }
+
+    return actions;
+  }
+
+  Widget _buildHeaderBarButton({String? title, void Function()? onTap}) {
     return Semantics(label: title, button: true, child:
       InkWell(onTap: onTap, child:
         Align(alignment: Alignment.center, child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
@@ -263,7 +268,6 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     else {
       _processTapAttributeValue(attributeValue);
     }
-
   }
 
   void _processTapAttributeValue(ContentAttributeValue attributeValue, { bool forceProcessing = false }) {
@@ -286,7 +290,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       _selection.clear();
     }
 
-    if (widget.attribute.requirements?.hasScope(requirementsScope) ?? false) {
+    if (widget.attribute.requirements?.hasFunctionalScope(requirementsFunctionalScope) ?? false) {
       widget.attribute.validateAttributeValuesSelection(_selection);
     }
 
@@ -304,12 +308,12 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 
   void _onTapClear() {
-    _selection = LinkedHashSet<dynamic>.from(widget.emptySelection);
-    if (multipleSelection || multipleValueGroups) {
-      setStateIfMounted(() {});
+    LinkedHashSet<dynamic> emptySelection = LinkedHashSet<dynamic>.from(widget.emptySelection);
+    /*if (multipleSelection || multipleValueGroups) {
+      setStateIfMounted(() { _selection = emptySelection; });
     }
-    else {
-      Navigator.of(context).pop(_selection);
+    else*/ {
+      Navigator.of(context).pop(emptySelection);
     }
   }
 }

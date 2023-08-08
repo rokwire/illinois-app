@@ -566,7 +566,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               description: _isResearchProject?
                 Localization().getStringEx("panel.groups_create.attributes.project_description", "Attributes help you provide more information."):
                 Localization().getStringEx("panel.groups_create.attributes.description", "Attributes help people understand more about your group."),
-              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired(contentAttributeRequirementsScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
+              requiredMark: (!_isResearchProject) && (Groups().contentAttributes?.hasRequired(contentAttributeRequirementsFunctionalScopeCreate) ?? false),  //can we remove the * at the end of the label "Attributes" as it does not work here. //If you decide to fix this and keep the * then change the description text from...
             )
           ),
           Container(width: 8),
@@ -1146,7 +1146,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
-        (Groups().contentAttributes?.isAttributesSelectionValid(_group?.attributes) ?? false) &&
+        (Groups().contentAttributes?.isSelectionValid(_group?.attributes) ?? false) &&
         (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
         ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
         ((_group?.researchProject != true) || (_researchProfileQuestionsCount >= 0));
