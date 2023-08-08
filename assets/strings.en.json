@@ -363,7 +363,7 @@
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Open Now",
     "panel.browse.entry.dinings.my_dining.title": "My Dining Locations",
 
-    "panel.browse.entry.events.event_feed.title": "Event Feed",
+    "panel.browse.entry.events.event_feed.title": "Events Feed",
     "panel.browse.entry.events.my_events.title": "My Events",
 
     "panel.browse.entry.feeds.twitter.title": "Twitter",
@@ -958,7 +958,7 @@
     "panel.explore.header.appointments.title":"MyMcKinley In-Person Appointments",
     "panel.explore.button.events.title":"Events",
     "panel.explore.button.events.hint":"",
-    "panel.explore.button.events2.title":"Event Feed",
+    "panel.explore.button.events2.title":"Events Feed",
     "panel.explore.button.events2.hint":"",
     "panel.explore.button.dining.title":"Residence Hall Dining",
     "panel.explore.button.dining.hint":"",
@@ -1020,7 +1020,7 @@
     "panel.explore.filter.terms.hint":"Filter by term",
 
     "panel.explore.state.online.empty.events":"No upcoming events are available.",
-    "panel.explore.state.online.empty.events2":"No event feed is available.",
+    "panel.explore.state.online.empty.events2":"No events feed is available.",
     "panel.explore.state.online.empty.dining":"No dining locations are currently open.",
     "panel.explore.state.online.empty.laundry":"No laundry locations are currently open.",
     "panel.explore.state.online.empty.buildings":"No building locations are available.",
@@ -1032,7 +1032,7 @@
     "panel.explore.state.online.empty.state_farm":"No State Farm Wayfinding available.",
    
     "panel.explore.state.offline.empty.events":"No upcoming events are available while offline.",
-    "panel.explore.state.offline.empty.events2":"No event feed is available while offline.",
+    "panel.explore.state.offline.empty.events2":"No events feed is available while offline.",
     "panel.explore.state.offline.empty.dining":"No dining locations are available while offline.",
     "panel.explore.state.offline.empty.laundry":"No laundry locations are available while offline.",
     "panel.explore.state.offline.empty.buildings":"No building locations are available while offline.",
@@ -1044,7 +1044,7 @@
     "panel.explore.state.offline.empty.state_farm":"State Farm Wayfinding is not available while offline.",
 
     "panel.explore.state.failed.events":"Failed to load upcoming events.",
-    "panel.explore.state.failed.events2":"Failed to load event feed.",
+    "panel.explore.state.failed.events2":"Failed to load events feed.",
     "panel.explore.state.failed.dining":"Failed to load dining locations.",
     "panel.explore.state.failed.laundry":"Failed to load laundry locations.",
     "panel.explore.state.failed.buildings":"Failed to load building locations.",
@@ -1170,8 +1170,8 @@
 	"panel.events2.home.attributes.sort.label.title": "Sort: ",
 	"panel.events2.home.attributes.events.label.title": "Events: ",
 	"panel.events2.home.attributes.launch.header.title": "Events",
-	"panel.events2.home.attributes.launch.header.description": "Customize your event feed by setting the below filters or <a href='{{events2_url}}'>view all events now<a> and choose your event filters later.",
-	"panel.events2.home.attributes.launch.apply.title": "Create My Event Feed",
+	"panel.events2.home.attributes.launch.header.description": "Customize your events feed by setting the below filters or <a href='{{events2_url}}'>view all events now<a> and choose your event filters later.",
+	"panel.events2.home.attributes.launch.apply.title": "Create My Events Feed",
 	"panel.events2.home.attributes.launch.continue.title": "Set Up Later",
 	"panel.events2.home.attributes.event_type.title": "Event Type",
     "panel.events2.home.attributes.event_type.hint": "Choose the event type your events can be filtered by.",
@@ -3201,7 +3201,7 @@
     "widget.home.suggested_events.button.all.title":"View All",
     "widget.home.suggested_events.button.all.hint":"Tap to view all events",
 
-    "widget.home.event2_feed.label.header.title":"Event Feed",
+    "widget.home.event2_feed.label.header.title":"Events Feed",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",
     "widget.home.event2_feed.button.all.title": "View All",
     "widget.home.event2_feed.button.all.hint": "Tap to view all events",
@@ -3395,7 +3395,7 @@
     "widget.home.favorites.message.offline.appointments": "MyMcKinley Appointments is not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.events2": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Event Feed</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.events2": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
     "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
