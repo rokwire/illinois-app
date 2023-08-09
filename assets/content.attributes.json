@@ -86,84 +86,6 @@
 			{ "label": "Summer Camp", "requirements": { "category" : "Recreation, Health & Fitness" }}
 		]
 	},{
-		"id": "affiliation",
-		"title": "University Affiliation",
-		"description": "Choose the university affiliation your event can be filtered by.",
-		"empty-hint": "Select a university affiliation...",
-		"usage": "property",
-		"widget": "dropdown",
-		"semantics-hint": "Double tap to show university affiliation options.",
-		"scope": ["events"],
-		"requirements" : {
-			"min-selected-count": 0,
-			"max-selected-count": 1
-		},
-		"values": [
-			"Academic Affairs",
-			"Advancement",
-			"Asian American Cultural Center",
-			"Beckman Institute for Advanced Science & Technology",
-			"Bruce D. Nesbitt African American Cultural Center",
-			"Campus Recreation",
-			"Cancer Center at Illinois",
-			"Carle Illinois College of Medicine",
-			"Career Center",
-			"Center on Health, Aging & Disability",
-			"Center for Advanced Study",
-			"Center for Innovation in Teaching & Learning",
-			"Center for Social & Behavioral Science",
-			"Chez Veterans Center",
-			"Disability Resources & Educational Resources",
-			"Diversity & Social Justice Education",
-			"Division of Intercollegiate Athletics",
-			"Education",
-			"Fine & Applied Arts",
-			"Gender & Sexuality Resource Center",
-			"General Studies",
-			"Gies College of Business",
-			"Graduate College",
-			"The Grainger College of Engineering",
-			"Hub for Brand Innovation & Advertising Technology",
-			"Humanities Research Institute",
-			"Illini Union",
-			"Illinois Extension",
-			"Illinois International",
-			"Illinois Leadership Center",
-			"Illinois Public Media",
-			"Information Sciences",
-			"Institute for Sustainability, Energy & Environment",
-			"Interdisciplinary Health Sciences Institute",
-			"International Education",
-			"Japan House",
-			"Krannert Art Museum",
-			"Krannert Center for the Performing Arts",
-			"La Casa Cultural Latina",
-			"Labor & Employment Relations",
-			"Law",
-			"Liberal Arts & Sciences",
-			"Media",
-			"McKinley Health Center",
-			"National Center for Supercomputing Applications",
-			"Native American House",
-			"New & Transfer Student Programs",
-			"Prairie Research Institute",
-			"Public Safety",
-			"Research & Innovation",
-			"Salaam Middle East & North Africa Cultural Center",
-			"Spurlock Museum",
-			"Siebel Center for Design",
-			"Social Work",
-			"State Farm Center",
-			"Student Affairs",
-			"Student Engagement",
-			"Technology Services",
-			"Undergraduate Admissions",
-			"University Housing",
-			"University Library",
-			"Veterinary Medicine",
-			"Women’s Resources Center"
-		]
-	},{
 		"id": "category",
 		"title": "Category",
 		"description": "Choose the category your group can be filtered by.",
@@ -257,7 +179,7 @@
 		"usage": "property",
 		"widget": "dropdown",
 		"semantics-hint": "Double tap to show college options.",
-		"scope": ["groups"],
+		"scope": ["groups", "events"],
 		"requirements" : {
 			"min-selected-count": 0,
 			"max-selected-count": 1
@@ -311,7 +233,7 @@
 		"semantics-hint": "Double tap to show department options.",
 		"usage": "property",
 		"widget": "dropdown",
-		"scope": ["groups"],
+		"scope": ["groups", "events"],
 		"requirements" : {
 			"mode": "inclusive",
 			"min-selected-count": 0,
@@ -1111,7 +1033,7 @@
 		]
 	}],
 	"requirements": [{
-		"min-selected-count": 1,
-		"scope":["groups"]
+		"min-selected-count": 0,
+		"scope":["groups","events"]
 	}]
 }
