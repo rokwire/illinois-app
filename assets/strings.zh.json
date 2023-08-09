@@ -3661,12 +3661,12 @@
 	"model.dining.schedule.label.until":"直到",
 	"model.dining.schedule.label.from":"来自",
 	
-	"model.explore.time.today":"今天",
-	"model.explore.time.tomorrow":"明天",
-	"model.explore.time.at":"在",
-	"model.explore.time.at.format": "{{day}} at {{time}}",
-	"model.explore.time.from_to.format": "{{day}} from {{start_time}} to {{end_time}}",
-	"model.explore.time.all_day": "一整天",
+	"model.explore.date_time.today":"今天",
+	"model.explore.date_time.tomorrow":"明天",
+	"model.explore.date_time.at":"在",
+	"model.explore.date_time.at.format": "{{day}} at {{time}}",
+	"model.explore.date_time.from_to.format": "{{day}} from {{start_time}} to {{end_time}}",
+	"model.explore.date_time.all_day": "一整天",
 	"model.explore.distance.format": "{{distance}} mi away",
 	
 	"model.groups.member.status.pending": "Pending",
