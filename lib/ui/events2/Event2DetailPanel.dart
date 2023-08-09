@@ -58,6 +58,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Event2? _event;
   Survey? _survey;
   Event2PersonsResult? _persons;
+  bool? _hasSurveyResponse;
 
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
   // when sending the appliction to background in iOS.
@@ -67,7 +68,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool _registrationLoading = false;
   bool _eventLoading = false;
   bool _eventProcessing = false;
-  bool? _hasSurveyResponse;
 
   @override
   void initState() {
@@ -163,12 +163,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ),
     ]));
 
-  Widget get _badgeWidget => _isAdmin ?
-  Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-    Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
-      Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
-        Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
-  ))) : Container();
+  Widget get _badgeWidget {
+    String? label = _isAdmin ? Localization().getStringEx('panel.event2.detail.general.admin.title', 'ADMIN') : null;
+    return (label != null) ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+        Semantics(label: event2UserRoleToString(_event?.userRole), excludeSemantics: true, child:
+          Text(event2UserRoleToString(_event?.userRole)?.toUpperCase() ?? 'ADMIN', style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+    ))) : Container();
+  }
 
 
   Widget get _categoriesWidget => 
