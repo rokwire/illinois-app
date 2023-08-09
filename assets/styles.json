@@ -695,6 +695,7 @@
     "transit": {"src": "images/location.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
     "inbox": {"src": "images/icon-news.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
     "guide": {"src": "images/icon-news.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
+    "event": {"src": "images/icon-event.png", "type": "flutter.asset", "size": 18, "todo": "pick better icon, color issue"},
     "events": {"src": "images/icon-calendar.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "pick better icon"},
     "athletics": {"src": "images/icon-athletics-orange.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18, "todo": "size"},
     "groups": {"src": "images/icon-browse-groups.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 18},

@@ -34,15 +34,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event2? event;
   final String? eventId;
+  final Event2? superEvent;
   final Survey? survey;
   final Position? userLocation;
-  Event2DetailPanel({ this.event, this.eventId, this.survey, this.userLocation});
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.userLocation});
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();
@@ -80,6 +82,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ]);
 
     _event = widget.event;
+    _superEvent = widget.superEvent;
     _survey = widget.survey;
     _initEvent();
 
@@ -143,24 +146,25 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       SliverList(delegate:
       SliverChildListDelegate([
         Container(color: Styles().colors?.white, child:
-        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _badgeWidget,
-          _categoriesWidget,
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
           Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _titleWidget,
-            _sponsorWidget,
-            _detailsWidget,
-          ])
-          ),
-          Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
-        ]),
+            _badgeWidget,
+            _categoriesWidget,
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              _titleWidget,
+              _sponsorWidget,
+              _detailsWidget,
+            ])
+            ),
+            Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
+          ]),
         ),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 24), child:
-        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _descriptionWidget,
-          _buttonsWidget,
-        ]))
+          Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _descriptionWidget,
+            _buttonsWidget,
+          ])),
+        _linkedEventsWidget,
       ], addSemanticIndexes:false)
       ),
     ]));
@@ -253,6 +257,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_speakerDetailWidget,
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
+      ...?_superEventDetailWidget,
       ...?_addToCalendarButton,
       ...?_adminSettingsButtonWidget,
       ...?_attendanceDetailWidget,
@@ -266,7 +271,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _dateDetailWidget {
-    String? dateTime = _event?.longDisplayDate;
+    String? dateTime = _event?.longDisplayDateAndTime;
     return (dateTime != null) ? <Widget>[
         _buildTextDetailWidget(dateTime, 'calendar'),
       _detailSpacerWidget
@@ -344,7 +349,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _speakerDetailWidget => StringUtils.isNotEmpty(_event?.speaker) ? <Widget> [
-    _buildTextDetailWidget("${_event?.speaker} (speaker)", "person"),
+    _buildTextDetailWidget("${_event?.speaker} (speaker)", "person",),
     _detailSpacerWidget
   ] : null;
 
@@ -374,6 +379,17 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     return [_buildTextDetailWidget(privacyTypeTitle, "privacy"), _detailSpacerWidget];
   }
+
+  List<Widget>? get _superEventDetailWidget => (_superEvent != null) ? <Widget> [
+    InkWell(onTap: _onSuperEvent, child:
+      _buildTextDetailWidget(_superEvent?.name ?? '', "event",
+        underlined: true,
+        maxLines: 2,
+      ),
+    ),
+    _detailSpacerWidget
+  ] : null;
+
 
   List<Widget>? get _attendanceDetailWidget {
     if (_isAdmin || _isAttendanceTaker) {
@@ -573,6 +589,44 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return null;
   }
 
+  Widget get _linkedEventsWidget => CollectionUtils.isNotEmpty(_linkedEvents) ? SectionSlantHeader(
+      title: _linkedEventsSectionTitle,
+      slantImageKey: "slant-dark",
+      slantColor: Styles().colors!.backgroundVariant,
+      titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
+      children: _linkedEventsCards
+  ) : Container();
+
+
+  String get _linkedEventsSectionTitle {
+    //TMP: return Localization().getStringEx('panel.explore_detail.super_event.schedule.heading.title', 'Event Schedule');
+    if (_event?.grouping?.type == Event2GroupingType.superEvent) {
+      return Localization().getStringEx('panel.explore_detail.super_event.schedule.heading.title', 'Event Schedule');
+    }
+    else if (_event?.grouping?.type == Event2GroupingType.recurrence) {
+      return Localization().getStringEx('panel.explore_detail.recurring_event.schedule.heading.title', 'Available Times');
+    }
+    else {
+      return '';
+    }
+  }
+
+  List<Widget> get _linkedEventsCards {
+    List<Widget> cardWidgets = [];
+    if (_linkedEvents != null) {
+      for (Event2 linkedEvent in _linkedEvents!) {
+        cardWidgets.add(Padding(padding: EdgeInsets.only(bottom: 8), child:
+          Event2Card(linkedEvent,
+            displayMode: Event2CardDisplayMode.link,
+            linkType: _event?.grouping?.type, // TMP: Event2GroupingType.superEvent,
+            onTap: () => _onLinkedEvent(linkedEvent),
+          ),
+        ));
+      }
+    }
+    return cardWidgets;
+  }
+
   Widget get _adminSettingsWidget  =>
       Padding(padding: EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16), child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -666,6 +720,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ) : Container();
 
   //Actions
+
   void _onLocation() {
     Analytics().logSelect(target: "Location Directions: ${_event?.name}");
     _event?.launchDirections();
@@ -703,6 +758,26 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
     if(StringUtils.isNotEmpty(url)){
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
+    }
+  }
+
+  void _onLinkedEvent(Event2 event) {
+    Analytics().logSelect(target: event.name);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,
+      userLocation: _userLocation,
+      superEvent: (_event?.isSuperEvent ?? false) ? _event : null, // TMP: _event, 
+    )));
+  }
+
+  void _onSuperEvent() {
+    Analytics().logSelect(target: _superEvent?.name);
+    if (widget.superEvent?.id == _superEvent?.id) {
+      Navigator.of(context).pop();
+    }
+    else {
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: _superEvent,
+        userLocation: _userLocation,
+      )));
     }
   }
 
@@ -917,7 +992,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Future<void> _initEvent() async {
     
-
     if ((_event == null) && (StringUtils.isNotEmpty(widget.eventId) && mounted)) {
       // Show loading progress only if we need to load the event.
       setState(() {
@@ -954,23 +1028,25 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       }
 
       Event2Grouping? linkedEventsGrouping = _event?.linkedEventsQueryGrouping;
-      int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
+      int? linkedEventsIndex = ((linkedEventsGrouping != null) && (_linkedEvents == null)) ? futures.length : null;
       if (linkedEventsIndex != null) {
         futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
       }
 
-      int? superEventIndex = (_event?.isSuperEventChild ?? false) ? futures.length : null;
+      //TMP: linkedEventsIndex = futures.length;
+      //TMP: futures.add(Events2().loadEvents(Events2Query(searchText: 'Prairie')));
+
+      int? superEventIndex = ((_event?.isSuperEventChild ?? false) && (_superEvent == null)) ? futures.length : null;
       if (superEventIndex != null) {
         futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
       }
-
 
       if (futures.isNotEmpty) {
         List<dynamic> results = await Future.wait(futures);
         Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
         List<SurveyResponse>? surveyResponses = ((surveyResponseIndex != null) && (surveyResponseIndex < results.length) && (results[surveyResponseIndex] is List<SurveyResponse>)) ? results[surveyResponseIndex] : null;
         Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
-        List<Event2>? linkedEvents = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is List<Event2>)) ? results[linkedEventsIndex] : null;
+        Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
         Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
 
         // Handle searching for survey responses if the event survey was just loaded
@@ -989,8 +1065,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           if (persons != null) {
             _persons = persons;
           }
-          if (linkedEvents != null) {
-            _linkedEvents = linkedEvents;
+          if (linkedEventsResult?.events != null) {
+            _linkedEvents = linkedEventsResult?.events;
           }
           if (superEvent != null) {
             _superEvent = superEvent;
@@ -1048,7 +1124,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
       List<SurveyResponse>? surveyResponses = ((surveyResponseIndex != null) && (surveyResponseIndex < results.length) && (results[surveyResponseIndex] is List<SurveyResponse>)) ? results[surveyResponseIndex] : null;
       Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
-      List<Event2>? linkedEvents = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is List<Event2>)) ? results[linkedEventsIndex] : null;
+      Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
       Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
 
       setStateIfMounted(() {
@@ -1067,8 +1143,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         if (persons != null) {
           _persons = persons;
         }
-        if (linkedEvents != null) {
-          _linkedEvents = linkedEvents;
+        if (linkedEventsResult?.events != null) {
+          _linkedEvents = linkedEventsResult?.events;
         }
         if (superEvent != null) {
           _superEvent = superEvent;

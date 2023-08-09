@@ -116,10 +116,11 @@ class Event2ImageCommandButton extends StatelessWidget {
 class Event2Card extends StatefulWidget {
   final Event2 event;
   final Event2CardDisplayMode displayMode;
+  final Event2GroupingType? linkType;
   final Position? userLocation;
   final void Function()? onTap;
   
-  Event2Card(this.event, { Key? key, this.displayMode = Event2CardDisplayMode.list, this.userLocation, this.onTap}) : super(key: key);
+  Event2Card(this.event, { Key? key, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CardState();
@@ -170,6 +171,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     switch (widget.displayMode) {
       case Event2CardDisplayMode.list: return _listContentWidget;
       case Event2CardDisplayMode.page: return _pageContentWidget;
+      case Event2CardDisplayMode.link: return _linkContentWidget;
     }
   }
 
@@ -219,6 +221,45 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       _pageHeadingWidget,
     ],);
 
+  Widget get _linkContentWidget =>
+    Container(decoration: _linkContentDecoration, child:
+      ClipRRect(borderRadius: _linkContentBorderRadius, child: 
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 16, top: 14, bottom: 14), child:
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _linkTitleWidget,
+                _linkDetailWidget,
+              ],),
+            ),
+          ),
+          _favoriteButton
+        ],)
+      ),
+    );
+
+  Widget get _linkTitleWidget {
+    String? title;
+    if (widget.linkType == Event2GroupingType.superEvent) {
+      title = widget.event.name;
+    }
+    else if (widget.linkType == Event2GroupingType.recurrence) {
+      title = widget.event.shortDisplayDate;
+    }
+    return Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"), maxLines: 2, overflow: TextOverflow.ellipsis,);
+  }
+
+  Widget get _linkDetailWidget {
+    String? detail;
+    if (widget.linkType == Event2GroupingType.superEvent) {
+      detail = widget.event.shortDisplayDateAndTime;
+    }
+    else if (widget.linkType == Event2GroupingType.recurrence) {
+      detail = widget.event.shortDisplayTime;
+    }
+    return Text(detail ?? '', style: Styles().textStyles?.getTextStyle("widget.item.small"), maxLines: 1, overflow: TextOverflow.ellipsis,);
+  }
+
   String get _semanticsLabel => '';//'''TODO custom label if needed';
   String get _semanticsHint => '';//'''TODO custom hint if needed';
 
@@ -239,6 +280,15 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   );
 
   BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.vertical(bottom: Radius.circular(4));
+
+  Decoration get _linkContentDecoration => BoxDecoration(
+    color: Styles().colors?.white,
+    borderRadius: _linkContentBorderRadius,
+    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 2.0, offset: Offset(0, 1))]
+  );
+
+  BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.circular(4.0);
 
   bool get _hasImage => StringUtils.isNotEmpty(widget.event.imageUrl);
 
@@ -335,7 +385,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   List<Widget>? get _dateDetailWidget {
-    String? dateTime = widget.event.shortDisplayDate;
+    String? dateTime = widget.event.shortDisplayDateAndTime;
     return (dateTime != null) ? <Widget>[_buildTextDetailWidget(dateTime, 'calendar')] : null;
   }
 
@@ -416,7 +466,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 }
 
-enum Event2CardDisplayMode { list, page }
+enum Event2CardDisplayMode { list, page, link }
 
 class Event2Popup {
   
