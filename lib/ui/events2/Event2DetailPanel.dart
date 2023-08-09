@@ -57,8 +57,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Event2? _event;
   Survey? _survey;
-  Event2PersonsResult? _persons;
   bool? _hasSurveyResponse;
+  Event2PersonsResult? _persons;
+  List<Event2>? _linkedEvents;
+  Event2? _superEvent;
 
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
   // when sending the appliction to background in iOS.
@@ -391,7 +393,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     String? description;
     bool hasRegistration = _event?.registrationDetails?.requiresRegistration ?? false;
     bool hasAttendance = _event?.attendanceDetails?.isNotEmpty ?? false;
-    bool hasSurvey = (_event?.surveyDetails?.isNotEmpty ?? false) && (_survey != null);
+    bool hasSurvey = (_event?.hasSurvey ?? false) && (_survey != null);
     bool showSurvey = (_isAttendee || _isAdmin) && hasAttendance && hasSurvey;
     int surveyHours = _event?.surveyDetails?.hoursAfterEvent ?? 0;
 
@@ -915,69 +917,83 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Future<void> _initEvent() async {
     
-    String? eventId = widget.event?.id ?? widget.eventId;
 
-    Event2? event, theEvent;
-    if (_event != null) {
-      theEvent = _event;
-    }
-    else if (StringUtils.isNotEmpty(widget.eventId) && mounted) {
+    if ((_event == null) && (StringUtils.isNotEmpty(widget.eventId) && mounted)) {
       // Show loading progress only if we need to load the event.
       setState(() {
         _eventLoading = true;
       });
-      theEvent = event = await Events2().loadEvent(widget.eventId!);
+      Event2? event = await Events2().loadEvent(widget.eventId!);
       setStateIfMounted(() {
         _event = event;
         _eventLoading = false;
       });
     }
 
-    // We need the survey and persons only if event has a survey attached.
-    if ((eventId != null) &&
-        (theEvent?.attendanceDetails?.isNotEmpty ?? false) &&
-        (theEvent?.surveyDetails?.isNotEmpty ?? false) &&
-        mounted) {
+    // Load additional stuff that we need for this event.
+    String? eventId = _event?.id;
+    if ((eventId != null) && mounted) {
       
       List<Future<dynamic>> futures = [];
 
-      int? surveyIndex = (_survey == null) ? futures.length : null;
+      // We need the survey and persons only if event has a survey attached.
+
+      int? surveyIndex = ((_event?.hasSurvey == true) && (_survey == null)) ? futures.length : null;
       if (surveyIndex != null) {
         futures.add(Surveys().loadEvent2Survey(eventId));
       }
 
-      // Handle searching for existing responses if we already have the survey
-      int? surveyResponseIndex = (_survey?.id != null) ? futures.length : null;
+      int? surveyResponseIndex = ((_event?.hasSurvey == true) && (_survey?.id != null)) ? futures.length : null;
       if (surveyResponseIndex != null) {
         futures.add(Surveys().loadSurveyResponses(surveyIDs: [_survey!.id]));
       }
 
-      int? peopleIndex = (_persons == null) ? futures.length : null;
+      int? peopleIndex = ((_event?.hasSurvey == true) && (_persons == null)) ? futures.length : null;
       if (peopleIndex != null) {
         futures.add(Events2().loadEventPeople(eventId));
       }
+
+      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsQueryGrouping;
+      int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
+      if (linkedEventsIndex != null) {
+        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
+      }
+
+      int? superEventIndex = (_event?.isSuperEventChild ?? false) ? futures.length : null;
+      if (superEventIndex != null) {
+        futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
+      }
+
 
       if (futures.isNotEmpty) {
         List<dynamic> results = await Future.wait(futures);
         Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
         List<SurveyResponse>? surveyResponses = ((surveyResponseIndex != null) && (surveyResponseIndex < results.length) && (results[surveyResponseIndex] is List<SurveyResponse>)) ? results[surveyResponseIndex] : null;
         Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
+        List<Event2>? linkedEvents = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is List<Event2>)) ? results[linkedEventsIndex] : null;
+        Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
 
         // Handle searching for survey responses if the event survey was just loaded
-        if (surveyResponseIndex == null && survey?.id != null) {
+        if ((_event?.hasSurvey == true) && (surveyResponseIndex == null) && (survey?.id != null)) {
           surveyResponses = await Surveys().loadSurveyResponses(surveyIDs: [survey!.id]);
         }
 
         setStateIfMounted(() {
           _eventLoading = false;
-          if (persons != null) {
-            _persons = persons;
-          }
           if (survey != null) {
             _survey = survey;
           }
           if (surveyResponses != null) {
             _hasSurveyResponse = surveyResponses.isNotEmpty;
+          }
+          if (persons != null) {
+            _persons = persons;
+          }
+          if (linkedEvents != null) {
+            _linkedEvents = linkedEvents;
+          }
+          if (superEvent != null) {
+            _superEvent = superEvent;
           }
         });
       }
@@ -998,20 +1014,33 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         Events2().loadEvent(eventId),
       ];
       
-      int? surveyIndex = ((_event?.attendanceDetails?.isNotEmpty ?? false) && (_event?.surveyDetails?.isNotEmpty ?? false)) ? futures.length : null;
+      // We need the survey and persons only if event has a survey attached.
+
+      int? surveyIndex = (_event?.hasSurvey == true) ? futures.length : null;
       if (surveyIndex != null) {
         futures.add(Surveys().loadEvent2Survey(eventId));
       }
 
       // Handle searching for existing survey responses
-      int? surveyResponseIndex = (_survey?.id != null) ? futures.length : null;
+      int? surveyResponseIndex = ((_event?.hasSurvey == true) && (_survey?.id != null)) ? futures.length : null;
       if (surveyResponseIndex != null) {
         futures.add(Surveys().loadSurveyResponses(surveyIDs: [_survey!.id]));
       }
 
-      int? peopleIndex = ((_event?.attendanceDetails?.isNotEmpty ?? false) && (_event?.surveyDetails?.isNotEmpty ?? false)) ? futures.length : null;
+      int? peopleIndex = (_event?.hasSurvey == true) ? futures.length : null;
       if (peopleIndex != null) {
         futures.add(Events2().loadEventPeople(eventId));
+      }
+
+      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsQueryGrouping;
+      int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
+      if (linkedEventsIndex != null) {
+        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
+      }
+
+      int? superEventIndex = (_event?.isSuperEventChild ?? false) ? futures.length : null;
+      if (superEventIndex != null) {
+        futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
       }
 
       List<dynamic> results = await Future.wait(futures);
@@ -1019,39 +1048,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
       List<SurveyResponse>? surveyResponses = ((surveyResponseIndex != null) && (surveyResponseIndex < results.length) && (results[surveyResponseIndex] is List<SurveyResponse>)) ? results[surveyResponseIndex] : null;
       Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
-
-      futures.clear();
-
-      // Handle the case if after refreshing event the surveyDetails get not empty
-      int? surveyIndex2 = ((surveyIndex == null) && (event?.attendanceDetails?.isNotEmpty ?? false) && (event?.surveyDetails?.isNotEmpty ?? false)) ? futures.length : null;
-      if (surveyIndex2 != null) {
-        futures.add(Surveys().loadEvent2Survey(eventId));
-      }
-
-      // Handle searching for existing survey responses if we found a new survey during refresh
-      int? surveyResponseIndex2 = ((surveyResponseIndex == null) && (survey?.id != null)) ? futures.length : null;
-      if (surveyResponseIndex2 != null) {
-        futures.add(Surveys().loadSurveyResponses(surveyIDs: [survey!.id]));
-      }
-
-      // Handle the case if after refreshing event the registrationDetails/attendanceDetails require loading persons
-      int? peopleIndex2 = ((peopleIndex == null) && (event?.attendanceDetails?.isNotEmpty ?? false) && (_event?.surveyDetails?.isNotEmpty ?? false)) ? futures.length : null;
-      if (peopleIndex2 != null) {
-        futures.add(Events2().loadEventPeople(eventId));
-      }
-
-      if (futures.isNotEmpty) {
-        results = await Future.wait(futures);
-        if ((peopleIndex2 != null) && (peopleIndex2 < results.length) && (results[peopleIndex2] is Event2PersonsResult)) {
-          persons = results[peopleIndex2];
-        }
-        if ((surveyIndex2 != null) && (surveyIndex2 < results.length) && (results[surveyIndex2] is Survey)) {
-          survey = results[surveyIndex2];
-        }
-        if ((surveyResponseIndex2 != null) && (surveyResponseIndex2 < results.length) && (results[surveyResponseIndex2] is List<SurveyResponse>)) {
-          surveyResponses = results[surveyResponseIndex2];
-        }
-      }
+      List<Event2>? linkedEvents = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is List<Event2>)) ? results[linkedEventsIndex] : null;
+      Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
 
       setStateIfMounted(() {
         if (progress != null) {
@@ -1060,14 +1058,20 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         if (event != null) {
           _event = event;
         }
-        if (persons != null) {
-          _persons = persons;
-        }
         if (survey != null) {
           _survey = survey;
         }
         if (surveyResponses != null) {
           _hasSurveyResponse = surveyResponses.isNotEmpty;
+        }
+        if (persons != null) {
+          _persons = persons;
+        }
+        if (linkedEvents != null) {
+          _linkedEvents = linkedEvents;
+        }
+        if (superEvent != null) {
+          _superEvent = superEvent;
         }
       });
     }
@@ -1088,5 +1092,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool get _isAttendee => (_persons?.attendees?.indexWhere((person) => person.identifier?.accountId == Auth2().accountId) ?? -1) > -1;
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
+}
 
+extension _Event2Ext on Event2 {
+
+  bool get hasSurvey => (attendanceDetails?.isNotEmpty ?? false) && (surveyDetails?.isNotEmpty ?? false);
+
+  Event2Grouping? get linkedEventsQueryGrouping {
+    if (isSuperEvent) {
+      return Event2Grouping.superEvent(id);
+    }
+    else if (isRecurring) {
+      return Event2Grouping.recurrence(grouping?.recurrenceId);
+    }
+    else {
+      return null;
+    }
+  }
 }
