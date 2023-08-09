@@ -272,7 +272,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _onlineDetailWidget {
-    if (_event?.online == true) {
+    if (_event?.isOnline == true) {
       bool canLaunch = StringUtils.isNotEmpty(_event?.onlineDetails?.url);
       List<Widget> details = <Widget>[
         InkWell(onTap: canLaunch ? _onOnline : null, child:
@@ -296,7 +296,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   List<Widget>? get _locationDetailWidget {
-    if (_event?.inPerson == true) {
+    if (_event?.isInPerson == true) {
 
       bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
 

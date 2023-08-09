@@ -340,13 +340,13 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   List<Widget>? get _onlineDetailWidget {
-    return widget.event.online ? <Widget>[
+    return widget.event.isOnline ? <Widget>[
       _buildTextDetailWidget('Online', 'laptop')
     ] : null;
   }
 
   List<Widget>? get _locationDetailWidget {
-    if (widget.event.inPerson) {
+    if (widget.event.isInPerson) {
 
       List<Widget> details = <Widget>[
         _buildTextDetailWidget('In Person', 'location'),
