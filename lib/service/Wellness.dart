@@ -284,7 +284,7 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     }
   }
 
-  Future<List<ToDoItem>?> loadToDoItems() async {
+  Future<List<ToDoItem>?> loadToDoItems(int? limit, int? offset,) async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo items. Missing wellness url.');
       return null;
@@ -293,8 +293,24 @@ class Wellness with Service implements NotificationsListener, ContentItemCategor
     http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
+    if (url != null && url.isNotEmpty) {
+      Map<String, String> queryParams = {};
+      if (limit != null) {
+        queryParams['limit'] = limit.toString();
+      }
+      if (offset != null) {
+        queryParams['offset'] = offset.toString();
+      }
+
+      // if (startDate != null) {
+      //   String? startDateFormatted = AppDateTime().dateTimeLocalToJson(startDate);
+      //   queryParams['start_date'] = startDateFormatted!;
+      // }
+
+    }
     if (responseCode == 200) {
       List<ToDoItem>? items = ToDoItem.listFromJson(JsonUtils.decodeList(responseString));
+
       return items;
     } else {
       Log.w('Failed to load wellness todo items. Response:\n$responseCode: $responseString');

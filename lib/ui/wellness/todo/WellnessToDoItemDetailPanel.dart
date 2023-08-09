@@ -677,10 +677,6 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       return;
     }
 
-    if(_dueDate == null || _dueTime == null){
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.item.empty.name.msg', 'Please, pick due date and time.'));
-      return;
-    }
     _increaseProgress();
     bool hasDueTime = false;
     if (_dueDate != null) {
@@ -729,22 +725,22 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     print(_dueDate?.weekday);
       switch(_selectedRecurringType){
         case "Daily":{
-          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + " ? * * *";
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + " " + (_dueTime?.hour.toString() ?? "0") + " ? * * *";
         }
         case "Does not repeat":{
           return "none";
         }
         case "Weekly":{
-          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + " ? * " + (_getWeekdayFromCode(_dueDate?.weekday ?? 0)) + " *";
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + " " + (_dueTime?.hour.toString() ?? "0") + " ? * " + (_getWeekdayFromCode(_dueDate?.weekday ?? 0)) + " *";
         }
         case "Monthly":{
-          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + (_dueDate?.day.toString() ?? "0") + " * ? *";
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + " " + (_dueTime?.hour.toString() ?? "0") + " " +(_dueDate?.day.toString() ?? "0") + " * ? *";
         }
         case "Annually":{
-          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + (_dueDate?.day.toString() ?? "0") + (_getMonthFromCode(_dueDate?.month ?? 0)) + " ? *";
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + " " + (_dueTime?.hour.toString() ?? "0") + " " + (_dueDate?.day.toString() ?? "0") + " " + (_getMonthFromCode(_dueDate?.month ?? 0)) + " ? *";
         }
         case "Weekdays":{
-          return "0 " + (_dueTime?.minute.toString() ?? "0") + (_dueTime?.hour.toString() ?? "0") + "? *" + "MON,TUE,WED,THU,FRI " + "*";
+          return "0 " + (_dueTime?.minute.toString() ?? "0") + " " + (_dueTime?.hour.toString() ?? "0") + "? *" + "MON,TUE,WED,THU,FRI " + "*";
         }
         default:{
           return "0 0 0 ? * * *";

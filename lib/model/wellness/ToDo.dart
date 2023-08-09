@@ -26,7 +26,7 @@ class ToDoItem {
   final String? id;
   final String? name;
   final ToDoCategory? category;
-  final DateTime? dueDateTimeUtc;
+  DateTime? dueDateTimeUtc;
   final bool? hasDueTime;
   ToDoReminderType? reminderType;
   DateTime? reminderDateTimeUtc;
@@ -35,6 +35,7 @@ class ToDoItem {
   final String? description;
   bool isCompleted;
   final String? recurrenceType;
+  final String? recurrenceId;
 
   ToDoItem(
       {this.id,
@@ -48,7 +49,8 @@ class ToDoItem {
       this.location,
       this.description,
       this.isCompleted = false,
-      this.recurrenceType});
+      this.recurrenceType,
+      this.recurrenceId});
 
   static ToDoItem? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -66,7 +68,9 @@ class ToDoItem {
         location: JsonUtils.stringValue(json['location']),
         description: JsonUtils.stringValue(json['description']),
         recurrenceType: JsonUtils.stringValue(json['recurrence_type']),
+        recurrenceId: JsonUtils.stringValue(json['recurrence_id']),
         isCompleted: JsonUtils.boolValue(json['completed']) ?? false);
+
   }
 
   Map<String, dynamic> toJson() {
@@ -83,6 +87,7 @@ class ToDoItem {
       'description': description,
       'completed': isCompleted,
       'recurrence_type' : recurrenceType,
+      'recurrence_id' : recurrenceId,
     };
     json.removeWhere((key, value) => (value == null));
     return json;

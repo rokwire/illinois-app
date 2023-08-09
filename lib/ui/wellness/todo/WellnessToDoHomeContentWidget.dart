@@ -29,6 +29,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessToDoHomeContentWidget extends StatefulWidget {
@@ -42,10 +43,15 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   static final String _unAssignedLabel =
       Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
   late _ToDoTab _selectedTab;
-  List<ToDoItem>? _todoItems;
+  List<ToDoItem> _todoItems = [];
+  List<ToDoItem> _recurringTodoItems = [];
   late DateTime _calendarStartDate;
   late DateTime _calendarEndDate;
   bool _itemsLoading = false;
+  late ScrollPagerController _scrollPagerController;
+  final ScrollController _scrollController = ScrollController();
+
+  int _limit = 30;
 
   @override
   void initState() {
@@ -59,18 +65,32 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     ]);
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
-    _loadToDoItems();
+    // _loadToDoItems();
+
+    _scrollPagerController = ScrollPagerController(limit: _limit, onPage: _loadTodos, onStateChanged: (){
+      if (mounted) {
+        setState(() { });
+      }
+    }, onReset: () {
+      _todoItems = [];
+      _recurringTodoItems = [];
+    });
+
+    _scrollPagerController.registerScrollController(_scrollController);
+
     if (Wellness().isToDoListAccessed != true) {
       Wellness().toDoListAccessed(true);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showWelcomePopup();
       });
     }
+
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -91,7 +111,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
           _buildManageButtonsRow(),
           _buildCalendarWidget(),
           _buildItemsContent(),
-          _buildClearCompletedItemsButton()
+          // _buildClearCompletedItemsButton()
         ]));
   }
 
@@ -294,6 +314,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildItemsContent() {
+
     if (_sortedItemsMap != null) {
       List<Widget> contentList = <Widget>[];
       for (String key in _sortedItemsMap!.keys) {
@@ -305,6 +326,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
           }
         }
       }
+
+      return ScrollPager(
+        controller: _scrollPagerController,
+        child: Column(children: contentList),
+      );
       return Column(children: contentList);
     } else {
       return _buildEmptyContent();
@@ -483,14 +509,14 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _calendarEndDate = now.add(Duration(days: (7 - (now.weekday + 1))));
   }
 
-  void _loadToDoItems() {
-    _setItemsLoading(true);
-    Wellness().loadToDoItems().then((items) {
-      _todoItems = items;
-      _sortItemsByDate();
-      _setItemsLoading(false);
-    });
-  }
+  // void _loadToDoItems() {
+  //   _setItemsLoading(true);
+  //   Wellness().loadToDoItems().then((items) {
+  //     _todoItems = items;
+  //     _sortItemsByDate();
+  //     _setItemsLoading(false);
+  //   });
+  // }
 
   void _sortItemsByDate() {
     if (CollectionUtils.isEmpty(_todoItems)) {
@@ -532,16 +558,21 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (CollectionUtils.isEmpty(_todoItems)) {
       return null;
     }
+
     Map<String, List<ToDoItem>> itemsMap = {};
+    List<ToDoItem>? categoryItems;
     for (ToDoItem item in _todoItems!) {
       String itemKey = _getItemKeyByTab(item)!;
-      List<ToDoItem>? categoryItems = itemsMap[itemKey];
+      categoryItems = itemsMap[itemKey];
       if (categoryItems == null) {
         categoryItems = <ToDoItem>[];
       }
       categoryItems.add(item);
       itemsMap[itemKey] = categoryItems;
     }
+
+    _sortItemsByDate();
+
     if (_selectedTab != _ToDoTab.category) {
       return itemsMap;
     }
@@ -635,9 +666,67 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         (name == Wellness.notifyToDoItemsDeleted) ||
         (name == Wellness.notifyToDoCategoryChanged) ||
         (name == Wellness.notifyToDoCategoryDeleted)) {
-      _loadToDoItems();
+        _scrollPagerController.reset();
+
     }
   }
+
+  Future<int> _loadTodos({required int limit, required int offset}) async {
+    List<ToDoItem>? responses = await Wellness().loadToDoItems(limit, offset);
+    if (mounted && responses != null) {
+      setState(() {
+        _todoItems?.addAll(responses);
+        _recurringTodoItems.addAll(_todoItems.where((element) => element.recurrenceType != null && element.recurrenceType != "none" && element.recurrenceId == null));
+        _fillRecurringTodos();
+      });
+    }
+    return responses?.length ?? -1;
+  }
+
+  void _fillRecurringTodos(){
+    DateTime? date = _recurringTodoItems[0].dueDateTimeUtc ?? DateTime.now();
+    List<ToDoItem> recurringItems = [];
+    while(_todoItems.length + recurringItems.length < _limit){
+      for(ToDoItem item in _recurringTodoItems){
+        if(_isSameDate(item.dueDateTimeUtc, date)){
+          continue;
+        }
+        else if(date!.isBefore(item?.dueDateTimeUtc ?? DateTime.now())){
+          continue;
+        }
+        else if(_todoItems.map((e) => e.dueDateTimeUtc.toString()).contains(date.toString())
+        && _todoItems.map((e) => e.id).contains(item.id)){
+          continue;
+        }else{
+          //every day occ
+          if(item.recurrenceType?.substring((item.recurrenceType?.length ?? 0) -5, (item.recurrenceType?.length ?? 0)) == "* * *"){
+            ToDoItem toDoItem = ToDoItem(
+                name: item.name,
+                category: item.category,
+                dueDateTimeUtc: date,
+                hasDueTime:  item.hasDueTime,
+                reminderType:  item.reminderType,
+                reminderDateTimeUtc: item.reminderDateTimeUtc,
+                workDays:  item.workDays,
+                location:  item.location,
+                description:  item.description,
+                isCompleted: false,
+                recurrenceType:  item.recurrenceType,
+                recurrenceId:  item.id
+            );
+            recurringItems.add(toDoItem);
+          }
+        }
+      }
+      date = date?.add(Duration(days: 1));
+    }
+    _todoItems.addAll(recurringItems);
+  }
+
+  bool _isSameDate(DateTime? item, DateTime? date){
+    return item?.month == date?.month && item?.day == date?.day;
+  }
+
 }
 
 class _ToDoItemCard extends StatefulWidget {
@@ -687,15 +776,15 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
     widget.item.isCompleted = !widget.item.isCompleted;
     AppSemantics.announceCheckBoxStateChange(context, widget.item.isCompleted , widget.item.name);
     _setLoading(true);
-    Wellness().updateToDoItem(widget.item).then((success) {
-      if (!success) {
-        // revert value if update fails
-        widget.item.isCompleted = !widget.item.isCompleted;
-        String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
-        AppAlert.showDialogResult(context, msg);
-      }
-      _setLoading(false);
-    });
+     Wellness().updateToDoItem(widget.item).then((success) {
+       if (!success) {
+         // revert value if update fails
+         widget.item.isCompleted = !widget.item.isCompleted;
+         String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
+         AppAlert.showDialogResult(context, msg);
+       }
+       _setLoading(false);
+     });
   }
 
   void _onTapEdit(ToDoItem item) {
@@ -931,4 +1020,6 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
   String get _formattedTime {
     return AppDateTime().formatDateTime(_reminderDateTime, format: 'hh : mm a', ignoreTimeZone: true)!;
   }
+
+
 }

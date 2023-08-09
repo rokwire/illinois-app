@@ -174,14 +174,14 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
 
   void _loadToDoItems() {
     _setLoading(true);
-    Wellness().loadToDoItems().then((items) {
+    Wellness().loadToDoItems(5,0).then((items) {
       _toDoItems = items;
       _setLoading(false);
     });
   }
 
   void _refreshItems() {
-    Wellness().loadToDoItems().then((items) {
+    Wellness().loadToDoItems(5,0).then((items) {
       _toDoItems = items;
       _updateState();
     });
