@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Improve event survey UI [#3500](https://github.com/rokwire/illinois-app/issues/3500).
+- Bring back College and Department attributes for Event2 and remove Univerity Affiliation [#3500](https://github.com/rokwire/illinois-app/issues/3500)
+- Do not require at least one attribute set when creating groups [#3500](https://github.com/rokwire/illinois-app/issues/3500).
 
 ## [5.0.42] - 2023-08-08
 ### Changed
