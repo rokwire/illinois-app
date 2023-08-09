@@ -615,13 +615,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     List<Widget> cardWidgets = [];
     if (_linkedEvents != null) {
       for (Event2 linkedEvent in _linkedEvents!) {
-        cardWidgets.add(Padding(padding: EdgeInsets.only(bottom: 8), child:
-          Event2Card(linkedEvent,
-            displayMode: Event2CardDisplayMode.link,
-            linkType: _event?.grouping?.type, // TMP: Event2GroupingType.superEvent,
-            onTap: () => _onLinkedEvent(linkedEvent),
-          ),
-        ));
+        if (linkedEvent.id != _event?.id) {
+          cardWidgets.add(Padding(padding: EdgeInsets.only(bottom: 8), child:
+            Event2Card(linkedEvent,
+              displayMode: Event2CardDisplayMode.link,
+              linkType: _event?.grouping?.type, // TMP: Event2GroupingType.superEvent,
+              onTap: () => _onLinkedEvent(linkedEvent),
+            ),
+          ));
+        }
       }
     }
     return cardWidgets;
