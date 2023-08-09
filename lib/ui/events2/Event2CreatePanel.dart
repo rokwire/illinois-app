@@ -12,6 +12,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';
@@ -45,8 +46,9 @@ class Event2CreatePanel extends StatefulWidget {
 
   final Event2? event;
   final Survey? survey;
+  final GroupEventBindingPrefs? groupEventPrefs; //TBD implement group event binding
 
-  Event2CreatePanel({Key? key, this.event, this.survey}) : super(key: key);
+  Event2CreatePanel({Key? key, this.event, this.survey, this.groupEventPrefs}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CreatePanelState();

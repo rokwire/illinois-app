@@ -27,6 +27,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -1033,4 +1034,17 @@ class Event2FilterParam {
       }
     }
   }
+}
+
+
+class GroupEventBindingPrefs {
+  Group? group;
+
+  String? bindingButtonName;
+  dynamic Function(BuildContext context, Event2 updatedEvent, List<Member>? selection)? onBind;
+
+  GroupEventBindingPrefs({
+    this.group,
+    this.bindingButtonName, this.onBind
+  });
 }

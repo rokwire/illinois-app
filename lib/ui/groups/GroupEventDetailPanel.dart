@@ -3,7 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -20,7 +23,6 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -33,13 +35,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final Event? event;
+  final Event2? event2;
   final Group? group;
   final bool previewMode;
+  @deprecated
+  final Event? event;
 
   String? get groupId => group?.id;
 
-  const GroupEventDetailPanel({Key? key,this.previewMode = false, this.event, this.group}) : super(key: key);
+  const GroupEventDetailPanel({Key? key,this.previewMode = false, this.group, this.event2, @deprecated this.event}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -55,11 +59,13 @@ class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttri
 class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with NotificationsListener{
   List<Group> _adminGroups = [];
   Event? _event;
+  Event2? _event2;
   Group? _currentlySelectedGroup;
 
   @override
   void initState() {
     _event = widget.event;
+    _event2 = widget.event2;
     Groups().loadGroups(contentType: GroupsContentType.my).then((groups) {
       if(groups?.isNotEmpty ?? false){
         _adminGroups = groups!.where((group) => group.currentUserIsAdmin).toList();
@@ -556,26 +562,27 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapEdit(){
     Analytics().logSelect(target: 'Edit Event');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: _event, onEditTap: (BuildContext context, Event event, List<Member>? selection) {
-      Groups().updateGroupEvents(event).then((String? id) {
-        if (StringUtils.isNotEmpty(id)) {
-          Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: selection).then((success){
-              if(success){
-                Navigator.pop(context);
-              } else {
-                AppAlert.showDialogResult(context, "Unable to update event members");
-              }
-          }).catchError((_){
-            AppAlert.showDialogResult(context, "Error Occurred while updating event members");
-          });
-        }
-        else {
-          AppAlert.showDialogResult(context, "Unable to update event");
-        }
-      }).catchError((_){
-        AppAlert.showDialogResult(context, "Error Occurred while updating event");
-      });
-    },)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event2, groupEventPrefs: GroupEventBindingPrefs(group: widget.group,  bindingButtonName: "TBD GroupWidgets editEvent",
+      onBind: (BuildContext context, Event2 event, List<Member>? selection) {
+        Groups().updateGroupEvents(event).then((String? id) {
+          if (StringUtils.isNotEmpty(id)) {
+            Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: selection).then((success){
+                if(success){
+                  Navigator.pop(context);
+                } else {
+                  AppAlert.showDialogResult(context, "Unable to update event members");
+                }
+            }).catchError((_){
+              AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+            });
+          }
+          else {
+            AppAlert.showDialogResult(context, "Unable to update event");
+          }
+        }).catchError((_){
+          AppAlert.showDialogResult(context, "Error Occurred while updating event");
+        });
+    }))));
   }
 
   void _onTapDelete(){
@@ -588,9 +595,12 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _deleteEvent(){
-    Groups().deleteEventFromGroup(event: _event!, groupId: widget.groupId).then((value){
-      Navigator.of(context).pop();
-    });
+    if(_event2 != null) {
+      Groups().deleteEventFromGroup(event: _event2!, groupId: widget.groupId)
+        .then((value) {
+          Navigator.of(context).pop();
+        });
+    }
   }
 
   void _onTapWebButton(String? url, { String? analyticsName }) {

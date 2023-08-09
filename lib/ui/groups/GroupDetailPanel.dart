@@ -23,7 +23,7 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -91,7 +91,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
-  List<Event>?       _groupEvents;
+  List<Event2>?       _groupEvents;
   List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>?      _groupAdmins;
 
@@ -274,7 +274,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event2>>? eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
@@ -287,7 +287,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _refreshEvents() {
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event2>>? eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
@@ -885,7 +885,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 //    }
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
-      for (Event? groupEvent in _groupEvents!) {
+      for (Event2? groupEvent in _groupEvents!) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: _group));
       }
 

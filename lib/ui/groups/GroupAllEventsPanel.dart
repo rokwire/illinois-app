@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -24,11 +24,11 @@ class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttribu
 }
 
 class _GroupAllEventsState extends State<GroupAllEventsPanel>{
-  List<Event>?   _groupEvents;
+  List<Event2>?   _groupEvents;
 
   @override
   void initState() {
-    Groups().loadEvents(widget.group).then((Map<int, List<Event>>? eventsMap) {
+    Groups().loadEvents(widget.group).then((Map<int, List<Event2>>? eventsMap) {
       if (mounted) {
         setState(() {
           _groupEvents = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
@@ -63,7 +63,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
     List<Widget> content = [];
 
     if (_groupEvents != null) {
-      for (Event? groupEvent in _groupEvents!) {
+      for (Event2? groupEvent in _groupEvents!) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group,));
       }
     }
