@@ -776,15 +776,27 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
     widget.item.isCompleted = !widget.item.isCompleted;
     AppSemantics.announceCheckBoxStateChange(context, widget.item.isCompleted , widget.item.name);
     _setLoading(true);
-     Wellness().updateToDoItem(widget.item).then((success) {
-       if (!success) {
-         // revert value if update fails
-         widget.item.isCompleted = !widget.item.isCompleted;
-         String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
-         AppAlert.showDialogResult(context, msg);
-       }
-       _setLoading(false);
-     });
+    if(widget.item.id != null){
+      Wellness().updateToDoItem(widget.item).then((success) {
+        if (!success) {
+          // revert value if update fails
+          widget.item.isCompleted = !widget.item.isCompleted;
+          String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
+          AppAlert.showDialogResult(context, msg);
+        }
+
+      });
+    }else{
+      Wellness().createToDoItem(widget.item).then((success) {
+        if (!success) {
+          // revert value if update fails
+          widget.item.isCompleted = !widget.item.isCompleted;
+          String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
+          AppAlert.showDialogResult(context, msg);
+        }
+      });
+    }
+    _setLoading(false);
   }
 
   void _onTapEdit(ToDoItem item) {
