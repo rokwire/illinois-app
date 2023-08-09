@@ -81,10 +81,10 @@ extension Event2Ext on Event2 {
     Analytics.LogAttributeLocation : location?.analyticsValue,
   };
 
-  String? get shortDisplayDate => _buildDisplayDate(longFormat: false);
-  String? get longDisplayDate => _buildDisplayDate(longFormat: true);
+  String? get shortDisplayDateAndTime => _buildDisplayDateAndTime(longFormat: false);
+  String? get longDisplayDateAndTime => _buildDisplayDateAndTime(longFormat: true);
   
-  String? _buildDisplayDate({bool longFormat = false}) {
+  String? _buildDisplayDateAndTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
       TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
       TZDateTime nowMidnightUni = TZDateTimeUtils.dateOnly(nowUni);
@@ -106,8 +106,8 @@ extension Event2Ext on Event2 {
         
         String displayDay;
         switch(statDaysDiff) {
-          case 0: displayDay = Localization().getStringEx('model.explore.time.today', 'Today'); break;
-          case 1: displayDay = Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow'); break;
+          case 0: displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today'); break;
+          case 1: displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow'); break;
           default: displayDay = DateFormat(startDateFormat).format(startDateTimeUni);
         }
 
@@ -115,13 +115,13 @@ extension Event2Ext on Event2 {
           String displayStartTime = DateFormat((startDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeUni).toLowerCase();
           if ((endDateTimeUni != null) && (TimeOfDay.fromDateTime(startDateTimeUni) != TimeOfDay.fromDateTime(endDateTimeUni))) {
            String displayEndTime = DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
-            return Localization().getStringEx('model.explore.time.from_to.format', '{{day}} from {{start_time}} to {{end_time}}').
+            return Localization().getStringEx('model.explore.date_time.from_to.format', '{{day}} from {{start_time}} to {{end_time}}').
               replaceAll('{{day}}', displayDay).
               replaceAll('{{start_time}}', displayStartTime).
               replaceAll('{{end_time}}', displayEndTime);
           }
           else {
-            return Localization().getStringEx('model.explore.time.at.format', '{{day}} at {{time}}').
+            return Localization().getStringEx('model.explore.date_time.at.format', '{{day}} at {{time}}').
               replaceAll('{{day}}', displayDay).
               replaceAll('{{time}}', displayStartTime);
           }
@@ -149,6 +149,108 @@ extension Event2Ext on Event2 {
             displayDateTime += differentStartAndEndDays ? ', ' : '';
             displayDateTime += DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
           }
+        }
+        return displayDateTime;
+      }
+    }
+    else {
+      return null;
+    }
+  }
+
+  String? get shortDisplayDate => _buildDisplayDate(longFormat: false);
+  String? get longDisplayDate => _buildDisplayDate(longFormat: true);
+
+  String? _buildDisplayDate({bool longFormat = false}) {
+    if (startTimeUtc != null) {
+      TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
+      TZDateTime nowMidnightUni = TZDateTimeUtils.dateOnly(nowUni);
+
+      TZDateTime startDateTimeUni = startTimeUtc!.toUniOrLocal();
+      TZDateTime startDateTimeMidnightUni = TZDateTimeUtils.dateOnly(startDateTimeUni);
+      int statDaysDiff = startDateTimeMidnightUni.difference(nowMidnightUni).inDays;
+
+      TZDateTime? endDateTimeUni = endTimeUtc?.toUniOrLocal();
+      TZDateTime? endDateTimeMidnightUni = (endDateTimeUni != null) ? TZDateTimeUtils.dateOnly(endDateTimeUni) : null;
+      int? endDaysDiff = (endDateTimeMidnightUni != null) ? endDateTimeMidnightUni.difference(nowMidnightUni).inDays : null;
+
+      bool differentStartAndEndDays = (statDaysDiff != endDaysDiff);
+
+      bool showStartYear = (nowUni.year != startDateTimeUni.year);
+      String startDateFormat = (longFormat ? 'EEE, MMM d' : 'MMM d') + (showStartYear ? ', yyyy' : '');
+
+      if ((endDaysDiff == null) || (endDaysDiff == statDaysDiff)) /* no end time or start date == end date */ {
+        
+        String displayDay;
+        switch(statDaysDiff) {
+          case 0: displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today'); break;
+          case 1: displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow'); break;
+          default: displayDay = DateFormat(startDateFormat).format(startDateTimeUni);
+        }
+
+        return displayDay;
+      }
+      else {
+        String displayDateTime = DateFormat(startDateFormat).format(startDateTimeUni);
+        if ((endDateTimeUni != null) && differentStartAndEndDays) {
+          bool showEndYear = (nowUni.year != endDateTimeUni.year);
+          String endDateFormat = (longFormat ? 'EEE, MMM d' : 'MMM d') + (showEndYear ? ', yyyy' : '');
+
+          displayDateTime += ' - ';
+          if (differentStartAndEndDays) {
+            displayDateTime += DateFormat(endDateFormat).format(endDateTimeUni);
+          }
+        }
+        return displayDateTime;
+      }
+    }
+    else {
+      return null;
+    }
+  }
+
+  String? get shortDisplayTime => _buildDisplayTime(longFormat: false);
+  String? get longDisplayTime => _buildDisplayTime(longFormat: true);
+  
+  String? _buildDisplayTime({bool longFormat = false}) {
+    if (startTimeUtc != null) {
+      TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
+      TZDateTime nowMidnightUni = TZDateTimeUtils.dateOnly(nowUni);
+
+      TZDateTime startDateTimeUni = startTimeUtc!.toUniOrLocal();
+      TZDateTime startDateTimeMidnightUni = TZDateTimeUtils.dateOnly(startDateTimeUni);
+      int statDaysDiff = startDateTimeMidnightUni.difference(nowMidnightUni).inDays;
+
+      TZDateTime? endDateTimeUni = endTimeUtc?.toUniOrLocal();
+      TZDateTime? endDateTimeMidnightUni = (endDateTimeUni != null) ? TZDateTimeUtils.dateOnly(endDateTimeUni) : null;
+      int? endDaysDiff = (endDateTimeMidnightUni != null) ? endDateTimeMidnightUni.difference(nowMidnightUni).inDays : null;
+
+      bool differentStartAndEndDays = (statDaysDiff != endDaysDiff);
+
+      if ((endDaysDiff == null) || (endDaysDiff == statDaysDiff)) /* no end time or start date == end date */ {
+        
+        if (allDay != true) {
+          String displayStartTime = DateFormat((startDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeUni).toLowerCase();
+          if ((endDateTimeUni != null) && (TimeOfDay.fromDateTime(startDateTimeUni) != TimeOfDay.fromDateTime(endDateTimeUni))) {
+           String displayEndTime = DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
+            return Localization().getStringEx('model.explore.time.from_to.format', '{{start_time}} to {{end_time}}').
+              replaceAll('{{start_time}}', displayStartTime).
+              replaceAll('{{end_time}}', displayEndTime);
+          }
+          else {
+            return Localization().getStringEx('model.explore.time.at.format', '{{time}}').
+              replaceAll('{{time}}', displayStartTime);
+          }
+        }
+        else {
+          return null;
+        }
+      }
+      else {
+        String displayDateTime = DateFormat((startDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeUni).toLowerCase();
+        if ((endDateTimeUni != null) && (differentStartAndEndDays || (allDay != true))) {
+          displayDateTime += ' - ';
+          displayDateTime += DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
         }
         return displayDateTime;
       }
