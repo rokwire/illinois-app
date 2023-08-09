@@ -687,42 +687,61 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
     String? location = StringUtils.isNotEmpty(_locationController.text) ? _locationController.text : null;
     String? description = StringUtils.isNotEmpty(_descriptionController.text) ? _descriptionController.text : null;
-    ToDoItem itemToSave = ToDoItem(
-        id: _item?.id,
-        name: name,
-        category: _category,
-        dueDateTimeUtc: _dueDate?.toUtc(),
-        hasDueTime: hasDueTime,
-        location: location,
-        isCompleted: _item?.isCompleted ?? false,
-        description: description,
-        workDays: _formattedWorkDays,
-        reminderType: _selectedReminderType,
-        recurrenceType: _generateCronExpressionFromString(),
-        reminderDateTimeUtc: _reminderDateTime?.toUtc());
+    ToDoItem? itemToSave;
+    if(_item?.id != null){
+      itemToSave = ToDoItem(
+          id: _item?.id,
+          name: name,
+          category: _category,
+          dueDateTimeUtc: _dueDate?.toUtc(),
+          hasDueTime: hasDueTime,
+          location: location,
+          isCompleted: _item?.isCompleted ?? false,
+          description: description,
+          workDays: _formattedWorkDays,
+          reminderType: _selectedReminderType,
+          recurrenceType: _generateCronExpressionFromString(),
+          recurrenceId: _item?.recurrenceId,
+          reminderDateTimeUtc: _reminderDateTime?.toUtc());
+    }else{
+      itemToSave = ToDoItem(
+          id: _item?.recurrenceId,
+          name: name,
+          category: _category,
+          dueDateTimeUtc: _dueDate?.toUtc(),
+          hasDueTime: hasDueTime,
+          location: location,
+          isCompleted: _item?.isCompleted ?? false,
+          description: description,
+          workDays: _formattedWorkDays,
+          reminderType: _selectedReminderType,
+          recurrenceType: _generateCronExpressionFromString(),
+          reminderDateTimeUtc: _reminderDateTime?.toUtc());
+    }
 
     Analytics().logWellnessToDo(
       action: (_item?.id == null) ? Analytics.LogWellnessActionCreate : Analytics.LogWellnessActionUpdate,
       item: itemToSave,
     );
 
-    if (_item?.id != null) {
-      Wellness().updateToDoItem(itemToSave).then((success) {
-        _onSaveCompleted(success);
-      });
-    } else {
-      Wellness().createToDoItem(itemToSave).then((success) {
-        _onSaveCompleted(success);
-      });
-    }
+    Wellness().updateToDoItem(itemToSave).then((success) {
+      _onSaveCompleted(success);
+    });
+
+    // if (_item?.id != null) {
+    //   Wellness().updateToDoItem(itemToSave).then((success) {
+    //     _onSaveCompleted(success);
+    //   });
+    // } else {
+    //     itemToSave.id = itemToSave.recurrenceId;
+    //     Wellness().updateToDoItem(itemToSave).then((success) {
+    //       _onSaveCompleted(success);
+    //     });
+    //   // });
+    // }
   }
 
   String _generateCronExpressionFromString(){
-    print(AppDateTime().getDisplayDateTime(_dueDate ?? DateTime.now()));
-    print(_dueDate?.day);
-    print(_dueDate?.month);
-    print(_dueDate?.year);
-    print(_dueDate?.weekday);
       switch(_selectedRecurringType){
         case "Daily":{
           return "0 " + (_dueTime?.minute.toString() ?? "0") + " " + (_dueTime?.hour.toString() ?? "0") + " ? * * *";
@@ -747,6 +766,14 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         }
       }
 
+  }
+
+  String _generateStringFromCronExpression(String cron){
+    if(cron.substring((cron.length) -5, (cron.length)) == "* * *"){
+      return "Daily";
+    }
+
+    return "Does not repeat";
   }
 
   String _getWeekdayFromCode(int dayCode){
@@ -864,6 +891,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     _selectedReminderType = _item?.reminderType ?? ToDoReminderType.none;
     _dueDate = _item?.dueDateTime;
     _reminderDateTime = _item?.reminderDateTime;
+    _selectedRecurringType = _generateStringFromCronExpression(_item?.recurrenceType ?? "");
     if ((_dueDate != null) && (_item?.hasDueTime ?? false) == true) {
       _dueTime = TimeOfDay(hour: _dueDate!.hour, minute: _dueDate!.minute);
     }

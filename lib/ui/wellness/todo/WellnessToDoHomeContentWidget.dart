@@ -791,7 +791,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
         if (!success) {
           // revert value if update fails
           widget.item.isCompleted = !widget.item.isCompleted;
-          String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
+          String msg = Localization().getStringEx('panel.wellness.todo.item.create.failed.msg', 'Failed to create To-Do item.');
           AppAlert.showDialogResult(context, msg);
         }
       });
