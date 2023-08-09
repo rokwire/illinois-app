@@ -271,8 +271,24 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
         ),
       ),
+      _groupingBadgeWidget,
       _favoriteButton
     ]);
+
+  Widget get _groupingBadgeWidget {
+    String? badgeLabel;
+    if (widget.event.isSuperEvent) {
+      badgeLabel = Localization().getStringEx('widget.event2.card.super_event.abbreviation.label', 'COMP'); // compound
+    }
+    else if (widget.event.isRecurring) {
+      badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
+    }
+    return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+        Semantics(label: badgeLabel, excludeSemantics: true, child:
+          Text(badgeLabel, style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+    ))) : Container();
+  }
 
   List<String>? get _displayCategories =>
     Events2().contentAttributes?.displaySelectedLabelsFromSelection(widget.event.attributes, usage: ContentAttributeUsage.category);

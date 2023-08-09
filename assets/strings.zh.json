@@ -3639,7 +3639,10 @@
 		"widget.access.auth.features.email_login.unsatisfied.message": "使用您的電子郵件登錄",
 		"widget.access.auth.features.phone_login.unsatisfied.message": "使用手機登錄",
 	
-	"model.group.updated.now": "Updated now",
+    "widget.event2.card.recurring.abbreviation.label": "REC",
+    "widget.event2.card.super_event.abbreviation.label": "COMP",
+
+		"model.group.updated.now": "Updated now",
 	"model.group.updated.minute": "Updated about a minute ago",
 	"model.group.updated.minutes": "Updated about %s minutes ago",
 	"model.group.updated.hour": "Updated about an hour ago",

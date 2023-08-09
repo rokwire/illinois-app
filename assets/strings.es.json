@@ -3639,6 +3639,9 @@
     "widget.access.auth.features.email_login.unsatisfied.message": "Inicia sesión con tu correo electrónico",
     "widget.access.auth.features.phone_login.unsatisfied.message": "Inicia sesión con tu teléfono",
 
+    "widget.event2.card.recurring.abbreviation.label": "REC",
+    "widget.event2.card.super_event.abbreviation.label": "COMP",
+
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
     "model.group.updated.minutes": "Updated about %s minutes ago",
