@@ -687,9 +687,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
     String? location = StringUtils.isNotEmpty(_locationController.text) ? _locationController.text : null;
     String? description = StringUtils.isNotEmpty(_descriptionController.text) ? _descriptionController.text : null;
-    ToDoItem? itemToSave;
-    if(_item?.id != null){
-      itemToSave = ToDoItem(
+    ToDoItem? itemToSave = ToDoItem(
           id: _item?.id,
           name: name,
           category: _category,
@@ -703,42 +701,22 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
           recurrenceType: _generateCronExpressionFromString(),
           recurrenceId: _item?.recurrenceId,
           reminderDateTimeUtc: _reminderDateTime?.toUtc());
-    }else{
-      itemToSave = ToDoItem(
-          id: _item?.recurrenceId,
-          name: name,
-          category: _category,
-          dueDateTimeUtc: _dueDate?.toUtc(),
-          hasDueTime: hasDueTime,
-          location: location,
-          isCompleted: _item?.isCompleted ?? false,
-          description: description,
-          workDays: _formattedWorkDays,
-          reminderType: _selectedReminderType,
-          recurrenceType: _generateCronExpressionFromString(),
-          reminderDateTimeUtc: _reminderDateTime?.toUtc());
-    }
 
     Analytics().logWellnessToDo(
       action: (_item?.id == null) ? Analytics.LogWellnessActionCreate : Analytics.LogWellnessActionUpdate,
       item: itemToSave,
     );
 
-    Wellness().updateToDoItem(itemToSave).then((success) {
-      _onSaveCompleted(success);
-    });
-
-    // if (_item?.id != null) {
-    //   Wellness().updateToDoItem(itemToSave).then((success) {
-    //     _onSaveCompleted(success);
-    //   });
-    // } else {
-    //     itemToSave.id = itemToSave.recurrenceId;
-    //     Wellness().updateToDoItem(itemToSave).then((success) {
-    //       _onSaveCompleted(success);
-    //     });
-    //   // });
-    // }
+    if (_item?.id != null) {
+      Wellness().updateToDoItem(itemToSave).then((success) {
+        _onSaveCompleted(success);
+      });
+    } else {
+        Wellness().createToDoItem(itemToSave).then((success) {
+          _onSaveCompleted(success);
+        });
+      // });
+    }
   }
 
   String _generateCronExpressionFromString(){

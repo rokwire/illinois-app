@@ -509,15 +509,6 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _calendarEndDate = now.add(Duration(days: (7 - (now.weekday + 1))));
   }
 
-  // void _loadToDoItems() {
-  //   _setItemsLoading(true);
-  //   Wellness().loadToDoItems().then((items) {
-  //     _todoItems = items;
-  //     _sortItemsByDate();
-  //     _setItemsLoading(false);
-  //   });
-  // }
-
   void _sortItemsByDate() {
     if (CollectionUtils.isEmpty(_todoItems)) {
       return;
