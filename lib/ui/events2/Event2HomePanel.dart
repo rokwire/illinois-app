@@ -49,9 +49,11 @@ class Event2HomePanel extends StatefulWidget {
   final LinkedHashSet<Event2TypeFilter>? types;
   final Map<String, dynamic>? attributes;
 
+  final GroupEventBindingPrefs? groupBinding;
+
   Event2HomePanel({Key? key,
     this.timeFilter, this.customStartTime, this.customEndTime,
-    this.types, this.attributes
+    this.types, this.attributes, this.groupBinding
   }) : super(key: key);
 
   @override
@@ -59,9 +61,9 @@ class Event2HomePanel extends StatefulWidget {
 
   // Filters onboarding
 
-  static void present(BuildContext context) {
+  static void present(BuildContext context, {GroupEventBindingPrefs? groupBinding}) {
     if (Storage().events2Attributes != null) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel()));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(groupBinding: groupBinding,)));
     }
     else {
       getLocationServicesStatus().then((LocationServicesStatus? status) {
@@ -92,6 +94,7 @@ class Event2HomePanel extends StatefulWidget {
             Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
               types: (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : null,
               attributes: attributes,
+              groupBinding: groupBinding,
             )));
           }
         });

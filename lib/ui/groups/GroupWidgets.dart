@@ -502,7 +502,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     return Stack(children: <Widget>[
       InkWell(onTap: () {
           Analytics().logSelect(target: "Group Event");
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event2: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
         },
         child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
