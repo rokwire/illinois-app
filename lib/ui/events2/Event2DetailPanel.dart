@@ -140,6 +140,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   RefreshIndicator(onRefresh: _refreshEvent, child:
     CustomScrollView(slivers: <Widget>[
       SliverToutHeaderBar(
+        title: _event?.name,
         flexImageUrl:  _event?.imageUrl,
         flexImageKey: 'event-detail-default',
         flexRightToLeftTriangleColor: Colors.white,
