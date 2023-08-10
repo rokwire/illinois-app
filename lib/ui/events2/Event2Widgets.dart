@@ -124,6 +124,9 @@ class Event2Card extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _Event2CardState();
+
+  static Decoration get linkContentDecoration => _Event2CardState._linkContentDecoration;
+  static BorderRadiusGeometry get linkContentBorderRadius => _Event2CardState._linkContentBorderRadius;
 }
 
 class _Event2CardState extends State<Event2Card>  implements NotificationsListener {
@@ -263,32 +266,32 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   String get _semanticsLabel => '';//'''TODO custom label if needed';
   String get _semanticsHint => '';//'''TODO custom hint if needed';
 
-  Decoration get _listContentDecoration => BoxDecoration(
+  static Decoration get _listContentDecoration => BoxDecoration(
     color: Styles().colors?.surface,
     borderRadius: _listContentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
   );
 
-  BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
+  static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
-  Decoration get _pageContentDecoration => BoxDecoration(
+  static Decoration get _pageContentDecoration => BoxDecoration(
     color: Styles().colors?.surface,
     borderRadius: _pageContentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
   );
 
-  BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.vertical(bottom: Radius.circular(4));
+  static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.vertical(bottom: Radius.circular(4));
 
-  Decoration get _linkContentDecoration => BoxDecoration(
+  static Decoration get _linkContentDecoration => BoxDecoration(
     color: Styles().colors?.white,
     borderRadius: _linkContentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 2.0, offset: Offset(0, 1))]
   );
 
-  BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.circular(4.0);
+  static BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.circular(4.0);
 
   bool get _hasImage => StringUtils.isNotEmpty(widget.event.imageUrl);
 
