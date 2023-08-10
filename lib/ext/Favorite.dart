@@ -79,7 +79,7 @@ extension FavoriteExt on Favorite {
       return (this as Event).displayDateTime;
     }
     else if (this is Event2) {
-      return (this as Event2).shortDisplayDate;
+      return (this as Event2).shortDisplayDateAndTime;
     }
     else if (this is Dining) {
       return (this as Dining).displayWorkTime;

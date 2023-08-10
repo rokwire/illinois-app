@@ -371,7 +371,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       }
     }
     else if (explore is Event2 ) {//For Events we show Two Locati
-      if (explore.inPerson) {
+      if (explore.isInPerson) {
         locationText = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
       }
     }
@@ -410,7 +410,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   Widget? _exploreOnlineDetail() {
     if (((widget.explore is Event) && ((widget.explore as Event).displayAsVirtual)) ||
-        (widget.explore is Event2) && ((widget.explore as Event2).online)) {
+        (widget.explore is Event2) && ((widget.explore as Event2).isOnline)) {
         return Semantics(label: Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event"), child:Padding(
           padding: _detailPadding,
           child: Row(

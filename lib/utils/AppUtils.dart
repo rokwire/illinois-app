@@ -292,15 +292,15 @@ class AppDateTimeUtils {
         timeDaysDiff += 1;
       }
       if (timeDaysDiff == 0) {
-        displayDay = Localization().getStringEx('model.explore.time.today', 'Today');
+        displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today');
         if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
         }
       }
       else if (timeDaysDiff == 1) {
-        displayDay = Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow');
+        displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
         if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
         }
       }
       else {

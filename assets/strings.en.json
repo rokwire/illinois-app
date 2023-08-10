@@ -1333,6 +1333,7 @@
 
 	"panel.event2.detail.general.prompt.delete.title": "Delete",
 	"panel.event2.detail.general.prompt.delete.message": "Are you sure you want to delete this event and all data associated with it? This action cannot be undone.",
+	"panel.event2.detail.general.admin.title": "ADMIN",
 
 	"panel.event2.detail.take_attendance.title": "Take Attendance",
 	"panel.event2.detail.survey.description.reg": "Registration is required for this event.",
@@ -3656,6 +3657,9 @@
     "widget.access.auth.features.email_login.unsatisfied.message": "Sign in with your email",
     "widget.access.auth.features.phone_login.unsatisfied.message": "Sign in with your phone",
 
+    "widget.event2.card.recurring.abbreviation.label": "REC",
+    "widget.event2.card.super_event.abbreviation.label": "COMP",
+
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
     "model.group.updated.minutes": "Updated about %s minutes ago",
@@ -3675,12 +3679,14 @@
     "model.dining.schedule.label.until":" until ",
     "model.dining.schedule.label.from":" from ",
 
-    "model.explore.time.today": "Today",
-    "model.explore.time.tomorrow": "Tomorrow",
-    "model.explore.time.at": "at",
-    "model.explore.time.at.format": "{{day}} at {{time}}",
-    "model.explore.time.from_to.format": "{{day}} from {{start_time}} to {{end_time}}",
-    "model.explore.time.all_day": "All day",
+    "model.explore.date_time.today": "Today",
+    "model.explore.date_time.tomorrow": "Tomorrow",
+    "model.explore.date_time.at": "at",
+    "model.explore.date_time.at.format": "{{day}} at {{time}}",
+    "model.explore.date_time.from_to.format": "{{day}} from {{start_time}} to {{end_time}}",
+    "model.explore.time.at.format": "{{time}}",
+    "model.explore.time.from_to.format": "{{start_time}} to {{end_time}}",
+    "model.explore.date_time.all_day": "All day",
     "model.explore.distance.format": "{{distance}} mi away",
 
 	"model.groups.member.status.pending": "Pending",

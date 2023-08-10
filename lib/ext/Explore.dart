@@ -335,7 +335,7 @@ extension ExploreMap on Explore {
       return (this as Event).displayDate;
     }
     else if (this is Event2) {
-      return (this as Event2).shortDisplayDate;
+      return (this as Event2).shortDisplayDateAndTime;
     }
     else if (this is Dining) {
       return (this as Dining).diningType;

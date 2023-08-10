@@ -90,7 +90,7 @@ extension EventExt on Event {
 
   String? get displayStartEndTime {
     if (allDay!) {
-      return Localization().getStringEx('model.explore.time.all_day', 'All day');
+      return Localization().getStringEx('model.explore.date_time.all_day', 'All day');
     }
     String? startTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: startDateGmt, allDay: allDay);
     String? endTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: endDateGmt, allDay: allDay);

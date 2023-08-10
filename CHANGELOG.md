@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.0.43] - 2023-08-09
 ### Changed
 - Improve event survey UI [#3500](https://github.com/rokwire/illinois-app/issues/3500).
 - Bring back College and Department attributes for Event2 and remove University Affiliation [#3500](https://github.com/rokwire/illinois-app/issues/3500)
 - Do not require at least one attribute set when creating groups [#3500](https://github.com/rokwire/illinois-app/issues/3500).
+### Added
+- Added initial implementation of super & recurring events [#3513](https://github.com/rokwire/illinois-app/issues/3513).
 
 ## [5.0.42] - 2023-08-08
 ### Changed
