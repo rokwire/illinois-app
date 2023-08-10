@@ -669,7 +669,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget _linkedEventsMessageCard(String message) => Container(decoration: Event2Card.linkContentDecoration, child:
     ClipRRect(borderRadius: Event2Card.linkContentBorderRadius, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24), child:
-        Text(message, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"), textAlign: TextAlign.center,),
+        Row(children: [
+          Expanded(child:
+            Text(message, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"), textAlign: TextAlign.center,),
+          )
+        ],)
       )
     )
   );
