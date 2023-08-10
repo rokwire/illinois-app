@@ -28,7 +28,6 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/groups/GroupEventDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
@@ -1654,7 +1653,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       bool hasGroup = (widget.group != null);
       Event mainEvent = _constructEventFromData();
       Event? eventToDisplay;
-      Group? groupToDisplay;
+      // Group? groupToDisplay; //deprecated
       List<String> createEventFailedForGroupNames = [];
       List<Group>? otherGroupsToSave;
 
@@ -1676,7 +1675,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           if (eventLinkedToGroup) {
             // Succeeded to link event to group
             eventToDisplay = mainEvent;
-            groupToDisplay = widget.group;
+            // groupToDisplay = widget.group;
           } else {
             // Failed to link event to group
             ListUtils.add(createEventFailedForGroupNames, widget.group?.title);
@@ -1698,7 +1697,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               // Succeeded to link event to group
               if (eventToDisplay == null) {
                 eventToDisplay = mainEvent;
-                groupToDisplay = group;
+                // groupToDisplay = group;
               }
             } else {
               // Failed to link event to group
@@ -1728,8 +1727,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       if (eventToDisplay != null) {
-        Navigator.pushReplacement(
-            context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: eventToDisplay, group: groupToDisplay, previewMode: true)));
+        //deprecated. Now using Events2
+        // Navigator.pushReplacement(
+        //     context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: eventToDisplay, group: groupToDisplay, previewMode: true)));
       }
     }
   }
