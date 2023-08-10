@@ -124,6 +124,9 @@ class Event2Card extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _Event2CardState();
+
+  static Decoration get linkContentDecoration => _Event2CardState._linkContentDecoration;
+  static BorderRadiusGeometry get linkContentBorderRadius => _Event2CardState._linkContentBorderRadius;
 }
 
 class _Event2CardState extends State<Event2Card>  implements NotificationsListener {
@@ -263,32 +266,32 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   String get _semanticsLabel => '';//'''TODO custom label if needed';
   String get _semanticsHint => '';//'''TODO custom hint if needed';
 
-  Decoration get _listContentDecoration => BoxDecoration(
+  static Decoration get _listContentDecoration => BoxDecoration(
     color: Styles().colors?.surface,
     borderRadius: _listContentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
   );
 
-  BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
+  static BorderRadiusGeometry get _listContentBorderRadius => BorderRadius.all(Radius.circular(8));
 
-  Decoration get _pageContentDecoration => BoxDecoration(
+  static Decoration get _pageContentDecoration => BoxDecoration(
     color: Styles().colors?.surface,
     borderRadius: _pageContentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
   );
 
-  BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.vertical(bottom: Radius.circular(4));
+  static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.vertical(bottom: Radius.circular(4));
 
-  Decoration get _linkContentDecoration => BoxDecoration(
+  static Decoration get _linkContentDecoration => BoxDecoration(
     color: Styles().colors?.white,
     borderRadius: _linkContentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 2.0, offset: Offset(0, 1))]
   );
 
-  BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.circular(4.0);
+  static BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.circular(4.0);
 
   bool get _hasImage => StringUtils.isNotEmpty(widget.event.imageUrl);
 
@@ -321,18 +324,36 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
         ),
       ),
+      _groupingIconWidget,
       _groupingBadgeWidget,
       _favoriteButton
     ]);
 
+  Widget? get _groupingIcon {
+    /*if (widget.event.isSuperEvent) {
+      return Styles().images?.getImage('composite');
+    }
+    else if (widget.event.isRecurring) {
+      return Styles().images?.getImage('recurrence');
+    }*/
+    //TMP: return Styles().images?.getImage('recurrence');
+    return null;
+  }
+
+  Widget get _groupingIconWidget {
+    Widget? groupingIcon = _groupingIcon;
+    return (groupingIcon != null) ? Padding(padding: EdgeInsets.only(left: 8, top: 16, bottom: 16), child: groupingIcon) : Container();
+  }
+
   Widget get _groupingBadgeWidget {
     String? badgeLabel;
     if (widget.event.isSuperEvent) {
-      badgeLabel = Localization().getStringEx('widget.event2.card.super_event.abbreviation.label', 'COMP'); // compound
+      badgeLabel = Localization().getStringEx('widget.event2.card.super_event.abbreviation.label', 'COMP'); // composite
     }
     else if (widget.event.isRecurring) {
       badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
     }
+    //TMP: badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
     return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
       Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
@@ -365,11 +386,22 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
   }
 
-  Widget get _titleWidget => Row(children: [
-    Expanded(child: 
-      Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,)
-    ),
-  ],);
+  Widget get _titleWidget {
+    Widget? groupingIcon = _groupingIcon;
+    Widget contentWidget = (groupingIcon != null) ?
+      RichText(textAlign: TextAlign.left, text:
+        TextSpan(children:[
+          TextSpan(text: widget.event.name, style : Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
+          WidgetSpan(child: Padding(padding: EdgeInsets.only(left: 6), child: groupingIcon)),
+        ])
+      ) :
+      Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,);
+    return Row(children: [
+      Expanded(child: 
+        contentWidget
+      ),
+    ],);
+  } 
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[

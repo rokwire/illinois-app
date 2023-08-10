@@ -72,6 +72,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool _registrationLoading = false;
   bool _eventLoading = false;
   bool _eventProcessing = false;
+  bool _linkedEventsLoading = false;
 
   @override
   void initState() {
@@ -139,6 +140,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   RefreshIndicator(onRefresh: _refreshEvent, child:
     CustomScrollView(slivers: <Widget>[
       SliverToutHeaderBar(
+        title: _event?.name,
         flexImageUrl:  _event?.imageUrl,
         flexImageKey: 'event-detail-default',
         flexRightToLeftTriangleColor: Colors.white,
@@ -186,6 +188,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
         ),
       ),
+      _groupingBadgeWidget,
       Stack(children: [
         _favoriteButton,
         _processingWidget,
@@ -194,6 +197,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<String>? get _displayCategories =>
     Events2().contentAttributes?.displaySelectedLabelsFromSelection(_event?.attributes, usage: ContentAttributeUsage.category);
+
+  Widget get _groupingBadgeWidget {
+    String? badgeLabel;
+    if (_event?.isSuperEvent == true) {
+      badgeLabel = Localization().getStringEx('widget.event2.card.super_event.abbreviation.label', 'COMP'); // composite
+    }
+    else if (_event?.isRecurring == true) {
+      badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
+    }
+    return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+        Semantics(label: badgeLabel, excludeSemantics: true, child:
+          Text(badgeLabel, style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
+    ))) : Container();
+  }
 
   Widget get _favoriteButton {
     bool isFavorite = Auth2().isFavorite(_event);
@@ -589,21 +607,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return null;
   }
 
-  Widget get _linkedEventsWidget => CollectionUtils.isNotEmpty(_linkedEvents) ? SectionSlantHeader(
+  Widget get _linkedEventsWidget => (_event?.hasLinkedEvents == true) ? SectionSlantHeader(
       title: _linkedEventsSectionTitle,
       slantImageKey: "slant-dark",
       slantColor: Styles().colors!.backgroundVariant,
       titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
-      children: _linkedEventsCards
+      progressWidget: _linkedEventsProgress,
+      children: !_linkedEventsLoading ? _linkedEventsContent : [Row(children: [Expanded(child: Container())],)],
   ) : Container();
 
 
   String get _linkedEventsSectionTitle {
-    //TMP: return Localization().getStringEx('panel.explore_detail.super_event.schedule.heading.title', 'Event Schedule');
-    if (_event?.grouping?.type == Event2GroupingType.superEvent) {
+    if (_event?.isSuperEvent == true) {
       return Localization().getStringEx('panel.explore_detail.super_event.schedule.heading.title', 'Event Schedule');
     }
-    else if (_event?.grouping?.type == Event2GroupingType.recurrence) {
+    else if (_event?.isRecurring == true) {
       return Localization().getStringEx('panel.explore_detail.recurring_event.schedule.heading.title', 'Available Times');
     }
     else {
@@ -611,7 +629,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }
 
-  List<Widget> get _linkedEventsCards {
+  Widget? get _linkedEventsProgress => _linkedEventsLoading ? SizedBox(width: 24, height: 24, child:
+    CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+  ) : null;
+
+  List<Widget> get _linkedEventsContent {
     List<Widget> cardWidgets = [];
     if (_linkedEvents != null) {
       for (Event2 linkedEvent in _linkedEvents!) {
@@ -619,15 +641,43 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           cardWidgets.add(Padding(padding: EdgeInsets.only(bottom: 8), child:
             Event2Card(linkedEvent,
               displayMode: Event2CardDisplayMode.link,
-              linkType: _event?.grouping?.type, // TMP: Event2GroupingType.superEvent,
+              linkType: _event?.grouping?.type,
               onTap: () => _onLinkedEvent(linkedEvent),
             ),
           ));
         }
       }
     }
+    if (cardWidgets.isEmpty) {
+      String? message;
+      if (_event?.isSuperEvent == true) {
+        // Event Schedule
+        message = (_linkedEvents != null) ?
+          Localization().getStringEx('panel.event2.detail.linked_events.super_event.empty.message', 'There are no scheduled upcoming events.') :
+          Localization().getStringEx('panel.event2.detail.linked_events.super_event.failed.message', 'Failed to load events schedule.');
+      }
+      else if (_event?.isRecurring == true) {
+        // Available Times
+        message = (_linkedEvents != null) ?
+          Localization().getStringEx('panel.event2.detail.linked_events.recurrence.failed.message', 'There are no upcoming available times.') :
+          Localization().getStringEx('panel.event2.detail.linked_events.recurrence.failed.message', 'Failed to load available times.');
+      }
+      cardWidgets.add(_linkedEventsMessageCard(message ?? ''));
+    }
     return cardWidgets;
   }
+
+  Widget _linkedEventsMessageCard(String message) => Container(decoration: Event2Card.linkContentDecoration, child:
+    ClipRRect(borderRadius: Event2Card.linkContentBorderRadius, child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24), child:
+        Row(children: [
+          Expanded(child:
+            Text(message, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"), textAlign: TextAlign.center,),
+          )
+        ],)
+      )
+    )
+  );
 
   Widget get _adminSettingsWidget  =>
       Padding(padding: EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16), child:
@@ -767,7 +817,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Analytics().logSelect(target: event.name);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,
       userLocation: _userLocation,
-      superEvent: (_event?.isSuperEvent ?? false) ? _event : null, // TMP: _event, 
+      superEvent: (_event?.isSuperEvent == true) ? _event : null,
     )));
   }
 
@@ -1029,16 +1079,17 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         futures.add(Events2().loadEventPeople(eventId));
       }
 
-      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsQueryGrouping;
+      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
       int? linkedEventsIndex = ((linkedEventsGrouping != null) && (_linkedEvents == null)) ? futures.length : null;
       if (linkedEventsIndex != null) {
         futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
+        //TMP: futures.add(Events2().loadEvents(Events2Query(searchText: 'Prairie')));
+        setState(() {
+          _linkedEventsLoading = true;
+        });
       }
 
-      //TMP: linkedEventsIndex = futures.length;
-      //TMP: futures.add(Events2().loadEvents(Events2Query(searchText: 'Prairie')));
-
-      int? superEventIndex = ((_event?.isSuperEventChild ?? false) && (_superEvent == null)) ? futures.length : null;
+      int? superEventIndex = ((_event?.isSuperEventChild == true) && (_superEvent == null)) ? futures.length : null;
       if (superEventIndex != null) {
         futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
       }
@@ -1058,6 +1109,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
         setStateIfMounted(() {
           _eventLoading = false;
+          _linkedEventsLoading = false;
           if (survey != null) {
             _survey = survey;
           }
@@ -1110,13 +1162,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         futures.add(Events2().loadEventPeople(eventId));
       }
 
-      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsQueryGrouping;
+      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
       int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
       if (linkedEventsIndex != null) {
         futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
       }
 
-      int? superEventIndex = (_event?.isSuperEventChild ?? false) ? futures.length : null;
+      int? superEventIndex = (_event?.isSuperEventChild == true) ? futures.length : null;
       if (superEventIndex != null) {
         futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
       }
@@ -1176,7 +1228,9 @@ extension _Event2Ext on Event2 {
 
   bool get hasSurvey => (attendanceDetails?.isNotEmpty ?? false) && (surveyDetails?.isNotEmpty ?? false);
 
-  Event2Grouping? get linkedEventsQueryGrouping {
+  bool get hasLinkedEvents => (isSuperEvent || isRecurring);
+
+  Event2Grouping? get linkedEventsGroupingQuery {
     if (isSuperEvent) {
       return Event2Grouping.superEvent(id);
     }
