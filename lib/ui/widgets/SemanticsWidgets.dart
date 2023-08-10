@@ -5,8 +5,9 @@ class AccessibleViewPagerNavigationButtons extends StatefulWidget{
   final PageController? controller;
   final int? initialPage;
   final int Function()? pagesCount; //This must be a function in order to receive updates if the count changes
+  final Widget? centerWidget;
 
-  const AccessibleViewPagerNavigationButtons({Key? key, this.controller, this.initialPage, this.pagesCount}) : super(key: key);
+  const AccessibleViewPagerNavigationButtons({Key? key, this.controller, this.initialPage, this.pagesCount, this.centerWidget}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AccessibleViewPagerNavigationButtonsState();
@@ -31,37 +32,26 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Visibility(
-              visible: _previousButtonAvailable,
-              child: Semantics(
-                // enabled: prevEnabled,
-                  label: "Previous Page",
-                  button: true,
-                  child: IconButton(
-                      onPressed: _onTapPrevious,
-                      icon: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true) ?? Container()
-                  )
-              )
-          ),
-          Visibility(
-              visible: _nextButtonAvailable,
-              child: Semantics(
-                  label: "Next Page",
-                  button: true,
-                  child: IconButton(
-                      onPressed: _onTapNext,
-                      icon: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container()
-                  )
-              )
+    return Material(color: Colors.transparent, child:
+      Row(children: [
+        Opacity(opacity: _previousButtonAvailable ? 1 : 0, child:
+          Semantics(label: "Previous Page", button: true, child:
+            IconButton(onPressed: _onTapPrevious, icon:
+              Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true) ?? Container()
+            )
           )
-        ],
-      ),
+        ),
+        
+        Expanded(child: widget.centerWidget ?? Container()),
+        
+        Opacity(opacity: _nextButtonAvailable ? 1 : 0, child:
+          Semantics(label: "Next Page", button: true, child:
+            IconButton(onPressed: _onTapNext, icon:
+              Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container()
+            )
+          )
+        )
+      ],),
     );
   }
 

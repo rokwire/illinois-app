@@ -169,11 +169,11 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
         padding: EdgeInsets.only(bottom: 40),
         child: Stack(alignment: Alignment.center, children: [
           RoundedButton(
+              label: Localization().getStringEx('panel.laundry.request_issue.button.submit.label', 'Submit'),
+              textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
               backgroundColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.white,
               contentWeight: 0.5,
               borderColor: Styles().colors!.fillColorPrimary,
-              label: Localization().getStringEx('panel.laundry.request_issue.button.submit.label', 'Submit'),
               onTap: _onTapSubmit,
               rightIcon: Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true)),
           Visibility(visible: _isLoading, child: CircularProgressIndicator())

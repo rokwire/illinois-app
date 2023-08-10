@@ -141,7 +141,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
           container: true,
           child: RibbonButton(
-            textColor: Styles().colors!.fillColorSecondary,
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
             backgroundColor: Styles().colors!.white,
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -462,7 +462,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return ((contentItem != null) && (contentItem != AcademicsContent.my_illini) && contentItems!.contains(contentItem)) ? contentItem : null;
   }
 
-  AcademicsContent? get _initialContentItem => widget.params[AcademicsHomePanel.contentItemKey];
+  AcademicsContent? get _initialContentItem => widget.params[AcademicsHomePanel.contentItemKey] ?? widget.content;
 
   // NotificationsListener
 

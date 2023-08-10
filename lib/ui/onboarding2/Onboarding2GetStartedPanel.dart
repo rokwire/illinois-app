@@ -52,11 +52,10 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                 RoundedButton(
                   label: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue'),
                   hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
-                  fontSize: 16,
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   borderColor: Styles().colors!.fillColorSecondary,
                   backgroundColor: Styles().colors!.white,
-                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: () => _onGoNext(context),
                 ),
                 Onboarding2UnderlinedButton(

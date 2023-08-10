@@ -266,7 +266,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildGroupsContentSelection() {
     return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
       progress: _myGroupsBusy,
-      textColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -337,7 +337,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
       if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
         for (ContentAttribute attribute in attributes) {
-          List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_contentAttributesSelection, complete: true);
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_contentAttributesSelection, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             displayAttributeValues = List.from(displayAttributeValues.map((String attribute) => "'$attribute'"));
             if (attributesList.isNotEmpty) {
@@ -420,6 +420,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
         contentAttributes: Groups().contentAttributes,
         selection: _contentAttributesSelection,
+        sortType: ContentAttributesSortType.alphabetical,
         filtersMode: true,
       ))).then((selection) {
         if ((selection != null) && mounted) {

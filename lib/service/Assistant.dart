@@ -24,42 +24,111 @@ class Assistant /* with Service */ {
 
   // Implementation
   
-  Future<Message?> sendQuery(String? query) async {
+  Future<Message?> sendQuery(String? query, {Map<String, String>? context}) async {
     if (!isEnabled) {
       Log.w('Failed to send assistant query. Missing assistant url.');
       return null;
     }
 
     String url = '${Config().assistantUrl}/query';
-    String? apiKey = Config().assistantAPIKey;
-    if (apiKey == null) {
-      Log.w('Failed to send assistant query. Missing assistant api key.');
-      return null;
-    }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'X-API-KEY': apiKey,
     };
     Map<String, dynamic> body = {
       'question': query,
     };
+    if (context != null) {
+      body['context'] = context;
+    }
 
-    String? json = JsonUtils.encode(body);
-    Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json, timeout: 30);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
-      Map<String, dynamic>? answerJson = responseJson?['answer'];
-      if (answerJson != null) {
-        return Message.fromAnswerJson(answerJson);
+    try {
+      String? json = JsonUtils.encode(body);
+      Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json);
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+        Map<String, dynamic>? answerJson = JsonUtils.mapValue(responseJson?['answer']) ;
+        if (answerJson != null) {
+          return Message.fromAnswerJson(answerJson);
+        }
+        return null;
+      } else {
+        Log.w('Failed to load assistant response. Response:\n$responseCode: $responseString');
+        return null;
       }
-      return null;
-    } else {
-      Log.w('Failed to load assistant response. Response:\n$responseCode: $responseString');
+    } catch(e) {
+      Log.e('Failed to load assistant response. Response: $e');
       return null;
     }
   }
 
-  bool get isEnabled => StringUtils.isNotEmpty(Config().wellnessUrl);
+  Future<Message?> sendFeedback(Message message) async {
+    if (!isEnabled) {
+      Log.w('Failed to send assistant feedback. Missing assistant url.');
+      return null;
+    }
+
+    String url = '${Config().assistantUrl}/feedback';
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+    Map<String, dynamic> body = {
+      'message_id': message.id,
+      'feedback': message.feedback?.name,
+      'explanation': message.feedbackExplanation,
+    };
+
+    try {
+      String? json = JsonUtils.encode(body);
+      Response? response = await Network().post(url, auth: Auth2(), headers: headers, body: json, timeout: 30);
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+        Map<String, dynamic>? answerJson = JsonUtils.mapValue(responseJson?['answer']);
+        if (answerJson != null) {
+          return Message.fromAnswerJson(answerJson);
+        }
+        return null;
+      } else {
+        Log.w('Failed to load assistant feedback response. Response:\n$responseCode: $responseString');
+        return null;
+      }
+    } catch(e) {
+      Log.e('Failed to load assistant response. Response: $e');
+      return null;
+    }
+  }
+
+
+  Future<int?> getQueryLimit() async {
+    if (!isEnabled) {
+      Log.w('Failed to get assistant query limit. Missing assistant url.');
+      return null;
+    }
+
+    String url = '${Config().assistantUrl}/query-limit';
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+
+    Response? response = await Network().get(url, auth: Auth2(), headers: headers);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Map<String, dynamic>? responseJson = JsonUtils.decodeMap(responseString);
+      dynamic limit = responseJson?['limit'];
+      if (limit is int) {
+        return limit;
+      }
+      return null;
+    } else {
+      Log.w('Failed to load assistant query limit response. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+
+  bool get isEnabled => StringUtils.isNotEmpty(Config().assistantUrl);
 }

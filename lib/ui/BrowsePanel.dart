@@ -28,6 +28,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
@@ -63,7 +64,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/content.dart';
@@ -582,7 +583,7 @@ class _BrowseEntry extends StatelessWidget {
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
       case "dinings.my_dining":              _onTapMyDinings(context); break;
 
-      case "events.suggested_events":        _onTapSuggestedEvents(context); break;
+      case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
 
       case "feeds.twitter":                  _onTapTwitter(context); break;
@@ -959,10 +960,15 @@ class _BrowseEntry extends StatelessWidget {
     SettingsNotificationsContentPanel.present(context, content: isUnread ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
 
-  void _onTapSuggestedEvents(BuildContext context) {
+  void _onTapEventFeed(BuildContext context) {
+    Analytics().logSelect(target: "Events Feed");
+    Event2HomePanel.present(context);
+  }
+
+  /*void _onTapSuggestedEvents(BuildContext context) {
     Analytics().logSelect(target: "Suggested Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
-  }
+  }*/
 
   void _onTapTwitter(BuildContext context) {
     Analytics().logSelect(target: "Twitter");
@@ -1006,7 +1012,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMyEvents(BuildContext context) {
     Analytics().logSelect(target: "My Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event.favoriteKeyName]); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event2.favoriteKeyName]); } )); // Event.favoriteKeyName
   }
 
   void _onTapMyDinings(BuildContext context) {
@@ -1213,11 +1219,15 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
       ModalImageHolder(child: Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
-        return (loadingProgress != null) ? Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
-          Center(child:
-            CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
-          ),
-        ) : child;
+        return (loadingProgress != null) ?
+          Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+            Center(child:
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
+            ),
+          ) :
+          AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
+            Container(color: Styles().colors?.fillColorPrimary, child: child)
+          );
       })),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:

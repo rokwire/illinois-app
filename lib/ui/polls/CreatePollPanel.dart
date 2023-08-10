@@ -378,9 +378,9 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 child: Column(children: [
                    RoundedButton(
                       label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start Poll Now"),
+                       textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       backgroundColor: Colors.white,
                       borderColor: Styles().colors!.fillColorSecondary,
-                      textColor: Styles().colors!.fillColorPrimary,
                       progress: (_progressPollStatus == PollStatus.opened),
                       onTap: () {
                         _onCreatePoll(status: PollStatus.opened);

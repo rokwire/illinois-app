@@ -203,6 +203,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogMapDisplayShowActionName        = "show";
   static const String   LogMapDisplayHideActionName        = "hide";
 
+  static const String   LogMapSelectEventName             = "map_select";
+  static const String   LogMapSelectTarget                = "target";
+
   // GeoFence Regions
   static const String   LogGeoFenceRegionEventName         = "geofence_region";
   static const String   LogGeoFenceRegionAction            = "action";
@@ -282,6 +285,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeEventId                = "event_id";
   static const String   LogAttributeEventName              = "event_name";
   static const String   LogAttributeEventCategory          = "event_category";
+  static const String   LogAttributeEventAttributes        = "event_attributes";
   static const String   LogAttributeRecurrenceId           = "recurrence_id";
   static const String   LogAttributeDiningId               = "dining_id";
   static const String   LogAttributeDiningName             = "dining_name";
@@ -908,6 +912,14 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent({
       LogEventName             : LogMapDisplayEventName,
       LogMapDisplayAction      : action
+    });
+  }
+
+  void logMapSelect({String? target}) {
+    
+    logEvent({
+      LogEventName             : LogMapSelectEventName,
+      LogMapSelectTarget       : target
     });
   }
 

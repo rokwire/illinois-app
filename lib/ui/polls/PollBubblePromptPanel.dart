@@ -234,9 +234,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
             label: _poll!.options![optionIndex],
             backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
-//            height: 42,
-            fontSize: 16.0,
-            textColor: _textColor,
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled")?.copyWith(color: _textColor),
             borderColor: Styles().colors!.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             onTap: () { _onButtonOption(optionIndex); }
@@ -365,10 +363,8 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   Widget _buildVoteDoneButton(void Function() handler) {
     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
+        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled")?.copyWith(color: _textColor),
         backgroundColor: _backgroundColor,
-//        height: 42,
-        fontSize: 16.0,
-        textColor: _textColor,
         borderColor: _doneButtonColor,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         onTap: (){

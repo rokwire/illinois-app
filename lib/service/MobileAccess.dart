@@ -26,8 +26,10 @@ import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class MobileAccess with Service implements NotificationsListener {
+  static const String notifyStartFinished  = "edu.illinois.rokwire.mobile_access.start.finished";
   static const String notifyDeviceRegistrationFinished  = "edu.illinois.rokwire.mobile_access.device.registration.finished";
 
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/mobile_access');
@@ -35,7 +37,7 @@ class MobileAccess with Service implements NotificationsListener {
   static const String _tag = 'MobileAccess';
 
   late MobileAccessOpenType _selectedOpenType;
-  bool _screenUnlocked = true; // When application is started up this means that the device is unlocked
+  bool _isStarted = false;
   bool _isScanning = false;
 
   // Singleton
@@ -60,6 +62,7 @@ class MobileAccess with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _selectedOpenType = _openTypeFromString(Storage().mobileAccessOpenType) ?? MobileAccessOpenType.opened_app;
+    _startSilently();
     _shouldScan();
     _checkNeedsRegistration();
     await super.initService();
@@ -77,6 +80,26 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   // APIs
+
+  bool get isStarted => _isStarted;
+
+  bool get canStart => FlexUI().isIcardMobileAvailable;
+
+  Future<bool> startIfNeeded() async =>
+    isStarted || (canStart && await _start(force: true));
+
+  Future<bool> _startSilently() async =>
+    isStarted || (canStart && await _start(force: false));
+
+  Future<bool> _start({ required bool force }) async {
+    bool result = false;
+    try {
+      result = await _methodChannel.invokeMethod('start', force);
+    } catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
 
   Future<List<dynamic>?> getAvailableKeys() async {
     List<dynamic>? mobileAccessKeys;
@@ -129,13 +152,12 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   Future<List<int>?> getLockServiceCodes() async {
-    List<int>? result;
     try {
-      result = await _methodChannel.invokeMethod('getLockServiceCodes', null);
+      return JsonUtils.listIntsValue(await _methodChannel.invokeMethod('getLockServiceCodes', null));
     } catch (e) {
       print(e.toString());
     }
-    return result;
+    return null;
   }
 
   Future<bool> setLockServiceCodes(List<int> lockServiceCodes) async {
@@ -220,7 +242,7 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   void _shouldScan() {
-    bool allowScan = _canHaveMobileIcard && _isAllowedToOpenDoors;
+    bool allowScan = _canHaveMobileIcard && _isAllowedToOpenDoors && _isStarted;
     if (_isScanning != allowScan) {
       _allowScanning(allowScan);
     }
@@ -287,11 +309,11 @@ class MobileAccess with Service implements NotificationsListener {
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
+      case "start.finished":
+        _onStartFinished(call.arguments);
+        break;
       case "endpoint.register.finished":
         _onEndpointRegistrationFinished(call.arguments);
-        break;
-      case "device.screen.unlocked":
-        _onScreenUnlocked(call.arguments);
         break;
       case "device.scanning":
         _onScanning(call.arguments);
@@ -302,20 +324,21 @@ class MobileAccess with Service implements NotificationsListener {
     return null;
   }
 
+  void _onStartFinished(dynamic arguments) {
+    bool? success = (arguments is bool) ? arguments : null;
+    if (success == true) {
+      _isStarted = true;
+      NotificationService().notify(notifyStartFinished);
+      _shouldScan();
+    }
+  }
+
   void _onEndpointRegistrationFinished(dynamic arguments) {
     bool? success = (arguments is bool) ? arguments : null;
     if (success == true) {
       _shouldScan();
     }
     NotificationService().notify(notifyDeviceRegistrationFinished, arguments);
-  }
-
-  void _onScreenUnlocked(dynamic arguments) {
-    bool screenUnlocked = (arguments is bool) ? arguments : false;
-    if (screenUnlocked != _screenUnlocked) {
-      _screenUnlocked = screenUnlocked;
-      _shouldScan();
-    }
   }
 
   void _onScanning(dynamic arguments) {
@@ -353,8 +376,6 @@ class MobileAccess with Service implements NotificationsListener {
         return true;
       case MobileAccessOpenType.opened_app:
         return (AppLivecycle().state == AppLifecycleState.resumed);
-      case MobileAccessOpenType.unlocked_device:
-        return _screenUnlocked;
     }
   }
 
@@ -362,8 +383,6 @@ class MobileAccess with Service implements NotificationsListener {
     switch (value) {
       case 'opened_app':
         return MobileAccessOpenType.opened_app;
-      case 'unlocked_device':
-        return MobileAccessOpenType.unlocked_device;
       case 'always':
         return MobileAccessOpenType.always;
       default:
@@ -375,8 +394,6 @@ class MobileAccess with Service implements NotificationsListener {
     switch (type) {
       case MobileAccessOpenType.opened_app:
         return 'opened_app';
-      case MobileAccessOpenType.unlocked_device:
-        return 'unlocked_device';
       case MobileAccessOpenType.always:
         return 'always';
       default:
@@ -444,4 +461,4 @@ class MobileAccess with Service implements NotificationsListener {
 
 enum MobileAccessBleRssiSensitivity { high, normal, low }
 
-enum MobileAccessOpenType { opened_app, unlocked_device, always }
+enum MobileAccessOpenType { opened_app, always }

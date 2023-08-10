@@ -23,8 +23,6 @@
 @interface MobileAccessPlugin : NSObject<FlutterPlugin>
 + (instancetype)sharedInstance;
 
-- (void)startWithAppId:(NSString*)appId;
-- (void)startWithAppId:(NSString*)appId completion:(void (^)(NSError* error))completion;
-
+@property(nonatomic, retain) NSString* origoAppId;
 @end
 

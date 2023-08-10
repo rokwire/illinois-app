@@ -80,9 +80,9 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
             Expanded(
               child: RoundedButton(
                 label: Localization().getStringEx("dialog.ok.title", "Ok"),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,
-                textColor: Styles().colors!.fillColorPrimary,
                 onTap: onTapSave,
               ),
             ),
@@ -90,9 +90,9 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
             Expanded(
               child: RoundedButton(
                 label: Localization().getStringEx( "dialog.cancel.title","Cancel"),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,
-                textColor: Styles().colors!.fillColorPrimary,
                 onTap: onTapCancel,
               ),
             ),

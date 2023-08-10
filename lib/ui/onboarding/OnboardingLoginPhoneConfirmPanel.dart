@@ -176,9 +176,9 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                         "Confirm phone number"),
                     hint: Localization().getStringEx(
                         "panel.onboarding.confirm_phone.button.confirm.hint", ""),
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                     borderColor: Styles().colors!.fillColorSecondary,
                     backgroundColor: Styles().colors!.background,
-                    textColor: Styles().colors!.fillColorPrimary,
                     onTap: () => _onTapConfirm())
                 ),
                 Visibility(
@@ -190,9 +190,9 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                           "panel.onboarding.confirm_phone.button.link.cancel.label", "Cancel"),
                       hint: Localization().getStringEx(
                           "panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.background,
-                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: () => _onTapCancel())
                   ),
                 ),
@@ -234,7 +234,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     });
 
     if (!_link) {
-      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((result) {
+      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text, scope: Onboarding2().loginAccountScope).then((result) {
         _onPhoneVerified(result);
       });
     } else {

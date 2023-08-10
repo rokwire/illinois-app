@@ -441,10 +441,8 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
             buttonWidgets.add(
               Padding(padding: EdgeInsets.only(top: 16), child:
                 RoundedButton(label: text ?? '',
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                   backgroundColor: Styles().colors!.white,
-                  textColor: Styles().colors!.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 16,
                   borderColor: Styles().colors!.fillColorSecondary,
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

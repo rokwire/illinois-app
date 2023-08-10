@@ -123,23 +123,27 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     return Scaffold(
         appBar: _headerBar,
         body: Column(children: <Widget>[
-          Padding(
-              padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-              child: Semantics(
-                  hint: Localization().getStringEx("dropdown.hint", "DropDown"),
-                  container: true,
-                  child: RibbonButton(
-                    textColor: Styles().colors!.fillColorSecondary,
-                    backgroundColor: Styles().colors!.white,
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                    rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
-                    label: _getContentLabel(_selectedContent),
-                    onTap: _changeSettingsContentValuesVisibility))),
+          Container(
+            color: _healthScreenerSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
+            padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+            child: Semantics(
+              hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
+              container: true,
+              child: RibbonButton(
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
+                  backgroundColor: Styles().colors!.white,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                  label: _getContentLabel(_selectedContent),
+                  onTap: _changeSettingsContentValuesVisibility
+              ),
+            ),
+          ),
           Expanded(
               child: Stack(children: [
             Padding(
-                padding: EdgeInsets.only(top: 16),
+                padding: EdgeInsets.only(top: _healthScreenerSelected ? 0 : 16.0),
                 child: _buildScrollableContentWidget(
                     child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget))),
             _buildContentValuesContainer()
@@ -285,7 +289,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
     return ((contentItem != null) && contentItems!.contains(contentItem)) ? contentItem : null;
   }
 
-  WellnessContent? get _initialContentItem => widget.params[WellnessHomePanel.contentItemKey];
+  WellnessContent? get _initialContentItem => widget.params[WellnessHomePanel.contentItemKey] ?? widget.content;
 
   Widget get _contentWidget {
     switch (_selectedContent) {
@@ -313,6 +317,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel>
         return Container();
     }
   }
+
+  bool get _healthScreenerSelected => _selectedContent == WellnessContent.healthScreener;
 
   String? _loadWellcomeResourceGuideId(String resourceId) =>
     Guide().detailIdFromUrl(Wellness().getResourceUrl(resourceId: resourceId));

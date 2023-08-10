@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class MobileCredential {
@@ -179,4 +180,94 @@ class UserInvitationMeta {
 
 enum InvitationCodeStatus { pending, acknowledged, not_supported, failed }
 
+class StudentId {
+  final String? fullName;
+  final String? uin;
+  final String? role;
+  final String? studentLevel;
+  final String? cardNumber;
+  final DateTime? expirationDate;
+  final String? libraryNumber;
+  final String? magTrack2;
+  final String? photoBase64;
+  final int? resultCode;
+  final String? resultDescription;
+  final bool? isActiveCard;
+  final int? birthYear;
+  final List<MobileIdCredential>? mobileCredentials;
+
+  StudentId(
+      {this.fullName,
+      this.uin,
+      this.role,
+      this.studentLevel,
+      this.cardNumber,
+      this.expirationDate,
+      this.libraryNumber,
+      this.magTrack2,
+      this.photoBase64,
+      this.resultCode,
+      this.resultDescription,
+      this.isActiveCard,
+      this.birthYear,
+      this.mobileCredentials});
+
+  static StudentId? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    bool isActiveCard = ('Y' == JsonUtils.stringValue(json['is_active_card']));
+    return StudentId(
+        fullName: JsonUtils.stringValue(json['full_name']),
+        uin: JsonUtils.stringValue(json['UIN']),
+        role: JsonUtils.stringValue(json['role']),
+        studentLevel: JsonUtils.stringValue(json['student_level']),
+        cardNumber: JsonUtils.stringValue(json['card_number']),
+        expirationDate:
+            DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['expiration_date']), format: _expirationDateFormat, isUtc: false),
+        libraryNumber: JsonUtils.stringValue(json['library_number']),
+        magTrack2: JsonUtils.stringValue(json['mag_track2']),
+        photoBase64: JsonUtils.stringValue(json['photo_base64']),
+        resultCode: JsonUtils.intValue(int.tryParse(json['result_code'])),
+        resultDescription: JsonUtils.stringValue(json['result_description']),
+        isActiveCard: isActiveCard,
+        birthYear: JsonUtils.intValue(int.tryParse(json['birth_year'])),
+        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])));
+  }
+}
+
+class MobileIdCredential {
+  final String? id;
+  final String? status;
+  final DateTime? expirationDate;
+
+  MobileIdCredential({this.id, this.status, this.expirationDate});
+
+  String? get displayExpirationDate {
+    return AppDateTime().formatDateTime(expirationDate, format: _expirationDateFormat);
+  }
+
+  static MobileIdCredential? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return MobileIdCredential(
+        id: JsonUtils.stringValue(json['id']),
+        status: JsonUtils.stringValue(json['status']),
+        expirationDate: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['expiration_date']), format: 'yyyy-MM-dd', isUtc: false));
+  }
+
+  static List<MobileIdCredential>? fromJsonList(List<dynamic>? jsonList) {
+    List<MobileIdCredential>? items;
+    if (jsonList != null) {
+      items = <MobileIdCredential>[];
+      for (dynamic json in jsonList) {
+        ListUtils.add(items, MobileIdCredential.fromJson(json));
+      }
+    }
+    return items;
+  }
+}
+
 final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
+final String _expirationDateFormat = 'yyyy-MM-dd';

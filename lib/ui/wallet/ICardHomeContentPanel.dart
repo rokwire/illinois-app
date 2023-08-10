@@ -142,7 +142,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
                       Padding(
                           padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                           child: RibbonButton(
-                              textColor: Styles().colors!.fillColorSecondary,
+                              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
                               backgroundColor: Styles().colors!.white,
                               borderRadius: BorderRadius.all(Radius.circular(5)),
                               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -229,7 +229,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   String _getContentLabel(ICardContent content) {
     switch (content) {
       case ICardContent.i_card:
-        return Localization().getStringEx('panel.icard.home.content.icard.label', 'i-card+');
+        return Localization().getStringEx('panel.icard.home.content.icard.label', 'Illini ID');
       case ICardContent.faqs:
         return Localization().getStringEx('panel.icard.home.content.faqs.label', 'FAQs');
     }

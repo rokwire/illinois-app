@@ -415,4 +415,28 @@ class Storage extends rokwire.Storage {
   String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
   set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
 
+  // Events2
+  static const String events2AttributesKey = 'events2_attributes';
+  Map<String, dynamic>? get events2Attributes => JsonUtils.decodeMap(getStringWithName(events2AttributesKey));
+  set events2Attributes(Map<String, dynamic>? value) => setStringWithName(events2AttributesKey, JsonUtils.encode(value));
+
+  static const String events2TypesKey = 'events2_types';
+  List<String>? get events2Types => getStringListWithName(events2TypesKey);
+  set events2Types(List<String>? value) => setStringListWithName(events2TypesKey, value);
+
+  static const String events2TimeKey = 'events2_time';
+  String? get events2Time => getStringWithName(events2TimeKey);
+  set events2Time(String? value) => setStringWithName(events2TimeKey, value);
+
+  static const String events2CustomStartTimeKey = 'events2_custom_start_time';
+  String? get events2CustomStartTime => getStringWithName(events2CustomStartTimeKey);
+  set events2CustomStartTime(String? value) => setStringWithName(events2CustomStartTimeKey, value);
+
+  static const String events2CustomEndTimeKey = 'events2_custom_end_time';
+  String? get events2CustomEndTime => getStringWithName(events2CustomEndTimeKey);
+  set events2CustomEndTime(String? value) => setStringWithName(events2CustomEndTimeKey, value);
+
+  static const String events2SortTypeKey = 'events2_sort_type';
+  String? get events2SortType => getStringWithName(events2SortTypeKey);
+  set events2SortType(String? value) => setStringWithName(events2SortTypeKey, value);
 }

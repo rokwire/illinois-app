@@ -123,28 +123,35 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
     );
   }
 
+  Widget get emptyImagePlaceholder => imagePlaceholder(); //Container(height: 102);
+
+  Widget imagePlaceholder({ Widget? child}) =>
+    AspectRatio(aspectRatio: (8000.0 / 4500.0), child:
+      Container(color: Styles().colors?.fillColorPrimary, child: child,)
+    );
+
   Widget _buildVideoEntry() {
     if (_video == null) {
-      return Container();
+      return emptyImagePlaceholder;
     }
-    final Widget emptyImagePlaceholder = Container(height: 102);
-    return GestureDetector(
-        onTap: _onTapVideo,
-        child: Semantics(
-            button: true,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Stack(alignment: Alignment.center, children: [
-                StringUtils.isNotEmpty(_video!.thumbUrl)
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                                child: Image.network(_video!.thumbUrl!,
-                                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                              return (loadingProgress == null) ? child : emptyImagePlaceholder;
-                            }))
-                        : emptyImagePlaceholder,
-                VideoPlayButton(hasBackground: false)
-              ])
-            ])));
+    return GestureDetector(onTap: _onTapVideo, child:
+      Semantics(button: true, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Stack(alignment: Alignment.center, children: [
+            StringUtils.isNotEmpty(_video!.thumbUrl) ?
+              ClipRRect(borderRadius: BorderRadius.circular(4), child:
+                Image.network(_video!.thumbUrl!, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  return imagePlaceholder(child: (loadingProgress != null) ? Center(child:
+                    CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
+                  ) : child);
+                })
+              ) :
+              emptyImagePlaceholder,
+            VideoPlayButton(hasBackground: false)
+          ])
+        ])
+      )
+    );
   }
 
   void _onTapVideo() {

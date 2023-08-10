@@ -1,10 +1,12 @@
 // XmlUtils
 
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xml/xml.dart';
-import 'dart:math' as math;
 
 class XmlUtils {
   
@@ -129,5 +131,24 @@ class GeoMapUtils {
       url += "&q=${Uri.encodeComponent(destination.toString())}";
     }
     return url;
+  }
+}
+
+// TODO: Might be better in the plugin rather than the app
+class LinearProgressColorUtils {
+  static Color linearProgressIndicatorColor(double percentage) {
+    return Color.lerp(
+      Colors.red,
+      Colors.green,
+      percentage,
+    )!;
+  }
+
+  static Color linearProgressIndicatorBackgroundColor(double percentage) {
+    return Color.lerp(
+      Colors.red[100],
+      Colors.green[100],
+      percentage,
+    )!;
   }
 }

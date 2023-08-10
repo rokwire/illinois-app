@@ -224,9 +224,8 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
           visible: directionsVisible, child: Padding(padding: EdgeInsets.only(right: 8), child: RoundedButton(
             label: Localization().getStringEx('panel.parking_lots.button.directions.title', 'Directions'),
             hint: Localization().getStringEx('panel.parking_lots.button.directions.hint', ''),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
             backgroundColor: Colors.white,
-            fontSize: 16.0,
-            textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             onTap: _onTapDirections),),))

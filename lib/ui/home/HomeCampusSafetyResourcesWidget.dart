@@ -165,11 +165,12 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
     }
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.campus_safety_resources.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.campus_safety_resources.button.all.hint', 'Tap to view all safety resources'),
-        onTap: _onViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.campus_safety_resources.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.campus_safety_resources.button.all.hint', 'Tap to view all safety resources'),
+          onTap: _onViewAll,
+        ),
       ),
     ]);
   }

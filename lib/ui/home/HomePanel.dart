@@ -39,6 +39,7 @@ import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
+import 'package:illinois/ui/home/HomeEvent2FeedWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeInboxWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
@@ -58,7 +59,7 @@ import 'package:illinois/ui/home/HomeWellnessTipsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -76,7 +77,6 @@ import 'package:illinois/ui/home/HomeSaferWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
-import 'package:illinois/ui/home/HomeSuggestedEventsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -142,7 +142,16 @@ class HomePanel extends StatefulWidget {
         return HomeCampusRemindersWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
     }
-    else if (code == 'suggested_events') {
+    else if (code == 'event_feed') {
+      if (title) {
+        return HomeEvent2FeedWidget.title;
+      } else if (handle) {
+        return HomeEvent2FeedWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeEvent2FeedWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    /*else if (code == 'suggested_events') {
       if (title) {
         return HomeSuggestedEventsWidget.title;
       } else if (handle) {
@@ -150,7 +159,7 @@ class HomePanel extends StatefulWidget {
       } else {
         return HomeSuggestedEventsWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
       }
-    }
+    }*/
     else if (code == 'recent_items') {
       if (title) {
         return HomeRecentItemsWidget.title;
@@ -406,11 +415,11 @@ class HomePanel extends StatefulWidget {
 
     else if (code == 'my_events') {
       if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: Event.favoriteKeyName);
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: Event2.favoriteKeyName); 
       } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,favoriteKey: Event.favoriteKeyName, );
+        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Event2.favoriteKeyName, );
       } else {
-        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Event.favoriteKeyName);
+        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Event2.favoriteKeyName);
       }
     }
     else if (code == 'my_dining') {

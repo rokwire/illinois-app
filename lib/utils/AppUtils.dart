@@ -139,7 +139,7 @@ class AppAlert {
       {required BuildContext buildContext,
       required String message,
       String? positiveButtonLabel,
-      required VoidCallback positiveCallback,
+      VoidCallback? positiveCallback,
       VoidCallback? negativeCallback,
       String? negativeButtonLabel}) async {
     bool alertDismissed = await showDialog(
@@ -152,7 +152,9 @@ class AppAlert {
                 onPressed: () {
                   Analytics().logAlert(text: message, selection: 'Yes');
                   Navigator.pop(context, true);
-                  positiveCallback();
+                  if (positiveCallback != null) {
+                    positiveCallback();
+                  }
                 }),
             TextButton(
                 child: Text(
@@ -290,15 +292,15 @@ class AppDateTimeUtils {
         timeDaysDiff += 1;
       }
       if (timeDaysDiff == 0) {
-        displayDay = Localization().getStringEx('model.explore.time.today', 'Today');
+        displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today');
         if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
         }
       }
       else if (timeDaysDiff == 1) {
-        displayDay = Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow');
+        displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
         if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
         }
       }
       else {
@@ -397,6 +399,13 @@ class AppPrivacyPolicy {
   }
 }
 
+class AppPopScope {
+  static Future<bool> back(Function? fn) {
+    fn?.call();
+    return Future.value(false);
+  }
+}
+
 extension StateExt on State {
   @protected
   void setStateIfMounted(VoidCallback fn) {
@@ -404,6 +413,16 @@ extension StateExt on State {
       // ignore: invalid_use_of_protected_member
       setState(fn);
     }
+  }
+
+  @protected
+  void setStateDelayedIfMounted(VoidCallback fn, { Duration duration = Duration.zero }) {
+    Future.delayed(duration, () {
+      if (mounted) {
+        // ignore: invalid_use_of_protected_member
+        setState(fn);
+      }
+    });
   }
 
   @protected
@@ -415,5 +434,18 @@ extension StateExt on State {
     else {
       fn();
     }
+  }
+
+  @protected
+  void applyStateDelayedIfMounted(VoidCallback fn, { Duration duration = Duration.zero }) {
+    Future.delayed(duration, () {
+      if (mounted) {
+        // ignore: invalid_use_of_protected_member
+        setState(fn);
+      }
+      else {
+        fn();
+      }
+    });
   }
 }

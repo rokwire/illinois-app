@@ -89,7 +89,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     return _canCreatePoll?
     RoundedButton(
       label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a Poll"),
-      textColor: Styles().colors!.fillColorPrimary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
       borderColor: Styles().colors!.fillColorSecondary,
       backgroundColor: Colors.white,
       contentWeight: 0.6,
@@ -99,8 +99,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     Padding(padding: EdgeInsets.only(right: 120), child:
       RoundedButton(
         label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login"),
-//        height: 48,
-        textColor: Styles().colors!.fillColorPrimary,
+        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
         borderColor: Styles().colors!.fillColorSecondary,
         backgroundColor: Colors.white,
         progress: _authLoading,

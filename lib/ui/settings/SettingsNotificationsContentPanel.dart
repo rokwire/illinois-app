@@ -113,6 +113,7 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeWellnessTodoList,
       FirebaseMessaging.payloadTypeWellnessToDoItem,
       FirebaseMessaging.payloadTypeEventDetail,
+      FirebaseMessaging.payloadTypeEvent,
       FirebaseMessaging.payloadTypeGameDetail,
       FirebaseMessaging.payloadTypeAthleticsGameStarted,
       FirebaseMessaging.payloadTypeAthleticsNewDetail,
@@ -226,7 +227,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
           RibbonButton(
-            textColor: Styles().colors!.fillColorSecondary,
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
             backgroundColor: Styles().colors!.white,
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),

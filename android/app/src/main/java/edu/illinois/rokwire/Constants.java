@@ -28,6 +28,7 @@ public class Constants {
     static final String TEST_KEY = "test";
 
     // Mobile Access
+    public static final String MOBILE_ACCESS_START_KEY = "start";
     public static final String MOBILE_ACCESS_AVAILABLE_KEYS_KEY = "availableKeys";
     public static final String MOBILE_ACCESS_REGISTER_ENDPOINT_KEY = "registerEndpoint";
     public static final String MOBILE_ACCESS_UNREGISTER_ENDPOINT_KEY = "unregisterEndpoint";
@@ -47,8 +48,8 @@ public class Constants {
     public static final String MOBILE_ACCESS_TWIST_AND_GO_ENABLED_PREFS_KEY = "mobile_access_twist_n_go_enabled";
     public static final String MOBILE_ACCESS_UNLOCK_VIBRATION_ENABLED_PREFS_KEY = "mobile_access_unlock_vibration_enabled";
     public static final String MOBILE_ACCESS_UNLOCK_SOUND_ENABLED_PREFS_KEY = "mobile_access_unlock_sound_enabled";
+    public static final String MOBILE_ACCESS_START_FINISHED_KEY = "start.finished";
     public static final String MOBILE_ACCESS_ENDPOINT_REGISTER_FINISHED_KEY = "endpoint.register.finished";
-    public static final String MOBILE_ACCESS_DEVICE_SCREEN_UNLOCKED_KEY = "device.screen.unlocked";
     public static final String MOBILE_ACCESS_DEVICE_SCANNING_KEY = "device.scanning";
 
 }

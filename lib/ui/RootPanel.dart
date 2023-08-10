@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,7 +25,11 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
@@ -37,11 +42,13 @@ import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:rokwire_plugin/model/actions.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/polls.dart';
@@ -54,7 +61,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -100,9 +106,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     NotificationService().subscribe(this, [
       FirebaseMessaging.notifyForegroundMessage,
       FirebaseMessaging.notifyPopupMessage,
+      FirebaseMessaging.notifyEventsNotification,
       FirebaseMessaging.notifyEventDetail,
+      FirebaseMessaging.notifyEventAttendeeSurveyInvitation,
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
+      FirebaseMessaging.notifyAthleticsTeam,
+      FirebaseMessaging.notifyAthleticsTeamRoster,
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
@@ -155,6 +165,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifySettingsAssessmentsNotification,
       FirebaseMessaging.notifySettingsCalendarNotification,
       FirebaseMessaging.notifySettingsAppointmentsNotification,
+      FirebaseMessaging.notifyGuideArticleDetailNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
       ActionBuilder.notifyShowPanel,
@@ -177,6 +188,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
       ExploreMapPanel.notifySelect,
+      Events2.notifyLaunchDetail
     ]);
 
     _tabs = _getTabs();
@@ -222,8 +234,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyPopupMessage) {
       _onFirebasePopupMessage(param);
     }
+    else if (name == FirebaseMessaging.notifyEventsNotification) {
+      _onFirebaseEvents(param);
+    }
     else if (name == FirebaseMessaging.notifyEventDetail) {
       _onFirebaseEventDetail(param);
+    }
+    else if (name == FirebaseMessaging.notifyEventAttendeeSurveyInvitation) {
+      _onFirebaseEventAttendeeSurveyInvitation(param);
     }
     else if (name == FirebaseMessaging.notifyGameDetail) {
       _onFirebaseGameDetail(param);
@@ -235,6 +253,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onLocalNotification(param);
     }
     else if (name == Events.notifyEventDetail) {
+      _onFirebaseEventDetail(param);
+    }
+    else if (name == Events2.notifyLaunchDetail) {
       _onFirebaseEventDetail(param);
     }
     else if (name == Sports.notifyGameDetail) {
@@ -285,6 +306,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyAthleticsNewsUpdated) {
       _onFirebaseAthleticsNewsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyAthleticsTeam) {
+      _onFirebaseAthleticsTeamNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyAthleticsTeamRoster) {
+      _onFirebaseAthleticsTeamRosterNotification(param);
     }
     else if (name == FirebaseMessaging.notifyHomeNotification) {
       _onFirebaseHomeNotification();
@@ -436,6 +463,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifySettingsAppointmentsNotification) {
       _onFirebaseSettingsNotification(settingsContent: SettingsContent.appointments);
     }
+    else if (name == FirebaseMessaging.notifyGuideArticleDetailNotification) {
+      _onFirebaseGuideArticleNotification(param);
+    }
     else if (name == HomePanel.notifySelect) {
       _onSelectHome();
     }
@@ -509,6 +539,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
 
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+        Analytics().logMapHide();
+      }
+
       if (mounted) {
         setState(() {
           _currentTabIndex = tabIndex;
@@ -520,6 +554,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
       Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
       Analytics().logPage(name: tabPanel?.runtimeType.toString());
+
+      if (getRootTabByIndex(_currentTabIndex) == RootTab.Maps) {
+        Analytics().logMapShow();
+      }
 
       RootTab? rootTab = getRootTabByIndex(tabIndex);
       NotificationService().notify(RootPanel.notifyTabChanged, rootTab);
@@ -608,7 +646,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       },
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
-                      textColor: Styles().colors!.fillColorPrimary,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.yes.title", 'Yes')),
                   Container(height: 10,),
                   RoundedButton(
@@ -619,7 +657,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                       },
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors!.fillColorSecondary,
-                      textColor: Styles().colors!.fillColorPrimary,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.no.title", 'No'))
                 ],
               ),
@@ -646,23 +684,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onCalendarPromptMessage(dynamic data) {
-        AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: Text(Localization().getStringEx(
-            'prompt.device_calendar.msg.add_event',
-            'Do you want to save this event to your calendar?')),
-        actions: <Widget>[
-          TextButton(
-              child:
-              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
-              onPressed: () {
-                Navigator.of(context).pop();
-                DeviceCalendar().placeEvent(data);
-              }),
-          TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-              onPressed: () => Navigator.of(context).pop())
-        ]);
+        DeviceCalendarDialog.show(context: context);
   }
 
   void _showPanel(Map<String, dynamic> content) {
@@ -690,13 +712,33 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     );
   }
 
-  Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
-    if (StringUtils.isNotEmpty(eventId)) {
-      ExplorePanel.presentDetailPanel(context, eventId: eventId);
+  Future<void> _onFirebaseEvents(Map<String, dynamic>? content) async {
+    Map<String, dynamic>? attributes = (content != null) ? JsonUtils.mapValue(JsonUtils.decode(JsonUtils.stringValue(content['attributes']))) : null;
+    List<String>? types = (content != null) ? JsonUtils.listStringsValue(content['types']) : null;
+    String? time =  (content != null) ? JsonUtils.stringValue(content['time']) : null;
+
+    LinkedHashSet<Event2TypeFilter>? typeFilters = types != null ? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(types)) : null;
+    Event2TimeFilter? timeFilter = time != null ? event2TimeFilterFromString(time) : null;
+
+    if (attributes != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2HomePanel(attributes: attributes, types: typeFilters, timeFilter: timeFilter,)));
     }
   }
 
+  Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
+    if (StringUtils.isNotEmpty(eventId)) {
+      //ExplorePanel.presentDetailPanel(context, eventId: eventId);
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
+    }
+  }
+
+  void _onFirebaseEventAttendeeSurveyInvitation(Map<String, dynamic>? content) {
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['entity_id']) : null;
+    if (StringUtils.isNotEmpty(eventId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(eventId: eventId,)));
+    }
+  }
   
   Future<void> _onFirebaseGameDetail(Map<String, dynamic>? content) async {
     String? gameId = (content != null) ? JsonUtils.stringValue(content['game_id']) : null;
@@ -716,12 +758,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
-    String? groupId = (content != null) ? JsonUtils.stringValue(content['group_id']) : null;
+    String? groupId = (content != null) ? JsonUtils.stringValue(content['group_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     _presentGroupDetailPanel(groupId: groupId);
   }
 
   Future<void> _onAppointmentDetail(Map<String, dynamic>? content) async {
-    String? appointmentId = (content != null) ? JsonUtils.stringValue(content['appointment_id']) : null;
+    String? appointmentId = (content != null) ? JsonUtils.stringValue(content['appointment_id']) ?? JsonUtils.stringValue(content['entity_id']) : null;
     if (StringUtils.isNotEmpty(appointmentId)) {
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
     }
@@ -738,7 +780,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
-    String? guideId = (content != null) ? JsonUtils.stringValue(content['guide_id']) : null;
+    String? guideId = (content != null) ? JsonUtils.stringValue(content['guide_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     if (StringUtils.isNotEmpty(guideId)){
       WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
@@ -768,7 +810,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   Future<void> _onCanvasEventDetail(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
+    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) ?? JsonUtils.stringValue(content['entity_id'])  : null;
     if (StringUtils.isNotEmpty(eventId)) {
       int? eventIdValue = int.tryParse(eventId!);
       if (eventIdValue != null) {
@@ -954,6 +996,23 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onFirebaseAthleticsTeamNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? sportName = JsonUtils.stringValue(param["sport"]);
+      if (StringUtils.isNotEmpty(sportName)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(Sports().getSportByShortName(sportName))));
+      }
+    }
+  }
+  void _onFirebaseAthleticsTeamRosterNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? sportName = JsonUtils.stringValue(param["sport"]);
+      if (StringUtils.isNotEmpty(sportName)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(Sports().getSportByShortName(sportName), null)));
+      }
+    }
+  }
+
   void _onFirebaseHomeNotification() {
     // Pop to Home Panel and select the first tab
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -1013,6 +1072,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         _onFirebaseAcademicsNotification(AcademicsContent.todo_list);
       }
     }
+  }
+
+  void _onFirebaseGuideArticleNotification(dynamic param) async {
+    _onGuideDetail(param);
   }
 
   void _onFirebaseProfileNotification({required SettingsProfileContent profileContent}) {

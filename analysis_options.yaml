@@ -1,0 +1,9 @@
+#include: package:flutter_lints/flutter.yaml
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
+# https://medium.com/flutter-community/watch-your-code-dart-flutter-lint-55a697d01c8d
+
+# A good example of this file can be found at
+# https://github.com/flutter/flutter/blob/master/analysis_options.yaml
+

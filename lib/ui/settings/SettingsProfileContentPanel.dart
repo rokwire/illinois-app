@@ -131,7 +131,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
               RibbonButton(
-                textColor: Styles().colors!.fillColorSecondary,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
                 backgroundColor: Styles().colors!.white,
                 borderRadius: BorderRadius.all(Radius.circular(5)),
                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),

@@ -33,10 +33,12 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
@@ -58,6 +60,7 @@ class SavedPanel extends StatefulWidget {
 
   static const List<String> allFavoriteCategories = <String>[
     Event.favoriteKeyName,
+    Event2.favoriteKeyName,
     Dining.favoriteKeyName,
     Game.favoriteKeyName,
     News.favoriteKeyName,
@@ -271,6 +274,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Future<List<Favorite>?> Function(LinkedHashSet<String>?) _favoriteCategoryLoader(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName: return _loadFavoriteEvents;
+      case Event2.favoriteKeyName: return _loadFavoriteEvents2;
       case Dining.favoriteKeyName: return _loadFavoriteDinings;
       case Game.favoriteKeyName: return _loadFavoriteGames;
       case News.favoriteKeyName: return _loadFavoriteNews;
@@ -287,6 +291,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Future<List<Favorite>?> _loadFavoriteEvents(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events().loadEventsByIds(favoriteIds), favoriteIds) : null;
+
+  Future<List<Favorite>?> _loadFavoriteEvents2(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsList(Events2Query(ids: favoriteIds)), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteDinings(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadBackendDinings(false, null, null), favoriteIds) : null;
@@ -370,6 +377,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   String? _favoriteCategoryTitle(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName:         return Localization().getStringEx('panel.saved.label.events', 'My Events');
+      case Event2.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.events2', 'My Events');
       case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining Locations");
       case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
       case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
@@ -385,6 +393,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   String? _favoriteCategoryIconKey(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName:         return 'events';
+      case Event2.favoriteKeyName:        return 'events';
       case Dining.favoriteKeyName:        return 'dining';
       case Game.favoriteKeyName:          return 'athletics';
       case News.favoriteKeyName:          return 'news';

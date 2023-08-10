@@ -321,8 +321,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       child: RoundedButton(
                         label: Localization().getStringEx("panel.athletics_team.button.full_schedule.title", 'Full Schedule'),
                         hint: Localization().getStringEx("panel.athletics_team.button.full_schedule.hint", ''),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         onTap: _showScheduleListPanel(),
-                        textColor: Styles().colors!.fillColorPrimary,
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.background,
                       ),
@@ -387,6 +387,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                         child: RoundedButton(
                           label: Localization().getStringEx("panel.athletics_team.button.all_news.title", 'All News'),
                           hint: Localization().getStringEx("panel.athletics_team.button.all_news.hint", ''),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                           onTap: () {
                             Analytics().logSelect(target:"All News");
                             Navigator.push(
@@ -394,7 +395,6 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                               CupertinoPageRoute(
                                 builder: (context) => AthleticsNewsListPanel(sportName: widget.sport!.name,)));
                           },
-                          textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
                           backgroundColor: Styles().colors!.background,
                         ),
@@ -452,8 +452,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: RoundedButton(
                       label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster'),
                       hint: Localization().getStringEx("panel.athletics_team.button.full_roster.hint", ''),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       onTap: _showRosterListPanel(),
-                      textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.background,
                     ),
@@ -510,8 +510,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       child: RoundedButton(
                         label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff'),
                         hint: Localization().getStringEx("panel.athletics_team.button.all_staff.hint", ''),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         onTap:_showCoachListPanel(),
-                        textColor: Styles().colors!.fillColorPrimary,
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.background,
                       ),
