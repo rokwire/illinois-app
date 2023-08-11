@@ -74,6 +74,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool _eventProcessing = false;
   bool _linkedEventsLoading = false;
 
+  List<String>? _displayCategories;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -85,6 +87,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     _event = widget.event;
     _superEvent = widget.superEvent;
     _survey = widget.survey;
+    _displayCategories = _buildDisplayCategories(widget.event);
     _initEvent();
 
     if ((_userLocation = widget.userLocation) == null) {
@@ -150,13 +153,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         Container(color: Styles().colors?.white, child:
           Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             _roleBadgeWidget,
-            _categoriesWidget,
+            _contentHeadingWidget,
             Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _titleWidget,
-              _sponsorWidget,
-              _detailsWidget,
-            ])
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _titleWidget,
+                _sponsorWidget,
+                _detailsWidget,
+              ])
             ),
             Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
           ]),
@@ -181,11 +184,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
 
-  Widget get _categoriesWidget => 
+  Widget get _contentHeadingWidget => 
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child:
-        Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 8), child:
-          Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
+        Padding(padding: EdgeInsets.only(left: 16, top: _hasDisplayCategories ? 16 : 8, bottom: 8), child:
+          _hasDisplayCategories ? _categoriesContentWidget : _titleContentWidget,
         ),
       ),
       _groupingBadgeWidget,
@@ -195,8 +198,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ],)
     ]);
 
-  List<String>? get _displayCategories =>
-    Events2().contentAttributes?.displaySelectedLabelsFromSelection(_event?.attributes, usage: ContentAttributeUsage.category);
+  Widget get _categoriesContentWidget =>
+    Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"));
+
+  static List<String>? _buildDisplayCategories(Event2? event) =>
+    Events2().contentAttributes?.displaySelectedLabelsFromSelection(event?.attributes, usage: ContentAttributeUsage.category);
 
   Widget get _groupingBadgeWidget {
     String? badgeLabel;
@@ -245,11 +251,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     ),
   );
 
-  Widget get _titleWidget => Row(children: [
-    Expanded(child: 
-      Text(_event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'), maxLines: 2, overflow: TextOverflow.ellipsis)
-    ),
-  ],);
+  Widget get _titleWidget => _hasDisplayCategories ?
+    Row(children: [
+      Expanded(child: 
+        _titleContentWidget
+      ),
+    ],) : Container();
+
+  Widget get _titleContentWidget =>
+    Text(_event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
@@ -1055,8 +1065,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         _eventLoading = true;
       });
       Event2? event = await Events2().loadEvent(widget.eventId!);
+      List<String>? displayCategories = _buildDisplayCategories(event);
       setStateIfMounted(() {
         _event = event;
+        _displayCategories = displayCategories;
         _eventLoading = false;
       });
     }
@@ -1185,6 +1197,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
       Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
       Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
+      List<String>? displayCategories = _buildDisplayCategories(event);
 
       setStateIfMounted(() {
         if (progress != null) {
@@ -1192,6 +1205,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         }
         if (event != null) {
           _event = event;
+          _displayCategories = displayCategories;
         }
         if (survey != null) {
           _survey = survey;
@@ -1225,6 +1239,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendanceTaker;
   //bool get _isParticipant =>  _event?.userRole == Event2UserRole.participant;
   bool get _isAttendee => (_persons?.attendees?.indexWhere((person) => person.identifier?.accountId == Auth2().accountId) ?? -1) > -1;
+  bool get _hasDisplayCategories => (_displayCategories?.isNotEmpty == true);
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
 }
