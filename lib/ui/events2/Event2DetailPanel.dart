@@ -616,7 +616,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           title: Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.title', 'Take Survey'),
           onTap: _onFollowUpSurvey,
           externalLink: false,
-      ) : _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.completed.message', 'You have completed this event\'s survey'), 'check')];
+      ) : _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.completed.message', 'You have completed this event\'s survey'), 'check', maxLines: 2)];
     }
 
     return null;
