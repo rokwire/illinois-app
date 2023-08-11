@@ -16,6 +16,9 @@ import 'package:timezone/timezone.dart';
 
 extension Event2Ext on Event2 {
 
+  bool get hasSurvey => (attendanceDetails?.isNotEmpty ?? false) && (surveyDetails?.isNotEmpty ?? false);
+  bool get hasLinkedEvents => (isSuperEvent || isRecurring);
+
   Color? get uiColor => Styles().colors?.eventColor;
 
   String? get displayImageUrl => StringUtils.isNotEmpty(imageUrl) ? imageUrl : randomImageUrl;
