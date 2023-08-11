@@ -120,10 +120,16 @@ class Event2Card extends StatefulWidget {
   final Position? userLocation;
   final void Function()? onTap;
   
-  Event2Card(this.event, { Key? key, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) : super(key: key);
+  final List<String>? displayCategories;
+  
+  Event2Card(this.event, { Key? key, this.displayMode = Event2CardDisplayMode.list, this.linkType, this.userLocation, this.onTap}) :
+    displayCategories = Events2().contentAttributes?.displaySelectedLabelsFromSelection(event.attributes, usage: ContentAttributeUsage.category),
+    super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CardState();
+
+  bool get hasDisplayCategories => (displayCategories?.isNotEmpty == true);
 
   static Decoration get linkContentDecoration => _Event2CardState._linkContentDecoration;
   static BorderRadiusGeometry get linkContentBorderRadius => _Event2CardState._linkContentBorderRadius;
@@ -183,7 +189,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       ClipRRect(borderRadius: _listContentBorderRadius, child: 
         Column(mainAxisSize: MainAxisSize.min, children: [
           _imageHeadingWidget,
-          _categoriesWidget,
+          _categoriesOrTitleAndFavoriteWidget,
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
             Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
               _titleWidget,
@@ -199,7 +205,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       Container(decoration: _pageContentDecoration, child:
         Column(mainAxisSize: MainAxisSize.min, children: [
           Padding(padding: EdgeInsets.only(top: _pageHeadingHeight), child:
-            _categoriesWidget,
+            _categoriesOrTitleAndFavoriteWidget,
           ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -316,15 +322,18 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
   
 
-  Widget get _categoriesWidget => 
+  Widget get _categoriesOrTitleAndFavoriteWidget => 
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 8), child:
-          Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
+          widget.hasDisplayCategories ? _categoriesContentWidget : _titleContentWidget
         ),
       ),
       _favoriteButton
     ]);
+
+  Widget get _categoriesContentWidget =>
+    Text(widget.displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"));
 
   /*Widget get _groupingBadgeWidget {
     String? badgeLabel;
@@ -340,9 +349,6 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           Text(badgeLabel, style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
     )) : Container();
   }*/
-
-  List<String>? get _displayCategories =>
-    Events2().contentAttributes?.displaySelectedLabelsFromSelection(widget.event.attributes, usage: ContentAttributeUsage.category);
 
   Widget get _favoriteButton {
     bool isFavorite = Auth2().isFavorite(widget.event);
@@ -366,14 +372,15 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
   }
 
-  Widget get _titleWidget {
-    Widget contentWidget =  Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,);
-    return Row(children: [
+  Widget get _titleWidget => widget.hasDisplayCategories ? 
+    Row(children: [
       Expanded(child: 
-        contentWidget
+        _titleContentWidget
       ),
-    ],);
-  } 
+    ],) : Container();
+
+  Widget get _titleContentWidget =>
+    Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
