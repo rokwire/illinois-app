@@ -64,6 +64,7 @@ import 'GroupSettingsPanel.dart';
 enum _DetailTab { Events, Posts, Polls, About }
 
 class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  static final String routeName = 'group_detail_content_panel';
 
   final Group? group;
   final String? groupIdentifier;
@@ -1965,14 +1966,14 @@ class _GroupEventSelector extends Event2Selector{
 
   void _onTapAddToGroup() {
     Analytics().logSelect(target: "Add To Group");
-    _state.setStateIfMounted(() {
-      data.addingGroupInProgress = true;
-    });
+    _state.setStateIfMounted(() {data.addingGroupInProgress = true;});
+
     Groups().linkEventToGroup(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection).then((value){
-      _state.setStateIfMounted(() {
-        data.addingGroupInProgress = false;
+      _state.setStateIfMounted(() {data.addingGroupInProgress = false;});
+      Navigator.of(_state.context).popUntil((Route route){
+        return route.settings.name == Event2HomePanel.routeName;
       });
-      Navigator.pop(_state.context, true);
+      Navigator.of(_state.context).pop(); //Back before Events2HomePanel //TBD do it properly
     });
   }
 }
@@ -1990,10 +1991,10 @@ class _GroupEventData extends Event2SelectorData{
       return (groupData is Group)? groupData : null;
   }
 
-  void set event(Group? group) => data?["event"] = group;
+  void set event(Event2? event) => data?["event"] = event;
 
-  Group? get event {
-    dynamic groupData = data?["event"];
-    return (groupData is Group)? groupData : null;
+  Event2? get event {
+    dynamic eventData = data?["event"];
+    return (eventData is Event2)? eventData : null;
   }
 }
