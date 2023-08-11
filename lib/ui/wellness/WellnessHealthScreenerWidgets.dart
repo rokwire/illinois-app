@@ -342,7 +342,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   Future<int> _loadPage({required int offset, required int limit}) async {
-    List<SurveyResponse>? responses = await Surveys().loadSurveyResponses(surveyTypes: [_healthScreenerSurveyType],
+    List<SurveyResponse>? responses = await Surveys().loadUserSurveyResponses(surveyTypes: [_healthScreenerSurveyType],
         startDate: _selectedStartDate, limit: limit, offset: offset);
     if (responses != null) {
       setState(() {
