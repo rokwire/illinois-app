@@ -149,7 +149,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       SliverChildListDelegate([
         Container(color: Styles().colors?.white, child:
           Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _badgeWidget,
+            _roleBadgeWidget,
             _categoriesWidget,
             Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
             Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -171,7 +171,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ),
     ]));
 
-  Widget get _badgeWidget {
+  Widget get _roleBadgeWidget {
     String? label = _isAdmin ? Localization().getStringEx('panel.event2.detail.general.admin.title', 'ADMIN') : null;
     return (label != null) ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
@@ -201,10 +201,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _groupingBadgeWidget {
     String? badgeLabel;
     if (_event?.isSuperEvent == true) {
-      badgeLabel = Localization().getStringEx('widget.event2.card.super_event.abbreviation.label', 'COMP'); // composite
+      badgeLabel = Localization().getStringEx('panel.event2.detail.general.super_event.abbreviation.title', 'Multi'); // composite
     }
     else if (_event?.isRecurring == true) {
-      badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
+      badgeLabel = Localization().getStringEx('panel.event2.detail.general.recurrence.abbreviation.title', 'Repeats');
     }
     return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
       Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
@@ -624,10 +624,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   String get _linkedEventsSectionTitle {
     if (_event?.isSuperEvent == true) {
-      return Localization().getStringEx('panel.explore_detail.super_event.schedule.heading.title', 'Event Schedule');
+      return Localization().getStringEx('panel.event2.detail.general.super_event.list.title', 'Multiple events');
     }
     else if (_event?.isRecurring == true) {
-      return Localization().getStringEx('panel.explore_detail.recurring_event.schedule.heading.title', 'Available Times');
+      return Localization().getStringEx('panel.event2.detail.general.recurrence.list.title', 'This event repeats');
     }
     else {
       return '';
