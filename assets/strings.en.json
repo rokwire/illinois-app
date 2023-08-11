@@ -3661,8 +3661,10 @@
     "widget.access.auth.features.email_login.unsatisfied.message": "Sign in with your email",
     "widget.access.auth.features.phone_login.unsatisfied.message": "Sign in with your phone",
 
-    "widget.event2.card.recurring.abbreviation.label": "REC",
-    "widget.event2.card.super_event.abbreviation.label": "COMP",
+    "widget.event2.card.detail.recurring.label": "Repeats",
+    "widget.event2.card.detail.super_event.label": "Multi-Event",
+    "widget.event2.card.detail.in_person.label": "In Person",
+    "widget.event2.card.detail.online.label": "Online",
 
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",

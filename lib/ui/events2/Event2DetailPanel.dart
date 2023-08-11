@@ -248,7 +248,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Widget get _titleWidget => Row(children: [
     Expanded(child: 
-      Text(_event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'), maxLines: 2,)
+      Text(_event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'), maxLines: 2, overflow: TextOverflow.ellipsis)
     ),
   ],);
 
@@ -1237,10 +1237,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 }
 
 extension _Event2Ext on Event2 {
-
-  bool get hasSurvey => (attendanceDetails?.isNotEmpty ?? false) && (surveyDetails?.isNotEmpty ?? false);
-
-  bool get hasLinkedEvents => (isSuperEvent || isRecurring);
 
   Event2Grouping? get linkedEventsGroupingQuery {
     if (isSuperEvent) {
