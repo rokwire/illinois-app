@@ -380,7 +380,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,);
+    Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2, overflow: TextOverflow.ellipsis);
 
   Widget get _detailsWidget {
     List<Widget> detailWidgets = <Widget>[
