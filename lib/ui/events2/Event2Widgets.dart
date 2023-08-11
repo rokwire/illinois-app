@@ -190,7 +190,6 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
               _detailsWidget,
             ]),
           ),
-
         ],),
       ),
     );
@@ -324,28 +323,10 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
           Text(_displayCategories?.join(', ') ?? '', overflow: TextOverflow.ellipsis, maxLines: 2, style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
         ),
       ),
-      _groupingIconWidget,
-      _groupingBadgeWidget,
       _favoriteButton
     ]);
 
-  Widget? get _groupingIcon {
-    /*if (widget.event.isSuperEvent) {
-      return Styles().images?.getImage('composite');
-    }
-    else if (widget.event.isRecurring) {
-      return Styles().images?.getImage('recurrence');
-    }*/
-    //TMP: return Styles().images?.getImage('recurrence');
-    return null;
-  }
-
-  Widget get _groupingIconWidget {
-    Widget? groupingIcon = _groupingIcon;
-    return (groupingIcon != null) ? Padding(padding: EdgeInsets.only(left: 8, top: 16, bottom: 16), child: groupingIcon) : Container();
-  }
-
-  Widget get _groupingBadgeWidget {
+  /*Widget get _groupingBadgeWidget {
     String? badgeLabel;
     if (widget.event.isSuperEvent) {
       badgeLabel = Localization().getStringEx('widget.event2.card.super_event.abbreviation.label', 'COMP'); // composite
@@ -353,13 +334,12 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     else if (widget.event.isRecurring) {
       badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
     }
-    //TMP: badgeLabel = Localization().getStringEx('widget.event2.card.recurring.abbreviation.label', 'REC');
-    return (badgeLabel != null) ? Padding(padding: EdgeInsets.only(top: 16), child:
+    return (badgeLabel != null) ? 
       Container(padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
         Semantics(label: badgeLabel, excludeSemantics: true, child:
           Text(badgeLabel, style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
-    ))) : Container();
-  }
+    )) : Container();
+  }*/
 
   List<String>? get _displayCategories =>
     Events2().contentAttributes?.displaySelectedLabelsFromSelection(widget.event.attributes, usage: ContentAttributeUsage.category);
@@ -387,15 +367,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }
 
   Widget get _titleWidget {
-    Widget? groupingIcon = _groupingIcon;
-    Widget contentWidget = (groupingIcon != null) ?
-      RichText(textAlign: TextAlign.left, text:
-        TextSpan(children:[
-          TextSpan(text: widget.event.name, style : Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),),
-          WidgetSpan(child: Padding(padding: EdgeInsets.only(left: 6), child: groupingIcon)),
-        ])
-      ) :
-      Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,);
+    Widget contentWidget =  Text(widget.event.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), maxLines: 2,);
     return Row(children: [
       Expanded(child: 
         contentWidget
@@ -408,6 +380,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       ...?_dateDetailWidget,
       ...?_onlineDetailWidget,
       ...?_locationDetailWidget,
+      ...?_groupingDetailWidget,
     ];
 
     return detailWidgets.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 4), child:
@@ -423,7 +396,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   List<Widget>? get _onlineDetailWidget {
     return widget.event.isOnline ? <Widget>[
-      _buildTextDetailWidget('Online', 'laptop')
+      _buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.online.label', 'Online'), 'laptop')
     ] : null;
   }
 
@@ -431,7 +404,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     if (widget.event.isInPerson) {
 
       List<Widget> details = <Widget>[
-        _buildTextDetailWidget('In Person', 'location'),
+        _buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.in_person.label', 'In Person'), 'location'),
       ];
 
       String? locationText = widget.event.location?.displayName ?? widget.event.location?.displayAddress; // ?? widget.event.location?.displayCoordinates
@@ -452,6 +425,27 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     }
     return null;
   }
+
+  List<Widget>? get _groupingDetailWidget {
+    if (widget.event.hasLinkedEvents) {
+      List<Widget> details = <Widget>[];
+      if (widget.event.isSuperEvent) {
+        details.add(_buildTextDetailWidget(
+          Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'),
+          'event',
+        ));
+      }
+      if (widget.event.isRecurring) {
+        details.add(_buildTextDetailWidget(
+          Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'),
+          'recurrence',
+        ));
+      }
+      return details.isNotEmpty ? details : null;
+    }
+    return null;
+  }
+  
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),

@@ -1226,10 +1226,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
 extension _Event2Ext on Event2 {
 
-  bool get hasSurvey => (attendanceDetails?.isNotEmpty ?? false) && (surveyDetails?.isNotEmpty ?? false);
-
-  bool get hasLinkedEvents => (isSuperEvent || isRecurring);
-
   Event2Grouping? get linkedEventsGroupingQuery {
     if (isSuperEvent) {
       return Event2Grouping.superEvent(id);
