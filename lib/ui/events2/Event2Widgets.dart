@@ -189,7 +189,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       ClipRRect(borderRadius: _listContentBorderRadius, child: 
         Column(mainAxisSize: MainAxisSize.min, children: [
           _imageHeadingWidget,
-          _categoriesOrTitleAndFavoriteWidget,
+          _contentHeadingWidget,
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
             Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
               _titleWidget,
@@ -205,7 +205,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       Container(decoration: _pageContentDecoration, child:
         Column(mainAxisSize: MainAxisSize.min, children: [
           Padding(padding: EdgeInsets.only(top: _pageHeadingHeight), child:
-            _categoriesOrTitleAndFavoriteWidget,
+            _contentHeadingWidget,
           ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -322,7 +322,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
   
 
-  Widget get _categoriesOrTitleAndFavoriteWidget => 
+  Widget get _contentHeadingWidget => 
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 8), child:
