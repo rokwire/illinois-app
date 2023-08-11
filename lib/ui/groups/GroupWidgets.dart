@@ -632,37 +632,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     //     AppAlert.showDialogResult(context, "Error Occurred while updating event");
     //   });
     // })));
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, event2Updater: Event2Updater(
-        buildWidget: (context) => Container(
-            child: RoundedButton( label: "Edit Members Selection",
-              onTap: (){
-                //TBD open Members Selection Panel
-              },
-            )
-        ),
-        onUpdated: (BuildContext context, Event2? event, /*List<Member>? selection*/) {
-          //TBD Members selection
-          List<Member>? memberSelection = null;
-          if(event!=null){
-            Groups().updateGroupEvents(event).then((String? id) {
-              if (StringUtils.isNotEmpty(id)) {
-                Groups().updateLinkedEventMembers(groupId: widget.group?.id, eventId: event.id, toMembers: memberSelection).then((success){
-                  if(success){
-                    Navigator.pop(context);
-                  } else {
-                    AppAlert.showDialogResult(context, "Unable to update event members");
-                  }
-                }).catchError((_){
-                  AppAlert.showDialogResult(context, "Error Occurred while updating event members");
-                });
-              }
-              else {
-                AppAlert.showDialogResult(context, "Unable to update event");
-              }
-            }).catchError((_){
-              AppAlert.showDialogResult(context, "Error Occurred while updating event");
-            });
-          }}))));
+    //TBD pass route name from parent
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event)))));
   }
 
   bool get _canEdit {
@@ -1194,7 +1165,7 @@ class _GroupCardState extends State<GroupCard> {
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
     if (FlexUI().isAuthenticationAvailable) {
       if (Auth2().isOidcLoggedIn) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
       }
       else {
         setState(() { _bussy = true; });
@@ -1203,7 +1174,7 @@ class _GroupCardState extends State<GroupCard> {
           if (mounted) {
             setState(() { _bussy = null; });
             if (result == Auth2OidcAuthenticateResult.succeeded) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+              Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
             }
           }
         });

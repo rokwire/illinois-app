@@ -18,6 +18,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
@@ -1761,14 +1762,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreateEvent(){
     Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(groupEventPrefs: new GroupEventBindingPrefs(group: _group))));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel( eventSelector: GroupEventSelector(GroupEventData(group: _group)))));
   }
 
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
     // Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroup: _group, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
-    Event2HomePanel.present(context, eventSelector: _GroupEventSelector(_GroupEventData(group: _group)));
+    Event2HomePanel.present(context, eventSelector: GroupEventSelector(GroupEventData(group: _group)));
 
   }
 
@@ -1911,12 +1912,12 @@ class _OfficerCard extends StatelessWidget {
   }
 }
 
-class _GroupEventSelector extends Event2Selector{
-  _GroupEventData data;
-
+class GroupEventSelector extends Event2Selector{
+  final bool showCustomButton;
+  GroupEventData data;
   late State _state;
 
-  _GroupEventSelector(this.data) : super(data);
+  GroupEventSelector(this.data, {this.showCustomButton = true}) : super(data);
 
   @override
   void init(State<StatefulWidget> state) {
@@ -1926,29 +1927,28 @@ class _GroupEventSelector extends Event2Selector{
 
   @override
   Widget? buildWidget(State<StatefulWidget> state) {
-    if(state is Event2SelectorDataProvider<_GroupEventData>){
-      data = (state as Event2SelectorDataProvider<_GroupEventData>).selectorData ?? data;
+    if(state is Event2SelectorDataProvider<GroupEventData>){
+      data = (state as Event2SelectorDataProvider<GroupEventData>).selectorData ?? data;
     }
-    // if(state is Event2SelectorDataProvider){
-    //   dynamic selectorData = (state as Event2SelectorDataProvider).selectorData;
-    //   _data = selectorData is _GroupEventData? selectorData : null;
-    // }
+
     return Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Column(
           children: [
-            RoundedButton(
-              label: (data.group?.researchProject == true) ?
-              Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
-              Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
-              hint: (data.group?.researchProject == true) ?
-              Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
-              Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors!.fillColorPrimary,
-              progress: data.addingGroupInProgress ?? false,
-              onTap: _onTapAddToGroup,
+            Visibility( visible: showCustomButton,
+              child: RoundedButton(
+                label: (data.group?.researchProject == true) ?
+                Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
+                Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+                hint: (data.group?.researchProject == true) ?
+                Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
+                Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                backgroundColor: Colors.white,
+                borderColor: Styles().colors!.fillColorPrimary,
+                progress: data.bindingInProgress ?? false,
+                onTap: ()=>_onTapAddToGroup(state),
+              ),
             ),
             Container(height: 6,),
             GroupMembersSelectionWidget(
@@ -1964,37 +1964,48 @@ class _GroupEventSelector extends Event2Selector{
     );
   }
 
-  void _onTapAddToGroup() {
+  void _onTapAddToGroup(State state) {
     Analytics().logSelect(target: "Add To Group");
-    _state.setStateIfMounted(() {data.addingGroupInProgress = true;});
+    _state.setStateIfMounted(() {data.bindingInProgress = true;});
+    performSelection(state);
+  }
 
+  void performSelection(State state){
     Groups().linkEventToGroup(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection).then((value){
-      _state.setStateIfMounted(() {data.addingGroupInProgress = false;});
+      _state.setStateIfMounted(() {data.bindingInProgress = false;});
       Navigator.of(_state.context).popUntil((Route route){
-        return route.settings.name == Event2HomePanel.routeName;
+        return route.settings.name == GroupDetailPanel.routeName;
       });
-      Navigator.of(_state.context).pop(); //Back before Events2HomePanel //TBD do it properly
     });
   }
 }
 
-class _GroupEventData extends Event2SelectorData{
-  List<Member>? membersSelection;
-  bool? addingGroupInProgress;
-
-  _GroupEventData({Group? group}): super(data: {"group": group});
+class GroupEventData extends Event2SelectorData{
+  GroupEventData({Group? group, Event2? event, List<Member>? memberSelection}):
+        super(data: {
+          "group" : group,
+          "event" : event,
+          "members_selection" : memberSelection
+        });
 
   void set group(Group? group) => data?["group"] = group;
-
   Group? get group {
       dynamic groupData = data?["group"];
       return (groupData is Group)? groupData : null;
   }
 
   void set event(Event2? event) => data?["event"] = event;
-
   Event2? get event {
     dynamic eventData = data?["event"];
     return (eventData is Event2)? eventData : null;
   }
+
+  void set membersSelection(List<Member>? selection) => data?["members_selection"] = selection;
+  List<Member>? get membersSelection {
+    dynamic selectionData = data?["members_selection"];
+    return (selectionData is List<Member>)? selectionData : null;
+  }
+
+  bool? get bindingInProgress => JsonUtils.boolValue(data?["bindingInProgress"]);
+  void set bindingInProgress(bool? progress) => data?["bindingInProgress"] = progress;
 }

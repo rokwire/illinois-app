@@ -981,7 +981,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _presentGroupDetailPanel({String? groupId, String? groupPostId}) {
     if (StringUtils.isNotEmpty(groupId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
     }

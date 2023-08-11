@@ -45,9 +45,9 @@ class Event2CreatePanel extends StatefulWidget {
 
   final Event2? event;
   final Survey? survey;
-  final Event2Updater? event2Updater;
+  final Event2Selector? eventSelector;
 
-  Event2CreatePanel({Key? key, this.event, this.survey, this.event2Updater}) : super(key: key);
+  Event2CreatePanel({Key? key, this.event, this.survey, this.eventSelector}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CreatePanelState();
@@ -414,7 +414,7 @@ class Event2CreatePanel extends StatefulWidget {
 
 }
 
-class _Event2CreatePanelState extends State<Event2CreatePanel>  {
+class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
   String? _imageUrl;
 
@@ -1507,10 +1507,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
   }
 
   //EventSelector section
-  Widget _buildEventSelectorSection() {
-    if(widget.event2Updater?.buildWidget != null){
-      return widget.event2Updater?.buildWidget!(context) ?? Container();
-    }
+  Widget _buildEventSelectorSection() { //TBD for custom selector in this panel
+    // if(widget.eventSelector != null){
+    //   return widget.eventSelector!.buildWidget(this) ?? Container();
+    // }
     return Container();
   }
 
@@ -1637,6 +1637,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
               Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
                 event: result,
                 survey: survey,
+                eventSelector: widget.eventSelector,
               )));
             }
             else {
@@ -1645,7 +1646,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           }
           else {
             Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-              event: result,
+              event: result, eventSelector: widget.eventSelector,
             )));
           }
         }
@@ -1679,18 +1680,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           ));
         }
 
-        if(widget.event2Updater?.onUpdated != null) {
-          widget.event2Updater?.onUpdated!(context, result);
-        }
+        // widget.eventSelector?.performSelection(this); TBD For custom Selector
       }
       else  {
         setState(() {
           _creatingEvent = false;
         });
         Event2Popup.showErrorResult(context, result);
-        if(widget.event2Updater?.onUpdated != null) {
-          widget.event2Updater?.onUpdated!(context, null);
-        }
+        // widget.eventSelector?.performSelection(this); TBD For custom Selector
       }
     }
   }
@@ -1884,6 +1881,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       speaker: _speaker,
       contacts: _contacts,
     );
+
+  // @override
+  // Event2SelectorData? selectorData;
+
+  // void _initSelector(){ //TBD for custom selector
+  //   widget.eventSelector?.init(this);
+  // }
+
 }
 
 // _Event2Visibility
@@ -1903,11 +1908,4 @@ _Event2Visibility? _event2VisibilityFromPrivate(bool? private) {
     case false: return _Event2Visibility.public;
     default: return null;
   }
-}
-
-class Event2Updater {
-  final Widget Function(BuildContext context)? buildWidget;
-  final void Function(BuildContext context, Event2? event)? onUpdated;
-
-  Event2Updater({this.buildWidget, this.onUpdated});
 }

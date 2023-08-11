@@ -1300,6 +1300,8 @@ abstract class Event2Selector<T extends Event2SelectorData> {
   void dispose(State state){}
 
   Widget? buildWidget(State state); //Provide layout to perform selection
+
+  void performSelection(State state){} //Selection finished from Create/Update //No custom button
 }
 
 abstract class Event2SelectorDataProvider <T extends Event2SelectorData>{
