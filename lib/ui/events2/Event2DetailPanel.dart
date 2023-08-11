@@ -86,8 +86,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     _superEvent = widget.superEvent;
     _survey = widget.survey;
     _initEvent();
-    widget.eventSelector?.init(this);
-    selectorData?.data?["event"] = _event;
+    _initSelector();
 
     if ((_userLocation = widget.userLocation) == null) {
       Event2HomePanel.getUserLocationIfAvailable().then((Position? userLocation) {
@@ -1243,6 +1242,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   @override
   Event2SelectorData? selectorData;
 
+  void _initSelector(){
+    widget.eventSelector?.init(this);
+    selectorData?.data?["event"] = _event;
+  }
+
   void set _selectorEvent(Event2 event) => selectorData?.data?["event"] = event;
 }
 
@@ -1261,6 +1265,7 @@ extension _Event2Ext on Event2 {
   }
 }
 
+//EventSelector Interface
 abstract class Event2Selector<T extends Event2SelectorData> {
   final T data; //Pass initial data (containing group etc)
 
@@ -1273,6 +1278,7 @@ abstract class Event2Selector<T extends Event2SelectorData> {
   }
 
   void dispose(State state){}
+
   Widget? buildWidget(State state); //Provide layout to perform selection
 }
 
