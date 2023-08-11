@@ -23,6 +23,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -45,7 +46,6 @@ import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
-import 'package:illinois/ui/groups/GroupEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
@@ -502,7 +502,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     return Stack(children: <Widget>[
       InkWell(onTap: () {
           Analytics().logSelect(target: "Group Event");
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
+          // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: widget.event,)));
         },
         child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
@@ -632,27 +633,37 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     //     AppAlert.showDialogResult(context, "Error Occurred while updating event");
     //   });
     // })));
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, groupEventPrefs: GroupEventBindingPrefs(group: widget.group,  bindingButtonName: "TBD GroupWidgets editEvent",
-      onBind: (BuildContext context, Event2 event, List<Member>? selection) {
-        Groups().updateGroupEvents(event).then((String? id) {
-          if (StringUtils.isNotEmpty(id)) {
-            Groups().updateLinkedEventMembers(groupId: widget.group?.id,eventId: event.id, toMembers: selection).then((success){
-              if(success){
-                Navigator.pop(context);
-              } else {
-                AppAlert.showDialogResult(context, "Unable to update event members");
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, event2Updater: Event2Updater(
+        buildWidget: (context) => Container(
+            child: RoundedButton( label: "Edit Members Selection",
+              onTap: (){
+                //TBD open Members Selection Panel
+              },
+            )
+        ),
+        onUpdated: (BuildContext context, Event2? event, /*List<Member>? selection*/) {
+          //TBD Members selection
+          List<Member>? memberSelection = null;
+          if(event!=null){
+            Groups().updateGroupEvents(event).then((String? id) {
+              if (StringUtils.isNotEmpty(id)) {
+                Groups().updateLinkedEventMembers(groupId: widget.group?.id, eventId: event.id, toMembers: memberSelection).then((success){
+                  if(success){
+                    Navigator.pop(context);
+                  } else {
+                    AppAlert.showDialogResult(context, "Unable to update event members");
+                  }
+                }).catchError((_){
+                  AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+                });
+              }
+              else {
+                AppAlert.showDialogResult(context, "Unable to update event");
               }
             }).catchError((_){
-              AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+              AppAlert.showDialogResult(context, "Error Occurred while updating event");
             });
-          }
-          else {
-            AppAlert.showDialogResult(context, "Unable to update event");
-          }
-        }).catchError((_){
-          AppAlert.showDialogResult(context, "Error Occurred while updating event");
-        });
-    }))));
+          }}))));
   }
 
   bool get _canEdit {

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
-import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -558,27 +557,37 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapEdit(){
     Analytics().logSelect(target: 'Edit Event');
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, groupEventPrefs: GroupEventBindingPrefs(group: widget.group,  bindingButtonName: "TBD GroupWidgets editEvent",
-      onBind: (BuildContext context, Event2 event, List<Member>? selection) {
-        Groups().updateGroupEvents(event).then((String? id) {
-          if (StringUtils.isNotEmpty(id)) {
-            Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: selection).then((success){
-                if(success){
-                  Navigator.pop(context);
-                } else {
-                  AppAlert.showDialogResult(context, "Unable to update event members");
-                }
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, event2Updater: Event2Updater(
+        buildWidget: (context) => Container(
+          child: RoundedButton( label: "Edit Members Selection",
+            onTap: (){
+              //TBD open Members Selection Panel
+            },
+          )
+        ),
+      onUpdated: (BuildContext context, Event2? event, /*List<Member>? selection*/) {
+        //TBD Members selection
+        List<Member>? memberSelection = null;
+          if(event!=null){
+            Groups().updateGroupEvents(event).then((String? id) {
+              if (StringUtils.isNotEmpty(id)) {
+                Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: memberSelection).then((success){
+                    if(success){
+                      Navigator.pop(context);
+                    } else {
+                      AppAlert.showDialogResult(context, "Unable to update event members");
+                    }
+                }).catchError((_){
+                  AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+                });
+              }
+              else {
+                AppAlert.showDialogResult(context, "Unable to update event");
+              }
             }).catchError((_){
-              AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+              AppAlert.showDialogResult(context, "Error Occurred while updating event");
             });
-          }
-          else {
-            AppAlert.showDialogResult(context, "Unable to update event");
-          }
-        }).catchError((_){
-          AppAlert.showDialogResult(context, "Error Occurred while updating event");
-        });
-    }))));
+    }}))));
   }
 
   void _onTapDelete(){

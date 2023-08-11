@@ -44,7 +44,8 @@ class Event2DetailPanel extends StatefulWidget implements AnalyticsPageAttribute
   final Event2? superEvent;
   final Survey? survey;
   final Position? userLocation;
-  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.userLocation});
+  final Event2Selector? eventSelector;
+  Event2DetailPanel({ this.event, this.eventId, this.superEvent, this.survey, this.userLocation, this.eventSelector});
   
   @override
   State<StatefulWidget> createState() => _Event2DetailPanelState();
@@ -530,6 +531,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_urlButtonWidget,
       ...?_registrationButtonWidget,
       ...?_logInButtonWidget,
+      ...?_selectorWidget,
     ];
 
     return buttons.isNotEmpty ? Padding(padding: EdgeInsets.only(top: 16), child:
@@ -678,6 +680,16 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       )
     )
   );
+
+
+  List<Widget>? get _selectorWidget {
+    if(widget.eventSelector?.buildWidget!=null) {
+      Widget? customSelectorWidget = widget.eventSelector?.buildWidget!(context, _event);
+      return customSelectorWidget != null ? <Widget> [customSelectorWidget] : null;
+    }
+
+    return null;
+  }
 
   Widget get _adminSettingsWidget  =>
       Padding(padding: EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16), child:

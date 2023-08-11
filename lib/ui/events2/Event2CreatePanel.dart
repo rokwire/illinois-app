@@ -46,9 +46,9 @@ class Event2CreatePanel extends StatefulWidget {
 
   final Event2? event;
   final Survey? survey;
-  final GroupEventBindingPrefs? groupEventPrefs; //TBD implement group event binding
+  final Event2Updater? event2Updater;
 
-  Event2CreatePanel({Key? key, this.event, this.survey, this.groupEventPrefs}) : super(key: key);
+  Event2CreatePanel({Key? key, this.event, this.survey, this.event2Updater}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CreatePanelState();
@@ -586,6 +586,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildSurveyButtonSection(),
             _buildSponsorshipAndContactsButtonSection(),
             _buildVisibilitySection(),
+            _buildEventSelectorSection(),
             _buildCreateEventSection(),
           ]),
         )
@@ -1506,6 +1507,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     }
   }
 
+  //EventSelector section
+  Widget _buildEventSelectorSection() {
+    if(widget.event2Updater?.buildWidget != null){
+      return widget.event2Updater?.buildWidget!(context) ?? Container();
+    }
+    return Container();
+  }
+
   // Create Event
 
   Widget _buildCreateEventSection() {
@@ -1670,12 +1679,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             survey: survey,
           ));
         }
+
+        if(widget.event2Updater?.onUpdated != null) {
+          widget.event2Updater?.onUpdated!(context, result);
+        }
       }
       else  {
         setState(() {
           _creatingEvent = false;
         });
         Event2Popup.showErrorResult(context, result);
+        if(widget.event2Updater?.onUpdated != null) {
+          widget.event2Updater?.onUpdated!(context, null);
+        }
       }
     }
   }
@@ -1888,4 +1904,11 @@ _Event2Visibility? _event2VisibilityFromPrivate(bool? private) {
     case false: return _Event2Visibility.public;
     default: return null;
   }
+}
+
+class Event2Updater {
+  final Widget Function(BuildContext context)? buildWidget;
+  final void Function(BuildContext context, Event2? event)? onUpdated;
+
+  Event2Updater({this.buildWidget, this.onUpdated});
 }

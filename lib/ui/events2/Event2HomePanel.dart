@@ -27,7 +27,6 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -49,11 +48,11 @@ class Event2HomePanel extends StatefulWidget {
   final LinkedHashSet<Event2TypeFilter>? types;
   final Map<String, dynamic>? attributes;
 
-  final GroupEventBindingPrefs? groupBinding;
+  final Event2Selector? eventSelector;
 
   Event2HomePanel({Key? key,
     this.timeFilter, this.customStartTime, this.customEndTime,
-    this.types, this.attributes, this.groupBinding
+    this.types, this.attributes, this.eventSelector
   }) : super(key: key);
 
   @override
@@ -61,9 +60,9 @@ class Event2HomePanel extends StatefulWidget {
 
   // Filters onboarding
 
-  static void present(BuildContext context, {GroupEventBindingPrefs? groupBinding}) {
+  static void present(BuildContext context, {Event2Selector? eventSelector}) {
     if (Storage().events2Attributes != null) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(groupBinding: groupBinding,)));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
     }
     else {
       getLocationServicesStatus().then((LocationServicesStatus? status) {
@@ -94,7 +93,7 @@ class Event2HomePanel extends StatefulWidget {
             Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
               types: (typesList != null) ? LinkedHashSet<Event2TypeFilter>.from(typesList) : null,
               attributes: attributes,
-              groupBinding: groupBinding,
+              eventSelector: eventSelector,
             )));
           }
         });
@@ -1039,15 +1038,8 @@ class Event2FilterParam {
   }
 }
 
+class Event2Selector {
+  final Widget Function(BuildContext context, Event2? event)? buildWidget;
 
-class GroupEventBindingPrefs {
-  Group? group;
-
-  String? bindingButtonName;
-  dynamic Function(BuildContext context, Event2 updatedEvent, List<Member>? selection)? onBind;
-
-  GroupEventBindingPrefs({
-    this.group,
-    this.bindingButtonName, this.onBind
-  });
+  Event2Selector({this.buildWidget});
 }
