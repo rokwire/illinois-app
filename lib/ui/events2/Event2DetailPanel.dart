@@ -325,28 +325,33 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
       bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
 
-      TextStyle? textDetailStyle = Styles().textStyles?.getTextStyle(canLocation ?
-        'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular');
+      String textDetailStyleName = canLocation ?
+        'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular';
+      TextStyle? textDetailStyle = Styles().textStyles?.getTextStyle(textDetailStyleName);
       
       List<Widget> details = <Widget>[
-        _buildTextDetailWidget('In Person', 'location'),
+        _buildTextDetailWidget('In Person', 'location',
+          textStyle: textDetailStyle
+        ),
       ];
 
-      String? locationText = (
-        _event?.location?.displayName ??
-        _event?.location?.displayAddress ??
-        _event?.location?.displayCoordinates
-      );
+      String? locationText = _event?.location?.displayName ?? _event?.location?.displayAddress; // ?? _event?.location?.displayCoordinates;
       if (locationText != null) {
         details.add(
-          _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location', iconVisible: false, detailPadding: EdgeInsets.zero)
+          _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location',
+            iconVisible: false,
+            detailPadding: EdgeInsets.zero
+          )
         );
       }
 
       String? distanceText = _event?.getDisplayDistance(_userLocation);
       if (distanceText != null) {
         details.add(
-          _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location', iconVisible: false, detailPadding: EdgeInsets.zero)
+          _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location',
+            iconVisible: false,
+            detailPadding: EdgeInsets.zero
+          )
         );
       }
 
@@ -474,7 +479,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
     return (description != null) ?<Widget>[
       _buildTextDetailWidget(description, 'info',
-        textStyle: 'widget.info.regular.thin.italic',
+        textStyle: Styles().textStyles?.getTextStyle('widget.info.regular.thin.italic') ,
         iconPadding: const EdgeInsets.only(right: 6),
         maxLines: 5,
       ),
@@ -695,14 +700,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _detailSpacerWidget => Container(height: 8,);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
-    String textStyle = 'widget.info.medium',
+    TextStyle? textStyle, // 'widget.info.medium' : 'widget.info.medium.underline'
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
     bool iconVisible = true, bool underlined = false, int maxLines = 1,
   }) =>
     _buildDetailWidget(
       Text(text,
-        style: Styles().textStyles?.getTextStyle(underlined ? '$textStyle.underline' : textStyle),
+        style: textStyle ?? Styles().textStyles?.getTextStyle(underlined ? 'widget.info.medium.underline' : 'widget.info.medium'),
         maxLines: maxLines,
         overflow: TextOverflow.ellipsis,
       ),
