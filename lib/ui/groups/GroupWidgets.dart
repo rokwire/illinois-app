@@ -24,7 +24,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
-import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';

@@ -12,7 +12,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
-import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupAttendancePanel.dart';
 import 'package:illinois/ui/events2/Event2SetupRegistrationPanel.dart';
 import 'package:illinois/ui/events2/Event2SetupSponsorshipAndContactsPanel.dart';

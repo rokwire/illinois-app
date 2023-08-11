@@ -997,7 +997,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation, eventSelector: widget.eventSelector,)));
   }
 }
 
@@ -1036,10 +1036,4 @@ class Event2FilterParam {
       }
     }
   }
-}
-
-class Event2Selector {
-  final Widget Function(BuildContext context, Event2? event)? buildWidget;
-
-  Event2Selector({this.buildWidget});
 }

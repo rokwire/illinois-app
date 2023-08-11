@@ -18,7 +18,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -1765,14 +1766,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroup: _group, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
-    // Event2HomePanel.present(context,
-    //     groupBinding: GroupEventBindingPrefs(
-    //     group: _group,
-    //     onBind: (BuildContext context, Event2 event, List<Member>? members){
-    //         //TBD implement on Bind
-    //     }
-    // ));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroup: _group, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
+    Event2HomePanel.present(context, eventSelector: _GroupEventSelector(_GroupEventData(group: _group)));
 
   }
 
@@ -1912,5 +1907,93 @@ class _OfficerCard extends StatelessWidget {
         Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles?.getTextStyle('widget.card.detail.regular')),
       ],),
     );
+  }
+}
+
+class _GroupEventSelector extends Event2Selector{
+  _GroupEventData data;
+
+  late State _state;
+
+  _GroupEventSelector(this.data) : super(data);
+
+  @override
+  void init(State<StatefulWidget> state) {
+    _state = state;
+    super.init(state);
+  }
+
+  @override
+  Widget? buildWidget(State<StatefulWidget> state) {
+    if(state is Event2SelectorDataProvider<_GroupEventData>){
+      data = (state as Event2SelectorDataProvider<_GroupEventData>).selectorData ?? data;
+    }
+    // if(state is Event2SelectorDataProvider){
+    //   dynamic selectorData = (state as Event2SelectorDataProvider).selectorData;
+    //   _data = selectorData is _GroupEventData? selectorData : null;
+    // }
+    return Container(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          children: [
+            RoundedButton(
+              label: (data.group?.researchProject == true) ?
+              Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
+              Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+              hint: (data.group?.researchProject == true) ?
+              Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
+              Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+              backgroundColor: Colors.white,
+              borderColor: Styles().colors!.fillColorPrimary,
+              progress: data.addingGroupInProgress ?? false,
+              onTap: _onTapAddToGroup,
+            ),
+            Container(height: 6,),
+            GroupMembersSelectionWidget(
+              selectedMembers: data.membersSelection,
+              groupId: data.group?.id,
+              onSelectionChanged: (members){
+                state.setStateIfMounted(() {
+                  data.membersSelection = members;
+                });
+              },),
+          ],
+        )
+    );
+  }
+
+  void _onTapAddToGroup() {
+    Analytics().logSelect(target: "Add To Group");
+    _state.setStateIfMounted(() {
+      data.addingGroupInProgress = true;
+    });
+    Groups().linkEventToGroup(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection).then((value){
+      _state.setStateIfMounted(() {
+        data.addingGroupInProgress = false;
+      });
+      Navigator.pop(_state.context, true);
+    });
+  }
+}
+
+class _GroupEventData extends Event2SelectorData{
+  List<Member>? membersSelection;
+  bool? addingGroupInProgress;
+
+  _GroupEventData({Group? group}): super(data: {"group": group});
+
+  void set group(Group? group) => data?["group"] = group;
+
+  Group? get group {
+      dynamic groupData = data?["group"];
+      return (groupData is Group)? groupData : null;
+  }
+
+  void set event(Group? group) => data?["event"] = group;
+
+  Group? get event {
+    dynamic groupData = data?["event"];
+    return (groupData is Group)? groupData : null;
   }
 }
