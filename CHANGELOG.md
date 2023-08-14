@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show Apply button in disabled state in Event2TimeRangePanel. Display proper message if needed [#3518](https://github.com/rokwire/illinois-app/issues/3518).
 - Do not limit event title wrap to 2 lines in detail panel [#3517](https://github.com/rokwire/illinois-app/issues/3517).
 - Renamed register buttons in Event2DetailPanel [#3508](https://github.com/rokwire/illinois-app/issues/3508).
+- Hide old events from Map panel [#3507](https://github.com/rokwire/illinois-app/issues/3507).
 ### Fixed
 - Fixed text style in Athletics News [#3526](https://github.com/rokwire/illinois-app/issues/3526).
 
