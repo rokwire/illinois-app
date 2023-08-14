@@ -274,7 +274,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
   void _loadResults() {
     _setLoading(true);
-    Surveys().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
+    Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       _responses.clear();
       if (CollectionUtils.isNotEmpty(responses)) {
         responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));

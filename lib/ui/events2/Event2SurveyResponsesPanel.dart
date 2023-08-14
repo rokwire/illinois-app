@@ -106,7 +106,7 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
   }
 
   Future<int> _loadResponses({required int offset, required int limit}) async {
-    List<SurveyResponse>? responses = widget.surveyId != null ? await Surveys().loadSurveyResponses(surveyIDs: [widget.surveyId!], limit: limit, offset: offset) : null;
+    List<SurveyResponse>? responses = widget.surveyId != null ? await Surveys().loadAllSurveyResponses(widget.surveyId!, limit: limit, offset: offset) : null;
     if (responses != null) {
       setState(() {
         _surveyResponses.addAll(responses);
