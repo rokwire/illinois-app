@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Event admins cannot load all survey responses [#3524](https://github.com/rokwire/illinois-app/issues/3524).
 - Added "Multi-person" event type [#3531](https://github.com/rokwire/illinois-app/issues/3531).
+- Added recent items support for calendar events [#3535](https://github.com/rokwire/illinois-app/issues/3535).
 ### Changed
 - Show mobile credential id in Mobile Access UI [#3529](https://github.com/rokwire/illinois-app/issues/3529).
 - Updated app version format in welcome widget in Favorites panel [#3528](https://github.com/rokwire/illinois-app/issues/3528).

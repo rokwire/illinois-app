@@ -26,6 +26,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -42,6 +43,7 @@ import 'package:illinois/ext/RecentItem.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/RecentItems.dart';
@@ -470,6 +472,9 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
 
     if (sourceItem is Event) {
       return sourceItem.isComposite ? CompositeEventsDetailPanel(parentEvent: sourceItem) : ExploreEventDetailPanel(event: sourceItem,);
+    }
+    else if (sourceItem is Event2) {
+      return Event2DetailPanel(event: sourceItem,);
     }
     else if (sourceItem is Dining) {
       return ExploreDiningDetailPanel(dining: sourceItem,);
