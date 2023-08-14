@@ -40,7 +40,6 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPollListPanel.dart';
@@ -1915,22 +1914,26 @@ class _OfficerCard extends StatelessWidget {
 class GroupEventSelector extends Event2Selector{
   final bool showCustomButton;
   GroupEventData data;
-  late State _state;
 
   GroupEventSelector(this.data, {this.showCustomButton = true}) : super(data);
 
   @override
   void init(State<StatefulWidget> state) {
-    _state = state;
     super.init(state);
+    if(data.group?.id != null && data.event?.id != null && CollectionUtils.isEmpty(data.membersSelection)){
+      Groups().loadGroupEventMemberSelection(data.group?.id, data.event?.id).then((memberSelection) { //Check do we already have selection {update mode}
+         state.setStateIfMounted(() {
+           if(memberSelection != null) {
+             data.membersSelection = memberSelection;
+           }
+         });
+      });
+    }
   }
 
   @override
   Widget? buildWidget(State<StatefulWidget> state) {
-    if(state is Event2SelectorDataProvider<GroupEventData>){
-      data = (state as Event2SelectorDataProvider<GroupEventData>).selectorData ?? data;
-    }
-
+    _updateDataFromState(state);
     return Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Column(
@@ -1966,19 +1969,30 @@ class GroupEventSelector extends Event2Selector{
 
   void _onTapAddToGroup(State state) {
     Analytics().logSelect(target: "Add To Group");
-    _state.setStateIfMounted(() {data.bindingInProgress = true;});
+    state.setStateIfMounted(() {data.bindingInProgress = true;});
     performSelection(state);
   }
 
   void performSelection(State state){
-    Groups().linkEventToGroup(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection).then((value){
-      _state.setStateIfMounted(() {data.bindingInProgress = false;});
-      if(state.mounted) {
-        Navigator.of(_state.context).popUntil((Route route) {
-          return route.settings.name == GroupDetailPanel.routeName;
-        });
+    _updateDataFromState(state);
+    Future<bool> Function({String? groupId, String? eventId, List<Member>? toMembers}) serviceAPI = data.updateExistingEvent == true ? Groups().updateLinkedEventMembers : Groups().linkEventToGroup;
+    serviceAPI(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection).then((success){
+      state.setStateIfMounted(() {data.bindingInProgress = false;});
+      if(success) {
+        if (state.mounted) {
+          Navigator.of(state.context).popUntil((Route route) {
+            return route.settings.name == GroupDetailPanel.routeName;
+          });
+        }
       }
     });
+  }
+
+  void _updateDataFromState(State state){
+    if(state is Event2SelectorDataProvider){
+      Event2SelectorData? rawData = (state as Event2SelectorDataProvider).selectorData;
+      data = (rawData is GroupEventData) ? rawData : data;
+    }
   }
 }
 
@@ -1987,7 +2001,8 @@ class GroupEventData extends Event2SelectorData{
         super(data: {
           "group" : group,
           "event" : event,
-          "members_selection" : memberSelection
+          "members_selection" : memberSelection,
+          "update_existing_event" : (event?.id != null)
         });
 
   void set group(Group? group) => data?["group"] = group;
@@ -2008,6 +2023,11 @@ class GroupEventData extends Event2SelectorData{
     return (selectionData is List<Member>)? selectionData : null;
   }
 
-  bool? get bindingInProgress => JsonUtils.boolValue(data?["bindingInProgress"]);
-  void set bindingInProgress(bool? progress) => data?["bindingInProgress"] = progress;
+  bool? get bindingInProgress => JsonUtils.boolValue(data?["binding_in_progress"]);
+  void set bindingInProgress(bool? progress) => data?["binding_in_progress"] = progress;
+
+  void set updateExistingEvent(bool? value) => data?["update_existing_event"] = value;
+  bool? get updateExistingEvent {
+    return JsonUtils.boolValue(data?["update_existing_event"]);
+  }
 }

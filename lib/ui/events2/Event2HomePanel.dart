@@ -982,7 +982,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onSearch() {
     Analytics().logSelect(target: 'Search');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(userLocation: _currentLocation,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(userLocation: _currentLocation, eventSelector: widget.eventSelector)));
   }
 
   void _onCreate() {

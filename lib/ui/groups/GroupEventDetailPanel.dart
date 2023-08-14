@@ -557,37 +557,39 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapEdit(){
     Analytics().logSelect(target: 'Edit Event');
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, event2Updater: Event2Updater(
-        buildWidget: (context) => Container(
-          child: RoundedButton( label: "Edit Members Selection",
-            onTap: (){
-              //TBD open Members Selection Panel
-            },
-          )
-        ),
-      onUpdated: (BuildContext context, Event2? event, /*List<Member>? selection*/) {
-        //TBD Members selection
-        List<Member>? memberSelection = null;
-          if(event!=null){
-            Groups().updateGroupEvents(event).then((String? id) {
-              if (StringUtils.isNotEmpty(id)) {
-                Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: memberSelection).then((success){
-                    if(success){
-                      Navigator.pop(context);
-                    } else {
-                      AppAlert.showDialogResult(context, "Unable to update event members");
-                    }
-                }).catchError((_){
-                  AppAlert.showDialogResult(context, "Error Occurred while updating event members");
-                });
-              }
-              else {
-                AppAlert.showDialogResult(context, "Unable to update event");
-              }
-            }).catchError((_){
-              AppAlert.showDialogResult(context, "Error Occurred while updating event");
-            });
-    }}))));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event,
+    //     event2Updater: Event2Updater(
+    //     buildWidget: (context) => Container(
+    //       child: RoundedButton( label: "Edit Members Selection",
+    //         onTap: (){
+    //           //TBD open Members Selection Panel
+    //         },
+    //       )
+    //     ),
+    //   onUpdated: (BuildContext context, Event2? event, /*List<Member>? selection*/) {
+    //     //TBD Members selection
+    //     List<Member>? memberSelection = null;
+    //       if(event!=null){
+    //         Groups().updateGroupEvents(event).then((String? id) {
+    //           if (StringUtils.isNotEmpty(id)) {
+    //             Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: memberSelection).then((success){
+    //                 if(success){
+    //                   Navigator.pop(context);
+    //                 } else {
+    //                   AppAlert.showDialogResult(context, "Unable to update event members");
+    //                 }
+    //             }).catchError((_){
+    //               AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+    //             });
+    //           }
+    //           else {
+    //             AppAlert.showDialogResult(context, "Unable to update event");
+    //           }
+    //         }).catchError((_){
+    //           AppAlert.showDialogResult(context, "Error Occurred while updating event");
+    //         });
+    // }})
+    )));
   }
 
   void _onTapDelete(){

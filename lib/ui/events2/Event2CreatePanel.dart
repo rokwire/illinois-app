@@ -1884,10 +1884,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       contacts: _contacts,
     );
 
+  //EventSelector
   @override
   Event2SelectorData? selectorData;
 
-  void _initSelector(){ //TBD for custom selector
+  void _initSelector(){
     widget.eventSelector?.init(this);
   }
 

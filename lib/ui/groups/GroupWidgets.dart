@@ -502,7 +502,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
       InkWell(onTap: () {
           Analytics().logSelect(target: "Group Event");
           // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: widget.event,)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: widget.event, eventSelector: widget.group != null ? GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showCustomButton: false) : null)));
         },
         child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
@@ -632,7 +632,6 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     //     AppAlert.showDialogResult(context, "Error Occurred while updating event");
     //   });
     // })));
-    //TBD pass route name from parent
     Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showCustomButton: false))));
   }
 
