@@ -633,7 +633,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     //   });
     // })));
     //TBD pass route name from parent
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event)))));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showCustomButton: false))));
   }
 
   bool get _canEdit {

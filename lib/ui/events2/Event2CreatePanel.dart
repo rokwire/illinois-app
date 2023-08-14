@@ -414,7 +414,7 @@ class Event2CreatePanel extends StatefulWidget {
 
 }
 
-class _Event2CreatePanelState extends State<Event2CreatePanel> {
+class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2SelectorDataProvider{
 
   String? _imageUrl;
 
@@ -525,6 +525,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
     _onlineUrlController.addListener(_updateErrorList);
     _locationLatitudeController.addListener(_updateErrorList);
     _locationLongitudeController.addListener(_updateErrorList);
+    _initSelector();
 
     super.initState();
   }
@@ -1507,10 +1508,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
   }
 
   //EventSelector section
-  Widget _buildEventSelectorSection() { //TBD for custom selector in this panel
-    // if(widget.eventSelector != null){
-    //   return widget.eventSelector!.buildWidget(this) ?? Container();
-    // }
+  Widget _buildEventSelectorSection() {
+    if(widget.eventSelector != null){
+      return widget.eventSelector!.buildWidget(this) ?? Container();
+    }
     return Container();
   }
 
@@ -1624,6 +1625,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
 
     if (mounted) {
       if (result is Event2) {
+        _selectorEvent = result;
         Survey? survey = widget.survey;
         if (widget.isCreate) {
           if (_survey != null) {
@@ -1680,14 +1682,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
           ));
         }
 
-        // widget.eventSelector?.performSelection(this); TBD For custom Selector
+        widget.eventSelector?.performSelection(this); //TBD For custom Selector
       }
       else  {
         setState(() {
           _creatingEvent = false;
         });
         Event2Popup.showErrorResult(context, result);
-        // widget.eventSelector?.performSelection(this); TBD For custom Selector
+        widget.eventSelector?.performSelection(this); //TBD For custom Selector
       }
     }
   }
@@ -1882,13 +1884,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> {
       contacts: _contacts,
     );
 
-  // @override
-  // Event2SelectorData? selectorData;
+  @override
+  Event2SelectorData? selectorData;
 
-  // void _initSelector(){ //TBD for custom selector
-  //   widget.eventSelector?.init(this);
-  // }
+  void _initSelector(){ //TBD for custom selector
+    widget.eventSelector?.init(this);
+  }
 
+  void set _selectorEvent(Event2 event) => selectorData?.data?["event"] = event;
 }
 
 // _Event2Visibility

@@ -1763,7 +1763,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapCreateEvent(){
     Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
     // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel( eventSelector: GroupEventSelector(GroupEventData(group: _group)))));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel( eventSelector: GroupEventSelector(GroupEventData(group: _group), showCustomButton: false))));
   }
 
   void _onTapBrowseEvents(){
@@ -1973,9 +1973,11 @@ class GroupEventSelector extends Event2Selector{
   void performSelection(State state){
     Groups().linkEventToGroup(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection).then((value){
       _state.setStateIfMounted(() {data.bindingInProgress = false;});
-      Navigator.of(_state.context).popUntil((Route route){
-        return route.settings.name == GroupDetailPanel.routeName;
-      });
+      if(state.mounted) {
+        Navigator.of(_state.context).popUntil((Route route) {
+          return route.settings.name == GroupDetailPanel.routeName;
+        });
+      }
     });
   }
 }
