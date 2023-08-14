@@ -1967,14 +1967,7 @@ class GroupEventSelector extends Event2Selector{
     );
   }
 
-  void _onTapAddToGroup(State state) {
-    Analytics().logSelect(target: "Add To Group");
-    state.setStateIfMounted(() {data.bindingInProgress = true;});
-    performSelection(state);
-  }
-
   void performSelection(State state){
-    _updateDataFromState(state);
     Future<bool> Function({String? groupId, String? eventId, List<Member>? toMembers}) serviceAPI = data.updateExistingEvent == true ? Groups().updateLinkedEventMembers : Groups().linkEventToGroup;
     serviceAPI(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection).then((success){
       state.setStateIfMounted(() {data.bindingInProgress = false;});
@@ -1993,6 +1986,12 @@ class GroupEventSelector extends Event2Selector{
       Event2SelectorData? rawData = (state as Event2SelectorDataProvider).selectorData;
       data = (rawData is GroupEventData) ? rawData : data;
     }
+  }
+
+  void _onTapAddToGroup(State state) {
+    Analytics().logSelect(target: "Add To Group");
+    state.setStateIfMounted(() {data.bindingInProgress = true;});
+    performSelection(state);
   }
 }
 
