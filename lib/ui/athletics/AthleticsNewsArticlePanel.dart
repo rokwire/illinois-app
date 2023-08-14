@@ -219,6 +219,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
         child:
         HtmlWidget(
             StringUtils.ensureNotEmpty(fullText),
+            textStyle:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
             onTapUrl : (url) {
               Navigator.push(context, CupertinoPageRoute(
                       builder: (context) => WebPanel(url: url,)
