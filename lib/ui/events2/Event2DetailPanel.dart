@@ -569,7 +569,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       return null;
 
     return (_event?.registrationDetails?.type == Event2RegistrationType.internal) ? <Widget>[_buildButtonWidget(
-        title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Log In to Register'),
+        title: Localization().getStringEx('panel.event2.detail.button.login.register.title', 'Log In to Register'),
         onTap: _onLogIn,
         externalLink: false,
         enabled: false,
@@ -589,14 +589,14 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if (_event?.registrationDetails?.type == Event2RegistrationType.internal) { //Require App registration
         if( _event?.userRole == Event2UserRole.participant){//Already registered
           return <Widget>[_buildButtonWidget(
-              title: Localization().getStringEx('panel.event2_detail.button.unregister.title', 'Unregister me'),
+              title: Localization().getStringEx('panel.event2.detail.button.unregister.title', 'Unregister'),
               onTap: _onUnregister,
               externalLink: false,
               progress: _registrationLoading
           )];
         } else if (_event?.userRole == null){//Not registered yet
           return <Widget>[_buildButtonWidget(
-              title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
+              title: Localization().getStringEx('panel.event2.detail.button.register.title', 'Register'),
               onTap: _onRegister,
               externalLink: false,
               progress: _registrationLoading,
@@ -605,7 +605,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     } else if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink)){// else external registration
       // if(_event?.userRole == null){ //TBD check if this is correct check or we don't know if the user is registered externally
         return <Widget>[_buildButtonWidget(
-            title: Localization().getStringEx('panel.event2_detail.button.register.title', 'Register me'),
+            title: Localization().getStringEx('panel.event2.detail.button.register.title', 'Register'),
             onTap: _onExternalRegistration,
             externalLink: true
         )];

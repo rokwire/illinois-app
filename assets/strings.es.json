@@ -1370,6 +1370,10 @@
     "panel.event2.detail.attendance.scan.cancel.button.title": "Cancel",
     "panel.event2.detail.attendance.qr_code.uin.not_valid.msg": "This QR code does not contain valid UIN number.",
 
+    "panel.event2.detail.button.register.title": "Register",
+    "panel.event2.detail.button.login.register.title": "Log In to Register",
+    "panel.event2.detail.button.unregister.title": "Unregister",
+
     "panel.event2.search.header.title": "Search",
 	"panel.event2.search.search.label.title": "Search: ",
 	"panel.event2.search.events.label.title": "Events: ",
