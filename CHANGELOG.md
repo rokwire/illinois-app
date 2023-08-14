@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Show mobile credential id in Mobile Access UI [#3529](https://github.com/rokwire/illinois-app/issues/3529).
 - Updated app version format in welcome widget in Favorites panel [#3528](https://github.com/rokwire/illinois-app/issues/3528).
+### Fixed
+- Fixed text style in Athletics News [#3526](https://github.com/rokwire/illinois-app/issues/3526).
 
 ## [5.0.45] - 2023-08-11
 ### Changed
