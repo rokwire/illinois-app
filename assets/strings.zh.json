@@ -3713,6 +3713,7 @@
 	"model.event2.event_type.public": "Public",
 	"model.event2.event_type.private": "Private",
 	"model.event2.event_type.nearby": "Nearby",
+	"model.event2.event_type.super_event": "Multi-person",
 	
 	"model.event2.event_time.upcoming": "Upcoming",
 	"model.event2.event_time.today": "Today",
