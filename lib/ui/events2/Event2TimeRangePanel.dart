@@ -267,7 +267,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
-    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay.fromDateTime(DateTime.now())).then((TimeOfDay? result) {
+    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
@@ -297,7 +297,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onEndTime() {
     Analytics().logSelect(target: "End Time");
-    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay.fromDateTime(TZDateTime.now(_timeZone))).then((TimeOfDay? result) {
+    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _endTime = result;
