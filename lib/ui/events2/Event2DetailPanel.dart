@@ -257,13 +257,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Widget get _titleWidget => _hasDisplayCategories ?
     Row(children: [
-      Expanded(child: 
+      Expanded(child:
         _titleContentWidget
       ),
     ],) : Container();
 
   Widget get _titleContentWidget =>
-    Text(_event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'), maxLines: 2, overflow: TextOverflow.ellipsis);
+    Text(_event?.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.extra_large'));
 
   Widget get _sponsorWidget => StringUtils.isNotEmpty(_event?.sponsor) ? Padding(padding: EdgeInsets.only(top: 8), child:
     Row(children: [
