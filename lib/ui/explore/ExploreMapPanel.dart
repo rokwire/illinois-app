@@ -1609,7 +1609,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       eventCategories = <String>[];
       for (dynamic entry in categories) {
         Map<String, dynamic>? mapEntry = JsonUtils.mapValue(entry);
-        String? category = (mapEntry != null) ? JsonUtils.stringValue(['category']) : null;
+        String? category = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['category']) : null;
         if (category != null) {
           eventCategories.add(category); 
         }
