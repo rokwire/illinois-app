@@ -1294,6 +1294,12 @@
 	"panel.event2.attributes.filters.header.title": "Event Filters",
 	"panel.event2.attributes.filters.header.description": "Choose one or more attributes to filter the events",
 
+	"panel.event2.attributes.filters.time_range.header.title": "Date & Time",
+	"panel.event2.attributes.filters.time_range.error.select.message": "You must select start or end time.",
+    "panel.event2.attributes.filters.time_range.error.start_in_past.message": "Start time must not be past.",
+    "panel.event2.attributes.filters.time_range.error.end_in_past.message": "End time must not be past.",
+    "panel.event2.attributes.filters.time_range.error.end_before_start.message": "End time must be after start time.",
+
     "panel.event2.setup.sponsorship_and_contacts.header.title": "Sponsorship and Contacts",
     "panel.event2.setup.sponsorship_and_contacts.sponsor.label.title": "SPONSOR",
     "panel.event2.setup.sponsorship_and_contacts.speaker.label.title": "SPEAKER",

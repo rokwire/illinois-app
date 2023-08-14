@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show mobile credential id in Mobile Access UI [#3529](https://github.com/rokwire/illinois-app/issues/3529).
 - Updated app version format in welcome widget in Favorites panel [#3528](https://github.com/rokwire/illinois-app/issues/3528).
 - Update groups events to use calendar BB [#3506](https://github.com/rokwire/illinois-app/issues/3506).
+- Show Apply button in disabled state in Event2TimeRangePanel. Display proper message if needed [#3518](https://github.com/rokwire/illinois-app/issues/3518).
 ### Fixed
 - Fixed text style in Athletics News [#3526](https://github.com/rokwire/illinois-app/issues/3526).
 
