@@ -102,7 +102,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> implements Notifi
               Padding(padding: EdgeInsets.only(left: 16), child:
                 Text(Localization().getStringEx("widget.home.welcome.text.title", 'Welcome to {{app_title}} {{app_version}}').
                   replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')).
-                  replaceAll('{{app_version}}', Config().appMasterVersion ?? ''),
+                  replaceAll('{{app_version}}', Config().appMajorVersion ?? ''),
                   style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")),
               ),
             ),
