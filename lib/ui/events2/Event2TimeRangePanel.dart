@@ -73,7 +73,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: 'Date & Time', actions: _canApply ? <Widget>[_applyButton] : null,),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.event2.attributes.filters.time_range.header.title', 'Date & Time'), actions: _isModified ? <Widget>[_buildApplyButton(enabled: _canApply)] : null,),
       body: _buildContent(),
       backgroundColor: Styles().colors!.white,
     );
@@ -209,21 +209,22 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
-  Widget get _applyButton => _buildHeaderBarButton(
+  Widget _buildApplyButton({bool enabled = true}) => _buildHeaderBarButton(
     title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
+    enabled: enabled,
     onTap: _onTapApply,
   );
 
-  Widget _buildHeaderBarButton({String? title, void Function()? onTap, double horizontalPadding = 16}) {
+  Widget _buildHeaderBarButton({String? title, void Function()? onTap, bool enabled = true, double horizontalPadding = 16}) {
     return Semantics(label: title, button: true, excludeSemantics: true, child: 
       InkWell(onTap: onTap, child:
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? Styles().colors!.white! : Styles().colors!.whiteTransparent06!, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                  style: Styles().textStyles?.getTextStyle(enabled ? "widget.heading.regular.fat" : "widget.heading.regular.fat.disabled")
                 ),
               ),
             ],)
@@ -266,7 +267,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onStartTime() {
     Analytics().logSelect(target: "Start Time");
-    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay.fromDateTime(DateTime.now())).then((TimeOfDay? result) {
+    showTimePicker(context: context, initialTime: _startTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
@@ -296,7 +297,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   void _onEndTime() {
     Analytics().logSelect(target: "End Time");
-    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay.fromDateTime(TZDateTime.now(_timeZone))).then((TimeOfDay? result) {
+    showTimePicker(context: context, initialTime: _endTime ?? TimeOfDay(hour: 0, minute: 0)).then((TimeOfDay? result) {
       if ((result != null) && mounted) {
         setState(() {
           _endTime = result;
@@ -311,26 +312,41 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
   TZDateTime _dateTimeWithDateAndTimeOfDay(DateTime date, TimeOfDay? time, { bool inclusive = false}) =>
     Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, date, time, inclusive: inclusive);
 
-  bool get _canApply {
-    TZDateTime now = TZDateTime.now(_timeZone);
+  bool get _isModified {
     TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
     bool sameStartTime = ((startTime == null) && (widget.startTime == null)) ||
       ((startTime != null) && (widget.startTime != null) && (startTime == widget.startTime));
     TZDateTime? endTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
     bool sameEndTime = ((endTime == null) && (widget.endTime == null)) ||
       ((endTime != null) && (widget.endTime != null) && (endTime == widget.endTime));
-    return (
-      (startTime != null) || (endTime != null)) &&
-      (!sameStartTime || !sameEndTime) &&
+    return (!sameStartTime || !sameEndTime);
+  }
+
+  bool get _canApply {
+    TZDateTime now = TZDateTime.now(_timeZone);
+    TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
+    TZDateTime? endTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
+    return ((startTime != null) || (endTime != null)) &&
       ((startTime == null) || startTime.isAfter(now)) &&
       ((endTime == null) || endTime.isAfter(startTime ?? now));
   }
 
   void _onTapApply() {
     Analytics().logSelect(target: 'Apply');
+    TZDateTime now = TZDateTime.now(_timeZone);
     TZDateTime? startTime = (_startDate != null) ? _dateTimeWithDateAndTimeOfDay(_startDate!, _startTime) : null;
     TZDateTime? endTime = (_endDate != null) ? _dateTimeWithDateAndTimeOfDay(_endDate!, _endTime, inclusive: true) : null;
-    if ((startTime != null) && (endTime != null) && endTime.isBefore(startTime)) {
+    if ((startTime == null) && (endTime == null)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.attributes.filters.time_range.error.select.message', 'You must select start or end time.'));
+    }
+    else if ((startTime != null) && startTime.isBefore(now)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.attributes.filters.time_range.error.start_in_past.message', 'Start time must not be past.'));
+    }
+    else if ((endTime != null) && endTime.isBefore(now)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.attributes.filters.time_range.error.end_in_past.message', 'End time must not be past.'));
+    }
+    else if ((startTime != null) && (endTime != null) && endTime.isBefore(startTime)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.event2.attributes.filters.time_range.error.end_before_start.message', 'End time must be after start time.'));
       AppAlert.showDialogResult(context, 'End time must be after start time.');
     }
     else if ((startTime != null) || (endTime != null)) {

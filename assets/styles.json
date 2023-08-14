@@ -122,6 +122,7 @@
     "widget.heading.medium": { "font_family": "medium", "size": 18.0, "color": "white"},
     "widget.heading.regular": { "font_family": "regular", "size": 16.0, "color": "white"},
     "widget.heading.regular.fat": { "font_family": "bold", "size": 16.0, "color": "white"},
+    "widget.heading.regular.fat.disabled": { "font_family": "bold", "size": 16.0, "color": "whiteTransparent06"},
     "widget.heading.regular.extra_fat": { "font_family": "extra_bold", "size": 16.0, "color": "white"},
     "widget.heading.medium_small": { "font_family": "bold", "size": 14.0, "color": "white"},
     "widget.heading.small": { "font_family": "bold", "size": 12.0, "color": "white"},
