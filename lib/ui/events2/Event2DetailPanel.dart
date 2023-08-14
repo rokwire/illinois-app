@@ -6,9 +6,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Survey.dart';
+import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
+import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
@@ -1084,6 +1086,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         _displayCategories = displayCategories;
         _eventLoading = false;
       });
+    }
+
+    if (_event != null) {
+      RecentItems().addRecentItem(RecentItem.fromSource(_event));
     }
 
     // Load additional stuff that we need for this event.
