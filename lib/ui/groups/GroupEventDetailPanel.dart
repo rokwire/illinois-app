@@ -3,16 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -20,7 +21,6 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -33,13 +33,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final Event? event;
+  final Event2? event;
   final Group? group;
   final bool previewMode;
 
   String? get groupId => group?.id;
 
-  const GroupEventDetailPanel({Key? key,this.previewMode = false, this.event, this.group}) : super(key: key);
+  const GroupEventDetailPanel({Key? key,this.previewMode = false, this.group, this.event}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -54,7 +54,7 @@ class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttri
 
 class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with NotificationsListener{
   List<Group> _adminGroups = [];
-  Event? _event;
+  Event2? _event;
   Group? _currentlySelectedGroup;
 
   @override
@@ -151,7 +151,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventImageHeader(){
-    String? imageUrl = widget.event?.eventImageUrl;
+    String? imageUrl = widget.event?.imageUrl;
     return Container(
       height: 200,
       color: Styles().colors!.background,
@@ -177,12 +177,13 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventTitle(){
+    dynamic category = (_event?.attributes != null) ? _event?.attributes!['category'] : null;
     return Container(child:
         Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _event?.category?.toUpperCase() ?? "",
+            JsonUtils.stringValue(category)?.toUpperCase() ?? "",
             style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced")
           ),
           Container(height: 8,),
@@ -196,12 +197,12 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventTimeDetail() {
-    String? displayTime = _event?.displayDateTime;
+    String? displayTime = _event?.longDisplayDateAndTime;
     //Newly created groups pass time in the string
     if(StringUtils.isEmpty(displayTime?.trim())){
-      if(_event?.startDateString !=null || _event?.endDateString != null){
-        DateTime? startDate = DateTimeUtils.dateTimeFromString(_event?.startDateString, format: Event.serverRequestDateTimeFormat);
-        DateTime? endDate = DateTimeUtils.dateTimeFromString(_event?.endDateString, format: Event.serverRequestDateTimeFormat);
+      if(_event?.startTimeUtc !=null || _event?.endTimeUtc != null){
+        DateTime? startDate = _event?.startTimeUtc?.toUniOrLocal();
+        DateTime? endDate = _event?.endTimeUtc?.toUniOrLocal() ;
         if(startDate !=null){
           displayTime = AppDateTime().formatDateTime(startDate, format: "MMM dd, yyyy");
         } else if(endDate != null){
@@ -233,7 +234,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventLocationDetail() {
-    if(!(widget.event?.displayAsInPerson ?? false)){
+    if(!(widget.event?.isInPerson ?? false)){
       return Container();
     }
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
@@ -284,14 +285,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventOnlineDetail() {
-    if(!(widget.event?.displayAsVirtual ?? false)){
+    if(!(widget.event?.isOnline ?? false)){
       return Container();
     }
 
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event");
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconKey = "laptop";
-    String? virtualUrl = widget.event?.virtualEventUrl;
+    String? virtualUrl = widget.event?.onlineDetails?.url;
     String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
     String? locationId = widget.event?.location?.id;
     String? urlFromLocation = locationId ??  locationDescription;
@@ -341,7 +342,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventPriceDetail() {
-    bool isFree = _event?.isEventFree ?? false;
+    bool isFree = _event?.free ?? false;
     String priceText =isFree? "Free" : (_event?.cost ?? "Free");
     String? additionalDescription = isFree? _event?.cost : null;
     bool hasAdditionalDescription = StringUtils.isNotEmpty(additionalDescription);
@@ -408,7 +409,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     List<Widget> contactList = [];
     contactList.add(Padding(
         padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
-    for (Contact? contact in widget.event!.contacts!) {
+    for (Event2Contact? contact in widget.event!.contacts!) {
       String contactDetails = '';
       if (StringUtils.isNotEmpty(contact!.firstName)) {
         contactDetails += contact.firstName!;
@@ -457,10 +458,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   Widget _eventUrlButtons(){
     List<Widget> buttons = <Widget>[];
     
-    String? titleUrl = _event?.titleUrl;
+    String? titleUrl = _event?.eventUrl;
     bool hasTitleUrl = StringUtils.isNotEmpty(titleUrl);
 
-    String? registrationUrl = _event?.registrationUrl;
+    String? registrationUrl = _event?.registrationDetails?.externalLink; //TBD Internal App Registration
     bool hasRegistrationUrl = StringUtils.isNotEmpty(registrationUrl);
 
     if (hasTitleUrl) {
@@ -509,7 +510,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            Analytics().logSelect(target: "Favorite: ${_event?.title}");
+            Analytics().logSelect(target: "Favorite: ${_event?.name}");
             Auth2().prefs?.toggleFavorite(_event);
             setState(() {});
           },
@@ -556,26 +557,39 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapEdit(){
     Analytics().logSelect(target: 'Edit Event');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: _event, onEditTap: (BuildContext context, Event event, List<Member>? selection) {
-      Groups().updateGroupEvents(event).then((String? id) {
-        if (StringUtils.isNotEmpty(id)) {
-          Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: selection).then((success){
-              if(success){
-                Navigator.pop(context);
-              } else {
-                AppAlert.showDialogResult(context, "Unable to update event members");
-              }
-          }).catchError((_){
-            AppAlert.showDialogResult(context, "Error Occurred while updating event members");
-          });
-        }
-        else {
-          AppAlert.showDialogResult(context, "Unable to update event");
-        }
-      }).catchError((_){
-        AppAlert.showDialogResult(context, "Error Occurred while updating event");
-      });
-    },)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event,
+    //     event2Updater: Event2Updater(
+    //     buildWidget: (context) => Container(
+    //       child: RoundedButton( label: "Edit Members Selection",
+    //         onTap: (){
+    //           //TBD open Members Selection Panel
+    //         },
+    //       )
+    //     ),
+    //   onUpdated: (BuildContext context, Event2? event, /*List<Member>? selection*/) {
+    //     //TBD Members selection
+    //     List<Member>? memberSelection = null;
+    //       if(event!=null){
+    //         Groups().updateGroupEvents(event).then((String? id) {
+    //           if (StringUtils.isNotEmpty(id)) {
+    //             Groups().updateLinkedEventMembers(groupId: widget.groupId,eventId: event.id, toMembers: memberSelection).then((success){
+    //                 if(success){
+    //                   Navigator.pop(context);
+    //                 } else {
+    //                   AppAlert.showDialogResult(context, "Unable to update event members");
+    //                 }
+    //             }).catchError((_){
+    //               AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+    //             });
+    //           }
+    //           else {
+    //             AppAlert.showDialogResult(context, "Unable to update event");
+    //           }
+    //         }).catchError((_){
+    //           AppAlert.showDialogResult(context, "Error Occurred while updating event");
+    //         });
+    // }})
+    )));
   }
 
   void _onTapDelete(){
@@ -588,9 +602,12 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _deleteEvent(){
-    Groups().deleteEventFromGroup(event: _event!, groupId: widget.groupId).then((value){
-      Navigator.of(context).pop();
-    });
+    if(_event != null) {
+      Groups().deleteEventFromGroup(event: _event!, groupId: widget.groupId)
+        .then((value) {
+          Navigator.of(context).pop();
+        });
+    }
   }
 
   void _onTapWebButton(String? url, { String? analyticsName }) {
@@ -615,8 +632,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onLocationDetailTapped(){
     Analytics().logSelect(target: 'Event location/url');
-    if((_event?.displayAsVirtual?? false) == true){
-      String? url = _event?.location?.description;
+    if((_event?.isOnline?? false) == true){
+      String? url = _event?.onlineDetails?.url;
       if(StringUtils.isNotEmpty(url)) {
         _onTapWebButton(url, analyticsName: "Event Link");
       }
@@ -728,17 +745,19 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   bool get isFavorite => Auth2().isFavorite(_event);
 
-  bool get _isPrivateGroupEvent => _event?.isGroupPrivate ?? false;
+  bool get _isPrivateGroupEvent => _event?.private ?? false;
 
   @override
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupEventsUpdated) {
-      Events().getEventById(_event?.eventId).then((event) {
-        setStateIfMounted(() {
-          if (event != null)
-            event = _event;
+      if(_event?.id != null) {
+        Events2().loadEvent(_event!.id!).then((event) {
+          setStateIfMounted(() {
+            if (event != null)
+              event = _event;
+          });
         });
-      });
+      }
     }
     else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() { });

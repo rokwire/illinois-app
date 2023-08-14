@@ -45,8 +45,9 @@ class Event2CreatePanel extends StatefulWidget {
 
   final Event2? event;
   final Survey? survey;
+  final Event2Selector? eventSelector;
 
-  Event2CreatePanel({Key? key, this.event, this.survey}) : super(key: key);
+  Event2CreatePanel({Key? key, this.event, this.survey, this.eventSelector}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Event2CreatePanelState();
@@ -413,7 +414,7 @@ class Event2CreatePanel extends StatefulWidget {
 
 }
 
-class _Event2CreatePanelState extends State<Event2CreatePanel>  {
+class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2SelectorDataProvider{
 
   String? _imageUrl;
 
@@ -524,6 +525,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     _onlineUrlController.addListener(_updateErrorList);
     _locationLatitudeController.addListener(_updateErrorList);
     _locationLongitudeController.addListener(_updateErrorList);
+    _initSelector();
 
     super.initState();
   }
@@ -584,6 +586,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             _buildSurveyButtonSection(),
             _buildSponsorshipAndContactsButtonSection(),
             _buildVisibilitySection(),
+            _buildEventSelectorSection(),
             _buildCreateEventSection(),
           ]),
         )
@@ -1504,6 +1507,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
     }
   }
 
+  //EventSelector section
+  Widget _buildEventSelectorSection() {
+    if(widget.eventSelector != null){
+      return widget.eventSelector!.buildWidget(this) ?? Container();
+    }
+    return Container();
+  }
+
   // Create Event
 
   Widget _buildCreateEventSection() {
@@ -1614,6 +1625,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
 
     if (mounted) {
       if (result is Event2) {
+        _selectorEvent = result;
         Survey? survey = widget.survey;
         if (widget.isCreate) {
           if (_survey != null) {
@@ -1627,6 +1639,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
               Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
                 event: result,
                 survey: survey,
+                eventSelector: widget.eventSelector,
               )));
             }
             else {
@@ -1635,7 +1648,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
           }
           else {
             Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
-              event: result,
+              event: result, eventSelector: widget.eventSelector,
             )));
           }
         }
@@ -1668,12 +1681,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
             survey: survey,
           ));
         }
+
+        widget.eventSelector?.performSelection(this); //TBD For custom Selector
       }
       else  {
         setState(() {
           _creatingEvent = false;
         });
         Event2Popup.showErrorResult(context, result);
+        widget.eventSelector?.performSelection(this); //TBD For custom Selector
       }
     }
   }
@@ -1867,6 +1883,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel>  {
       speaker: _speaker,
       contacts: _contacts,
     );
+
+  //EventSelector
+  @override
+  Event2SelectorData? selectorData;
+
+  void _initSelector(){
+    widget.eventSelector?.init(this);
+  }
+
+  void set _selectorEvent(Event2 event) => selectorData?.data?["event"] = event;
 }
 
 // _Event2Visibility

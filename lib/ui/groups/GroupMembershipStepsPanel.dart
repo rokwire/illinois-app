@@ -17,12 +17,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
-import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/groups/GroupFindEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -32,6 +31,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/ext/Event2.dart';
 
 class GroupMembershipStepsPanel extends StatefulWidget {
   final List<GroupMembershipStep>? steps;
@@ -47,7 +47,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   late List<GroupMembershipStep> _steps;
   List<FocusNode>? _focusNodes;
   List<TextEditingController>? _controllers;
-  Map<String, Event> _events = Map<String, Event>();
+  Map<String, Event2> _events = Map<String, Event2>();
 
   @override
   void initState() {
@@ -68,9 +68,9 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     }
 
     if (0 < eventIds.length) {
-      Events().loadEventsByIds(eventIds).then((List<Event>? events) {
+      Events2().loadEventsByIds(eventIds).then((List<Event2>? events) {
         if (events != null) {
-          for (Event event in events) {
+          for (Event2 event in events) {
             if (event.id != null) {
               _events[event.id!] = event;
             }
@@ -80,10 +80,10 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           }
         }
       });
-      Groups().loadEvents(null).then((Map<int, List<Event>>? eventsMap) {
-        List<Event>? events = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
+      Groups().loadEvents(null).then((Map<int, List<Event2>>? eventsMap) {
+        List<Event2>? events = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
         if (CollectionUtils.isNotEmpty(events)) {
-          for (Event event in events!) {
+          for (Event2 event in events!) {
             if (event.id != null) {
               _events[event.id!] = event;
             }
@@ -208,7 +208,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     if (0 < eventsCount) {
       for (int eventIndex = 0; eventIndex < eventsCount; eventIndex++) {
         String? eventId = eventIds![eventIndex];
-        Event? event = _events[eventId];
+        Event2? event = _events[eventId];
         if (event != null) {
           stepContent.add(_EventCard(event: event, onTapRemove:(){ _removeEvent(stepIndex:index, eventIndex: eventIndex); }));
         }
@@ -277,9 +277,9 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     if (step.eventIds == null) {
       step.eventIds = <String>[];
     }
-    GroupEventsContext groupContext = GroupEventsContext(events: <Event>[]);
+    GroupEventsContext groupContext = GroupEventsContext(events: <Event2>[]);
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupFindEventPanel(groupContext: groupContext,))).then((_){
-      for (Event newEvent in groupContext.events!) {
+      for (Event2 newEvent in groupContext.events!) {
         if (newEvent.id != null) {
           if (!step.eventIds!.contains(newEvent.id)) {
             step.eventIds!.add(newEvent.id!);
@@ -324,7 +324,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
 }
 
 class _EventCard extends StatelessWidget {
-  final Event?              event;
+  final Event2?              event;
   final GestureTapCallback? onTapRemove;
   
   _EventCard({this.event, this.onTapRemove});
@@ -343,11 +343,11 @@ class _EventCard extends StatelessWidget {
           Padding(padding: EdgeInsets.all(16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(bottom: 8), child: 
-                Text(event!.title!,  style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
+                Text(event!.name!,  style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 8), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
-                Text(event?.timeDisplayString ?? '',  style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
+                Text(event?.shortDisplayDate ?? '',  style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
               ],)),
             ],)
           ),

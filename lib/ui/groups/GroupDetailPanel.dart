@@ -18,12 +18,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -37,8 +40,6 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPollListPanel.dart';
@@ -63,6 +64,7 @@ import 'GroupSettingsPanel.dart';
 enum _DetailTab { Events, Posts, Polls, About }
 
 class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  static final String routeName = 'group_detail_content_panel';
 
   final Group? group;
   final String? groupIdentifier;
@@ -91,7 +93,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
-  List<Event>?       _groupEvents;
+  List<Event2>?       _groupEvents;
   List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>?      _groupAdmins;
 
@@ -274,7 +276,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event2>>? eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
@@ -287,7 +289,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _refreshEvents() {
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event2>>? eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
@@ -885,7 +887,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 //    }
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
-      for (Event? groupEvent in _groupEvents!) {
+      for (Event2? groupEvent in _groupEvents!) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: _group));
       }
 
@@ -1759,12 +1761,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreateEvent(){
     Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel( eventSelector: GroupEventSelector(GroupEventData(group: _group), showCustomButton: false))));
   }
 
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroup: _group, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroup: _group, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
+    Event2HomePanel.present(context, eventSelector: GroupEventSelector(GroupEventData(group: _group)));
+
   }
 
   void _onTapCreatePost() {
@@ -1903,5 +1908,125 @@ class _OfficerCard extends StatelessWidget {
         Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles?.getTextStyle('widget.card.detail.regular')),
       ],),
     );
+  }
+}
+
+class GroupEventSelector extends Event2Selector{
+  final bool showCustomButton;
+  GroupEventData data;
+
+  GroupEventSelector(this.data, {this.showCustomButton = true}) : super(data);
+
+  @override
+  void init(State<StatefulWidget> state) {
+    super.init(state);
+    if(data.group?.id != null && data.event?.id != null && CollectionUtils.isEmpty(data.membersSelection)){
+      Groups().loadGroupEventMemberSelection(data.group?.id, data.event?.id).then((memberSelection) { //Check do we already have selection {update mode}
+         state.setStateIfMounted(() {
+           if(memberSelection != null) {
+             data.membersSelection = memberSelection;
+           }
+         });
+      });
+    }
+  }
+
+  @override
+  Widget? buildWidget(State<StatefulWidget> state) {
+    _updateDataFromState(state);
+    return Container(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          children: [
+            Visibility( visible: showCustomButton,
+              child: RoundedButton(
+                label: (data.group?.researchProject == true) ?
+                Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
+                Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+                hint: (data.group?.researchProject == true) ?
+                Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
+                Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                backgroundColor: Colors.white,
+                borderColor: Styles().colors!.fillColorPrimary,
+                progress: data.bindingInProgress ?? false,
+                onTap: ()=>_onTapAddToGroup(state),
+              ),
+            ),
+            Container(height: 6,),
+            GroupMembersSelectionWidget(
+              selectedMembers: data.membersSelection,
+              groupId: data.group?.id,
+              onSelectionChanged: (members){
+                state.setStateIfMounted(() {
+                  data.membersSelection = members;
+                });
+              },),
+          ],
+        )
+    );
+  }
+
+  void performSelection(State state){
+    Future<bool> Function({String? groupId, String? eventId, List<Member>? toMembers}) serviceAPI = data.updateExistingEvent == true ? Groups().updateLinkedEventMembers : Groups().linkEventToGroup;
+    serviceAPI(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection).then((success){
+      state.setStateIfMounted(() {data.bindingInProgress = false;});
+      if(success) {
+        if (state.mounted) {
+          Navigator.of(state.context).popUntil((Route route) {
+            return route.settings.name == GroupDetailPanel.routeName;
+          });
+        }
+      }
+    });
+  }
+
+  void _updateDataFromState(State state){
+    if(state is Event2SelectorDataProvider){
+      Event2SelectorData? rawData = (state as Event2SelectorDataProvider).selectorData;
+      data = (rawData is GroupEventData) ? rawData : data;
+    }
+  }
+
+  void _onTapAddToGroup(State state) {
+    Analytics().logSelect(target: "Add To Group");
+    state.setStateIfMounted(() {data.bindingInProgress = true;});
+    performSelection(state);
+  }
+}
+
+class GroupEventData extends Event2SelectorData{
+  GroupEventData({Group? group, Event2? event, List<Member>? memberSelection}):
+        super(data: {
+          "group" : group,
+          "event" : event,
+          "members_selection" : memberSelection,
+          "update_existing_event" : (event?.id != null)
+        });
+
+  void set group(Group? group) => data?["group"] = group;
+  Group? get group {
+      dynamic groupData = data?["group"];
+      return (groupData is Group)? groupData : null;
+  }
+
+  void set event(Event2? event) => data?["event"] = event;
+  Event2? get event {
+    dynamic eventData = data?["event"];
+    return (eventData is Event2)? eventData : null;
+  }
+
+  void set membersSelection(List<Member>? selection) => data?["members_selection"] = selection;
+  List<Member>? get membersSelection {
+    dynamic selectionData = data?["members_selection"];
+    return (selectionData is List<Member>)? selectionData : null;
+  }
+
+  bool? get bindingInProgress => JsonUtils.boolValue(data?["binding_in_progress"]);
+  void set bindingInProgress(bool? progress) => data?["binding_in_progress"] = progress;
+
+  void set updateExistingEvent(bool? value) => data?["update_existing_event"] = value;
+  bool? get updateExistingEvent {
+    return JsonUtils.boolValue(data?["update_existing_event"]);
   }
 }

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -284,6 +285,17 @@ extension Event2Ext on Event2 {
     DateTime? eventTime = endTimeUtc ?? startTimeUtc;
     return (eventTime == null) || eventTime.toUtc().add(Duration(hours: hours)).isBefore(DateTime.now().toUtc());
   }
+
+  bool get isFavorite =>
+      //isRecurring //TBD Recurring id
+      // ? Auth2().isListFavorite(recurringEvents?.cast<Favorite>());
+      Auth2().isFavorite(this);
+
+  bool get canUserEdit =>
+      userRole == Event2UserRole.admin;
+
+  bool get canUserDelete =>
+      userRole == Event2UserRole.admin;
 }
 
 extension Event2ContactExt on Event2Contact {

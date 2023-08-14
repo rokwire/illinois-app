@@ -35,8 +35,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class Event2SearchPanel extends StatefulWidget {
   final Position? userLocation;
+  final Event2Selector? eventSelector;
 
-  Event2SearchPanel({Key? key, this.userLocation}) : super(key: key);
+  Event2SearchPanel({Key? key, this.userLocation, this.eventSelector}) : super(key: key);
 
   @override
   _Event2SearchPanelState createState() => _Event2SearchPanelState();
@@ -245,7 +246,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
 
   void _onTapEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _userLocation,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _userLocation, eventSelector: widget.eventSelector,)));
   }
 
   void _onTextChanged(String text) {

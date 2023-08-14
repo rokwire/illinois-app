@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -34,14 +35,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupEventsContext {
   StreamController<void> eventsController = StreamController<void>();
-  List<Event>? _events;
-  List<Event>? get events => _events;
+  List<Event2>? _events;
+  List<Event2>? get events => _events;
   set events(value){
     _events = value;
     eventsController.add(null);
   }
   
-  GroupEventsContext({List<Event>? events}) {
+  GroupEventsContext({List<Event2>? events}) {
     _events = events;
   }
 

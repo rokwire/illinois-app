@@ -19,15 +19,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -41,10 +43,8 @@ import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
-import 'package:illinois/ui/groups/GroupEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
@@ -409,7 +409,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
 //GroupEventCard
 
 class GroupEventCard extends StatefulWidget {
-  final Event? groupEvent;
+  final Event2? groupEvent;
   final Group? group;
 
   GroupEventCard({this.groupEvent, this.group});
@@ -421,7 +421,7 @@ class GroupEventCard extends StatefulWidget {
 class _GroupEventCardState extends State<GroupEventCard>{
   @override
   Widget build(BuildContext context) {
-    Event? event = widget.groupEvent;
+    Event2? event = widget.groupEvent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -439,7 +439,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
 
 class _EventContent extends StatefulWidget {
   final Group? group;
-  final Event? event;
+  final Event2? event;
 
   _EventContent({this.event, this.group});
 
@@ -483,25 +483,26 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   Widget build(BuildContext context) {
 
     bool isFavorite = widget.event?.isFavorite ?? false;
-    String? imageUrl = widget.event?.eventImageUrl;
+    String? imageUrl = widget.event?.imageUrl;
 
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
         Container(constraints: BoxConstraints(minHeight: 64), child:
-          Text(widget.event?.title ?? '',  style:Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
+          Text(widget.event?.name ?? '',  style:Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
       )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Styles().images?.getImage('calendar')),
       Expanded(child:
-      Text(widget.event?.timeDisplayString ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small"))
+      Text(widget.event?.shortDisplayDate ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small"))
       ),
     ],)),);
 
     return Stack(children: <Widget>[
       InkWell(onTap: () {
           Analytics().logSelect(target: "Group Event");
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
+          // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: widget.event, eventSelector: widget.group != null ? GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showCustomButton: false) : null)));
         },
         child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
@@ -552,7 +553,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onFavoriteTap() {
-    Analytics().logSelect(target: "Favorite: ${widget.event?.title}");
+    Analytics().logSelect(target: "Favorite: ${widget.event?.name}");
     Auth2().prefs?.toggleFavorite(widget.event);
   }
 
@@ -611,30 +612,31 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   void _onEditEventTap(){
     Analytics().logSelect(target: "Update Event");
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event, onEditTap: (BuildContext context, Event event, List<Member>? selection) {
-      Groups().updateGroupEvents(event).then((String? id) {
-        if (StringUtils.isNotEmpty(id)) {
-          Groups().updateLinkedEventMembers(groupId: widget.group?.id,eventId: event.id, toMembers: selection).then((success){
-            if(success){
-              Navigator.pop(context);
-            } else {
-              AppAlert.showDialogResult(context, "Unable to update event members");
-            }
-          }).catchError((_){
-            AppAlert.showDialogResult(context, "Error Occurred while updating event members");
-          });
-        }
-        else {
-          AppAlert.showDialogResult(context, "Unable to update event");
-        }
-      }).catchError((_){
-        AppAlert.showDialogResult(context, "Error Occurred while updating event");
-      });
-    })));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(event: widget.event, group: widget.group,  onEditTap: (BuildContext context, Event event, List<Member>? selection) {
+    //   Groups().updateGroupEvents(event).then((String? id) {
+    //     if (StringUtils.isNotEmpty(id)) {
+    //       Groups().updateLinkedEventMembers(groupId: widget.group?.id,eventId: event.id, toMembers: selection).then((success){
+    //         if(success){
+    //           Navigator.pop(context);
+    //         } else {
+    //           AppAlert.showDialogResult(context, "Unable to update event members");
+    //         }
+    //       }).catchError((_){
+    //         AppAlert.showDialogResult(context, "Error Occurred while updating event members");
+    //       });
+    //     }
+    //     else {
+    //       AppAlert.showDialogResult(context, "Unable to update event");
+    //     }
+    //   }).catchError((_){
+    //     AppAlert.showDialogResult(context, "Error Occurred while updating event");
+    //   });
+    // })));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showCustomButton: false))));
   }
 
   bool get _canEdit {
-    return widget.isAdmin && StringUtils.isNotEmpty(widget.event?.createdByGroupId);
+    return widget.isAdmin && widget.event?.canUserEdit == true; //StringUtils.isNotEmpty(widget.event?.createdByGroupId);
   }
 
   bool get _canDelete {
@@ -1162,7 +1164,7 @@ class _GroupCardState extends State<GroupCard> {
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
     if (FlexUI().isAuthenticationAvailable) {
       if (Auth2().isOidcLoggedIn) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
       }
       else {
         setState(() { _bussy = true; });
@@ -1171,7 +1173,7 @@ class _GroupCardState extends State<GroupCard> {
           if (mounted) {
             setState(() { _bussy = null; });
             if (result == Auth2OidcAuthenticateResult.succeeded) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
+              Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: GroupDetailPanel.routeName), builder: (context) => GroupDetailPanel(group: widget.group)));
             }
           }
         });
