@@ -1101,7 +1101,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
       int? surveyResponseIndex = ((_event?.hasSurvey == true) && (_survey?.id != null)) ? futures.length : null;
       if (surveyResponseIndex != null) {
-        futures.add(Surveys().loadSurveyResponses(surveyIDs: [_survey!.id]));
+        futures.add(Surveys().loadUserSurveyResponses(surveyIDs: [_survey!.id]));
       }
 
       int? peopleIndex = ((_event?.hasSurvey == true) && (_persons == null)) ? futures.length : null;
@@ -1134,7 +1134,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
         // Handle searching for survey responses if the event survey was just loaded
         if ((_event?.hasSurvey == true) && (surveyResponseIndex == null) && (survey?.id != null)) {
-          surveyResponses = await Surveys().loadSurveyResponses(surveyIDs: [survey!.id]);
+          surveyResponses = await Surveys().loadUserSurveyResponses(surveyIDs: [survey!.id]);
         }
 
         setStateIfMounted(() {
@@ -1184,7 +1184,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       // Handle searching for existing survey responses
       int? surveyResponseIndex = ((_event?.hasSurvey == true) && (_survey?.id != null)) ? futures.length : null;
       if (surveyResponseIndex != null) {
-        futures.add(Surveys().loadSurveyResponses(surveyIDs: [_survey!.id]));
+        futures.add(Surveys().loadUserSurveyResponses(surveyIDs: [_survey!.id]));
       }
 
       int? peopleIndex = (_event?.hasSurvey == true) ? futures.length : null;
