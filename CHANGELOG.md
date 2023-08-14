@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.46] - 2023-08-14
 ### Added
 - Event admins cannot load all survey responses [#3524](https://github.com/rokwire/illinois-app/issues/3524).
 - Added "Multi-person" event type [#3531](https://github.com/rokwire/illinois-app/issues/3531).
