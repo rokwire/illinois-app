@@ -525,6 +525,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _onlineUrlController.addListener(_updateErrorList);
     _locationLatitudeController.addListener(_updateErrorList);
     _locationLongitudeController.addListener(_updateErrorList);
+    _costController.addListener(_updateErrorList);
     _initSelector();
 
     super.initState();
@@ -1127,21 +1128,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     expanded: _costSectionExpanded,
   );
 
-  Widget _buildCostSectionBody() {
-    List<Widget> contentList = <Widget>[
-      _buildFreeToggle(),
-    ];
-
-    if (_free == false) {
-      contentList.addAll(<Widget>[
-        Padding(padding: Event2CreatePanel.innerSectionPadding),
-        _buildCostInnerSection(),
-      ]);
-    }
-
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
-  }
-
+  Widget _buildCostSectionBody() => Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+    _buildFreeToggle(),
+    Padding(padding: Event2CreatePanel.innerSectionPadding),
+    _buildCostInnerSection(),
+  ]);
+    
   Widget _buildFreeToggle() => Semantics(toggled: _free, excludeSemantics: true, 
     label: Localization().getStringEx("panel.event2.create.free.toggle.title", "Is this event free?"),
     hint: Localization().getStringEx("panel.event2.create.free.toggle.hint", ""),
@@ -1192,6 +1184,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _free = !_free;
+      _errorList = _buildErrorList();
     });
   }
 
@@ -1574,6 +1567,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.online_url', 'online URL'));
     }
 
+    if ((_free == false) && _costController.text.isEmpty) {
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.cost_description', 'cost description'));
+    }
+
     if (Events2().contentAttributes?.isSelectionValid(_attributes) != true) {
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.attributes', 'event attributes'));
     }
@@ -1748,7 +1745,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     (_eventType != null) &&
     (!_inPersonEventType || _hasLocation) &&
     (!_onlineEventType || _hasOnlineDetails) &&
-    (Events2().contentAttributes?.isAttributesSelectionValid(_attributes) ?? false) &&
+    (_free || _costController.text.isNotEmpty) &&
+    (Events2().contentAttributes?.isSelectionValid(_attributes) ?? false) &&
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&
     (!_hasSurvey || _hasAttendanceDetails)
   );
