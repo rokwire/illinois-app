@@ -320,7 +320,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
     // set calendarEventId in survey if it is missing
     if (survey != null && StringUtils.isEmpty(survey.calendarEventId)) {
-      survey.calendarEventId = widget.surveyParam.event?.id;
+      survey.calendarEventId = widget.surveyParam.survey?.calendarEventId ?? widget.surveyParam.event?.id;
     }
 
     return Event2SetupSurveyParam(
