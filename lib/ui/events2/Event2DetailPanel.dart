@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
@@ -824,15 +825,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   }
 
   void _onLaunchUrl(String? url, {BuildContext? context}) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context ?? this.context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
-      }
+    Uri? uri = Uri.tryParse(url ?? '');
+    if (uri != null) {
+      launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
     }
   }
 
@@ -840,8 +835,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if (analyticsName != null) {
       Analytics().logSelect(target: analyticsName);
     }
-    if(StringUtils.isNotEmpty(url)){
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
+    Uri? uri = Uri.tryParse(url ?? '');
+    if (uri != null) {
+      launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
     }
   }
 
