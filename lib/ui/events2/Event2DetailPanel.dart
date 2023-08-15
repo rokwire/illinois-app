@@ -315,7 +315,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       bool canLaunch = StringUtils.isNotEmpty(_event?.onlineDetails?.url);
       List<Widget> details = <Widget>[
         InkWell(onTap: canLaunch ? _onOnline : null, child:
-          _buildTextDetailWidget('Online', 'laptop'),
+          _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.online.title', 'Online'), 'laptop'),
         ),
       ];
 
@@ -344,7 +344,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       TextStyle? textDetailStyle = Styles().textStyles?.getTextStyle(textDetailStyleName);
       
       List<Widget> details = <Widget>[
-        _buildTextDetailWidget('In Person', 'location',
+        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.in_person.title', 'In Person'), 'location',
           textStyle: textDetailStyle
         ),
       ];
@@ -392,6 +392,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<Widget>? get _priceDetailWidget{
     bool isFree = _event?.free ?? false;
+    // "panel.event2.detail.general.free.title": "Free"
     String priceText =isFree? "Free" : (_event?.cost ?? "Free");
     String? additionalDescription = isFree? _event?.cost : null;
     List<Widget>? details = priceText.isNotEmpty ? <Widget>[
@@ -506,7 +507,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       return null;
 
     List<Widget> contactList = [];
-    contactList.add(_buildTextDetailWidget("Contacts", "person"));
+    contactList.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.contacts.title', 'Contacts'), 'person'));
 
     for (Event2Contact? contact in _event!.contacts!) {
       String? details =  event2ContactToDisplayString(contact);
@@ -533,13 +534,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<Widget>? get _adminSettingsButtonWidget => _isAdmin? <Widget>[
     InkWell(onTap: _onAdminSettings, child:
-       _buildTextDetailWidget("Event Admin Actions", "settings", underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.admin_actions.title', 'Event Admin Actions'), 'settings', underlined: true)),
     _detailSpacerWidget
   ] : null;
 
   List<Widget>? get _addToCalendarButton => <Widget>[
     InkWell(onTap: _onAddToCalendar, child:
-       _buildTextDetailWidget("Add to Calendar", "event-save-to-calendar", underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)),
     _detailSpacerWidget
   ];
 
