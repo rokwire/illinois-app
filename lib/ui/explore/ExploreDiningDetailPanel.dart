@@ -449,7 +449,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Container(width: 10,),
             Expanded(child:
               StringUtils.isNotEmpty(_diningFeedback?.dieticianUrl) ? RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.ask_dietician', 'Ask a Dietician'),
+                label: Localization().getStringEx('panel.explore_detail.button.ask_dietician', 'Ask a Dietitian'),
                 backgroundColor: Styles().colors?.white,
                 borderColor: Styles().colors!.fillColorSecondary,
                 textStyle: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
@@ -582,14 +582,14 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   void _onTapAskDietician() {
-    Analytics().logSelect(target: 'Ask a Dietician');
+    Analytics().logSelect(target: 'Ask a Dietitian');
     String? url = _diningFeedback?.dieticianUrl;
     if (url != null) {
       showDialog<String?>(context: context, builder: (BuildContext context) {
         return _FeedbackBodyWidget(
-          analyticsTitle: 'Ask a Dietician',
-          title: Localization().getStringEx('panel.explore_detail.label.ask_dietician', 'Ask a Dietician'),
-          message: Localization().getStringEx('panel.explore_detail.label.ask_dietician_descr', 'Type your question to our dieticians:'),
+          analyticsTitle: 'Ask a Dietitian',
+          title: Localization().getStringEx('panel.explore_detail.label.ask_dietician', 'Ask a Dietitian'),
+          message: Localization().getStringEx('panel.explore_detail.label.ask_dietician_descr', 'Type your question to our Dietitian:'),
         );
       }).then((String? body) {
         if (body != null) {
