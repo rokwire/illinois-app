@@ -1239,6 +1239,7 @@
 	"panel.event2.create.status.missing.event_type": "event type",
 	"panel.event2.create.status.missing.location": "location coordinates",
 	"panel.event2.create.status.missing.online_url": "online URL",
+	"panel.event2.create.status.missing.cost_description": "cost description",
 	"panel.event2.create.status.missing.attributes": "event attributes",
 	"panel.event2.create.status.missing.registration_link": "registration link",
 	"panel.event2.create.status.missing.survey_attendance_details": "attendance (required for survey)",
