@@ -194,7 +194,7 @@ class Event2HomePanel extends StatefulWidget {
     return ContentAttribute(
       id: eventTypeContentAttributeId,
       title: Localization().getStringEx('panel.events2.home.attributes.event_type.title', 'Event Type'),
-      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.empty', 'Select an event type...'),
+      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.empty', 'Select an event type'),
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_type.hint.semantics', 'Double type to show event options.'),
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ internalContentAttributesScope },
@@ -229,7 +229,7 @@ class Event2HomePanel extends StatefulWidget {
     return ContentAttribute(
       id: eventTimeContentAttributeId,
       title: Localization().getStringEx('panel.events2.home.attributes.event_time.title', 'Date & Time'),
-      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.empty', 'Select an date & time...'),
+      emptyHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.empty', 'Select an date & time'),
       semanticsHint: Localization().getStringEx('panel.events2.home.attributes.event_time.hint.semantics', 'Double type to show date & time options.'),
       widget: ContentAttributeWidget.dropdown,
       scope: <String>{ internalContentAttributesScope },
