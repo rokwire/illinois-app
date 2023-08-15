@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Cannot update survey created in admin app [#3542](https://github.com/rokwire/illinois-app/issues/3542).
+### Changed
+- Enable cost description for free events [#3461](https://github.com/rokwire/illinois-app/issues/3461).
 
 ## [5.0.46] - 2023-08-14
 ### Added

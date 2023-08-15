@@ -1127,21 +1127,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     expanded: _costSectionExpanded,
   );
 
-  Widget _buildCostSectionBody() {
-    List<Widget> contentList = <Widget>[
-      _buildFreeToggle(),
-    ];
-
-    if (_free == false) {
-      contentList.addAll(<Widget>[
-        Padding(padding: Event2CreatePanel.innerSectionPadding),
-        _buildCostInnerSection(),
-      ]);
-    }
-
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
-  }
-
+  Widget _buildCostSectionBody() => Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+    _buildFreeToggle(),
+    Padding(padding: Event2CreatePanel.innerSectionPadding),
+    _buildCostInnerSection(),
+  ]);
+    
   Widget _buildFreeToggle() => Semantics(toggled: _free, excludeSemantics: true, 
     label: Localization().getStringEx("panel.event2.create.free.toggle.title", "Is this event free?"),
     hint: Localization().getStringEx("panel.event2.create.free.toggle.hint", ""),
