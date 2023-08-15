@@ -208,7 +208,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {2}))));
   }
 
   void _refreshGames({bool showProgress = false}) {

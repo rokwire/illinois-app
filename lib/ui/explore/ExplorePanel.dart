@@ -445,10 +445,10 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   ///
-  /// Load athletics games if "All Categories" or "Athletics" categories are selected
+  /// Load athletics games if "All Categories" or "Big 10 Athletics" categories are selected
   ///
   bool _shouldLoadGames(Set<String?>? selectedCategories) {
-    return CollectionUtils.isEmpty(selectedCategories) || selectedCategories!.contains('Athletics');
+    return CollectionUtils.isEmpty(selectedCategories) || selectedCategories!.contains('Big 10 Athletics');
   }
 
   ///
@@ -965,6 +965,12 @@ class ExplorePanelState extends State<ExplorePanel>
 
     for (int i = 0; i < visibleFilters.length; i++) {
       ExploreFilter selectedFilter = visibleFilters[i];
+      // Do not show categories filter if selected category is athletics "Big 10 Athletics" (e.g only one selected index with value 2)
+      if ((selectedFilter.type == ExploreFilterType.categories) &&
+          (widget.initialFilter?.type == ExploreFilterType.categories) &&
+          (widget.initialFilter?.selectedIndexes.contains(2) ?? false)) {
+        continue;
+      }
       List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues[filterValueIndex];
