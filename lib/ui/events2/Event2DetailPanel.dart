@@ -315,7 +315,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       bool canLaunch = StringUtils.isNotEmpty(_event?.onlineDetails?.url);
       List<Widget> details = <Widget>[
         InkWell(onTap: canLaunch ? _onOnline : null, child:
-          _buildTextDetailWidget('Online', 'laptop'),
+          _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.online.title', 'Online'), 'laptop'),
         ),
       ];
 
@@ -344,7 +344,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       TextStyle? textDetailStyle = Styles().textStyles?.getTextStyle(textDetailStyleName);
       
       List<Widget> details = <Widget>[
-        _buildTextDetailWidget('In Person', 'location',
+        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.in_person.title', 'In Person'), 'location',
           textStyle: textDetailStyle
         ),
       ];
@@ -391,21 +391,22 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   ] : null;
 
   List<Widget>? get _priceDetailWidget{
-    bool isFree = _event?.free ?? false;
-    String priceText =isFree? "Free" : (_event?.cost ?? "Free");
-    String? additionalDescription = isFree? _event?.cost : null;
-    List<Widget>? details = priceText.isNotEmpty ? <Widget>[
-      _buildTextDetailWidget(priceText, 'cost'),
-    ] : null;
-    
-    if(details != null && StringUtils.isNotEmpty(additionalDescription)){
-      details.add(Container(padding: EdgeInsets.only(left: 28), child:
-        Row(children: [Expanded(child:
-            Text(additionalDescription!, style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
-          ])));
+    List<Widget>? details = <Widget>[];
+    if (_event?.free != false) {
+      details.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.free.title', 'Free'), 'cost'));
+      if (StringUtils.isNotEmpty(_event?.cost)) {
+        details.add(_buildTextDetailWidget(_event?.cost ?? '', 'cost',
+          textStyle: Styles().textStyles?.getTextStyle('widget.info.regular.thin'),
+          iconVisible: false,
+          maxLines: 2,
+          detailPadding: EdgeInsets.zero
+        ));
+      }
     }
-    details?.add( _detailSpacerWidget);
-
+    else if (StringUtils.isNotEmpty(_event?.cost)) {
+      details.add(_buildTextDetailWidget(_event?.cost ?? '', 'cost'));
+    }
+    details.add( _detailSpacerWidget);
     return details;
   }
 
@@ -506,7 +507,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       return null;
 
     List<Widget> contactList = [];
-    contactList.add(_buildTextDetailWidget("Contacts", "person"));
+    contactList.add(_buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.contacts.title', 'Contacts'), 'person'));
 
     for (Event2Contact? contact in _event!.contacts!) {
       String? details =  event2ContactToDisplayString(contact);
@@ -533,13 +534,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<Widget>? get _adminSettingsButtonWidget => _isAdmin? <Widget>[
     InkWell(onTap: _onAdminSettings, child:
-       _buildTextDetailWidget("Event Admin Actions", "settings", underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.admin_actions.title', 'Event Admin Actions'), 'settings', underlined: true)),
     _detailSpacerWidget
   ] : null;
 
   List<Widget>? get _addToCalendarButton => <Widget>[
     InkWell(onTap: _onAddToCalendar, child:
-       _buildTextDetailWidget("Add to Calendar", "event-save-to-calendar", underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)),
     _detailSpacerWidget
   ];
 
@@ -726,15 +727,16 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     TextStyle? textStyle, // 'widget.info.medium' : 'widget.info.medium.underline'
+    int? maxLines = 1, TextOverflow? overflow = TextOverflow.ellipsis,
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
-    bool iconVisible = true, bool underlined = false, int maxLines = 1,
+    bool iconVisible = true, bool underlined = false,
   }) =>
     _buildDetailWidget(
       Text(text,
         style: textStyle ?? Styles().textStyles?.getTextStyle(underlined ? 'widget.info.medium.underline' : 'widget.info.medium'),
         maxLines: maxLines,
-        overflow: TextOverflow.ellipsis,
+        overflow: overflow,
       ),
       iconKey,
       detailPadding: detailPadding,
