@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Displaying athletics events [#3544](https://github.com/rokwire/illinois-app/issues/3544).
 ### Changed
 - Enable cost description for free events [#3461](https://github.com/rokwire/illinois-app/issues/3461).
+- Removed periods from button titles [#3435](https://github.com/rokwire/illinois-app/issues/3435).
 
 ## [5.0.46] - 2023-08-14
 ### Added

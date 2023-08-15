@@ -692,7 +692,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       ],)
                   ),
                   GroupDropDownButton(
-                    emptySelectionText: Localization().getStringEx('panel.groups_event_detail.button.select_group.title', "Select a group.."),
+                    emptySelectionText: Localization().getStringEx('panel.groups_event_detail.button.select_group.title', "Select a group"),
                     buttonHint: Localization().getStringEx('panel.groups_event_detail.button.select_group.hint', "Double tap to show categories options"),
                     items: _adminGroups,
                     constructTitle: (dynamic group) {
