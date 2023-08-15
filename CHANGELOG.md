@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Cannot update survey created in admin app [#3542](https://github.com/rokwire/illinois-app/issues/3542).
 - Displaying athletics events [#3544](https://github.com/rokwire/illinois-app/issues/3544).
-- Fixed spelling of dietitian in Dining[#3404](https://github.com/rokwire/illinois-app/issues/3404).
+- Fixed spelling of dietitian in Dining [#3404](https://github.com/rokwire/illinois-app/issues/3404).
+- Fixed Profile Settings panel inconsistencies [#3315](https://github.com/rokwire/illinois-app/issues/3315).
 ### Changed
 - Enable cost description for free events [#3461](https://github.com/rokwire/illinois-app/issues/3461).
 - Removed periods from button titles [#3435](https://github.com/rokwire/illinois-app/issues/3435).

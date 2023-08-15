@@ -282,6 +282,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
           border: Border.all(color: Styles().colors!.surfaceAccent!),
+          borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: StudentCourses().requireAda,
           onTap: _onRequireAdaToggled)
       ]),
@@ -302,13 +303,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
           border: Border.all(color: Styles().colors!.surfaceAccent!),
+          borderRadius: BorderRadius.all(Radius.circular(4)),
           toggled: Questionnaires().participateInResearch == true,
           onTap: _onResearchQuestionnaireToggled
         ),
         Container(height: 4),
         RibbonButton(
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-          //borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderRadius: BorderRadius.all(Radius.circular(4)),
           label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
           textStyle:  (Questionnaires().participateInResearch == true) ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
           rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right-bold' : 'chevron-right-gray',
@@ -510,6 +512,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
       backgroundColor: Styles().colors!.background,
       borderColor: Styles().colors!.fillColorSecondary,
+      borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
       onTap: _onSignOutClicked,
     );
   }
