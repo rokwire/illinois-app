@@ -445,10 +445,10 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   ///
-  /// Load athletics games if "All Categories" or "Athletics" categories are selected
+  /// Load athletics games if "All Categories" or "Big 10 Athletics" categories are selected
   ///
   bool _shouldLoadGames(Set<String?>? selectedCategories) {
-    return CollectionUtils.isEmpty(selectedCategories) || selectedCategories!.contains('Athletics');
+    return CollectionUtils.isEmpty(selectedCategories) || selectedCategories!.contains('Big 10 Athletics');
   }
 
   ///

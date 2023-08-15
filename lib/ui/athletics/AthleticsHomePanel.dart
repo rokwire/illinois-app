@@ -430,7 +430,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   void _onTapMoreUpcomingEvents() {
     Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
-      ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3});
+      ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {2});
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: initialFilter)));
     }
     else {
