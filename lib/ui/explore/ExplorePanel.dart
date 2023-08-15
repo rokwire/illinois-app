@@ -965,6 +965,12 @@ class ExplorePanelState extends State<ExplorePanel>
 
     for (int i = 0; i < visibleFilters.length; i++) {
       ExploreFilter selectedFilter = visibleFilters[i];
+      // Do not show categories filter if selected category is athletics "Big 10 Athletics" (e.g only one selected index with value 2)
+      if ((selectedFilter.type == ExploreFilterType.categories) &&
+          (widget.initialFilter?.type == ExploreFilterType.categories) &&
+          (widget.initialFilter?.selectedIndexes.contains(2) ?? false)) {
+        continue;
+      }
       List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues[filterValueIndex];
