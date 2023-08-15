@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed periods from button titles [#3435](https://github.com/rokwire/illinois-app/issues/3435).
 - Renamed "Event admin actions" to "Event admin settings" [#3431](https://github.com/rokwire/illinois-app/issues/3431).
 - Do not load URLs from Event2DetailPanel in a WebPanel [#3430](https://github.com/rokwire/illinois-app/issues/3430).
+- Change HomeAthleticsGameDayWidget empty message [#3341](https://github.com/rokwire/illinois-app/issues/3341).
 
 ## [5.0.46] - 2023-08-14
 ### Added
