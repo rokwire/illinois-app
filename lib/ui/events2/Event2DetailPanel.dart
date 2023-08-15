@@ -534,7 +534,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   List<Widget>? get _adminSettingsButtonWidget => _isAdmin? <Widget>[
     InkWell(onTap: _onAdminSettings, child:
-       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.admin_actions.title', 'Event Admin Actions'), 'settings', underlined: true)),
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.admin_settings.title', 'Event Admin Settings'), 'settings', underlined: true)),
     _detailSpacerWidget
   ] : null;
 
