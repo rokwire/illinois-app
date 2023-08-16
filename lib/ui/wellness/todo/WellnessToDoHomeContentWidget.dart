@@ -680,14 +680,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       List<ToDoItem> recurringItems = [];
       while(_todoItems.length + recurringItems.length < _limit){
         for(ToDoItem item in _recurringTodoItems){
-          if(_isSameDate(item.dueDateTimeUtc, date)){
-            continue;
-          }
-          else if(date!.isBefore(item?.dueDateTimeUtc ?? DateTime.now())){
-            continue;
-          }
-          else if(_todoItems.map((e) => e.dueDateTimeUtc.toString()).contains(date.toString())
-              && _todoItems.map((e) => e.id).contains(item.id)){
+          if(date!.isBefore(item?.dueDateTimeUtc ?? DateTime.now())
+              || _isSameDate(item.dueDateTimeUtc, date)
+              || _isRecurringDayCompleted(item, date)
+          ){
             continue;
           }else{
             //daily
@@ -695,7 +691,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               ToDoItem toDoItem = ToDoItem(
                   name: item.name,
                   category: item.category,
-                  dueDateTimeUtc: date,
+                  dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
                   hasDueTime:  item.hasDueTime,
                   reminderType:  item.reminderType,
                   reminderDateTimeUtc: item.reminderDateTimeUtc,
@@ -714,7 +710,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                 ToDoItem toDoItem = ToDoItem(
                     name: item.name,
                     category: item.category,
-                    dueDateTimeUtc: date,
+                    dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
                     hasDueTime:  item.hasDueTime,
                     reminderType:  item.reminderType,
                     reminderDateTimeUtc: item.reminderDateTimeUtc,
@@ -735,7 +731,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                   ToDoItem toDoItem = ToDoItem(
                       name: item.name,
                       category: item.category,
-                      dueDateTimeUtc: date,
+                      dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
                       hasDueTime:  item.hasDueTime,
                       reminderType:  item.reminderType,
                       reminderDateTimeUtc: item.reminderDateTimeUtc,
@@ -757,7 +753,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                       ToDoItem toDoItem = ToDoItem(
                           name: item.name,
                           category: item.category,
-                          dueDateTimeUtc: date,
+                          dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
                           hasDueTime:  item.hasDueTime,
                           reminderType:  item.reminderType,
                           reminderDateTimeUtc: item.reminderDateTimeUtc,
@@ -807,6 +803,15 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   bool _isSameDate(DateTime? item, DateTime? date){
     return item?.month == date?.month && item?.day == date?.day;
+  }
+
+  bool _isRecurringDayCompleted(ToDoItem recurringItem, DateTime? date){
+    for(ToDoItem item in _todoItems){
+      if(_isSameDate(item.dueDateTimeUtc, date) && (item?.recurrenceId ?? "") == recurringItem.id){
+        return true;
+      }
+    }
+    return false;
   }
 
 }

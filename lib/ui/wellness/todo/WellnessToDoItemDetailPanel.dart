@@ -833,7 +833,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       }else if(cron.substring(cron.length -5, cron.length) == "* ? *"){
         return "Monthly";
       }else{
-        String daysString = cron.substring(10, cron.length-2);
+        String daysString = cron.substring(12, cron.length-2);
         if(daysString.length == 3){
           return "Weekly";
         }else{
@@ -942,16 +942,6 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
 
   void _onSaveCompleted(bool success) {
     late String msg;
-      if (success) {
-        msg = Localization().getStringEx('panel.wellness.todo.item.save.succeeded.msg', 'To-Do item saved successfully.');
-      } else {
-        msg = Localization().getStringEx('panel.wellness.todo.item.save.failed.msg', 'Failed to save To-Do item.');
-      }
-      AppAlert.showDialogResult(context, msg).then((_) {
-        if (success) {
-          Navigator.of(context).pop();
-        }
-      });
       _decreaseProgress();
   }
 
