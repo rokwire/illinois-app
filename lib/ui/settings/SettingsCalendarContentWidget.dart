@@ -79,15 +79,24 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['calendar.settings'] ?? [];
     for (String code in codes) {
-      if (code == 'add') {
+      if (code == 'enable') {
+        contentList.add(Container(height: 4));
+        contentList.add(ToggleRibbonButton(
+            label: Localization().getStringEx('panel.settings.home.calendar.settings.enable.label', 'Allow saving to calendar'),
+            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+            textStyle: (Storage().calendarEnabledToSave == true) ? Styles().textStyles?.getTextStyle("widget.message.regular.fat") :   Styles().textStyles?.getTextStyle("widget.message.regular.fat.accent"),
+            toggled: Storage().calendarEnabledToSave ?? false,
+            onTap: _onEnable));
+      } else if (code == 'auto_save') {
         contentList.add(Container(height: 4));
         contentList.add(ToggleRibbonButton(
             label: Localization().getStringEx('panel.settings.home.calendar.settings.add_events.label', 'Add saved events to calendar'),
             border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             textStyle: (Storage().calendarEnabledToSave == true) ? Styles().textStyles?.getTextStyle("widget.message.regular.fat") :   Styles().textStyles?.getTextStyle("widget.message.regular.fat.accent"),
-            toggled: Storage().calendarEnabledToSave ?? false,
-            onTap: _onAdd));
+            toggled: Storage().calendarEnabledToSave == true && Storage().calendarEnabledToAutoSave == true,
+            onTap: _onAutoSave));
       } else if (code == 'prompt') {
         contentList.add(Container(height: 4));
         contentList.add(ToggleRibbonButton(
@@ -113,10 +122,17 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
     return contentList;
   }
 
-  void _onAdd() {
+  void _onEnable() {
     Analytics().logSelect(target: 'Add saved events to calendar');
     setState(() {
       Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave!;
+    });
+  }
+
+  void _onAutoSave() {
+    Analytics().logSelect(target: 'Add saved events to calendar');
+    setState(() {
+      Storage().calendarEnabledToAutoSave = !Storage().calendarEnabledToAutoSave!;
     });
   }
 

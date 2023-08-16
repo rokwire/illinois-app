@@ -85,7 +85,7 @@
 			"assessments.settings.health_screener": ["save"],
 
 			"calendar": ["settings"],
-			"calendar.settings": ["add", "prompt"],
+			"calendar.settings": ["prompt"],
 			
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			

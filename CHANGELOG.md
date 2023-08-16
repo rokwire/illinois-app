@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated privacy strings [#3332](https://github.com/rokwire/illinois-app/issues/3332).
+- Decouple Favourites from Device Calendar [#3558](https://github.com/rokwire/illinois-app/issues/3558).
 
 ## [5.0.47] - 2023-08-15
 ### Fixed
