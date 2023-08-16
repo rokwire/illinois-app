@@ -3,7 +3,7 @@
 		{"level":1, "key": "privacy.category.description.1", "text": "You may not be able to use all features, but you are anonymous, and we don't ask you for any identifying information or store any data. Anonymous data will be collected and used to optimize app performance."},
 		{"level":2, "key": "privacy.category.description.2", "text": "See what's happening around you. We use Wi-Fi and Bluetooth location services to improve your experience, but we never store that data."},
 		{"level":3, "key": "privacy.category.description.3", "text": "You can personalize and customize the app. Wi-Fi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience."},
-		{"level":4, "key": "privacy.category.description.4", "text": "Let the app work for you.\nYou can access your i-card, save credit cards to make future purchases easier, use Illini ID, and get notifications based on your specific interests."},
+		{"level":4, "key": "privacy.category.description.4", "text": "Let the app work for you.\nYou can access your i-card, use Illini ID, and get notifications based on your specific interests."},
 		{"level":5, "key": "privacy.category.description.5", "text": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends can all enjoy."}
 	],
 	"categories":[
@@ -104,17 +104,6 @@
 					"description_key" :"privacy.entry.athletics.notifications.description",
 					"dataUsage" : "This feature uses location services, personal preferences and events you have starred in the app.",
 					"dataUsage_key" :"privacy.entry.athletics.notifications.data_usage"
-				},
-				{
-					"min_level": 4,
-					"icon_resource": "person-dark",
-					"off_icon_resource": "person-disabled-dark",
-					"title" : "Identity",
-					"title_key" :"privacy.entry.athletics.sharing.title",
-					"description" : "May store credit card information to buy tickets for athletic events.",
-					"description_key" :"privacy.entry.athletics.sharing.description",
-					"dataUsage" : "This feature uses location services, personal preferences, credit card information and starred items.",
-					"dataUsage_key" :"privacy.entry.athletics.sharing.data_usage"
 				}
 			]
 		},
@@ -393,11 +382,6 @@
 		{
 			"key":"privacy.features2.entry.disable_notifications",
 			"text":"Turn off notifications.",
-			"max_level":3
-		},
-		{
-			"key":"privacy.features2.entry.remove_credit_card",
-			"text":"Remove your credit card info.",
 			"max_level":3
 		},
 		{
