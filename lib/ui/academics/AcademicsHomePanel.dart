@@ -382,6 +382,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return ((_selectedContent == AcademicsContent.gies_checklist) ||
             (_selectedContent == AcademicsContent.uiuc_checklist) ||
             (_selectedContent == AcademicsContent.student_courses) ||
+            (_selectedContent == AcademicsContent.todo_list) ||
             (_selectedContent == AcademicsContent.appointments)) ?
       _rawContentWidget :
       SingleChildScrollView(child:

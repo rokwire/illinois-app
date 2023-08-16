@@ -51,7 +51,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   late ScrollPagerController _scrollPagerController;
   final ScrollController _scrollController = ScrollController();
 
-  int _limit = 30;
+  int _limit = 10;
 
   @override
   void initState() {
@@ -67,9 +67,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _initCalendarDates();
     // _loadToDoItems();
 
-    _scrollPagerController = ScrollPagerController(limit: _limit, onPage: _loadTodos, onStateChanged: (){
+    _scrollPagerController = ScrollPagerController(limit: _limit, controller:_scrollController, infinite: true, onPage: _loadTodos, onStateChanged: (){
       if (mounted) {
-        setState(() { });
+        setState(() {
+        });
       }
     }, onReset: () {
       _todoItems = [];
@@ -323,9 +324,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         }
       }
 
-      return ScrollPager(
-        controller: _scrollPagerController,
-        child: Column(children: contentList),
+      return Expanded(
+        child: ScrollPager(
+          controller: _scrollPagerController,
+          child: Column(children: contentList),
+        ),
       );
       return Column(children: contentList);
     } else {
@@ -662,7 +665,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     List<ToDoItem>? responses = await Wellness().loadToDoItems(limit, offset);
     if (mounted && responses != null) {
       setState(() {
-        _todoItems?.addAll(responses);
+        _todoItems?.addAll(responses.where((a) => _todoItems.every((b) => a.id != b.id)));
+        // _todoItems?.addAll(responses);
         _recurringTodoItems.addAll(_todoItems.where((element) => element.recurrenceType != null && element.recurrenceType != "none" && element.recurrenceId == null));
         _fillRecurringTodos();
       });
@@ -671,43 +675,134 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _fillRecurringTodos(){
-    DateTime? date = _recurringTodoItems[0].dueDateTimeUtc ?? DateTime.now();
-    List<ToDoItem> recurringItems = [];
-    while(_todoItems.length + recurringItems.length < _limit){
-      for(ToDoItem item in _recurringTodoItems){
-        if(_isSameDate(item.dueDateTimeUtc, date)){
-          continue;
-        }
-        else if(date!.isBefore(item?.dueDateTimeUtc ?? DateTime.now())){
-          continue;
-        }
-        else if(_todoItems.map((e) => e.dueDateTimeUtc.toString()).contains(date.toString())
-        && _todoItems.map((e) => e.id).contains(item.id)){
-          continue;
-        }else{
-          //every day occ
-          if(item.recurrenceType?.substring((item.recurrenceType?.length ?? 0) -5, (item.recurrenceType?.length ?? 0)) == "* * *"){
-            ToDoItem toDoItem = ToDoItem(
-                name: item.name,
-                category: item.category,
-                dueDateTimeUtc: date,
-                hasDueTime:  item.hasDueTime,
-                reminderType:  item.reminderType,
-                reminderDateTimeUtc: item.reminderDateTimeUtc,
-                workDays:  item.workDays,
-                location:  item.location,
-                description:  item.description,
-                isCompleted: false,
-                recurrenceType:  item.recurrenceType,
-                recurrenceId:  item.id
-            );
-            recurringItems.add(toDoItem);
+    if(_recurringTodoItems.isNotEmpty){
+      DateTime? date = _recurringTodoItems[0].dueDateTimeUtc ?? DateTime.now();
+      List<ToDoItem> recurringItems = [];
+      while(_todoItems.length + recurringItems.length < _limit){
+        for(ToDoItem item in _recurringTodoItems){
+          if(_isSameDate(item.dueDateTimeUtc, date)){
+            continue;
+          }
+          else if(date!.isBefore(item?.dueDateTimeUtc ?? DateTime.now())){
+            continue;
+          }
+          else if(_todoItems.map((e) => e.dueDateTimeUtc.toString()).contains(date.toString())
+              && _todoItems.map((e) => e.id).contains(item.id)){
+            continue;
+          }else{
+            //daily
+            if(item.recurrenceType?.substring((item.recurrenceType?.length ?? 0) -5, (item.recurrenceType?.length ?? 0)) == "* * *"){
+              ToDoItem toDoItem = ToDoItem(
+                  name: item.name,
+                  category: item.category,
+                  dueDateTimeUtc: date,
+                  hasDueTime:  item.hasDueTime,
+                  reminderType:  item.reminderType,
+                  reminderDateTimeUtc: item.reminderDateTimeUtc,
+                  workDays:  item.workDays,
+                  location:  item.location,
+                  description:  item.description,
+                  isCompleted: false,
+                  recurrenceType:  item.recurrenceType,
+                  recurrenceId:  item.id
+              );
+              recurringItems.add(toDoItem);
+              //monthly
+            }else if(item.recurrenceType?.substring((item.recurrenceType?.length ?? 0) -5, (item.recurrenceType?.length ?? 0)) == "* ? *"){
+              List<String>? result = item.recurrenceType?.split(' ');
+              if(result != null && int.parse(result[3]) == date.day) {
+                ToDoItem toDoItem = ToDoItem(
+                    name: item.name,
+                    category: item.category,
+                    dueDateTimeUtc: date,
+                    hasDueTime:  item.hasDueTime,
+                    reminderType:  item.reminderType,
+                    reminderDateTimeUtc: item.reminderDateTimeUtc,
+                    workDays:  item.workDays,
+                    location:  item.location,
+                    description:  item.description,
+                    isCompleted: false,
+                    recurrenceType:  item.recurrenceType,
+                    recurrenceId:  item.id
+                );
+                recurringItems.add(toDoItem);
+              }
+            }else{
+              List<String>? result = item.recurrenceType?.split(' ');
+              if(result != null){
+                //weekly
+                if(!result[5].contains(",") && _convertDayString(result[5]) == date.weekday){
+                  ToDoItem toDoItem = ToDoItem(
+                      name: item.name,
+                      category: item.category,
+                      dueDateTimeUtc: date,
+                      hasDueTime:  item.hasDueTime,
+                      reminderType:  item.reminderType,
+                      reminderDateTimeUtc: item.reminderDateTimeUtc,
+                      workDays:  item.workDays,
+                      location:  item.location,
+                      description:  item.description,
+                      isCompleted: false,
+                      recurrenceType:  item.recurrenceType,
+                      recurrenceId:  item.id
+                  );
+                  recurringItems.add(toDoItem);
+
+                  //weekdays
+                }else{
+                  String daysString = item.recurrenceType?.substring(10, item.recurrenceType!.length -2) ?? "";
+                  List<String> dayStrings = daysString.split(",");
+                  for(String day in dayStrings){
+                    if(_convertDayString(day) == date.weekday){
+                      ToDoItem toDoItem = ToDoItem(
+                          name: item.name,
+                          category: item.category,
+                          dueDateTimeUtc: date,
+                          hasDueTime:  item.hasDueTime,
+                          reminderType:  item.reminderType,
+                          reminderDateTimeUtc: item.reminderDateTimeUtc,
+                          workDays:  item.workDays,
+                          location:  item.location,
+                          description:  item.description,
+                          isCompleted: false,
+                          recurrenceType:  item.recurrenceType,
+                          recurrenceId:  item.id
+                      );
+                      recurringItems.add(toDoItem);
+                      break;
+                    }
+                  }
+                }
+              }
+            }
           }
         }
+        date = date?.add(Duration(days: 1));
       }
-      date = date?.add(Duration(days: 1));
+      _todoItems.addAll(recurringItems);
     }
-    _todoItems.addAll(recurringItems);
+  }
+
+  int _convertDayString(String day){
+    switch(day){
+      case "MON":
+        return 1;
+      case "TUE":
+        return 2;
+      case "WED":
+        return 3;
+      case "THU":
+        return 4;
+      case "FRI":
+        return 5;
+      case "SAT":
+        return 6;
+      case "SUN":
+        return 7;
+      default:
+        return -1;
+
+    }
   }
 
   bool _isSameDate(DateTime? item, DateTime? date){

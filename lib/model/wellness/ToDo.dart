@@ -28,6 +28,7 @@ class ToDoItem {
   final ToDoCategory? category;
   DateTime? dueDateTimeUtc;
   final bool? hasDueTime;
+  DateTime? endDateTimeUtc;
   ToDoReminderType? reminderType;
   DateTime? reminderDateTimeUtc;
   final List<String>? workDays;
@@ -43,6 +44,7 @@ class ToDoItem {
       this.category,
       this.dueDateTimeUtc,
       this.hasDueTime,
+      this.endDateTimeUtc,
       this.reminderType,
       this.reminderDateTimeUtc,
       this.workDays,
@@ -62,6 +64,7 @@ class ToDoItem {
         category: ToDoCategory.fromJson(JsonUtils.mapValue(json['category'])),
         dueDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['due_date_time']), format: _dateTimeFormat, isUtc: true),
         hasDueTime: JsonUtils.boolValue(json['has_due_time']),
+        endDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['end_date_time']), format: _dateTimeFormat, isUtc: true),
         reminderType: reminderTypeFromString(JsonUtils.stringValue(json['reminder_type'])),
         reminderDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['reminder_date_time']), format: _dateTimeFormat, isUtc: true),
         workDays: JsonUtils.listStringsValue(json['work_days']),
@@ -80,6 +83,7 @@ class ToDoItem {
       'category': category?.toJson(),
       'due_date_time': DateTimeUtils.utcDateTimeToString(dueDateTimeUtc),
       'has_due_time': hasDueTime,
+      'end_date_time': DateTimeUtils.utcDateTimeToString(endDateTimeUtc),
       'reminder_type': reminderTypeToKeyString(reminderType),
       'reminder_date_time': DateTimeUtils.utcDateTimeToString(reminderDateTimeUtc),
       'work_days': workDays,
