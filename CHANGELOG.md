@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated privacy strings [#3332](https://github.com/rokwire/illinois-app/issues/3332).
 - Decouple Favourites from Device Calendar [#3558](https://github.com/rokwire/illinois-app/issues/3558).
 - Load again content attributes JSON from content service [#3560](https://github.com/rokwire/illinois-app/issues/3560).
+### Fixed
+- Android: request for location permission [#3563](https://github.com/rokwire/illinois-app/issues/3563).
 
 ## [5.0.47] - 2023-08-15
 ### Fixed
