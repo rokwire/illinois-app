@@ -68,7 +68,7 @@ class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsList
   }
 
   void _processFavorite(dynamic event) {
-    _DeviceCalendarEvent? deviceCalendarEvent = _DeviceCalendarEvent.from(event);
+    _DeviceCalendarEvent? deviceCalendarEvent = Storage().calendarEnabledToAutoSave == true ? _DeviceCalendarEvent.from(event) : null;
     if(deviceCalendarEvent==null)
       return;
 
