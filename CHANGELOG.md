@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed Daily Illini RSS feeds parsing [#3572](https://github.com/rokwire/illinois-app/issues/3572).
 - Make sure not to show State Farm Center in Favorites or Browse panels [#3298](https://github.com/rokwire/illinois-app/issues/3298).
+- Fix adding super event to group [#3564](https://github.com/rokwire/illinois-app/issues/3564).
 ### Added
 - Added background update and pull to refresh capability of MTD stop schedules panel [#3325](https://github.com/rokwire/illinois-app/issues/3325).
 
