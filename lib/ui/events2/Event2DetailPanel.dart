@@ -845,6 +845,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Analytics().logSelect(target: event.name);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,
       userLocation: _userLocation,
+      eventSelector:  widget.eventSelector,
       superEvent: (_event?.isSuperEvent == true) ? _event : null,
     )));
   }
@@ -857,6 +858,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     else {
       Navigator.of(context).push(CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: _superEvent,
         userLocation: _userLocation,
+        eventSelector:  widget.eventSelector,
       )));
     }
   }
