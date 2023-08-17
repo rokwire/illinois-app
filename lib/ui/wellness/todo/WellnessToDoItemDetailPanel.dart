@@ -944,6 +944,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   void _onSaveCompleted(bool success) {
     late String msg;
       _decreaseProgress();
+    Navigator.of(context).pop();
   }
 
   void _loadCategories() {
