@@ -833,11 +833,12 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       }else if(cron.substring(cron.length -5, cron.length) == "* ? *"){
         return "Monthly";
       }else{
-        String daysString = cron.substring(12, cron.length-2);
-        if(daysString.length == 3){
+        // String daysString = cron.substring(11, cron.length-2);
+        List<String> daysStringList  = cron.split(" ");
+        if(daysStringList[5].length == 3){
           return "Weekly";
         }else{
-          List<String> dayStrings = daysString.split(",");
+          List<String> dayStrings = daysStringList[5].split(",");
           _determineHighlightedDays(dayStrings);
           return "Weekdays";
         }

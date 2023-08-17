@@ -51,7 +51,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   late ScrollPagerController _scrollPagerController;
   final ScrollController _scrollController = ScrollController();
 
-  int _limit = 10;
+  int _limit = 100;
 
   @override
   void initState() {
@@ -746,26 +746,28 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
                   //weekdays
                 }else{
-                  String daysString = item.recurrenceType?.substring(10, item.recurrenceType!.length -2) ?? "";
-                  List<String> dayStrings = daysString.split(",");
-                  for(String day in dayStrings){
-                    if(_convertDayString(day) == date.weekday){
-                      ToDoItem toDoItem = ToDoItem(
-                          name: item.name,
-                          category: item.category,
-                          dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
-                          hasDueTime:  item.hasDueTime,
-                          reminderType:  item.reminderType,
-                          reminderDateTimeUtc: item.reminderDateTimeUtc,
-                          workDays:  item.workDays,
-                          location:  item.location,
-                          description:  item.description,
-                          isCompleted: false,
-                          recurrenceType:  item.recurrenceType,
-                          recurrenceId:  item.id
-                      );
-                      recurringItems.add(toDoItem);
-                      break;
+                  List<String>? daysStringList  = item.recurrenceType?.split(" ");
+                  List<String>? dayStrings = daysStringList?[5].split(",");
+                  if(dayStrings != null){
+                    for(String day in dayStrings){
+                      if(_convertDayString(day) == date.weekday){
+                        ToDoItem toDoItem = ToDoItem(
+                            name: item.name,
+                            category: item.category,
+                            dueDateTimeUtc: new DateTime.utc(date!.year, date!.month, date!.day, item.dueDateTimeUtc?.hour ?? 0, item.dueDateTimeUtc?.minute ?? 0),
+                            hasDueTime:  item.hasDueTime,
+                            reminderType:  item.reminderType,
+                            reminderDateTimeUtc: item.reminderDateTimeUtc,
+                            workDays:  item.workDays,
+                            location:  item.location,
+                            description:  item.description,
+                            isCompleted: false,
+                            recurrenceType:  item.recurrenceType,
+                            recurrenceId:  item.id
+                        );
+                        recurringItems.add(toDoItem);
+                        break;
+                      }
                     }
                   }
                 }
