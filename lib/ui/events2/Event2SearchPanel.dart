@@ -58,7 +58,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
   String? _eventsErrorText;
   int? _totalEventsCount;
   bool? _lastPageLoadedAll;
-  static const int _eventsPageLength = 8;
+  static const int _eventsPageLength = 16;
 
   Position? _userLocation;
 
@@ -317,7 +317,9 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
         searchText: searchText,
         offset: 0,
         limit: limit,
-        location: _userLocation
+        location: _userLocation,
+        sortType: Event2SortType.dateTime,
+        sortOrder: Event2SortOrder.ascending,
       ), client: _extendClient);
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
@@ -354,8 +356,10 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
         searchText: _searchText,
         offset: 0,
         limit: limit,
-        location: _userLocation
-      ), client: _extendClient);
+        location: _userLocation,
+        sortType: Event2SortType.dateTime,
+        sortOrder: Event2SortOrder.ascending,
+      ), client: _refreshClient);
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
       int? totalEventsCount = listResult?.totalCount;
@@ -398,7 +402,9 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
         searchText: _searchText,
         offset: _events?.length ?? 0,
         limit: _eventsPageLength,
-        location: _userLocation
+        location: _userLocation,
+        sortType: Event2SortType.dateTime,
+        sortOrder: Event2SortOrder.ascending,
       ), client: _extendClient);
       List<Event2>? events = listResult?.events;
       int? totalEventsCount = listResult?.totalCount;

@@ -467,7 +467,7 @@
     "panel.map.select.button.select.hint": "",
 
     "panel.academics.header.title": "Académica",
-    "panel.academics.section.events.label": "Eventos Académicos",
+    "panel.academics.section.events.label": "Ponentes y Seminarios",
     "panel.academics.section.gies_checklist.label": "Lista de verificación para nuevos estudiantes de iDegrees",
     "panel.academics.section.uiuc_checklist.label": "Lista de verificación para nuevos estudiantes",
     "panel.academics.section.canvas_courses.label": "Mis cursos Gies Canvas",
@@ -478,8 +478,8 @@
     "panel.academics.section.due_date_catalog.label": "Catálogo de fecha de vencimiento",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.appointments.label": "Equipo",
-    "panel.academics.section.events.offline.msg": "No hay eventos académicos disponibles sin conexión.",
-    "panel.academics.section.events.empty.msg": "Sin eventos académicos.",
+    "panel.academics.section.events.offline.msg": "No Speakers & Seminars events are available while offline.",
+    "panel.academics.section.events.empty.msg": "There are no upcoming Speakers & Seminars events.",
 
     "panel.athletics.header.title": "Atletismo",
     "panel.athletics.label.upcoming_events.title": "Próximos eventos",

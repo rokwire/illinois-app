@@ -382,7 +382,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return ((_selectedContent == AcademicsContent.gies_checklist) ||
             (_selectedContent == AcademicsContent.uiuc_checklist) ||
             (_selectedContent == AcademicsContent.student_courses) ||
-            (_selectedContent == AcademicsContent.appointments)) ?
+            (_selectedContent == AcademicsContent.appointments) ||
+            (_selectedContent == AcademicsContent.events)) ?
       _rawContentWidget :
       SingleChildScrollView(child:
         Padding(padding: EdgeInsets.only(bottom: 16), child:
@@ -433,7 +434,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   String _getContentLabel(AcademicsContent section) {
     switch (section) {
       case AcademicsContent.events:
-        return Localization().getStringEx('panel.academics.section.events.label', 'Academic Events');
+        return Localization().getStringEx('panel.academics.section.events.label', 'Speakers & Seminars');
       case AcademicsContent.gies_checklist:
         return Localization().getStringEx('panel.academics.section.gies_checklist.label', 'iDegrees New Student Checklist');
       case AcademicsContent.uiuc_checklist:
