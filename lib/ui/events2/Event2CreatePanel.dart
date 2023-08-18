@@ -887,6 +887,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
+          _errorList = _buildErrorList();
         });
       }
     });
@@ -908,6 +909,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if ((result != null) && mounted) {
         setState(() {
           _endDate = DateUtils.dateOnly(result);
+          _errorList = _buildErrorList();
         });
       }
     });
@@ -920,6 +922,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if ((result != null) && mounted) {
         setState(() {
           _endTime = result;
+          _errorList = _buildErrorList();
         });
       }
     });
@@ -1546,6 +1549,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     );
   }
 
+  bool get _isEndBeforeStartDateTime {
+    DateTime? startDateTimeUtc = _startDateTimeUtc;
+    DateTime? endDateTimeUtc = _endDateTimeUtc;
+    return ((startDateTimeUtc != null) && (endDateTimeUtc != null)) ? endDateTimeUtc.isBefore(startDateTimeUtc) : false;
+  }
+
   List<String> _buildErrorList() {
     List<String> errorList = <String>[];
 
@@ -1555,6 +1564,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
     if (_startDate == null) {
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.date', 'date and time'));
+    }
+    else if (_isEndBeforeStartDateTime) {
+      errorList.add(Localization().getStringEx('panel.event2.create.status.invalid.date.pair', 'end before start'));
     }
 
     if (_eventType == null) {
@@ -1741,7 +1753,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   bool _canCreateEvent() => (
     _titleController.text.isNotEmpty &&
-    (_startDate != null) &&
+    (_startDate != null) && !_isEndBeforeStartDateTime &&
     (_eventType != null) &&
     (!_inPersonEventType || _hasLocation) &&
     (!_onlineEventType || _hasOnlineDetails) &&
