@@ -221,6 +221,7 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
 
     NotificationService().subscribe(this, [
       Onboarding2.notifyFinished,
+      Localization.notifyLocaleChanged,
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Config.notifyOnboardingRequired,
@@ -417,6 +418,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       }
     }
     else if (name == Auth2.notifyUserDeleted) {
+      _resetUI();
+    }
+    else if (name == Localization.notifyLocaleChanged) {
       _resetUI();
     }
     else if (name == Storage.notifySettingChanged) {

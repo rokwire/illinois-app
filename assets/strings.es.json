@@ -1635,6 +1635,7 @@
     "panel.settings.home.settings.sections.favorites.label": "Personalizar favoritos",
     "panel.settings.home.settings.sections.assessments.label": "Mis evaluaciones",
     "panel.settings.home.settings.sections.i_card.label": "Illini ID",
+    "panel.settings.home.settings.sections.language.label": "Mi idioma",
 
     "panel.settings.home.connect.not_logged_in.title":"Inicia sesión en {{app_title}}",
     "panel.settings.home.connect.not_logged_in.netid.description.part_1": "Eres un ",
@@ -1728,8 +1729,12 @@
     "panel.settings.home.assessments.skills_self_evaluation.save_results.label": "Guardar mis resultados para compararlos con resultados futuros",
     "panel.settings.home.assessments.skills_self_evaluation.save_progress.description": "El progreso de una evaluación que haya iniciado se guardará automáticamente hasta que la cancele o la complete.",
     "panel.settings.home.assessments.skills_self_evaluation.title": "Autoevaluación de habilidades",
-
     "panel.settings.home.assessments.health_screener.title": "Evaluador de salud",
+
+    "panel.settings.home.language.system.title": "Usar el idioma del sistema",
+    "panel.settings.home.language.en.title": "Inglés",
+    "panel.settings.home.language.es.title": "Español",
+    "panel.settings.home.language.zh.title": "Chino",
 
     "panel.settings.privacy_center.label.title":"Centro de privacidad",
     "panel.settings.privacy_center.label.description":"Personalice sus preferencias de privacidad y datos.",
