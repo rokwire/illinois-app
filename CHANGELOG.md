@@ -7,12 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Rename "i-card" to "Illini ID" in Settings [#3588](https://github.com/rokwire/illinois-app/issues/3588).
+### Fixed
+- Show Twitter in favorites [#3590](https://github.com/rokwire/illinois-app/issues/3590).
 
 ## [5.0.49] - 2023-08-17
 ### Changed
 - "Multi-person" calendar event filter type renamed to "Multi-event" [#3570](https://github.com/rokwire/illinois-app/issues/3570).
 - Do not show "Next Available Appointment" if no slots are available [#3261](https://github.com/rokwire/illinois-app/issues/3261).
-
 ### Fixed
 - Fixed Daily Illini RSS feeds parsing [#3572](https://github.com/rokwire/illinois-app/issues/3572).
 - Make sure not to show State Farm Center in Favorites or Browse panels [#3298](https://github.com/rokwire/illinois-app/issues/3298).
