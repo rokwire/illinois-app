@@ -312,7 +312,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       case SettingsContent.assessments:
         return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
       case SettingsContent.i_card:
-        return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'i-card');
+        return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID');
     }
   }
 
