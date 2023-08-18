@@ -28,7 +28,9 @@ import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsICardContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsLanguageContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -38,7 +40,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card }
+enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language }
 
 class SettingsHomeContentPanel extends StatefulWidget {
   static final String routeName = 'settings_home_content_panel';
@@ -50,7 +52,7 @@ class SettingsHomeContentPanel extends StatefulWidget {
   @override
   _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
 
-  static void present(BuildContext context, {SettingsContent? content}) {
+  static void present(BuildContext context, { SettingsContent? content}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
       MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
@@ -86,7 +88,10 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [FlexUI.notifyChanged]);
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+      Localization.notifyLocaleChanged,
+    ]);
     _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.sections);
   }
 
@@ -276,6 +281,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return SettingsAssessmentsContentWidget();
       case SettingsContent.i_card:
         return SettingsICardContentWidget();
+      case SettingsContent.language:
+        return SettingsLanguageContentWidget();
     }
   }
 
@@ -313,6 +320,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
         return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
       case SettingsContent.i_card:
         return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID');
+      case SettingsContent.language:
+        return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language');
     }
   }
 
@@ -321,9 +330,10 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   @override
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
-      if (mounted) {
-        setState(() {});
-      }
+      setStateIfMounted(() {});
+    }
+    else if (name == Localization.notifyLocaleChanged) {
+      setStateIfMounted(() {});
     }
   }
 }

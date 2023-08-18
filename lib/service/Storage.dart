@@ -135,9 +135,6 @@ class Storage extends rokwire.Storage {
     setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
   }
 
-  // Language
-  @override String get currentLanguageKey => 'current_language';
-
   // Recent Items - backward compatability
   static const String recentItemsKey  = '_recent_items_json_string';
   List<dynamic>? get recentItems => JsonUtils.decode(getStringWithName(recentItemsKey));

@@ -1636,6 +1636,7 @@
 	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
 	"panel.settings.home.settings.sections.assessments.label": "我的評估",
 	"panel.settings.home.settings.sections.i_card.label": "伊利尼州 ID",
+	"panel.settings.home.settings.sections.language.label": "我的語言",
 	
 	"panel.settings.home.connect.not_logged_in.title":"登錄{{app_title}}",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_1": "你是不是一位",
@@ -1727,12 +1728,16 @@
 		"panel.settings.home.appointments.mckinley.label": "我的麥金萊",
 	
 	"panel.settings.home.assessments.skills_self_evaluation.save_results.label": "保存我的結果以與未來的結果進行比較",
-		"panel.settings.home.assessments.skills_self_evaluation.save_progress.description": "您開始的評估的進度將自動保存，直到您取消或完成它。",
+	"panel.settings.home.assessments.skills_self_evaluation.save_progress.description": "您開始的評估的進度將自動保存，直到您取消或完成它。",
 	"panel.settings.home.assessments.skills_self_evaluation.title": "技能自我評價",
-	
 	"panel.settings.home.assessments.health_screener.title": "健康檢查員",
 	
-		"panel.settings.privacy_center.label.title":"隐私中心",
+	"panel.settings.home.language.system.title": "使用系統語言",
+	"panel.settings.home.language.en.title": "英語",
+	"panel.settings.home.language.es.title": "西班牙語",
+	"panel.settings.home.language.zh.title": "中國人",
+	
+	"panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",
 	"panel.settings.privacy_center.label.finish_setup":"完成安装",
 	"panel.settings.privacy_center.label.finish_setup_description":"使用您的 NetID 或電話號碼登錄以獲得完整的{{app_title}}體驗。",
