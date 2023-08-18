@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Rename "i-card" to "Illini ID" in Settings [#3588](https://github.com/rokwire/illinois-app/issues/3588).
+- Read event attendance url from app config [#3584](https://github.com/rokwire/illinois-app/issues/3584).
 ### Fixed
 - Show Twitter in favorites [#3590](https://github.com/rokwire/illinois-app/issues/3590).
 ### Added

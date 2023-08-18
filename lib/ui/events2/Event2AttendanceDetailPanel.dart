@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -190,13 +191,13 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   Widget _buildUploadAttendeesDescription() {
     TextStyle? mainStyle = Styles().textStyles?.getTextStyle('panel.event.attendance.detail.description.italic');
     final Color defaultStyleColor = Colors.red;
-    final String adminAppUrl = 'go.illinois.edu/ILappAdmin'; //TBD: DD - move it to config
-    final String adminAppUrlMacro = '{{admin_app_url}}';
+    final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
     String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
-        "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.");
-    contentHtml = contentHtml.replaceAll(adminAppUrlMacro, adminAppUrl);
+        "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='$eventAttendanceUrlMacro'>$eventAttendanceUrlMacro</a>.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
     return Visibility(
-        visible: _isAdmin,
+        visible: _isAdmin && StringUtils.isNotEmpty(eventAttendanceUrl),
         child: Padding(
             padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 20, right: _mainHorizontalPadding),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -320,12 +321,13 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   Widget _buildAttendeesInputDescriptionSection() {
     TextStyle? mainStyle = Styles().textStyles?.getTextStyle('panel.event.attendance.detail.description.italic');
     final Color defaultStyleColor = Colors.red;
-    final String adminAppUrl = 'go.illinois.edu/ILappAdmin'; //TBD: DD - move it to config
-    final String adminAppUrlMacro = '{{admin_app_url}}';
+    final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
     String contentHtml = Localization()
-        .getStringEx('panel.event2.detail.attendance.attendees.netids.description', "Upload a list at <a href='{{admin_app_url}}'>{{admin_app_url}}</a>.");
-    contentHtml = contentHtml.replaceAll(adminAppUrlMacro, adminAppUrl);
-    return Padding(
+        .getStringEx('panel.event2.detail.attendance.attendees.netids.description', "Upload a list at <a href='$eventAttendanceUrlMacro'>$eventAttendanceUrlMacro</a>.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
+    return Visibility(visible: StringUtils.isNotEmpty(eventAttendanceUrl),
+      child: Padding(
         padding: EdgeInsets.symmetric(horizontal: _mainHorizontalPadding),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -353,7 +355,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                             'To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.'),
                         style: mainStyle))
               ]))
-        ]));
+        ])));
   }
 
   void _onTapBack() {
