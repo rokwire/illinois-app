@@ -467,7 +467,7 @@
 	"panel.map.select.button.select.hint": "",
 
 	"panel.academics.header.title": "學者",
-	"panel.academics.section.events.label": "學術活動",
+	"panel.academics.section.events.label": "演講者和研討會",
 	"panel.academics.section.gies_checklist.label": "iDegrees 新學生清單",
 	"panel.academics.section.uiuc_checklist.label": "新學生清單",
 	"panel.academics.section.canvas_courses.label": "我的 Gies 帆布課程",
@@ -478,8 +478,8 @@
 	"panel.academics.section.due_date_catalog.label": "到期日目錄",
 	"panel.academics.section.appointments.label": "約會",
 	"panel.academics.section.my_illini.label": "myIllini",
-	"panel.academics.section.events.offline.msg": "離線時沒有可用的學術活動.",
-	"panel.academics.section.events.empty.msg": "沒有學術活動.",
+	"panel.academics.section.events.offline.msg": "No Speakers & Seminars events are available while offline.",
+	"panel.academics.section.events.empty.msg": "There are no upcoming Speakers & Seminars events.",
 	
 	"panel.athletics.header.title":"运动",
 	"panel.athletics.label.upcoming_events.title":"近期活动",

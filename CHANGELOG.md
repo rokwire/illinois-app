@@ -10,9 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Read event attendance url from app config [#3584](https://github.com/rokwire/illinois-app/issues/3584).
 ### Fixed
 - Show Twitter in favorites [#3590](https://github.com/rokwire/illinois-app/issues/3590).
+- Use calendar events for Academics / Events [#3586](https://github.com/rokwire/illinois-app/issues/3586).
 ### Added
 - Added language selector in Settings panel [#3587](https://github.com/rokwire/illinois-app/issues/3587).
 - Added check for end time before start time in create event panel [#3585](https://github.com/rokwire/illinois-app/issues/3585).
+
 
 
 ## [5.0.49] - 2023-08-17

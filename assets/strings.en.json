@@ -468,7 +468,7 @@
     "panel.map.select.button.select.hint": "",
 
     "panel.academics.header.title": "Academics",
-    "panel.academics.section.events.label": "Academic Events",
+    "panel.academics.section.events.label": "Speakers & Seminars",
     "panel.academics.section.gies_checklist.label": "iDegrees New Student Checklist",
     "panel.academics.section.uiuc_checklist.label": "New Student Checklist",
     "panel.academics.section.canvas_courses.label": "My Gies Canvas Courses",
@@ -479,8 +479,8 @@
     "panel.academics.section.due_date_catalog.label": "Due Date Catalog",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.appointments.label": "Appointments",
-    "panel.academics.section.events.offline.msg": "No academic events are available while offline.",
-    "panel.academics.section.events.empty.msg": "No academic events.",
+    "panel.academics.section.events.offline.msg": "No Speakers & Seminars events are available while offline.",
+    "panel.academics.section.events.empty.msg": "There are no upcoming Speakers & Seminars events.",
 
     "panel.athletics.header.title": "Athletics",
     "panel.athletics.label.upcoming_events.title": "Upcoming Events",
