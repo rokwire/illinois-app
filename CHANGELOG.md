@@ -15,8 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added language selector in Settings panel [#3587](https://github.com/rokwire/illinois-app/issues/3587).
 - Added check for end time before start time in create event panel [#3585](https://github.com/rokwire/illinois-app/issues/3585).
 
-
-
 ## [5.0.49] - 2023-08-17
 ### Changed
 - "Multi-person" calendar event filter type renamed to "Multi-event" [#3570](https://github.com/rokwire/illinois-app/issues/3570).
