@@ -963,6 +963,8 @@
     "event-detail-default": {"src": "images/event-detail-default.png", "type": "flutter.asset"},
     "event-save-to-calendar": {"src": "images/icon-save.png", "type": "flutter.asset"},
     "event-filters-background": {"src": "images/event-filters-background.png", "type": "flutter.asset"},
-    "event-onboarding-header": {"src": "images/event-onboarding-header.png", "type": "flutter.asset"}
+    "event-onboarding-header": {"src": "images/event-onboarding-header.png", "type": "flutter.asset"},
+
+    "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"}
   }
 }
