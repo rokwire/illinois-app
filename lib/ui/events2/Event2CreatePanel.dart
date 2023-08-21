@@ -1418,7 +1418,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   Widget _buildSponsorshipAndContactsButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'EVENT HOST DETAILS'),
-      subTitle: !_hasSponsorshipAndContacts ? Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Set sponsor, speaker and contacts to your event.') : null,
+      subTitle: !_hasSponsorshipAndContacts ? Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Display event host and contact information.') : null,
       onTap: _onSponsorshipAndContacts,
     ),
     body: _buildSponsorshipAndContactsSectionBody()

@@ -1202,7 +1202,7 @@
 	"panel.event2.create.button.attendance.description": "Receive feedback about your event.",
 	"panel.event2.create.button.attendance.confirmation": "Event attendance details set up.",
 	"panel.event2.create.button.sponsorship_and_contacts.title": "EVENT HOST DETAILS",
-	"panel.event2.create.button.sponsorship_and_contacts.description": "Set sponsor, speaker and contacts to your event.",
+	"panel.event2.create.button.sponsorship_and_contacts.description": "Display event host and contact information.",
 	"panel.event2.create.button.sponsorship_and_contacts.confirmation": "Event host details set up.",
 	"panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Event Host: ",
 	"panel.event2.create.button.sponsorship_and_contacts.label.speaker": "Speaker: ",
