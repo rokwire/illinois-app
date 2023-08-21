@@ -499,11 +499,11 @@ enum Event2CardDisplayMode { list, page, link }
 
 class Event2Popup {
   
-  static Future<void> showMessage(BuildContext context, String title, String? message) =>
+  static Future<void> showMessage(BuildContext context, { String? title, String? message}) =>
     showDialog(context: context, builder: (BuildContext context) => AlertDialog(
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),),
-        (message != null) ? Padding(padding: EdgeInsets.only(top: 12), child:
+        (title != null) ? Text(title, style: Styles().textStyles?.getTextStyle("widget.card.title.regular.fat"),) : Container(),
+        (message != null) ? Padding(padding: (title != null) ? EdgeInsets.only(top: 12) : EdgeInsets.zero, child:
           Text(message, style: Styles().textStyles?.getTextStyle("widget.card.title.small"),),
         ) : Container()
       ],),
@@ -522,8 +522,8 @@ class Event2Popup {
 
   static Future<void> showErrorResult(BuildContext context, dynamic result) =>
     showMessage(context,
-      Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
-      StringUtils.isNotEmptyString(result) ? result : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
+      title: Localization().getStringEx('panel.event2.create.message.failed.title', 'Failed'),
+      message: StringUtils.isNotEmptyString(result) ? result : Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
     );
 
   static Future<bool?> showPrompt(BuildContext context, String title, String? message, {

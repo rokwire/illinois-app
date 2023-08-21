@@ -122,10 +122,10 @@ class Event2CreatePanel extends StatefulWidget {
     );
   }
 
-  static Widget buildInnerSectionWidget({ required Widget heading, required Widget body,
+  static Widget buildInnerSectionWidget({ Widget? heading, Widget? body, Widget? trailing,
     EdgeInsetsGeometry padding = innerSectionPadding,
     EdgeInsetsGeometry bodyPadding = EdgeInsets.zero
-  }) => buildSectionWidget(heading: heading, body: body, padding: padding, bodyPadding: bodyPadding);
+  }) => buildSectionWidget(heading: heading, body: body, trailing: trailing, padding: padding, bodyPadding: bodyPadding);
 
   static Widget buildSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = sectionHeadingPadding }) {
     String semanticsLabel = title;
@@ -300,6 +300,7 @@ class Event2CreatePanel extends StatefulWidget {
   // Text Edit
 
   static Widget buildTextEditWidget(TextEditingController controller, {
+    FocusNode? focusNode,
     TextInputType? keyboardType,
     int? maxLines = 1,
     bool autocorrect = false,
@@ -316,6 +317,7 @@ class Event2CreatePanel extends StatefulWidget {
       value: controller.text,
       child: TextField(
         controller: controller,
+        focusNode: focusNode,
         decoration: textEditDecoration(padding: padding),
         style: textEditStyle,
         maxLines: maxLines,
@@ -325,6 +327,7 @@ class Event2CreatePanel extends StatefulWidget {
     ));
 
   static Widget buildInnerTextEditWidget(TextEditingController controller, {
+    FocusNode? focusNode,
     TextInputType? keyboardType,
     int? maxLines = 1,
     bool autocorrect = false,
@@ -333,37 +336,71 @@ class Event2CreatePanel extends StatefulWidget {
     String? semanticsLabel,
     String? semanticsHint,
   }) =>
-    buildTextEditWidget(controller, keyboardType: keyboardType, maxLines: maxLines, autocorrect: autocorrect, padding: padding, onChanged: onChanged, semanticsLabel: semanticsLabel, semanticsHint: semanticsHint);
+    buildTextEditWidget(controller, focusNode: focusNode, keyboardType: keyboardType, maxLines: maxLines, autocorrect: autocorrect, padding: padding, onChanged: onChanged, semanticsLabel: semanticsLabel, semanticsHint: semanticsHint);
 
 
   // Confirm URL
 
   static Widget buildConfirmUrlLink({
     void Function()? onTap,
+    bool progress = false,
     EdgeInsetsGeometry padding = const EdgeInsets.only(top: 8, bottom: 16, left: 12)
   }) {
     return Align(alignment: Alignment.centerRight, child:
-      LinkButton(
-        title: Localization().getStringEx('panel.event2.create.button.confirm_url.title', 'Confirm URL'),
-        hint: Localization().getStringEx('panel.event2.create.button.confirm_url.hint', ''),
-        onTap: onTap,
-        padding: padding,
-      )
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        progress ? Padding(padding: padding, child:
+          SizedBox(width: 16, height: 16, child:
+            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors?.fillColorSecondary,)
+          ),
+        ) : Container(),
+        LinkButton(
+          title: Localization().getStringEx('panel.event2.create.button.confirm_url.title', 'Confirm URL'),
+          hint: Localization().getStringEx('panel.event2.create.button.confirm_url.hint', ''),
+          onTap: onTap,
+          padding: padding,
+        )
+      ],)
     );
   }
 
-  static void confirmLinkUrl(TextEditingController controller, { String? analyticsTarget }) {
+  static void confirmLinkUrl(BuildContext context, TextEditingController controller, { FocusNode? focusNode, void Function(bool progress)? updateProgress, String? analyticsTarget }) {
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
+    hideKeyboard(context);
     if (controller.text.isNotEmpty) {
       Uri? uri = Uri.tryParse(controller.text);
       if (uri != null) {
-        Uri? fixedUri = UrlUtils.fixUri(uri);
-        if (fixedUri != null) {
-          controller.text = fixedUri.toString();
-          uri = fixedUri;
+        if (updateProgress != null) {
+          updateProgress(true);
         }
-        launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+         UrlUtils.fixUriAsync(uri).then((Uri? fixedUri) {
+          if (updateProgress != null) {
+            updateProgress(false);
+          }
+          if (fixedUri != null) {
+            controller.text = fixedUri.toString();
+            uri = fixedUri;
+          }
+          if (uri != null) {
+            launchUrl(uri!, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault).then((bool result) {
+              if (result == false) {
+                Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.create.confirm_url.failed.message', 'Failed to confirm URL.')).then((_) {
+                  focusNode?.requestFocus();
+                });
+              }
+            });
+          }
+         });
       }
+      else {
+        Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.create.confirm_url.invalid.message', 'Please enter a valid URL.')).then((_) {
+          focusNode?.requestFocus();
+        });
+      }
+    }
+    else {
+      Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.create.confirm_url.empty.message', 'Please enter URL string.')).then((_) {
+        focusNode?.requestFocus();
+      });
     }
   }
 
@@ -460,6 +497,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   final TextEditingController _costController = TextEditingController();
 
+  final FocusNode _websiteFocus = FocusNode();
+  final FocusNode _onlineUrlFocus = FocusNode();
+
+  bool _confirmingWebsiteUrl = false;
+  bool _confirmingOnlineUrl = false;
+
   bool _dateTimeSectionExpanded = false;
   bool _typeAndLocationSectionExpanded = false;
   bool _costSectionExpanded = false;
@@ -547,6 +590,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _onlinePasscodeController.dispose();
 
     _costController.dispose();
+
+    _websiteFocus.dispose();
+    _onlineUrlFocus.dispose();
     super.dispose();
   }
 
@@ -660,12 +706,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildWebsiteSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.website.title', 'ADD EVENT WEBSITE LINK'), suffixImageKey: 'external-link'),
-    body: Event2CreatePanel.buildTextEditWidget(_websiteController, keyboardType: TextInputType.url, semanticsLabel: Localization().getStringEx('panel.event2.create.section.website.field.title', 'WEBSITE LINK FIELD')),
-    trailing: Event2CreatePanel.buildConfirmUrlLink(onTap: (_onConfirmWebsiteLink)),
+    body: Event2CreatePanel.buildTextEditWidget(_websiteController, focusNode: _websiteFocus, keyboardType: TextInputType.url, semanticsLabel: Localization().getStringEx('panel.event2.create.section.website.field.title', 'WEBSITE LINK FIELD')),
+    trailing: Event2CreatePanel.buildConfirmUrlLink(onTap: _onConfirmWebsiteLink, progress: _confirmingWebsiteUrl),
     padding: const EdgeInsets.only(bottom: 8), // Link button tapable area
   );
 
-  void _onConfirmWebsiteLink() => Event2CreatePanel.confirmLinkUrl(_websiteController, analyticsTarget: 'Confirm Website URL');
+  void _onConfirmWebsiteLink() => Event2CreatePanel.confirmLinkUrl(context, _websiteController, focusNode: _websiteFocus, analyticsTarget: 'Confirm Website URL', updateProgress: (bool value) {
+    setStateIfMounted(() { _confirmingWebsiteUrl = value; });
+  });
 
   // Date & Time
 
@@ -1086,8 +1134,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildOnlineUrlInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.url.title', 'ONLINE URL'), required: true),
-    body: Event2CreatePanel.buildInnerTextEditWidget(_onlineUrlController, keyboardType: TextInputType.url, semanticsLabel: Localization().getStringEx('panel.event2.create.online_details.url.field', 'ONLINE URL FIELD')),
+    body: Event2CreatePanel.buildInnerTextEditWidget(_onlineUrlController, focusNode: _onlineUrlFocus, keyboardType: TextInputType.url, semanticsLabel: Localization().getStringEx('panel.event2.create.online_details.url.field', 'ONLINE URL FIELD')),
+    trailing: Event2CreatePanel.buildConfirmUrlLink(onTap: _onConfirmOnlineUrlLink, progress: _confirmingOnlineUrl),
+    padding: EdgeInsets.zero,
   );
+
+  void _onConfirmOnlineUrlLink() => Event2CreatePanel.confirmLinkUrl(context, _onlineUrlController, focusNode: _onlineUrlFocus, analyticsTarget: 'Confirm Online URL', updateProgress: (bool value) {
+    setStateIfMounted(() { _confirmingOnlineUrl = value; });
+  });
 
   Widget _buildOnlineMeetingIdInnerSection() => Event2CreatePanel.buildInnerSectionWidget(
     heading: Event2CreatePanel.buildInnerSectionHeadingWidget(Localization().getStringEx('panel.event2.create.online_details.meeting_id.title', 'MEETING ID')),
