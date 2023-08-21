@@ -298,6 +298,9 @@ extension Event2Ext on Event2 {
   bool get canUserDelete =>
       userRole == Event2UserRole.admin;
 
+  bool get hasGame =>
+      game != null;
+
   Game? get game =>
       isSportEvent ? Game.fromJson(data) : null;
 }
