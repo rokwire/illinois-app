@@ -215,7 +215,6 @@
 			"Services",
 			"Provost & Vice Chancellor for Academic Affairs",
 			"Technology Services",
-			"Campus General Use",
 			"Vice Chancellor Administration and Operations",
 			"Office of the Vice Chancellor for Institutional Advancement",
 			"Office of the Vice Chancellor for Research and Innovation",
@@ -573,14 +572,6 @@
 			{ "label": "Technology Services", "requirements": { "college" : "Technology Services" }},
 			{ "label": "TS IT Service Delivery", "requirements": { "college" : "Technology Services" }},
 
-			{ "label": "Campus Insurance Coverage", "requirements": { "college" : "Campus General Use" }},
-			{ "label": "Development & Foundation Svcs", "requirements": { "college" : "Campus General Use" }},
-			{ "label": "General & Unassigned", "requirements": { "college" : "Campus General Use" }},
-			{ "label": "Leasehold", "requirements": { "college" : "Campus General Use" }},
-			{ "label": "Medicare", "requirements": { "college" : "Campus General Use" }},
-			{ "label": "Memorial Stadium", "requirements": { "college" : "Campus General Use" }},
-			{ "label": "Worker's Compensation", "requirements": { "college" : "Campus General Use" }},
-			
 			{ "label": "Allerton Park & Retreat Center", "requirements": { "college" : "Vice Chancellor Administration and Operations" }},
 			{ "label": "Aviation Lease", "requirements": { "college" : "Vice Chancellor Administration and Operations" }},
 			{ "label": "Division of Public Safety", "requirements": { "college" : "Vice Chancellor Administration and Operations" }},
