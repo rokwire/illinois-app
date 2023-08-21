@@ -14,6 +14,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
@@ -60,8 +61,11 @@ class Event2HomePanel extends StatefulWidget {
 
   // Filters onboarding
 
-  static void present(BuildContext context, {Event2Selector? eventSelector}) {
-    if (Storage().events2Attributes != null) {
+  static void present(BuildContext context, {Event2Selector? eventSelector, Map<String, dynamic>? attributes}) {
+    if (attributes != null) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector, attributes: attributes, types: LinkedHashSet<Event2TypeFilter>(),)));
+    }
+    else if (Storage().events2Attributes != null) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
     }
     else {
@@ -122,6 +126,8 @@ class Event2HomePanel extends StatefulWidget {
   }
 
   static String url = "${DeepLink().appUrl}/events2";
+
+  static Map<String, dynamic> athleticsCategoryAttributes = {'category': 'Big 10 Athletics'};
 
   static Future<bool> _onTapLinkUrl(BuildContext context, String urlParam) async {
     if (urlParam == url) {
@@ -997,7 +1003,11 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation, eventSelector: widget.eventSelector,)));
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation, eventSelector: widget.eventSelector,)));
+    }
   }
 }
 

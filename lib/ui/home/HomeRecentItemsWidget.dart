@@ -39,6 +39,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/RecentItem.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -474,7 +475,11 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
       return sourceItem.isComposite ? CompositeEventsDetailPanel(parentEvent: sourceItem) : ExploreEventDetailPanel(event: sourceItem,);
     }
     else if (sourceItem is Event2) {
-      return Event2DetailPanel(event: sourceItem,);
+      if (sourceItem.hasGame) {
+        return AthleticsGameDetailPanel(game: sourceItem.game,);
+      } else {
+        return Event2DetailPanel(event: sourceItem,);
+      }
     }
     else if (sourceItem is Dining) {
       return ExploreDiningDetailPanel(dining: sourceItem,);

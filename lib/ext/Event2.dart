@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
@@ -296,6 +297,12 @@ extension Event2Ext on Event2 {
 
   bool get canUserDelete =>
       userRole == Event2UserRole.admin;
+
+  bool get hasGame =>
+      game != null;
+
+  Game? get game =>
+      isSportEvent ? Game.fromJson(data) : null;
 }
 
 extension Event2ContactExt on Event2Contact {

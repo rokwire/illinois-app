@@ -21,11 +21,13 @@ import 'dart:math';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -281,7 +283,11 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
 
   void _onTapEvent2(Event2 event) {
     Analytics().logSelect(target: "Event: '${event.name}'", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation,)));
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation,)));
+    }
   }
 
   void _onTapViewAll() {
