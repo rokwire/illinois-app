@@ -245,8 +245,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     String? personNetId = person.identifier?.netId;
     if (widget.manualCheckEnabled != true) {
       Event2Popup.showMessage(context,
-        Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
-        Localization().getStringEx("panel.event2.detail.attendance.manual_check.disabled", "Manual check is not enabled for this event."));
+        title: Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
+        message: Localization().getStringEx("panel.event2.detail.attendance.manual_check.disabled", "Manual check is not enabled for this event."));
     }
     else if ((eventId != null) && (personNetId != null) && !_processingNetIds.contains(personNetId))  {
 
@@ -431,8 +431,8 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
     if (widget.scanEnabled != true) {
       Event2Popup.showMessage(context,
-        Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
-        Localization().getStringEx("panel.event2.detail.attendance.scan.disabled", "Scanning Illini ID is not enabled for this event."));
+        title: Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
+        message: Localization().getStringEx("panel.event2.detail.attendance.scan.disabled", "Scanning Illini ID is not enabled for this event."));
     }
     else if (!_scanning) {
       setState(() {
