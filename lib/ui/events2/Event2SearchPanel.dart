@@ -20,6 +20,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
+import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
@@ -246,7 +248,11 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
 
   void _onTapEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _userLocation, eventSelector: widget.eventSelector,)));
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _userLocation, eventSelector: widget.eventSelector,)));
+    }
   }
 
   void _onTextChanged(String text) {

@@ -276,7 +276,12 @@ extension ExploreExt on Explore {
       }
     }
     else if (this is Event2) {
-        route = CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: this as Event2, userLocation: initialLocationData,));
+        Event2 event2 = (this as Event2);
+        if (event2.hasGame) {
+          route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game));
+        } else {
+          route = CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2, userLocation: initialLocationData,));
+        }
     }
     else if (this is Dining) {
       route = CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining, initialLocationData: initialLocationData),);

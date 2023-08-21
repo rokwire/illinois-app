@@ -190,7 +190,12 @@ extension FavoriteExt on Favorite {
       }
     }
     else if (this is Event2) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: this as Event2,)));
+      Event2 event2 = (this as Event2);
+      if (event2.hasGame) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event2.game)));
+      } else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event2)));
+      }
     }
     else if (this is Dining) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining,)));
