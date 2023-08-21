@@ -198,7 +198,6 @@
 			"Graduate College",
 			"Grainger Engineering",
 			"Illinois International",
-			"Institute of Aviation",
 			"Law",
 			"Liberal Arts & Sciences",
 			"Medicine at UIUC",
@@ -399,8 +398,6 @@
 			{ "label": "Illinois International", "requirements": { "college" : "Illinois International" }},
 			{ "label": "Intensive English Institute", "requirements": { "college" : "Illinois International" }},
 			{ "label": "Intl Student and Scholar Svcs", "requirements": { "college" : "Illinois International" }},
-
-			{ "label": "Institute of Aviation", "requirements": { "college" : "Institute of Aviation" }},
 
 			{ "label": "Law", "requirements": { "college" : "Law" }},
 			{ "label": "Law Library", "requirements": { "college" : "Law" }},
