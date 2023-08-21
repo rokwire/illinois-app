@@ -27,13 +27,11 @@ class Event2SetupSponsorshipAndContactsPanel extends StatefulWidget {
 class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSponsorshipAndContactsPanel>  {
 
   final TextEditingController _sponsorController = TextEditingController();
-  final TextEditingController _speakerController = TextEditingController();
   late List<Event2Contact> _contacts;
 
   @override
   void initState() {
     _sponsorController.text = widget.details?.sponsor ?? '';
-    _speakerController.text = widget.details?.speaker ?? '';
     _contacts = ListUtils.from(widget.details?.contacts) ?? <Event2Contact>[];
     super.initState();
   }
@@ -41,7 +39,6 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   @override
   void dispose() {
     _sponsorController.dispose();
-    _speakerController.dispose();
     super.dispose();
   }
 
@@ -69,9 +66,6 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
             Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
               _buildSponsorSection()
             ),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-              _buildSpeakerSection()
-            ),
             _buildContactsSection(),
           ]),
         )
@@ -84,14 +78,6 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   Widget _buildSponsorSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.sponsor.label.title', 'SPONSOR')),
     body: Event2CreatePanel.buildTextEditWidget(_sponsorController, keyboardType: TextInputType.text),
-  );
-
-  // Speaker
-
-  Widget _buildSpeakerSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.speaker.label.title', 'SPEAKER')),
-    body: Event2CreatePanel.buildTextEditWidget(_speakerController, keyboardType: TextInputType.text),
-    padding: EdgeInsets.zero
   );
 
   // Contacts
@@ -201,7 +187,6 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
     Analytics().logSelect(target: 'HeaderBar: Back');
     Navigator.of(context).pop(Event2SponsorshipAndContactsDetails(
       sponsor: Event2CreatePanel.textFieldValue(_sponsorController),
-      speaker: Event2CreatePanel.textFieldValue(_speakerController),
       contacts: _contacts.isNotEmpty ? _contacts : null,
     ));
   }
@@ -210,10 +195,9 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
 
 class Event2SponsorshipAndContactsDetails {
   final String? sponsor;
-  final String? speaker;
   final List<Event2Contact>? contacts;
 
-  Event2SponsorshipAndContactsDetails({this.sponsor, this.speaker, this.contacts});
+  Event2SponsorshipAndContactsDetails({this.sponsor, this.contacts});
 }
 
 class _Event2ContactCard extends StatelessWidget {

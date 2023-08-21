@@ -1489,13 +1489,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2SponsorshipAndContactsDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSponsorshipAndContactsPanel(details: Event2SponsorshipAndContactsDetails(
       sponsor: _sponsor,
-      speaker: _speaker,
       contacts: _contacts,
     )))).then((Event2SponsorshipAndContactsDetails? result) {
       if ((result != null) && mounted) {
         setState(() {
           _sponsor = (result.sponsor?.isNotEmpty ?? false) ? result.sponsor : null;
-          _speaker = (result.speaker?.isNotEmpty ?? false) ? result.speaker : null;
           _contacts = (result.contacts?.isNotEmpty ?? false) ? result.contacts : null;
         });
       }
