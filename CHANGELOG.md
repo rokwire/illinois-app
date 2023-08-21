@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Handle sport events from Calendar BB [#3594](https://github.com/rokwire/illinois-app/issues/3594).
 ### Changed
 - More precise processing of 'Confirm URL' command in Event2CreatePanel [#3580](https://github.com/rokwire/illinois-app/issues/3580).
-
+- Updated content attributes master copy [#3578](https://github.com/rokwire/illinois-app/issues/3578).
 ## [5.0.50] - 2023-08-18
 ### Changed
 - Rename "i-card" to "Illini ID" in Settings [#3588](https://github.com/rokwire/illinois-app/issues/3588).
