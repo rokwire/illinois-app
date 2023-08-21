@@ -1205,7 +1205,7 @@
 	"panel.event2.create.button.sponsorship_and_contacts.title": "EVENT HOST DETAILS",
 	"panel.event2.create.button.sponsorship_and_contacts.description": "Set sponsor, speaker and contacts to your event.",
 	"panel.event2.create.button.sponsorship_and_contacts.confirmation": "Event host details set up.",
-	"panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Sponsor: ",
+	"panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Event Host: ",
 	"panel.event2.create.button.sponsorship_and_contacts.label.speaker": "Speaker: ",
 	"panel.event2.create.button.sponsorship_and_contacts.label.contacts": "Contacts: ",
 	"panel.event2.create.button.survey.title": "EVENT FOLLOW-UP SURVEY",

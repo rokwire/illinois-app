@@ -1437,7 +1437,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if (descriptionList.isNotEmpty) {
         descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
       }
-      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.sponsor', 'Sponsor: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.sponsor', 'Event Host: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: _sponsor, style: regularStyle,),);
     }
 
