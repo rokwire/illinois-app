@@ -56,7 +56,7 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   }
 
   Widget _buildScaffoldContent() => Scaffold(
-    appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Sponsorship And Contacts"), onLeading: _onHeaderBack,),
+    appBar: HeaderBar(title: Localization().getStringEx("panel.event2.setup.sponsorship_and_contacts.header.title", "Event Host Details"), onLeading: _onHeaderBack,),
     body: _buildPanelContent(),
     backgroundColor: Styles().colors!.white,
   );

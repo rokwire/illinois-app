@@ -1417,7 +1417,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildSponsorshipAndContactsButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'SPONSORSHIP AND CONTACTS'),
+      title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'EVENT HOST DETAILS'),
       subTitle: !_hasSponsorshipAndContacts ? Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Set sponsor, speaker and contacts to your event.') : null,
       onTap: _onSponsorshipAndContacts,
     ),
@@ -1485,7 +1485,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     CollectionUtils.isNotEmpty(_contacts);
 
   void _onSponsorshipAndContacts() {
-    Analytics().logSelect(target: "Sponsorship and Contacts");
+    Analytics().logSelect(target: "Event Host Details");
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2SponsorshipAndContactsDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSponsorshipAndContactsPanel(details: Event2SponsorshipAndContactsDetails(
       sponsor: _sponsor,
