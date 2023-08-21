@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added required sign for hours title in Event2SetupSurveyPanel [#3582](https://github.com/rokwire/illinois-app/issues/3582).
+- Added default course detail image [#2286](https://github.com/rokwire/illinois-app/issues/2286).
 
 ## [5.0.50] - 2023-08-18
 ### Changed
