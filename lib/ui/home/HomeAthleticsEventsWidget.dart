@@ -43,8 +43,6 @@ class HomeAthliticsEventsWidget extends StatefulWidget {
 
 class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> implements NotificationsListener {
 
-  static const String _athleticsCategory = 'Big 10 Athletics';
-
   List<Event2>? _sportEvents;
   bool _loadingGames = false;
   DateTime? _pausedDateTime;
@@ -216,7 +214,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Event2HomePanel.present(context, attributes: {'category': _athleticsCategory});
+    Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes);
   }
 
   void _refreshGames({bool showProgress = false}) {
@@ -248,7 +246,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
   Future<List<Event2>?> _loadSportEvents() async {
     Events2Query query = Events2Query(
-        attributes: {'category': _athleticsCategory},
+        attributes: Event2HomePanel.athleticsCategoryAttributes,
         limit: Config().homeAthleticsEventsCount,
         sortType: Event2SortType.dateTime);
     Events2ListResult? result = await Events2().loadEvents(query);

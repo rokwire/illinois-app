@@ -802,7 +802,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSportEvents(BuildContext context) {
     Analytics().logSelect(target: "Athletics Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {2}))));
+    Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes);
   }
 
   void _onTapSportNews(BuildContext context) {
