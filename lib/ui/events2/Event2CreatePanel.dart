@@ -303,6 +303,7 @@ class Event2CreatePanel extends StatefulWidget {
     FocusNode? focusNode,
     TextInputType? keyboardType,
     int? maxLines = 1,
+    int? minLines,
     bool autocorrect = false,
     EdgeInsetsGeometry padding = textEditContentPadding,
     void Function()? onChanged,
@@ -321,6 +322,7 @@ class Event2CreatePanel extends StatefulWidget {
         decoration: textEditDecoration(padding: padding),
         style: textEditStyle,
         maxLines: maxLines,
+        minLines: minLines,
         keyboardType: keyboardType,
         autocorrect: autocorrect,
         onChanged: (onChanged != null) ? ((_) => onChanged) : null,
@@ -701,7 +703,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildDescriptionSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION')),
-    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.description.field.title', 'DESCRIPTION FIELD')),
+    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, minLines: 3, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.description.field.title', 'DESCRIPTION FIELD')),
   );
 
   Widget _buildWebsiteSection() => Event2CreatePanel.buildSectionWidget(
@@ -1417,8 +1419,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildSponsorshipAndContactsButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
-      title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'SPONSORSHIP AND CONTACTS'),
-      subTitle: !_hasSponsorshipAndContacts ? Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Set sponsor, speaker and contacts to your event.') : null,
+      title: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.title', 'EVENT HOST DETAILS'),
+      subTitle: !_hasSponsorshipAndContacts ? Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.description', 'Display event host and contact information.') : null,
       onTap: _onSponsorshipAndContacts,
     ),
     body: _buildSponsorshipAndContactsSectionBody()
@@ -1437,7 +1439,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if (descriptionList.isNotEmpty) {
         descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
       }
-      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.sponsor', 'Sponsor: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.button.sponsorship_and_contacts.label.sponsor', 'Event Host: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: _sponsor, style: regularStyle,),);
     }
 
@@ -1485,17 +1487,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     CollectionUtils.isNotEmpty(_contacts);
 
   void _onSponsorshipAndContacts() {
-    Analytics().logSelect(target: "Sponsorship and Contacts");
+    Analytics().logSelect(target: "Event Host Details");
     Event2CreatePanel.hideKeyboard(context);
     Navigator.push<Event2SponsorshipAndContactsDetails>(context, CupertinoPageRoute(builder: (context) => Event2SetupSponsorshipAndContactsPanel(details: Event2SponsorshipAndContactsDetails(
       sponsor: _sponsor,
-      speaker: _speaker,
       contacts: _contacts,
     )))).then((Event2SponsorshipAndContactsDetails? result) {
       if ((result != null) && mounted) {
         setState(() {
           _sponsor = (result.sponsor?.isNotEmpty ?? false) ? result.sponsor : null;
-          _speaker = (result.speaker?.isNotEmpty ?? false) ? result.speaker : null;
           _contacts = (result.contacts?.isNotEmpty ?? false) ? result.contacts : null;
         });
       }
