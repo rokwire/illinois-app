@@ -173,12 +173,12 @@
 		]
 	},{
 		"id": "college",
-		"title": "College",
-		"description": "Choose the college your group can be filtered by.",
-		"empty-hint": "Select a college",
+		"title": "College, School & Unit",
+		"description": "Choose the college, school or unit your group can be filtered by.",
+		"empty-hint": "Select a college, school & unit",
 		"usage": "property",
 		"widget": "dropdown",
-		"semantics-hint": "Double tap to show college options.",
+		"semantics-hint": "Double tap to show college, school and unit options.",
 		"scope": ["groups", "events"],
 		"requirements" : {
 			"min-selected-count": 0,
