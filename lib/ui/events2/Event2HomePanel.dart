@@ -60,8 +60,11 @@ class Event2HomePanel extends StatefulWidget {
 
   // Filters onboarding
 
-  static void present(BuildContext context, {Event2Selector? eventSelector}) {
-    if (Storage().events2Attributes != null) {
+  static void present(BuildContext context, {Event2Selector? eventSelector, Map<String, dynamic>? attributes}) {
+    if (attributes != null) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector, attributes: attributes,)));
+    }
+    else if (Storage().events2Attributes != null) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
     }
     else {

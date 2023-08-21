@@ -9,8 +9,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -42,6 +42,8 @@ class HomeAthliticsEventsWidget extends StatefulWidget {
 }
 
 class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> implements NotificationsListener {
+
+  static const String _athleticsCategory = 'Big 10 Athletics';
 
   List<Event2>? _sportEvents;
   bool _loadingGames = false;
@@ -213,9 +215,8 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
   }
 
   void _onTapSeeAll() {
-    //TBD: DD - implement
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {2}))));
+    Event2HomePanel.present(context, attributes: {'category': _athleticsCategory});
   }
 
   void _refreshGames({bool showProgress = false}) {
@@ -247,7 +248,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
   Future<List<Event2>?> _loadSportEvents() async {
     Events2Query query = Events2Query(
-        attributes: {'category': 'Big 10 Athletics'},
+        attributes: {'category': _athleticsCategory},
         limit: Config().homeAthleticsEventsCount,
         sortType: Event2SortType.dateTime);
     Events2ListResult? result = await Events2().loadEvents(query);
