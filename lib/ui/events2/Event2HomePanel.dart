@@ -63,7 +63,7 @@ class Event2HomePanel extends StatefulWidget {
 
   static void present(BuildContext context, {Event2Selector? eventSelector, Map<String, dynamic>? attributes}) {
     if (attributes != null) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector, attributes: attributes,)));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector, attributes: attributes, types: LinkedHashSet<Event2TypeFilter>(),)));
     }
     else if (Storage().events2Attributes != null) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
