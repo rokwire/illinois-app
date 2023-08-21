@@ -303,6 +303,7 @@ class Event2CreatePanel extends StatefulWidget {
     FocusNode? focusNode,
     TextInputType? keyboardType,
     int? maxLines = 1,
+    int? minLines,
     bool autocorrect = false,
     EdgeInsetsGeometry padding = textEditContentPadding,
     void Function()? onChanged,
@@ -321,6 +322,7 @@ class Event2CreatePanel extends StatefulWidget {
         decoration: textEditDecoration(padding: padding),
         style: textEditStyle,
         maxLines: maxLines,
+        minLines: minLines,
         keyboardType: keyboardType,
         autocorrect: autocorrect,
         onChanged: (onChanged != null) ? ((_) => onChanged) : null,
@@ -701,7 +703,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildDescriptionSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION')),
-    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.description.field.title', 'DESCRIPTION FIELD')),
+    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, minLines: 3, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.description.field.title', 'DESCRIPTION FIELD')),
   );
 
   Widget _buildWebsiteSection() => Event2CreatePanel.buildSectionWidget(
