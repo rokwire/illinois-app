@@ -35,6 +35,7 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
+import 'package:illinois/ui/events2/Event2SearchPanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/explore/ExploreListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -66,7 +67,7 @@ enum ExploreMapType { Events2, Dining, Laundry, Buildings, StudentCourse, Appoin
 
 class ExploreMapPanel extends StatefulWidget {
   static const String notifySelect = "edu.illinois.rokwire.explore.map.select";
-  static const String mapTypeKey = "map-type";
+  static const String selectParamKey = "select-param";
 
   final Map<String, dynamic> params = <String, dynamic>{};
 
@@ -104,6 +105,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   TZDateTime? _event2CustomEndTime;
   late LinkedHashSet<Event2TypeFilter> _event2Types;
   late Map<String, dynamic> _event2Attributes;
+  String? _event2SearchText;
 
   List<StudentCourseTerm>? _studentCourseTerms;
   
@@ -189,6 +191,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     _event2CustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     _event2Types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _event2Attributes = Storage().events2Attributes ?? <String, dynamic>{};
+    _event2SearchText = _intialEvent2SearchParam?.searchText;
 
     _initFilters();
     _initMapStyles();
@@ -269,12 +272,22 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
       }
     }
     else if (name == ExploreMapPanel.notifySelect) {
-      ExploreMapType? exploreItem = param;
-      if (mounted && (exploreItem != null) && (_selectedMapType != exploreItem)) {
-        setState(() {
-          _selectedMapType = exploreItem;
-        });
-        _initExplores();
+      if (mounted) {
+        if ((param is ExploreMapType) && (_selectedMapType != param)) {
+          setState(() {
+            _selectedMapType = param;
+          });
+          _initExplores();
+        }
+        else if (param is ExploreMapSearchEventsParam) {
+          if ((_selectedMapType != ExploreMapType.Events2) || (_event2SearchText != param.searchText)) {
+            setState(() {
+              _selectedMapType = ExploreMapType.Events2;
+              _event2SearchText = param.searchText;
+            });
+            _initExplores();
+          }
+        }
       }
     }
     else if (name == RootPanel.notifyTabChanged) {
@@ -830,12 +843,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
       ])),
       Expanded(flex: 4, child: Wrap(alignment: WrapAlignment.end, verticalDirection: VerticalDirection.up, children: [
-        LinkButton(
-          title: Localization().getStringEx('panel.events2.home.bar.button.list.title', 'List'), 
-          hint: Localization().getStringEx('panel.events2.home.bar.button.list.hint', 'Tap to view events as list'),
-          onTap: _onEvent2ListView,
-          padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
-          textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
+        Visibility(visible: StringUtils.isEmpty(_event2SearchText), child:
+          LinkButton(
+            title: Localization().getStringEx('panel.events2.home.bar.button.list.title', 'List'), 
+            hint: Localization().getStringEx('panel.events2.home.bar.button.list.hint', 'Tap to view events as list'),
+            onTap: _onEvent2ListView,
+            padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
+            textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
+          ),
         ),
         Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
           Event2ImageCommandButton('plus-circle',
@@ -860,49 +875,59 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
     TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
 
-    String? timeDescription = (_event2TimeFilter != Event2TimeFilter.customRange) ?
-      event2TimeFilterToDisplayString(_event2TimeFilter) :
-      event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: _event2CustomStartTime, customEndTime: _event2CustomEndTime);
-    
-    if (timeDescription != null) {
-      if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
-      }
-      descriptionList.add(TextSpan(text: timeDescription, style: regularStyle,),);
+    if (StringUtils.isNotEmpty(_event2SearchText)) {
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.search.label.title', 'Search: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: _event2SearchText ?? '' , style: regularStyle,));
     }
-
-    for (Event2TypeFilter type in _event2Types) {
-      if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+    else {
+      List<InlineSpan> filtersList = <InlineSpan>[];
+      String? timeDescription = (_event2TimeFilter != Event2TimeFilter.customRange) ?
+        event2TimeFilterToDisplayString(_event2TimeFilter) :
+        event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: _event2CustomStartTime, customEndTime: _event2CustomEndTime);
+      
+      if (timeDescription != null) {
+        if (filtersList.isNotEmpty) {
+          filtersList.add(TextSpan(text: ", " , style: regularStyle,));
+        }
+        filtersList.add(TextSpan(text: timeDescription, style: regularStyle,),);
       }
-      descriptionList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
-    }
 
-    ContentAttributes? contentAttributes = Events2().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    if (_event2Attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
-      for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_event2Attributes, complete: true);
-        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          for (String attributeValue in displayAttributeValues) {
-            if (descriptionList.isNotEmpty) {
-              descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+      for (Event2TypeFilter type in _event2Types) {
+        if (filtersList.isNotEmpty) {
+          filtersList.add(TextSpan(text: ", " , style: regularStyle,));
+        }
+        filtersList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
+      }
+
+      ContentAttributes? contentAttributes = Events2().contentAttributes;
+      List<ContentAttribute>? attributes = contentAttributes?.attributes;
+      if (_event2Attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+        for (ContentAttribute attribute in attributes) {
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_event2Attributes, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            for (String attributeValue in displayAttributeValues) {
+              if (filtersList.isNotEmpty) {
+                filtersList.add(TextSpan(text: ", " , style: regularStyle,));
+              }
+              filtersList.add(TextSpan(text: attributeValue, style: regularStyle,),);
             }
-            descriptionList.add(TextSpan(text: attributeValue, style: regularStyle,),);
           }
         }
+      }
+
+      if (filtersList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
+        descriptionList.addAll(filtersList);
       }
     }
 
     if (descriptionList.isNotEmpty) {
       int? locationsCount = _totalExploreLocations();
-      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
-      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.events.label.title', 'Events: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.locations.label.title', 'Locations: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: _exploreProgress ? '...' : ((locationsCount != null) ? locationsCount.toString() : '-') , style: regularStyle,));
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
-
 
     if (descriptionList.isNotEmpty) {
       return Container(padding: EdgeInsets.only(left: 16, right: 16), child:
@@ -933,6 +958,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           _event2CustomEndTime = filterResult.customEndTime;
           _event2Types = filterResult.types ?? LinkedHashSet<Event2TypeFilter>();
           _event2Attributes = filterResult.attributes ?? <String, dynamic>{};
+          _event2SearchText = null;
         });
         
         Storage().events2Time = event2TimeFilterToString(_event2TimeFilter);
@@ -976,7 +1002,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   void _onEvent2Search() {
     Analytics().logSelect(target: 'Search');
-    AppAlert.showDialogResult(context, 'TBD');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(searchText: _event2SearchText, searchContext: Event2SearchContext.Map, userLocation: _currentLocation))).then((result) {
+      if ((result is String) && (result.isNotEmpty)) {
+        setStateIfMounted(() {
+          _event2SearchText = result;
+        });
+        _initExplores();
+      }
+    });
   }
 
   void _onEvent2Create() {
@@ -1364,9 +1397,23 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
 
   }
 
-  ExploreMapType? get _initialExploreType =>
-    widget.params[ExploreMapPanel.mapTypeKey];
+  ExploreMapType? get _initialExploreType => _paramExploreType(widget.params[ExploreMapPanel.selectParamKey]);
 
+  static ExploreMapType? _paramExploreType(dynamic param) {
+    if (param is ExploreMapType) {
+      return param;
+    }
+    else if (param is ExploreMapSearchEventsParam) {
+      return ExploreMapType.Events2;
+    }
+    else {
+      return null;
+    }
+  }
+
+  ExploreMapSearchEventsParam? get _intialEvent2SearchParam => _paramSearchEvents2(widget.params[ExploreMapPanel.selectParamKey]);
+
+  static ExploreMapSearchEventsParam? _paramSearchEvents2(dynamic param) => (param is ExploreMapSearchEventsParam) ? param : null;
 
   ExploreMapType? get _lastExploreType => exploreMapItemFromString(Storage().selectedMapExploreType);
   
@@ -1620,17 +1667,24 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   } 
 
   Future<Events2Query> _event2QueryParam() async {
-    if (_event2Types.contains(Event2TypeFilter.nearby)) {
-      await _ensureCurrentLocation();
+    if (StringUtils.isNotEmpty(_event2SearchText)) {
+      return Events2Query(
+        searchText: _event2SearchText,
+      );
     }
-    return Events2Query(
-      timeFilter: _event2TimeFilter,
-      customStartTimeUtc: _event2CustomStartTime?.toUtc(),
-      customEndTimeUtc: _event2CustomEndTime?.toUtc(),
-      types: _event2Types,
-      attributes: _event2Attributes,
-      location: _currentLocation,
-    );
+    else {
+      if (_event2Types.contains(Event2TypeFilter.nearby)) {
+        await _ensureCurrentLocation();
+      }
+      return Events2Query(
+        timeFilter: _event2TimeFilter,
+        customStartTimeUtc: _event2CustomStartTime?.toUtc(),
+        customEndTimeUtc: _event2CustomEndTime?.toUtc(),
+        types: _event2Types,
+        attributes: _event2Attributes,
+        location: _currentLocation,
+      );
+    }
   } 
 
   // Content Data
@@ -2281,4 +2335,9 @@ String? exploreMapTypeToString(ExploreMapType? value) {
     case ExploreMapType.StateFarmWayfinding: return 'stateFarmWayfinding';
     default: return null;
   }
+}
+
+class ExploreMapSearchEventsParam {
+  final String searchText;
+  ExploreMapSearchEventsParam(this.searchText);
 }
