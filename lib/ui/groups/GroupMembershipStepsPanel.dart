@@ -31,6 +31,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/ext/Event2.dart';
 
 class GroupMembershipStepsPanel extends StatefulWidget {
   final List<GroupMembershipStep>? steps;

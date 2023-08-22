@@ -21,6 +21,7 @@ import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -104,7 +105,7 @@ class RecentItem {
           id: item.id,
           title: item.title,
           descripton: item.description,
-          time: item.shortDisplayDateAndTime,
+          time: item.displayTime,
           sourceJson: item.jsonData
       );
     } else if(item is News) {

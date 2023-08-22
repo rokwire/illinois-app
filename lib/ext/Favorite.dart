@@ -85,7 +85,7 @@ extension FavoriteExt on Favorite {
       return (this as Dining).displayWorkTime;
     }
     else if (this is Game) {
-      return (this as Game).shortDisplayDateAndTime;
+      return (this as Game).displayTime;
     }
     else if (this is News) {
       return (this as News).displayTime;

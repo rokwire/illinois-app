@@ -492,7 +492,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       TZDateTime? dateTimeUni = explore.startTimeUtc?.toUniOrLocal();
       return (dateTimeUni != null) ? DateFormat('MMM d, ha').format(dateTimeUni) : null;
     } else if (explore is Game) {
-      return explore.shortDisplayDateAndTime;
+      return explore.displayTime;
     } else if (explore is StudentCourse) {
       return explore.section?.displaySchedule;
     } else {
