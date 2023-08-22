@@ -33,7 +33,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -491,7 +490,6 @@ class _ExploreMapSelectLocationPanelState extends State<ExploreMapSelectLocation
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
       switch (_mapType) {
-        case ExploreMapType.Events: return Events().loadEvents();
         case ExploreMapType.Events2: return Events2().loadEventsList(Events2Query());
         case ExploreMapType.Dining: return _loadDinings();
         case ExploreMapType.Laundry: return _loadLaundry();

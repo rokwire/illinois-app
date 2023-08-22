@@ -323,7 +323,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseTabNotification(RootTab.Maps);
     }
     else if (name == FirebaseMessaging.notifyMapEventsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Events);
+      _onFirebaseMapNotification(ExploreMapType.Events2);
     }
     else if (name == FirebaseMessaging.notifyMapDiningNotification) {
       _onFirebaseMapNotification(ExploreMapType.Dining);
