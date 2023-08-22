@@ -73,12 +73,14 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
         _contentList.add(section); 
 
         // section entries
+        String? attributeGroup;
         int startCount = _contentList.length;
         for (ContentAttributeValue attributeValue in sectionAttributeValues) {
           if (startCount < _contentList.length) {
-            _contentList.add(_ContentItem.separator);
+            _contentList.add((attributeGroup != attributeValue.group) ? _ContentItem.groupSeparator : _ContentItem.separator);
           }
           _contentList.add(attributeValue);
+          attributeGroup = attributeValue.group;
         }
 
         // spacing
@@ -167,10 +169,13 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       return _buildAttributeValueWidget(sourceData);
     }
     else if (sourceData == _ContentItem.separator) {
-      return Container(color: Colors.white, child:
-        Padding(padding: EdgeInsets.symmetric(horizontal: 12), child:
-          Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
-        ),
+      return Container(color: Colors.white, padding: EdgeInsets.symmetric(horizontal: 12), child:
+        Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
+      );
+    }
+    else if (sourceData == _ContentItem.groupSeparator) {
+      return Container(color: Colors.white, padding: EdgeInsets.symmetric(horizontal: 0), child:
+        Container(height: 1, color: Styles().colors!.fillColorPrimary,)
       );
     }
     else if (sourceData == _ContentItem.spacing) {
@@ -318,4 +323,4 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   }
 }
 
-enum _ContentItem { spacing, separator }
+enum _ContentItem { spacing, separator, groupSeparator }
