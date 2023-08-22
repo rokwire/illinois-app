@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:illinois/ext/Appointment.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';

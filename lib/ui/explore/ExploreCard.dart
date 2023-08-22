@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';

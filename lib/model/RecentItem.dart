@@ -22,6 +22,7 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Event2.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
