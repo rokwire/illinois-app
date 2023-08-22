@@ -26,6 +26,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -741,7 +742,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
   }
 
   Widget? _athleticsTimeDetail() {
-    String displayTime = widget.game.displayTime;
+    String? displayTime = widget.game.displayTime;
     if (StringUtils.isNotEmpty(displayTime)) {
       return Padding(
         padding: _detailPadding,
@@ -751,7 +752,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
             Padding(
               padding: _iconPadding,
             ),
-            Text(displayTime,
+            Text(displayTime!,
                 style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
           ],
         )),
