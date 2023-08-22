@@ -86,7 +86,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
 
     String title = widget._game?.title ?? "";
     String subTitle = widget._game?.description ?? "";
-    String displayTime = widget._game?.displayTime ?? "";
+    String displayTime = widget._game?.shortDisplayDateAndTime ?? "";
 
     return GestureDetector(
       onTap: _onTapSchedule,
@@ -167,7 +167,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardTimeDetail() {
-    String? displayTime = widget._game?.displayTime;
+    String? displayTime = widget._game?.shortDisplayDateAndTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Padding(
         padding: EdgeInsets.only(top: 12, left: 24, right: 24),
