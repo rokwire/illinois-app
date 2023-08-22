@@ -895,9 +895,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
 
     if (descriptionList.isNotEmpty) {
+      int? locationsCount = _totalExploreLocations();
       descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.events.label.title', 'Events: ') , style: boldStyle,));
+      descriptionList.add(TextSpan(text: _exploreProgress ? '...' : ((locationsCount != null) ? locationsCount.toString() : '-') , style: regularStyle,));
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
+
 
     if (descriptionList.isNotEmpty) {
       return Container(padding: EdgeInsets.only(left: 16, right: 16), child:
@@ -2064,6 +2069,22 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     }
 
     return markers;
+  }
+
+  int? _totalExploreLocations() {
+    if (_exploreMarkerGroups != null) {
+      int totalCount = 0;
+      for (dynamic group in _exploreMarkerGroups!) {
+        if (group is Explore) {
+          totalCount++;
+        }
+        else if (group is List) {
+          totalCount += group.length;
+        }
+      }
+      return totalCount;
+    }
+    return null;
   }
 
   Future<Marker?> _createExploreGroupMarker(List<Explore>? exploreGroup, { required ImageConfiguration imageConfiguration }) async {
