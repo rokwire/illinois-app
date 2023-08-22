@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Displaying correct date time in athletics [#3611](https://github.com/rokwire/illinois-app/issues/3611).
 ### Changed
-- Sample appointments updates with a true McKinley location [#3604](https://github.com/rokwire/illinois-app/issues/3604).
+- Sample appointments updated with a true McKinley location [#3604](https://github.com/rokwire/illinois-app/issues/3604).
+- Use different separators to highlight attribute values groups [#3605](https://github.com/rokwire/illinois-app/issues/3605).
 
 ## [5.0.51] - 2023-08-21
 ### Added
