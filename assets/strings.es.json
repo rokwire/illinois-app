@@ -986,6 +986,7 @@
     "panel.explore.button.clear.title":"Claro",
     "panel.explore.button.clear.hint":"Borrar ubicación seleccionada",
     "panel.explore.label.dining_news.title":"Noticias gastronómicas",
+    "panel.explore.label.locations.label.title":"Locations: ",
 
     "panel.explore.button.events.display_type.all.label": "Todos los eventos",
     "panel.explore.button.events.display_type.multiple.label": "Multi-day events",

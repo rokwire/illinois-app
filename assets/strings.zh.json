@@ -986,6 +986,7 @@
 	"panel.explore.button.clear.title":"清除",
 	"panel.explore.button.clear.hint":"清除所選位置",
 	"panel.explore.label.dining_news.title":"餐飲資訊",
+	"panel.explore.label.locations.label.title":"Locations: ",
 	
 	"panel.explore.button.events.display_type.all.label": "所有活動",
 	"panel.explore.button.events.display_type.multiple.label": "Multi-day events",

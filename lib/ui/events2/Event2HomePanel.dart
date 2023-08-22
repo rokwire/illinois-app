@@ -487,9 +487,9 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
         LinkButton(
           title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
           hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
-          onTap: _onMapView,
-          padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
           textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
+          padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
+          onTap: _onMapView,
         ),
         Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
           Event2ImageCommandButton('plus-circle',
@@ -988,7 +988,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onSearch() {
     Analytics().logSelect(target: 'Search');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(userLocation: _currentLocation, eventSelector: widget.eventSelector)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(searchContext: Event2SearchContext.List, userLocation: _currentLocation, eventSelector: widget.eventSelector)));
   }
 
   void _onCreate() {

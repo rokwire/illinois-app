@@ -323,7 +323,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseTabNotification(RootTab.Maps);
     }
     else if (name == FirebaseMessaging.notifyMapEventsNotification) {
-      _onFirebaseMapNotification(ExploreMapType.Events);
+      _onFirebaseMapNotification(ExploreMapType.Events2);
     }
     else if (name == FirebaseMessaging.notifyMapDiningNotification) {
       _onFirebaseMapNotification(ExploreMapType.Dining);
@@ -492,16 +492,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _onSelectMaps(ExploreMapType? mapType) {
+  void _onSelectMaps(dynamic param) {
     int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
     if (mounted && (mapsIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       int lastTabIndex = _currentTabIndex;
       _selectTab(mapsIndex);
-      if ((lastTabIndex != mapsIndex) && (mapType != null) && !ExploreMapPanel.hasState) {
+      if ((lastTabIndex != mapsIndex) && (param != null) && !ExploreMapPanel.hasState) {
         Widget? mapsWidget = _panels[RootTab.Maps];
         ExploreMapPanel? mapsPanel = (mapsWidget is ExploreMapPanel) ? mapsWidget : null;
-        mapsPanel?.params[ExploreMapPanel.mapTypeKey] = mapType;
+        mapsPanel?.params[ExploreMapPanel.selectParamKey] = param;
       }
     }
   }

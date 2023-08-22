@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -25,6 +26,9 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:illinois/ui/explore/ExploreMapPanel.dart';
+import 'package:illinois/ui/widgets/GestureDetector.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -32,14 +36,17 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class Event2SearchPanel extends StatefulWidget {
+  final String? searchText;
+  final Event2SearchContext? searchContext;
   final Position? userLocation;
   final Event2Selector? eventSelector;
 
-  Event2SearchPanel({Key? key, this.userLocation, this.eventSelector}) : super(key: key);
+  Event2SearchPanel({Key? key, this.searchText, this.searchContext, this.userLocation, this.eventSelector}) : super(key: key);
 
   @override
   _Event2SearchPanelState createState() => _Event2SearchPanelState();
@@ -67,6 +74,11 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
   @override
   void initState() {
     _scrollController.addListener(_scrollListener);
+    _searchTextController.text = widget.searchText ?? '';
+
+    if (StringUtils.isNotEmpty(widget.searchText)) {
+      _search(widget.searchText!);
+    }
 
     if ((_userLocation = widget.userLocation) == null) {
       Event2HomePanel.getUserLocationIfAvailable().then((Position? userLocation) {
@@ -87,15 +99,27 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
 
   @override
   Widget build(BuildContext context) {
+    return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
+      BackGestureDetector(onBack: _onHeaderBarBack, child:
+        _buildScaffoldContent(),
+      ) :
+      _buildScaffoldContent()
+    );
+  }
+
+  Widget _buildScaffoldContent() {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx("panel.event2.search.header.title", "Search"),),
-      body: _buildScaffoldContent(),
+      appBar: HeaderBar(
+        title: Localization().getStringEx("panel.event2.search.header.title", "Search"),
+        onLeading: _onHeaderBarBack,
+      ),
+      body: _buildPanelContent(),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  Widget _buildScaffoldContent() {
+  Widget _buildPanelContent() {
     return RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -169,10 +193,25 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
       descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.events.label.title', 'Events: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: (_searchClient != null) ? '...' : ((_events != null) ? _events!.length.toString() : '-') , style: regularStyle,));
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
-      return Container(decoration: _contentDescriptionDecoration, padding: EdgeInsets.only(top: 12, left: 16, right: 16, bottom: 12), child:
-        Row(children: [ Expanded(child:
-          RichText(text: TextSpan(style: regularStyle, children: descriptionList))
-        ),],)
+      
+      return Container(decoration: _contentDescriptionDecoration, child:
+        Row(children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(top: 12, left: 16, bottom: 12), child:
+              RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+            )
+          ),
+          Visibility(visible: StringUtils.isNotEmpty(_searchText) && (0 < (_totalEventsCount ?? 0)), child:
+            LinkButton(
+              title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
+              hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
+              textStyle: Styles().textStyles?.getTextStyle('widget.button.title.medium.fat.underline'),
+              padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 7),
+              onTap: _onTapMapView,
+            ),
+          ),
+
+        ],)
       );
     }
     else {
@@ -287,7 +326,27 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
 
   void _onTapSearch() {
     Analytics().logSelect(target: "Search");
-    _search(_searchTextController.text.trim());
+
+    String searchText = _searchTextController.text.trim();
+    if (searchText.isNotEmpty) {
+      FocusScope.of(context).requestFocus(FocusNode());
+      _search(searchText);
+    }
+  }
+
+  void _onTapMapView() {
+    Analytics().logSelect(target: 'Map View');
+    if (widget.searchContext == Event2SearchContext.Map) {
+      Navigator.of(context).pop((0 < (_totalEventsCount ?? 0)) ? _searchText : null);
+    }
+    else {
+      NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchEventsParam(_searchText ?? ''));
+    }
+  }
+
+  void _onHeaderBarBack() {
+    Analytics().logSelect(target: 'HeaderBar: Back');
+    Navigator.of(context).pop((0 < (_totalEventsCount ?? 0)) ? _searchText : null);
   }
 
   Future<void> _onRefresh() {
@@ -307,7 +366,6 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
   Future<void> _search(String searchText, { int limit = _eventsPageLength }) async {
     if (searchText.isNotEmpty) {
       Client client = Client();
-      FocusScope.of(context).requestFocus(FocusNode());
 
       _searchClient?.close();
       _refreshClient?.close();
@@ -435,3 +493,5 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
     }
   }
 }
+
+enum Event2SearchContext { List, Map }
