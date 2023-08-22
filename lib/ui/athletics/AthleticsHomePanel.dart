@@ -741,8 +741,8 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
   }
 
   Widget? _athleticsTimeDetail() {
-    String displayTime = widget.game.displayTime;
-    if (displayTime.isNotEmpty) {
+    String? displayTime = widget.game.shortDisplayDateAndTime;
+    if (StringUtils.isNotEmpty(displayTime)) {
       return Padding(
         padding: _detailPadding,
         child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
@@ -751,7 +751,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
             Padding(
               padding: _iconPadding,
             ),
-            Text(displayTime,
+            Text(displayTime!,
                 style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
           ],
         )),

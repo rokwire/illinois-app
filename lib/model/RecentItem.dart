@@ -105,7 +105,7 @@ class RecentItem {
           id: item.id,
           title: item.title,
           descripton: item.description,
-          time: item.displayTime,
+          time: item.shortDisplayDateAndTime,
           sourceJson: item.jsonData
       );
     } else if(item is News) {

@@ -185,9 +185,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   padding: EdgeInsets.only(top: 16),
                                 )),
                           Visibility(
-                              visible: StringUtils.isNotEmpty(widget.game?.displayTime),
+                              visible: StringUtils.isNotEmpty(widget.game?.shortDisplayDateAndTime),
                               child: Semantics(
-                                label: widget.game?.displayTime,
+                                label: widget.game?.shortDisplayDateAndTime,
                                 button: false,
                                 child: Padding(
                                   padding: EdgeInsets.only(bottom: 10),
@@ -197,7 +197,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                       Padding(
                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Text(
-                                          widget.game?.displayTime ?? '',
+                                          widget.game?.shortDisplayDateAndTime ?? '',
                                           style: Styles().textStyles?.getTextStyle("widget.athletics.heading.regular.variant")
                                         ),
                                       )
