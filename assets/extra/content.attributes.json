@@ -33,7 +33,7 @@
 		"id": "sport",
 		"title": "Big 10 Athletics",
 		"description": "Choose the athletics your event can be filtered by.",
-		"empty-hint": "Select an athletics",
+		"empty-hint": "Select a sport",
 		"semantics-hint": "Double tap to show athletics options.",
 		"usage": "category",
 		"widget": "dropdown",
