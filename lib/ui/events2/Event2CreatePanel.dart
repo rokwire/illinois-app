@@ -468,6 +468,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   late _Event2Visibility _visibility;
   
   late bool _free;
+  late bool _published;
   
   Map<String, dynamic>? _attributes;
 
@@ -549,6 +550,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     //NA: userRole
 
     _free = widget.event?.free ?? true;
+    _published = widget.event?.published ?? true;
     _costController.text = widget.event?.cost ?? '';
 
     _registrationDetails = widget.event?.registrationDetails;
@@ -634,6 +636,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             _buildAttendanceButtonSection(),
             _buildSurveyButtonSection(),
             _buildSponsorshipAndContactsButtonSection(),
+            _buildPublishedSection(),
             _buildVisibilitySection(),
             _buildEventSelectorSection(),
             _buildCreateEventSection(),
@@ -1557,6 +1560,31 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     }
   }
 
+  // Published
+
+  Widget _buildPublishedSection() =>  Padding(padding: Event2CreatePanel.sectionPadding, child: _buildPublishedToggle());
+
+  Widget _buildPublishedToggle() => Semantics(toggled: _free, excludeSemantics: true, 
+    label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
+    hint: Localization().getStringEx("panel.event2.create.published.toggle.hint", ""),
+    child: ToggleRibbonButton(
+      label: Localization().getStringEx("panel.event2.create.published.toggle.title", "Publish this event"),
+      padding: _togglePadding,
+      toggled: _published,
+      onTap: _onTapPublished,
+      border: _toggleBorder,
+      borderRadius: _toggleBorderRadius,
+    ));
+
+
+  void _onTapPublished() {
+    Analytics().logSelect(target: "Toggle publish this event");
+    Event2CreatePanel.hideKeyboard(context);
+    setStateIfMounted(() {
+      _published = !_published;
+    });
+  }
+
   //EventSelector section
   Widget _buildEventSelectorSection() {
     if(widget.eventSelector != null){
@@ -1932,6 +1960,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       grouping: null, // TBD
       attributes: _attributes,
       private: _private,
+      published: _published,
 
       canceled: null, // NA
       userRole: null, // NA

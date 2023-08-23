@@ -1244,6 +1244,8 @@
 	"panel.event2.create.confirm_url.invalid.message": "Please enter a valid URL.",
 	"panel.event2.create.confirm_url.failed.message": "Failed to confirm URL.",
     "panel.event2.create.label.visibility.title": "EVENT VISIBILITY",
+	"panel.event2.create.published.toggle.title": "Publish this event",
+	"panel.event2.create.published.toggle.hint": "",
     "panel.event2.create.button.create.title": "Create Event",
     "panel.event2.create.button.create.hint": "",
     "panel.event2.update.button.update.title": "Update Event",
