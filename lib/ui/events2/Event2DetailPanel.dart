@@ -77,6 +77,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool _eventLoading = false;
   bool _eventProcessing = false;
   bool _linkedEventsLoading = false;
+  bool _registrationLaunching = false;
+  bool _websiteLaunching = false;
+  bool _onlineLaunching = false;
 
   List<String>? _displayCategories;
 
@@ -277,7 +280,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _descriptionWidget => StringUtils.isNotEmpty(_event?.description) ? Padding(padding: EdgeInsets.only(top: 24, left: 10, right: 10), child:
        HtmlWidget(
           StringUtils.ensureNotEmpty(_event?.description),
-          onTapUrl : (url) {_launchUrl(url, context: context); return true;},
+          onTapUrl : (url) { _launchUrl(url, context: context); return true; },
           textStyle: Styles().textStyles?.getTextStyle("widget.info.regular")
       )
   ) : Container();
@@ -316,7 +319,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       bool canLaunch = StringUtils.isNotEmpty(_event?.onlineDetails?.url);
       List<Widget> details = <Widget>[
         InkWell(onTap: canLaunch ? _onOnline : null, child:
-          _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.online.title', 'Online'), 'laptop'),
+          _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.online.title', 'Online'), 'laptop', showProgress: _onlineLaunching),
         ),
       ];
 
@@ -563,7 +566,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildButtonWidget(//TBD remove loading from here
       title: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
       hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
-      onTap: (){_onWebButton(_event?.eventUrl, analyticsName: 'Website');}
+      progress: _websiteLaunching,
+      onTap: _onWebsiteButton,
     )] : null;
 
   List<Widget>? get _logInButtonWidget{
@@ -609,6 +613,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         return <Widget>[_buildButtonWidget(
             title: Localization().getStringEx('panel.event2.detail.button.register.title', 'Register'),
             onTap: _onExternalRegistration,
+            progress: _registrationLaunching,
             externalLink: true
         )];
       // }
@@ -731,7 +736,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     int? maxLines = 1, TextOverflow? overflow = TextOverflow.ellipsis,
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
-    bool iconVisible = true, bool underlined = false,
+    bool iconVisible = true, bool showProgress = false, bool underlined = false,
   }) =>
     _buildDetailWidget(
       Text(text,
@@ -742,21 +747,28 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       iconKey,
       detailPadding: detailPadding,
       iconPadding: iconPadding,
-      iconVisible: iconVisible
+      iconVisible: iconVisible,
+      showProgress: showProgress,
     );
 
   Widget _buildDetailWidget(Widget contentWidget, String iconKey, {
     EdgeInsetsGeometry detailPadding = const EdgeInsets.only(top: 4),
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(right: 6, top: 2, bottom: 2),
-    bool iconVisible = true
+    bool iconVisible = true,
+    bool showProgress = false,
   }) {
     List<Widget> contentList = <Widget>[];
     Widget? iconWidget = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
     if (iconWidget != null) {
-      contentList.add(Opacity(opacity: iconVisible ? 1 : 0, child:
-        Padding(padding: iconPadding, child:
-          iconWidget,
-        )
+      contentList.add(Padding(padding: iconPadding, child: showProgress ?
+        Stack(children: [
+          Opacity(opacity: 0, child: iconWidget),
+          Positioned.fill(child:
+            Padding(padding: EdgeInsets.all(2), child:
+              CircularProgressIndicator(strokeWidth: 2, color: Styles().colors?.fillColorSecondary,)
+            ),
+          )
+        ],) : Opacity(opacity: iconVisible ? 1 : 0, child: iconWidget),
       ));
     }
     contentList.add(Expanded(child:
@@ -813,7 +825,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onOnline() {
     Analytics().logSelect(target: "Online Url: ${_event?.name}");
-    _launchUrl(_event?.onlineDetails?.url);
+    _launchUrl(_event?.onlineDetails?.url, updateProgress: (bool value) => setStateDelayedIfMounted(() { _onlineLaunching = value; }));
   }
 
   void _onFavorite() {
@@ -821,11 +833,21 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Auth2().prefs?.toggleFavorite(_event);
   }
 
-  void _launchUrl(String? url, { BuildContext? context }) {
+  void _launchUrl(String? url, { BuildContext? context, void Function(bool progress)? updateProgress }) {
     Uri? uri = UrlUtils.parseUri(url);
     if (uri != null) {
-      launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault).then((bool result) {
-        Event2Popup.showMessage(context ?? this.context, message: Localization().getStringEx('panel.event2.detail.launch.url.failed.message', 'Failed to launch URL.'));
+      if (updateProgress != null) {
+        updateProgress(true);
+      }
+      UrlUtils.fixUriAsync(uri).then((Uri? fixedUri) {
+        if (updateProgress != null) {
+          updateProgress(false);
+        }
+        launchUrl(fixedUri ?? uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault).then((bool result) {
+          if (result == false) {
+            Event2Popup.showMessage(context ?? this.context, message: Localization().getStringEx('panel.event2.detail.launch.url.failed.message', 'Failed to launch URL.'));
+          }
+        });
       });
     }
     else {
@@ -833,14 +855,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }
 
-  void _onWebButton(String? url, { String? analyticsName }) {
-    if (analyticsName != null) {
-      Analytics().logSelect(target: analyticsName);
-    }
-    Uri? uri = Uri.tryParse(url ?? '');
-    if (uri != null) {
-      launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
-    }
+  void _onWebsiteButton() {
+    Analytics().logSelect(target: 'Website');
+    _launchUrl(_event?.eventUrl, updateProgress: (bool value) => setStateDelayedIfMounted(() { _websiteLaunching = value; }));
   }
 
   void _onLinkedEvent(Event2 event) {
@@ -902,7 +919,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onExternalRegistration(){
     Analytics().logSelect(target: 'Register me');
-      _launchUrl(_event?.registrationDetails?.externalLink);
+    _launchUrl(_event?.registrationDetails?.externalLink, updateProgress: (bool value) => setStateDelayedIfMounted(() { _registrationLaunching = value; }));
   }
 
   void _onFollowUpSurvey(){
