@@ -482,7 +482,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   List<Event2Contact>? _contacts;
   // Explore? _locationExplore;
 
-  late List<String> _errorList;
+  late Map<_ErrorCategory, List<String>> _errorMap;
   bool _creatingEvent = false;
 
   final TextEditingController _titleController = TextEditingController();
@@ -566,13 +566,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _typeAndLocationSectionExpanded = widget.isUpdate;
     _costSectionExpanded = widget.isUpdate;
 
-    _errorList = _buildErrorList();
+    _errorMap = _buildErrorMap();
 
-    _titleController.addListener(_updateErrorList);
-    _onlineUrlController.addListener(_updateErrorList);
-    _locationLatitudeController.addListener(_updateErrorList);
-    _locationLongitudeController.addListener(_updateErrorList);
-    _costController.addListener(_updateErrorList);
+    _titleController.addListener(_updateErrorMap);
+    _onlineUrlController.addListener(_updateErrorMap);
+    _locationLatitudeController.addListener(_updateErrorMap);
+    _locationLongitudeController.addListener(_updateErrorMap);
+    _costController.addListener(_updateErrorMap);
     _initSelector();
 
     super.initState();
@@ -927,7 +927,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if ((result != null) && mounted) {
         setState(() {
           _startDate = DateUtils.dateOnly(result);
-          _errorList = _buildErrorList();
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -940,7 +940,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if ((result != null) && mounted) {
         setState(() {
           _startTime = result;
-          _errorList = _buildErrorList();
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -962,7 +962,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if ((result != null) && mounted) {
         setState(() {
           _endDate = DateUtils.dateOnly(result);
-          _errorList = _buildErrorList();
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -975,7 +975,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if ((result != null) && mounted) {
         setState(() {
           _endTime = result;
-          _errorList = _buildErrorList();
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -1094,7 +1094,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     if ((value != null) && mounted) {
       setState(() {
         _eventType = value;
-        _errorList = _buildErrorList();
+        _errorMap = _buildErrorMap();
       });
     }
   }
@@ -1172,7 +1172,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         _locationLatitudeController.text = _printLatLng(explore.exploreLocation?.latitude);
         _locationLongitudeController.text = _printLatLng(explore.exploreLocation?.longitude);
         setState(() {
-          _errorList = _buildErrorList();
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -1246,7 +1246,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     Event2CreatePanel.hideKeyboard(context);
     setStateIfMounted(() {
       _free = !_free;
-      _errorList = _buildErrorList();
+      _errorMap = _buildErrorMap();
     });
   }
 
@@ -1311,7 +1311,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if ((selection != null) && mounted) {
         setState(() {
           _attributes = selection;
-          _errorList = _buildErrorList();
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -1369,7 +1369,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       if ((result != null) && mounted) {
         setState(() {
           _attendanceDetails = result;
-          _errorList = _buildErrorList();
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -1412,7 +1412,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         setState(() {
           _survey = result.survey;
           _surveyDetails = result.details;
-          _errorList = _buildErrorList();
+          _errorMap = _buildErrorMap();
         });
       }
     });
@@ -1599,7 +1599,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     List<Widget> contentList = <Widget>[
       _buildCreateEventButton(),
     ];
-    if (_errorList.isNotEmpty) {
+    if (_errorMap.isNotEmpty) {
       contentList.add(_buildCreateErrorStatus());
     }
     return Padding(padding: Event2CreatePanel.sectionPadding, child:
@@ -1637,64 +1637,114 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     return ((startDateTimeUtc != null) && (endDateTimeUtc != null)) ? endDateTimeUtc.isBefore(startDateTimeUtc) : false;
   }
 
-  List<String> _buildErrorList() {
-    List<String> errorList = <String>[];
+  bool get _isStartBeforeEndDateTime {
+    DateTime? startDateTimeUtc = _startDateTimeUtc;
+    DateTime? endDateTimeUtc = _endDateTimeUtc;
+    return ((startDateTimeUtc != null) && (endDateTimeUtc != null)) ? startDateTimeUtc.isBefore(endDateTimeUtc) : false;
+  }
+
+  Map<_ErrorCategory, List<String>> _buildErrorMap() {
+    List<String> missingList = <String>[];
+    List<String> invalidList = <String>[];
 
     if (_titleController.text.isEmpty) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.name', 'event name'));
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.name', 'event name'));
     }
 
-    if (_startDate == null) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.date', 'date and time'));
+    if ((_startDate == null) && (_startTime == null)) {
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.start_datetime', 'start date and time'));
     }
-    else if (_isEndBeforeStartDateTime) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.invalid.date.pair', 'end before start'));
+    else if (_startDate == null) {
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.start_date', 'start date'));
+    }
+    else if (_startTime == null) {
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.start_time', 'start time'));
+    }
+    
+    if ((_endDate != null) || (_endTime != null)) {
+      if (_endDate == null) {
+        missingList.add(Localization().getStringEx('panel.event2.create.status.missing.end_date', 'end date'));
+      }
+      else if (_endTime == null) {
+        missingList.add(Localization().getStringEx('panel.event2.create.status.missing.end_time', 'end time'));
+      }
+      else if (_isEndBeforeStartDateTime) {
+        invalidList.add(Localization().getStringEx('panel.event2.create.status.invalid.date.pair', 'end before start'));
+      }
     }
 
     if (_eventType == null) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.event_type', 'event type'));
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.event_type', 'event type'));
     }
     else if (_inPersonEventType && !_hasLocation) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.location', 'location coordinates'));
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.location', 'location coordinates'));
     }
     else if (_onlineEventType && !_hasOnlineDetails) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.online_url', 'online URL'));
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.online_url', 'online URL'));
     }
 
     if ((_free == false) && _costController.text.isEmpty) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.cost_description', 'cost description'));
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.cost_description', 'cost description'));
     }
 
     if (Events2().contentAttributes?.isSelectionValid(_attributes) != true) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.attributes', 'event attributes'));
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.attributes', 'event attributes'));
     }
 
     if ((_registrationDetails?.type == Event2RegistrationType.external) && (_registrationDetails?.externalLink?.isEmpty ?? true)) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.registration_link', 'registration link'));
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.registration_link', 'registration link'));
     }
     
     if (_hasSurvey && !_hasAttendanceDetails) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.survey_attendance_details', 'attendance (required for survey)'));
+      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.survey_attendance_details', 'attendance (required for survey)'));
     }
 
-    return errorList;
+    Map<_ErrorCategory, List<String>> errorMap = <_ErrorCategory, List<String>>{};
+    if (missingList.isNotEmpty) {
+      errorMap[_ErrorCategory.missing] = missingList;
+    }
+    if (invalidList.isNotEmpty) {
+      errorMap[_ErrorCategory.invalid] = invalidList;
+    }
+    return errorMap;
   }
-
 
   Widget _buildCreateErrorStatus() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
     TextStyle? boldStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text");
     TextStyle? regularStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text.small");
 
-    for (String error in _errorList) {
+    List<String>? missingStringList = _errorMap[_ErrorCategory.missing];
+    if ((missingStringList != null) && missingStringList.isNotEmpty) {
       if (descriptionList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
       }
-      descriptionList.add(TextSpan(text: error, style: regularStyle,),);
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.status.missing.heading', 'Missing: ') , style: boldStyle,));
+      int missingStart = descriptionList.length;
+      for (String missingString in missingStringList) {
+        if (missingStart < descriptionList.length) {
+          descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        }
+        descriptionList.add(TextSpan(text: missingString, style: regularStyle,),);
+      }
+    }
+
+    List<String>? invalidStringList = _errorMap[_ErrorCategory.invalid];
+    if ((invalidStringList != null) && invalidStringList.isNotEmpty) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: "; " , style: regularStyle,));
+      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.create.status.invalid.heading', 'Invalid: ') , style: boldStyle,));
+      int invalidStart = descriptionList.length;
+      for (String invalidString in invalidStringList) {
+        if (invalidStart < descriptionList.length) {
+          descriptionList.add(TextSpan(text: ", " , style: regularStyle,));
+        }
+        descriptionList.add(TextSpan(text: invalidString, style: regularStyle,),);
+      }
     }
 
     if (descriptionList.isNotEmpty) {
-      descriptionList.insert(0, TextSpan(text: Localization().getStringEx('panel.event2.create.status.missing.heading', 'Missing: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: "." , style: regularStyle,));
     }
 
@@ -1835,7 +1885,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   bool _canCreateEvent() => (
     _titleController.text.isNotEmpty &&
-    (_startDate != null) && !_isEndBeforeStartDateTime &&
+    (_startDate != null) && (_startTime != null) &&
+    (((_endDate == null) && (_endTime == null)) || ((_endDate != null) && (_endTime != null) && _isStartBeforeEndDateTime)) &&
     (_eventType != null) &&
     (!_inPersonEventType || _hasLocation) &&
     (!_onlineEventType || _hasOnlineDetails) &&
@@ -1845,11 +1896,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     (!_hasSurvey || _hasAttendanceDetails)
   );
 
-  void _updateErrorList() {
-    List<String> errorList = _buildErrorList();
-    if (!DeepCollectionEquality().equals(errorList, _errorList)) {
+  void _updateErrorMap() {
+    Map<_ErrorCategory, List<String>> errorMap = _buildErrorMap();
+    if (!DeepCollectionEquality().equals(errorMap, _errorMap)) {
       setStateIfMounted(() {
-        _errorList = errorList;
+        _errorMap = errorMap;
       });
     }
   }
@@ -2006,3 +2057,7 @@ _Event2Visibility? _event2VisibilityFromPrivate(bool? private) {
     default: return null;
   }
 }
+
+// _ErrorCategory
+
+enum _ErrorCategory { missing, invalid }
