@@ -1189,6 +1189,7 @@
 	"panel.event2.update.header.title": "Update Event",
     "panel.event2.create.section.title.title": "EVENT TITLE",
     "panel.event2.create.section.description.title": "EVENT DESCRIPTION",
+    "panel.event2.create.section.description.description": " (Hyperlinks added to this field will not be active. Please add all urls to the appropriate fields such as the event type online url, event website link, or event registration external link.)",
     "panel.event2.create.section.date_and_time.title": "DATE AND TIME",
     "panel.event2.create.section.type_and_location.title": "EVENT TYPE AND LOCATION",
     "panel.event2.create.section.cost.title": "COST",

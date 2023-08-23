@@ -466,10 +466,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Event2Type? _eventType;
   late _Event2Visibility _visibility;
-  
+
   late bool _free;
   late bool _published;
-  
+
   Map<String, dynamic>? _attributes;
 
   Event2RegistrationDetails? _registrationDetails;
@@ -488,7 +488,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _websiteController = TextEditingController();
-  
+
   final TextEditingController _locationBuildingController = TextEditingController();
   final TextEditingController _locationAddressController = TextEditingController();
   final TextEditingController _locationLatitudeController = TextEditingController();
@@ -588,7 +588,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _locationAddressController.dispose();
     _locationLatitudeController.dispose();
     _locationLongitudeController.dispose();
-  
+
     _onlineUrlController.dispose();
     _onlineMeetingIdController.dispose();
     _onlinePasscodeController.dispose();
@@ -704,10 +704,28 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     body: Event2CreatePanel.buildTextEditWidget(_titleController, keyboardType: TextInputType.text, maxLines: null, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.title.field.title', 'TITLE FIELD'),),
   );
 
-  Widget _buildDescriptionSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION')),
-    body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, minLines: 3, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.description.field.title', 'DESCRIPTION FIELD')),
-  );
+  Widget _buildDescriptionSection() {
+    String title = Localization().getStringEx('panel.event2.create.section.description.title', 'EVENT DESCRIPTION');
+    String description = Localization().getStringEx(	"panel.event2.create.section.description.description", " (Hyperlinks added to this field will not be active. Please add all urls to the appropriate fields such as the event type online url, event website link, or event registration external link.)",);
+    String semanticsLabel = title + description;
+
+    return Event2CreatePanel.buildSectionWidget(
+          heading: Padding(padding: Event2CreatePanel.sectionHeadingPadding, child:
+            Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
+              Row(children: [
+                Expanded(child:
+                  RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
+                    TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
+                      TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
+                    ])
+                  )
+                ),
+              ]),
+            )
+          ),
+          body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, minLines: 3, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.description.field.title', 'DESCRIPTION FIELD')),
+      );
+  }
 
   Widget _buildWebsiteSection() => Event2CreatePanel.buildSectionWidget(
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.website.title', 'ADD EVENT WEBSITE LINK'), suffixImageKey: 'external-link'),
@@ -1040,7 +1058,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     return Semantics(label: "$title, required", container: true, child:
       Row(children: <Widget>[
         Expanded(flex: 3, child:
-          RichText(text:
+          RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
             TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: "", children: <InlineSpan>[
               TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
             ])
@@ -1222,7 +1240,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
         Row(children: [
           Expanded(child:
-            RichText(text:
+            RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
               TextSpan(text: title, style: Event2CreatePanel.headingTextStype, children: <InlineSpan>[
                 TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
               ])
@@ -1288,7 +1306,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
       return Row(children: [
         Expanded(child:
-          RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+          RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
         ),
       ],);
     }
@@ -1475,7 +1493,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
       return Row(children: [
         Expanded(child:
-          RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+          RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
         ),
       ],);
     }
@@ -1750,7 +1768,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
     return Padding(padding: EdgeInsets.only(top: 12), child:
       Row(children: [ Expanded(child:
-        RichText(text: TextSpan(style: regularStyle, children: descriptionList))
+        RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
       ),],),
     );
   }
