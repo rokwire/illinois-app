@@ -369,7 +369,7 @@ class Event2CreatePanel extends StatefulWidget {
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
     hideKeyboard(context);
     if (controller.text.isNotEmpty) {
-      Uri? uri = Uri.tryParse(controller.text);
+      Uri? uri = UrlUtils.parseUri(controller.text);
       if (uri != null) {
         if (updateProgress != null) {
           updateProgress(true);
