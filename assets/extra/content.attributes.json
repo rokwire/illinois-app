@@ -50,17 +50,17 @@
       { "label": "Men's Golf", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Men's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Men's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Men's Track Field", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Men's Track \u0026 Field", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Wrestling", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Women's Basketball", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Women's Cross Country", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Women's Golf", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Women's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Women's Soccer", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Soccer", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Softball", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Swim Dive", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Swimming \u0026 Diving", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Women's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Women's Track Field", "requirements": { "category" : "Big 10 Athletics" }},
+      { "label": "Women's Track \u0026 Field", "requirements": { "category" : "Big 10 Athletics" }},
       { "label": "Volleyball", "requirements": { "category" : "Big 10 Athletics" }}
 		]
 	},{
@@ -138,17 +138,17 @@
       { "label": "Men's Golf", "requirements": { "category" : "Athletics" }},
       { "label": "Men's Gymnastics", "requirements": { "category" : "Athletics" }},
       { "label": "Men's Tennis", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Track Field", "requirements": { "category" : "Athletics" }},
+      { "label": "Men's Track \u0026 Field", "requirements": { "category" : "Athletics" }},
       { "label": "Wrestling", "requirements": { "category" : "Athletics" }},
       { "label": "Women's Basketball", "requirements": { "category" : "Athletics" }},
       { "label": "Women's Cross Country", "requirements": { "category" : "Athletics" }},
       { "label": "Women's Golf", "requirements": { "category" : "Athletics" }},
       { "label": "Women's Gymnastics", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Soccer", "requirements": { "category" : "Athletics" }},
+      { "label": "Soccer", "requirements": { "category" : "Athletics" }},
       { "label": "Softball", "requirements": { "category" : "Athletics" }},
-      { "label": "Swim Dive", "requirements": { "category" : "Athletics" }},
+      { "label": "Swimming \u0026 Diving", "requirements": { "category" : "Athletics" }},
       { "label": "Women's Tennis", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Track Field", "requirements": { "category" : "Athletics" }},
+      { "label": "Women's Track \u0026 Field", "requirements": { "category" : "Athletics" }},
       { "label": "Volleyball", "requirements": { "category" : "Athletics" }}
 		]
 	},{

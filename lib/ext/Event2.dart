@@ -65,17 +65,17 @@ extension Event2Ext on Event2 {
     "Men's Golf" : "mgolf",
     "Men's Gymnastics" : "mgym",
     "Men's Tennis" : "mten",
-    "Men's Track Field" : "mtrack",
+    "Men's Track & Field" : "mtrack",
     "Wrestling" : "wrestling",
     "Women's Basketball" : "wbball",
     "Women's Cross Country" : "wcross",
     "Women's Golf" : "wgolf",
     "Women's Gymnastics" : "wgym",
-    "Women's Soccer" : "wsoc",
+    "Soccer" : "wsoc",
     "Softball" : "softball",
-    "Swim Dive" : "wswim",
+    "Swimming & Diving" : "wswim",
     "Women's Tennis" : "wten",
-    "Women's Track Field" : "wtrack",
+    "Women's Track & Field" : "wtrack",
     "Volleyball" : "wvball"
   };
 
