@@ -365,7 +365,7 @@
 	"panel.browse.entry.events.event_feed.title": "活動提要",
 	"panel.browse.entry.events.my_events.title": "我的活動",
 	
-	"panel.browse.entry.feeds.twitter.title": "推特",
+	"panel.browse.entry.feeds.twitter.title": "X/Twitter",
 	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 調頻",
 	
 	"panel.browse.entry.groups.all_groups.title": "所有組",
@@ -3489,7 +3489,7 @@
 	"widget.home.student_courses.button.all.title": "查看全部",
 	"widget.home.student_courses.button.all.hint": "點擊查看所有課程",
 	
-	"widget.home.twitter.header.label": "推特",
+	"widget.home.twitter.header.label": "X/Twitter",
 	"widget.home.twitter.text.empty.description": "未能加載推文。",
 	"widget.home.twitter.button.all.title": "查看全部",
 	"widget.home.twitter.button.all.hint": "點擊查看所有推文",
