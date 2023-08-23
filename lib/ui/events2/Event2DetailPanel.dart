@@ -277,7 +277,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _descriptionWidget => StringUtils.isNotEmpty(_event?.description) ? Padding(padding: EdgeInsets.only(top: 24, left: 10, right: 10), child:
        HtmlWidget(
           StringUtils.ensureNotEmpty(_event?.description),
-          onTapUrl : (url) {_onLaunchUrl(url, context: context); return true;},
+          onTapUrl : (url) {_launchUrl(url, context: context); return true;},
           textStyle: Styles().textStyles?.getTextStyle("widget.info.regular")
       )
   ) : Container();
@@ -813,10 +813,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onOnline() {
     Analytics().logSelect(target: "Online Url: ${_event?.name}");
-    String? url = _event?.onlineDetails?.url;
-    if(StringUtils.isNotEmpty(url)){
-      _onLaunchUrl(url);
-    }
+    _launchUrl(_event?.onlineDetails?.url);
   }
 
   void _onFavorite() {
@@ -824,10 +821,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     Auth2().prefs?.toggleFavorite(_event);
   }
 
-  void _onLaunchUrl(String? url, {BuildContext? context}) {
-    Uri? uri = Uri.tryParse(url ?? '');
+  void _launchUrl(String? url, { BuildContext? context }) {
+    Uri? uri = UrlUtils.parseUri(url);
     if (uri != null) {
-      launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault);
+      launchUrl(uri, mode: Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault).then((bool result) {
+        Event2Popup.showMessage(context ?? this.context, message: Localization().getStringEx('panel.event2.detail.launch.url.failed.message', 'Failed to launch URL.'));
+      });
+    }
+    else {
+      Event2Popup.showMessage(context ?? this.context, message: Localization().getStringEx('panel.event2.detail.parse.url.failed.message', 'Failed to parse URL.'));
     }
   }
 
@@ -900,8 +902,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onExternalRegistration(){
     Analytics().logSelect(target: 'Register me');
-    if(StringUtils.isNotEmpty(_event?.registrationDetails?.externalLink))
-       _onLaunchUrl(_event?.registrationDetails?.externalLink);
+      _launchUrl(_event?.registrationDetails?.externalLink);
   }
 
   void _onFollowUpSurvey(){
@@ -930,15 +931,13 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onContactEmail(String? email){
     if(StringUtils.isNotEmpty(email)) {
-      String link = "mailto:$email";
-      _onLaunchUrl(link);
+      _launchUrl("mailto:$email");
     }
   }
 
   void _onContactPhone(String? phone){
     if(StringUtils.isNotEmpty(phone)) {
-      String link = "tel:$phone";
-      _onLaunchUrl(link);
+      _launchUrl("tel:$phone");
     }
   }
 

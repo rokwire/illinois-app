@@ -1364,6 +1364,8 @@
 	"panel.event2.detail.general.recurrence.abbreviation.title": "Repeats",
 	"panel.event2.detail.general.super_event.list.title": "Multiple events",
 	"panel.event2.detail.general.recurrence.list.title": "This event repeats",
+	"panel.event2.detail.parse.url.failed.message": "Failed to parse URL.",
+	"panel.event2.detail.launch.url.failed.message": "Failed to launch URL.",
 	"panel.event2.detail.linked_events.super_event.failed.message": "Failed to load events schedule.",
 	"panel.event2.detail.linked_events.super_event.empty.message": "There are no scheduled upcoming events.",
 	"panel.event2.detail.linked_events.recurrence.failed.message": "Failed to load available times.",
