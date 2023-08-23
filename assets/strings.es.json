@@ -365,7 +365,7 @@
     "panel.browse.entry.events.event_feed.title": "Fuente de eventos",
     "panel.browse.entry.events.my_events.title": "Mis eventos",
 
-    "panel.browse.entry.feeds.twitter.title": "Gorjeo",
+    "panel.browse.entry.feeds.twitter.title": "X/Twitter",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
@@ -3489,7 +3489,7 @@
     "widget.home.student_courses.button.all.title": "Ver todo",
     "widget.home.student_courses.button.all.hint": "Toca para ver todos los cursos",
 
-    "widget.home.twitter.header.label": "Gorjeo",
+    "widget.home.twitter.header.label": "X/Twitter",
 	"widget.home.twitter.text.empty.description": "No se pudieron cargar los tuits.",
     "widget.home.twitter.button.all.title": "Ver todo",
     "widget.home.twitter.button.all.hint": "Toca para ver todos los tweets",

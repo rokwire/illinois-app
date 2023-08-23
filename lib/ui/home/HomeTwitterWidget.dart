@@ -37,7 +37,7 @@ class HomeTwitterWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.twitter.header.label', 'Twitter');
+  static String get title => Localization().getStringEx('widget.home.twitter.header.label', 'X/Twitter');
   
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();

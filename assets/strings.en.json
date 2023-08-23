@@ -366,7 +366,7 @@
     "panel.browse.entry.events.event_feed.title": "Events Feed",
     "panel.browse.entry.events.my_events.title": "My Events",
 
-    "panel.browse.entry.feeds.twitter.title": "Twitter",
+    "panel.browse.entry.feeds.twitter.title": "X/Twitter",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "All Groups",
@@ -3507,7 +3507,7 @@
     "widget.home.student_courses.button.all.title": "View All",
     "widget.home.student_courses.button.all.hint": "Tap to view all courses",
 
-    "widget.home.twitter.header.label": "Twitter",
+    "widget.home.twitter.header.label": "X/Twitter",
 	"widget.home.twitter.text.empty.description": "Failed to load tweets.",
     "widget.home.twitter.button.all.title": "View All",
     "widget.home.twitter.button.all.hint": "Tap to view all tweets",
