@@ -369,7 +369,7 @@ class Event2CreatePanel extends StatefulWidget {
     Analytics().logSelect(target: analyticsTarget ?? "Confirm URL");
     hideKeyboard(context);
     if (controller.text.isNotEmpty) {
-      Uri? uri = Uri.tryParse(controller.text);
+      Uri? uri = UrlUtils.parseUri(controller.text);
       if (uri != null) {
         if (updateProgress != null) {
           updateProgress(true);
@@ -573,6 +573,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _locationLatitudeController.addListener(_updateErrorMap);
     _locationLongitudeController.addListener(_updateErrorMap);
     _costController.addListener(_updateErrorMap);
+    _websiteController.addListener(_updateErrorMap);
     _initSelector();
 
     super.initState();
@@ -1700,9 +1701,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     else if (_onlineEventType && !_hasOnlineDetails) {
       missingList.add(Localization().getStringEx('panel.event2.create.status.missing.online_url', 'online URL'));
     }
+    else if (_onlineEventType && !_hasValidOnlineDetails) {
+      invalidList.add(Localization().getStringEx('panel.event2.create.status.invalid.online_url', 'online URL'));
+    }
 
     if ((_free == false) && _costController.text.isEmpty) {
       missingList.add(Localization().getStringEx('panel.event2.create.status.missing.cost_description', 'cost description'));
+    }
+
+    if (_hasWebsiteURL && !_hasValidWebsiteURL) {
+      invalidList.add(Localization().getStringEx('panel.event2.create.status.invalid.website_url', 'website URL'));
     }
 
     if (Events2().contentAttributes?.isSelectionValid(_attributes) != true) {
@@ -1888,8 +1896,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     ) : null;
 
   bool get _hasOnlineDetails => _onlineUrlController.text.isNotEmpty;
+  bool get _hasValidOnlineDetails => UrlUtils.isValidUrl(_onlineUrlController.text);
   bool get _hasAttendanceDetails => _attendanceDetails?.isNotEmpty ?? false;
   bool get _hasRegistrationDetails => _registrationDetails?.requiresRegistration ?? false;
+  bool get _hasWebsiteURL => _websiteController.text.isNotEmpty;
+  bool get _hasValidWebsiteURL => UrlUtils.isValidUrl(_websiteController.text);
 
   DateTime? get _startDateTimeUtc =>
     (_startDate != null) ? Event2TimeRangePanel.dateTimeWithDateAndTimeOfDay(_timeZone, _startDate!, _startTime).toUtc() : null;
@@ -1907,7 +1918,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     (((_endDate == null) && (_endTime == null)) || ((_endDate != null) && (_endTime != null) && _isStartBeforeEndDateTime)) &&
     (_eventType != null) &&
     (!_inPersonEventType || _hasLocation) &&
-    (!_onlineEventType || _hasOnlineDetails) &&
+    (!_onlineEventType || _hasValidOnlineDetails) &&
+    (!_hasWebsiteURL || _hasValidWebsiteURL) &&
     (_free || _costController.text.isNotEmpty) &&
     (Events2().contentAttributes?.isSelectionValid(_attributes) ?? false) &&
     ((_registrationDetails?.type != Event2RegistrationType.external) || (_registrationDetails?.externalLink?.isNotEmpty ?? false)) &&

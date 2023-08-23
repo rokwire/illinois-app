@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Displaying sport for athletics events [#3621](https://github.com/rokwire/illinois-app/issues/3621).
+- Fixed URLs parsing, validation and processing in Create Event and Event detail panels [#3580](https://github.com/rokwire/illinois-app/issues/3580).
 ### Added
 - Added published flag in create/update event panel [#3623](https://github.com/rokwire/illinois-app/issues/3623).
 - CreateEventPanel add additional description in description section [#3620](https://github.com/rokwire/illinois-app/issues/3620).
