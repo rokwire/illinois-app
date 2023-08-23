@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Displaying sport for athletics events [#3621](https://github.com/rokwire/illinois-app/issues/3621).
 ### Added
 - Added published flag in create/update event panel [#3623](https://github.com/rokwire/illinois-app/issues/3623).
+### Changed
+- Do not allow building event datetime on date part only [#3585](https://github.com/rokwire/illinois-app/issues/3585).
 
 ## [5.0.52] - 2023-08-22
 ### Fixed

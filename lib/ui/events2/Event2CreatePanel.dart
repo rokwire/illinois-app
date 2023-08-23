@@ -1637,6 +1637,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     return ((startDateTimeUtc != null) && (endDateTimeUtc != null)) ? endDateTimeUtc.isBefore(startDateTimeUtc) : false;
   }
 
+  bool get _isStartBeforeEndDateTime {
+    DateTime? startDateTimeUtc = _startDateTimeUtc;
+    DateTime? endDateTimeUtc = _endDateTimeUtc;
+    return ((startDateTimeUtc != null) && (endDateTimeUtc != null)) ? startDateTimeUtc.isBefore(endDateTimeUtc) : false;
+  }
+
   List<String> _buildErrorList() {
     List<String> errorList = <String>[];
 
@@ -1644,11 +1650,26 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       errorList.add(Localization().getStringEx('panel.event2.create.status.missing.name', 'event name'));
     }
 
-    if (_startDate == null) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.date', 'date and time'));
+    if ((_startDate == null) && (_startTime == null)) {
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.start_datetime', 'start date and time'));
     }
-    else if (_isEndBeforeStartDateTime) {
-      errorList.add(Localization().getStringEx('panel.event2.create.status.invalid.date.pair', 'end before start'));
+    else if (_startDate == null) {
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.start_date', 'start date'));
+    }
+    else if (_startTime == null) {
+      errorList.add(Localization().getStringEx('panel.event2.create.status.missing.start_time', 'start time'));
+    }
+    
+    if ((_endDate != null) || (_endTime != null)) {
+      if (_endDate == null) {
+        errorList.add(Localization().getStringEx('panel.event2.create.status.missing.end_date', 'end date'));
+      }
+      else if (_endTime == null) {
+        errorList.add(Localization().getStringEx('panel.event2.create.status.missing.end_time', 'end time'));
+      }
+      else if (_isEndBeforeStartDateTime) {
+        errorList.add(Localization().getStringEx('panel.event2.create.status.invalid.date.pair', 'end before start'));
+      }
     }
 
     if (_eventType == null) {
@@ -1835,7 +1856,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   bool _canCreateEvent() => (
     _titleController.text.isNotEmpty &&
-    (_startDate != null) && !_isEndBeforeStartDateTime &&
+    (_startDate != null) && (_startTime != null) &&
+    (((_endDate == null) && (_endTime == null)) || ((_endDate != null) && (_endTime != null) && _isStartBeforeEndDateTime)) &&
     (_eventType != null) &&
     (!_inPersonEventType || _hasLocation) &&
     (!_onlineEventType || _hasOnlineDetails) &&
