@@ -1256,6 +1256,8 @@
 	"panel.event2.create.status.missing.survey_attendance_details": "attendance (required for survey)",
 	"panel.event2.create.status.invalid.heading": "Invalid: ",
 	"panel.event2.create.status.invalid.date.pair": "end precedеs start",
+	"panel.event2.create.status.invalid.online_url": "online URL",
+	"panel.event2.create.status.invalid.website_url": "website URL",
 	"panel.event2.create.message.succeeded.title": "Succeeded",
 	"panel.event2.create.message.succeeded.message": "Successfully created \"{{event_name}}\" event.",
   "panel.event2.update.message.succeeded.message": "Successfully updated \"{{event_name}}\" event.",
