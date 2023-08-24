@@ -76,7 +76,7 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
   // Sponsor
   
   Widget _buildSponsorSection() => Event2CreatePanel.buildSectionWidget(
-    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.sponsor.label.title', 'SPONSOR')),
+    heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.sponsorship_and_contacts.sponsor.label.title', 'EVENT HOST')),
     body: Event2CreatePanel.buildTextEditWidget(_sponsorController, keyboardType: TextInputType.text),
   );
 
