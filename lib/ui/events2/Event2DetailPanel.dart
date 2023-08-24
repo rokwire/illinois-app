@@ -578,7 +578,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         title: Localization().getStringEx('panel.event2.detail.button.login.register.title', 'Log In to Register'),
         onTap: _onLogIn,
         externalLink: false,
-        enabled: false,
         progress: _authLoading
     )] : null;
   }
