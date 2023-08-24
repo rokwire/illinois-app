@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.54] - 2023-08-24
 ### Changed
 - Hide "Renew" button in Mobile Access [#3634](https://github.com/rokwire/illinois-app/issues/3634).
 - Renamed Sponsor to Event Host [#3392](https://github.com/rokwire/illinois-app/issues/3392).
