@@ -488,21 +488,21 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
           title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
           hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
           textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
-          padding: EdgeInsets.only(left: 0, right: 8, top: 16, bottom: 16),
+          padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
           onTap: _onMapView,
         ),
         Visibility(visible: Auth2().account?.isCalendarAdmin ?? false, child:
           Event2ImageCommandButton('plus-circle',
             label: Localization().getStringEx('panel.events2.home.bar.button.create.title', 'Create'),
             hint: Localization().getStringEx('panel.events2.home.bar.button.create.hint', 'Tap to create event'),
-            contentPadding: EdgeInsets.only(left: 8, right: 8, top: 16, bottom: 16),
+            contentPadding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
             onTap: _onCreate
           ),
         ),
         Event2ImageCommandButton('search',
           label: Localization().getStringEx('panel.events2.home.bar.button.search.title', 'Search'),
           hint: Localization().getStringEx('panel.events2.home.bar.button.search.hint', 'Tap to search events'),
-          contentPadding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
+          contentPadding: EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
           onTap: _onSearch
         ),
       ])),
@@ -988,7 +988,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onSearch() {
     Analytics().logSelect(target: 'Search');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(searchContext: Event2SearchContext.List, userLocation: _currentLocation, eventSelector: widget.eventSelector)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(searchContext: Event2SearchContext.List, locationServicesStatus: _locationServicesStatus, userLocation: _currentLocation, eventSelector: widget.eventSelector)));
   }
 
   void _onCreate() {
@@ -998,7 +998,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
   void _onMapView() {
     Analytics().logSelect(target: 'Map View');
-    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapType.Events2);
+    NotificationService().notify(ExploreMapPanel.notifySelect, ExploreMapSearchEventsParam(''));
   }
 
   void _onEvent(Event2 event) {
