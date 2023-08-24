@@ -191,7 +191,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> {
       descriptionList.add(TextSpan(text: _searchText ?? '' , style: regularStyle,));
       descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
       descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.events.label.title', 'Events: ') , style: boldStyle,));
-      descriptionList.add(TextSpan(text: (_searchClient != null) ? '...' : ((_events != null) ? _events!.length.toString() : '-') , style: regularStyle,));
+      descriptionList.add(TextSpan(text: (_searchClient != null) ? '...' : (_totalEventsCount?.toString() ?? '-') , style: regularStyle,));
       descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
       
       return Container(decoration: _contentDescriptionDecoration, child:
