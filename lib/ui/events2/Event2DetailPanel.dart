@@ -566,6 +566,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     StringUtils.isNotEmpty(_event?.eventUrl) ? <Widget>[_buildButtonWidget(//TBD remove loading from here
       title: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
       hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+      externalLink: true,
       progress: _websiteLaunching,
       onTap: _onWebsiteButton,
     )] : null;
@@ -577,8 +578,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     return (_event?.registrationDetails?.type == Event2RegistrationType.internal) ? <Widget>[_buildButtonWidget(
         title: Localization().getStringEx('panel.event2.detail.button.login.register.title', 'Log In to Register'),
         onTap: _onLogIn,
-        externalLink: false,
-        enabled: false,
         progress: _authLoading
     )] : null;
   }
@@ -597,14 +596,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           return <Widget>[_buildButtonWidget(
               title: Localization().getStringEx('panel.event2.detail.button.unregister.title', 'Unregister'),
               onTap: _onUnregister,
-              externalLink: false,
               progress: _registrationLoading
           )];
         } else if (_event?.userRole == null){//Not registered yet
           return <Widget>[_buildButtonWidget(
               title: Localization().getStringEx('panel.event2.detail.button.register.title', 'Register'),
               onTap: _onRegister,
-              externalLink: false,
               progress: _registrationLoading,
           )];
         }
@@ -627,7 +624,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       return <Widget>[_hasSurveyResponse == false ? _buildButtonWidget(
           title: Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.title', 'Take Survey'),
           onTap: _onFollowUpSurvey,
-          externalLink: false,
       ) : _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.survey.button.follow_up_survey.completed.message', 'You have completed this event\'s survey'), 'check', maxLines: 2)];
     }
 
@@ -782,7 +778,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget _buildButtonWidget({String? title,
     String? hint,
     bool enabled = true,
-    bool externalLink = true,
+    bool externalLink = false,
     bool progress = false,
     void Function()? onTap,
   }) => StringUtils.isNotEmpty(title) ?
