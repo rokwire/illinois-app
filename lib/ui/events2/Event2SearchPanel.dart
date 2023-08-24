@@ -695,8 +695,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
       await _ensureUserLocation(prompt: true);
     }
     return Events2Query(
-      offset: offset,
-      limit: limit,
+      searchText: searchText,
       timeFilter: _timeFilter,
       customStartTimeUtc: _customStartTime?.toUtc(),
       customEndTimeUtc: _customEndTime?.toUtc(),
@@ -705,6 +704,8 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
       sortType: _sortType,
       sortOrder: Event2SortOrder.ascending,
       location: _userLocation,
+      offset: offset,
+      limit: limit,
     );
   } 
 
