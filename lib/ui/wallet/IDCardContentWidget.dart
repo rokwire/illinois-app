@@ -19,7 +19,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -43,7 +43,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 class IDCardContentWidget extends StatefulWidget {
   IDCardContentWidget();
@@ -447,6 +447,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               sprintf(Localization().getStringEx('widget.id_card.label.mobile_access.expires', 'Expires: %s'),
                   [StringUtils.ensureNotEmpty(expirationDateString, defaultValue: '---')]),
               style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.tiny'))),
+      /*
       Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: RoundedButton(
@@ -456,7 +457,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               backgroundColor: Colors.white,
               contentWeight: 0.0,
               borderColor: Styles().colors!.fillColorSecondary,
-              onTap: _onTapRenewMobileAccessButton)),
+              onTap: _onTapRenewMobileAccessButton)),*/
     ]);
   }
 
@@ -503,6 +504,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     //TBD: DD - implement request
   }
 
+  /*
   void _onTapRenewMobileAccessButton() {
     Analytics().logSelect(target: 'Renew Mobile Access');
     AppAlert.showCustomDialog(
@@ -606,7 +608,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       }
     }
     return false;
-  }
+  }*/
 
   void _onTapMobileAccessPermissions() {
     Analytics().logSelect(target: 'Mobile Access Permissions');
