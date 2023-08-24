@@ -1317,7 +1317,7 @@
     "panel.event2.attributes.filters.time_range.error.end_before_start.message": "End time must be after start time.",
 
     "panel.event2.setup.sponsorship_and_contacts.header.title": "Event Host Details",
-    "panel.event2.setup.sponsorship_and_contacts.sponsor.label.title": "SPONSOR",
+    "panel.event2.setup.sponsorship_and_contacts.sponsor.label.title": "EVENT HOST",
     "panel.event2.setup.sponsorship_and_contacts.speaker.label.title": "SPEAKER",
     "panel.event2.setup.sponsorship_and_contacts.contacts.label.title": "CONTACTS",
     "panel.event2.setup.sponsorship_and_contacts.contacts.button.create.title": "Create",
