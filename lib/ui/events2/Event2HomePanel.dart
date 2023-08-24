@@ -399,7 +399,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
       _onAppLivecycleStateChanged(param);
     }
     else if (name == Auth2.notifyLoginChanged) {
-      setStateIfMounted(() { });
+      _refresh();
     }
     else if (name == FlexUI.notifyChanged) {
       _currentLocation = null;
