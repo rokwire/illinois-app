@@ -876,58 +876,28 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
 
     if (StringUtils.isNotEmpty(_event2SearchText)) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
+      }
       descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.search.label.title', 'Search: ') , style: boldStyle,));
       descriptionList.add(TextSpan(text: _event2SearchText ?? '' , style: regularStyle,));
     }
-    else {
-      List<InlineSpan> filtersList = <InlineSpan>[];
-      String? timeDescription = (_event2TimeFilter != Event2TimeFilter.customRange) ?
-        event2TimeFilterToDisplayString(_event2TimeFilter) :
-        event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: _event2CustomStartTime, customEndTime: _event2CustomEndTime);
-      
-      if (timeDescription != null) {
-        if (filtersList.isNotEmpty) {
-          filtersList.add(TextSpan(text: ", " , style: regularStyle,));
-        }
-        filtersList.add(TextSpan(text: timeDescription, style: regularStyle,),);
-      }
 
-      for (Event2TypeFilter type in _event2Types) {
-        if (filtersList.isNotEmpty) {
-          filtersList.add(TextSpan(text: ", " , style: regularStyle,));
-        }
-        filtersList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
+    List<InlineSpan> filtersList = _buildEvents2FilterAttributes(boldStyle: boldStyle, regularStyle: regularStyle);
+    if (filtersList.isNotEmpty) {
+      if (descriptionList.isNotEmpty) {
+        descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
       }
-
-      ContentAttributes? contentAttributes = Events2().contentAttributes;
-      List<ContentAttribute>? attributes = contentAttributes?.attributes;
-      if (_event2Attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
-        for (ContentAttribute attribute in attributes) {
-          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_event2Attributes, complete: true);
-          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-            for (String attributeValue in displayAttributeValues) {
-              if (filtersList.isNotEmpty) {
-                filtersList.add(TextSpan(text: ", " , style: regularStyle,));
-              }
-              filtersList.add(TextSpan(text: attributeValue, style: regularStyle,),);
-            }
-          }
-        }
-      }
-
-      if (filtersList.isNotEmpty) {
-        descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
-        descriptionList.addAll(filtersList);
-      }
+      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.events2.home.attributes.filter.label.title', 'Filter: ') , style: boldStyle,));
+      descriptionList.addAll(filtersList);
     }
 
     if (descriptionList.isNotEmpty) {
-      int? locationsCount = _totalExploreLocations();
       descriptionList.add(TextSpan(text: '; ', style: regularStyle,),);
-      descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.locations.label.title', 'Locations: ') , style: boldStyle,));
-      descriptionList.add(TextSpan(text: _exploreProgress ? '...' : ((locationsCount != null) ? locationsCount.toString() : '-') , style: regularStyle,));
-      descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
     }
+    descriptionList.add(TextSpan(text: Localization().getStringEx('panel.explore.label.locations.label.title', 'Locations: ') , style: boldStyle,));
+    descriptionList.add(TextSpan(text: _exploreProgress ? '...' : (_totalExploreLocations()?.toString() ?? '-') , style: regularStyle,));
+    descriptionList.add(TextSpan(text: '.', style: regularStyle,),);
 
     if (descriptionList.isNotEmpty) {
       return Container(padding: EdgeInsets.only(left: 16, right: 16), child:
@@ -939,6 +909,45 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
     else {
       return Container();
     }
+  }
+
+  List<InlineSpan> _buildEvents2FilterAttributes({TextStyle? boldStyle, TextStyle? regularStyle}) {
+    List<InlineSpan> filtersList = <InlineSpan>[];
+    String? timeDescription = (_event2TimeFilter != Event2TimeFilter.customRange) ?
+      event2TimeFilterToDisplayString(_event2TimeFilter) :
+      event2TimeFilterDisplayInfo(Event2TimeFilter.customRange, customStartTime: _event2CustomStartTime, customEndTime: _event2CustomEndTime);
+    
+    if (timeDescription != null) {
+      if (filtersList.isNotEmpty) {
+        filtersList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      filtersList.add(TextSpan(text: timeDescription, style: regularStyle,),);
+    }
+
+    for (Event2TypeFilter type in _event2Types) {
+      if (filtersList.isNotEmpty) {
+        filtersList.add(TextSpan(text: ", " , style: regularStyle,));
+      }
+      filtersList.add(TextSpan(text: event2TypeFilterToDisplayString(type), style: regularStyle,),);
+    }
+
+    ContentAttributes? contentAttributes = Events2().contentAttributes;
+    List<ContentAttribute>? attributes = contentAttributes?.attributes;
+    if (_event2Attributes.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+      for (ContentAttribute attribute in attributes) {
+        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_event2Attributes, complete: true);
+        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+          for (String attributeValue in displayAttributeValues) {
+            if (filtersList.isNotEmpty) {
+              filtersList.add(TextSpan(text: ", " , style: regularStyle,));
+            }
+            filtersList.add(TextSpan(text: attributeValue, style: regularStyle,),);
+          }
+        }
+      }
+    }
+
+    return filtersList;
   }
 
   void _onEvent2Filters() {
@@ -958,7 +967,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
           _event2CustomEndTime = filterResult.customEndTime;
           _event2Types = filterResult.types ?? LinkedHashSet<Event2TypeFilter>();
           _event2Attributes = filterResult.attributes ?? <String, dynamic>{};
-          _event2SearchText = null;
         });
         
         Storage().events2Time = event2TimeFilterToString(_event2TimeFilter);
@@ -1003,11 +1011,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   void _onEvent2Search() {
     Analytics().logSelect(target: 'Search');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2SearchPanel(searchText: _event2SearchText, searchContext: Event2SearchContext.Map, userLocation: _currentLocation))).then((result) {
-      if ((result is String) && (result.isNotEmpty)) {
-        setStateIfMounted(() {
-          _event2SearchText = result;
-        });
-        _initExplores();
+      if (result is String) {
+        String? event2SearchText = result.isNotEmpty ? result : null;
+        if (_event2SearchText != event2SearchText) {
+          setStateIfMounted(() {
+            _event2SearchText = event2SearchText;
+          });
+          _initExplores();
+        }
       }
     });
   }
@@ -1667,24 +1678,18 @@ class _ExploreMapPanelState extends State<ExploreMapPanel>
   } 
 
   Future<Events2Query> _event2QueryParam() async {
-    if (StringUtils.isNotEmpty(_event2SearchText)) {
-      return Events2Query(
-        searchText: _event2SearchText,
-      );
+    if (_event2Types.contains(Event2TypeFilter.nearby)) {
+      await _ensureCurrentLocation();
     }
-    else {
-      if (_event2Types.contains(Event2TypeFilter.nearby)) {
-        await _ensureCurrentLocation();
-      }
-      return Events2Query(
-        timeFilter: _event2TimeFilter,
-        customStartTimeUtc: _event2CustomStartTime?.toUtc(),
-        customEndTimeUtc: _event2CustomEndTime?.toUtc(),
-        types: _event2Types,
-        attributes: _event2Attributes,
-        location: _currentLocation,
-      );
-    }
+    return Events2Query(
+      searchText: _event2SearchText,
+      timeFilter: _event2TimeFilter,
+      customStartTimeUtc: _event2CustomStartTime?.toUtc(),
+      customEndTimeUtc: _event2CustomEndTime?.toUtc(),
+      types: _event2Types,
+      attributes: _event2Attributes,
+      location: _currentLocation,
+    );
   } 
 
   // Content Data
