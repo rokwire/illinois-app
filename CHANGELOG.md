@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Hide "Renew" button in Mobile Access [#3634](https://github.com/rokwire/illinois-app/issues/3634).
+- Renamed Sponsor to Event Host [#3392](https://github.com/rokwire/illinois-app/issues/3392).
 ### Fixed
 - Fixed total number of events in Event2SearchPanel [#3633](https://github.com/rokwire/illinois-app/issues/3633).
 
