@@ -255,11 +255,8 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       Row(children: [
         Flexible(flex: 3, child:
           Row( crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(padding: EdgeInsets.only(right: 2),
-              child: Event2CreatePanel.buildSectionRequiredWidget(),
-            ),
             Expanded( child:
-              Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'How many hours after the event ends before sending this survey to attendees?'), maxLines: null)
+              Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.hours.title', 'How many hours after the event ends before sending this survey to attendees?'), required: true)
             )
           ]),
         ),

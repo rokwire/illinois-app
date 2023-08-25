@@ -1762,7 +1762,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapCreateEvent(){
     Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
     // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel( eventSelector: GroupEventSelector(GroupEventData(group: _group), showCustomButton: false))));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel( eventSelector: GroupEventSelector(GroupEventData(group: _group), showCustomButton: false, padding: EdgeInsets.only(top: 16)))));
   }
 
   void _onTapBrowseEvents(){
@@ -1913,9 +1913,13 @@ class _OfficerCard extends StatelessWidget {
 
 class GroupEventSelector extends Event2Selector{
   final bool showCustomButton;
+  final EdgeInsetsGeometry padding;
   GroupEventData data;
 
-  GroupEventSelector(this.data, {this.showCustomButton = true}) : super(data);
+  GroupEventSelector(this.data, {
+    this.showCustomButton = true,
+    this.padding = const EdgeInsets.symmetric(vertical: 10),
+  }) : super(data);
 
   @override
   void init(State<StatefulWidget> state) {
@@ -1935,7 +1939,7 @@ class GroupEventSelector extends Event2Selector{
   Widget? buildWidget(State<StatefulWidget> state) {
     _updateDataFromState(state);
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 10),
+        padding: padding,
         child: Column(
           children: [
             Visibility( visible: showCustomButton,
