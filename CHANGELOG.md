@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Create event panel UI polish and improvements [#3585](https://github.com/rokwire/illinois-app/issues/3585).
-- Use better ratio images for Android splash screen.
+- Use better ratio images for Android splash screen [#3307](https://github.com/rokwire/illinois-app/issues/3307).
 
 ## [5.0.54] - 2023-08-24
 ### Changed
