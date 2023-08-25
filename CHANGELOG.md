@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.55] - 2023-08-25
 ### Changed
 - Create event panel UI polish and improvements [#3585](https://github.com/rokwire/illinois-app/issues/3585).
 - Use better ratio images for Android splash screen [#3307](https://github.com/rokwire/illinois-app/issues/3307).
