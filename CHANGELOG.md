@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added Pinch Zoom support for ModalImagePanel [#3305](https://github.com/rokwire/illinois-app/issues/3305).
 - Hook up "Request" button in Mobile access [#3641](https://github.com/rokwire/illinois-app/issues/3641).
+### Fixed
+- Do not show "View on map" command if laundry room has no location data [#3299](https://github.com/rokwire/illinois-app/issues/3299).
 
 ## [5.0.54] - 2023-08-24
 ### Changed
