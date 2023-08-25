@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use better ratio images for Android splash screen [#3307](https://github.com/rokwire/illinois-app/issues/3307).
 ### Added
 - Added Pinch Zoom support for ModalImagePanel [#3305](https://github.com/rokwire/illinois-app/issues/3305).
+- Hook up "Request" button in Mobile access [#3641](https://github.com/rokwire/illinois-app/issues/3641).
 
 ## [5.0.54] - 2023-08-24
 ### Changed
