@@ -77,6 +77,8 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   List<MobileIdCredential>? _mobileIdCredentials;
   PageController? _mobileAccessPageController;
 
+  bool _requestingDeviceRegistration = false;
+
   @override
   void initState() {
     super.initState();
@@ -480,6 +482,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               backgroundColor: Colors.white,
               contentWeight: 0.0,
               borderColor: Styles().colors!.fillColorSecondary,
+              progress: _requestingDeviceRegistration,
               onTap: _onTapRequestMobileAccessButton)),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 50),
@@ -500,8 +503,25 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   }
 
   void _onTapRequestMobileAccessButton() {
+    if (_requestingDeviceRegistration) {
+      return;
+    }
     Analytics().logSelect(target: 'Request Mobile Access');
-    //TBD: DD - implement request
+    setStateIfMounted(() {
+      _requestingDeviceRegistration = true;
+    });
+    MobileAccess().requestDeviceRegistration().then((error) {
+      late String msg;
+      if (error != null) {
+        msg = _registrationErrorToString(error)!;
+      } else {
+        msg = Localization().getStringEx('key9', 'Successfully initiated device registration.');
+      }
+      setStateIfMounted(() {
+        _requestingDeviceRegistration = false;
+      });
+      AppAlert.showDialogResult(context, msg);
+    });
   }
 
   /*
@@ -651,6 +671,37 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   bool get _hasMobileAccessKeys => ((_mobileAccessKeys != null) && _mobileAccessKeys!.isNotEmpty);
 
   bool get _hasMobileIdentityCredentials => CollectionUtils.isNotEmpty(_mobileIdCredentials);
+
+  static String? _registrationErrorToString(MobileAccessRequestDeviceRegistrationError? error) {
+    switch (error) {
+      case MobileAccessRequestDeviceRegistrationError.not_using_bb:
+        return Localization()
+            .getStringEx('widget.id_card.mobile_access.request_register_device.error.not_using_bb', 'You are not allowed to request mobile access.');
+      case MobileAccessRequestDeviceRegistrationError.icard_not_allowed:
+        return Localization()
+            .getStringEx('widget.id_card.mobile_access.request_register_device.error.icard_not_allowed', 'You are not a member of a required group.');
+      case MobileAccessRequestDeviceRegistrationError.device_already_registered:
+        return Localization()
+            .getStringEx('widget.id_card.mobile_access.request_register_device.error.device_already_registered', 'Your device had already been registered.');
+      case MobileAccessRequestDeviceRegistrationError.no_mobile_credential:
+        return Localization()
+            .getStringEx('widget.id_card.mobile_access.request_register_device.error.no_mobile_credential', 'No mobile identity credential available.');
+      case MobileAccessRequestDeviceRegistrationError.no_pending_invitation:
+        return Localization()
+            .getStringEx('widget.id_card.mobile_access.request_register_device.error.no_pending_invitation', 'No mobile identity invitation available.');
+      case MobileAccessRequestDeviceRegistrationError.no_invitation_code:
+        return Localization()
+            .getStringEx('widget.id_card.mobile_access.request_register_device.error.no_invitation_code', 'No mobile identity invitation code available.');
+      case MobileAccessRequestDeviceRegistrationError.invitation_code_expired:
+        return Localization()
+            .getStringEx('widget.id_card.mobile_access.request_register_device.error.invitation_code_expired', 'Invitation code has been expired.');
+      case MobileAccessRequestDeviceRegistrationError.registration_initiation_failed:
+        return Localization().getStringEx(
+            'widget.id_card.mobile_access.request_register_device.error.registration_initiation_failed', 'Failed to initiate device registration.');
+      default:
+        return null;
+    }
+  }
 }
 
 
