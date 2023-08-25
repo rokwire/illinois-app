@@ -15,6 +15,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart' as rokwire;
 import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -117,6 +118,7 @@ class Auth2 extends rokwire.Auth2 {
     }
     else if (state == AppLifecycleState.resumed) {
       //TMP: _convertFile('student.guide.import.json', 'Illinois_Student_Guide_Final.json');
+      //Log.d("UIUC Token: ${JsonUtils.encode(_uiucToken?.toJson())}", lineLength: 512);
 
       _refreshAuthCardIfNeeded();
 
@@ -289,6 +291,7 @@ class Auth2 extends rokwire.Auth2 {
     if ((authCard != null) && (authCard != _authCard)) {
       _authCard = authCard;
       await _saveAuthCardStringToCache(authCardString);
+      Log.d('Auth Card Refreshed');
       NotificationService().notify(notifyCardChanged);
     }
     return authCard;
