@@ -1689,15 +1689,20 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     if (_eventType == null) {
       missingList.add(Localization().getStringEx('panel.event2.create.status.missing.event_type', 'event type'));
     }
-    else if (_inPersonEventType && !_hasLocation) {
-      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.location', 'location coordinates'));
+    else {
+      if (_inPersonEventType && !_hasLocation) {
+        missingList.add(Localization().getStringEx('panel.event2.create.status.missing.location', 'location coordinates'));
+      }
+      if (_onlineEventType) {
+        if (!_hasOnlineDetails) {
+          missingList.add(Localization().getStringEx('panel.event2.create.status.missing.online_url', 'online URL'));
+        }
+        else if (!_hasValidOnlineDetails) {
+          invalidList.add(Localization().getStringEx('panel.event2.create.status.invalid.online_url', 'online URL'));
+        }
+      }
     }
-    else if (_onlineEventType && !_hasOnlineDetails) {
-      missingList.add(Localization().getStringEx('panel.event2.create.status.missing.online_url', 'online URL'));
-    }
-    else if (_onlineEventType && !_hasValidOnlineDetails) {
-      invalidList.add(Localization().getStringEx('panel.event2.create.status.invalid.online_url', 'online URL'));
-    }
+    
 
     if ((_free == false) && _costController.text.isEmpty) {
       missingList.add(Localization().getStringEx('panel.event2.create.status.missing.cost_description', 'cost description'));
