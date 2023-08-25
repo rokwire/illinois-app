@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Survey.dart';
+import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -167,8 +168,18 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildInnerSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = innerSectionHeadingPadding }) =>
     buildSectionHeadingWidget(title, required: required, prefixImageKey: prefixImageKey, suffixImageKey: suffixImageKey, padding : padding);
 
-  static Widget buildSectionTitleWidget(String title, {int? maxLines}) =>
-    Text(title, style: headingTextStype, maxLines: maxLines);
+  static double get textScaleFactor {
+    BuildContext? context = App.instance?.currentContext;
+    return (context != null) ? MediaQuery.of(context).textScaleFactor : 1.0;
+  }
+
+  static Widget buildSectionTitleWidget(String title, { bool required = false }) =>
+    RichText(textScaleFactor: textScaleFactor, text:
+      TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
+        TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+      ] : null),
+    );
+
 
   static Widget buildSectionSubTitleWidget(String subTitle) =>
     Text(subTitle, style: subTitleTextStype);
@@ -209,22 +220,11 @@ class Event2CreatePanel extends StatefulWidget {
     bool expanded = false,
     void Function()? onToggleExpanded,
     EdgeInsetsGeometry padding = sectionHeadingContentPadding
-  }) {
-    List<Widget> wrapList = <Widget>[
-      buildSectionTitleWidget(title),
-    ];
-
-    if (required) {
-      wrapList.add(Padding(padding: EdgeInsets.only(left: 2), child:
-        buildSectionRequiredWidget(), 
-      ));
-    }
-
-    return InkWell(onTap: onToggleExpanded, child:
+  }) => InkWell(onTap: onToggleExpanded, child:
       Padding(padding: padding, child:
         Row(children: [
           Expanded(child:
-            Wrap(children: wrapList),
+            buildSectionTitleWidget(title, required: required),
           ),
           Padding(padding: EdgeInsets.only(left: 8), child:
             Styles().images?.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
@@ -232,7 +232,6 @@ class Event2CreatePanel extends StatefulWidget {
         ],),
       ),
     );
-  }
 
   // Sections / Button Section
 
@@ -257,26 +256,14 @@ class Event2CreatePanel extends StatefulWidget {
     );
   }
 
-  static Widget buildButtonSectionHeadingWidget({String? title, String? subTitle, bool required = false, void Function()? onTap, EdgeInsetsGeometry? padding }) {
-
-    List<Widget> wrapList = <Widget>[];
-
-    if (title != null) {
-      wrapList.add(buildSectionTitleWidget(title));
-    }
-
-    if (required) {
-      wrapList.add(Padding(padding: EdgeInsets.only(left: 2), child:
-        buildSectionRequiredWidget(), 
-      ));
-    }
+  static Widget buildButtonSectionHeadingWidget({required String title, String? subTitle, bool required = false, void Function()? onTap, EdgeInsetsGeometry? padding }) {
 
     Widget leftWidget = (subTitle != null) ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Wrap(children: wrapList),
+      buildSectionTitleWidget(title, required: required),
       Padding(padding: EdgeInsets.only(top: 2), child:
         buildSectionSubTitleWidget(subTitle),
       )
-    ],) : Wrap(children: wrapList);
+    ],) : buildSectionTitleWidget(title, required: required);
 
     EdgeInsetsGeometry appliedPadding = padding ?? ((subTitle != null) ?
       const EdgeInsets.symmetric(horizontal: 16, vertical: 11) :
@@ -773,7 +760,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       semanticsDateLabel: Localization().getStringEx("panel.create_event.date_time.start_date.title", "START DATE"),
       semanticsTimeLabel: Localization().getStringEx("panel.create_event.date_time.start_time.title",'START TIME'),
       dateLabel: Localization().getStringEx("panel.create_event.date_time.start_date.title", "START DATE"),
+      dateRequired: true,
       timeLabel: Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
+      timeRequired: true,
     ),
     
     Padding(padding: EdgeInsets.only(bottom: 12)),
@@ -787,7 +776,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       semanticsDateLabel: Localization().getStringEx("panel.create_event.date_time.end_date.title", "END DATE"),
       semanticsTimeLabel: Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
       dateLabel: Localization().getStringEx("panel.create_event.date_time.end_date.title", "END DATE"),
+      dateRequired: (_endDate != null) || (_endTime != null),
       timeLabel: Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
+      timeRequired: (_endDate != null) || (_endTime != null),
     ),
     
     //Padding(padding: EdgeInsets.only(bottom: 12)),
@@ -800,11 +791,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   Widget _buildTimeZoneDropdown(){
     return Semantics(container: true, child:
       Row(children: <Widget>[
-        Expanded(flex: 3, child:
-          Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx("panel.create_event.date_time.time_zone.title", "TIME ZONE")),
+        Expanded(flex: 4, child:
+          Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx("panel.create_event.date_time.time_zone.title", "TIME ZONE"), required: true),
         ),
         Container(width: 16,),
-        Expanded(flex: 7, child:
+        Expanded(flex: 6, child:
           Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
@@ -855,7 +846,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     void Function()? onTime,
     bool hasTime = true,
     String? dateLabel,
+    bool dateRequired = false,
     String? timeLabel,
+    bool timeRequired = false,
     String? semanticsDateLabel,
     String? semanticsTimeLabel,
   }) {
@@ -865,7 +858,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.only(bottom: 4), child:
               Row(children: <Widget>[
-                Event2CreatePanel.buildSectionTitleWidget(dateLabel ?? ''),
+                Event2CreatePanel.buildSectionTitleWidget(dateLabel ?? '', required: dateRequired),
               ],),
             ),
             _buildDropdownButton(label: (date != null) ? DateFormat("EEE, MMM dd, yyyy").format(date) : "-", onTap: onDate,)
@@ -877,11 +870,11 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     if (hasTime) {
       contentList.add(Expanded(flex: 1, child:
         Padding(padding: EdgeInsets.only(left: 4), child:
-          Semantics(label:semanticsTimeLabel, button: true, excludeSemantics: true, child:
+          Semantics(label: semanticsTimeLabel, button: true, excludeSemantics: true, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(bottom: 4), child:
                 Row(children: <Widget>[
-                  Text(timeLabel ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Event2CreatePanel.headingTextStype),
+                  Event2CreatePanel.buildSectionTitleWidget(timeLabel ?? '', required: timeRequired),
                 ],),
               ),
               _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,)
@@ -1031,6 +1024,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       _buildEventTypeDropdown(),
     ];
 
+    if ((_eventType == Event2Type.online) || (_eventType == Event2Type.hybrid)) {
+      contentList.addAll(<Widget>[
+        Padding(padding: Event2CreatePanel.innerSectionPadding),
+        _buildOnlineUrlInnerSection(),
+        _buildOnlineMeetingIdInnerSection(),
+        _buildOnlinePasscodeInnerSection(),
+      ]);
+    }
+
     if ((_eventType == Event2Type.inPerson) || (_eventType == Event2Type.hybrid)) {
       contentList.addAll(<Widget>[
         Padding(padding: Event2CreatePanel.innerSectionPadding),
@@ -1042,15 +1044,6 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       ]);
     }
 
-    if ((_eventType == Event2Type.online) || (_eventType == Event2Type.hybrid)) {
-      contentList.addAll(<Widget>[
-        Padding(padding: Event2CreatePanel.innerSectionPadding),
-        _buildOnlineUrlInnerSection(),
-        _buildOnlineMeetingIdInnerSection(),
-        _buildOnlinePasscodeInnerSection(),
-      ]);
-    }
-
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
 
@@ -1058,7 +1051,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     String? title = Localization().getStringEx("panel.event2.create.label.event_type.title", "EVENT TYPE");
     return Semantics(label: "$title, required", container: true, child:
       Row(children: <Widget>[
-        Expanded(flex: 3, child:
+        Expanded(flex: 4, child:
           RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
             TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: "", children: <InlineSpan>[
               TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
@@ -1066,7 +1059,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
           )
         ),
         Container(width: 16,),
-        Expanded(flex: 7, child:
+        Expanded(flex: 6, child:
           Container(decoration: Event2CreatePanel.dropdownButtonDecoration, child:
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
@@ -1201,7 +1194,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildCostDropdownSection() => Event2CreatePanel.buildDropdownSectionWidget(
     heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.create.section.cost.title', 'COST'),
-      required: true,
+      required: !_free,
       expanded: _costSectionExpanded,
       onToggleExpanded: _onToggleCostSection,
     ),
@@ -1244,6 +1237,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
               TextSpan(text: title, style: Event2CreatePanel.headingTextStype, children: <InlineSpan>[
                 TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
+                TextSpan(text: _free ? '' : ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
               ])
             )
           ),
