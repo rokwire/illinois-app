@@ -176,7 +176,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Canvas LMS', toggled: (Storage().debugUseCanvasLms == true), onTap: _onUseCanvasLms),
                 ToggleRibbonButton(label: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
                 ToggleRibbonButton(label: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
-                    
+                ToggleRibbonButton(label: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
+
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
                 Container(color: Colors.white, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16), child:
@@ -725,6 +726,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   void _onUseIdentityBb() {
     setState(() {
       Storage().debugUseIdentityBb = (Storage().debugUseIdentityBb != true);
+    });
+  }
+
+  void _onAutomaticCredentials() {
+    setState(() {
+      Storage().debugAutomaticCredentials = (Storage().debugAutomaticCredentials != true);
     });
   }
 

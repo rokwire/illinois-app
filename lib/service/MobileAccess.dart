@@ -64,7 +64,9 @@ class MobileAccess with Service implements NotificationsListener {
     _selectedOpenType = _openTypeFromString(Storage().mobileAccessOpenType) ?? MobileAccessOpenType.opened_app;
     _startSilently();
     _shouldScan();
-    _checkNeedsRegistration();
+    if (Storage().debugAutomaticCredentials == true) {
+      requestDeviceRegistration();
+    }
     await super.initService();
   }
 
@@ -249,62 +251,70 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   ///
+  /// Initiate device registration via Identity BB API
+  ///
   /// This method uses more prints for debug purposes.
   ///
-  void _checkNeedsRegistration() {
+  /// returns MobileAccessRequestDeviceRegistrationError if there is an error, null - otherwise
+  ///
+  Future<MobileAccessRequestDeviceRegistrationError?> requestDeviceRegistration() async {
     // 1. Check if debug setting is on
     if (Storage().debugUseIdentityBb != true) {
       _print('Use mobile icard native sdk implementation for registration flow.');
-      return;
+      return MobileAccessRequestDeviceRegistrationError.not_using_bb;
     }
     // 2. Check if user can have mobile card
     if (!_canHaveMobileIcard) {
-      _print('User cannot have mobile icard, so do not try to register device.');
-      return;
+      _print('User cannot have mobile icard (not signed in or not a member of a group), so do not try to register device.');
+      return MobileAccessRequestDeviceRegistrationError.icard_not_allowed;
     }
     // 3. Check if the device/endpoint is registered in the sdk
-    isEndpointRegistered().then((registered) {
-      // 4. Device/endpoint has already been registered - do nothing.
-      if (registered) {
-        _print('Device has already been registered - do not try to register it again.');
-        return;
-      }
-      // 5. Load mobile identity credential.
-      Identity().loadMobileCredential().then((mobileCredential) {
-        if (mobileCredential == null) {
-          _print('No mobile identity credential available.');
-          return;
-        }
-        UserInvitation? invitation = mobileCredential.lastPendingInvitation;
-        if (invitation == null) {
-          _print('No mobile identity invitation available.');
-          return;
-        }
-        String? invitationCode = invitation.invitationCode;
-        if (invitationCode == null) {
-          _print('There is no mobile identity invitation code.');
-          return;
-        }
-        DateTime? expirationDateUtc = invitation.expirationDateUtc;
-        // Allow registration if the expiration date is null or is after now
-        DateTime nowUtc = DateTime.now().toUtc();
-        if ((expirationDateUtc != null) && expirationDateUtc.isBefore(nowUtc)) {
-          _print('Mobile identity invitation has been expired.');
-          return;
-        }
-        // 6. Register endpoint / device
-        registerEndpoint(invitationCode).then((registrationInitiated) {
-          late String resultMsg;
-          if (registrationInitiated == true) {
-            resultMsg = 'Mobile identity registration initiated successfully.';
-            _shouldScan();
-          } else {
-            resultMsg = 'Failed to initiate mobile identity registration';
-          }
-          _print(resultMsg);
-        });
-      });
-    });
+    bool registered = await isEndpointRegistered();
+    if (registered) {
+      _print('Device has already been registered - do not try to register it again.');
+      return MobileAccessRequestDeviceRegistrationError.device_already_registered;
+    }
+
+    // 4. Load mobile credential
+    MobileCredential? mobileCredential = await Identity().loadMobileCredential();
+    if (mobileCredential == null) {
+      _print('No mobile identity credential available.');
+      return MobileAccessRequestDeviceRegistrationError.no_mobile_credential;
+    }
+
+    // 5. Get last pending invitation
+    UserInvitation? invitation = mobileCredential.lastPendingInvitation;
+    if (invitation == null) {
+      _print('No mobile identity invitation available.');
+      return MobileAccessRequestDeviceRegistrationError.no_pending_invitation;
+    }
+
+    // 6. Get the invitation code from the last pending invitation
+    String? invitationCode = invitation.invitationCode;
+    if (invitationCode == null) {
+      _print('There is no mobile identity invitation code.');
+      return MobileAccessRequestDeviceRegistrationError.no_invitation_code;
+    }
+
+    // 7. Allow registration if the expiration date is null or is after now
+    DateTime? expirationDateUtc = invitation.expirationDateUtc;
+    DateTime nowUtc = DateTime.now().toUtc();
+    if ((expirationDateUtc != null) && expirationDateUtc.isBefore(nowUtc)) {
+      _print('Mobile identity invitation has been expired.');
+      return MobileAccessRequestDeviceRegistrationError.invitation_code_expired;
+    }
+
+    // 8. Initiate endpoint registration
+    bool? registrationInitiated = await registerEndpoint(invitationCode);
+    if (registrationInitiated == true) {
+      _print('Mobile identity registration initiated successfully.');
+      _shouldScan();
+      return null;
+    } else {
+      // result = Localization().getStringEx('key8', 'Failed to initiate device registration.');
+      _print('Failed to initiate mobile identity registration');
+      return MobileAccessRequestDeviceRegistrationError.registration_initiation_failed;
+    }
   }
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
@@ -435,20 +445,10 @@ class MobileAccess with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
       _shouldScan();
-      _checkNeedsRegistration();
     } else if (name == FlexUI.notifyChanged) {
       _shouldScan();
-      _checkNeedsRegistration();
     } else if (name == AppLivecycle.notifyStateChanged) {
-      AppLifecycleState? state = (param is AppLifecycleState) ? param : null;
       _shouldScan();
-      if (state == AppLifecycleState.resumed) {
-        _checkNeedsRegistration();
-      }
-    } else if (name == Storage.notifySettingChanged) {
-      if (param == Storage.debugUseIdentityBbKey) {
-        _checkNeedsRegistration();
-      }
     }
   }
 
@@ -462,3 +462,14 @@ class MobileAccess with Service implements NotificationsListener {
 enum MobileAccessBleRssiSensitivity { high, normal, low }
 
 enum MobileAccessOpenType { opened_app, always }
+
+enum MobileAccessRequestDeviceRegistrationError {
+  not_using_bb,
+  icard_not_allowed,
+  device_already_registered,
+  no_mobile_credential,
+  no_pending_invitation,
+  no_invitation_code,
+  invitation_code_expired,
+  registration_initiation_failed
+}
