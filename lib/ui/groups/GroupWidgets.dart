@@ -1926,6 +1926,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
 
   @override
   Widget build(BuildContext context) {
+    String selectedMembers = selectedMembersText;
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1939,12 +1940,14 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
               )
             ],
           ),
-          GestureDetector(
-            onTap: _onTapEdit,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text(selectedMembersText, style: Styles().textStyles?.getTextStyle("widget.group.members.selected_entry"),),
-            )
+          Visibility(visible: selectedMembers.isNotEmpty, child: 
+            GestureDetector(
+              onTap: _onTapEdit,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text(selectedMembers, style: Styles().textStyles?.getTextStyle("widget.group.members.selected_entry"),),
+              )
+            ),
           ),
           Visibility(
             visible: _showChangeButton,
