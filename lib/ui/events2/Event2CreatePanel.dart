@@ -1522,7 +1522,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildVisibilitySection() {
     String title = Localization().getStringEx('panel.event2.create.label.visibility.title', 'EVENT VISIBILITY');
-    return Padding(padding: Event2CreatePanel.sectionPadding, child:
+    return Padding(padding: EdgeInsets.zero, child: // Event2CreatePanel.sectionPadding - the last section does not add padding at the bottom
       Semantics(container: true, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Expanded(child:
@@ -1608,17 +1608,12 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   // Create Event
 
-  Widget _buildCreateEventSection() {
-    List<Widget> contentList = <Widget>[
+  Widget _buildCreateEventSection() => Padding(padding: Event2CreatePanel.sectionPadding, child:
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      _errorMap.isNotEmpty ? _buildCreateErrorStatus() : Padding(padding: Event2CreatePanel.sectionPadding),
       _buildCreateEventButton(),
-    ];
-    if (_errorMap.isNotEmpty) {
-      contentList.add(_buildCreateErrorStatus());
-    }
-    return Padding(padding: Event2CreatePanel.sectionPadding, child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList, )
-    );
-  }
+    ], )
+  );
 
   Widget _buildCreateEventButton() {
     
@@ -1773,7 +1768,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       descriptionList.add(TextSpan(text: "." , style: regularStyle,));
     }
 
-    return Padding(padding: EdgeInsets.only(top: 12), child:
+    return Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
       Row(children: [ Expanded(child:
         RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
       ),],),
