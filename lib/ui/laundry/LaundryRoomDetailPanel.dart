@@ -109,7 +109,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   }
 
   Widget _buildLocationWidget() {
-    return Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+    return (widget.room.location?.isLocationCoordinateValid == true) ? Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
       Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
       Expanded(
           child: GestureDetector(
@@ -123,7 +123,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
                       padding: EdgeInsets.only(left: 10, right: 24),
                       child: Text(Localization().getStringEx('panel.laundry_detail.button.view_on_map.title', 'View on map'),
                           style: Styles().textStyles?.getTextStyle("panel.laundry_room_detail.map_button.title.regular.underline"))))))
-    ]);
+    ]) : Container();
   }
 
   Widget _buildReportIssueWidget() {
