@@ -31,6 +31,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
+import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/survey.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -280,10 +281,28 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
           padding: const EdgeInsets.only(top: 8),
           child: Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.preview.subtitle', 'Optional: Try out the survey by filling out the sample below.')),
         ),
-        SurveyWidget(survey: _displaySurvey, controller: _surveyController, summarizeResultRules: true),
+        SurveyWidget(survey: _displaySurvey, controller: _surveyController, summarizeResultRules: true, summarizeResultRulesWidget: _buildPreviewContinueWidget()),
       ],
     )
   );
+
+  Widget _buildPreviewContinueWidget() {
+    return PopupMessage(
+      title: "Sample Follow-Up Survey",
+      messageWidget: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 24, bottom: 8),
+        child: Text(
+          Localization().getStringEx('panel.event2.setup.survey.preview.continue.message',
+            'Thank you for testing your event follow-up survey. At this point, the survey would be submitted, and the results would be available to view under the event admin settings.'),
+          style: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
+        )
+      ),
+      buttonTitle: Localization().getStringEx("dialog.ok.title", "OK"),
+      onTapButton: (context) {
+        Navigator.pop(context);
+      },
+    );
+  }
 
   // HeaderBar
 
