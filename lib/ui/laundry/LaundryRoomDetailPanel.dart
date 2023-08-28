@@ -109,7 +109,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   }
 
   Widget _buildLocationWidget() {
-    return (widget.room.location?.isLocationCoordinateValid == true) ? Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+    return _isLocationWidgetEnabled &&  (widget.room.location?.isLocationCoordinateValid == true) ? Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
       Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
       Expanded(
           child: GestureDetector(
@@ -283,6 +283,8 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
       }
     }
   }
+
+  bool get _isLocationWidgetEnabled => false; //[FEATURE] Remove "View on Map" from the laundry detail page #1674: "Laundry rooms do not need navigation"
 
   // NotificationsListener
 
