@@ -1379,7 +1379,7 @@
     "panel.event2.detail.attendance.event.capacity.label.title": "EVENT CAPACITY:",
     "panel.event2.detail.attendance.event.registrations.label.title": "TOTAL NUMBER OF REGISTRATIONS:",
     "panel.event2.detail.attendance.event.attendees.label.title": "TOTAL NUMBER OF ATTENDEES:",
-    "panel.event2.detail.attendance.attendees.drop_down.hint": "ATTENDEE LIST",
+    "panel.event2.detail.attendance.attendees.drop_down.hint": "REGISTRANTS",
     "panel.event2.detail.attendance.attendees.empty.text": "There are no users registered or attending for this event yet.",
     "panel.event2.detail.attendance.attendees.failed.text": "Failed to load attendees list.",
     "panel.event2.detail.attendance.manual.netid.label": "Net ID for manual attendance check:",

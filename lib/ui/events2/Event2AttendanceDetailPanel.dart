@@ -183,7 +183,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                         isExpanded: true,
                         style: Styles().textStyles?.getTextStyle('panel.create_event.dropdown_button.title.regular'),
                         hint: Event2CreatePanel.buildSectionTitleWidget(
-                            Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'ATTENDEE LIST')),
+                            Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'REGISTRANTS')),
                         items: null,
                         onChanged: null)))));
   }
