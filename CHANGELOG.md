@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Two new locale default analytics [#3648](https://github.com/rokwire/illinois-app/issues/3648).
 ### Changed
 -Hide Laundry location button even if it's location is valid [#1674](https://github.com/rokwire/illinois-app/issues/1674).
+-Rename Attendee List to Registrants in Event2AttendanceDetailPanel [#3647](https://github.com/rokwire/illinois-app/issues/3647).
 
 ## [5.0.55] - 2023-08-25
 ### Changed

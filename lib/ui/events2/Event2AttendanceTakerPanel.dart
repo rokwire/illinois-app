@@ -180,7 +180,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   }
 
   Widget _buildAttendeesListDropDownSection() => Event2CreatePanel.buildDropdownSectionWidget(
-    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'ATTENDEE LIST'),
+    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'REGISTRANTS'),
       expanded: _attendeesSectionExpanded,
       onToggleExpanded: _onToggleAttendeesListSection,
     ),
