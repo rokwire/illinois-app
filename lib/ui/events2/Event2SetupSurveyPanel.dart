@@ -274,7 +274,12 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Widget _buildSurveyPreviewSection() => Visibility(visible: _survey != null, child:
     Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),),
         Text(Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat')),
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.preview.subtitle', 'Optional: Try out the survey by filling out the sample below.')),
+        ),
         SurveyWidget(survey: _displaySurvey, controller: _surveyController, summarizeResultRules: true),
       ],
     )
