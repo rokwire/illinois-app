@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 -Hide Laundry location button even if it's location is valid [#1674](https://github.com/rokwire/illinois-app/issues/1674).
 -Rename Attendee List to Registrants in Event2AttendanceDetailPanel [#3647](https://github.com/rokwire/illinois-app/issues/3647).
+### Fixed
+- Groups load upcoming events [#3645](https://github.com/rokwire/illinois-app/issues/3645).
 
 ## [5.0.55] - 2023-08-25
 ### Changed
