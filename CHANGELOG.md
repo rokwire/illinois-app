@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -Rename Attendee List to Registrants in Event2AttendanceDetailPanel [#3647](https://github.com/rokwire/illinois-app/issues/3647).
 ### Fixed
 - Groups load upcoming events [#3645](https://github.com/rokwire/illinois-app/issues/3645).
+- Fixed typo. Rename Cineese to chinese [#3646](https://github.com/rokwire/illinois-app/issues/3646).
 
 ## [5.0.55] - 2023-08-25
 ### Changed
