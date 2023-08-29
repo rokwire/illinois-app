@@ -27,12 +27,14 @@ import 'package:http/http.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Identity.dart';
 import 'package:illinois/service/MobileAccess.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -77,7 +79,8 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   List<MobileIdCredential>? _mobileIdCredentials;
   PageController? _mobileAccessPageController;
 
-  bool _requestingDeviceRegistration = false;
+  bool _submittingDeviceRegistration = false;
+  bool _deleteMobileCredential = false;
 
   @override
   void initState() {
@@ -86,6 +89,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       Auth2.notifyCardChanged,
       FlexUI.notifyChanged,
       MobileAccess.notifyStartFinished,
+      AppLivecycle.notifyStateChanged,
     ]);
 
     MobileAccess().startIfNeeded();
@@ -166,33 +170,31 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     return null;
   }
 
-  Future<void> _loadMobileAccess() async {
+  Future<void> _loadMobileAccessDetails() async {
     if (_isIcardMobileAvailable) {
       _increaseMobileAccessLoadingProgress();
-      MobileAccess().getAvailableKeys().then((List<dynamic>? mobileAccessKeys) {
-        _mobileAccessKeys = mobileAccessKeys;
-        _decreaseMobileAccessLoadingProgress();
-        if (_hasMobileAccessKeys) {
-          _loadMobileIdCredentials();
+      Identity().loadStudentId().then((studentId) {
+        List<MobileIdCredential>? mobileCredentials = studentId?.mobileCredentials;
+        if (CollectionUtils.isNotEmpty(mobileCredentials)) {
+          _mobileIdCredentials = mobileCredentials;
+          MobileAccess().getAvailableKeys().then((accessKeys) {
+            List<dynamic>? mobileKeys = accessKeys;
+            if (CollectionUtils.isNotEmpty(mobileKeys)) {
+              _mobileAccessKeys = accessKeys;
+            } else if (!_hasDeleteTimeout) {
+              _deleteMobileCredential = true;
+            }
+            _decreaseMobileAccessLoadingProgress();
+          });
+        } else {
+          _mobileIdCredentials = null;
+          _mobileAccessKeys = null;
+          _decreaseMobileAccessLoadingProgress();
         }
       });
     } else {
       setStateIfMounted(() {
         _mobileAccessKeys = null;
-        _mobileIdCredentials = null;
-      });
-    }
-  }
-
-  Future<void> _loadMobileIdCredentials() async {
-    if (_isIcardMobileAvailable) {
-      _increaseMobileAccessLoadingProgress();
-      Identity().loadStudentId().then((studentId) {
-        _mobileIdCredentials = studentId?.mobileCredentials;
-        _decreaseMobileAccessLoadingProgress();
-      });
-    } else {
-      setStateIfMounted(() {
         _mobileIdCredentials = null;
       });
     }
@@ -217,6 +219,10 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     else if (name == MobileAccess.notifyStartFinished) {
       _checkIcarMobileAvailable();
       setStateIfMounted(() { });
+    } else if (name == AppLivecycle.notifyStateChanged) {
+      if ((param is AppLifecycleState) && (param == AppLifecycleState.resumed)) {
+        setStateIfMounted(() {});
+      }
     }
   }
   
@@ -476,14 +482,15 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: RoundedButton(
-              label: Localization().getStringEx('widget.id_card.button.mobile_access.request', 'Request'),
-              hint: Localization().getStringEx('widget.id_card.button.mobile_access.request.hint', ''),
+              label: _submitButtonLabel,
+              hint: _submitButtonHint,
               textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
+              enabled: _submitButtonEnabled,
               contentWeight: 0.0,
               borderColor: Styles().colors!.fillColorSecondary,
-              progress: _requestingDeviceRegistration,
-              onTap: _onTapRequestMobileAccessButton)),
+              progress: _submittingDeviceRegistration,
+              onTap: _onTapSubmitMobileAccessButton)),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 50),
           child: Text(
@@ -502,26 +509,37 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     return true;
   }
 
-  void _onTapRequestMobileAccessButton() {
-    if (_requestingDeviceRegistration) {
+  void _onTapSubmitMobileAccessButton() {
+    if (_submittingDeviceRegistration || !_submitButtonEnabled) {
       return;
     }
-    Analytics().logSelect(target: 'Request Mobile Access');
-    setStateIfMounted(() {
-      _requestingDeviceRegistration = true;
-    });
-    MobileAccess().requestDeviceRegistration().then((error) {
-      late String msg;
-      if (error != null) {
-        msg = _registrationErrorToString(error)!;
-      } else {
-        msg = Localization().getStringEx('key9', 'Successfully initiated device registration.');
-      }
-      setStateIfMounted(() {
-        _requestingDeviceRegistration = false;
+    Analytics().logSelect(target: _hasDeleteTimeout ? 'Download' : 'Request');
+    _setSubmittingDeviceRegistration(true);
+    if (_deleteMobileCredential) {
+      Identity().deleteMobileCredential().then((deleteInitiated) {
+        late String deleteMsg;
+        if (deleteInitiated) {
+          //TBD: move this timeout to config when all is confirmed as a flow.
+          Storage().mobileAccessDeleteTimeoutUtcInMillis = DateTime.now().add(Duration(minutes: 10)).toUtc().millisecondsSinceEpoch;
+          deleteMsg = Localization().getStringEx('widget.id_card.mobile_access.delete_credential.success.msg', 'Please, wait about 10 minutes until mobile access is available to download.');
+        } else {
+          deleteMsg = Localization().getStringEx('widget.id_card.mobile_access.delete_credential.failed.msg', 'Failed to request mobile access.');
+        }
+        _setSubmittingDeviceRegistration(false);
+        AppAlert.showDialogResult(context, deleteMsg);
       });
-      AppAlert.showDialogResult(context, msg);
-    });
+    } else {
+      MobileAccess().requestDeviceRegistration().then((error) {
+        late String requestMsg;
+        if (error != null) {
+          requestMsg = _registrationErrorToString(error)!;
+        } else {
+          requestMsg = Localization().getStringEx('widget.id_card.mobile_access.request_register_device.success.msg', 'Successfully initiated device registration.');
+        }
+        _setSubmittingDeviceRegistration(false);
+        AppAlert.showDialogResult(context, requestMsg);
+      });
+    }
   }
 
   /*
@@ -639,7 +657,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     bool isIcardMobileAvailable = FlexUI().isIcardMobileAvailable && MobileAccess().isStarted;
     if (_isIcardMobileAvailable != isIcardMobileAvailable) {
       _isIcardMobileAvailable = isIcardMobileAvailable;
-      _loadMobileAccess();
+      _loadMobileAccessDetails();
     }
   }
 
@@ -659,6 +677,12 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     return (_mobileAccessLoadingProgress > 0);
   }
 
+  void _setSubmittingDeviceRegistration(bool value) {
+    setStateIfMounted(() {
+      _submittingDeviceRegistration = value;
+    });
+  }
+
   String? get _userQRCodeContent {
     String? qrCodeContent = Auth2().authCard!.magTrack2;
     return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().authCard?.uin;
@@ -671,6 +695,35 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   bool get _hasMobileAccessKeys => ((_mobileAccessKeys != null) && _mobileAccessKeys!.isNotEmpty);
 
   bool get _hasMobileIdentityCredentials => CollectionUtils.isNotEmpty(_mobileIdCredentials);
+
+  bool get _submitButtonEnabled {
+    return !_hasDeleteTimeout || _deleteTimeoutPassed;
+  }
+
+  DateTime? get _deleteTimeoutUtc {
+    int? timeOutInMillis = Storage().mobileAccessDeleteTimeoutUtcInMillis;
+    return (timeOutInMillis != null) ? DateTime.fromMillisecondsSinceEpoch(timeOutInMillis, isUtc: true) : null;
+  }
+
+  bool get _hasDeleteTimeout {
+    return (_deleteTimeoutUtc != null);
+  }
+
+  bool get _deleteTimeoutPassed {
+    return _hasDeleteTimeout && _deleteTimeoutUtc!.isBefore(DateTime.now().toUtc());
+  }
+
+  String get _submitButtonLabel {
+    return _hasDeleteTimeout
+        ? Localization().getStringEx('widget.id_card.button.mobile_access.download', 'Download')
+        : Localization().getStringEx('widget.id_card.button.mobile_access.request', 'Request');
+  }
+
+  String get _submitButtonHint {
+    return _hasDeleteTimeout
+        ? Localization().getStringEx('widget.id_card.button.mobile_access.download.hint', '')
+        : Localization().getStringEx('widget.id_card.button.mobile_access.request.hint', '');
+  }
 
   static String? _registrationErrorToString(MobileAccessRequestDeviceRegistrationError? error) {
     switch (error) {

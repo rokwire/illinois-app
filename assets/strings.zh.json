@@ -3584,6 +3584,7 @@
 	"widget.id_card.label.mobile_access.my": "我的移動訪問：%s",
 	"widget.id_card.label.mobile_access.expires": "過期：%s",
 	"widget.id_card.button.mobile_access.request": "要求",
+	"widget.id_card.button.mobile_access.download": "下載",
 	"widget.id_card.button.mobile_access.renew": "更新",
 	"widget.id_card.label.mobile_access.i_card.not_available": "使用您的伊利尼 ID 訪問校園內的各種服務和建築。",
 	"widget.id_card.label.mobile_access.permissions": "設置移動訪問權限",
@@ -3599,6 +3600,9 @@
 	"widget.id_card.mobile_access.request_register_device.error.no_invitation_code": "No mobile identity invitation code available.",
 	"widget.id_card.mobile_access.request_register_device.error.invitation_code_expired": "Invitation code has been expired.",
 	"widget.id_card.mobile_access.request_register_device.error.registration_initiation_failed": "Failed to initiate device registration.",
+	"widget.id_card.mobile_access.request_register_device.success.msg": "Successfully initiated device registration.",
+	"widget.id_card.mobile_access.delete_credential.success.msg": "Please, wait about 10 minutes until mobile access is available to download.",
+	"widget.id_card.mobile_access.delete_credential.failed.msg": "Failed to request mobile access.",
 
 	"widget.bus_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",

@@ -3601,6 +3601,7 @@
     "widget.id_card.label.mobile_access.my": "My Mobile Access: %s",
     "widget.id_card.label.mobile_access.expires": "Expires: %s",
     "widget.id_card.button.mobile_access.request": "Request",
+    "widget.id_card.button.mobile_access.download": "Download",
     "widget.id_card.button.mobile_access.renew": "Renew",
     "widget.id_card.label.mobile_access.i_card.not_available": "Access various services and buildings on campus with your Illini ID",
     "widget.id_card.label.mobile_access.permissions": "Set mobile access permissions",
@@ -3616,6 +3617,9 @@
     "widget.id_card.mobile_access.request_register_device.error.no_invitation_code": "No mobile identity invitation code available.",
     "widget.id_card.mobile_access.request_register_device.error.invitation_code_expired": "Invitation code has been expired.",
     "widget.id_card.mobile_access.request_register_device.error.registration_initiation_failed": "Failed to initiate device registration.",
+    "widget.id_card.mobile_access.request_register_device.success.msg": "Successfully initiated device registration.",
+    "widget.id_card.mobile_access.delete_credential.success.msg": "Please, wait about 10 minutes until mobile access is available to download.",
+    "widget.id_card.mobile_access.delete_credential.failed.msg": "Failed to request mobile access.",
 
     "widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",

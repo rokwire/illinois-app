@@ -268,40 +268,40 @@ class MobileAccess with Service implements NotificationsListener {
       _print('User cannot have mobile icard (not signed in or not a member of a group), so do not try to register device.');
       return MobileAccessRequestDeviceRegistrationError.icard_not_allowed;
     }
-    // 3. Check if the device/endpoint is registered in the sdk
-    bool registered = await isEndpointRegistered();
-    if (registered) {
-      _print('Device has already been registered - do not try to register it again.');
-      return MobileAccessRequestDeviceRegistrationError.device_already_registered;
-    }
 
-    // 4. Load mobile credential
+    // 3. Load mobile credential
     MobileCredential? mobileCredential = await Identity().loadMobileCredential();
     if (mobileCredential == null) {
       _print('No mobile identity credential available.');
       return MobileAccessRequestDeviceRegistrationError.no_mobile_credential;
     }
 
-    // 5. Get last pending invitation
+    // 4. Get last pending invitation
     UserInvitation? invitation = mobileCredential.lastPendingInvitation;
     if (invitation == null) {
       _print('No mobile identity invitation available.');
       return MobileAccessRequestDeviceRegistrationError.no_pending_invitation;
     }
 
-    // 6. Get the invitation code from the last pending invitation
+    // 5. Get the invitation code from the last pending invitation
     String? invitationCode = invitation.invitationCode;
     if (invitationCode == null) {
       _print('There is no mobile identity invitation code.');
       return MobileAccessRequestDeviceRegistrationError.no_invitation_code;
     }
 
-    // 7. Allow registration if the expiration date is null or is after now
+    // 6. Allow registration if the expiration date is null or is after now
     DateTime? expirationDateUtc = invitation.expirationDateUtc;
     DateTime nowUtc = DateTime.now().toUtc();
     if ((expirationDateUtc != null) && expirationDateUtc.isBefore(nowUtc)) {
       _print('Mobile identity invitation has been expired.');
       return MobileAccessRequestDeviceRegistrationError.invitation_code_expired;
+    }
+    // 7. Check if the device/endpoint is registered in the sdk
+    bool registered = await isEndpointRegistered();
+    if (registered) {
+      _print('Device has already been registered - do not try to register it again.');
+      return MobileAccessRequestDeviceRegistrationError.device_already_registered;
     }
 
     // 8. Initiate endpoint registration
