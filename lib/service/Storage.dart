@@ -416,6 +416,10 @@ class Storage extends rokwire.Storage {
   String? get mobileAccessOpenType => getStringWithName(mobileAccessOpenTypeKey);
   set mobileAccessOpenType(String? value) => setStringWithName(mobileAccessOpenTypeKey, value);
 
+  static const String mobileAccessDeleteTimeoutInMillisKey = 'mobile_access_delete_timeout_millis';
+  int? get mobileAccessDeleteTimeoutUtcInMillis => getIntWithName(mobileAccessDeleteTimeoutInMillisKey);
+  set mobileAccessDeleteTimeoutUtcInMillis(int? value) => setIntWithName(mobileAccessDeleteTimeoutInMillisKey, value);
+
   // Events2
   static const String events2AttributesKey = 'events2_attributes';
   Map<String, dynamic>? get events2Attributes => JsonUtils.decodeMap(getStringWithName(events2AttributesKey));
