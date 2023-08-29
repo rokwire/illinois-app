@@ -345,16 +345,6 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                           }
                         : null))
           ]),
-          Padding(
-              padding: EdgeInsets.symmetric(vertical: 32),
-              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Padding(padding: EdgeInsets.only(right: 8.8), child: Styles().images?.getImage('info')),
-                Expanded(
-                    child: Text(
-                        Localization().getStringEx('panel.event2.detail.attendance.attendees.checkin.description',
-                            'To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.'),
-                        style: mainStyle))
-              ]))
         ])));
   }
 

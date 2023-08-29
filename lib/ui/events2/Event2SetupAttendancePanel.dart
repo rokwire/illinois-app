@@ -119,7 +119,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     hint: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.hint", ""),
     child: ToggleRibbonButton(
       label: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.title", "Scan Illini ID"),
-      description: Localization().getStringEx("panel.event2.setup.attendance.scan.toggle.description", "Does not require advance registration."),
       toggled: _scanningEnabled,
       onTap: _onTapScan,
       padding: EdgeInsets.zero,
@@ -161,7 +160,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     hint: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.hint", ""),
     child: ToggleRibbonButton(
       label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance check"),
-      description: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.description", "Requires advance registration."),
       toggled: _manualCheckEnabled,
       onTap: _onTapManual,
       padding: EdgeInsets.zero,
@@ -213,7 +211,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     body: Event2CreatePanel.buildTextEditWidget(_attendanceTakersController, keyboardType: TextInputType.text, maxLines: null),
     trailing: Column(children: [
       _buildAttendanceTakersHint(),
-      _buildAttendanceTakersInfo(),
     ]),
   );
 
@@ -222,17 +219,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
       Expanded(child:
         Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype,),
       )
-    ],),
-  );
-
-  Widget _buildAttendanceTakersInfo() => Padding(padding: EdgeInsets.only(top: 12), child:
-    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Styles().images?.getImage('info') ?? Container(),
-      Expanded(child:
-        Padding(padding: EdgeInsets.only(left: 6), child:
-          Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.info', 'To check in a specific attendee, the individual must be accounted for in your total number of registrants within the Illinois app. No personal attendee information may be entered as part of taking attendance in the Illinois app.'), style: _infoTextStype,)
-        ),
-      ),
     ],),
   );
 
