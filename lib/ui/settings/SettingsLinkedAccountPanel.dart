@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -6,6 +7,7 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
 
 class SettingsLinkedAccountPanel extends StatefulWidget{
   final Auth2Type? linkedAccount;
@@ -45,6 +47,13 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
 
   void _onTapDisconnect(Auth2Type? account){
     if(_isLoading != true) {//Disable while loading
+      SettingsDialog.show(context,
+        title: Localization().getStringEx("panel.settings.link.login_prompt.title", "Sign In Required"),
+        message: [ TextSpan(text: Localization().getStringEx("panel.settings.link.login_prompt.description", "For security, you must sign in again to confirm it's you before adding an alternate account.")), ],
+        continueTitle: Localization().getStringEx("panel.settings.link.login_prompt.confirm.title", "Sign In"),
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController) => _onTapDisconnectConfirmed(mode, progressController),
+      );
+
       _clearErrorMsg();
       setState(() {
         _isLoading = true;
@@ -63,6 +72,61 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
       }
     }
   }
+
+  //TODO: fix
+  // void _onLinkPhoneOrEmailReloginConfirmed(SettingsLoginPhoneOrEmailMode mode, OnContinueProgressController progressController) {
+  //   progressController(loading: true);
+  //   _linkVerifySignIn().then((bool? result) {
+  //     progressController(loading: false);
+  //     _popToMe();
+  //     if (result == true) {
+  //       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsLoginPhoneOrEmailPanel(mode: mode, link: true, onFinish: () {
+  //         _popToMe();
+  //       },)),);
+  //     }
+  //   });
+  // }
+  //
+  // Future<bool?> _linkVerifySignIn() async {
+  //   if (Auth2().isOidcLoggedIn) {
+  //     Auth2OidcAuthenticateResult? result = await Auth2().authenticateWithOidc();
+  //     return (result != null) ? (result == Auth2OidcAuthenticateResult.succeeded) : null;
+  //   }
+  //   else if (Auth2().isEmailLoggedIn) {
+  //     Completer<bool?> completer = Completer<bool?>();
+  //     Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
+  //         SettingsLoginEmailPanel(email: Auth2().account?.authType?.identifier, state: Auth2EmailAccountState.verified, onFinish: () {
+  //           completer.complete(true);
+  //         },)
+  //     ),).then((_) {
+  //       completer.complete(null);
+  //     });
+  //     return completer.future;
+  //   }
+  //   else if (Auth2().isPhoneLoggedIn) {
+  //     Completer<bool?> completer = Completer<bool?>();
+  //     Auth2().authenticateWithPhone(Auth2().account?.authType?.identifier).then((Auth2PhoneRequestCodeResult result) {
+  //       if (result == Auth2PhoneRequestCodeResult.succeeded) {
+  //         Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) =>
+  //             SettingsLoginPhoneConfirmPanel(phoneNumber: Auth2().account?.authType?.identifier, onFinish: () {
+  //               completer.complete(true);
+  //             },)
+  //         ),).then((_) {
+  //           completer.complete(null);
+  //         });
+  //       }
+  //       else {
+  //         AppAlert.showDialogResult(context, Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code. An unexpected error has occurred.")).then((_) {
+  //           completer.complete(null);
+  //         });
+  //       }
+  //     });
+  //     return completer.future;
+  //   }
+  //   else {
+  //     return null;
+  //   }
+  // }
 
   void _handleResult(bool? result){
     if (mounted) {
