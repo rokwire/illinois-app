@@ -123,7 +123,8 @@
 				"canvas_courses"                         : ["${config.settings.groups.canvas}"],
 				"medicine_courses"                       : ["${config.settings.groups.canvas}"],
 				"mtd_bus_pass"                           : ["${config.settings.groups.mtd_bus_pass}"],
-				"icard_mobile"                           : ["${config.settings.groups.icard_mobile}"]
+				"icard_mobile"                           : ["${config.settings.groups.icard_mobile}"],
+				"assistant"								  : ["${config.settings.groups.assistant}"]
 			},
 			"locations": {
 			},
