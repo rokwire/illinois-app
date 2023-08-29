@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Event Admin Required to Fill Out Survey [#3581](https://github.com/rokwire/illinois-app/issues/3581).
 - Updated en and zh string files [#3665](https://github.com/rokwire/illinois-app/issues/3665).
 - Remove unneeded descriptions form Attendance panel [#3661](https://github.com/rokwire/illinois-app/issues/3661).
+### Added
+- New Mobile Access flow for requesting credentials [#3651](https://github.com/rokwire/illinois-app/issues/3651).
 
 ## [5.0.56] - 2023-08-28
 ### Added
