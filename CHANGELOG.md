@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update mobile access model [#3679](https://github.com/rokwire/illinois-app/issues/3679).
+- To-Do item header title [#3677](https://github.com/rokwire/illinois-app/issues/3677).
 
 ## [5.0.57] - 2023-08-29
 ### Changed
