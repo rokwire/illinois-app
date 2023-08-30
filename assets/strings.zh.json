@@ -2245,6 +2245,7 @@
 	"panel.wellness.categories.manage.color.pick.cancel.button": "取消",
 	"panel.wellness.categories.manage.color.pick.select.button": "選擇",
 
+	"panel.wellness.todo.item.detail.header.title": "待辦事項列表項",
 	"panel.wellness.todo.item.add.label": "添加項目",
 	"panel.wellness.todo.item.name.field.label": "項目名",
 	"panel.wellness.todo.item.optional_fields.label": "可選字段",
