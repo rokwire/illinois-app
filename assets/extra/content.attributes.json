@@ -10,7 +10,7 @@
 			"widget": "dropdown",
 			"scope": ["events"],
 			"requirements" : {
-				"min-selected-count": 0,
+				"min-selected-count": 1,
 				"max-selected-count": 1
 			},
 			"values": [
@@ -43,25 +43,25 @@
 			"max-selected-count": 1
 		},
 		"values": [
-      { "label": "Baseball", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Men's Basketball", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Men's Cross Country", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Football", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Men's Golf", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Men's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Men's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Men's Track \u0026 Field", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Wrestling", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Women's Basketball", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Women's Cross Country", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Women's Golf", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Women's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Soccer", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Softball", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Swimming \u0026 Diving", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Women's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Women's Track \u0026 Field", "requirements": { "category" : "Big 10 Athletics" }},
-      { "label": "Volleyball", "requirements": { "category" : "Big 10 Athletics" }}
+			  { "label": "Baseball", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Men's Basketball", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Men's Cross Country", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Football", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Men's Golf", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Men's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Men's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Men's Track \u0026 Field", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Wrestling", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Women's Basketball", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Women's Cross Country", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Women's Golf", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Women's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Soccer", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Softball", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Swimming \u0026 Diving", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Women's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Women's Track \u0026 Field", "requirements": { "category" : "Big 10 Athletics" }},
+			  { "label": "Volleyball", "requirements": { "category" : "Big 10 Athletics" }}
 		]
 	},{
 		"id": "recreation-health-fitness",
@@ -95,17 +95,25 @@
 		"widget": "dropdown",
 		"scope": ["groups"],
 		"requirements" : {
-			"min-selected-count": 0,
+			"min-selected-count": 1,
 			"max-selected-count": 1
 		},
 		"values": [
-			"Academic",
-			"Athletics",
+			"Big 10 Athletics",
+			"Campus Visits",
 			"Career Development",
-			"Community",
-			"Entertainment",
+			"Ceremonies & Services",
+			"Club Athletics",
+			"Conferences & Workshops",
+			"Exhibits",
+			"Festivals & Celebrations",
+			"Film Screenings",
 			"Other",
-			"Recreation"
+			"Performances",
+			"Receptions & Open House Events",
+			"Recreation, Health & Fitness",
+			"Social & Informal Events",
+			"Speakers & Seminars"
 		],
 		"translations": {
 			"es": {
@@ -131,27 +139,49 @@
 			"max-selected-count": 1
 		},
 		"values": [
-      { "label": "Baseball", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Basketball", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Cross Country", "requirements": { "category" : "Athletics" }},
-      { "label": "Football", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Golf", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Gymnastics", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Tennis", "requirements": { "category" : "Athletics" }},
-      { "label": "Men's Track \u0026 Field", "requirements": { "category" : "Athletics" }},
-      { "label": "Wrestling", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Basketball", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Cross Country", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Golf", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Gymnastics", "requirements": { "category" : "Athletics" }},
-      { "label": "Soccer", "requirements": { "category" : "Athletics" }},
-      { "label": "Softball", "requirements": { "category" : "Athletics" }},
-      { "label": "Swimming \u0026 Diving", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Tennis", "requirements": { "category" : "Athletics" }},
-      { "label": "Women's Track \u0026 Field", "requirements": { "category" : "Athletics" }},
-      { "label": "Volleyball", "requirements": { "category" : "Athletics" }}
+			{ "label": "Baseball", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Men's Basketball", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Men's Cross Country", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Football", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Men's Golf", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Men's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Men's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Men's Track \u0026 Field", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Wrestling", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Women's Basketball", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Women's Cross Country", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Women's Golf", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Women's Gymnastics", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Soccer", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Softball", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Swimming \u0026 Diving", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Women's Tennis", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Women's Track \u0026 Field", "requirements": { "category" : "Big 10 Athletics" }},
+			{ "label": "Volleyball", "requirements": { "category" : "Big 10 Athletics" }}
 		]
 	},{
+	  "id": "recreation-health-fitness",
+	  "title": "Recreation, Health & Fitness",
+	  "description": "Choose the recreation, health & fitness your group can be filtered by.",
+	  "empty-hint": "Select a recreation, health & fitness",
+	  "semantics-hint": "Double tap to show recreation, health & fitness options.",
+	  "usage": "category",
+	  "widget": "dropdown",
+	  "scope": ["groups"],
+	  "requirements" : {
+		  "min-selected-count": 0,
+		  "max-selected-count": 1
+	  },
+	  "values": [
+		  { "label": "Group Fitness", "requirements": { "category" : "Recreation, Health & Fitness" }},
+		  { "label": "Aquatics", "requirements": { "category" : "Recreation, Health & Fitness" }},
+		  { "label": "Ice Skating", "requirements": { "category" : "Recreation, Health & Fitness" }},
+		  { "label": "Personal Training", "requirements": { "category" : "Recreation, Health & Fitness" }},
+		  { "label": "Student Wellness", "requirements": { "category" : "Recreation, Health & Fitness" }},
+		  { "label": "Adventure Req", "requirements": { "category" : "Recreation, Health & Fitness" }},
+		  { "label": "Summer Camp", "requirements": { "category" : "Recreation, Health & Fitness" }}
+	  ]
+  	},{
 		"id": "student-classification",
 		"title": "Student Classification",
 		"description": "Choose the student classification your group can be filtered by.",
