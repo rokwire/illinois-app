@@ -535,6 +535,8 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
           requestMsg = _registrationErrorToString(error)!;
         } else {
           requestMsg = Localization().getStringEx('widget.id_card.mobile_access.request_register_device.success.msg', 'Successfully initiated device registration.');
+          // Load mobile access details after successful device registration.
+          _loadMobileAccessDetails();
         }
         _setSubmittingDeviceRegistration(false);
         AppAlert.showDialogResult(context, requestMsg);
