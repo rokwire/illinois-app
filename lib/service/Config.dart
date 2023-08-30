@@ -211,6 +211,8 @@ class Config extends rokwire.Config {
   String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
   String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
 
+  int get mobileAccessDeleteTimeoutMins   => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
+
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;
 
