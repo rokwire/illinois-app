@@ -519,8 +519,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       Identity().deleteMobileCredential().then((deleteInitiated) {
         late String deleteMsg;
         if (deleteInitiated) {
-          //TBD: move this timeout to config when all is confirmed as a flow.
-          Storage().mobileAccessDeleteTimeoutUtcInMillis = DateTime.now().add(Duration(minutes: 10)).toUtc().millisecondsSinceEpoch;
+          Storage().mobileAccessDeleteTimeoutUtcInMillis = DateTime.now().add(Duration(minutes: Config().mobileAccessDeleteTimeoutMins)).toUtc().millisecondsSinceEpoch;
           deleteMsg = Localization().getStringEx('widget.id_card.mobile_access.delete_credential.success.msg', 'Please, wait about 10 minutes until mobile access is available to download.');
         } else {
           deleteMsg = Localization().getStringEx('widget.id_card.mobile_access.delete_credential.failed.msg', 'Failed to request mobile access.');
