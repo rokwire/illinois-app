@@ -194,6 +194,7 @@ class StudentId {
   final String? resultDescription;
   final bool? isActiveCard;
   final int? birthYear;
+  final MobileIdStatus? mobileIdStatus;
   final List<MobileIdCredential>? mobileCredentials;
 
   StudentId(
@@ -210,6 +211,7 @@ class StudentId {
       this.resultDescription,
       this.isActiveCard,
       this.birthYear,
+      this.mobileIdStatus,
       this.mobileCredentials});
 
   static StudentId? fromJson(Map<String, dynamic>? json) {
@@ -232,16 +234,33 @@ class StudentId {
         resultDescription: JsonUtils.stringValue(json['result_description']),
         isActiveCard: isActiveCard,
         birthYear: JsonUtils.intValue(int.tryParse(json['birth_year'])),
+        mobileIdStatus: mobileIdStatusFromString(JsonUtils.stringValue(json['mobileid_status'])),
         mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])));
+  }
+
+  static MobileIdStatus? mobileIdStatusFromString(String? value) {
+    switch (value) {
+      case 'ELIGIBLE':
+        return MobileIdStatus.eligible;
+      case 'ACTIVE':
+        return MobileIdStatus.active;
+      case 'PENDING':
+        return MobileIdStatus.pending;
+      case 'ISSUING':
+        return MobileIdStatus.issuing;
+      case 'INELIGIBLE':
+        return MobileIdStatus.ineligible;
+      default:
+        return null;
+    }
   }
 }
 
 class MobileIdCredential {
   final String? id;
-  final String? status;
   final DateTime? expirationDate;
 
-  MobileIdCredential({this.id, this.status, this.expirationDate});
+  MobileIdCredential({this.id, this.expirationDate});
 
   String? get displayExpirationDate {
     return AppDateTime().formatDateTime(expirationDate, format: _expirationDateFormat);
@@ -253,7 +272,6 @@ class MobileIdCredential {
     }
     return MobileIdCredential(
         id: JsonUtils.stringValue(json['id']),
-        status: JsonUtils.stringValue(json['status']),
         expirationDate: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['expiration_date']), format: 'yyyy-MM-dd', isUtc: false));
   }
 
@@ -268,6 +286,8 @@ class MobileIdCredential {
     return items;
   }
 }
+
+enum MobileIdStatus { eligible, active, pending, issuing, ineligible }
 
 final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 final String _expirationDateFormat = 'yyyy-MM-dd';
