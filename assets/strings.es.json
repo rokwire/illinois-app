@@ -2243,6 +2243,7 @@
     "panel.wellness.categories.manage.color.pick.cancel.button": "Cancelar",
     "panel.wellness.categories.manage.color.pick.select.button": "Seleccione",
 
+    "panel.wellness.todo.item.detail.header.title": "Elemento de la lista de tareas pendientes",
     "panel.wellness.todo.item.add.label": "Agregar un artículo",
     "panel.wellness.todo.item.name.field.label": "NOMBRE DEL ÁRTICULO",
     "panel.wellness.todo.item.optional_fields.label": "Campos opcionales",

@@ -2259,6 +2259,7 @@
     "panel.wellness.categories.manage.color.pick.cancel.button": "Cancel",
     "panel.wellness.categories.manage.color.pick.select.button": "Select",
 
+    "panel.wellness.todo.item.detail.header.title": "To-Do List Item",
     "panel.wellness.todo.item.add.label": "Add an Item",
     "panel.wellness.todo.item.name.field.label": "ITEM NAME",
     "panel.wellness.todo.item.optional_fields.label": "Optional Fields",
