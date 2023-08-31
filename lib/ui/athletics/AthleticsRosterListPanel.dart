@@ -247,7 +247,7 @@ class _RosterListHeading extends StatelessWidget{
                 ],
               ),
               SizedBox(height: 10.0,),
-              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", '2019-2020 Roster') ,
+              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", 'Full Roster') ,
                 style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")
               ),
             ],

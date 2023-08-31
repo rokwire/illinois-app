@@ -582,7 +582,7 @@
     "panel.athletics_roster_list.button.by_name.title": "By Name",
     "panel.athletics_roster_list.button.by_position.title": "By Position",
     "panel.athletics_roster_list.button.by_number.title": "By Number",
-    "panel.athletics_roster_list.label.heading.title": "2019-2020 Roster",
+    "panel.athletics_roster_list.label.heading.title": "Full Roster",
     "panel.athletics_roster_list.label.position.title": "Position",
     "panel.athletics_roster_list.label.ht.title": "Ht.",
     "panel.athletics_roster_list.label.wt.title": "Wt.",
@@ -590,7 +590,7 @@
     "panel.athletics_roster_list.label.year.title": "Year",
 
     "panel.athletics_coach_list.header.title": "Staff",
-    "panel.athletics_coach_list.label.heading.title": "2019-2020 Coach",
+    "panel.athletics_coach_list.label.heading.title": "All Staff",
     "panel.athletics_coach_list.label.position.title": "Position",
 
     "panel.athletics_coach_detail.header.title": "Staff",
