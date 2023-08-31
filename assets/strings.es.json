@@ -362,7 +362,7 @@
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Abierto ahora",
     "panel.browse.entry.dinings.my_dining.title": "Mis lugares para comer",
 
-    "panel.browse.entry.events.event_feed.title": "Fuente de eventos",
+    "panel.browse.entry.events.event_feed.title": "All Events",
     "panel.browse.entry.events.my_events.title": "Mis eventos",
 
     "panel.browse.entry.feeds.twitter.title": "X/Twitter",
@@ -957,7 +957,7 @@
     "panel.explore.header.appointments.title":"Citas en persona de MyMcKinley",
     "panel.explore.button.events.title":"Eventos",
     "panel.explore.button.events.hint":"",
-    "panel.explore.button.events2.title":"Fuente de eventos",
+    "panel.explore.button.events2.title":"All Events",
     "panel.explore.button.events2.hint":"",
     "panel.explore.button.dining.title":"Comedor de la residencia",
     "panel.explore.button.dining.hint":"",
@@ -1020,7 +1020,7 @@
     "panel.explore.filter.terms.hint":"Filtrar por término",
 
     "panel.explore.state.online.empty.events":"No hay eventos próximos",
-    "panel.explore.state.online.empty.events2":"No hay ningún feed de eventos disponible.",
+    "panel.explore.state.online.empty.events2":"No events are available.",
     "panel.explore.state.online.empty.dining":"Actualmente no hay restaurantes abiertos",
     "panel.explore.state.online.empty.laundry":"No hay ubicaciones de lavandería abiertas actualmente.",
     "panel.explore.state.online.empty.buildings":"No hay ubicaciones de construcción disponibles.",
@@ -3240,7 +3240,7 @@
     "widget.home.recent_items.button.all.title":"Ver todo",
     "widget.home.recent_items.button.all.hint":"Toca para ver todos los elementos",
 
-    "widget.home.event2_feed.label.header.title":"Events Feed",
+    "widget.home.event2_feed.label.header.title":"All Events",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",
     "widget.home.event2_feed.button.all.title":"View All",
     "widget.home.event2_feed.button.all.hint":"Tap to view all events",
