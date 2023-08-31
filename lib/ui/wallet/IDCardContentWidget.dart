@@ -248,7 +248,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     String? cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Expires');
     String? expirationDate = Auth2().authCard?.expirationDate;
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
-    String roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth2().authCard?.role ?? "");
+    String roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your Illini ID") : (Auth2().authCard?.role ?? "");
 
     Widget? buildingAccessIcon;
     String? buildingAccessStatus;
@@ -503,7 +503,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
 
   Future<bool> _checkNetIdStatus() async {
     if (Auth2().authCard?.photoBase64?.isEmpty ?? true) {
-      await AppAlert.showDialogResult(context, Localization().getStringEx('panel.covid19_passport.message.missing_id_info', 'No Illini ID information found. You may have an expired i-card. Please contact the ID Center.'));
+      await AppAlert.showDialogResult(context, Localization().getStringEx('panel.covid19_passport.message.missing_id_info', 'No Illini ID information found. You may have an expired Illini ID. Please contact the ID Center.'));
       return false;
     }
     return true;
@@ -597,7 +597,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     final String urlMacro = '{{mobile_access_website_url}}';
     final String externalLinkIconMacro = '{{external_link_icon}}';
     String rescheduleContentHtml = Localization().getStringEx("widget.id_card.dialog.text.renew_access.done",
-        "If your Illini ID does not work in 30 minutes, call <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, email <a href='mailto:{{mobile_access_email}}'>{{mobile_access_email}}</a>, or <a href='{{mobile_access_website_url}}'>visit the i-card website</a> <img src='asset:{{external_link_icon}}' alt=''/>");
+        "If your Illini ID does not work in 30 minutes, call <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, email <a href='mailto:{{mobile_access_email}}'>{{mobile_access_email}}</a>, or <a href='{{mobile_access_website_url}}'>visit the Illini ID website</a> <img src='asset:{{external_link_icon}}' alt=''/>");
     //TBD: DD - read phone, email and website from config when we have them
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(phoneMacro, '555-555-555');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(emailMacro, 'test@email.com');

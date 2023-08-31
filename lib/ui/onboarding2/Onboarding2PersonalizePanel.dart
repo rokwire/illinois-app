@@ -228,7 +228,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
               Localization().getStringEx('panel.onboarding2.personalize.learn_more.title2',"Personal information"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and i-card information."),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and Illini ID information."),
               style: Onboarding2InfoDialog.contentStyle,
             ),
             Container(height: 24,),
