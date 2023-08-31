@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Rename "i-card" to "Illini ID" [#3685](https://github.com/rokwire/illinois-app/issues/3685).
+- Do not show FAQs for users that do not have Mobile Access [#3687](https://github.com/rokwire/illinois-app/issues/3687).
 
 ### Changed
 ## [5.0.58] - 2023-08-30

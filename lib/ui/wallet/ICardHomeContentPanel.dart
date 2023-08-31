@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/wallet/ICardFaqsContentWidget.dart';
 import 'package:illinois/ui/wallet/IDCardContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -95,11 +96,13 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   static ICardContent? _lastSelectedContent;
   late ICardContent _selectedContent;
   bool _contentValuesVisible = false;
+  late List<ICardContent> _contentValues;
 
   @override
   void initState() {
     super.initState();
     _selectedContent = widget.content ?? (_lastSelectedContent ?? ICardContent.i_card);
+    _loadContentValues();
   }
 
   @override
@@ -176,7 +179,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    for (ICardContent currentContent in ICardContent.values) {
+    for (ICardContent currentContent in _contentValues) {
       if ((_selectedContent != currentContent)) {
         sectionList.add(_buildContentItem(currentContent));
       }
@@ -193,9 +196,21 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
         onTap: () => _onTapContentItem(contentItem));
   }
 
+  void _loadContentValues() {
+    _contentValues = <ICardContent>[];
+    for (ICardContent iCardContent in ICardContent.values) {
+      // FAQs are available only for users that can have Mobile Access
+      if ((iCardContent != ICardContent.faqs) || (FlexUI().isIcardMobileAvailable)) {
+        _contentValues.add(iCardContent);
+      }
+    }
+  }
+
   void _onTapContentDropdown() {
-    Analytics().logSelect(target: 'Content Dropdown');
-    _changeContentValuesVisibility();
+    if (_contentValues.length > 1) {
+      Analytics().logSelect(target: 'Content Dropdown');
+      _changeContentValuesVisibility();
+    }
   }
 
   void _onTapContentItem(ICardContent contentItem) {
