@@ -47,7 +47,7 @@ class ICardHomeContentPanel extends StatefulWidget {
         AppAlert.showMessage(
             context,
             Localization().getStringEx('panel.browse.label.no_card.illini_id',
-                'No Illini ID information. You do not have an active i-card. Please visit the ID Center.'));
+                'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.'));
       } else {
         String? warning;
         int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
@@ -55,7 +55,7 @@ class ICardHomeContentPanel extends StatefulWidget {
           if (expirationDays <= 0) {
             warning = sprintf(
                 Localization().getStringEx('panel.browse.label.expired_card.illini_id',
-                    'No Illini ID information. Your i-card expired on %s. Please visit the ID Center.'),
+                    'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'),
                 [Auth2().authCard?.expirationDate ?? '']);
           } else if ((0 < expirationDays) && (expirationDays < 30)) {
             warning = sprintf(
@@ -111,7 +111,7 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
             Expanded(
                 child: Padding(
                     padding: EdgeInsets.only(left: 16),
-                    child: Text(Localization().getStringEx('panel.icard.home.title.label', 'i-card'),
+                    child: Text(Localization().getStringEx('panel.icard.home.title.label', 'Illini ID'),
                         style: Styles().textStyles?.getTextStyle('panel.id_card.heading.title')))),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),

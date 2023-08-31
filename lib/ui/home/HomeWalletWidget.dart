@@ -478,13 +478,13 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
       message = Localization().getStringEx('panel.browse.label.logged_out.illini_id.short', 'You need to be logged in with your NetID to access Illini ID.');
     }
     else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
-      message = Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active i-card. Please visit the ID Center.');
+      message = Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active Illini ID. Please visit the ID Center.');
     }
     else {
       int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
       if (expirationDays != null) {
         if (expirationDays <= 0) {
-          message = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your i-card expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+          message = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your Illini ID expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
         }
         else if ((0 < expirationDays) && (expirationDays < 30)) {
           warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id','Your ID will expire on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
