@@ -1358,6 +1358,7 @@
 	"panel.event2.detail.linked_events.super_event.empty.message": "There are no scheduled upcoming events.",
 	"panel.event2.detail.linked_events.recurrence.failed.message": "Failed to load available times.",
 	"panel.event2.detail.linked_events.recurrence.empty.message": "There are no upcoming available times.",
+    "panel.event2.detail.star_event.dialog.message": "Do you want to also Star this event?",
 
 	"panel.event2.detail.take_attendance.title": "Take Attendance",
 	"panel.event2.detail.survey.description.reg": "Registration is required for this event.",

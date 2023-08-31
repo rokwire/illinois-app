@@ -880,7 +880,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _onRegister() {
     Analytics().logSelect(target: 'Register me');
-    _performRegistration(Events2().registerToEvent);
+    _performRegistration(Events2().registerToEvent,
+        onSuccess: (Event2 event) {
+          if(!Auth2().isFavorite(event)){ //Show only if it's not favorite yet
+            AppAlert.showConfirmationDialog(buildContext: context,
+                message: Localization().getStringEx("panel.event2.detail.star_event.dialog.message", "Do you want to also Star this event?"),
+                positiveCallback: ()=> _onFavorite()
+            );
+          }
+    });
   }
 
   void _onUnregister() {
@@ -888,7 +896,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     _performRegistration(Events2().unregisterFromEvent);
   }
 
-  void _performRegistration(Future<dynamic> Function(String eventId) registrationApi) {
+  void _performRegistration(Future<dynamic> Function(String eventId) registrationApi, {Function(Event2 event)? onSuccess}) {
     if ((_eventId != null) && !_registrationLoading) {
         setStateIfMounted(() {
           _registrationLoading = true;
@@ -901,6 +909,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               _event = result;
               _registrationLoading = false;
             });
+            onSuccess?.call(result);
           }
           else {
             setState(() {

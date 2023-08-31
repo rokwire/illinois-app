@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Events Feed renamed to All Events [#3690](https://github.com/rokwire/illinois-app/issues/3690).
 ### Fixed
 - Wording for team roster and staff [#3682](https://github.com/rokwire/illinois-app/issues/3682).
+- ### Added
+- Added dialog prompt to Star an event after successful registration [#3692](https://github.com/rokwire/illinois-app/issues/3692).
 
 ### Changed
 ## [5.0.58] - 2023-08-30
