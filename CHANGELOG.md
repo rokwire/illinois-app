@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Rename "i-card" to "Illini ID" [#3685](https://github.com/rokwire/illinois-app/issues/3685).
 - Do not show FAQs for users that do not have Mobile Access [#3687](https://github.com/rokwire/illinois-app/issues/3687).
+### Fixed
+- Wording for team roster and staff [#3682](https://github.com/rokwire/illinois-app/issues/3682).
 
 ### Changed
 ## [5.0.58] - 2023-08-30
@@ -15,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update mobile access model [#3679](https://github.com/rokwire/illinois-app/issues/3679).
 - To-Do item header title [#3677](https://github.com/rokwire/illinois-app/issues/3677).
 ### Fixed
-- Content attributes min-selection requirement validation[#3631](https://github.com/rokwire/illinois-app/issues/3631).
+- Content attributes min-selection requirement validation [#3631](https://github.com/rokwire/illinois-app/issues/3631).
 
 ## [5.0.57] - 2023-08-29
 ### Changed
