@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Rename "i-card" to "Illini ID" [#3685](https://github.com/rokwire/illinois-app/issues/3685).
 - Do not show FAQs for users that do not have Mobile Access [#3687](https://github.com/rokwire/illinois-app/issues/3687).
+- Events Feed renamed to All Events [#3690](https://github.com/rokwire/illinois-app/issues/3690).
 ### Fixed
 - Wording for team roster and staff [#3682](https://github.com/rokwire/illinois-app/issues/3682).
 

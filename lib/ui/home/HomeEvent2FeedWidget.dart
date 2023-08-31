@@ -58,7 +58,7 @@ class HomeEvent2FeedWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.event2_feed.label.header.title', 'Events Feed');
+  static String get title => Localization().getStringEx('widget.home.event2_feed.label.header.title', 'All Events');
 
   State<HomeEvent2FeedWidget> createState() => _HomeEvent2FeedWidgetState();
 }

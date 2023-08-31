@@ -362,7 +362,7 @@
 	"panel.browse.entry.dinings.dinings_open.title": "宿舍餐廳現在開放",
 	"panel.browse.entry.dinings.my_dining.title": "我的用餐地點",
 
-	"panel.browse.entry.events.event_feed.title": "活動提要",
+	"panel.browse.entry.events.event_feed.title": "All Events",
 	"panel.browse.entry.events.my_events.title": "我的活動",
 
 	"panel.browse.entry.feeds.twitter.title": "推特",
@@ -957,7 +957,7 @@
 	"panel.explore.header.appointments.title":"MyMcKinley 面對面約會",
 	"panel.explore.button.events.title":"活动",
 	"panel.explore.button.events.hint":"",
-	"panel.explore.button.events2.title":"活動提要",
+	"panel.explore.button.events2.title":"All Events",
 	"panel.explore.button.events2.hint":"",
 	"panel.explore.button.dining.title":"宿舍餐廳",
 	"panel.explore.button.dining.hint":"",
@@ -1020,7 +1020,7 @@
 	"panel.explore.filter.terms.hint":"按術語過濾",
 
 	"panel.explore.state.online.empty.events":"没有即将发生的活动。",
-	"panel.explore.state.online.empty.events2":"沒有可用的事件源。",
+	"panel.explore.state.online.empty.events2":"No events are available.",
 	"panel.explore.state.online.empty.dining":"目前尚无用餐场所",
 	"panel.explore.state.online.empty.laundry":"目前沒有洗衣店開放。",
 	"panel.explore.state.online.empty.buildings":"沒有可用的建築位置。",
@@ -3240,7 +3240,7 @@
 	"widget.home.recent_items.button.all.title":"查看全部",
 	"widget.home.recent_items.button.all.hint":"點擊查看所有項目",
 
-	"widget.home.event2_feed.label.header.title":"Events Feed",
+	"widget.home.event2_feed.label.header.title":"All Events",
 	"widget.home.event2_feed.text.empty.description": "没有公告的活动。",
 	"widget.home.event2_feed.button.all.title":"检视全部",
 	"widget.home.event2_feed.button.all.hint":"点击以活动",
