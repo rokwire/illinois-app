@@ -581,7 +581,7 @@
 	"panel.athletics_roster_list.button.by_name.title":"按名称",
 	"panel.athletics_roster_list.button.by_position.title":"按位置",
 	"panel.athletics_roster_list.button.by_number.title":"按编号",
-	"panel.athletics_roster_list.label.heading.title":"2019-2020名册",
+	"panel.athletics_roster_list.label.heading.title":"完整名單",
 	"panel.athletics_roster_list.label.position.title":"位置",
 	"panel.athletics_roster_list.label.ht.title":"高。",
 	"panel.athletics_roster_list.label.wt.title":"重",
@@ -589,7 +589,7 @@
 	"panel.athletics_roster_list.label.year.title":"年",
 
 	"panel.athletics_coach_list.header.title": "Staff",
-	"panel.athletics_coach_list.label.heading.title": "2019-2020教练",
+	"panel.athletics_coach_list.label.heading.title": "全體員工",
 	"panel.athletics_coach_list.label.position.title":"位置",
 
 	"panel.athletics_coach_detail.header.title":"员工",
