@@ -1359,6 +1359,7 @@
 	"panel.event2.detail.linked_events.super_event.empty.message": "没有安排行程",
 	"panel.event2.detail.linked_events.recurrence.failed.message": "时间加载失败",
 	"panel.event2.detail.linked_events.recurrence.empty.message": "没有空闲时间。",
+	"panel.event2.detail.star_event.dialog.message": "Do you want to also Star this event?",
 
 	"panel.event2.detail.take_attendance.title": "纪录出席纪录",
 	"panel.event2.detail.survey.description.reg": "此活动需提前登记。",
