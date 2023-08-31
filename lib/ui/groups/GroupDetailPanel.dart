@@ -1762,7 +1762,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapCreateEvent(){
     Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
     // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel( eventSelector: GroupEventSelector(GroupEventData(group: _group), showCustomButton: false, padding: EdgeInsets.only(top: 16)))));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel( eventSelector: GroupEventSelector(GroupEventData(group: _group), showSelectionButton: false, padding: EdgeInsets.only(top: 16)))));
   }
 
   void _onTapBrowseEvents(){
@@ -1912,26 +1912,22 @@ class _OfficerCard extends StatelessWidget {
 }
 
 class GroupEventSelector extends Event2Selector{
-  final bool showCustomButton;
+  final bool showSelectionButton;
+  final bool enableMembersSelection;
   final EdgeInsetsGeometry padding;
   GroupEventData data;
 
   GroupEventSelector(this.data, {
-    this.showCustomButton = true,
+    this.showSelectionButton = true,
+    this.enableMembersSelection = false,
     this.padding = const EdgeInsets.symmetric(vertical: 10),
   }) : super(data);
 
   @override
   void init(State<StatefulWidget> state) {
     super.init(state);
-    if(data.group?.id != null && data.event?.id != null && CollectionUtils.isEmpty(data.membersSelection)){
-      Groups().loadGroupEventMemberSelection(data.group?.id, data.event?.id).then((memberSelection) { //Check do we already have selection {update mode}
-         state.setStateIfMounted(() {
-           if(memberSelection != null) {
-             data.membersSelection = memberSelection;
-           }
-         });
-      });
+    if(enableMembersSelection) {
+      _initMemberSelection(state);
     }
   }
 
@@ -1942,7 +1938,7 @@ class GroupEventSelector extends Event2Selector{
         padding: padding,
         child: Column(
           children: [
-            Visibility( visible: showCustomButton,
+            Visibility(visible: showSelectionButton,
               child: RoundedButton(
                 label: (data.group?.researchProject == true) ?
                 Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
@@ -1958,14 +1954,15 @@ class GroupEventSelector extends Event2Selector{
               ),
             ),
             Container(height: 6,),
-            GroupMembersSelectionWidget(
+            Visibility(visible: enableMembersSelection,
+              child: GroupMembersSelectionWidget(
               selectedMembers: data.membersSelection,
               groupId: data.group?.id,
               onSelectionChanged: (members){
                 state.setStateIfMounted(() {
                   data.membersSelection = members;
                 });
-              },),
+              },)),
           ],
         )
     );
@@ -1996,6 +1993,18 @@ class GroupEventSelector extends Event2Selector{
     Analytics().logSelect(target: "Add To Group");
     state.setStateIfMounted(() {data.bindingInProgress = true;});
     performSelection(state);
+  }
+
+  void _initMemberSelection(State<StatefulWidget> state){
+    if(data.group?.id != null && data.event?.id != null && CollectionUtils.isEmpty(data.membersSelection)){
+      Groups().loadGroupEventMemberSelection(data.group?.id, data.event?.id).then((memberSelection) { //Check do we already have selection {update mode}
+        state.setStateIfMounted(() {
+          if(memberSelection != null) {
+            data.membersSelection = memberSelection;
+          }
+        });
+      });
+    }
   }
 }
 
