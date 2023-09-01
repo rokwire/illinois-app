@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Hide Illini ID FAQs for all [#3696](https://github.com/rokwire/illinois-app/issues/3696).
+- Show mobile access based on the mobile id status [#3698](https://github.com/rokwire/illinois-app/issues/3698).
 
 ## [5.0.59] - 2023-08-31
 ### Changed
