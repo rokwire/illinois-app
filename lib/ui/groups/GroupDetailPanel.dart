@@ -1762,8 +1762,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreateEvent(){
     Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel( eventSelector: GroupEventSelector(GroupEventData(group: _group), showSelectionButton: false, padding: EdgeInsets.only(top: 16)))));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(
+        eventSelector: GroupEventSelector(GroupEventData(group: _group), showSelectionButton: false, enablePostingToAdminGroups: true, padding: EdgeInsets.only(top: 16)))));
   }
 
   void _onTapBrowseEvents(){
@@ -1915,12 +1915,14 @@ class _OfficerCard extends StatelessWidget {
 class GroupEventSelector extends Event2Selector{
   final bool showSelectionButton;
   final bool enableMembersSelection;
+  final bool enablePostingToAdminGroups;
   final EdgeInsetsGeometry padding;
   GroupEventData data;
 
   GroupEventSelector(this.data, {
     this.showSelectionButton = true,
     this.enableMembersSelection = false,
+    this.enablePostingToAdminGroups = false,
     this.padding = const EdgeInsets.symmetric(vertical: 10),
   }) : super(data);
 
@@ -1974,7 +1976,9 @@ class GroupEventSelector extends Event2Selector{
   Future<void> prepareSelection(State state) async {
     await super.prepareSelection(state);
     _updateDataFromState(state);
-    await _selectOtherAdminGroups(state);
+    if(enablePostingToAdminGroups) {
+      await _selectOtherAdminGroups(state);
+    }
   }
 
   Future <void> performSelection(State state) async {
@@ -2047,7 +2051,7 @@ class GroupEventSelector extends Event2Selector{
   /// Returns the group for which the binding has failed. Empty == success
   ///
   Future<List<String>> _bindEventToSelectedAdminGroups(Event2 event) async{
-    List<String> failedForGroups = ["TBD TEST ERROR even if no ERROR"]; //TBD remove
+    List<String> failedForGroups = []; //TBD remove
     // Save the event to the other selected groups that the user is admin.
     if (CollectionUtils.isNotEmpty(data.adminGroupsSelection)) {
       for (Group group in data.adminGroupsSelection!) {
