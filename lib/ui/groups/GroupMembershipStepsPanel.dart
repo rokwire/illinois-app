@@ -68,7 +68,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     }
 
     if (0 < eventIds.length) {
-      Events2().loadEventsByIds(eventIds).then((List<Event2>? events) {
+      Events2().loadEventsByIds(eventIds: eventIds).then((List<Event2>? events) {
         if (events != null) {
           for (Event2 event in events) {
             if (event.id != null) {
