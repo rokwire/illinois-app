@@ -199,8 +199,8 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   void _loadContentValues() {
     _contentValues = <ICardContent>[];
     for (ICardContent iCardContent in ICardContent.values) {
-      // FAQs are available only for users that can have Mobile Access
-      if ((iCardContent != ICardContent.faqs) || (FlexUI().isIcardMobileAvailable)) {
+      // Hide FAQs for all
+      if (iCardContent != ICardContent.faqs) {
         _contentValues.add(iCardContent);
       }
     }
