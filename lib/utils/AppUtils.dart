@@ -32,7 +32,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AppAlert {
   
-  static Future<bool?> showDialogResult(BuildContext context, String? message, { String? buttonTitle }) async {
+  static Future<bool?> showDialogResult(BuildContext context, String? message, { String? buttonTitle, Function? onConfirm}) async {
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -45,6 +45,7 @@ class AppAlert {
                 onPressed: () {
                   Analytics().logAlert(text: message, selection: displayButtonTitle);
                   Navigator.pop(context, true);
+                  onConfirm?.call();
                 }
             ) //return dismissed 'true'
           ],

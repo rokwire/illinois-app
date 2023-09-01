@@ -1328,7 +1328,9 @@ abstract class Event2Selector<T extends Event2SelectorData> {
 
   Widget? buildWidget(State state); //Provide layout to perform selection
 
-  void performSelection(State state){} //Selection finished from Create/Update //No custom button
+  Future<void> prepareSelection(State state) async {}
+
+  Future<void> performSelection(State state) async {} //Selection finished from Create/Update //No custom button
 }
 
 abstract class Event2SelectorDataProvider <T extends Event2SelectorData>{
