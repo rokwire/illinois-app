@@ -38,6 +38,7 @@ import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
@@ -1926,6 +1927,7 @@ class GroupEventSelector extends Event2Selector{
   @override
   void init(State<StatefulWidget> state) {
     super.init(state);
+    // _initAdminGroups();
     if(enableMembersSelection) {
       _initMemberSelection(state);
     }
@@ -1968,18 +1970,25 @@ class GroupEventSelector extends Event2Selector{
     );
   }
 
-  void performSelection(State state){
-    Future<bool> Function({String? groupId, String? eventId, List<Member>? toMembers}) serviceAPI = data.updateExistingEvent == true ? Groups().updateLinkedEventMembers : Groups().linkEventToGroup;
-    serviceAPI(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection).then((success){
-      state.setStateIfMounted(() {data.bindingInProgress = false;});
-      if(success) {
-        if (state.mounted) {
-          Navigator.of(state.context).popUntil((Route route) {
-            return route.settings.name == GroupDetailPanel.routeName;
-          });
-        }
-      }
+ @override
+  Future<void> prepareSelection(State state) async {
+    await super.prepareSelection(state);
+    _updateDataFromState(state);
+    await _selectOtherAdminGroups(state);
+  }
+
+  Future <void> performSelection(State state) async {
+    String? failureMsg = await _bindEvent(event: data.event);
+    state.setStateIfMounted(() {
+      data.bindingInProgress = false;
     });
+    if (StringUtils.isNotEmpty(failureMsg)) {
+      bool? confirmed = await AppAlert.showDialogResult(state.context, failureMsg, onConfirm: () => _finishSelectionFlow(state));
+      if(confirmed == true)
+        Log.d("The user confirms the error");
+    } else {
+      _finishSelectionFlow(state);
+    }
   }
 
   void _updateDataFromState(State state){
@@ -1989,9 +1998,10 @@ class GroupEventSelector extends Event2Selector{
     }
   }
 
-  void _onTapAddToGroup(State state) {
+  void _onTapAddToGroup(State state) async{
     Analytics().logSelect(target: "Add To Group");
     state.setStateIfMounted(() {data.bindingInProgress = true;});
+    await prepareSelection(state);
     performSelection(state);
   }
 
@@ -2003,6 +2013,71 @@ class GroupEventSelector extends Event2Selector{
             data.membersSelection = memberSelection;
           }
         });
+      });
+    }
+  }
+
+  //Event to Group binding
+  Future<String?> _bindEvent({Event2? event}) async{
+    List<String?> failedBindingGroupNames = [];
+    Future<bool> Function({String? groupId, String? eventId, List<Member>? toMembers}) serviceAPI = data.updateExistingEvent == true ? Groups().updateLinkedEventMembers : Groups().linkEventToGroup;
+    bool bindingSuccess = await serviceAPI(groupId: data.group?.id, eventId: event?.id, toMembers: data.membersSelection);
+    if(bindingSuccess == false){
+      failedBindingGroupNames.add(data.group?.title);
+    }
+    if(data.adminGroupsSelection?.isNotEmpty == true && event != null) {
+      failedBindingGroupNames = await _bindEventToSelectedAdminGroups(event);
+    }
+
+    return _constructBindingFailureMsg(failedGroupNames: failedBindingGroupNames, event: event);
+  }
+
+  //Other admin groups
+  Future<void> _selectOtherAdminGroups(State state) async{
+    if (CollectionUtils.isEmpty(data.membersSelection)) { //Do not allow to save to other groups if membersSelection is performed. Causes a bug that these members may not be also members of the rest of the groups
+      if(data.group?.id != null) {
+        List<Group>? otherAdminGroups = await Groups().loadAdminUserGroups(excludeIds: [data.group!.id!]);
+        List<Group>? otherSelectedGroups = await showDialog(context: state.context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherAdminGroups));
+        state.setStateIfMounted(() {data.adminGroupsSelection = otherSelectedGroups;});
+      }
+    }
+  }
+
+  ///
+  /// Returns the group for which the binding has failed. Empty == success
+  ///
+  Future<List<String>> _bindEventToSelectedAdminGroups(Event2 event) async{
+    List<String> failedForGroups = ["TBD TEST ERROR even if no ERROR"]; //TBD remove
+    // Save the event to the other selected groups that the user is admin.
+    if (CollectionUtils.isNotEmpty(data.adminGroupsSelection)) {
+      for (Group group in data.adminGroupsSelection!) {
+          bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: group.id, eventId: event.id, toMembers: data.membersSelection);
+          if (eventLinkedToGroup == false) {
+            // Failed to link event to group
+            ListUtils.add(failedForGroups, group.title);
+          }
+        }
+      }
+
+    return failedForGroups;
+  }
+
+  String? _constructBindingFailureMsg({List<String?>? failedGroupNames, Event2? event}){
+    String? failedMsg;
+    if(StringUtils.isEmpty(event?.id)){
+      failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.');
+    } else if(CollectionUtils.isNotEmpty(failedGroupNames)){
+      failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ');
+      failedMsg += failedGroupNames!.join(', ');
+    }
+
+    return failedMsg;
+  }
+
+  void _finishSelectionFlow(State state){
+    if (state.mounted) {
+      Navigator.of(state.context).popUntil((Route route) {
+        return route.settings.name == GroupDetailPanel.routeName;
       });
     }
   }
@@ -2041,5 +2116,10 @@ class GroupEventData extends Event2SelectorData{
   void set updateExistingEvent(bool? value) => data?["update_existing_event"] = value;
   bool? get updateExistingEvent {
     return JsonUtils.boolValue(data?["update_existing_event"]);
+  }
+
+  void set adminGroupsSelection(List<Group>? otherGroups) => data?["other_admin_groups"] = otherGroups;
+  List<Group>? get adminGroupsSelection {
+    return JsonUtils.listValue<Group>(data?["other_admin_groups"]);
   }
 }

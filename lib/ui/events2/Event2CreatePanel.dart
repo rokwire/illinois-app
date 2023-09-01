@@ -1781,12 +1781,14 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     setStateIfMounted(() {
       _creatingEvent = true;
     });
+    await widget.eventSelector?.prepareSelection(this);
     Future<dynamic> Function(Event2 source) serviceAPI = widget.isCreate ? Events2().createEvent : Events2().updateEvent;
     dynamic result = await serviceAPI(_createEventFromData());
 
     if (mounted) {
       if (result is Event2) {
         _selectorEvent = result;
+        await widget.eventSelector?.performSelection(this);
         Survey? survey = widget.survey;
         if (widget.isCreate) {
           if (_survey != null) {
@@ -1842,15 +1844,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             survey: survey,
           ));
         }
-
-        widget.eventSelector?.performSelection(this); //TBD For custom Selector
       }
       else  {
         setState(() {
           _creatingEvent = false;
         });
         Event2Popup.showErrorResult(context, result);
-        widget.eventSelector?.performSelection(this); //TBD For custom Selector
+        await widget.eventSelector?.performSelection(this);
       }
     }
   }
@@ -2056,6 +2056,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
   @override
   Event2SelectorData? selectorData;
 
+  //Selector
   void _initSelector(){
     widget.eventSelector?.init(this);
   }
