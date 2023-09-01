@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/wallet/ICardFaqsContentWidget.dart';
 import 'package:illinois/ui/wallet/IDCardContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
