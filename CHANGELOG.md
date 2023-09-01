@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show mobile access based on the mobile id status [#3698](https://github.com/rokwire/illinois-app/issues/3698).
 ### Added
 - Bring back dialog for adding event to multiple groups that user is admin of [#3695](https://github.com/rokwire/illinois-app/issues/3695).
+### Fixed
+- Group events load private events for group members[#3674](https://github.com/rokwire/illinois-app/issues/3674).
 
 ## [5.0.59] - 2023-08-31
 ### Changed
