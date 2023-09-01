@@ -18,7 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -89,7 +89,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
+      MobileAccess.notifyMobileIdStatusChanged,
       Localization.notifyLocaleChanged,
     ]);
     _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.sections);
@@ -220,7 +220,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
     for (SettingsContent section in SettingsContent.values) {
       if ((_selectedContent != section)) {
         // Add i_card content only if icard mobile is available
-        if ((section != SettingsContent.i_card) || (FlexUI().isIcardMobileAvailable)) {
+        if ((section != SettingsContent.i_card) || (MobileAccess().isMobileAccessAvailable)) {
           sectionList.add(_buildContentItem(section));
         }
       }
@@ -329,7 +329,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
+    if (name == MobileAccess.notifyMobileIdStatusChanged) {
       setStateIfMounted(() {});
     }
     else if (name == Localization.notifyLocaleChanged) {

@@ -31,12 +31,14 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class MobileAccess with Service implements NotificationsListener {
   static const String notifyStartFinished  = "edu.illinois.rokwire.mobile_access.start.finished";
   static const String notifyDeviceRegistrationFinished  = "edu.illinois.rokwire.mobile_access.device.registration.finished";
+  static const String notifyMobileIdStatusChanged  = "edu.illinois.rokwire.mobile_access.mobile_id.status.changed";
 
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/mobile_access');
 
   static const String _tag = 'MobileAccess';
 
   late MobileAccessOpenType _selectedOpenType;
+  MobileIdStatus? _lastIdStatus;
   bool _isStarted = false;
   bool _isScanning = false;
 
@@ -56,12 +58,13 @@ class MobileAccess with Service implements NotificationsListener {
     super.createService();
     _methodChannel.setMethodCallHandler(_handleMethodCall);
     NotificationService()
-        .subscribe(this, [AppLivecycle.notifyStateChanged, Auth2.notifyLoginChanged, FlexUI.notifyChanged, Storage.notifySettingChanged]);
+        .subscribe(this, [AppLivecycle.notifyStateChanged, Auth2.notifyLoginChanged, Storage.notifySettingChanged]);
   }
 
   @override
   Future<void> initService() async {
     _selectedOpenType = _openTypeFromString(Storage().mobileAccessOpenType) ?? MobileAccessOpenType.opened_app;
+    await loadStudentId();
     _startSilently();
     _shouldScan();
     if (Storage().debugAutomaticCredentials == true) {
@@ -83,9 +86,13 @@ class MobileAccess with Service implements NotificationsListener {
 
   // APIs
 
+  bool get isMobileAccessAvailable {
+    return (_lastIdStatus != null) && (_lastIdStatus != MobileIdStatus.ineligible);
+  }
+
   bool get isStarted => _isStarted;
 
-  bool get canStart => FlexUI().isIcardMobileAvailable;
+  bool get canStart => isMobileAccessAvailable;
 
   Future<bool> startIfNeeded() async =>
     isStarted || (canStart && await _start(force: true));
@@ -250,6 +257,23 @@ class MobileAccess with Service implements NotificationsListener {
     }
   }
 
+  Future<StudentId?> loadStudentId() async {
+    if (!Auth2().isLoggedIn) {
+      _onMobileIdStatus(null);
+      return null;
+    }
+    StudentId? studentId = await Identity().loadStudentId();
+    _onMobileIdStatus(studentId?.mobileIdStatus);
+    return studentId;
+  }
+
+  void _onMobileIdStatus(MobileIdStatus? status) {
+    if (status != _lastIdStatus) {
+      _lastIdStatus = status;
+      NotificationService().notify(notifyMobileIdStatusChanged);
+    }
+  }
+
   ///
   /// Initiate device registration via Identity BB API
   ///
@@ -373,7 +397,7 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   bool get _canHaveMobileIcard {
-    return Auth2().isLoggedIn && FlexUI().isIcardMobileAvailable;
+    return Auth2().isLoggedIn && isMobileAccessAvailable;
   }
 
   bool get _isAllowedToOpenDoors {
@@ -444,9 +468,9 @@ class MobileAccess with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
-      _shouldScan();
-    } else if (name == FlexUI.notifyChanged) {
-      _shouldScan();
+      loadStudentId().then((_) {
+        _shouldScan();
+      });
     } else if (name == AppLivecycle.notifyStateChanged) {
       _shouldScan();
     }

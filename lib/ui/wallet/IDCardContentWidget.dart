@@ -87,7 +87,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     super.initState();
     NotificationService().subscribe(this, [
       Auth2.notifyCardChanged,
-      FlexUI.notifyChanged,
+      MobileAccess.notifyMobileIdStatusChanged,
       MobileAccess.notifyStartFinished,
       AppLivecycle.notifyStateChanged,
     ]);
@@ -173,7 +173,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   Future<void> _loadMobileAccessDetails() async {
     if (_isIcardMobileAvailable) {
       _increaseMobileAccessLoadingProgress();
-      Identity().loadStudentId().then((studentId) {
+      MobileAccess().loadStudentId().then((studentId) {
         List<MobileIdCredential>? mobileCredentials = studentId?.mobileCredentials;
         if (CollectionUtils.isNotEmpty(mobileCredentials)) {
           _mobileIdCredentials = mobileCredentials;
@@ -211,7 +211,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
         });
       });
     }
-    else if (name == FlexUI.notifyChanged) {
+    else if (name == MobileAccess.notifyMobileIdStatusChanged) {
       MobileAccess().startIfNeeded();
       _checkIcarMobileAvailable();
       setStateIfMounted(() { });
@@ -655,7 +655,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   }
 
   void _checkIcarMobileAvailable() {
-    bool isIcardMobileAvailable = FlexUI().isIcardMobileAvailable && MobileAccess().isStarted;
+    bool isIcardMobileAvailable = MobileAccess().isMobileAccessAvailable && MobileAccess().isStarted;
     if (_isIcardMobileAvailable != isIcardMobileAvailable) {
       _isIcardMobileAvailable = isIcardMobileAvailable;
       _loadMobileAccessDetails();
