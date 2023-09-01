@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.60] - 2023-09-01
 ### Changed
 - Hide Illini ID FAQs for all [#3696](https://github.com/rokwire/illinois-app/issues/3696).
 - Show mobile access based on the mobile id status [#3698](https://github.com/rokwire/illinois-app/issues/3698).
