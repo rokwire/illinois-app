@@ -1369,7 +1369,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       title: Localization().getStringEx('panel.event2.create.button.attendance.title', 'EVENT ATTENDANCE'),
       subTitle: (_attendanceDetails?.isNotEmpty == true) ?
         Localization().getStringEx('panel.event2.create.button.attendance.confirmation', 'Event attendance details set up.') :
-        Localization().getStringEx('panel.event2.create.button.attendance.description', 'Receive feedback about your event.'),
+        Localization().getStringEx('panel.event2.create.button.attendance.description', 'Check in attendees via the app.'),
       onTap: _onEventAttendance,
     ),
   );
