@@ -1769,7 +1769,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
     // Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroup: _group, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
-    Event2HomePanel.present(context, eventSelector: GroupEventSelector(GroupEventData(group: _group)));
+    Event2HomePanel.present(context, eventSelector: GroupEventSelector(GroupEventData(group: _group,), enablePostingToAdminGroups: true));
 
   }
 
@@ -1981,17 +1981,23 @@ class GroupEventSelector extends Event2Selector{
     }
   }
 
+  @override
   Future <void> performSelection(State state) async {
     String? failureMsg = await _bindEvent(event: data.event);
-    state.setStateIfMounted(() {
-      data.bindingInProgress = false;
-    });
+    state.setStateIfMounted(() {data.bindingInProgress = false;});
     if (StringUtils.isNotEmpty(failureMsg)) {
-      bool? confirmed = await AppAlert.showDialogResult(state.context, failureMsg, onConfirm: () => _finishSelectionFlow(state));
+      bool? confirmed = await AppAlert.showDialogResult(state.context, failureMsg);
       if(confirmed == true)
         Log.d("The user confirms the error");
-    } else {
-      _finishSelectionFlow(state);
+    }
+  }
+
+  @override
+  void finishSelection(State state){
+    if (state.mounted) {
+      Navigator.of(state.context).popUntil((Route route) {
+        return route.settings.name == GroupDetailPanel.routeName;
+      });
     }
   }
 
@@ -2006,7 +2012,8 @@ class GroupEventSelector extends Event2Selector{
     Analytics().logSelect(target: "Add To Group");
     state.setStateIfMounted(() {data.bindingInProgress = true;});
     await prepareSelection(state);
-    performSelection(state);
+    await performSelection(state);
+    finishSelection(state);
   }
 
   void _initMemberSelection(State<StatefulWidget> state){
@@ -2051,7 +2058,7 @@ class GroupEventSelector extends Event2Selector{
   /// Returns the group for which the binding has failed. Empty == success
   ///
   Future<List<String>> _bindEventToSelectedAdminGroups(Event2 event) async{
-    List<String> failedForGroups = []; //TBD remove
+    List<String> failedForGroups = [];
     // Save the event to the other selected groups that the user is admin.
     if (CollectionUtils.isNotEmpty(data.adminGroupsSelection)) {
       for (Group group in data.adminGroupsSelection!) {
@@ -2076,14 +2083,6 @@ class GroupEventSelector extends Event2Selector{
     }
 
     return failedMsg;
-  }
-
-  void _finishSelectionFlow(State state){
-    if (state.mounted) {
-      Navigator.of(state.context).popUntil((Route route) {
-        return route.settings.name == GroupDetailPanel.routeName;
-      });
-    }
   }
 }
 
