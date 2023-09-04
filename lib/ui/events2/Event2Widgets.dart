@@ -414,7 +414,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         _buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.in_person.label', 'In Person'), 'location'),
       ];
 
-      String? locationText = widget.event.location?.displayName ?? widget.event.location?.displayAddress; // ?? widget.event.location?.displayCoordinates
+      String? locationText = widget.event.location?.displayName ?? widget.event.location?.displayAddress ?? widget.event.location?.displayDescription; // ?? widget.event.location?.displayCoordinates
       if (locationText != null) {
         details.add(
           _buildDetailWidget(Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)

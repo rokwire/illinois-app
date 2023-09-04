@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Event2CreatePanel update attendance description [#3702](https://github.com/rokwire/illinois-app/issues/3702).
+- Acknowledge location description when presenting event locations [#3510](https://github.com/rokwire/illinois-app/issues/3510).
 
 ## [5.0.60] - 2023-09-01
 ### Changed

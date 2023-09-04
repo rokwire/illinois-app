@@ -40,6 +40,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'dart:math' as math;
 
 import 'package:sprintf/sprintf.dart';
@@ -573,6 +574,8 @@ extension ExploreLocationExp on ExploreLocation {
 
     return displayText;
   }
+
+  String? get displayDescription => StringUtils.isNotEmpty(description) ? description : null;
 
   String? get displayCoordinates =>
     isLocationCoordinateValid ? "[${latitude?.toStringAsFixed(6)}, ${longitude?.toStringAsFixed(6)}]" : null;
