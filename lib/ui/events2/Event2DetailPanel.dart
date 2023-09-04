@@ -1326,11 +1326,13 @@ abstract class Event2Selector<T extends Event2SelectorData> {
 
   void dispose(State state){}
 
-  Widget? buildWidget(State state); //Provide layout to perform selection
+  Widget? buildWidget(State state); //Provide custom layout to perform selection
 
-  Future<void> prepareSelection(State state) async {}
+  Future<void> prepareSelection(State state) async {} //Call whatever API we need before performing the selection
 
-  Future<void> performSelection(State state) async {} //Selection finished from Create/Update //No custom button
+  Future<void> performSelection(State state) async {} //Call the bind API
+
+  void finishSelection(State state) {} //Go Back to the initial flow panel
 }
 
 abstract class Event2SelectorDataProvider <T extends Event2SelectorData>{

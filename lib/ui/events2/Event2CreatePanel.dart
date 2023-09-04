@@ -1844,13 +1844,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             survey: survey,
           ));
         }
+        widget.eventSelector?.finishSelection(this);
       }
       else  {
         setState(() {
           _creatingEvent = false;
         });
         Event2Popup.showErrorResult(context, result);
-        await widget.eventSelector?.performSelection(this);
       }
     }
   }
