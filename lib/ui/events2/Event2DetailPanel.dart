@@ -353,7 +353,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         ),
       ];
 
-      String? locationText = _event?.location?.displayName ?? _event?.location?.displayAddress; // ?? _event?.location?.displayCoordinates;
+      String? locationText = _event?.location?.displayName ?? _event?.location?.displayAddress ?? _event?.location?.displayDescription; // ?? _event?.location?.displayCoordinates;
       if (locationText != null) {
         details.add(
           _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location',
