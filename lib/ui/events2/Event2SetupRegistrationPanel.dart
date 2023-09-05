@@ -227,7 +227,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     heading: Event2CreatePanel.buildSectionHeadingWidget(Localization().getStringEx('panel.event2.setup.registration.registrants.label.title', 'NETIDS FOR ADDITIONAL REGISTRANTS')),
     body: Event2CreatePanel.buildTextEditWidget(_registrantsController, keyboardType: TextInputType.text, maxLines: null,
       semanticsLabel: Localization().getStringEx('panel.event2.setup.registration.link.field.label', 'NETIDS FOR ADDITIONAL REGISTRANTS FIELD'),
-      semanticsHint: Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space or comma separated list of Net IDs.')
+      semanticsHint: Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space- or comma-separated list of NetIDs.')
     ),
     trailing: _buildRegistrantsHint(),
   );
@@ -235,7 +235,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildRegistrantsHint() => Padding(padding: EdgeInsets.only(top: 2), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype, semanticsLabel: "",),
+        Text(Localization().getStringEx('panel.event2.setup.registration.registrants.label.hint', 'A space- or comma-separated list of NetIDs.'), style: _infoTextStype, semanticsLabel: "",),
       )
     ],),
   );
