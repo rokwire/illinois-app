@@ -2,8 +2,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/events2/Event2AttendanceTakerPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2Widgets.dart';
 import 'package:illinois/ui/widgets/GestureDetector.dart';
@@ -46,6 +49,12 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
 
   bool _modified = false;
   bool _updatingRegistration = false;
+
+  //Guests dropdown
+  List<Event2Person> _displayList = <Event2Person>[];
+  String? _errorMessage;
+  bool _guestsSectionExpanded = false;
+  bool _loadingPeople = false;
   
   @override
   void initState() {
@@ -61,6 +70,30 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       _linkController.addListener(_checkModified);
       _capacityController.addListener(_checkModified);
       _registrantsController.addListener(_checkModified);
+    }
+
+    String? eventId = widget.event?.id;
+    if (eventId != null) {
+      _loadingPeople = true;
+      Events2().loadEventPeopleEx(eventId).then((result) {
+        if (mounted) {
+          if (result is Event2PersonsResult) {
+            setState(() {
+              _loadingPeople = false;
+              _displayList = result.buildDisplayList();
+            });
+          }
+          else {
+            setState(() {
+              _loadingPeople = false;
+              _errorMessage = StringUtils.isNotEmptyString(result) ? result : _internalErrorString;
+            });
+          }
+        }
+      });
+    }
+    else {
+      _errorMessage = _internalErrorString;
     }
 
     super.initState();
@@ -199,6 +232,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       Container(decoration: Event2CreatePanel.sectionSplitterDecoration, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(children: [
          _buildCapacitySection(),
+          _buildGuestListDropDownSection(),
          _buildRegistrantsSection(),
         ],),
       ),
@@ -382,6 +416,96 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     }
   }
 
+  //Guests list
+  bool get _hasError => (_errorMessage != null);
+  bool get _isAdmin => (widget.event?.userRole == Event2UserRole.admin);
+  String get _internalErrorString => Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured');
+
+  Widget _buildGuestListDropDownSection() => _isEditing? Event2CreatePanel.buildDropdownSectionWidget(
+    heading: Event2CreatePanel.buildDropdownSectionHeadingWidget(Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'GUEST LIST'),
+      expanded: _guestsSectionExpanded,
+      onToggleExpanded: _onToggleGuestsListSection,
+    ),
+    body: _buildGuestsListSectionBody(),
+    bodyPadding: EdgeInsets.zero,
+    expanded: _guestsSectionExpanded,
+    trailing: _isAdmin ? _buildUploadGuestsDescription() : null,
+  ) : Container();
+
+  void _onToggleGuestsListSection() {
+    Analytics().logSelect(target: "Toggle Guests List");
+    setStateIfMounted(() {
+      _guestsSectionExpanded = !_guestsSectionExpanded;
+    });
+  }
+
+  Widget _buildGuestsListSectionBody() {
+    List<Widget> contentList = <Widget>[];
+    for (Event2Person displayPerson in _displayList) {
+      if(displayPerson.registrationType == Event2UserRegistrationType.creator)
+        continue;
+
+      if (contentList.isNotEmpty) {
+        contentList.add(Divider(color: Styles().colors?.dividerLineAccent, thickness: 1, height: 1,));
+      }
+      contentList.add(_GuestListItemWidget(displayPerson, enabled: true, highlighted: false,));
+    }
+    if (_loadingPeople) {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+        Center(child:
+          SizedBox(width: 24, height: 24, child:
+            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,)
+          ),
+        ),
+      );
+    }
+    if (0 < contentList.length) {
+      return Column(mainAxisSize: MainAxisSize.max, children: contentList,);
+    }
+    else {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+      Row(children: [
+        Expanded(child:
+        Text(_hasError ?
+        Localization().getStringEx("panel.event2.setup.registration.guest.failed.text", "Failed to load guests list.") :
+        Localization().getStringEx("panel.event2.setup.registration.guest.empty.text", "There are no users registered for this event yet."),
+          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
+        )
+      ],)
+      );
+    }
+  }
+
+  Widget _buildUploadGuestsDescription() {
+    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+    final Color defaultStyleColor = Colors.red;
+    final String? eventAttendanceUrl = Config().eventAttendanceUrl;
+    final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
+    String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
+        "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.");
+    contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
+    return Visibility(visible: StringUtils.isNotEmpty(eventAttendanceUrl), child:
+      Padding(padding: EdgeInsets.only(top: 12), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Styles().images?.getImage('info') ?? Container(),
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 6), child:
+              HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)} : null,
+              )
+            ),
+          ),
+        ])
+      ),
+    );
+  }
+
+  bool _onTapHtmlLink(String? url) {
+    Analytics().logSelect(target: '($url)');
+    UrlUtils.launchExternal(url);
+    return true;
+  }
+
   void _onHeaderBarApply() {
     Analytics().logSelect(target: 'HeaderBar: Apply');
     _updateEventRegistrationDetails((_registrationType != Event2RegistrationType.none) ? _buildRegistrationDetails() : null);
@@ -390,5 +514,52 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   void _onHeaderBarBack() {
     Analytics().logSelect(target: 'HeaderBar: Back');
     Navigator.of(context).pop(_isCreating ? _buildRegistrationDetails() : null);
+  }
+}
+
+class _GuestListItemWidget extends StatelessWidget {
+  final Event2Person registrant;
+  final bool enabled;
+  final bool highlighted;
+
+  _GuestListItemWidget(this.registrant, { Key? key, required this.enabled, required this.highlighted}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Expanded(flex: 3, child:
+        Padding(padding: EdgeInsets.only(left: 16, top: 10, bottom: 10), child:
+          _nameWidget
+        )
+      ),
+      Expanded( flex: 2, child:
+        Padding( padding: EdgeInsets.only(right: 16, left: 6),
+          child: _typeWidget,
+        ))
+    ],);
+
+  }
+
+  Widget get _nameWidget {
+    String? registrantNetId = registrant.identifier?.netId;
+    String textStyleKey = (enabled ? (highlighted ? 'widget.label.regular.fat' : 'widget.card.title.small.fat') : 'widget.card.title.small.fat.variant3');
+    return Text(registrantNetId ?? '', style: Styles().textStyles?.getTextStyle(textStyleKey));
+  }
+
+  Widget get _typeWidget {
+    String type = "";
+    switch (registrant.registrationType){
+      case Event2UserRegistrationType.self:
+          type = "Self Registered";
+        break;
+      case Event2UserRegistrationType.registrants:
+          type = "Guest List";
+        break;
+      case Event2UserRegistrationType.creator:
+          type = "Creator";
+        break;
+      default:  type = "Unknown";
+    }
+    return Text(type, style: Styles().textStyles?.getTextStyle('widget.detail.light.regular'), textAlign: TextAlign.end,);
   }
 }

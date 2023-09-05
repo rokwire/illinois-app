@@ -1278,6 +1278,8 @@
 	"panel.event2.setup.registration.label.label.title": "添加注册标记",
 	"panel.event2.setup.registration.link.label.title": "添加外部连结",
 	"panel.event2.setup.registration.description.label.title": "透过Illinois应用程序注册需要提供NetIDs",
+	"panel.event2.setup.registration.guest.empty.text": "There are no users registered for this event yet.",
+	"panel.event2.setup.registration.guest.failed.text": "Failed to load guests list.",
 
 	"panel.event2.setup.attendance.header.title": "活动出席纪录",
 	"panel.event2.setup.attendance.scan.toggle.title": "扫Illini ID",

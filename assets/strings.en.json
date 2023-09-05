@@ -1293,6 +1293,8 @@
     "panel.event2.setup.registration.link.label.title": "ADD EXTERNAL LINK FOR REGISTRATION",
     "panel.event2.setup.registration.link.field.label": "ADD EXTERNAL LINK FOR REGISTRATION FIELD",
     "panel.event2.setup.registration.description.label.title": "Registration within the Illinois app requires the user to sign in with a NetID.",
+    "panel.event2.setup.registration.guest.empty.text": "There are no users registered for this event yet.",
+    "panel.event2.setup.registration.guest.failed.text": "Failed to load guests list.",
 
     "panel.event2.setup.attendance.header.title": "Event Attendance",
     "panel.event2.setup.attendance.scan.toggle.title": "Scan Illini ID",
