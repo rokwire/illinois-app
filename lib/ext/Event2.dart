@@ -322,6 +322,17 @@ extension Event2ContactExt on Event2Contact {
   }
 }
 
+extension Event2RegistrationDetailsExt on Event2RegistrationDetails {
+  
+  bool get requiresRegistration => (type == Event2RegistrationType.external) || (type == Event2RegistrationType.internal);
+
+  bool? isRegistrationCapacityReached(int? participantsCount) =>
+    ((type == Event2RegistrationType.internal) && (eventCapacity != null) && (participantsCount != null)) ? (eventCapacity! <= participantsCount) : null;
+
+  bool? isRegistrationAvailable(int? participantsCount) =>
+    ((type == Event2RegistrationType.internal) && (eventCapacity != null) && (participantsCount != null)) ? (participantsCount < eventCapacity!) : null;
+}
+
 
 // Event2SortType
 
