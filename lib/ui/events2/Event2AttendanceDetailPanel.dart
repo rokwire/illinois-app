@@ -117,11 +117,11 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
         child: Semantics(
             toggled: _manualCheckEnabled,
             excludeSemantics: true,
-            label: Localization().getStringEx('panel.event2.detail.attendance.manual.toggle.title', 'Allow manual attendance check'),
+            label: Localization().getStringEx('panel.event2.detail.attendance.manual.toggle.title', 'Allow manual attendance taking'),
             hint: Localization().getStringEx('panel.event2.detail.attendance.manual.toggle.hint', ''),
             child: ToggleRibbonButton(
                 padding: EdgeInsets.zero,
-                label: Localization().getStringEx('panel.event2.detail.attendance.manual.toggle.title', 'Allow manual attendance check'),
+                label: Localization().getStringEx('panel.event2.detail.attendance.manual.toggle.title', 'Allow manual attendance taking'),
                 description: Localization().getStringEx('panel.event2.detail.attendance.manual.toggle.description', 'Requires advance registration.'),
                 toggled: _manualCheckEnabled,
                 onTap: _onTapManual)));
@@ -183,7 +183,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                         isExpanded: true,
                         style: Styles().textStyles?.getTextStyle('panel.create_event.dropdown_button.title.regular'),
                         hint: Event2CreatePanel.buildSectionTitleWidget(
-                            Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'REGISTRANTS')),
+                            Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'GUEST LIST')),
                         items: null,
                         onChanged: null)))));
   }
@@ -194,7 +194,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
     final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
     String contentHtml = Localization().getStringEx('panel.event2.detail.attendance.attendees.description',
-        "Looking for a way to upload an attendee list or download your current attendees? Share the link or visit <a href='$eventAttendanceUrlMacro'>$eventAttendanceUrlMacro</a>.");
+        "Visit <a href='{{event_attendance_url}}'>{{event_attendance_url}}</a> to upload or download a list.");
     contentHtml = contentHtml.replaceAll(eventAttendanceUrlMacro, eventAttendanceUrl ?? '');
     return Visibility(
         visible: _isAdmin && StringUtils.isNotEmpty(eventAttendanceUrl),

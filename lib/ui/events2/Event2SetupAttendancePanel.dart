@@ -156,10 +156,10 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     );
 
   Widget _buildManualToggle() => Semantics(toggled: _manualCheckEnabled, excludeSemantics: true, 
-    label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance check"),
+    label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance taking"),
     hint: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.hint", ""),
     child: ToggleRibbonButton(
-      label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance check"),
+      label: Localization().getStringEx("panel.event2.setup.attendance.manual.toggle.title", "Allow manual attendance taking"),
       toggled: _manualCheckEnabled,
       onTap: _onTapManual,
       padding: EdgeInsets.zero,
@@ -217,7 +217,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildAttendanceTakersHint() => Padding(padding: EdgeInsets.only(top: 2), child:
     Row(children: [
       Expanded(child:
-        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.hint', 'A space or comma separated list of Net IDs.'), style: _infoTextStype,),
+        Text(Localization().getStringEx('panel.event2.setup.attendance.takers.label.hint', 'A space- or comma-separated list of NetIDs.'), style: _infoTextStype,),
       )
     ],),
   );
