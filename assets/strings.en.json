@@ -1400,6 +1400,8 @@
     "panel.event2.detail.attendance.event.registrations.label.title": "TOTAL NUMBER OF REGISTRATIONS:",
     "panel.event2.detail.attendance.event.attendees.label.title": "TOTAL NUMBER OF ATTENDEES:",
     "panel.event2.detail.attendance.attendees.drop_down.hint": "REGISTRANTS",
+    "panel.event2.detail.attendance.attendees.capacity.reached.text": "Event capacity is reached",
+    "panel.event2.detail.attendance.attendees.capacity.exceeded.text": "Event capacity exceeded",
     "panel.event2.detail.attendance.attendees.empty.text": "There are no users registered for or attending this event yet.",
     "panel.event2.detail.attendance.attendees.failed.text": "Failed to load attendee list.",
     "panel.event2.detail.attendance.manual.netid.label": "NetID for manual attendance check:",
