@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Guest List to Registration Setup Panel [#3678](https://github.com/rokwire/illinois-app/issues/3678).
 ### Changed
 - Changed texts in Registration and Attendance Panels [#3678](https://github.com/rokwire/illinois-app/issues/3678).
+- Acknowledged event capacity in registration and attendance taking [#3671](https://github.com/rokwire/illinois-app/issues/3671).
 
 ## [5.0.61] - 2023-09-04
 ### Changed
