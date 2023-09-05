@@ -138,7 +138,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   Widget _buildEventDetailsSection() => Event2CreatePanel.buildSectionWidget(
     body: Column(children: [
       _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'), value: widget.event?.registrationDetails?.eventCapacity),
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.registrations.label.title', 'TOTAL NUMBER OF REGISTRATIONS:'), value: _persons?.registrants?.length, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
+      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.registrations.label.title', 'TOTAL NUMBER OF REGISTRATIONS:'), value: Event2Person.countInList(_persons?.registrants, role: Event2UserRole.participant), loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
       _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.attendees.label.title', 'TOTAL NUMBER OF ATTENDEES:'), value: (_persons?.attendees != null) ? _atendeesNetIds.length : null, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
       StringUtils.isNotEmpty(_errorMessage) ? _buildErrorStatus(_errorMessage ?? '') : Container(),
     ],),
