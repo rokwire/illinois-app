@@ -1273,7 +1273,7 @@
 	"panel.event2.setup.registration.require.toggle.title": "必须透过应用程序注册",
 	"panel.event2.setup.registration.require.toggle.hint": "",
 	"panel.event2.setup.registration.capacity.label.title": "活动规模",
-	"panel.event2.setup.registration.registrants.label.title": "其他注册人的NetIDs",
+	"panel.event2.setup.registration.registrants.label.title": "ADD NETID(S) TO THE GUEST LIST",
 	"panel.event2.setup.registration.registrants.label.hint": "A space- or comma-separated list of NetIDs.",
 	"panel.event2.setup.registration.label.label.title": "添加注册标记",
 	"panel.event2.setup.registration.link.label.title": "添加外部连结",
