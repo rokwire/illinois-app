@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added Guest List to Registration Setup Panel [#3678](https://github.com/rokwire/illinois-app/issues/3678).
+### Changed
+- Changed texts in Registration and Attendance Panels [#3678](https://github.com/rokwire/illinois-app/issues/3678).
+
 ## [5.0.61] - 2023-09-04
 ### Changed
 - Event2CreatePanel update attendance description [#3702](https://github.com/rokwire/illinois-app/issues/3702).
