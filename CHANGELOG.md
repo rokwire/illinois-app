@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.62] - 2023-09-05
 ### Added
 - Added Guest List to Registration Setup Panel [#3678](https://github.com/rokwire/illinois-app/issues/3678).
 ### Changed
