@@ -184,7 +184,7 @@
     "widget.title.small": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.semi_fat": {"font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.small.fat": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.title.small.fat.spaced": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimary", "letter_spacing": 1.0},
+    "widget.title.small.fat.spaced": {"extends": "widget.title.small.fat", "letter_spacing": 1.0},
     "widget.title.tiny": {"font_family": "bold", "size": 12.0, "color": "fillColorPrimary"},
     "widget.title.tiny.highlight": {"extends" : "widget.title.tiny", "color": "white"},
     "widget.title.tiny.extra_fat": {"font_family": "extra_bold", "size": 12.0, "color": "fillColorPrimary"},
@@ -271,6 +271,9 @@
     "widget.label.regular.fat": { "font_family": "bold", "size": 16.0, "color": "fillColorSecondary"},
     "widget.label.regular.thin": { "font_family": "regular", "size": 16.0, "color": "fillColorSecondary"},
     "widget.label.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorSecondary"},
+    "widget.label.small.fat.spaced": { "extends": "widget.label.small.fat", "letter_spacing": 1.0},
+    "widget.label.small.extra_fat": { "font_family": "extra_bold", "size": 14.0, "color": "fillColorSecondary"},
+    "widget.label.small.extra_fat.spaced": { "extends": "widget.label.small.extra_fat", "letter_spacing": 1.0},
     "widget.label.tiny.fat": { "font_family": "bold", "size": 12.0, "color": "fillColorSecondary"},
 
     "widget.info.large": { "font_family": "regular", "size": 22.0, "color": "textSurface"},

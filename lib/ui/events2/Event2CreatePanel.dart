@@ -71,7 +71,7 @@ class Event2CreatePanel extends StatefulWidget {
   static const EdgeInsetsGeometry textEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
   static const EdgeInsetsGeometry innerTextEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
 
-  static TextStyle? get headingTextStype => Styles().textStyles?.getTextStyle("panel.create_event.title.small");
+  static TextStyle? get headingTextStype => Styles().textStyles?.getTextStyle("widget.title.small.fat.spaced");
   static TextStyle? get subTitleTextStype => Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
   static TextStyle? get textEditStyle => Styles().textStyles?.getTextStyle('widget.input_field.dark.text.regular.thin');
 
@@ -173,10 +173,10 @@ class Event2CreatePanel extends StatefulWidget {
     return (context != null) ? MediaQuery.of(context).textScaleFactor : 1.0;
   }
 
-  static Widget buildSectionTitleWidget(String title, { bool required = false }) =>
+  static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
     RichText(textScaleFactor: textScaleFactor, text:
-      TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
-        TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+      TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
+        TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
       ] : null),
     );
 
@@ -698,21 +698,21 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     String semanticsLabel = title + description;
 
     return Event2CreatePanel.buildSectionWidget(
-          heading: Padding(padding: Event2CreatePanel.sectionHeadingPadding, child:
-            Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
-              Row(children: [
-                Expanded(child:
-                  RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
-                    TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
-                      TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
-                    ])
-                  )
-                ),
-              ]),
-            )
-          ),
-          body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, minLines: 3, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.description.field.title', 'DESCRIPTION FIELD')),
-      );
+      heading: Padding(padding: Event2CreatePanel.sectionHeadingPadding, child:
+        Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
+          Row(children: [
+            Expanded(child:
+              RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
+                TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
+                  TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
+                ])
+              )
+            ),
+          ]),
+        )
+      ),
+      body: Event2CreatePanel.buildTextEditWidget(_descriptionController, keyboardType: TextInputType.text, maxLines: null, minLines: 3, autocorrect: true, semanticsLabel: Localization().getStringEx('panel.event2.create.section.description.field.title', 'DESCRIPTION FIELD')),
+    );
   }
 
   Widget _buildWebsiteSection() => Event2CreatePanel.buildSectionWidget(

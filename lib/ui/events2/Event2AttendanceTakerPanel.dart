@@ -135,33 +135,66 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     ]);
   }
 
-  Widget _buildEventDetailsSection() => Event2CreatePanel.buildSectionWidget(
-    body: Column(children: [
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'), value: widget.event?.registrationDetails?.eventCapacity),
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.registrations.label.title', 'TOTAL NUMBER OF REGISTRATIONS:'), value: _persons?.registrants?.length, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
-      _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.attendees.label.title', 'TOTAL NUMBER OF ATTENDEES:'), value: (_persons?.attendees != null) ? _atendeesNetIds.length : null, loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
-      StringUtils.isNotEmpty(_errorMessage) ? _buildErrorStatus(_errorMessage ?? '') : Container(),
-    ],),
-  );
+  Widget _buildEventDetailsSection() {
+    String? attendeesStatus;
+    TextStyle? attendeesTextStyle, attendeesStatusTextStyle = Styles().textStyles?.getTextStyle('widget.label.small.fat.spaced');
+    int? attendeesCount = (_persons?.attendees != null) ? _atendeesNetIds.length : null;
+    int? eventCapacity = widget.event?.registrationDetails?.eventCapacity;
+    if ((attendeesCount != null) && (eventCapacity != null)) {
+      if (eventCapacity < attendeesCount) {
+        attendeesStatus =  Localization().getStringEx('panel.event2.detail.attendance.attendees.capacity.exceeded.text', 'Event capacity exceeded');
+        attendeesStatusTextStyle = attendeesTextStyle = Styles().textStyles?.getTextStyle('widget.label.small.extra_fat.spaced');
+      }
+      else if (eventCapacity == attendeesCount) {
+        attendeesStatus = Localization().getStringEx('panel.event2.detail.attendance.attendees.capacity.reached.text', 'Event capacity is reached');
+        attendeesStatusTextStyle = Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'); // widget.label.small.fat.spaced
+      }
+    }
+
+    return Event2CreatePanel.buildSectionWidget(
+      body: Column(children: [
+        _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.capacity.label.title', 'EVENT CAPACITY:'), value: eventCapacity),
+        _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.registrations.label.title', 'TOTAL NUMBER OF REGISTRATIONS:'), value: Event2Person.countInList(_persons?.registrants, role: Event2UserRole.participant), loading: _loadingPeople, defaultValue: _hasError ? '-' : ''),
+        _buildEventDetail(label: Localization().getStringEx('panel.event2.detail.attendance.event.attendees.label.title', 'TOTAL NUMBER OF ATTENDEES:'), value: attendeesCount, loading: _loadingPeople, defaultValue: _hasError ? '-' : '',
+          description: attendeesStatus,
+          descriptionTextStyle: attendeesStatusTextStyle,
+          labelTextStyle: attendeesTextStyle,
+        ),
+        StringUtils.isNotEmpty(_errorMessage) ? _buildErrorStatus(_errorMessage ?? '') : Container(),
+      ],),
+    );
+  }
   
-  Widget _buildEventDetail({required String label, int? value, bool? loading, String defaultValue = ''}) {
+  Widget _buildEventDetail({required String label, int? value, String? description, 
+    TextStyle? labelTextStyle, TextStyle? valueTextStyle, TextStyle? descriptionTextStyle,
+    bool? loading, String defaultValue = ''
+  }) {
     String valueLabel = value?.toString() ?? defaultValue;
     String semanticsLabel = "$label: $valueLabel";
 
     return Padding(padding: Event2CreatePanel.innerSectionPadding, child:
       Semantics(label: semanticsLabel, excludeSemantics: true, child:
-        Row(children: [
-          Expanded(child:
-            Event2CreatePanel.buildSectionTitleWidget(label)
-          ),
-          (loading == true) ?
-            Padding(padding: EdgeInsets.all(2.5), child:
-              SizedBox(width: 16, height: 16, child:
-                CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
-              ),
-            ) :
-            Text(valueLabel, style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'),)
-        ])
+        Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          Row(children: [
+            Expanded(child:
+              Event2CreatePanel.buildSectionTitleWidget(label, textStyle: labelTextStyle)
+            ),
+            (loading == true) ?
+              Padding(padding: EdgeInsets.all(2.5), child:
+                SizedBox(width: 16, height: 16, child:
+                  CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+                ),
+              ) :
+              Text(valueLabel, style: valueTextStyle ?? Styles().textStyles?.getTextStyle('widget.label.medium.fat'),)
+          ]),
+
+          (description != null) ? Row(children: [
+            Expanded(child:
+              Text(description, style: descriptionTextStyle ?? valueTextStyle ?? Event2CreatePanel.headingTextStype,)
+            )
+          ],) : Container()
+
+        ],)
       )
     );
   }
