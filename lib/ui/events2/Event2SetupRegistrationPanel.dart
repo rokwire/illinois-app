@@ -442,7 +442,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildGuestsListSectionBody() {
     List<Widget> contentList = <Widget>[];
     for (Event2Person displayPerson in _displayList) {
-      if(displayPerson.registrationType == Event2UserRegistrationType.creator)
+      if(displayPerson.role != Event2UserRole.participant) //Show only participants
         continue;
 
       if (contentList.isNotEmpty) {
