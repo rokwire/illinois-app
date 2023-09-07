@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - SavedPanel: load events from events/lite (includes private events) [#3709](https://github.com/rokwire/illinois-app/issues/3709).
+- Display time for game events in local timezone and show past and upcoming games based on event day/time until midnight [#3714](https://github.com/rokwire/illinois-app/issues/3714).
 
 ## [5.0.62] - 2023-09-05
 ### Added
