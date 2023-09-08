@@ -506,16 +506,16 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _imageUrl = widget.event?.imageUrl;
     _websiteController.text = widget.event?.eventUrl ?? '';
 
-    _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? DateTimeUni.timezoneUniOrLocal;
+    _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? DateTimeLocal.timezoneLocal;
     if (widget.event?.startTimeUtc != null) {
-      TZDateTime startTimeUni = TZDateTime.from(widget.event!.startTimeUtc!, _timeZone);
-      _startDate = TZDateTimeUtils.dateOnly(startTimeUni);
-      _startTime = TimeOfDay.fromDateTime(startTimeUni);
+      TZDateTime startTime = TZDateTime.from(widget.event!.startTimeUtc!, _timeZone);
+      _startDate = TZDateTimeUtils.dateOnly(startTime);
+      _startTime = TimeOfDay.fromDateTime(startTime);
     }
     if (widget.event?.endTimeUtc != null) {
-      TZDateTime endTimeUni = TZDateTime.from(widget.event!.endTimeUtc!, _timeZone);
-      _endDate = TZDateTimeUtils.dateOnly(endTimeUni);
-      _endTime = TimeOfDay.fromDateTime(endTimeUni);
+      TZDateTime endTime = TZDateTime.from(widget.event!.endTimeUtc!, _timeZone);
+      _endDate = TZDateTimeUtils.dateOnly(endTime);
+      _endTime = TimeOfDay.fromDateTime(endTime);
     }
     //_allDay = (widget.event?.allDay == true);
 

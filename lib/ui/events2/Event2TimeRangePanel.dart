@@ -49,7 +49,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   @override
   void initState() {
-    _timeZone = widget.startTime?.location ?? widget.endTime?.location ?? DateTimeUni.timezoneUniOrLocal;
+    _timeZone = widget.startTime?.location ?? widget.endTime?.location ?? DateTimeLocal.timezoneLocal;
     
     DateTime now = DateTime.now();
     if (widget.startTime != null) {

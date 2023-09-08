@@ -91,20 +91,20 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayDateAndTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
-      TZDateTime nowMidnightUni = TZDateTimeUtils.dateOnly(nowUni);
+      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeUni = startTimeUtc!.toUniOrLocal();
-      TZDateTime startDateTimeMidnightUni = TZDateTimeUtils.dateOnly(startDateTimeUni);
-      int statDaysDiff = startDateTimeMidnightUni.difference(nowMidnightUni).inDays;
+      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
+      int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeUni = endTimeUtc?.toUniOrLocal();
-      TZDateTime? endDateTimeMidnightUni = (endDateTimeUni != null) ? TZDateTimeUtils.dateOnly(endDateTimeUni) : null;
-      int? endDaysDiff = (endDateTimeMidnightUni != null) ? endDateTimeMidnightUni.difference(nowMidnightUni).inDays : null;
+      TZDateTime? endDateTimeLocal = endTimeUtc?.toLocalTZ();
+      TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
+      int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
       bool differentStartAndEndDays = (statDaysDiff != endDaysDiff);
 
-      bool showStartYear = (nowUni.year != startDateTimeUni.year);
+      bool showStartYear = (nowLocal.year != startDateTimeLocal.year);
       String startDateFormat = (longFormat ? 'EEE, MMM d' : 'MMM d') + (showStartYear ? ', yyyy' : '');
 
       if ((endDaysDiff == null) || (endDaysDiff == statDaysDiff)) /* no end time or start date == end date */ {
@@ -113,13 +113,13 @@ extension Event2Ext on Event2 {
         switch(statDaysDiff) {
           case 0: displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today'); break;
           case 1: displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow'); break;
-          default: displayDay = DateFormat(startDateFormat).format(startDateTimeUni);
+          default: displayDay = DateFormat(startDateFormat).format(startDateTimeLocal);
         }
 
         if (allDay != true) {
-          String displayStartTime = DateFormat((startDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeUni).toLowerCase();
-          if ((endDateTimeUni != null) && (TimeOfDay.fromDateTime(startDateTimeUni) != TimeOfDay.fromDateTime(endDateTimeUni))) {
-            String displayEndTime = DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
+          String displayStartTime = DateFormat((startDateTimeLocal.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeLocal).toLowerCase();
+          if ((endDateTimeLocal != null) && (TimeOfDay.fromDateTime(startDateTimeLocal) != TimeOfDay.fromDateTime(endDateTimeLocal))) {
+            String displayEndTime = DateFormat((endDateTimeLocal.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeLocal).toLowerCase();
             return Localization().getStringEx('model.explore.date_time.from_to.format', '{{day}} from {{start_time}} to {{end_time}}').
             replaceAll('{{day}}', displayDay).
             replaceAll('{{start_time}}', displayStartTime).
@@ -136,23 +136,23 @@ extension Event2Ext on Event2 {
         }
       }
       else {
-        String displayDateTime = DateFormat(startDateFormat).format(startDateTimeUni);
+        String displayDateTime = DateFormat(startDateFormat).format(startDateTimeLocal);
         if (allDay != true) {
           displayDateTime += showStartYear ? ' ' : ', ';
-          displayDateTime += DateFormat((startDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeUni).toLowerCase();
+          displayDateTime += DateFormat((startDateTimeLocal.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeLocal).toLowerCase();
         }
 
-        if ((endDateTimeUni != null) && (differentStartAndEndDays || (allDay != true))) {
-          bool showEndYear = (nowUni.year != endDateTimeUni.year);
+        if ((endDateTimeLocal != null) && (differentStartAndEndDays || (allDay != true))) {
+          bool showEndYear = (nowLocal.year != endDateTimeLocal.year);
           String endDateFormat = (longFormat ? 'EEE, MMM d' : 'MMM d') + (showEndYear ? ', yyyy' : '');
 
           displayDateTime += ' - ';
           if (differentStartAndEndDays) {
-            displayDateTime += DateFormat(endDateFormat).format(endDateTimeUni);
+            displayDateTime += DateFormat(endDateFormat).format(endDateTimeLocal);
           }
           if (allDay != true) {
             displayDateTime += differentStartAndEndDays ? ', ' : '';
-            displayDateTime += DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
+            displayDateTime += DateFormat((endDateTimeLocal.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeLocal).toLowerCase();
           }
         }
         return displayDateTime;
@@ -168,20 +168,20 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayDate({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
-      TZDateTime nowMidnightUni = TZDateTimeUtils.dateOnly(nowUni);
+      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeUni = startTimeUtc!.toUniOrLocal();
-      TZDateTime startDateTimeMidnightUni = TZDateTimeUtils.dateOnly(startDateTimeUni);
-      int statDaysDiff = startDateTimeMidnightUni.difference(nowMidnightUni).inDays;
+      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
+      int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeUni = endTimeUtc?.toUniOrLocal();
-      TZDateTime? endDateTimeMidnightUni = (endDateTimeUni != null) ? TZDateTimeUtils.dateOnly(endDateTimeUni) : null;
-      int? endDaysDiff = (endDateTimeMidnightUni != null) ? endDateTimeMidnightUni.difference(nowMidnightUni).inDays : null;
+      TZDateTime? endDateTimeLocal = endTimeUtc?.toLocalTZ();
+      TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
+      int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
       bool differentStartAndEndDays = (statDaysDiff != endDaysDiff);
 
-      bool showStartYear = (nowUni.year != startDateTimeUni.year);
+      bool showStartYear = (nowLocal.year != startDateTimeLocal.year);
       String startDateFormat = (longFormat ? 'EEE, MMM d' : 'MMM d') + (showStartYear ? ', yyyy' : '');
 
       if ((endDaysDiff == null) || (endDaysDiff == statDaysDiff)) /* no end time or start date == end date */ {
@@ -190,20 +190,20 @@ extension Event2Ext on Event2 {
         switch(statDaysDiff) {
           case 0: displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today'); break;
           case 1: displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow'); break;
-          default: displayDay = DateFormat(startDateFormat).format(startDateTimeUni);
+          default: displayDay = DateFormat(startDateFormat).format(startDateTimeLocal);
         }
 
         return displayDay;
       }
       else {
-        String displayDateTime = DateFormat(startDateFormat).format(startDateTimeUni);
-        if ((endDateTimeUni != null) && differentStartAndEndDays) {
-          bool showEndYear = (nowUni.year != endDateTimeUni.year);
+        String displayDateTime = DateFormat(startDateFormat).format(startDateTimeLocal);
+        if ((endDateTimeLocal != null) && differentStartAndEndDays) {
+          bool showEndYear = (nowLocal.year != endDateTimeLocal.year);
           String endDateFormat = (longFormat ? 'EEE, MMM d' : 'MMM d') + (showEndYear ? ', yyyy' : '');
 
           displayDateTime += ' - ';
           if (differentStartAndEndDays) {
-            displayDateTime += DateFormat(endDateFormat).format(endDateTimeUni);
+            displayDateTime += DateFormat(endDateFormat).format(endDateTimeLocal);
           }
         }
         return displayDateTime;
@@ -219,25 +219,25 @@ extension Event2Ext on Event2 {
 
   String? _buildDisplayTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
-      TZDateTime nowUni = DateTimeUni.nowUniOrLocal();
-      TZDateTime nowMidnightUni = TZDateTimeUtils.dateOnly(nowUni);
+      TZDateTime nowLocal = DateTimeLocal.nowLocalTZ();
+      TZDateTime nowMidnightLocal = TZDateTimeUtils.dateOnly(nowLocal);
 
-      TZDateTime startDateTimeUni = startTimeUtc!.toUniOrLocal();
-      TZDateTime startDateTimeMidnightUni = TZDateTimeUtils.dateOnly(startDateTimeUni);
-      int statDaysDiff = startDateTimeMidnightUni.difference(nowMidnightUni).inDays;
+      TZDateTime startDateTimeLocal = startTimeUtc!.toLocalTZ();
+      TZDateTime startDateTimeMidnightLocal = TZDateTimeUtils.dateOnly(startDateTimeLocal);
+      int statDaysDiff = startDateTimeMidnightLocal.difference(nowMidnightLocal).inDays;
 
-      TZDateTime? endDateTimeUni = endTimeUtc?.toUniOrLocal();
-      TZDateTime? endDateTimeMidnightUni = (endDateTimeUni != null) ? TZDateTimeUtils.dateOnly(endDateTimeUni) : null;
-      int? endDaysDiff = (endDateTimeMidnightUni != null) ? endDateTimeMidnightUni.difference(nowMidnightUni).inDays : null;
+      TZDateTime? endDateTimeLocal =  endTimeUtc?.toLocalTZ();
+      TZDateTime? endDateTimeMidnightLocal = (endDateTimeLocal != null) ? TZDateTimeUtils.dateOnly(endDateTimeLocal) : null;
+      int? endDaysDiff = (endDateTimeMidnightLocal != null) ? endDateTimeMidnightLocal.difference(nowMidnightLocal).inDays : null;
 
       bool differentStartAndEndDays = (statDaysDiff != endDaysDiff);
 
       if ((endDaysDiff == null) || (endDaysDiff == statDaysDiff)) /* no end time or start date == end date */ {
 
         if (allDay != true) {
-          String displayStartTime = DateFormat((startDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeUni).toLowerCase();
-          if ((endDateTimeUni != null) && (TimeOfDay.fromDateTime(startDateTimeUni) != TimeOfDay.fromDateTime(endDateTimeUni))) {
-            String displayEndTime = DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
+          String displayStartTime = DateFormat((startDateTimeLocal.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeLocal).toLowerCase();
+          if ((endDateTimeLocal != null) && (TimeOfDay.fromDateTime(startDateTimeLocal) != TimeOfDay.fromDateTime(endDateTimeLocal))) {
+            String displayEndTime = DateFormat((endDateTimeLocal.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeLocal).toLowerCase();
             return Localization().getStringEx('model.explore.time.from_to.format', '{{start_time}} to {{end_time}}').
             replaceAll('{{start_time}}', displayStartTime).
             replaceAll('{{end_time}}', displayEndTime);
@@ -252,10 +252,10 @@ extension Event2Ext on Event2 {
         }
       }
       else {
-        String displayDateTime = DateFormat((startDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeUni).toLowerCase();
-        if ((endDateTimeUni != null) && (differentStartAndEndDays || (allDay != true))) {
+        String displayDateTime = DateFormat((startDateTimeLocal.minute == 0) ? 'ha' : 'h:mma').format(startDateTimeLocal).toLowerCase();
+        if ((endDateTimeLocal != null) && (differentStartAndEndDays || (allDay != true))) {
           displayDateTime += ' - ';
-          displayDateTime += DateFormat((endDateTimeUni.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeUni).toLowerCase();
+          displayDateTime += DateFormat((endDateTimeLocal.minute == 0) ? 'ha' : 'h:mma').format(endDateTimeLocal).toLowerCase();
         }
         return displayDateTime;
       }
@@ -413,20 +413,20 @@ String? event2TimeFilterDisplayInfo(Event2TimeFilter? value, { TZDateTime? custo
   Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTime?.toUtc(), customEndTimeUtc: customEndTime?.toUtc());
 
   int? startTimeEpoch = JsonUtils.intValue(options['end_time_after']);
-  TZDateTime? startTimeUni = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? DateTimeUni.timezoneUniOrLocal, startTimeEpoch * 1000) : null;
+  TZDateTime? startTimeLocal = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? DateTimeLocal.timezoneLocal, startTimeEpoch * 1000) : null;
 
   int? endTimeEpoch = JsonUtils.intValue(options['start_time_before']);
-  TZDateTime? endTimeUni = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? DateTimeUni.timezoneUniOrLocal, endTimeEpoch * 1000).toUniOrLocal() : null;
+  TZDateTime? endTimeLocal = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? DateTimeLocal.timezoneLocal, endTimeEpoch * 1000) : null;
 
   if (value == Event2TimeFilter.upcoming) {
     return null;
   }
   else if ((value == Event2TimeFilter.today) || (value == Event2TimeFilter.tomorrow)) {
-    return (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
+    return (startTimeLocal != null) ? DateFormat(dateFormat).format(startTimeLocal) : null;
   }
   else {
-    String? displayStartTime = (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
-    String? displayEndTime = (endTimeUni != null) ? DateFormat(dateFormat).format(endTimeUni) : null;
+    String? displayStartTime = (startTimeLocal != null) ? DateFormat(dateFormat).format(startTimeLocal) : null;
+    String? displayEndTime = (endTimeLocal != null) ? DateFormat(dateFormat).format(endTimeLocal) : null;
     if (displayStartTime != null) {
       return (displayEndTime != null) ? '$displayStartTime - $displayEndTime' : '$displayStartTime ⇧';  
     }
