@@ -102,18 +102,18 @@
 			"Big 10 Athletics",
 			"Campus Visits",
 			"Career Development",
-			"Ceremonies & Services",
+			"Ceremonies and Services",
 			"Club Athletics",
-			"Conferences & Workshops",
+			"Conferences and Workshops",
 			"Exhibits",
-			"Festivals & Celebrations",
+			"Festivals and Celebrations",
 			"Film Screenings",
 			"Other",
 			"Performances",
-			"Receptions & Open House Events",
-			"Recreation, Health & Fitness",
-			"Social & Informal Events",
-			"Speakers & Seminars"
+			"Receptions and Open House Events",
+			"Recreation, Health and Fitness",
+			"Social and Informal Events",
+			"Speakers and Seminars"
 		],
 		"translations": {
 			"es": {
@@ -161,10 +161,10 @@
 		]
 	},{
 	  "id": "recreation-health-fitness",
-	  "title": "Recreation, Health & Fitness",
-	  "description": "Choose the recreation, health & fitness your group can be filtered by.",
-	  "empty-hint": "Select a recreation, health & fitness",
-	  "semantics-hint": "Double tap to show recreation, health & fitness options.",
+	  "title": "Recreation, Health and Fitness",
+	  "description": "Choose the recreation, health and fitness your group can be filtered by.",
+	  "empty-hint": "Select a recreation, health and fitness",
+	  "semantics-hint": "Double tap to show recreation, health and fitness options.",
 	  "usage": "category",
 	  "widget": "dropdown",
 	  "scope": ["groups"],
@@ -173,13 +173,13 @@
 		  "max-selected-count": 1
 	  },
 	  "values": [
-		  { "label": "Group Fitness", "requirements": { "category" : "Recreation, Health & Fitness" }},
-		  { "label": "Aquatics", "requirements": { "category" : "Recreation, Health & Fitness" }},
-		  { "label": "Ice Skating", "requirements": { "category" : "Recreation, Health & Fitness" }},
-		  { "label": "Personal Training", "requirements": { "category" : "Recreation, Health & Fitness" }},
-		  { "label": "Student Wellness", "requirements": { "category" : "Recreation, Health & Fitness" }},
-		  { "label": "Adventure Req", "requirements": { "category" : "Recreation, Health & Fitness" }},
-		  { "label": "Summer Camp", "requirements": { "category" : "Recreation, Health & Fitness" }}
+		  { "label": "Group Fitness", "requirements": { "category" : "Recreation, Health and Fitness" }},
+		  { "label": "Aquatics", "requirements": { "category" : "Recreation, Health and Fitness" }},
+		  { "label": "Ice Skating", "requirements": { "category" : "Recreation, Health and Fitness" }},
+		  { "label": "Personal Training", "requirements": { "category" : "Recreation, Health and Fitness" }},
+		  { "label": "Student Wellness", "requirements": { "category" : "Recreation, Health and Fitness" }},
+		  { "label": "Adventure Req", "requirements": { "category" : "Recreation, Health and Fitness" }},
+		  { "label": "Summer Camp", "requirements": { "category" : "Recreation, Health and Fitness" }}
 	  ]
   	},{
 		"id": "student-classification",
