@@ -413,10 +413,10 @@ String? event2TimeFilterDisplayInfo(Event2TimeFilter? value, { TZDateTime? custo
   Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTime?.toUtc(), customEndTimeUtc: customEndTime?.toUtc());
 
   int? startTimeEpoch = JsonUtils.intValue(options['end_time_after']);
-  TZDateTime? startTimeLocal = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? local, startTimeEpoch * 1000) : null;
+  TZDateTime? startTimeLocal = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? DateTimeLocal.timezoneLocal, startTimeEpoch * 1000) : null;
 
   int? endTimeEpoch = JsonUtils.intValue(options['start_time_before']);
-  TZDateTime? endTimeLocal = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? local, endTimeEpoch * 1000) : null;
+  TZDateTime? endTimeLocal = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? DateTimeLocal.timezoneLocal, endTimeEpoch * 1000) : null;
 
   if (value == Event2TimeFilter.upcoming) {
     return null;
