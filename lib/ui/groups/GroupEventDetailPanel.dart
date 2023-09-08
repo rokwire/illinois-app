@@ -201,8 +201,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     //Newly created groups pass time in the string
     if(StringUtils.isEmpty(displayTime?.trim())){
       if(_event?.startTimeUtc !=null || _event?.endTimeUtc != null){
-        DateTime? startDate = _event?.startTimeUtc?.toUniOrLocal();
-        DateTime? endDate = _event?.endTimeUtc?.toUniOrLocal() ;
+        DateTime? startDate = _event?.startTimeUtc?.toLocal();
+        DateTime? endDate = _event?.endTimeUtc?.toLocal() ;
         if(startDate !=null){
           displayTime = AppDateTime().formatDateTime(startDate, format: "MMM dd, yyyy");
         } else if(endDate != null){

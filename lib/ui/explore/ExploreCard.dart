@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Game.dart';
@@ -25,7 +26,6 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/WellnessBuilding.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -33,7 +33,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/events2.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
@@ -49,7 +48,6 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:timezone/timezone.dart';
 
 class ExploreCard extends StatefulWidget {
   final GestureTapCallback? onTap;
@@ -490,8 +488,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     if (explore is Event) {
       return explore.timeDisplayString;
     } else if (explore is Event2) {
-      TZDateTime? dateTimeUni = explore.startTimeUtc?.toUniOrLocal();
-      return (dateTimeUni != null) ? DateFormat('MMM d, ha').format(dateTimeUni) : null;
+      return explore.shortDisplayDateAndTime;
     } else if (explore is Game) {
       return explore.displayTime;
     } else if (explore is StudentCourse) {

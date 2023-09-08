@@ -7,7 +7,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/event2.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -413,20 +412,20 @@ String? event2TimeFilterDisplayInfo(Event2TimeFilter? value, { TZDateTime? custo
   Events2Query.buildTimeLoadOptions(options, value, customStartTimeUtc: customStartTime?.toUtc(), customEndTimeUtc: customEndTime?.toUtc());
 
   int? startTimeEpoch = JsonUtils.intValue(options['end_time_after']);
-  TZDateTime? startTimeUni = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? DateTimeUni.timezoneUniOrLocal, startTimeEpoch * 1000) : null;
+  TZDateTime? startTimeLocal = (startTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customStartTime?.location ?? local, startTimeEpoch * 1000) : null;
 
   int? endTimeEpoch = JsonUtils.intValue(options['start_time_before']);
-  TZDateTime? endTimeUni = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? DateTimeUni.timezoneUniOrLocal, endTimeEpoch * 1000).toUniOrLocal() : null;
+  TZDateTime? endTimeLocal = (endTimeEpoch != null) ? TZDateTime.fromMillisecondsSinceEpoch(customEndTime?.location ?? local, endTimeEpoch * 1000) : null;
 
   if (value == Event2TimeFilter.upcoming) {
     return null;
   }
   else if ((value == Event2TimeFilter.today) || (value == Event2TimeFilter.tomorrow)) {
-    return (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
+    return (startTimeLocal != null) ? DateFormat(dateFormat).format(startTimeLocal) : null;
   }
   else {
-    String? displayStartTime = (startTimeUni != null) ? DateFormat(dateFormat).format(startTimeUni) : null;
-    String? displayEndTime = (endTimeUni != null) ? DateFormat(dateFormat).format(endTimeUni) : null;
+    String? displayStartTime = (startTimeLocal != null) ? DateFormat(dateFormat).format(startTimeLocal) : null;
+    String? displayEndTime = (endTimeLocal != null) ? DateFormat(dateFormat).format(endTimeLocal) : null;
     if (displayStartTime != null) {
       return (displayEndTime != null) ? '$displayStartTime - $displayEndTime' : '$displayStartTime ⇧';  
     }

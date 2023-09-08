@@ -4,7 +4,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -49,7 +48,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
 
   @override
   void initState() {
-    _timeZone = widget.startTime?.location ?? widget.endTime?.location ?? DateTimeUni.timezoneUniOrLocal;
+    _timeZone = widget.startTime?.location ?? widget.endTime?.location ?? local;
     
     DateTime now = DateTime.now();
     if (widget.startTime != null) {
