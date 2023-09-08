@@ -31,6 +31,7 @@ import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -505,7 +506,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     _imageUrl = widget.event?.imageUrl;
     _websiteController.text = widget.event?.eventUrl ?? '';
 
-    _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? local;
+    _timeZone = timeZoneDatabase.locations[widget.event?.timezone] ?? DateTimeLocal.timezoneLocal;
     if (widget.event?.startTimeUtc != null) {
       TZDateTime startTime = TZDateTime.from(widget.event!.startTimeUtc!, _timeZone);
       _startDate = TZDateTimeUtils.dateOnly(startTime);
