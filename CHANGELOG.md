@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Upgrade to connectivity_plus plugin [#45](https://github.com/rokmetro/vogue-app/issues/45).
 
 ## [5.0.64] - 2023-09-08
 ### Changed
