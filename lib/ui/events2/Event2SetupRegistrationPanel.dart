@@ -80,7 +80,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
           if (result is Event2PersonsResult) {
             setState(() {
               _loadingPeople = false;
-              _displayList = result.buildDisplayList();
+              _displayList = result.buildDisplayMap().buildDisplayList();
             });
           }
           else {
@@ -547,19 +547,7 @@ class _GuestListItemWidget extends StatelessWidget {
   }
 
   Widget get _typeWidget {
-    String type = "";
-    switch (registrant.registrationType){
-      case Event2UserRegistrationType.self:
-          type = "Self Registered";
-        break;
-      case Event2UserRegistrationType.registrants:
-          type = "Guest List";
-        break;
-      case Event2UserRegistrationType.creator:
-          type = "Creator";
-        break;
-      default:  type = "Unknown";
-    }
+    String type = event2UserRegistrationToDisplayString(registrant.registrationType) ?? Localization().getStringEx('model.event2.registrant_type.unknown', 'Unknown');
     return Text(type, style: Styles().textStyles?.getTextStyle('widget.detail.light.regular'), textAlign: TextAlign.end,);
   }
 }

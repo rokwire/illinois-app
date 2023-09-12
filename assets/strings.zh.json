@@ -3796,6 +3796,11 @@
 	"model.event2.registration_type.internal": "Via the app",
 	"model.event2.registration_type.external": "Via external link",
 
+	"model.event2.registrant_type.self": "Self Registered",
+	"model.event2.registrant_type.registrants": "Guest List",
+	"model.event2.registrant_type.creator": "Creator",
+	"model.event2.registrant_type.unknown": "Unknown",
+
 	"model.canvas.calendar.event.type.event.label": "事件",
 	"model.canvas.calendar.event.type.assignment.label": "任務",
 
