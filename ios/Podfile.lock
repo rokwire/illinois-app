@@ -132,16 +132,16 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
-  - OrigoSDK-Debug (1.9.0):
+  - OrigoSDK-Debug (1.10.0):
     - BerTlv
     - CocoaLumberjack
     - JSONModel
-    - Mixpanel (~> 5.0.0)
-  - OrigoSDK-Release (1.9.0):
+    - Mixpanel (~> 5.0.2)
+  - OrigoSDK-Release (1.10.0):
     - BerTlv
     - CocoaLumberjack
     - JSONModel
-    - Mixpanel (~> 5.0.0)
+    - Mixpanel (~> 5.0.2)
   - package_info (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -153,12 +153,12 @@ PODS:
   - ReachabilitySwift (5.0.0)
   - rokwire_plugin (1.5.0):
     - Flutter
-  - SeosMobileKeysSDK-Debug (7.7.2):
+  - SeosMobileKeysSDK-Debug (7.7.5):
     - BerTlv
     - CocoaLumberjack
     - JSONModel
     - Mixpanel
-  - SeosMobileKeysSDK-Release (7.7.2):
+  - SeosMobileKeysSDK-Release (7.7.5):
     - BerTlv
     - CocoaLumberjack
     - JSONModel
@@ -368,16 +368,16 @@ SPEC CHECKSUMS:
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   Mixpanel: 62e5fb088d56a7ba1369aeb335d0bff7ebae061e
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  OrigoSDK-Debug: fc656dce5122825ea5495ad67c22aa6182fa9401
-  OrigoSDK-Release: 0befd88b1c95169c7ed6ee7708a50588fc402674
+  OrigoSDK-Debug: 425bf16ad0796cb41a1b9239031b09ba33946376
+  OrigoSDK-Release: 5e57c26ed74121d287ad820d3b7001e018561fb9
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   PromisesSwift: cf9eb58666a43bbe007302226e510b16c1e10959
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   rokwire_plugin: 5ad66246a9e292b6ffbe5dedca91550e1c89b007
-  SeosMobileKeysSDK-Debug: 359fc447059b971f61f17b66ecfc62883921d4a4
-  SeosMobileKeysSDK-Release: 97d1ac3775b62e770206d32d8fdb7463e92444fe
+  SeosMobileKeysSDK-Debug: 41dc15710ad56f340a9ef3e82d987623c289d9ce
+  SeosMobileKeysSDK-Release: add079b6221cd9d42b4c088407b2f8f365c0cd53
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
   speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
