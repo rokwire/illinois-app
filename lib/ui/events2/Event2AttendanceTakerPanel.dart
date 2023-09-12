@@ -1,8 +1,10 @@
 //import 'dart:math';
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -412,7 +414,6 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
           String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
           if (attendeeNetId != null) {
-
             setState(() {
               _atendeesNetIds.add(attendeeNetId);
               if (!_displayMap.containsKey(attendeeNetId)) {
@@ -422,6 +423,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
               _processedNetId = attendeeNetId;
               _attendeesSectionExpanded = true;
             });
+            _beep(_isAttendeeRegistered(attendeeNetId));
             _manualNetIdController.text = '';
             _setupProcessedTimer();
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -510,7 +512,6 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
             String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
             if (attendeeNetId != null) {
-
               setState(() {
                 _atendeesNetIds.add(attendeeNetId);
                 if (!_displayMap.containsKey(attendeeNetId)) {
@@ -520,6 +521,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
                 _processedNetId = attendeeNetId;
                 _attendeesSectionExpanded = true;
               });
+              _beep(_isAttendeeRegistered(attendeeNetId));
               _setupProcessedTimer();
             }
             else {
@@ -573,6 +575,18 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         });
       }
     });
+  }
+
+  bool _isAttendeeRegistered(String attendeeNetId) =>
+    _displayMap[attendeeNetId]?.registrationType != null;
+
+  Future<void> _beep(bool success) async {
+    if (Platform.isAndroid) {
+      await FlutterBeep.playSysSound(success ? AndroidSoundIDs.TONE_PROP_BEEP : AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
+    }
+    else if (Platform.isIOS) {
+      await FlutterBeep.playSysSound(success ? iOSSoundIDs.AudioToneKey2 : iOSSoundIDs.SIMToolkitTone3);
+    }
   }
 
   Future<void> _refresh() async {

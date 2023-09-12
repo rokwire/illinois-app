@@ -60,6 +60,12 @@
 @import flutter_barcode_scanner;
 #endif
 
+#if __has_include(<flutter_beep/FlutterBeepPlugin.h>)
+#import <flutter_beep/FlutterBeepPlugin.h>
+#else
+@import flutter_beep;
+#endif
+
 #if __has_include(<flutter_exif_rotation/FlutterExifRotationPlugin.h>)
 #import <flutter_exif_rotation/FlutterExifRotationPlugin.h>
 #else
@@ -204,6 +210,7 @@
   [FLTFirebaseCrashlyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCrashlyticsPlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
   [SwiftFlutterBarcodeScannerPlugin registerWithRegistrar:[registry registrarForPlugin:@"SwiftFlutterBarcodeScannerPlugin"]];
+  [FlutterBeepPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterBeepPlugin"]];
   [FlutterExifRotationPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterExifRotationPlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
   [FlutterNativeTimezonePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterNativeTimezonePlugin"]];

@@ -61,6 +61,11 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin flutter_barcode_scanner, com.amolg.flutterbarcodescanner.FlutterBarcodeScannerPlugin", e);
     }
     try {
+      flutterEngine.getPlugins().add(new com.gonoter.flutter_beep.FlutterBeepPlugin());
+    } catch(Exception e) {
+      Log.e(TAG, "Error registering plugin flutter_beep, com.gonoter.flutter_beep.FlutterBeepPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.flutterexifrotation.FlutterExifRotationPlugin());
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin flutter_exif_rotation, io.flutter.plugins.flutterexifrotation.FlutterExifRotationPlugin", e);

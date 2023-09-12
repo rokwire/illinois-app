@@ -74,6 +74,8 @@ PODS:
   - Flutter (1.0.0)
   - flutter_barcode_scanner (2.0.0):
     - Flutter
+  - flutter_beep (0.0.1):
+    - Flutter
   - flutter_exif_rotation (0.3.0):
     - Flutter
   - flutter_local_notifications (0.0.1):
@@ -201,6 +203,7 @@ DEPENDENCIES:
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
   - flutter_barcode_scanner (from `.symlinks/plugins/flutter_barcode_scanner/ios`)
+  - flutter_beep (from `.symlinks/plugins/flutter_beep/ios`)
   - flutter_exif_rotation (from `.symlinks/plugins/flutter_exif_rotation/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_timezone (from `.symlinks/plugins/flutter_native_timezone/ios`)
@@ -277,6 +280,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_barcode_scanner:
     :path: ".symlinks/plugins/flutter_barcode_scanner/ios"
+  flutter_beep:
+    :path: ".symlinks/plugins/flutter_beep/ios"
   flutter_exif_rotation:
     :path: ".symlinks/plugins/flutter_exif_rotation/ios"
   flutter_local_notifications:
@@ -335,7 +340,7 @@ SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   BerTlv: c94b89a7b93bf8c1881691a8d105ec87a4a10759
   CocoaLumberjack: 78abfb691154e2a9df8ded4350d504ee19d90732
-  connectivity_plus: 07c49e96d7fc92bc9920617b83238c4d178b446a
+  connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   device_calendar: 9cb33f88a02e19652ec7b8b122ca778f751b1f7b
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Firebase: bd152f0f3d278c4060c5c71359db08ebcfd5a3e2
@@ -351,6 +356,7 @@ SPEC CHECKSUMS:
   FirebaseSessions: 5f9e62cd4096e24d2011cbd845b0efceffaee1ec
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
+  flutter_beep: 54fb393b22dfa0f0e4573c81b1c74dd71c4e5af8
   flutter_exif_rotation: de6b54e8bd54a687f28d6397d1a890391de41111
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_native_timezone: 5f05b2de06c9776b4cc70e1839f03de178394d22
