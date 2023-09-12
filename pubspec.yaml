@@ -60,6 +60,7 @@ dependencies:
   in_app_review: ^2.0.4
   speech_to_text: ^6.1.1
   visibility_detector: ^0.4.0+2
+  flutter_beep: ^1.0.0
 # google_maps_flutter: ^2.2.5
 
   rokwire_plugin:
