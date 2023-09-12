@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade to connectivity_plus plugin [#45](https://github.com/rokmetro/vogue-app/issues/45).
 - Android: Update HID / Origo sdk to 1.9.1 [#3725](https://github.com/rokwire/illinois-app/issues/3725).
 - iOS: Update HID / Origo sdk to 1.10.0 [#3727](https://github.com/rokwire/illinois-app/issues/3727).
+### Fixed
+- Showing live games [#3729](https://github.com/rokwire/illinois-app/issues/3729).
 
 ## [5.0.64] - 2023-09-08
 ### Changed
