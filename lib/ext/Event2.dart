@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -86,8 +87,8 @@ extension Event2Ext on Event2 {
     Analytics.LogAttributeLocation : location?.analyticsValue,
   };
 
-  String? get shortDisplayDateAndTime => _buildDisplayDateAndTime(longFormat: false);
-  String? get longDisplayDateAndTime => _buildDisplayDateAndTime(longFormat: true);
+  String? get shortDisplayDateAndTime => hasGame ? game!.displayTime : _buildDisplayDateAndTime(longFormat: false);
+  String? get longDisplayDateAndTime => hasGame ? game!.displayTime : _buildDisplayDateAndTime(longFormat: true);
 
   String? _buildDisplayDateAndTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
@@ -163,8 +164,8 @@ extension Event2Ext on Event2 {
     }
   }
 
-  String? get shortDisplayDate => _buildDisplayDate(longFormat: false);
-  String? get longDisplayDate => _buildDisplayDate(longFormat: true);
+  String? get shortDisplayDate => hasGame ? game!.displayTime : _buildDisplayDate(longFormat: false);
+  String? get longDisplayDate => hasGame ? game!.displayTime : _buildDisplayDate(longFormat: true);
 
   String? _buildDisplayDate({bool longFormat = false}) {
     if (startTimeUtc != null) {
@@ -214,8 +215,8 @@ extension Event2Ext on Event2 {
     }
   }
 
-  String? get shortDisplayTime => _buildDisplayTime(longFormat: false);
-  String? get longDisplayTime => _buildDisplayTime(longFormat: true);
+  String? get shortDisplayTime => hasGame ? game!.displayTime : _buildDisplayTime(longFormat: false);
+  String? get longDisplayTime => hasGame ? game!.displayTime : _buildDisplayTime(longFormat: true);
 
   String? _buildDisplayTime({bool longFormat = false}) {
     if (startTimeUtc != null) {
