@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.66] - 2023-09-13
 ### Fixed
 - Show date range for game events [#3735](https://github.com/rokwire/illinois-app/issues/3735).
 - Event additional attendance takers [#3656](https://github.com/rokwire/illinois-app/issues/3656).
