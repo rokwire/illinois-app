@@ -1364,15 +1364,15 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   // Attendance
 
-  Widget  _buildAttendanceButtonSection() => Event2CreatePanel.buildButtonSectionWidget(
+  Widget  _buildAttendanceButtonSection() => Visibility(visible: widget.isCreate, child: Event2CreatePanel.buildButtonSectionWidget(
     heading: Event2CreatePanel.buildButtonSectionHeadingWidget(
       title: Localization().getStringEx('panel.event2.create.button.attendance.title', 'EVENT ATTENDANCE'),
       subTitle: (_attendanceDetails?.isNotEmpty == true) ?
-        Localization().getStringEx('panel.event2.create.button.attendance.confirmation', 'Event attendance details set up.') :
-        Localization().getStringEx('panel.event2.create.button.attendance.description', 'Check in attendees via the app.'),
+      Localization().getStringEx('panel.event2.create.button.attendance.confirmation', 'Event attendance details set up.') :
+      Localization().getStringEx('panel.event2.create.button.attendance.description', 'Check in attendees via the app.'),
       onTap: _onEventAttendance,
     ),
-  );
+  ));
 
   void _onEventAttendance() {
     Analytics().logSelect(target: "Event Attendance");

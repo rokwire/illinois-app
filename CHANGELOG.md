@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Show date range for game events [#3735](https://github.com/rokwire/illinois-app/issues/3735).
+- Event additional attendance takers [#3656](https://github.com/rokwire/illinois-app/issues/3656).
 
 ## [5.0.65] - 2023-09-12
 ### Changed
