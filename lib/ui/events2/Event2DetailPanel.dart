@@ -454,7 +454,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     bool hasSurvey = (_event?.hasSurvey ?? false) && (_survey != null);
     bool showSurvey = (_isAttendee || _isAdmin) && hasAttendance && hasSurvey;
     int surveyHours = _event?.surveyDetails?.hoursAfterEvent ?? 0;
-    bool registrationAvailable = _event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) ?? true;
+    bool registrationAvailable = (_event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) != false);
 
     if (hasRegistration) {
       if (hasAttendance) {
@@ -588,7 +588,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if(Auth2().isLoggedIn == true)
       return null;
 
-    return (_event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) != false) ? <Widget>[_buildButtonWidget(
+    return _isInternalRegistrationAvailable ? <Widget>[_buildButtonWidget(
         title: Localization().getStringEx('panel.event2.detail.button.login.register.title', 'Log In to Register'),
         onTap: _onLogIn,
         progress: _authLoading
@@ -611,7 +611,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               onTap: _onUnregister,
               progress: _registrationLoading
           )];
-        } else if ((_event?.userRole == null) && (_event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) != false)) { // Not registered yet and has available capacity
+        } else if ((_event?.userRole == null) && _isInternalRegistrationAvailable) { // Not registered yet and has available capacity
           return <Widget>[_buildButtonWidget(
               title: Localization().getStringEx('panel.event2.detail.button.register.title', 'Register'),
               onTap: _onRegister,
@@ -1298,6 +1298,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   //bool get _isParticipant =>  _event?.userRole == Event2UserRole.participant;
   bool get _isAttendee => (_persons?.attendees?.indexWhere((person) => person.identifier?.accountId == Auth2().accountId) ?? -1) > -1;
   bool get _hasDisplayCategories => (_displayCategories?.isNotEmpty == true);
+  bool get _isInternalRegistrationAvailable => (_event?.registrationDetails?.type == Event2RegistrationType.internal) &&
+    (_event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) == true);
+
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
 
