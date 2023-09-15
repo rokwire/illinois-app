@@ -16,7 +16,6 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:sprintf/sprintf.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
   final Event2? event;
@@ -53,15 +52,12 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   bool _modified = false;
   bool _updatingAttendance = false;
 
-  Event2PersonsResult? _personResult;
-
   @override
   void initState() {
     _event = widget.event;
     _initDetails(widget.details);
     if (_isEditing) {
       _attendanceTakersController.addListener(_checkModified);
-      _loadEventUsers();
     }
     super.initState();
   }
@@ -230,9 +226,6 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   Future<void> _onRefresh() async {
     _updateController.add(Event2AttendanceTakerWidget.notifyRefresh);
-    if (_isEditing) {
-      _loadEventUsers();
-    }
   }
 
   // HeaderBar
@@ -329,34 +322,9 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
-  void _loadEventUsers() {
-    if (widget.eventId != null) {
-      Events2().loadEventPeople(widget.eventId!).then((result) {
-        _personResult = result;
-      });
-    }
-  }
-
-  List<String> _buildDuplicatedAttendanceTakerNetIds() {
-    List<String> duplicatedNetIds = <String>[];
-    List<Event2Person>? registrants = _personResult?.registrants;
-    if (CollectionUtils.isNotEmpty(registrants)) {
-      List<String>? attendanceTakersNetIds = ListUtils.notEmpty(ListUtils.stripEmptyStrings(_attendanceTakersController.text.split(RegExp(r'[\s,;]+'))));
-      if (CollectionUtils.isNotEmpty(attendanceTakersNetIds)) {
-        for (Event2Person registrant in registrants!) {
-          String? registrantNetId = registrant.identifier?.netId;
-          if ((registrantNetId != null) && attendanceTakersNetIds!.contains(registrantNetId)) {
-            duplicatedNetIds.add(registrantNetId);
-          }
-        }
-      }
-    }
-    return duplicatedNetIds;
-  }
-
   void _onTapApply() {
     Analytics().logSelect(target: 'HeaderBar: Apply');
-    List<String> duplicatedTakersNetIds = _buildDuplicatedAttendanceTakerNetIds();
+    /*List<String> duplicatedTakersNetIds = _buildDuplicatedAttendanceTakerNetIds();
     if (CollectionUtils.isNotEmpty(duplicatedTakersNetIds)) {
       String msg = sprintf(
           Localization().getStringEx('panel.event2.setup.attendance.takers.duplicated_netids.error.msg',
@@ -364,7 +332,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
           [duplicatedTakersNetIds.join(',')]);
       AppAlert.showMessage(context, msg);
       return;
-    }
+    }*/
     _updateEventAttendanceDetails(
         attendanceDetails: _buildAttendanceDetails(), progress: (bool value) => (_applyProgress = value), success: (Event2 event) => _applyEventDetails(event));
   }
