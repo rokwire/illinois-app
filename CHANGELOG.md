@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Do not show Register button until we are sure that registration is available for the event [#3671](https://github.com/rokwire/illinois-app/issues/3671).
+- Event additional attendance takers [#3656](https://github.com/rokwire/illinois-app/issues/3656).
 
 ## [5.0.66] - 2023-09-13
 ### Fixed
