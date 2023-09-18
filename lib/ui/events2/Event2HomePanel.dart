@@ -1004,7 +1004,8 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
   void _onEvent(Event2 event) {
     Analytics().logSelect(target: 'Event: ${event.name}');
     if (event.hasGame) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+      widget.eventSelector?.data.event = event;
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game, eventSelector: widget.eventSelector)));
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event, userLocation: _currentLocation, eventSelector: widget.eventSelector,)));
     }

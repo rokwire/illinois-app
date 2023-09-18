@@ -22,6 +22,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events2/Event2CreatePanel.dart';
 import 'package:illinois/ui/events2/Event2DetailPanel.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
@@ -502,7 +503,9 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
       InkWell(onTap: () {
           Analytics().logSelect(target: "Group Event");
           // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: widget.event, eventSelector: widget.group != null ? GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showSelectionButton: false) : null)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>  widget.event?.hasGame == true?
+          AthleticsGameDetailPanel(game: widget.event?.game, eventSelector: widget.group != null ? GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showSelectionButton: false) : null) :
+          Event2DetailPanel(event: widget.event, eventSelector: widget.group != null ? GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showSelectionButton: false) : null)));
         },
         child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
@@ -632,7 +635,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     //     AppAlert.showDialogResult(context, "Error Occurred while updating event");
     //   });
     // })));
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showSelectionButton: false))));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(event: widget.event, eventSelector: GroupEventSelector(GroupEventData(group: widget.group, event: widget.event), showSelectionButton: false, padding: EdgeInsets.only(top: 16)))));
   }
 
   bool get _canEdit {
