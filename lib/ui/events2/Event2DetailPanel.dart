@@ -1211,21 +1211,16 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
       List<Future<dynamic>> futures = [
         Events2().loadEvent(eventId),
+        Surveys().loadEvent2Survey(eventId), // we always need to load the survey because a new survey may have just been set
       ];
       
-      // We need the survey and persons only if event has a survey attached.
-
-      int? surveyIndex = (_event?.hasSurvey == true) ? futures.length : null;
-      if (surveyIndex != null) {
-        futures.add(Surveys().loadEvent2Survey(eventId));
-      }
-
       // Handle searching for existing survey responses
       int? surveyResponseIndex = ((_event?.hasSurvey == true) && (_survey?.id != null)) ? futures.length : null;
       if (surveyResponseIndex != null) {
         futures.add(Surveys().loadUserSurveyResponses(surveyIDs: [_survey!.id]));
       }
 
+      // We need the persons only if event has a survey attached.
       int? peopleIndex = (_event?.hasSurvey == true) ? futures.length : null;
       if (peopleIndex != null) {
         futures.add(Events2().loadEventPeople(eventId));
@@ -1244,7 +1239,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
       List<dynamic> results = await Future.wait(futures);
       Event2? event = ((0 < results.length) && (results[0] is Event2)) ? results[0] : null;
-      Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
+      Survey? survey = ((1 < results.length) && (results[1] is Survey)) ? results[1] : null;
       List<SurveyResponse>? surveyResponses = ((surveyResponseIndex != null) && (surveyResponseIndex < results.length) && (results[surveyResponseIndex] is List<SurveyResponse>)) ? results[surveyResponseIndex] : null;
       Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
       Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
@@ -1260,7 +1255,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           _selectorEvent = event;
           _displayCategories = displayCategories;
         }
-        if (survey != null) {
+        if (survey != null || _event?.hasSurvey != true) {
           _survey = survey;
         }
         if (surveyResponses != null) {
