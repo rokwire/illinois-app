@@ -93,7 +93,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildScanSection()),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildManualSection()),
               _isEditing ? _buildAttendanceTakerSection() : Container(),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()),
+              _isEditing ? Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildAttendanceTakersSection()) : Container(),
             ]),
           )
 
