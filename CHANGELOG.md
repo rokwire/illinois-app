@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Display raw attribute value as it is if it does not persist as content attribite value [#3743](https://github.com/rokwire/illinois-app/issues/3743).
+- Do not show additional attendance takers edit when creating/updating event, make it available ONLY when editing event attendance strsaightly [#3656](https://github.com/rokwire/illinois-app/issues/3656).
 
 ## [5.0.67] - 2023-09-15
 ### Fixed
