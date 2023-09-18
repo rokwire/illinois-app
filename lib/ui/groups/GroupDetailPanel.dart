@@ -1929,7 +1929,6 @@ class GroupEventSelector extends Event2Selector{
   @override
   void init(State<StatefulWidget> state) {
     super.init(state);
-    // _initAdminGroups();
     if(enableMembersSelection) {
       _initMemberSelection(state);
     }
@@ -2095,34 +2094,28 @@ class GroupEventData extends Event2SelectorData{
           "update_existing_event" : (event?.id != null)
         });
 
-  void set group(Group? group) => data?["group"] = group;
+  void set group(Group? group) => data["group"] = group;
   Group? get group {
-      dynamic groupData = data?["group"];
+      dynamic groupData = data["group"];
       return (groupData is Group)? groupData : null;
   }
 
-  void set event(Event2? event) => data?["event"] = event;
-  Event2? get event {
-    dynamic eventData = data?["event"];
-    return (eventData is Event2)? eventData : null;
-  }
-
-  void set membersSelection(List<Member>? selection) => data?["members_selection"] = selection;
+  void set membersSelection(List<Member>? selection) => data["members_selection"] = selection;
   List<Member>? get membersSelection {
-    dynamic selectionData = data?["members_selection"];
+    dynamic selectionData = data["members_selection"];
     return (selectionData is List<Member>)? selectionData : null;
   }
 
-  bool? get bindingInProgress => JsonUtils.boolValue(data?["binding_in_progress"]);
-  void set bindingInProgress(bool? progress) => data?["binding_in_progress"] = progress;
+  bool? get bindingInProgress => JsonUtils.boolValue(data["binding_in_progress"]);
+  void set bindingInProgress(bool? progress) => data["binding_in_progress"] = progress;
 
-  void set updateExistingEvent(bool? value) => data?["update_existing_event"] = value;
+  void set updateExistingEvent(bool? value) => data["update_existing_event"] = value;
   bool? get updateExistingEvent {
-    return JsonUtils.boolValue(data?["update_existing_event"]);
+    return JsonUtils.boolValue(data["update_existing_event"]);
   }
 
-  void set adminGroupsSelection(List<Group>? otherGroups) => data?["other_admin_groups"] = otherGroups;
+  void set adminGroupsSelection(List<Group>? otherGroups) => data["other_admin_groups"] = otherGroups;
   List<Group>? get adminGroupsSelection {
-    return JsonUtils.listValue<Group>(data?["other_admin_groups"]);
+    return JsonUtils.listValue<Group>(data["other_admin_groups"]);
   }
 }

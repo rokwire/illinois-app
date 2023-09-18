@@ -717,12 +717,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
 
   List<Widget>? get _selectorWidget {
-    if(widget.eventSelector?.buildWidget!=null) {
       Widget? customSelectorWidget = widget.eventSelector?.buildWidget(this);
       return customSelectorWidget != null ? <Widget> [customSelectorWidget] : null;
-    }
-
-    return null;
   }
 
   Widget get _adminSettingsWidget  =>
@@ -1310,10 +1306,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   void _initSelector(){
     widget.eventSelector?.init(this);
-    selectorData?.data?["event"] = _event;
+    selectorData?.event = _event;
   }
 
-  void set _selectorEvent(Event2 event) => selectorData?.data?["event"] = event;
+  void set _selectorEvent(Event2 event) => selectorData?.event = event;
 }
 
 extension _Event2Ext on Event2 {
@@ -1360,6 +1356,12 @@ abstract class Event2SelectorDataProvider <T extends Event2SelectorData>{
 }
 
 class Event2SelectorData{
-  Map<String, dynamic>? data;
-  Event2SelectorData({this.data});
+  Map<String, dynamic> data;
+  Event2SelectorData({required this.data});
+
+  void set event(Event2? event) => data["event"] = event;
+  Event2? get event {
+    dynamic eventData = data["event"];
+    return (eventData is Event2)? eventData : null;
+  }
 }

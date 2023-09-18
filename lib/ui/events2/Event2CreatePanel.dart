@@ -2061,7 +2061,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     widget.eventSelector?.init(this);
   }
 
-  void set _selectorEvent(Event2 event) => selectorData?.data?["event"] = event;
+  void set _selectorEvent(Event2 event) => selectorData?.event = event;
 }
 
 // _Event2Visibility
