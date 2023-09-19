@@ -728,8 +728,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           _buildSettingButton(title: "Promote this event", onTap: _onSettingPromote),
           _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
-          _buildSettingButton(title: "Event follow-up survey", onTap: _onSettingSurvey),
-          _buildSettingButton(title: _survey != null ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
+          _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
+          _buildSettingButton(title: _event?.hasSurvey == true ? "Event follow-up survey responses" : null, onTap: _onSettingSurveyResponses),
           _buildSettingButton(title: "Delete event", onTap: _onSettingDeleteEvent),
         ],)
     );
@@ -1113,12 +1113,17 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         _eventLoading = true;
       });
       Event2? event = await Events2().loadEvent(widget.eventId!);
-      List<String>? displayCategories = _buildDisplayCategories(event);
       setStateIfMounted(() {
-        _event = event;
-        _displayCategories = displayCategories;
         _eventLoading = false;
       });
+      if (event != null) {
+        List<String>? displayCategories = _buildDisplayCategories(event);
+        setStateIfMounted(() {
+          _event = event;
+          _selectorEvent = event;
+          _displayCategories = displayCategories;
+        });
+      }
     }
 
     if (_event != null) {
@@ -1209,73 +1214,85 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         });
       }
 
-      List<Future<dynamic>> futures = [
-        Events2().loadEvent(eventId),
-      ];
-      
-      // We need the survey and persons only if event has a survey attached.
-
-      int? surveyIndex = (_event?.hasSurvey == true) ? futures.length : null;
-      if (surveyIndex != null) {
-        futures.add(Surveys().loadEvent2Survey(eventId));
-      }
-
-      // Handle searching for existing survey responses
-      int? surveyResponseIndex = ((_event?.hasSurvey == true) && (_survey?.id != null)) ? futures.length : null;
-      if (surveyResponseIndex != null) {
-        futures.add(Surveys().loadUserSurveyResponses(surveyIDs: [_survey!.id]));
-      }
-
-      int? peopleIndex = (_event?.hasSurvey == true) ? futures.length : null;
-      if (peopleIndex != null) {
-        futures.add(Events2().loadEventPeople(eventId));
-      }
-
-      Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
-      int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
-      if (linkedEventsIndex != null) {
-        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
-      }
-
-      int? superEventIndex = (_event?.isSuperEventChild == true) ? futures.length : null;
-      if (superEventIndex != null) {
-        futures.add(Events2().loadEvent(_event?.grouping?.superEventId ?? ''));
-      }
-
-      List<dynamic> results = await Future.wait(futures);
-      Event2? event = ((0 < results.length) && (results[0] is Event2)) ? results[0] : null;
-      Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
-      List<SurveyResponse>? surveyResponses = ((surveyResponseIndex != null) && (surveyResponseIndex < results.length) && (results[surveyResponseIndex] is List<SurveyResponse>)) ? results[surveyResponseIndex] : null;
-      Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
-      Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
-      Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
-      List<String>? displayCategories = _buildDisplayCategories(event);
-
-      setStateIfMounted(() {
-        if (progress != null) {
-          progress(false);
-        }
+      Event2? event = await Events2().loadEvent(eventId);
+      if (mounted) {
         if (event != null) {
-          _event = event;
-          _selectorEvent = event;
-          _displayCategories = displayCategories;
+
+          List<Future<dynamic>> futures = [];
+
+          // We need the survey only if event has a survey attached.
+          int? surveyIndex = event.hasSurvey ? futures.length : null;
+          if (surveyIndex != null) {
+            futures.add(Surveys().loadEvent2Survey(eventId));
+          }
+
+          // We need the persons only if event has a survey attached.
+          int? peopleIndex = event.hasSurvey ? futures.length : null;
+          if (peopleIndex != null) {
+            futures.add(Events2().loadEventPeople(eventId));
+          }
+
+          Event2Grouping? linkedEventsGrouping = event.linkedEventsGroupingQuery;
+          int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
+          if (linkedEventsIndex != null) {
+            futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
+          }
+
+          int? superEventIndex = event.isSuperEventChild ? futures.length : null;
+          if (superEventIndex != null) {
+            futures.add(Events2().loadEvent(event.grouping?.superEventId ?? ''));
+          }
+
+          if (futures.isNotEmpty) {
+            List<dynamic> results = await Future.wait(futures);
+            Survey? survey = ((surveyIndex != null) && (surveyIndex < results.length) && (results[surveyIndex] is Survey)) ? results[surveyIndex] : null;
+            Event2PersonsResult? persons = ((peopleIndex != null) && (peopleIndex < results.length) && (results[peopleIndex] is Event2PersonsResult)) ? results[peopleIndex] : null;
+            Events2ListResult? linkedEventsResult = ((linkedEventsIndex != null) && (linkedEventsIndex < results.length) && (results[linkedEventsIndex] is Events2ListResult)) ? results[linkedEventsIndex] : null;
+            Event2? superEvent = ((superEventIndex != null) && (superEventIndex < results.length) && (results[superEventIndex] is Event2)) ? results[superEventIndex] : null;
+
+            // Handle searching for existing survey responses
+            String? surveyId = survey?.id;
+            List<SurveyResponse>? surveyResponses = (event.hasSurvey && (surveyId != null) && mounted) ? await Surveys().loadUserSurveyResponses(surveyIDs: [surveyId]) : null;
+
+            // build display categories
+            List<String>? displayCategories = _buildDisplayCategories(event);
+
+            setStateIfMounted(() {
+              if (progress != null) {
+                progress(false);
+              }
+              _event = event;
+              _selectorEvent = event;
+              _displayCategories = displayCategories;
+              
+              _survey = survey;
+
+              if (persons != null) {
+                _persons = persons;
+              }
+              if (surveyResponses != null) {
+                _hasSurveyResponse = surveyResponses.isNotEmpty;
+              }
+              if (linkedEventsResult?.events != null) {
+                _linkedEvents = linkedEventsResult?.events;
+              }
+              if (superEvent != null) {
+                _superEvent = superEvent;
+              }
+            });
+          }
+          else if (progress != null) {
+            setState(() {
+              progress(true);
+            });
+          }
         }
-        if (survey != null) {
-          _survey = survey;
+        else if (progress != null) {
+          setState(() {
+            progress(true);
+          });
         }
-        if (surveyResponses != null) {
-          _hasSurveyResponse = surveyResponses.isNotEmpty;
-        }
-        if (persons != null) {
-          _persons = persons;
-        }
-        if (linkedEventsResult?.events != null) {
-          _linkedEvents = linkedEventsResult?.events;
-        }
-        if (superEvent != null) {
-          _superEvent = superEvent;
-        }
-      });
+      }
     }
   }
 
@@ -1283,7 +1300,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     if ((event != null) && (event.id == _eventId) && mounted) {
       setState(() {
         _event = event;
-       _selectorEvent = event;
+        _selectorEvent = event;
       });
     }
   }
