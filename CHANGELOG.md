@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Event survey settings don't save between event admins [#3723](https://github.com/rokwire/illinois-app/issues/3723).
+### Changed
+- Updated chinese strings [#3749](https://github.com/rokwire/illinois-app/issues/3749).
 
 ## [5.0.68] - 2023-09-18
 ### Fixed
