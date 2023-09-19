@@ -668,7 +668,7 @@
 	},{
 		"id": "tags",
 		"title": "Tags",
-		"description": "Tags help people understanding more about your gtoup",
+		"description": "Tags help people understand more about your group.",
 		"empty-hint": "Select tags",
 		"usage": "tag",
 		"widget": "dropdown",
