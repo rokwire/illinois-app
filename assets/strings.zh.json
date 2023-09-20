@@ -1264,7 +1264,8 @@
 	"panel.event2.update.registration.message.succeeded.message": "成功更新 \"{{event_name}}\" 注册信息。",
 	"panel.event2.update.attendance.message.succeeded.message": "成功更新 \"{{event_name}}\" 出席纪录。",
 	"panel.event2.create.message.failed.title": "失败",
-	"panel.event2.create.survey.message.failed.title": "活动注册失败",
+	"panel.event2.create.survey.create.failed.msg": "Failed to create event survey.",
+	"panel.event2.create.survey.update.failed.msg": "Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.",
 	"panel.event2.create.exit.prompt.title": "退出",
 	"panel.event2.create.exit.prompt.message": "退出并不保留变更纪录？",
 
@@ -1303,7 +1304,7 @@
 	"panel.event2.setup.survey.apply.button": "申请",
 	"panel.event2.setup.survey.hours.invalid.msg": "请填入大于零的数字",
 	"panel.event2.setup.survey.surveys.failed.msg": "无法开启问卷。",
-	"panel.event2.setup.survey.update.failed.msg": "无法更新问卷。",
+	"panel.event2.setup.survey.update.failed.msg": "Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.",
 	"panel.event2.setup.survey.update.already_available.msg": "此问卷已经设置公开，无法更新问卷内容",
 	"panel.event2.setup.survey.update.event_missing.msg": "无法找到类似活动。",
 	"panel.event2.setup.survey.surveys.empty.msg": "目前没有可填写的问卷",
