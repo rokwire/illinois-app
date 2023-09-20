@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fix event survey update failure handling [#3758](https://github.com/rokwire/illinois-app/issues/3758).
+- Fixed notifications display time [#381](https://github.com/rokwire/app-flutter-plugin/issues/381).
 
 ## [5.0.69] - 2023-09-19
 ### Fixed
