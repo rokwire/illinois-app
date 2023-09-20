@@ -1806,7 +1806,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
               )));
             }
             else {
-              Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.message.failed.title', 'Failed to create event survey.'));
+              Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.create.failed.msg', 'Failed to create event survey.'));
             }
           }
           else {
@@ -1817,8 +1817,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         }
         else {
           // we have a survey and it is not available to attendees yet
+          bool surveyUpdateResult = true;
           if ((_survey != null) || (survey != null) && (result.isSurveyAvailable == false)) {
-            bool surveyUpdateResult = true;
             if (_survey?.title != survey?.title) {
               // a different template than the initially selected template was selected
               if (survey == null) {
@@ -1831,7 +1831,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
                 // a survey already exists and the template has been changed, so update the existing survey
                 surveyUpdateResult = await Surveys().updateSurvey(_survey!) ?? false;
               }
-              if (surveyUpdateResult && result.id != null) {
+              if (result.id != null) {
+                // always load the survey if we have the event ID to make sure we have the current version (other admins may be editing)
                 survey = await Surveys().loadEvent2Survey(result.id!);
               }
             }
@@ -1839,10 +1840,19 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
           setState(() {
             _creatingEvent = false;
           });
-          Navigator.of(context).pop(Event2SetupSurveyParam(
-            event: result,
-            survey: survey,
-          ));
+          if (surveyUpdateResult) {
+            Navigator.of(context).pop(Event2SetupSurveyParam(
+              event: result,
+              survey: survey,
+            ));
+          } else {
+            Event2Popup.showErrorResult(context,Localization().getStringEx('panel.event2.create.survey.update.failed.msg', 'Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.')).then((_) {
+              Navigator.of(context).pop(Event2SetupSurveyParam(
+                event: result,
+                survey: survey,
+              ));
+            });
+          }
         }
         widget.eventSelector?.finishSelection(this);
       }

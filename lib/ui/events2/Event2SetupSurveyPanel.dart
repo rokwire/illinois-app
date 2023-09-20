@@ -408,9 +408,9 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
             // a survey already exists and the template has been changed, so update the existing survey
             surveyUpdateResult = await Surveys().updateSurvey(surveyParam!.survey!) ?? false;
           }
-          if (surveyUpdateResult) {
-            survey = await Surveys().loadEvent2Survey(eventId);
-          }
+
+          // always load the survey to make sure we have the current version (other admins may be editing)
+          survey = await Surveys().loadEvent2Survey(eventId);
         }
 
         if (mounted) {
@@ -425,7 +425,12 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
             ));
           }
           else {
-            Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.failed.msg', 'Failed to update event survey.'));
+            Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.setup.survey.update.failed.msg', 'Failed to set event survey, but the number of hours setting has been saved. Remember that other event admins may have modified the survey.')).then((_) {
+              Navigator.of(context).pop(Event2SetupSurveyParam(
+                event: event,
+                survey: survey,
+              ));
+            });
           }
         }
       } else {
