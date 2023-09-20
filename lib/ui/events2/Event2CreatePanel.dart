@@ -1806,7 +1806,13 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
               )));
             }
             else {
-              Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.create.failed.msg', 'Failed to create event survey.'));
+              Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.create.survey.create.failed.msg', 'Failed to create event survey.')).then((_) {
+                Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => Event2DetailPanel(
+                  event: result,
+                  survey: null,
+                  eventSelector: widget.eventSelector,
+                )));
+              });
             }
           }
           else {
