@@ -277,12 +277,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event2>>? eventsMap) {
+    Groups().loadEventsV3(_group?.id, limit: 3).then((Events2ListResult? eventsResult) {
       if (mounted) {
         setState(() {
-          bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
-          _allEventsCount = hasEventsMap ? eventsMap!.keys.first : 0;
-          _groupEvents = hasEventsMap ? eventsMap!.values.first : null;
+          _allEventsCount = eventsResult?.totalCount ?? 0;
+          _groupEvents = eventsResult?.events;
           _updatingEvents = false;
         });
       }
@@ -290,12 +289,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _refreshEvents() {
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event2>>? eventsMap) {
-      if (mounted) {
+    Groups().loadEventsV3(_group?.id, limit: 3).then((Events2ListResult? eventsResult) {
+      if (mounted && (eventsResult != null)) {
         setState(() {
-          bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
-          _allEventsCount = hasEventsMap ? eventsMap!.keys.first : 0;
-          _groupEvents = hasEventsMap ? eventsMap!.values.first : null;
+          _allEventsCount = eventsResult.totalCount ?? 0;
+          _groupEvents = eventsResult.events;
         });
       }
     });
@@ -1981,11 +1979,15 @@ class GroupEventSelector extends Event2Selector{
   }
 
   @override
+  Future<dynamic> Function(Event2 source)? event2SelectorServiceAPI() =>
+    (data.updateExistingEvent == true) ? _updateEvent : _createEvent;
+
+  @override
   Future <void> performSelection(State state) async {
-    String? failureMsg = await _bindEvent(event: data.event);
+    //await _bindEvent();
     state.setStateIfMounted(() {data.bindingInProgress = false;});
-    if (StringUtils.isNotEmpty(failureMsg)) {
-      bool? confirmed = await AppAlert.showDialogResult(state.context, failureMsg);
+    if (StringUtils.isNotEmpty(data.serviceAPIError)) {
+      bool? confirmed = await AppAlert.showDialogResult(state.context, data.serviceAPIError);
       if(confirmed == true)
         Log.d("The user confirms the error");
     }
@@ -2011,6 +2013,7 @@ class GroupEventSelector extends Event2Selector{
     Analytics().logSelect(target: "Add To Group");
     state.setStateIfMounted(() {data.bindingInProgress = true;});
     await prepareSelection(state);
+    await _bindEvent();
     await performSelection(state);
     finishSelection(state);
   }
@@ -2028,19 +2031,63 @@ class GroupEventSelector extends Event2Selector{
   }
 
   //Event to Group binding
-  Future<String?> _bindEvent({Event2? event}) async{
-    List<String?> failedBindingGroupNames = [];
+  Future<void> _bindEvent() async{
     Future<bool> Function({String? groupId, String? eventId, List<Member>? toMembers}) serviceAPI = data.updateExistingEvent == true ? Groups().updateLinkedEventMembers : Groups().linkEventToGroup;
-    bool bindingSuccess = await serviceAPI(groupId: data.group?.id, eventId: event?.id, toMembers: data.membersSelection);
-    if(bindingSuccess == false){
-      failedBindingGroupNames.add(data.group?.title);
-    }
-    if(data.adminGroupsSelection?.isNotEmpty == true && event != null) {
-      failedBindingGroupNames = await _bindEventToSelectedAdminGroups(event);
+    List<Future<bool>> futures = [
+      serviceAPI(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection)
+    ];
+    if (data.adminGroupsSelection?.isNotEmpty == true) {
+      for (Group group in data.adminGroupsSelection!) {
+        futures.add(serviceAPI(groupId: group.id, eventId: data.event?.id, toMembers: data.membersSelection));
+      }
     }
 
-    return _constructBindingFailureMsg(failedGroupNames: failedBindingGroupNames, event: event);
+    List<bool> results = await Future.wait(futures);
+
+    List<String> failedBindingGroupNames = [];
+    for (int index = 0; index < results.length; index++) {
+      if (!results[index]) {
+        Group? group = (0 < index) ? data.adminGroupsSelection![index - 1] : data.group;
+        if (group?.title != null) {
+          failedBindingGroupNames.add(group!.title!);
+        }
+      }
+    }
+    if (failedBindingGroupNames.isNotEmpty) {
+      data.serviceAPIError = _constructBindingFailureMsg(event: data.event, failedGroupNames: failedBindingGroupNames);
+    }
   }
+
+  Future<dynamic> _createEvent(Event2 event) async {
+    if (data.adminGroupsSelection?.isNotEmpty == true) {
+      return await _createEventForGroups(event);
+    }
+    else {
+      return await Groups().createEventForGroupV3(event, groupId: data.group?.id, toMembers: data.membersSelection);
+    }
+  }
+
+  Future<dynamic> _createEventForGroups(Event2 event) async {
+    List<String> groupIds = <String>[];
+    ListUtils.add(groupIds, data.group?.id);
+    data.adminGroupsSelection?.forEach((Group group) => ListUtils.add(groupIds, group.id));
+
+    dynamic result = await Groups().createEventForGroupsV3(event, groupIds: groupIds);
+    if ((result is CreateEventForGroupsV3Param) && (result.event != null)) {
+      data.serviceAPIError = _constructFailedGroupsMessage(
+        targetGroups: data.adminGroupsSelection,
+        succeededGroupIds: result.groupIds
+      );
+      return result.event;
+    }
+    else {
+      return result;
+    }
+  }
+
+  Future<dynamic> _updateEvent(Event2 event) async =>
+    await Groups().updateEventForGroupV3(event, groupId: data.group?.id, toMembers: data.membersSelection);
+
 
   //Other admin groups
   Future<void> _selectOtherAdminGroups(State state) async{
@@ -2053,10 +2100,23 @@ class GroupEventSelector extends Event2Selector{
     }
   }
 
+  String? _constructFailedGroupsMessage({List<Group>? targetGroups, List<String>? succeededGroupIds}) {
+    List<String>? failedGroupNames;
+    if (targetGroups != null) {
+      Set<String>? succeededMap = (succeededGroupIds != null) ? Set.from(succeededGroupIds) : null;
+      for (Group group in targetGroups) {
+        if ((succeededMap?.contains(group.id) != true) && (group.title != null)) {
+          (failedGroupNames ??= <String>[]).add(group.title!);
+        }
+      }
+    }
+    return (failedGroupNames?.isNotEmpty == true) ? (Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ') + failedGroupNames!.join(', ')) : null;
+  }
+
   ///
   /// Returns the group for which the binding has failed. Empty == success
   ///
-  Future<List<String>> _bindEventToSelectedAdminGroups(Event2 event) async{
+  /*Future<List<String>> _bindEventToSelectedAdminGroups(Event2 event) async{
     List<String> failedForGroups = [];
     // Save the event to the other selected groups that the user is admin.
     if (CollectionUtils.isNotEmpty(data.adminGroupsSelection)) {
@@ -2070,14 +2130,14 @@ class GroupEventSelector extends Event2Selector{
       }
 
     return failedForGroups;
-  }
+  }*/
 
   String? _constructBindingFailureMsg({List<String?>? failedGroupNames, Event2? event}){
     String? failedMsg;
     if(StringUtils.isEmpty(event?.id)){
       failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.');
     } else if(CollectionUtils.isNotEmpty(failedGroupNames)){
-      failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ');
+      failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ');
       failedMsg += failedGroupNames!.join(', ');
     }
 
@@ -2118,4 +2178,7 @@ class GroupEventData extends Event2SelectorData{
   List<Group>? get adminGroupsSelection {
     return JsonUtils.listValue<Group>(data["other_admin_groups"]);
   }
+
+  String? get serviceAPIError => JsonUtils.stringValue(data['service_api_error']);
+  set serviceAPIError(String? value) => data['service_api_error'] = value;
 }

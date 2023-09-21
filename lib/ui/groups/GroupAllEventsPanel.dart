@@ -9,7 +9,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -28,10 +27,10 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
   @override
   void initState() {
-    Groups().loadEvents(widget.group).then((Map<int, List<Event2>>? eventsMap) {
+    Groups().loadEventsV3(widget.group?.id).then((Events2ListResult? eventsResult) {
       if (mounted) {
         setState(() {
-          _groupEvents = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
+          _groupEvents = eventsResult?.events;
         });
       }
     });

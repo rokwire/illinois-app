@@ -1712,7 +1712,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
       String failedMsg;
       if (CollectionUtils.isNotEmpty(createEventFailedForGroupNames)) {
-        failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ');
+        failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ');
         failedMsg += createEventFailedForGroupNames.join(', ');
       } else if (StringUtils.isEmpty(mainEventId)) {
         failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.');
