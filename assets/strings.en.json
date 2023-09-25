@@ -1307,7 +1307,7 @@
     "panel.event2.setup.attendance.takers.label.title": "NetIDs for additional attendance takers:",
     "panel.event2.setup.attendance.takers.label.hint": "A space- or comma-separated list of NetIDs.",
     "panel.event2.setup.attendance.takers.label.info": "To check in a specific attendee, the individual must be registered already. No personal attendee information may be entered as part of taking attendance in the Illinois app.",
-    "panel.event2.setup.attendance.takers.duplicated_netids.error.msg": "Additional attendance takers should not persist in the registrants. The following NetIDs cannot be promoted as attendance takers:\n\n%s",
+    "panel.event2.setup.attendance.takers.duplicated_netids.error.msg": "Registrants with the following NetIDs cannot be added as attendance takers until they unregister for the event:\n\n%s",
 
     "panel.event2.setup.survey.header.title": "Event Follow-Up Survey",
     "panel.event2.setup.survey.has_survey.toggle.title": "SEND FOLLOW-UP SURVEY",

@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class Event2SetupAttendancePanel extends StatefulWidget {
   final Event2? event;
@@ -287,8 +288,11 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Event2AttendanceDetails _buildAttendanceDetails() => Event2AttendanceDetails(
       scanningEnabled: _scanningEnabled,
       manualCheckEnabled: _manualCheckEnabled,
-      attendanceTakers: ListUtils.notEmpty(ListUtils.stripEmptyStrings(_attendanceTakersController.text.split(RegExp(r'[\s,;]+')))),
+      attendanceTakers: _buildAttendanceTakers(),
   );
+
+  List<String>? _buildAttendanceTakers() =>
+    ListUtils.notEmpty(ListUtils.stripEmptyStrings(_attendanceTakersController.text.split(RegExp(r'[\s,;]+'))));
 
   void _updateEventAttendanceDetails({required Event2AttendanceDetails attendanceDetails, void Function(bool)? progress, void Function(Event2)? success }) {
     if ((_updatingAttendance != true) && mounted) {
@@ -322,19 +326,56 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     }
   }
 
-  void _onTapApply() {
+  Future<List<String>?> _checkForInvalidAttendanceTakers({void Function(bool)? progress}) async {
+    String? eventId = widget.eventId;
+    List<String>? attendanceTakers = _buildAttendanceTakers();
+    if ((eventId != null) && (attendanceTakers != null) && attendanceTakers.isNotEmpty) {
+      setStateIfMounted(() {
+        if (progress != null) {
+          progress(true);
+        }
+      });
+
+      Event2PersonsResult? persons = await Events2().loadEventPeople(eventId);
+      
+      setStateIfMounted(() {
+        if (progress != null) {
+          progress(false);
+        }
+      });
+
+      Set<String>? registrants = Event2Person.netIdsFromList(persons?.registrants);
+      if ((registrants != null) && registrants.isNotEmpty) {
+        List<String> invalidAttendanceTakers = <String>[];
+        for (String attendanceTaker in attendanceTakers) {
+          if (registrants.contains(attendanceTaker)) {
+            invalidAttendanceTakers.add(attendanceTaker);
+          }
+        }
+        return invalidAttendanceTakers;
+      }
+    }
+    return null;
+  }
+
+  void _onTapApply() async {
     Analytics().logSelect(target: 'HeaderBar: Apply');
-    /*List<String> duplicatedTakersNetIds = _buildDuplicatedAttendanceTakerNetIds();
-    if (CollectionUtils.isNotEmpty(duplicatedTakersNetIds)) {
-      String msg = sprintf(
-          Localization().getStringEx('panel.event2.setup.attendance.takers.duplicated_netids.error.msg',
-              'Additional attendance takers should not persist in the registrants. The following NetIDs cannot be promoted as attendance takers:\n\n %s'),
-          [duplicatedTakersNetIds.join(',')]);
-      AppAlert.showMessage(context, msg);
-      return;
-    }*/
-    _updateEventAttendanceDetails(
-        attendanceDetails: _buildAttendanceDetails(), progress: (bool value) => (_applyProgress = value), success: (Event2 event) => _applyEventDetails(event));
+    List<String>? invalidAttendanceTakers = await _checkForInvalidAttendanceTakers(
+      progress: (bool value) => (_applyProgress = value),
+    );
+    if (mounted) {
+      if ((invalidAttendanceTakers != null) && invalidAttendanceTakers.isNotEmpty) {
+        String msg = sprintf(Localization().getStringEx('panel.event2.setup.attendance.takers.duplicated_netids.error.msg', 'Registrants with the following NetIDs cannot be added as attendance takers until they unregister for the event:\n\n %s'), [ invalidAttendanceTakers.join(', ') ]);
+        Event2Popup.showMessage(context, title: Localization().getStringEx("panel.event2.setup.attendance.header.title", "Event Attendance"), message: msg);
+      }
+      else {
+        _updateEventAttendanceDetails(
+            attendanceDetails: _buildAttendanceDetails(),
+            progress: (bool value) => (_applyProgress = value),
+            success: (Event2 event) => _applyEventDetails(event)
+        );
+      }
+    }
   }
 
   void _onHeaderBarBack() {
