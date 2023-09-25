@@ -19,6 +19,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -45,6 +46,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class IDCardContentWidget extends StatefulWidget {
@@ -81,13 +83,14 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
 
   bool _submittingDeviceRegistration = false;
   bool _deleteMobileCredential = false;
+  bool _renewingMobileId = false;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
       Auth2.notifyCardChanged,
-      MobileAccess.notifyMobileIdStatusChanged,
+      MobileAccess.notifyMobileStudentIdChanged,
       MobileAccess.notifyStartFinished,
       AppLivecycle.notifyStateChanged,
     ]);
@@ -211,7 +214,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
         });
       });
     }
-    else if (name == MobileAccess.notifyMobileIdStatusChanged) {
+    else if (name == MobileAccess.notifyMobileStudentIdChanged) {
       MobileAccess().startIfNeeded();
       _checkIcarMobileAvailable();
       setStateIfMounted(() { });
@@ -400,7 +403,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
         child: Column(children: [
           Container(color: Styles().colors!.dividerLine, height: 1),
           Padding(padding: EdgeInsets.only(top: 20), child: Styles().images?.getImage('mobile-access-logo', excludeFromSemantics: true)),
-          (_hasMobileAccess ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessExistsContent())
+          (_hasMobileAccess ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessContent())
         ]));
     }
 
@@ -455,8 +458,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               sprintf(Localization().getStringEx('widget.id_card.label.mobile_access.expires', 'Expires: %s'),
                   [StringUtils.ensureNotEmpty(expirationDateString, defaultValue: '---')]),
               style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.tiny'))),
-      /*
-      Padding(
+      Visibility(visible: MobileAccess().canRenewMobileId, child: Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: RoundedButton(
               label: Localization().getStringEx('widget.id_card.button.mobile_access.renew', 'Renew'),
@@ -464,12 +466,13 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
               contentWeight: 0.0,
+              progress: _renewingMobileId,
               borderColor: Styles().colors!.fillColorSecondary,
-              onTap: _onTapRenewMobileAccessButton)),*/
+              onTap: _onTapRenewMobileAccessButton)))
     ]);
   }
 
-  Widget _buildMissingMobileAccessExistsContent() {
+  Widget _buildMissingMobileAccessContent() {
     if (_hasMobileAccess) {
       return Container();
     }
@@ -546,7 +549,6 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     }
   }
 
-  /*
   void _onTapRenewMobileAccessButton() {
     Analytics().logSelect(target: 'Renew Mobile Access');
     AppAlert.showCustomDialog(
@@ -650,7 +652,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
       }
     }
     return false;
-  }*/
+  }
 
   void _onTapMobileAccessPermissions() {
     Analytics().logSelect(target: 'Mobile Access Permissions');
