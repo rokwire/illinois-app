@@ -196,6 +196,7 @@ class StudentId {
   final int? birthYear;
   final MobileIdStatus? mobileIdStatus;
   final List<MobileIdCredential>? mobileCredentials;
+  final bool? canRenewMobileId;
 
   StudentId(
       {this.fullName,
@@ -212,13 +213,15 @@ class StudentId {
       this.isActiveCard,
       this.birthYear,
       this.mobileIdStatus,
-      this.mobileCredentials});
+      this.mobileCredentials,
+      this.canRenewMobileId});
 
   static StudentId? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
     bool isActiveCard = ('Y' == JsonUtils.stringValue(json['is_active_card']));
+    bool canRenewMobileId = ('yes' == JsonUtils.stringValue(json['can_renew_mobileid'])?.toLowerCase());
     return StudentId(
         fullName: JsonUtils.stringValue(json['full_name']),
         uin: JsonUtils.stringValue(json['UIN']),
@@ -235,7 +238,8 @@ class StudentId {
         isActiveCard: isActiveCard,
         birthYear: JsonUtils.intValue(int.tryParse(json['birth_year'])),
         mobileIdStatus: mobileIdStatusFromString(JsonUtils.stringValue(json['mobileid_status'])),
-        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])));
+        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])),
+        canRenewMobileId: canRenewMobileId);
   }
 
   static MobileIdStatus? mobileIdStatusFromString(String? value) {
