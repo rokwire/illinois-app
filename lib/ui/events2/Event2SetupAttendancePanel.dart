@@ -328,7 +328,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     if (CollectionUtils.isNotEmpty(duplicatedTakersNetIds)) {
       String msg = sprintf(
           Localization().getStringEx('panel.event2.setup.attendance.takers.duplicated_netids.error.msg',
-              'Additional attendance takers should not persist in the registrants. The following NetIDs cannot be promoted as attendance takers:\n\n %s'),
+              'Registrants with the following NetIDs cannot be added as attendance takers until they unregister for the event:\n\n %s'),
           [duplicatedTakersNetIds.join(',')]);
       AppAlert.showMessage(context, msg);
       return;
