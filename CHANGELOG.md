@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Check for attendance takers that are also registrant before applying attendance takers [#3762](https://github.com/rokwire/illinois-app/issues/3762).
+### Added
+- Implemented "Renew" mobile access [#3763](https://github.com/rokwire/illinois-app/issues/3763).
 
 ## [5.0.70] - 2023-09-20
 ### Fixed
