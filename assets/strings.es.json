@@ -3617,6 +3617,8 @@
     "widget.id_card.mobile_access.request_register_device.success.msg": "Successfully initiated device registration.",
     "widget.id_card.mobile_access.delete_credential.success.msg": "Please, wait about 10 minutes until mobile access is available to download.",
     "widget.id_card.mobile_access.delete_credential.failed.msg": "Failed to request mobile access.",
+    "widget.id_card.mobile_access.pending.label": "Pending",
+    "widget.id_card.mobile_access.issuing.label": "Issuing",
 
     "widget.bus_pass.header.title": "MTD pase de autobús",
     "widget.card.label.uin.title": "UIN",

@@ -90,6 +90,18 @@ class MobileAccess with Service implements NotificationsListener {
     return (_lastIdStatus != null) && (_lastIdStatus != MobileIdStatus.ineligible);
   }
 
+  bool get isMobileAccessPending {
+    return (_lastIdStatus == MobileIdStatus.pending);
+  }
+
+  bool get isMobileAccessIssuing {
+    return (_lastIdStatus == MobileIdStatus.issuing);
+  }
+
+  bool get isMobileAccessWaiting {
+    return (isMobileAccessPending || isMobileAccessIssuing);
+  }
+
   bool get isStarted => _isStarted;
 
   bool get canStart => isMobileAccessAvailable;

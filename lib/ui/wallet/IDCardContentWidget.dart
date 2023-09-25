@@ -484,13 +484,16 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
           child: RoundedButton(
               label: _submitButtonLabel,
               hint: _submitButtonHint,
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+              textStyle: _submitButtonEnabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
               backgroundColor: Colors.white,
               enabled: _submitButtonEnabled,
               contentWeight: 0.0,
-              borderColor: Styles().colors!.fillColorSecondary,
+              borderColor: _submitButtonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
               progress: _submittingDeviceRegistration,
               onTap: _onTapSubmitMobileAccessButton)),
+      Visibility(visible: MobileAccess().isMobileAccessWaiting, child: Padding(padding: EdgeInsets.only(bottom: 10), child: Text(
+          StringUtils.ensureNotEmpty(_mobileAccessWaitingLabel),
+          style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.tiny')))),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 50),
           child: Text(
@@ -698,7 +701,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   bool get _hasMobileIdentityCredentials => CollectionUtils.isNotEmpty(_mobileIdCredentials);
 
   bool get _submitButtonEnabled {
-    return !_hasDeleteTimeout || _deleteTimeoutPassed;
+    return (!_hasDeleteTimeout || _deleteTimeoutPassed || !MobileAccess().isMobileAccessWaiting);
   }
 
   DateTime? get _deleteTimeoutUtc {
@@ -724,6 +727,16 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     return _hasDeleteTimeout
         ? Localization().getStringEx('widget.id_card.button.mobile_access.download.hint', '')
         : Localization().getStringEx('widget.id_card.button.mobile_access.request.hint', '');
+  }
+
+  String? get _mobileAccessWaitingLabel {
+    if (MobileAccess().isMobileAccessIssuing) {
+      return Localization().getStringEx('widget.id_card.mobile_access.pending.label', 'Pending');
+    } else if (MobileAccess().isMobileAccessPending) {
+      return Localization().getStringEx('widget.id_card.mobile_access.issuing.label', 'Issuing');
+    } else {
+      return null;
+    }
   }
 
   static String? _registrationErrorToString(MobileAccessRequestDeviceRegistrationError? error) {
