@@ -19,6 +19,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -45,6 +46,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class IDCardContentWidget extends StatefulWidget {
@@ -81,13 +83,14 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
 
   bool _submittingDeviceRegistration = false;
   bool _deleteMobileCredential = false;
+  bool _renewingMobileId = false;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
       Auth2.notifyCardChanged,
-      MobileAccess.notifyMobileIdStatusChanged,
+      MobileAccess.notifyMobileStudentIdChanged,
       MobileAccess.notifyStartFinished,
       AppLivecycle.notifyStateChanged,
     ]);
@@ -211,7 +214,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
         });
       });
     }
-    else if (name == MobileAccess.notifyMobileIdStatusChanged) {
+    else if (name == MobileAccess.notifyMobileStudentIdChanged) {
       MobileAccess().startIfNeeded();
       _checkIcarMobileAvailable();
       setStateIfMounted(() { });
@@ -400,7 +403,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
         child: Column(children: [
           Container(color: Styles().colors!.dividerLine, height: 1),
           Padding(padding: EdgeInsets.only(top: 20), child: Styles().images?.getImage('mobile-access-logo', excludeFromSemantics: true)),
-          (_hasMobileAccess ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessExistsContent())
+          (_hasMobileAccess ? _buildExistingMobileAccessContent() : _buildMissingMobileAccessContent())
         ]));
     }
 
@@ -455,8 +458,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               sprintf(Localization().getStringEx('widget.id_card.label.mobile_access.expires', 'Expires: %s'),
                   [StringUtils.ensureNotEmpty(expirationDateString, defaultValue: '---')]),
               style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.tiny'))),
-      /*
-      Padding(
+      Visibility(visible: MobileAccess().canRenewMobileId, child: Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: RoundedButton(
               label: Localization().getStringEx('widget.id_card.button.mobile_access.renew', 'Renew'),
@@ -464,12 +466,13 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
               textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
               contentWeight: 0.0,
+              progress: _renewingMobileId,
               borderColor: Styles().colors!.fillColorSecondary,
-              onTap: _onTapRenewMobileAccessButton)),*/
+              onTap: _onTapRenewMobileAccessButton)))
     ]);
   }
 
-  Widget _buildMissingMobileAccessExistsContent() {
+  Widget _buildMissingMobileAccessContent() {
     if (_hasMobileAccess) {
       return Container();
     }
@@ -484,13 +487,16 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
           child: RoundedButton(
               label: _submitButtonLabel,
               hint: _submitButtonHint,
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+              textStyle: _submitButtonEnabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
               backgroundColor: Colors.white,
               enabled: _submitButtonEnabled,
               contentWeight: 0.0,
-              borderColor: Styles().colors!.fillColorSecondary,
+              borderColor: _submitButtonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
               progress: _submittingDeviceRegistration,
               onTap: _onTapSubmitMobileAccessButton)),
+      Visibility(visible: MobileAccess().isMobileAccessWaiting, child: Padding(padding: EdgeInsets.only(bottom: 10), child: Text(
+          StringUtils.ensureNotEmpty(_mobileAccessWaitingLabel),
+          style: Styles().textStyles?.getTextStyle('panel.id_card.detail.title.tiny')))),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 50),
           child: Text(
@@ -543,111 +549,32 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     }
   }
 
-  /*
   void _onTapRenewMobileAccessButton() {
-    Analytics().logSelect(target: 'Renew Mobile Access');
-    AppAlert.showCustomDialog(
-        context: context,
-        contentPadding: EdgeInsets.all(0),
-        contentWidget: Container(
-            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
-            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-              Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                    Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: HtmlWidget(
-                            "<div style=text-align:center>${Localization().getStringEx('widget.id_card.dialog.text.renew_access', 'Renewing your Illini ID access could take up to 30 minutes to complete. Your <b>building access will be temporarily disabled</b> while being renewed. <p>Would you still like to renew right now?</p>')}</div>",
-                            textStyle: Styles().textStyles?.getTextStyle("widget.detail.small"))),
-                    Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      RoundedButton(
-                          label: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew.cancel', 'Cancel'),
-                          hint: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew.cancel.hint', ''),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-                          backgroundColor: Colors.white,
-                          contentWeight: 0.0,
-                          borderColor: Styles().colors!.fillColorSecondary,
-                          onTap: _onTapCancelRenew),
-                      RoundedButton(
-                          label: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew_access', 'Renew Access'),
-                          hint: Localization().getStringEx('widget.id_card.dialog.button.mobile_access.renew_access.hint', ''),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.accent"),
-                          backgroundColor: Styles().colors!.fillColorSecondary,
-                          contentWeight: 0.0,
-                          borderColor: Styles().colors!.fillColorSecondary,
-                          onTap: _onTapRenewAccess)
-                    ])
-                  ]))
-            ])));
-  }
-
-  void _onTapCancelRenew() {
-    Analytics().logSelect(target: 'Cancel Renew Access');
-    Navigator.of(context).pop();
-  }
-
-  void _onTapRenewAccess() {
-    Analytics().logSelect(target: 'Renew Access');
-    Navigator.of(context).pop();
-    //TBD: DD - implement renew access
-
-    final String phoneMacro = '{{mobile_access_phone}}';
-    final String emailMacro = '{{mobile_access_email}}';
-    final String urlMacro = '{{mobile_access_website_url}}';
-    final String externalLinkIconMacro = '{{external_link_icon}}';
-    String rescheduleContentHtml = Localization().getStringEx("widget.id_card.dialog.text.renew_access.done",
-        "If your Illini ID does not work in 30 minutes, call <a href='tel:{{mobile_access_phone}}'>{{mobile_access_phone}}</a>, email <a href='mailto:{{mobile_access_email}}'>{{mobile_access_email}}</a>, or <a href='{{mobile_access_website_url}}'>visit the Illini ID website</a> <img src='asset:{{external_link_icon}}' alt=''/>");
-    //TBD: DD - read phone, email and website from config when we have them
-    rescheduleContentHtml = rescheduleContentHtml.replaceAll(phoneMacro, '555-555-555');
-    rescheduleContentHtml = rescheduleContentHtml.replaceAll(emailMacro, 'test@email.com');
-    rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlMacro, 'https://www.google.com');
-    rescheduleContentHtml = rescheduleContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
-    AppAlert.showCustomDialog(
-        context: context,
-        contentPadding: EdgeInsets.all(0),
-        contentWidget: Container(
-            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
-            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
-              Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                    Padding(
-                        padding: EdgeInsets.only(top: 30),
-                        child: Text(
-                            Localization().getStringEx('widget.id_card.dialog.title.renew_access.done',
-                                'Please wait at least 30 minutes before trying your mobile access'), textAlign: TextAlign.center,
-                            style: Styles().textStyles?.getTextStyle('widget.title.medium.fat'))),
-                    Padding(
-                        padding: EdgeInsets.only(top: 20),
-                        //TBD: DD - properly format html. Currently not able with this plugin
-                        child: HtmlWidget("<div style=text-align:center>$rescheduleContentHtml</div>",
-                            textStyle: Styles().textStyles?.getTextStyle("widget.detail.small"),
-                            onTapUrl: (url) => _onTapLinkUrl(url)))
-                  ])),
-              Positioned.fill(
-                  child: Align(
-                      alignment: Alignment.topRight,
-                      child: InkWell(
-                          onTap: () {
-                            Analytics().logSelect(target: 'Close Renew Mobile Access popup');
-                            Navigator.of(context).pop();
-                          },
-                          child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', color: Styles().colors?.fillColorPrimary)))))
-            ])));
-  }
-
-  Future<bool> _onTapLinkUrl(String? url) async {
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if ((uri != null) && (await canLaunchUrl(uri))) {
-        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
-        launchUrl(uri, mode: launchMode);
-        return true;
-      }
+    if (_renewingMobileId) {
+      return;
     }
-    return false;
-  }*/
+    Analytics().logSelect(target: 'Renew Mobile Access');
+    setStateIfMounted(() {
+      _renewingMobileId = true;
+    });
+    MobileAccess().renewMobileId().then((studentId) {
+      bool success = (studentId != null);
+      late String msg;
+      if (success) {
+        msg = Localization().getStringEx('widget.id_card.mobile_access.renew.success.msg', 'Mobile Access was successfully renewed.');
+      } else {
+        msg = Localization().getStringEx('widget.id_card.mobile_access.renew.fail.msg', 'Failed to renew Mobile Access.');
+      }
+      setStateIfMounted(() {
+        _renewingMobileId = false;
+      });
+      AppAlert.showDialogResult(context, msg).then((value) {
+        if (success) {
+          _loadMobileAccessDetails();
+        }
+      });
+    });
+  }
 
   void _onTapMobileAccessPermissions() {
     Analytics().logSelect(target: 'Mobile Access Permissions');
@@ -698,7 +625,7 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
   bool get _hasMobileIdentityCredentials => CollectionUtils.isNotEmpty(_mobileIdCredentials);
 
   bool get _submitButtonEnabled {
-    return !_hasDeleteTimeout || _deleteTimeoutPassed;
+    return ((!_hasDeleteTimeout || _deleteTimeoutPassed) && !MobileAccess().isMobileAccessWaiting);
   }
 
   DateTime? get _deleteTimeoutUtc {
@@ -724,6 +651,16 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     return _hasDeleteTimeout
         ? Localization().getStringEx('widget.id_card.button.mobile_access.download.hint', '')
         : Localization().getStringEx('widget.id_card.button.mobile_access.request.hint', '');
+  }
+
+  String? get _mobileAccessWaitingLabel {
+    if (MobileAccess().isMobileAccessIssuing) {
+      return Localization().getStringEx('widget.id_card.mobile_access.pending.label', 'Pending');
+    } else if (MobileAccess().isMobileAccessPending) {
+      return Localization().getStringEx('widget.id_card.mobile_access.issuing.label', 'Issuing');
+    } else {
+      return null;
+    }
   }
 
   static String? _registrationErrorToString(MobileAccessRequestDeviceRegistrationError? error) {

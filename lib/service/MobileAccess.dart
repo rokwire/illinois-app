@@ -31,14 +31,14 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class MobileAccess with Service implements NotificationsListener {
   static const String notifyStartFinished  = "edu.illinois.rokwire.mobile_access.start.finished";
   static const String notifyDeviceRegistrationFinished  = "edu.illinois.rokwire.mobile_access.device.registration.finished";
-  static const String notifyMobileIdStatusChanged  = "edu.illinois.rokwire.mobile_access.mobile_id.status.changed";
+  static const String notifyMobileStudentIdChanged  = "edu.illinois.rokwire.mobile_access.student_id.changed";
 
   static const MethodChannel _methodChannel = const MethodChannel('edu.illinois.rokwire/mobile_access');
 
   static const String _tag = 'MobileAccess';
 
   late MobileAccessOpenType _selectedOpenType;
-  MobileIdStatus? _lastIdStatus;
+  StudentId? _lastStudentId;
   bool _isStarted = false;
   bool _isScanning = false;
 
@@ -84,15 +84,54 @@ class MobileAccess with Service implements NotificationsListener {
     return Set.from([Auth2(), FlexUI(), Storage(), AppLivecycle()]);
   }
 
-  // APIs
+  // Accessories
 
-  bool get isMobileAccessAvailable {
-    return (_lastIdStatus != null) && (_lastIdStatus != MobileIdStatus.ineligible);
+  bool get isMobileAccessAvailable => ((_lastMobileIdStatus != null) && (_lastMobileIdStatus != MobileIdStatus.ineligible));
+
+  bool get isMobileAccessPending => (_lastMobileIdStatus == MobileIdStatus.pending);
+
+  bool get isMobileAccessIssuing => (_lastMobileIdStatus == MobileIdStatus.issuing);
+
+  bool get isMobileAccessWaiting => (isMobileAccessPending || isMobileAccessIssuing);
+
+  bool get canRenewMobileId => (_lastStudentId?.canRenewMobileId == true);
+
+  MobileIdStatus? get _lastMobileIdStatus => _lastStudentId?.mobileIdStatus;
+
+  MobileAccessOpenType get selectedOpenType {
+    return _selectedOpenType;
+  }
+
+  set selectedOpenType(MobileAccessOpenType openType) {
+    if (_selectedOpenType != openType) {
+      _selectedOpenType = openType;
+      Storage().mobileAccessOpenType = _openTypeToString(_selectedOpenType);
+      _shouldScan();
+    }
+  }
+
+  bool get _canHaveMobileIcard {
+    return Auth2().isLoggedIn && isMobileAccessAvailable;
+  }
+
+  bool get _isAllowedToOpenDoors {
+    if (AppLivecycle().state == AppLifecycleState.detached) {
+      // Do not allow scanning / opening doors when app is in detached state
+      return false;
+    }
+    switch (_selectedOpenType) {
+      case MobileAccessOpenType.always:
+        return true;
+      case MobileAccessOpenType.opened_app:
+        return (AppLivecycle().state == AppLifecycleState.resumed);
+    }
   }
 
   bool get isStarted => _isStarted;
 
   bool get canStart => isMobileAccessAvailable;
+
+  // APIs
 
   Future<bool> startIfNeeded() async =>
     isStarted || (canStart && await _start(force: true));
@@ -259,18 +298,28 @@ class MobileAccess with Service implements NotificationsListener {
 
   Future<StudentId?> loadStudentId() async {
     if (!Auth2().isLoggedIn) {
-      _onMobileIdStatus(null);
+      _onStudentId(null);
       return null;
     }
     StudentId? studentId = await Identity().loadStudentId();
-    _onMobileIdStatus(studentId?.mobileIdStatus);
+    _onStudentId(studentId);
     return studentId;
   }
 
-  void _onMobileIdStatus(MobileIdStatus? status) {
-    if (status != _lastIdStatus) {
-      _lastIdStatus = status;
-      NotificationService().notify(notifyMobileIdStatusChanged);
+  Future<StudentId?> renewMobileId() async {
+    if (!Auth2().isLoggedIn) {
+      _onStudentId(null);
+      return null;
+    }
+    StudentId? studentId = await Identity().renewMobileId();
+    _onStudentId(studentId);
+    return studentId;
+  }
+
+  void _onStudentId(StudentId? studentId) {
+    if (studentId != _lastStudentId) {
+      _lastStudentId = studentId;
+      NotificationService().notify(notifyMobileStudentIdChanged);
     }
   }
 
@@ -383,35 +432,6 @@ class MobileAccess with Service implements NotificationsListener {
   }
 
   // Open Type
-
-  MobileAccessOpenType get selectedOpenType {
-    return _selectedOpenType;
-  }
-
-  set selectedOpenType(MobileAccessOpenType openType) {
-    if (_selectedOpenType != openType) {
-      _selectedOpenType = openType;
-      Storage().mobileAccessOpenType = _openTypeToString(_selectedOpenType);
-      _shouldScan();
-    }
-  }
-
-  bool get _canHaveMobileIcard {
-    return Auth2().isLoggedIn && isMobileAccessAvailable;
-  }
-
-  bool get _isAllowedToOpenDoors {
-    if (AppLivecycle().state == AppLifecycleState.detached) {
-      // Do not allow scanning / opening doors when app is in detached state
-      return false;
-    }
-    switch (_selectedOpenType) {
-      case MobileAccessOpenType.always:
-        return true;
-      case MobileAccessOpenType.opened_app:
-        return (AppLivecycle().state == AppLifecycleState.resumed);
-    }
-  }
 
   static MobileAccessOpenType? _openTypeFromString(String? value) {
     switch (value) {

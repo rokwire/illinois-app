@@ -87,4 +87,20 @@ class Identity /* with Service */ {
       return null;
     }
   }
+
+  Future<StudentId?> renewMobileId() async {
+    if (StringUtils.isEmpty(Config().identityUrl)) {
+      Log.e('Identity: renewMobileId - missing identity url.');
+      return null;
+    }
+    Response? response = await Network().get("${Config().identityUrl}/renewmobileid", auth: Auth2(), headers: _externalAuthorizationHeader);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return StudentId.fromJson(JsonUtils.decodeMap(responseString));
+    } else {
+      Log.e('Identity: Failed to renew mobile id. Reason ($responseCode): $responseString');
+      return null;
+    }
+  }
 }
