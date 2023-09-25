@@ -1292,7 +1292,7 @@
 	"panel.event2.setup.attendance.takers.label.title": "额外参加人的NetIDs：",
 	"panel.event2.setup.attendance.takers.label.hint": "逗号或空白分开的NetIDs名单。",
 	"panel.event2.setup.attendance.takers.label.info": "参与者需要先注册才能签到。在Illinois应用程序的签到功能无法添加新的参与者信息。",
-	"panel.event2.setup.attendance.takers.duplicated_netids.error.msg": "額外的出席人數不應持續存在於註冊者中。 以下 NetID 不能晉升為出席者：\n\n%s",
+	"panel.event2.setup.attendance.takers.duplicated_netids.error.msg": "Registrants with the following NetIDs cannot be added as attendance takers until they unregister for the event:\n\n%s",
 
 	"panel.event2.setup.survey.header.title": "活动建议问卷",
 	"panel.event2.setup.survey.has_survey.toggle.title": "发送建议问卷",
