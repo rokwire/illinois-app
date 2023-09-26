@@ -2474,6 +2474,7 @@
 	"panel.group_detail.members_count.group.delete.confirm.msg": "此群组有%d位成员。您确定要删除此群组？",
 	"panel.group_detail.group.delete.confirm.msg": "您确定要删除此群组？",
 	"panel.group_detail.group.delete.failed.msg": "无法删除群组。",
+	"panel.group_detail.event.delete.failed.msg": "Failed to delete event.",
 	"panel.group_detail.attendance.scan.cancel.button.title": "取消",
 	"panel.group_detail.attendance.qr_code.uin.not_valid.msg": "此二维码没有包含有效的UIN号码。",
 	"panel.group_detail.attendance.authman.uin.not_member.msg": "UIN'%s'的学生不是此群组成员，因此无法参加。",

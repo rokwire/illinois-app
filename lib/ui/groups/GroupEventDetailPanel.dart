@@ -603,9 +603,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _deleteEvent(){
     if(_event != null) {
-      Groups().deleteEventFromGroup(event: _event!, groupId: widget.groupId)
-        .then((value) {
-          Navigator.of(context).pop();
+      Groups().deleteEventForGroupV3(eventId: _event?.id, groupId: widget.groupId)
+        .then((bool value) {
+          if (value) {
+            Navigator.of(context).pop();
+          }
+          else {
+            AppAlert.showDialogResult(context, Localization().getStringEx('panel.group_detail.event.delete.failed.msg', 'Failed to delete event.'));
+          }
         });
     }
   }

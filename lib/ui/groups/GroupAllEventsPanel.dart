@@ -9,7 +9,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -25,13 +24,16 @@ class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttribu
 
 class _GroupAllEventsState extends State<GroupAllEventsPanel>{
   List<Event2>?   _groupEvents;
+  bool _loadingGroupEvents = false;
 
   @override
   void initState() {
-    Groups().loadEvents(widget.group).then((Map<int, List<Event2>>? eventsMap) {
+    _loadingGroupEvents = true;
+    Groups().loadEventsV3(widget.group?.id).then((Events2ListResult? eventsResult) {
       if (mounted) {
         setState(() {
-          _groupEvents = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
+          _groupEvents = eventsResult?.events;
+          _loadingGroupEvents = false;
         });
       }
     });
@@ -40,16 +42,17 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
   @override
   Widget build(BuildContext context) {
+    int? eventsCount = _groupEvents?.length;
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx("panel.groups_all_events.label.heading","Upcoming Events") + "(${_groupEvents?.length ?? ""})",
+        title: Localization().getStringEx("panel.groups_all_events.label.heading","Upcoming Events") + ((eventsCount != null) ? " ($eventsCount)" : ""),
       ),
       body:SingleChildScrollView(child:
          Column(
           children: <Widget>[
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-              child: _buildEvents()
+              child: _loadingGroupEvents ? _buildProgress() :  _buildEvents()
             ),
           ],
         ),
@@ -70,5 +73,15 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
     return Column(
         children: content);
+  }
+
+  Widget _buildProgress() {
+    return Padding(padding: EdgeInsets.only(top: 150), child:
+      Center(child:
+        SizedBox(width: 32, height: 32, child:
+          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,)
+        )
+      ),
+    );
   }
 }

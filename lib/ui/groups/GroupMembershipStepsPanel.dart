@@ -21,7 +21,6 @@ import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/events2.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/groups/GroupFindEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -29,7 +28,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ext/Event2.dart';
 
@@ -71,19 +69,6 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
       Events2().loadEventsByIds(eventIds: eventIds).then((List<Event2>? events) {
         if (events != null) {
           for (Event2 event in events) {
-            if (event.id != null) {
-              _events[event.id!] = event;
-            }
-          }
-          if (mounted) {
-            setState(() {});
-          }
-        }
-      });
-      Groups().loadEvents(null).then((Map<int, List<Event2>>? eventsMap) {
-        List<Event2>? events = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
-        if (CollectionUtils.isNotEmpty(events)) {
-          for (Event2 event in events!) {
             if (event.id != null) {
               _events[event.id!] = event;
             }

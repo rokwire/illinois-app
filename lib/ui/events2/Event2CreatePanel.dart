@@ -1782,7 +1782,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       _creatingEvent = true;
     });
     await widget.eventSelector?.prepareSelection(this);
-    Future<dynamic> Function(Event2 source) serviceAPI = widget.isCreate ? Events2().createEvent : Events2().updateEvent;
+    Future<dynamic> Function(Event2 source) serviceAPI = widget.eventSelector?.event2SelectorServiceAPI() ?? (widget.isCreate ? Events2().createEvent : Events2().updateEvent);
     dynamic result = await serviceAPI(_createEventFromData());
 
     if (mounted) {

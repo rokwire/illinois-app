@@ -1362,9 +1362,12 @@ abstract class Event2Selector<T extends Event2SelectorData> {
 
   Future<void> prepareSelection(State state) async {} //Call whatever API we need before performing the selection
 
+  Future<dynamic> Function(Event2 source)? event2SelectorServiceAPI() => null;
+
   Future<void> performSelection(State state) async {} //Call the bind API
 
   void finishSelection(State state) {} //Go Back to the initial flow panel
+
 }
 
 abstract class Event2SelectorDataProvider <T extends Event2SelectorData>{

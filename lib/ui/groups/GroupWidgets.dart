@@ -607,8 +607,13 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onRemoveEvent(BuildContext context){
-    Groups().deleteEventFromGroup(event: widget.event!, groupId: widget.group!.id).then((value){
-      Navigator.of(context).pop();
+    Groups().deleteEventForGroupV3(eventId: widget.event?.id, groupId: widget.group?.id).then((bool value){
+      if (value) {
+        Navigator.of(context).pop();
+      }
+      else {
+        
+      }
     });
   }
 
