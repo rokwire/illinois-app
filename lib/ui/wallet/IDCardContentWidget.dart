@@ -19,7 +19,6 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/model/Identity.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -46,7 +45,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class IDCardContentWidget extends StatefulWidget {
