@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [5.0.71] - 2023-09-25
+### Changed
+- Check for attendance takers that are also registrant before applying attendance takers [#3762](https://github.com/rokwire/illinois-app/issues/3762).
+### Added
+- Implemented "Renew" mobile access [#3763](https://github.com/rokwire/illinois-app/issues/3763).
+
 ## [5.0.70] - 2023-09-20
 ### Fixed
 - Fix event survey update failure handling [#3758](https://github.com/rokwire/illinois-app/issues/3758).

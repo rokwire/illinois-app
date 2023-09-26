@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -196,6 +197,7 @@ class StudentId {
   final int? birthYear;
   final MobileIdStatus? mobileIdStatus;
   final List<MobileIdCredential>? mobileCredentials;
+  final bool? canRenewMobileId;
 
   StudentId(
       {this.fullName,
@@ -212,13 +214,15 @@ class StudentId {
       this.isActiveCard,
       this.birthYear,
       this.mobileIdStatus,
-      this.mobileCredentials});
+      this.mobileCredentials,
+      this.canRenewMobileId});
 
   static StudentId? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
     bool isActiveCard = ('Y' == JsonUtils.stringValue(json['is_active_card']));
+    bool canRenewMobileId = ('yes' == JsonUtils.stringValue(json['can_renew_mobileid'])?.toLowerCase());
     return StudentId(
         fullName: JsonUtils.stringValue(json['full_name']),
         uin: JsonUtils.stringValue(json['UIN']),
@@ -235,8 +239,48 @@ class StudentId {
         isActiveCard: isActiveCard,
         birthYear: JsonUtils.intValue(int.tryParse(json['birth_year'])),
         mobileIdStatus: mobileIdStatusFromString(JsonUtils.stringValue(json['mobileid_status'])),
-        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])));
+        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])),
+        canRenewMobileId: canRenewMobileId);
   }
+
+  @override
+  bool operator ==(dynamic other) =>
+      (other is StudentId) &&
+      (fullName == other.fullName) &&
+      (uin == other.uin) &&
+      (role == other.role) &&
+      (studentLevel == other.studentLevel) &&
+      (cardNumber == other.cardNumber) &&
+      (expirationDate == other.expirationDate) &&
+      (libraryNumber == other.libraryNumber) &&
+      (magTrack2 == other.magTrack2) &&
+      (photoBase64 == other.photoBase64) &&
+      (resultCode == other.resultCode) &&
+      (resultDescription == other.resultDescription) &&
+      (isActiveCard == other.isActiveCard) &&
+      (birthYear == other.birthYear) &&
+      (mobileIdStatus == other.mobileIdStatus) &&
+      (DeepCollectionEquality().equals(mobileCredentials, other.mobileCredentials)) &&
+      (canRenewMobileId == other.canRenewMobileId);
+
+  @override
+  int get hashCode =>
+      (fullName?.hashCode ?? 0) ^
+      (uin?.hashCode ?? 0) ^
+      (role?.hashCode ?? 0) ^
+      (studentLevel?.hashCode ?? 0) ^
+      (cardNumber?.hashCode ?? 0) ^
+      (expirationDate?.hashCode ?? 0) ^
+      (libraryNumber?.hashCode ?? 0) ^
+      (magTrack2?.hashCode ?? 0) ^
+      (photoBase64?.hashCode ?? 0) ^
+      (resultCode?.hashCode ?? 0) ^
+      (resultDescription?.hashCode ?? 0) ^
+      (isActiveCard?.hashCode ?? 0) ^
+      (birthYear?.hashCode ?? 0) ^
+      (mobileIdStatus?.hashCode ?? 0) ^
+      (DeepCollectionEquality().hash(mobileCredentials)) ^
+      (canRenewMobileId?.hashCode ?? 0);
 
   static MobileIdStatus? mobileIdStatusFromString(String? value) {
     switch (value) {
@@ -265,6 +309,12 @@ class MobileIdCredential {
   String? get displayExpirationDate {
     return AppDateTime().formatDateTime(expirationDate, format: _expirationDateFormat);
   }
+
+  @override
+  bool operator ==(dynamic other) => (other is MobileIdCredential) && (id == other.id) && (expirationDate == other.expirationDate);
+
+  @override
+  int get hashCode => (id?.hashCode ?? 0) ^ (expirationDate?.hashCode ?? 0);
 
   static MobileIdCredential? fromJson(Map<String, dynamic>? json) {
     if (json == null) {

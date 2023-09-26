@@ -89,7 +89,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      MobileAccess.notifyMobileIdStatusChanged,
+      MobileAccess.notifyMobileStudentIdChanged,
       Localization.notifyLocaleChanged,
     ]);
     _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.sections);
@@ -329,7 +329,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == MobileAccess.notifyMobileIdStatusChanged) {
+    if (name == MobileAccess.notifyMobileStudentIdChanged) {
       setStateIfMounted(() {});
     }
     else if (name == Localization.notifyLocaleChanged) {
