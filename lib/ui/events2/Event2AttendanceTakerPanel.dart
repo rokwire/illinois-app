@@ -549,6 +549,7 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         });
         Event2Popup.showErrorResult(context, _internalErrorString);
       }
+      //TBD: check _isAttendeeUinAttended
       else if (_isInternalRegisterationEvent) {
         _isAttendeeUinRegistered(uin).then((bool? result) {
           if (mounted) {
