@@ -281,87 +281,102 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     Analytics().logSelect(target: "Toggle Attendee");
     Event2CreatePanel.hideKeyboard(context);
     String? eventId = widget.event?.id;
-    String? personNetId = person.identifier?.netId;
+    Event2PersonIdentifier? personIdentifier = person.identifier;
+    String? netId = personIdentifier?.netId;
     if (widget.manualCheckEnabled != true) {
       Event2Popup.showMessage(context,
         title: Localization().getStringEx("panel.event2.detail.attendance.message.not_available.title", "Not Available"),
         message: Localization().getStringEx("panel.event2.detail.attendance.manual_check.disabled", "Manual check is not enabled for this event."));
     }
-    else if ((eventId != null) && (personNetId != null) && !_processingNetIds.contains(personNetId))  {
-      if (_atendeesNetIds.contains(personNetId)) {
-        _unattendEvent(eventId: eventId, identifier: person.identifier);
+    else if ((eventId != null) && (netId != null) && (personIdentifier != null) && !_processingNetIds.contains(netId))  {
+      if (_atendeesNetIds.contains(netId)) {
+        _unattendEvent(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
       }
       else {
-        if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(personNetId)) {
-          _promptUnregisteredAttendee().then((bool? result) {
-            if ((result == true) && mounted) {
-              _attendEvent(eventId: eventId, identifier: person.identifier);
-            }
-          });
-        }
-        else {
-          _attendEvent(eventId: eventId, identifier: person.identifier);
-        }
+        _attendEvent_CheckAttendee(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
       }
     }
   }
-
-  void _attendEvent({required String eventId, Event2PersonIdentifier? identifier}) {
-    String? personNetId = identifier?.netId;
-    if (mounted && (personNetId != null)) {
-      setState(() {
-        _processingNetIds.add(personNetId);
-      });
-
-      Events2().attendEvent(eventId, personIdentifier: identifier).then((dynamic result) {
-        if (mounted) {
-          setState(() {
-            _processingNetIds.remove(personNetId);
-          });
-
-          if (result is Event2Person) {
-            setState(() {
-              _atendeesNetIds.add(personNetId);
-            });
-            _beep(true);
-          }
-          else {
-            Event2Popup.showErrorResult(context, result);
-            _beep(false);
-          }
+  
+  // In _attendEvent_CheckAttendee we check if the attendee candidate is already registered or already attended the event
+  void _attendEvent_CheckAttendee({required String eventId, required String netId, required Event2PersonIdentifier personIdentifier}) {
+    if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
+      _promptUnregisteredAttendee().then((bool? result) {
+        if ((result == true) && mounted) {
+          _attendEvent_CheckCapacity(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
         }
       });
+    }
+    else {
+      _attendEvent_CheckCapacity(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
     }
   }
 
-  void _unattendEvent({required String eventId, Event2PersonIdentifier? identifier}) {
-    String? personNetId = identifier?.netId;
-    if (mounted && (personNetId != null)) {
-      setState(() {
-        _processingNetIds.add(personNetId);
-      });
-      Events2().unattendEvent(eventId, personIdentifier: identifier).then((dynamic result) {
-        if (mounted) {
-          setState(() {
-            _processingNetIds.remove(personNetId);
-          });
-
-          if (result == true) {
-            setState(() {
-              _atendeesNetIds.remove(personNetId);
-              if (personNetId == _processedNetId) {
-                _processedNetId = null;
-              }
-            });
-            _beep(true);
-          }
-          else {
-            Event2Popup.showErrorResult(context, result);
-            _beep(false);
-          }
+  // In _attendEvent_CheckCapacity we check if the event capacity is reached
+  void _attendEvent_CheckCapacity({required String eventId, required String netId, required Event2PersonIdentifier personIdentifier}) {
+    if (_isInternalRegisterationEvent && (_isEventCapacityReached == true)) {
+      _promptCapacityReached().then((bool? result) {
+        if ((result == true) && mounted) {
+          _attendEvent(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
         }
       });
     }
+    else {
+      _attendEvent(eventId: eventId, netId: netId, personIdentifier: personIdentifier);
+    }
+  }
+  
+  // In _attendEvent we call the Event2 service unconditionally
+  void _attendEvent({required String eventId, required String netId, required Event2PersonIdentifier personIdentifier}) {
+    setState(() {
+      _processingNetIds.add(netId);
+    });
+    Events2().attendEvent(eventId, personIdentifier: personIdentifier).then((dynamic result) {
+      if (mounted) {
+        setState(() {
+          _processingNetIds.remove(netId);
+        });
+
+        if (result is Event2Person) {
+          setState(() {
+            _atendeesNetIds.add(netId);
+          });
+          _beep(true);
+        }
+        else {
+          Event2Popup.showErrorResult(context, result);
+          _beep(false);
+        }
+      }
+    });
+  }
+
+  // In _unattendEvent we call the Event2 service unconditionally
+  void _unattendEvent({required String eventId, required String netId, Event2PersonIdentifier? personIdentifier}) {
+    setState(() {
+      _processingNetIds.add(netId);
+    });
+    Events2().unattendEvent(eventId, personIdentifier: personIdentifier).then((dynamic result) {
+      if (mounted) {
+        setState(() {
+          _processingNetIds.remove(netId);
+        });
+
+        if (result == true) {
+          setState(() {
+            _atendeesNetIds.remove(netId);
+            if (netId == _processedNetId) {
+              _processedNetId = null;
+            }
+          });
+          _beep(true);
+        }
+        else {
+          Event2Popup.showErrorResult(context, result);
+          _beep(false);
+        }
+      }
+    });
   }
 
   Widget _buildUploadAttendeesDescription() {
@@ -433,22 +448,42 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     String netId = _manualNetIdController.text.trim();
     String? eventId = widget.event?.id;
     if (netId.isNotEmpty && (eventId != null) && (_manualInputProgress == false)) {
-      if (_isAttendeeNetIdAttended(netId)) {
-        Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_already_registered.description', 'Already marked as attended.'));
-      }
-      else if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
-        _promptUnregisteredAttendee().then((bool? result) {
-          if ((result == true) && mounted) {
-            _manualAttendEvent(netId: netId, eventId: eventId);
-          }
-        });
-      }
-      else {
-        _manualAttendEvent(netId: netId, eventId: eventId);
-      }
+      _manualAttendEvent_CheckAttendee(eventId: eventId, netId: netId);
     }
   }
 
+  // In _manualAttendEvent_CheckAttendee we check if the attendee candidate is already registered or already attended the event
+  void _manualAttendEvent_CheckAttendee({ required String eventId, required String netId}) {
+    if (_isAttendeeNetIdAttended(netId)) {
+      Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_already_registered.description', 'Already marked as attended.'));
+    }
+    else if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
+      _promptUnregisteredAttendee().then((bool? result) {
+        if ((result == true) && mounted) {
+          _manualAttendEvent_CheckCapacity(eventId: eventId, netId: netId);
+        }
+      });
+    }
+    else {
+      _manualAttendEvent_CheckCapacity(eventId: eventId, netId: netId);
+    }
+  }
+
+  // In _manualAttendEvent_CheckCapacity we check if the event capacity is reached
+  void _manualAttendEvent_CheckCapacity({ required String eventId, required String netId}) {
+    if (_isInternalRegisterationEvent && (_isEventCapacityReached == true)) {
+      _promptCapacityReached().then((bool? result) {
+        if ((result == true) && mounted) {
+          _manualAttendEvent(eventId: eventId, netId: netId);
+        }
+      });
+    }
+    else {
+      _manualAttendEvent(eventId: eventId, netId: netId);
+    }
+  }
+
+  // In _manualAttendEvent we call the Event2 service unconditionally
   void _manualAttendEvent({ required String eventId, required String netId}) {
     setState(() {
       _manualInputProgress = true;
@@ -549,50 +584,84 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         });
         Event2Popup.showErrorResult(context, _internalErrorString);
       }
-      else if (_isInternalRegisterationEvent) {
-        Events2().loadEventPerson(uin: uin).then((Event2PersonIdentifier? personIdentifier) {
-          if (mounted) {
-            String? netId = personIdentifier?.exteralId;
-            if (netId != null) {
-              if (_isAttendeeNetIdAttended(netId)) {
-                setState(() {
-                  _scanning = false;
-                });
-                Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_already_registered.description', 'Already marked as attended.'));
-              }
-              else if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
-                _promptUnregisteredAttendee().then((bool? result) {
-                  if (mounted) {
-                    if (result == true) {
-                      _scanAttendEvent(eventId: eventId, uin: uin);
-                    }
-                    else {
-                      setState(() {
-                        _scanning = false;
-                      });
-                    }
+      else {
+        _scanAttendEvent_CheckAttendee(eventId: eventId, uin: uin);
+      }
+    }
+    else {
+      setState(() {
+        _scanning = false;
+      });
+    }
+  }
+
+  // In _scanAttendEvent_CheckAttendee we check if the attendee candidate is already registered or already attended the event
+  void _scanAttendEvent_CheckAttendee({ required String eventId, required String uin}) {
+    if (_isInternalRegisterationEvent) {
+      Events2().loadEventPerson(uin: uin).then((Event2PersonIdentifier? personIdentifier) {
+        if (mounted) {
+          String? netId = personIdentifier?.exteralId;
+          if (netId != null) {
+            if (_isAttendeeNetIdAttended(netId)) {
+              setState(() {
+                _scanning = false;
+              });
+              Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_already_registered.description', 'Already marked as attended.'));
+            }
+            else if (!_isAttendeeNetIdRegistered(netId)) {
+              _promptUnregisteredAttendee().then((bool? result) {
+                if (mounted) {
+                  if (result == true) {
+                    _scanAttendEvent_CheckCapacity(eventId: eventId, uin: uin);
                   }
-                });
-              }
-              else {
-                _scanAttendEvent(eventId: eventId, uin: uin);
-              }
+                  else {
+                    setState(() {
+                      _scanning = false;
+                    });
+                  }
+                }
+              });
+            }
+            else {
+              _scanAttendEvent_CheckCapacity(eventId: eventId, uin: uin);
+            }
+          }
+          else {
+            setState(() {
+              _scanning = false;
+            });
+            Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.attendance.prompt.uin.not_recognized.description', 'This QR code contain a valid UIN but we failed to identify its owner.'));
+          }
+        }
+      });
+    }
+    else {
+      _scanAttendEvent_CheckCapacity(eventId: eventId, uin: uin);
+    }
+  }
+
+  // In _scanAttendEvent_CheckCapacity we check if the event capacity is reached
+  void _scanAttendEvent_CheckCapacity({ required String eventId, required String uin}) {
+    if (_isInternalRegisterationEvent && (_isEventCapacityReached == true)) {
+      _promptCapacityReached().then((bool? result) {
+          if (mounted) {
+            if (result == true) {
+              _scanAttendEvent(eventId: eventId, uin: uin);
             }
             else {
               setState(() {
                 _scanning = false;
               });
-              Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.attendance.prompt.uin.not_recognized.description', 'This QR code contain a valid UIN but we failed to identify its owner.'));
             }
           }
-        });
-      }
-      else {
-        _scanAttendEvent(eventId: eventId, uin: uin);
-      }
+      });
+    }
+    else {
+      _scanAttendEvent(eventId: eventId, uin: uin);
     }
   }
 
+  // In _scanAttendEvent we call the Event2 service unconditionally
   void _scanAttendEvent({ required String eventId, required String uin}) {
     Events2().attendEvent(eventId, uin: uin).then((result) {
       if (mounted) {
@@ -675,11 +744,11 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   bool _isAttendeeNetIdAttended(String attendeeNetId) =>
     _atendeesNetIds.contains(attendeeNetId);
 
-  /*bool? get _isEventCapacityReached {
+  bool? get _isEventCapacityReached {
     int attendeesCount = _atendeesNetIds.length;
     int? eventCapacity = widget.event?.registrationDetails?.eventCapacity;
-    return (eventCapacity != null) ? (eventCapacity <= attendeesCount) : null;
-  }*/
+    return ((eventCapacity != null) && (0 < eventCapacity)) ? (eventCapacity <= attendeesCount) : null;
+  }
 
   Future<void> _beep(bool success) async {
     if (Platform.isAndroid) {
@@ -697,12 +766,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
   );
 
-  /*Future<bool?> _promptCapacityReached() => Event2Popup.showPrompt(context,
+  Future<bool?> _promptCapacityReached() => Event2Popup.showPrompt(context,
     Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.title', 'At event capacity'),
     Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.description', 'Mark as attended?'),
     positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
     negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
-  );*/
+  );
 
   Future<void> _refresh() async {
     String? eventId = widget.event?.id;
