@@ -143,9 +143,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
   Widget _buildEventDetailsSection() {
     String? attendeesStatus;
     TextStyle? attendeesTextStyle, attendeesStatusTextStyle = Styles().textStyles?.getTextStyle('widget.label.small.fat.spaced');
-    int? attendeesCount = (_persons?.attendees != null) ? _atendeesNetIds.length : null;
+    int attendeesCount = _atendeesNetIds.length;
     int? eventCapacity = widget.event?.registrationDetails?.eventCapacity;
-    if ((attendeesCount != null) && (eventCapacity != null)) {
+    if (eventCapacity != null) {
       if (eventCapacity < attendeesCount) {
         attendeesStatus =  Localization().getStringEx('panel.event2.detail.attendance.attendees.capacity.exceeded.text', 'Event capacity exceeded');
         attendeesStatusTextStyle = attendeesTextStyle = Styles().textStyles?.getTextStyle('widget.label.small.extra_fat.spaced');
@@ -672,6 +672,12 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     return false; 
   }
 
+  /*bool? get _isEventCapacityReached {
+    int attendeesCount = _atendeesNetIds.length;
+    int? eventCapacity = widget.event?.registrationDetails?.eventCapacity;
+    return (eventCapacity != null) ? (eventCapacity <= attendeesCount) : null;
+  }*/
+
   Future<void> _beep(bool success) async {
     if (Platform.isAndroid) {
       await FlutterBeep.playSysSound(success ? AndroidSoundIDs.TONE_PROP_BEEP : AndroidSoundIDs.TONE_CDMA_ABBR_ALERT);
@@ -687,6 +693,13 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
     negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
   );
+
+  /*Future<bool?> _promptCapacityReached() => Event2Popup.showPrompt(context,
+    Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.title', 'At event capacity'),
+    Localization().getStringEx('panel.event2.detail.attendance.prompt.event_capacity_reached.description', 'Mark as attended?'),
+    positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
+    negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
+  );*/
 
   Future<void> _refresh() async {
     String? eventId = widget.event?.id;
