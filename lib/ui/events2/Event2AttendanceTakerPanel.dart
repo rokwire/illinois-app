@@ -433,7 +433,10 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     String netId = _manualNetIdController.text.trim();
     String? eventId = widget.event?.id;
     if (netId.isNotEmpty && (eventId != null) && (_manualInputProgress == false)) {
-      if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
+      if (_isAttendeeNetIdAttended(netId)) {
+        Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_already_registered.description', 'Already marked as attended.'));
+      }
+      else if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
         _promptUnregisteredAttendee().then((bool? result) {
           if ((result == true) && mounted) {
             _manualAttendEvent(netId: netId, eventId: eventId);
@@ -659,6 +662,9 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   bool _isAttendeeNetIdRegistered(String attendeeNetId) =>
     _displayMap[attendeeNetId]?.registrationType != null;
+
+  bool _isAttendeeNetIdAttended(String attendeeNetId) =>
+    _atendeesNetIds.contains(attendeeNetId);
 
   Future<bool?> _isAttendeeUinRegistered(String attendeeUi) async { //TMP:
     await Future.delayed(Duration(milliseconds: 1500));
