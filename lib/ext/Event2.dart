@@ -497,7 +497,7 @@ String event2RegistrationToDisplayString(Event2RegistrationType value) {
 
 String? event2UserRegistrationToDisplayString(Event2UserRegistrationType? value) {
   switch (value) {
-    case Event2UserRegistrationType.self: return Localization().getStringEx("model.event2.registrant_type.self", "Self Registered");
+    case Event2UserRegistrationType.self: return Localization().getStringEx("model.event2.registrant_type.self", "Self-Registered");
     case Event2UserRegistrationType.registrants: return Localization().getStringEx("model.event2.registrant_type.registrants", "Guest List");
     case Event2UserRegistrationType.creator: return Localization().getStringEx("model.event2.registrant_type.creator", "Creator");
     default: return null;
