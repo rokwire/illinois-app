@@ -1079,7 +1079,7 @@ packages:
       path: plugin
       relative: true
     source: path
-    version: "1.5.2"
+    version: "1.5.3"
   roundcheckbox:
     dependency: "direct main"
     description:
