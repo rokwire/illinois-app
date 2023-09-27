@@ -1425,6 +1425,7 @@
     "panel.event2.detail.attendance.attendees.checkin.description": "To check in a specific attendee, the individual must already be registered. No personal attendee information may be entered as part of taking attendance in the Illinois app.",
     "panel.event2.detail.attendance.scan.cancel.button.title": "Cancel",
     "panel.event2.detail.attendance.qr_code.uin.not_valid.msg": "This QR code does not contain a valid UIN.",
+    "panel.event2.detail.attendance.prompt.uin.not_recognized.description": "This QR code contain a valid UIN but we failed to identify its owner.",
     "panel.event2.detail.attendance.prompt.attendee_not_registered.title": "Not registered",
     "panel.event2.detail.attendance.prompt.attendee_not_registered.description": "Mark as attended?",
     "panel.event2.detail.attendance.prompt.event_capacity_reached.title": "At event capacity",

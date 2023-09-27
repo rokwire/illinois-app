@@ -549,32 +549,40 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         });
         Event2Popup.showErrorResult(context, _internalErrorString);
       }
-      //TBD: check _isAttendeeUinAttended
       else if (_isInternalRegisterationEvent) {
-        _isAttendeeUinRegistered(uin).then((bool? result) {
+        Events2().loadEventPerson(uin: uin).then((Event2PersonIdentifier? personIdentifier) {
           if (mounted) {
-            if (result == false) {
-              _promptUnregisteredAttendee().then((bool? result) {
-                if (mounted) {
-                  if (result == true) {
-                    _scanAttendEvent(eventId: eventId, uin: uin);
+            String? netId = personIdentifier?.exteralId;
+            if (netId != null) {
+              if (_isAttendeeNetIdAttended(netId)) {
+                setState(() {
+                  _scanning = false;
+                });
+                Event2Popup.showMessage(context, message: Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_already_registered.description', 'Already marked as attended.'));
+              }
+              else if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
+                _promptUnregisteredAttendee().then((bool? result) {
+                  if (mounted) {
+                    if (result == true) {
+                      _scanAttendEvent(eventId: eventId, uin: uin);
+                    }
+                    else {
+                      setState(() {
+                        _scanning = false;
+                      });
+                    }
                   }
-                  else {
-                    setState(() {
-                      _scanning = false;
-                    });
-                  }
-                }
-              });
-            }
-            else if (result == true) {
-              _scanAttendEvent(eventId: eventId, uin: uin);
+                });
+              }
+              else {
+                _scanAttendEvent(eventId: eventId, uin: uin);
+              }
             }
             else {
               setState(() {
                 _scanning = false;
               });
-              Event2Popup.showErrorResult(context, Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'));
+              Event2Popup.showErrorResult(context, Localization().getStringEx('panel.event2.detail.attendance.prompt.uin.not_recognized.description', 'This QR code contain a valid UIN but we failed to identify its owner.'));
             }
           }
         });
@@ -666,11 +674,6 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
 
   bool _isAttendeeNetIdAttended(String attendeeNetId) =>
     _atendeesNetIds.contains(attendeeNetId);
-
-  Future<bool?> _isAttendeeUinRegistered(String attendeeUi) async { //TMP:
-    await Future.delayed(Duration(milliseconds: 1500));
-    return false; 
-  }
 
   /*bool? get _isEventCapacityReached {
     int attendeesCount = _atendeesNetIds.length;
