@@ -288,49 +288,79 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         message: Localization().getStringEx("panel.event2.detail.attendance.manual_check.disabled", "Manual check is not enabled for this event."));
     }
     else if ((eventId != null) && (personNetId != null) && !_processingNetIds.contains(personNetId))  {
+      if (_atendeesNetIds.contains(personNetId)) {
+        _unattendEvent(eventId: eventId, identifier: person.identifier);
+      }
+      else {
+        if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(personNetId)) {
+          _promptUnregisteredAttendee().then((bool? result) {
+            if ((result == true) && mounted) {
+              _attendEvent(eventId: eventId, identifier: person.identifier);
+            }
+          });
+        }
+        else {
+          _attendEvent(eventId: eventId, identifier: person.identifier);
+        }
+      }
+    }
+  }
 
+  void _attendEvent({required String eventId, Event2PersonIdentifier? identifier}) {
+    String? personNetId = identifier?.netId;
+    if (mounted && (personNetId != null)) {
       setState(() {
         _processingNetIds.add(personNetId);
       });
 
-      if (_atendeesNetIds.contains(personNetId)) {
-        Events2().unattendEvent(eventId, personIdentifier: person.identifier).then((dynamic result) {
-          if (mounted) {
-              setState(() {
-                _processingNetIds.remove(personNetId);
-              });
+      Events2().attendEvent(eventId, personIdentifier: identifier).then((dynamic result) {
+        if (mounted) {
+          setState(() {
+            _processingNetIds.remove(personNetId);
+          });
 
-            if (result == true) {
-              setState(() {
-                _atendeesNetIds.remove(personNetId);
-                if (personNetId == _processedNetId) {
-                  _processedNetId = null;
-                }
-              });
-            }
-            else {
-              Event2Popup.showErrorResult(context, result);
-            }
-          }
-        });
-      }
-      else {
-        Events2().attendEvent(eventId, personIdentifier: person.identifier).then((dynamic result) {
-          if (mounted) {
+          if (result is Event2Person) {
             setState(() {
-              _processingNetIds.remove(personNetId);
+              _atendeesNetIds.add(personNetId);
             });
-            if (result is Event2Person) {
-              setState(() {
-                _atendeesNetIds.add(personNetId);
-              });
-            }
-            else {
-              Event2Popup.showErrorResult(context, result);
-            }
+            _beep(true);
           }
-        });
-      }
+          else {
+            Event2Popup.showErrorResult(context, result);
+            _beep(false);
+          }
+        }
+      });
+    }
+  }
+
+  void _unattendEvent({required String eventId, Event2PersonIdentifier? identifier}) {
+    String? personNetId = identifier?.netId;
+    if (mounted && (personNetId != null)) {
+      setState(() {
+        _processingNetIds.add(personNetId);
+      });
+      Events2().unattendEvent(eventId, personIdentifier: identifier).then((dynamic result) {
+        if (mounted) {
+          setState(() {
+            _processingNetIds.remove(personNetId);
+          });
+
+          if (result == true) {
+            setState(() {
+              _atendeesNetIds.remove(personNetId);
+              if (personNetId == _processedNetId) {
+                _processedNetId = null;
+              }
+            });
+            _beep(true);
+          }
+          else {
+            Event2Popup.showErrorResult(context, result);
+            _beep(false);
+          }
+        }
+      });
     }
   }
 
@@ -403,40 +433,54 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     String netId = _manualNetIdController.text.trim();
     String? eventId = widget.event?.id;
     if (netId.isNotEmpty && (eventId != null) && (_manualInputProgress == false)) {
-      setState(() {
-        _manualInputProgress = true;
-      });
-      Events2().attendEvent(eventId, personIdentifier: Event2PersonIdentifier(accountId: "", exteralId: netId)).then((result) {
-        if (mounted) {
-          setState(() {
-            _manualInputProgress = false;
-          });
-
-          String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
-          if (attendeeNetId != null) {
-            setState(() {
-              _atendeesNetIds.add(attendeeNetId);
-              if (!_displayMap.containsKey(attendeeNetId)) {
-                _displayMap[attendeeNetId] = result;
-                _displayList = _displayMap.buildDisplayList();
-              }
-              _processedNetId = attendeeNetId;
-              _attendeesSectionExpanded = true;
-            });
-            _beep(_isAttendeeRegistered(attendeeNetId));
-            _manualNetIdController.text = '';
-            _setupProcessedTimer();
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _ensureVisibleManualNetIdInput();
-              _manualNetIdFocusNode.requestFocus();
-            });
+      if (_isInternalRegisterationEvent && !_isAttendeeNetIdRegistered(netId)) {
+        _promptUnregisteredAttendee().then((bool? result) {
+          if ((result == true) && mounted) {
+            _manualAttendEvent(netId: netId, eventId: eventId);
           }
-          else {
-            Event2Popup.showErrorResult(context, result);
-          }
-        }
-      });
+        });
+      }
+      else {
+        _manualAttendEvent(netId: netId, eventId: eventId);
+      }
     }
+  }
+
+  void _manualAttendEvent({ required String eventId, required String netId}) {
+    setState(() {
+      _manualInputProgress = true;
+    });
+    Events2().attendEvent(eventId, personIdentifier: Event2PersonIdentifier(accountId: "", exteralId: netId)).then((result) {
+      if (mounted) {
+        setState(() {
+          _manualInputProgress = false;
+        });
+
+        String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
+        if (attendeeNetId != null) {
+          setState(() {
+            _atendeesNetIds.add(attendeeNetId);
+            if (!_displayMap.containsKey(attendeeNetId)) {
+              _displayMap[attendeeNetId] = result;
+              _displayList = _displayMap.buildDisplayList();
+            }
+            _processedNetId = attendeeNetId;
+            _attendeesSectionExpanded = true;
+          });
+          _beep(true);
+          _manualNetIdController.text = '';
+          _setupProcessedTimer();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _ensureVisibleManualNetIdInput();
+            _manualNetIdFocusNode.requestFocus();
+          });
+        }
+        else {
+          Event2Popup.showErrorResult(context, result);
+          _beep(false);
+        }
+      }
+    });
   }
 
   void _ensureVisibleManualNetIdInput() {
@@ -500,37 +544,70 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
         setState(() {
           _scanning = false;
         });
-
         Event2Popup.showErrorResult(context, _internalErrorString);
       }
-      else {
-        Events2().attendEvent(eventId, uin: uin).then((result) {
+      else if (_isInternalRegisterationEvent) {
+        _isAttendeeUinRegistered(uin).then((bool? result) {
           if (mounted) {
-            setState(() {
-              _scanning = false;
-            });
-
-            String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
-            if (attendeeNetId != null) {
-              setState(() {
-                _atendeesNetIds.add(attendeeNetId);
-                if (!_displayMap.containsKey(attendeeNetId)) {
-                  _displayMap[attendeeNetId] = result;
-                  _displayList = _displayMap.buildDisplayList();
+            if (result == false) {
+              _promptUnregisteredAttendee().then((bool? result) {
+                if (mounted) {
+                  if (result == true) {
+                    _scanAttendEvent(eventId: eventId, uin: uin);
+                  }
+                  else {
+                    setState(() {
+                      _scanning = false;
+                    });
+                  }
                 }
-                _processedNetId = attendeeNetId;
-                _attendeesSectionExpanded = true;
               });
-              _beep(_isAttendeeRegistered(attendeeNetId));
-              _setupProcessedTimer();
+            }
+            else if (result == true) {
+              _scanAttendEvent(eventId: eventId, uin: uin);
             }
             else {
-              Event2Popup.showErrorResult(context, result);
+              setState(() {
+                _scanning = false;
+              });
+              Event2Popup.showErrorResult(context, Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'));
             }
           }
         });
       }
+      else {
+        _scanAttendEvent(eventId: eventId, uin: uin);
+      }
     }
+  }
+
+  void _scanAttendEvent({ required String eventId, required String uin}) {
+    Events2().attendEvent(eventId, uin: uin).then((result) {
+      if (mounted) {
+        setState(() {
+          _scanning = false;
+        });
+
+        String? attendeeNetId = (result is Event2Person) ? result.identifier?.netId : null;
+        if (attendeeNetId != null) {
+          setState(() {
+            _atendeesNetIds.add(attendeeNetId);
+            if (!_displayMap.containsKey(attendeeNetId)) {
+              _displayMap[attendeeNetId] = result;
+              _displayList = _displayMap.buildDisplayList();
+            }
+            _processedNetId = attendeeNetId;
+            _attendeesSectionExpanded = true;
+          });
+          _beep(true);
+          _setupProcessedTimer();
+        }
+        else {
+          Event2Popup.showErrorResult(context, result);
+          _beep(false);
+        }
+      }
+    });
   }
 
   ///
@@ -577,8 +654,16 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
     });
   }
 
-  bool _isAttendeeRegistered(String attendeeNetId) =>
+  bool get _isInternalRegisterationEvent =>
+    widget.event?.registrationDetails?.type == Event2RegistrationType.internal;
+
+  bool _isAttendeeNetIdRegistered(String attendeeNetId) =>
     _displayMap[attendeeNetId]?.registrationType != null;
+
+  Future<bool?> _isAttendeeUinRegistered(String attendeeUi) async { //TMP:
+    await Future.delayed(Duration(milliseconds: 1500));
+    return false; 
+  }
 
   Future<void> _beep(bool success) async {
     if (Platform.isAndroid) {
@@ -588,6 +673,13 @@ class _Event2AttendanceTakerWidgetState extends State<Event2AttendanceTakerWidge
       await FlutterBeep.playSysSound(success ? iOSSoundIDs.AudioToneKey2 : iOSSoundIDs.SIMToolkitTone3);
     }
   }
+
+  Future<bool?> _promptUnregisteredAttendee() => Event2Popup.showPrompt(context,
+    Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_not_registered.title', 'Not registered'),
+    Localization().getStringEx('panel.event2.detail.attendance.prompt.attendee_not_registered.description', 'Mark as attended?'),
+    positiveButtonTitle: Localization().getStringEx("dialog.yes.title", "Yes"),
+    negativeButtonTitle: Localization().getStringEx("dialog.no.title", "No"),
+  );
 
   Future<void> _refresh() async {
     String? eventId = widget.event?.id;

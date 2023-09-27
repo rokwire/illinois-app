@@ -1410,6 +1410,8 @@
 	"panel.event2.detail.attendance.attendees.checkin.description": "参与者需要先注册才能签到。在Illinois应用程序的签到功能无法添加新的参与者信息。",
 	"panel.event2.detail.attendance.scan.cancel.button.title": "取消",
 	"panel.event2.detail.attendance.qr_code.uin.not_valid.msg": "此二维码不包含有效的 UIN 号码。",
+	"panel.event2.detail.attendance.prompt.attendee_not_registered.title": "Not registered",
+	"panel.event2.detail.attendance.prompt.attendee_not_registered.description": "Mark as attended?",
 
 	"panel.event2.detail.button.register.title": "注册",
 	"panel.event2.detail.button.login.register.title": "请登入以注册",
