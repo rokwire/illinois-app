@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - English strings [#3770](https://github.com/rokwire/illinois-app/issues/3770).
+- Prompt if attendee candidate is not registered or if event capacity is reached [#3722](https://github.com/rokwire/illinois-app/issues/3722).
 
 ## [5.0.72] - 2023-09-26
 ### Changed
