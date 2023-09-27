@@ -3804,7 +3804,7 @@
 	"model.event2.registration_type.internal": "从应用程序",
 	"model.event2.registration_type.external": "从外部链接",
 
-	"model.event2.registrant_type.self": "Self Registered",
+	"model.event2.registrant_type.self": "Self-Registered",
 	"model.event2.registrant_type.registrants": "Guest List",
 	"model.event2.registrant_type.creator": "Creator",
 	"model.event2.registrant_type.unknown": "Unknown",
