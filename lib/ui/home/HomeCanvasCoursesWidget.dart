@@ -134,11 +134,12 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
           allowImplicitScrolling: true,
         )
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => coursePages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.canvas_courses.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.canvas_courses.button.all.hint', 'Tap to view all courses'),
-        onTap: _onViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => coursePages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.canvas_courses.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.canvas_courses.button.all.hint', 'Tap to view all courses'),
+          onTap: _onViewAll,
+        ),
       ),
     ],);
   }

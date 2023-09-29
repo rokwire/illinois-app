@@ -109,11 +109,10 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                 RoundedButton(
                   label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign In with NetID'),
                   hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
-                  fontSize: 16,
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   borderColor: Styles().colors!.fillColorSecondary,
                   backgroundColor: Styles().colors!.white,
-                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: _onLoginTapped,
                 ),
                 Onboarding2UnderlinedButton(
@@ -220,7 +219,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
     Analytics().logSelect(target: 'Log in with NetID');
     if (_progress != true) {
       setState(() { _progress = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
+      Auth2().authenticateWithOidc(scope: Onboarding2().loginAccountScope).then((Auth2OidcAuthenticateResult? result) {
         if (mounted) {
           if (result == Auth2OidcAuthenticateResult.succeeded) {
             FlexUI().update().then((_) {

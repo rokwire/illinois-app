@@ -39,9 +39,7 @@ class HorizontalDiningSpecials extends StatelessWidget {
     return hasOffers ? Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 10,),
-        Text(Localization().getStringEx("panel.explore.label.dining_news.title", "Dining News"), style:
-          TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Styles().colors!.textBackground,),
-        ),
+        Text(Localization().getStringEx("panel.explore.label.dining_news.title", "Dining News"), style: Styles().textStyles?.getTextStyle("widget.item.regular.extra_fat")),
         SingleChildScrollView(scrollDirection: Axis.horizontal, child:
           Row(children: offerWidgets,),
         )

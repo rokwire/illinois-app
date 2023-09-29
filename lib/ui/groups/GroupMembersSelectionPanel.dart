@@ -98,20 +98,14 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                             children: <Widget>[
                               Text(
                                 Localization().getStringEx("panel.group.members.label.tap_the.title", "Tap the "),
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.medium,
-                                    color: Styles().colors!.white,
-                                    fontSize: 16),
+                                style: Styles().textStyles?.getTextStyle("widget.title.light.regular")
                               ),
                               Styles().images?.getImage('check-circle-outline-gray-white', excludeFromSemantics: true) ?? Container(),
                               Expanded(
                                   child:Text(
                                     Localization().getStringEx("panel.group.members.label.follow_team.title", " to select members"),
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontFamily: Styles().fontFamilies!.medium,
-                                        color: Styles().colors!.white,
-                                        fontSize: 16),
+                                    style: Styles().textStyles?.getTextStyle("widget.title.light.regular")
                                   )
                               )
                             ],
@@ -132,8 +126,9 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
               ),
               Padding(padding: EdgeInsets.only(top: 24, bottom: 24), child:
               RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   contentWeight: 0.5,
-                  textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary,
+                  borderColor: Styles().colors!.fillColorSecondary,
                   backgroundColor: Styles().colors!.white,
                   onTap: _onTapDone),
               ),
@@ -267,7 +262,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                       onSubmitted: (_) => () {},
                       cursorColor: Styles().colors!.fillColorSecondary,
                       keyboardType: TextInputType.text,
-                      style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                       decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)))
                     )),
               ),
@@ -443,7 +438,7 @@ class _MemberSelectionWidget extends StatelessWidget {
                           child:
                           Container(
                             child: Text(label,
-                              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16)))),
+                              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")))),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
@@ -452,11 +447,7 @@ class _MemberSelectionWidget extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(groupMemberStatusToDisplayString(member?.status)?.toUpperCase() ?? "",
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.bold,
-                                fontSize: 12,
-                                color: Styles().colors!.white
-                            ),
+                            style: Styles().textStyles?.getTextStyle("widget.title.light.little.fat")
                           ),
                         ),
                       ),

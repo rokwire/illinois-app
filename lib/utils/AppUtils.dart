@@ -32,7 +32,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AppAlert {
   
-  static Future<bool?> showDialogResult(BuildContext context, String? message, { String? buttonTitle }) async {
+  static Future<bool?> showDialogResult(BuildContext context, String? message, { String? buttonTitle, Function? onConfirm}) async {
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -45,6 +45,7 @@ class AppAlert {
                 onPressed: () {
                   Analytics().logAlert(text: message, selection: displayButtonTitle);
                   Navigator.pop(context, true);
+                  onConfirm?.call();
                 }
             ) //return dismissed 'true'
           ],
@@ -139,7 +140,7 @@ class AppAlert {
       {required BuildContext buildContext,
       required String message,
       String? positiveButtonLabel,
-      required VoidCallback positiveCallback,
+      VoidCallback? positiveCallback,
       VoidCallback? negativeCallback,
       String? negativeButtonLabel}) async {
     bool alertDismissed = await showDialog(
@@ -152,7 +153,9 @@ class AppAlert {
                 onPressed: () {
                   Analytics().logAlert(text: message, selection: 'Yes');
                   Navigator.pop(context, true);
-                  positiveCallback();
+                  if (positiveCallback != null) {
+                    positiveCallback();
+                  }
                 }),
             TextButton(
                 child: Text(
@@ -290,15 +293,15 @@ class AppDateTimeUtils {
         timeDaysDiff += 1;
       }
       if (timeDaysDiff == 0) {
-        displayDay = Localization().getStringEx('model.explore.time.today', 'Today');
+        displayDay = Localization().getStringEx('model.explore.date_time.today', 'Today');
         if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
         }
       }
       else if (timeDaysDiff == 1) {
-        displayDay = Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow');
+        displayDay = Localization().getStringEx('model.explore.date_time.tomorrow', 'Tomorrow');
         if (!allDay! && includeAtSuffix) {
-          displayDay = "$displayDay ${Localization().getStringEx('model.explore.time.at', 'at')}";
+          displayDay = "$displayDay ${Localization().getStringEx('model.explore.date_time.at', 'at')}";
         }
       }
       else {
@@ -313,7 +316,7 @@ class AppDateTimeUtils {
     if (dateTimeUtc != null && !allDay!) {
       DateTime dateTimeToCompare = _getDateTimeToCompare(dateTimeUtc: dateTimeUtc, considerSettingsDisplayTime: considerSettingsDisplayTime)!;
       String format = (dateTimeToCompare.minute == 0) ? 'ha' : 'h:mma';
-      timeToString = AppDateTime().formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !AppDateTime().useDeviceLocalTimeZone);
+      timeToString = AppDateTime().formatDateTime(dateTimeToCompare, format: format, ignoreTimeZone: true, showTzSuffix: !AppDateTime().useDeviceLocalTimeZone)?.toLowerCase();
     }
     return timeToString;
   }
@@ -384,12 +387,8 @@ class AppPrivacyPolicy {
         return true;
       }
     }
-    else if ((Config().privacyPolicyGuideId != null) && (Guide().entryById(Config().privacyPolicyGuideId) != null)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: Config().privacyPolicyGuideId, showTabBar: false,)));
-      return true;
-    }
     else {
-      Map<String, dynamic>? privacyPolicyGuideEntry = JsonUtils.decodeMap(await AppBundle.loadString('assets/privacy.notice.json'));
+      Map<String, dynamic>? privacyPolicyGuideEntry = Guide().entryById(Config().privacyPolicyGuideId) ?? JsonUtils.decodeMap(await AppBundle.loadString('assets/privacy.notice.json'));
       if (privacyPolicyGuideEntry != null) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntry: privacyPolicyGuideEntry, showTabBar: false,)));
         return true;
@@ -398,6 +397,13 @@ class AppPrivacyPolicy {
         return false;
       }
     }
+  }
+}
+
+class AppPopScope {
+  static Future<bool> back(Function? fn) {
+    fn?.call();
+    return Future.value(false);
   }
 }
 
@@ -411,6 +417,16 @@ extension StateExt on State {
   }
 
   @protected
+  void setStateDelayedIfMounted(VoidCallback fn, { Duration duration = Duration.zero }) {
+    Future.delayed(duration, () {
+      if (mounted) {
+        // ignore: invalid_use_of_protected_member
+        setState(fn);
+      }
+    });
+  }
+
+  @protected
   void applyStateIfMounted(VoidCallback fn) {
     if (mounted) {
       // ignore: invalid_use_of_protected_member
@@ -419,5 +435,18 @@ extension StateExt on State {
     else {
       fn();
     }
+  }
+
+  @protected
+  void applyStateDelayedIfMounted(VoidCallback fn, { Duration duration = Duration.zero }) {
+    Future.delayed(duration, () {
+      if (mounted) {
+        // ignore: invalid_use_of_protected_member
+        setState(fn);
+      }
+      else {
+        fn();
+      }
+    });
   }
 }

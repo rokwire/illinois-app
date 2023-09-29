@@ -351,6 +351,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
               slivers: <Widget>[
                 SliverToutHeaderBar(
                   flexRightToLeftTriangleColor: Colors.white,
+                  flexImageKey: 'course-detail-default',
                 ),
                 SliverList(
                   delegate: SliverChildListDelegate(

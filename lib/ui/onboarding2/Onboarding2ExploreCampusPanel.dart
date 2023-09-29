@@ -122,7 +122,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                         Container(height: 10,),
                         Onboarding2UnderlinedButton(
                           title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
-                          fontSize: 14,
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline"),
                           onTap: _onTapLearnMore,
                         ),
                         Container(height: 24,),
@@ -177,11 +177,10 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                     RoundedButton(
                       label: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.hint', ''),
-                      fontSize: 16,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       backgroundColor: Styles().colors!.white,
                       borderColor: Styles().colors!.fillColorSecondaryVariant,
-                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: () => _goNext(context),
                     )
                   ],

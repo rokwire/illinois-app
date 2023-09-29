@@ -84,7 +84,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 24, top: 16), child:
               Text(title, textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
+                style: Styles().textStyles?.getTextStyle("widget.title.large.fat")
               )
             )
           ),
@@ -102,7 +102,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
 
       Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 8), child:
         Text(Localization().getStringEx('panel.group.detail.post.report_abuse.comment.title', 'Please add your comment for this report:'),
-          style: TextStyle(color: Styles().colors?.textSurface, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)
+          style: Styles().textStyles?.getTextStyle("widget.info.regular")
         ),
       ),
       
@@ -115,7 +115,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
               hint: Localization().getStringEx('panel.group.detail.post.report_abuse.comment.hint', ''),
               child: TextField(controller: _commentController, maxLines: 10,
                 onChanged: _onCommentChanged,
-                style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.only(left: 8, right: 20, top: 4, bottom: 4)),
               )
             )
@@ -128,7 +128,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
                 child: GestureDetector(onTap: () { _commentController.text = ''; },
                   child: Container(width: 36, height: 36,
                     child: Align(alignment: Alignment.center,
-                      child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                      child: Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")),
                     ),
                   ),
                 ),
@@ -146,9 +146,9 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
             RoundedButton(
               label: Localization().getStringEx("panel.group.detail.post.report_abuse.button.send.label", "Send"),
               hint: Localization().getStringEx("panel.group.detail.post.report_abuse.button.send.hint", "Tap to send report"),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: Styles().colors?.white,
               borderColor: Styles().colors?.fillColorSecondary,
-              textColor: Styles().colors?.fillColorPrimary,
               progress:  _sending,
               onTap: _onSend,
             ),
@@ -178,7 +178,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       border: Border.all(color: Styles().colors!.textSurface!, width: 1),
       alignment: Alignment.topRight,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
-      infoTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+      infoTextStyle: Styles().textStyles?.getTextStyle("widget.title.regular.medium_fat"),
       closeIcon: Styles().images?.getImage('close'),
     ),);
   }

@@ -15,6 +15,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Content.dart' as uiuc;
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
@@ -27,6 +28,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
@@ -54,7 +56,7 @@ import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
-import 'package:illinois/ui/wallet/IDCardPanel.dart';
+import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -62,10 +64,10 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -581,7 +583,7 @@ class _BrowseEntry extends StatelessWidget {
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
       case "dinings.my_dining":              _onTapMyDinings(context); break;
 
-      case "events.suggested_events":        _onTapSuggestedEvents(context); break;
+      case "events.event_feed":              _onTapEventFeed(context); break;
       case "events.my_events":               _onTapMyEvents(context); break;
 
       case "feeds.twitter":                  _onTapTwitter(context); break;
@@ -706,10 +708,7 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  int get _videoTutorialsCount {
-    List<dynamic>? videos = JsonUtils.listValue(Assets()['video_tutorials.videos']);
-    return videos?.length ?? 0;
-  }
+  int get _videoTutorialsCount => uiuc.Content().videos?.length ?? 0;
 
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
@@ -723,23 +722,17 @@ class _BrowseEntry extends StatelessWidget {
         Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
           Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
+          Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
         Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-                settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
       }
     }
   }
 
   List<Video>? _getVideoTutorials() {
-    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+    Map<String, dynamic>? videoTutorials = uiuc.Content().videoTutorials;
     if (videoTutorials == null) {
       return null;
     }
@@ -809,7 +802,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapSportEvents(BuildContext context) {
     Analytics().logSelect(target: "Athletics Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
+    Event2HomePanel.present(context, attributes: Event2HomePanel.athleticsCategoryAttributes);
   }
 
   void _onTapSportNews(BuildContext context) {
@@ -819,7 +812,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapBuildingAccess(BuildContext context) {
     Analytics().logSelect(target: 'Building Access');
-    IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
   
   void _onTapTestLocations(BuildContext context) {
@@ -967,10 +960,15 @@ class _BrowseEntry extends StatelessWidget {
     SettingsNotificationsContentPanel.present(context, content: isUnread ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
 
-  void _onTapSuggestedEvents(BuildContext context) {
+  void _onTapEventFeed(BuildContext context) {
+    Analytics().logSelect(target: "Events Feed");
+    Event2HomePanel.present(context);
+  }
+
+  /*void _onTapSuggestedEvents(BuildContext context) {
     Analytics().logSelect(target: "Suggested Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
-  }
+  }*/
 
   void _onTapTwitter(BuildContext context) {
     Analytics().logSelect(target: "Twitter");
@@ -1014,7 +1012,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMyEvents(BuildContext context) {
     Analytics().logSelect(target: "My Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event.favoriteKeyName]); } ));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event2.favoriteKeyName]); } )); // Event.favoriteKeyName
   }
 
   void _onTapMyDinings(BuildContext context) {
@@ -1118,7 +1116,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapIlliniId(BuildContext context) {
     Analytics().logSelect(target: "Illini ID");
-    IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
 
   void _onTapLibraryCard(BuildContext context) {
@@ -1191,6 +1189,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   void initState() {
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
+      Content.notifyContentImagesChanged,
     ]);
 
     widget.updateController?.stream.listen((String command) {
@@ -1220,11 +1219,15 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
       ModalImageHolder(child: Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
-        return (loadingProgress != null) ? Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
-          Center(child:
-            CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
-          ),
-        ) : child;
+        return (loadingProgress != null) ?
+          Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+            Center(child:
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
+            ),
+          ) :
+          AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
+            Container(color: Styles().colors?.fillColorPrimary, child: child)
+          );
       })),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
@@ -1261,7 +1264,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   }
 
   void _updateImage() {
-    Storage().browseToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.browse.tout');
+    Storage().browseToutImageUrl = _imageUrl = Content().randomImageUrl('browse.tout');
     Storage().browseToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
   }
 
@@ -1270,6 +1273,9 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   @override
   void onNotification(String name, dynamic param) {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+      _update();
+    }
+    else if (name == Content.notifyContentImagesChanged) {
       _update();
     }
   }

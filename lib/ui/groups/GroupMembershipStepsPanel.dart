@@ -17,12 +17,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/events.dart';
-import 'package:rokwire_plugin/service/groups.dart';
-import 'package:illinois/ext/Event.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/groups/GroupFindEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -30,8 +28,8 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/ext/Event2.dart';
 
 class GroupMembershipStepsPanel extends StatefulWidget {
   final List<GroupMembershipStep>? steps;
@@ -47,7 +45,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   late List<GroupMembershipStep> _steps;
   List<FocusNode>? _focusNodes;
   List<TextEditingController>? _controllers;
-  Map<String, Event> _events = Map<String, Event>();
+  Map<String, Event2> _events = Map<String, Event2>();
 
   @override
   void initState() {
@@ -68,22 +66,9 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     }
 
     if (0 < eventIds.length) {
-      Events().loadEventsByIds(eventIds).then((List<Event>? events) {
+      Events2().loadEventsByIds(eventIds: eventIds).then((List<Event2>? events) {
         if (events != null) {
-          for (Event event in events) {
-            if (event.id != null) {
-              _events[event.id!] = event;
-            }
-          }
-          if (mounted) {
-            setState(() {});
-          }
-        }
-      });
-      Groups().loadEvents(null).then((Map<int, List<Event>>? eventsMap) {
-        List<Event>? events = CollectionUtils.isNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
-        if (CollectionUtils.isNotEmpty(events)) {
-          for (Event event in events!) {
+          for (Event2 event in events) {
             if (event.id != null) {
               _events[event.id!] = event;
             }
@@ -149,10 +134,10 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           children:<Widget>[
             Row(children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 4), child: Styles().images?.getImage('campus-tools', excludeFromSemantics: true)),
-              Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+              Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
+              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin")),
             ),
           ]),
       ),
@@ -179,7 +164,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   Widget _buildStep({required int index}) {
     List<Widget> stepContent = [
       Padding(padding: EdgeInsets.only(bottom: 4),
-        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.tiny")),
       ),
       Stack(children: <Widget>[
         Container(color: Styles().colors!.white,
@@ -188,14 +173,14 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
             controller: _controllers![index],
             focusNode: _focusNodes![index],
             decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-            style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground,),
+            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
           ),
         ),
         Align(alignment: Alignment.topRight,
           child: GestureDetector(onTap: () { _removeStep(index: index); },
             child: Container(width: 36, height: 36,
               child: Align(alignment: Alignment.center,
-                child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                child: Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")),
               ),
             ),
           ),
@@ -208,7 +193,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     if (0 < eventsCount) {
       for (int eventIndex = 0; eventIndex < eventsCount; eventIndex++) {
         String? eventId = eventIds![eventIndex];
-        Event? event = _events[eventId];
+        Event2? event = _events[eventId];
         if (event != null) {
           stepContent.add(_EventCard(event: event, onTapRemove:(){ _removeEvent(stepIndex:index, eventIndex: eventIndex); }));
         }
@@ -235,10 +220,8 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         child: Row(children: <Widget>[
           Expanded(child: Container(),),
           RoundedButton(label:Localization().getStringEx("panel.membership_request.button.save.title", 'Save steps'),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
             backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.bold,
-            fontSize: 16,
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -279,9 +262,9 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     if (step.eventIds == null) {
       step.eventIds = <String>[];
     }
-    GroupEventsContext groupContext = GroupEventsContext(events: <Event>[]);
+    GroupEventsContext groupContext = GroupEventsContext(events: <Event2>[]);
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupFindEventPanel(groupContext: groupContext,))).then((_){
-      for (Event newEvent in groupContext.events!) {
+      for (Event2 newEvent in groupContext.events!) {
         if (newEvent.id != null) {
           if (!step.eventIds!.contains(newEvent.id)) {
             step.eventIds!.add(newEvent.id!);
@@ -326,7 +309,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
 }
 
 class _EventCard extends StatelessWidget {
-  final Event?              event;
+  final Event2?              event;
   final GestureTapCallback? onTapRemove;
   
   _EventCard({this.event, this.onTapRemove});
@@ -345,11 +328,11 @@ class _EventCard extends StatelessWidget {
           Padding(padding: EdgeInsets.all(16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(bottom: 8), child: 
-                Text(event!.title!,  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary),),
+                Text(event!.name!,  style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 8), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
-                Text(event?.timeDisplayString ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),),
+                Text(event?.shortDisplayDate ?? '',  style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
               ],)),
             ],)
           ),
@@ -357,7 +340,7 @@ class _EventCard extends StatelessWidget {
             child: GestureDetector(onTap: () { onTapRemove!(); },
               child: Container(width: 36, height: 36,
                 child: Align(alignment: Alignment.center,
-                  child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                  child: Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")),
                 ),
               ),
             ),

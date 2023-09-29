@@ -16,16 +16,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/poll.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart' as rokwire;
-import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:http/http.dart';
 
 class Polls extends rokwire.Polls implements NotificationsListener {
 
@@ -88,30 +83,5 @@ class Polls extends rokwire.Polls implements NotificationsListener {
     else  {
       return error.toString();
     }
-  }
-
-  Future<Map<String, Map<String, dynamic>>?> loadContentItems({List<String>? categories}) async {
-    Map<String, Map<String, dynamic>>? result;
-    if (Config().contentUrl != null) {
-      Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': categories}), auth: Auth2());
-      List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
-      if (responseList != null) {
-        result = <String, Map<String, dynamic>>{};
-        for (dynamic responseEntry in responseList) {
-          Map<String, dynamic>? contentItem = JsonUtils.mapValue(responseEntry);
-          if (contentItem != null) {
-            Map<String, dynamic>? data = JsonUtils.mapValue(contentItem['data']);
-            if (data != null) {
-              data['category'] = contentItem['category'];
-              String? key = JsonUtils.stringValue(data['key']);
-              if (key != null) {
-                result[key] = data;
-              }
-            }
-          }
-        }
-      }
-    }
-    return result;
   }
 }

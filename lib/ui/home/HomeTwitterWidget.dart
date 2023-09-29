@@ -37,7 +37,7 @@ class HomeTwitterWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.twitter.header.label', 'Twitter');
+  static String get title => Localization().getStringEx('widget.home.twitter.header.label', 'X/Twitter');
   
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
@@ -125,17 +125,14 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   @override
   Widget build(BuildContext context) {
-    int displayPagesCount = _tweetsCount + ((_loadingPage == true) ? 1 : 0);
-    return Visibility(visible: (0 < displayPagesCount), child:
-        Semantics(container: true, child:
-          Column(children: <Widget>[
-            _buildHeader(),
-            Stack(children:<Widget>[
-              _buildSlant(),
-              _buildContent(),
-            ]),
-          ]),
-        ),
+    return Semantics(container: true, child:
+      Column(children: <Widget>[
+        _buildHeader(),
+        Stack(children:<Widget>[
+          _buildSlant(),
+          _buildContent(),
+        ]),
+      ]),
     );
   }
 

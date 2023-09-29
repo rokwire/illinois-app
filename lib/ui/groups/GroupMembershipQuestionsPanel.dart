@@ -108,10 +108,10 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children:<Widget>[
             Row(children: <Widget>[
-              Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions'), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+              Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions'), style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
+              Text(description, style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin")),
             ),
           ]),
       ),
@@ -143,7 +143,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     return Padding(padding: EdgeInsets.symmetric(vertical: 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4),
-          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+          child: Text(Localization().getStringEx("panel.membership_questions.label.question", 'QUESTION #')+(index+1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.tiny")),
         ),
         Stack(children: <Widget>[
           Container(color: Styles().colors!.white,
@@ -154,8 +154,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
               onChanged: _onTextChanged,
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-              style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground,),
-            ),
+              style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
           ),
           Align(alignment: Alignment.topRight,
             child: GestureDetector(onTap: () { _removeQuestion(index: index); },
@@ -165,7 +164,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
                     label: Localization().getStringEx("panel.membership_questions.button.clear.hint", "clear"),
                     button: true,
                     excludeSemantics: true,
-                    child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                    child: Text('X', style: Styles().textStyles?.getTextStyle("widget.title.regular")),
                 )),
               ),
             ),
@@ -181,10 +180,8 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
           Expanded(flex: 1,child: Container(),),
           Expanded(flex: 5,
           child: RoundedButton(label: Localization().getStringEx("panel.membership_questions.button.update_question.title", 'Update Questions'),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
             backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.bold,
-            fontSize: 16,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,

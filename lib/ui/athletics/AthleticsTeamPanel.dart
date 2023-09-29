@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -122,7 +122,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
     }
 
     String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow") + " ${widget.sport?.name}";
-    String randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.$sportShortName') ?? '';
+    String randomImageURL = Content().randomImageUrl('sports.$sportShortName') ?? '';
     return SingleChildScrollView(
       child: Container(
         color: Styles().colors!.background,
@@ -321,8 +321,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       child: RoundedButton(
                         label: Localization().getStringEx("panel.athletics_team.button.full_schedule.title", 'Full Schedule'),
                         hint: Localization().getStringEx("panel.athletics_team.button.full_schedule.hint", ''),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         onTap: _showScheduleListPanel(),
-                        textColor: Styles().colors!.fillColorPrimary,
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.background,
                       ),
@@ -387,6 +387,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                         child: RoundedButton(
                           label: Localization().getStringEx("panel.athletics_team.button.all_news.title", 'All News'),
                           hint: Localization().getStringEx("panel.athletics_team.button.all_news.hint", ''),
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                           onTap: () {
                             Analytics().logSelect(target:"All News");
                             Navigator.push(
@@ -394,7 +395,6 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                               CupertinoPageRoute(
                                 builder: (context) => AthleticsNewsListPanel(sportName: widget.sport!.name,)));
                           },
-                          textColor: Styles().colors!.fillColorPrimary,
                           borderColor: Styles().colors!.fillColorSecondary,
                           backgroundColor: Styles().colors!.background,
                         ),
@@ -452,8 +452,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     child: RoundedButton(
                       label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster'),
                       hint: Localization().getStringEx("panel.athletics_team.button.full_roster.hint", ''),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       onTap: _showRosterListPanel(),
-                      textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.background,
                     ),
@@ -510,8 +510,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       child: RoundedButton(
                         label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff'),
                         hint: Localization().getStringEx("panel.athletics_team.button.all_staff.hint", ''),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         onTap:_showCoachListPanel(),
-                        textColor: Styles().colors!.fillColorPrimary,
                         borderColor: Styles().colors!.fillColorSecondary,
                         backgroundColor: Styles().colors!.background,
                       ),

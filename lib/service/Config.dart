@@ -47,7 +47,7 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
   Map<String, dynamic> get secretCanvas => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
-  
+
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
 
@@ -108,6 +108,7 @@ class Config extends rokwire.Config {
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
   String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
   String? get dailyIlliniFeedUrl     => JsonUtils.stringValue(otherUniversityServices['daily_illini_feed_url']);
+  String? get eventAttendanceUrl     => JsonUtils.stringValue(otherUniversityServices['event_attendance_url']);
 
   // Getters: Platform Building Blocks
   String? get gatewayUrl             => JsonUtils.stringValue(platformBuildingBlocks['gateway_url']);
@@ -118,6 +119,9 @@ class Config extends rokwire.Config {
   String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);
   String? get wellnessUrl            => JsonUtils.stringValue(platformBuildingBlocks["wellness_url"]);
   String? get appointmentsUrl        => JsonUtils.stringValue(platformBuildingBlocks["appointments_url"]);
+  String? get occupationsUrl         => JsonUtils.stringValue(platformBuildingBlocks["occupations_url"]);
+  String? get assistantUrl           => JsonUtils.stringValue(platformBuildingBlocks["assistant_url"]);
+  String? get identityUrl            => JsonUtils.stringValue(platformBuildingBlocks["identity_url"]);
 
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);
@@ -206,6 +210,8 @@ class Config extends rokwire.Config {
 
   String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
   String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
+
+  int get mobileAccessDeleteTimeoutMins   => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

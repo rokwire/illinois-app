@@ -112,7 +112,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
               children: [
                 Text(
                   Localization().getStringEx('panel.group_qr_code.description.label', 'Invite others to join this group by sharing a link or the QR code after saving it to your photo library.'),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                  style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 24),
@@ -146,9 +146,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                   child: RoundedButton(
                     label: Localization().getStringEx('panel.group_qr_code.button.save.title', 'Save QR Code'),
                     hint: '',
+                    textStyle: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
                     backgroundColor: Styles().colors!.background,
-                    fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
                     borderColor: Styles().colors!.fillColorSecondary,
                     onTap: _onTapSave,
                   ),
@@ -158,9 +157,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                   child: RoundedButton(
                     label: Localization().getStringEx('panel.group_qr_code.button.share.title', 'Share Link'),
                     hint: '',
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                     backgroundColor: Styles().colors!.background,
-                    fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
                     borderColor: Styles().colors!.fillColorSecondary,
                     onTap: _onTapShare,
                     rightIcon: Styles().images?.getImage('share-dark', excludeFromSemantics: true),

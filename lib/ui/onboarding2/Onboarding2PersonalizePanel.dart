@@ -122,7 +122,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                           Container(height: 10,),
                           Onboarding2UnderlinedButton(
                             title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
-                            fontSize: 14,
+                            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline"),
                             onTap: _onTapLearnMore,
                           ),
                           Container(height: 12,),
@@ -177,11 +177,10 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                     RoundedButton(
                       label: Localization().getStringEx('panel.onboarding2.personalize.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.personalize.button.continue.hint', ''),
-                      fontSize: 16,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       backgroundColor: Styles().colors!.white,
                       borderColor: Styles().colors!.fillColorSecondaryVariant,
-                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: () => _goNext(context),
                     )
                   ],
@@ -229,7 +228,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
               Localization().getStringEx('panel.onboarding2.personalize.learn_more.title2',"Personal information"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and i-card information."),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and Illini ID information."),
               style: Onboarding2InfoDialog.contentStyle,
             ),
             Container(height: 24,),

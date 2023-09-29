@@ -163,6 +163,7 @@ class _AppointmentPersonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int numSlots = person.numberOfAvailableSlots ?? 0;
     String? numberOfAvailableSlots = person.displayNumberOfAvailableSlots;
     String? nextAvailableTime = person.displayNextAvailableTime;
 
@@ -224,7 +225,7 @@ class _AppointmentPersonCard extends StatelessWidget {
                         ),
                       ),
 
-                      Visibility(visible: StringUtils.isNotEmpty(nextAvailableTime), child:
+                      Visibility(visible: StringUtils.isNotEmpty(nextAvailableTime) && (0 < numSlots), child:
                         Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(right: 6), child:

@@ -210,9 +210,9 @@ class _OnboardingLoginPhoneVerifyPanelState
                     "Next"),
                 hint: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.hint", ""),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.background,
-                textColor: Styles().colors!.fillColorPrimary,
                 onTap: () => _onTapNext()),),)
           ],),
         ));

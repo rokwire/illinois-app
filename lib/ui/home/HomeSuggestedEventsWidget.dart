@@ -347,11 +347,12 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),
-        onTap: _navigateToExploreEvents,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),
+          onTap: _navigateToExploreEvents,
+        ),
       ),
     ]);
   }

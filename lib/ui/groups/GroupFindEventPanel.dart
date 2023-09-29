@@ -22,6 +22,7 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -34,14 +35,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupEventsContext {
   StreamController<void> eventsController = StreamController<void>();
-  List<Event>? _events;
-  List<Event>? get events => _events;
+  List<Event2>? _events;
+  List<Event2>? get events => _events;
   set events(value){
     _events = value;
     eventsController.add(null);
   }
   
-  GroupEventsContext({List<Event>? events}) {
+  GroupEventsContext({List<Event2>? events}) {
     _events = events;
   }
 
@@ -225,8 +226,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             child: RoundedButton(
               label: Localization().getStringEx("panel.find_event.button.add_selected_events.title", "Add (#) event to group").replaceAll("#", _selectedEvents.length.toString()),
               hint: Localization().getStringEx("panel.find_event.button.add_selected_events.hint", ""),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
               borderColor: Styles().colors!.fillColorSecondary,
               onTap: _onTapAddEvents,
             ),

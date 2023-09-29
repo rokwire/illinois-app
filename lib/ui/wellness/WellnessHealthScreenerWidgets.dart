@@ -18,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -26,12 +25,19 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
+import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widget_builders/scroll_pager.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
+import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
+import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/service/storage.dart';
+
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/widgets/InfoPopup.dart';
 
 class WellnessHealthScreenerHomeWidget extends StatefulWidget {
   final ScrollController scrollController;
@@ -43,11 +49,12 @@ class WellnessHealthScreenerHomeWidget extends StatefulWidget {
 }
 
 class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreenerHomeWidget> implements NotificationsListener {
+  final String _healthScreenerSurveyType = "health_screener";
+
   String resourceName = 'wellness.health_screener';
   List<String> _timeframes = ["Today", "This Week", "This Month", "All Time"];
 
   String? _selectedTimeframe = "This Week";
-  String? _selectedSurveyType = "Health Screener";
 
   List<SurveyResponse> _responses = [];
 
@@ -60,6 +67,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
     super.initState();
     NotificationService().subscribe(this, [
+      Storage.notifySettingChanged,
       Surveys.notifySurveyResponseCreated,
       FlexUI.notifyChanged
     ]);
@@ -80,63 +88,105 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   Widget _buildContent() {
     Widget? accessWidget = AccessCard.builder(resource: resourceName);
     bool showHistory = JsonUtils.stringListValue(FlexUI()[resourceName])?.contains('history') ?? false;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        HomeSlantWidget(
-          title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Screener'),
-          titleIconKey: 'health',
-          childPadding: HomeSlantWidget.defaultChildPadding,
-          child: accessWidget ?? _buildHealthScreenerSectionWidget(),
-        ),
-        Visibility(visible: showHistory && (accessWidget == null), child: _buildHistorySectionWidget()),
-      ]);
+    return SectionSlantHeader(
+      titleIconKey: 'health',
+      headerWidget: _buildHeader(),
+      slantColor: Styles().colors?.gradientColorPrimary,
+      slantPainterHeadingHeight: 0,
+      backgroundColor: Styles().colors?.background,
+      children: _buildInfoAndSettings(accessWidget, showHistory),
+      childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      allowOverlap: false,
+    );
   }
 
-  Widget _buildHealthScreenerSectionWidget() {
+  Widget _buildHeader() {
     Widget content;
     if (StringUtils.isNotEmpty(Config().healthScreenerSurveyID)) {
-      content = Column(children: [
-        Text(
-          Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.title',
-              'Not feeling well? Use the Illinois Health Screener to help you find the right resources'),
-          style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-        ),
-        SizedBox(height: 8),
-        Text(
-          Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.text',
-              'Your screening results are confidential unless you choose to share them'),
-          style: Styles().textStyles?.getTextStyle('widget.detail.small'),
-        ),
-        SizedBox(height: 16),
-        RoundedButton(
+      content = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Not feeling well?'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.subtitle', 'Find the right resources'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
+        Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
+        Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
             label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title',
                 'Take the Screener'),
             textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
-            onTap: _onTapTakeScreener),
+            onTap: _onTapTakeScreener
+        )),
       ]);
     } else {
-      content = Text(
-        Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.missing.title',
-            'The Illinois Health Screener is currently unavailable. Please check back later.'),
-        style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-      );
+      content = Column(crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.missing.title',
+              'The Illinois Health Screener is currently unavailable. Please check back later.'),
+          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'),
+        )
+      ],);
     }
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: content
+    return Container(
+      padding: EdgeInsets.only(top: 32, bottom: 32),
+      child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: content,),
+      decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Styles().colors?.fillColorPrimaryVariant ?? Colors.transparent,
+                Styles().colors?.gradientColorPrimary ?? Colors.transparent,
+              ]
+          )
       ),
     );
   }
 
+  Widget _buildDescription() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(Localization().getStringEx('panel.wellness.sections.health_screener.description.title',
+        'Use the Illinois Health Screener to help you find the right resources'), style: Styles().textStyles?.getTextStyle('panel.wellness.sections.health_screener.description'),),
+      Padding(padding: EdgeInsets.only(top: 8), child: Text(
+        Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.text',
+            'Your screening results are confidential unless you choose to share them'),
+        style: Styles().textStyles?.getTextStyle('panel.wellness.sections.health_screener.description'),
+      ))
+    ]);
+  }
+
+  List<Widget> _buildInfoAndSettings(Widget? accessWidget, bool showHistory) {
+    bool saveEnabled = Storage().assessmentsSaveResultsMap?[_healthScreenerSurveyType] != false;
+    return <Widget>[
+      RibbonButton(
+        leftIconKey: "info",
+        label: saveEnabled ? Localization().getStringEx("panel.wellness.sections.health_screener.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
+        Localization().getStringEx("panel.wellness.sections.health_screener.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
+        textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+        backgroundColor: Colors.transparent,
+        onTap: _onTapSavedResultsInfo,
+      ),
+      RibbonButton(
+        leftIconKey: "settings",
+        label: saveEnabled ? Localization().getStringEx("panel.wellness.sections.health_screener.body.dont_save.label", "Don't Save My Results") :
+        Localization().getStringEx("panel.wellness.sections.health_screener.body.save.label", "Save My Results"),
+        textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
+        backgroundColor: Colors.transparent,
+        onTap: _onTapSettings,
+      ),
+      Visibility(visible: showHistory && (accessWidget == null), child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 0),
+        child: _buildHistorySectionWidget(),
+      ))
+    ];
+  }
+
   Widget _buildHistorySectionWidget() {
-    return HomeSlantWidget(
-      title: Localization().getStringEx('panel.wellness.sections.health_screener.label.history.title', 'History'),
-      titleIconKey: 'history',
-      childPadding: HomeSlantWidget.defaultChildPadding,
-      child: Column(children: [
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.history.title', 'My Screener History',),
+        style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
         _buildFiltersWidget(),
         SizedBox(height: 16.0),
         _buildResponsesSection(),
@@ -146,58 +196,57 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   Widget _buildFiltersWidget() {
-    return Card(
-      color: Styles().colors?.surface,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.timeframe.title", "Time:"), style: Styles().textStyles?.getTextStyle('widget.title.regular.fat'),),
-                Container(width: 8.0),
-                Expanded(
-                  child: DropdownButton(value: _selectedTimeframe, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
-                      items: _getDropDownItems(_timeframes), isExpanded: true, onChanged: (String? selected) {
-                    setState(() {
-                      _selectedTimeframe = selected;
-                      _refreshHistory();
-                    });
-                  }),
-                ),
-              ],
-            ),
-            // Row(
-            //   children: [
-            //     Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular.fat'),),
-            //     Container(width: 8.0),
-            //     Expanded(
-            //       child: DropdownButton(value: _selectedSurveyType, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
-            //           items: _getDropDownItems(_surveyTypes), isExpanded: true, onChanged: (String? selected) {
-            //         setState(() {
-            //           _selectedSurveyType = selected;
-            //           _refreshHistory();
-            //         });
-            //       }),
-            //     ),
-            //   ],
-            // ),
-            // Row(
-            //   children: [
-            //     Text(Localization().getStringEx("panel.activity.dropdown.filter.illness.title", "Illness:"), style: Styles().textStyles.headline4,),
-            //     Container(width: 8.0),
-            //     Expanded(
-            //       child: DropdownButton(value: _selectedPlan, isExpanded: true, style: Styles().textStyles.body, items: AppWidgets.getDropDownItems(Health().activePlans, nullOption: "All"), onChanged: (TreatmentPlan? selected) {
-            //         setState(() {
-            //           _selectedPlan = selected;
-            //           _refreshEvents();
-            //         });
-            //       }),
-            //     ),
-            //   ],
-            // ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              DropdownButton(value: _selectedTimeframe, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
+                  items: _getDropDownItems(_timeframes), onChanged: (String? selected) {
+                setState(() {
+                  _selectedTimeframe = selected;
+                  _refreshHistory();
+                });
+              }),
+              Spacer(flex: 1,),
+              TextButton(
+                child: Text(Localization().getStringEx("panel.wellness.sections.health_screener.history.clear", "Clear All"),
+                  style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat')),
+                onPressed: _onTapClearHistoryConfirm,
+              ),
+            ],
+          ),
+          // Row(
+          //   children: [
+          //     Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular.fat'),),
+          //     Container(width: 8.0),
+          //     Expanded(
+          //       child: DropdownButton(value: _selectedSurveyType, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
+          //           items: _getDropDownItems(_surveyTypes), isExpanded: true, onChanged: (String? selected) {
+          //         setState(() {
+          //           _selectedSurveyType = selected;
+          //           _refreshHistory();
+          //         });
+          //       }),
+          //     ),
+          //   ],
+          // ),
+          // Row(
+          //   children: [
+          //     Text(Localization().getStringEx("panel.activity.dropdown.filter.illness.title", "Illness:"), style: Styles().textStyles.headline4,),
+          //     Container(width: 8.0),
+          //     Expanded(
+          //       child: DropdownButton(value: _selectedPlan, isExpanded: true, style: Styles().textStyles.body, items: AppWidgets.getDropDownItems(Health().activePlans, nullOption: "All"), onChanged: (TreatmentPlan? selected) {
+          //         setState(() {
+          //           _selectedPlan = selected;
+          //           _refreshEvents();
+          //         });
+          //       }),
+          //     ),
+          //   ],
+          // ),
+        ],
       ),
     );
   }
@@ -214,6 +263,50 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   void _onTapTakeScreener() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().healthScreenerSurveyID, tabBar: uiuc.TabBar(), offlineWidget: _buildOfflineWidget(),)));
+  }
+
+  void _onTapClearHistoryConfirm() {
+    List<Widget> buttons = [
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
+        label: Localization().getStringEx('dialog.no.title', 'No'),
+        borderColor: Styles().colors?.fillColorPrimaryVariant,
+        backgroundColor: Styles().colors?.surface,
+        textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+        onTap: _onTapDismissClearHistory,
+      )),
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
+        label: Localization().getStringEx('dialog.yes.title', 'Yes'),
+        borderColor: Styles().colors?.fillColorSecondary,
+        backgroundColor: Styles().colors?.surface,
+        textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+        onTap: _onTapClearHistory,
+      )),
+    ];
+
+    ActionsMessage.show(
+      context: context,
+      titleBarColor: Styles().colors?.surface,
+      message: Localization().getStringEx('panel.wellness.sections.health_screener.history.clear.confirm', 'Are you sure you want to clear your history?'),
+      messageTextStyle: Styles().textStyles?.getTextStyle('widget.description.medium'),
+      messagePadding: const EdgeInsets.only(left: 32, right: 32, top: 8, bottom: 32),
+      messageTextAlign: TextAlign.center,
+      buttons: buttons,
+      buttonsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
+      closeButtonIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
+    );
+  }
+
+  void _onTapDismissClearHistory() {
+    Navigator.of(context).pop();
+  }
+
+  void _onTapClearHistory() {
+    Navigator.of(context).pop();
+    Surveys().deleteSurveyResponses(surveyTypes: [_healthScreenerSurveyType]).then((_) {
+      setState(() {
+        _refreshHistory();
+      });
+    });
   }
 
   Widget _buildOfflineWidget() {
@@ -243,26 +336,13 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     }
   }
 
-  List<String> get _selectedSurveyTypes {
-    List<String> types = [];
-    if (_selectedSurveyType == "All") {
-      // types.addAll(_surveyTypes.skip(1));
-    } else if (_selectedSurveyType != null) {
-      types.add(_selectedSurveyType!);
-    }
-    for (int i = 0; i < types.length; i++) {
-      types[i] = types[i].toLowerCase().replaceAll(' ', '_');
-    }
-    return types;
-  }
-
   void _refreshHistory() {
     _responses.clear();
     _pagerController.reset();
   }
 
   Future<int> _loadPage({required int offset, required int limit}) async {
-    List<SurveyResponse>? responses = await Surveys().loadSurveyResponses(surveyTypes: _selectedSurveyTypes,
+    List<SurveyResponse>? responses = await Surveys().loadUserSurveyResponses(surveyTypes: [_healthScreenerSurveyType],
         startDate: _selectedStartDate, limit: limit, offset: offset);
     if (responses != null) {
       setState(() {
@@ -286,6 +366,28 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     return dropDownItems;
   }
 
+  void _onTapSavedResultsInfo() {
+    bool saveEnabled = Storage().assessmentsSaveResultsMap?[_healthScreenerSurveyType] != false;
+    Widget textWidget = Text(
+      saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog",
+          "Your results will be saved for you to compare to future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.") :
+      Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
+      style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
+      textAlign: TextAlign.center,
+    );
+    showDialog(context: context, builder: (_) => InfoPopup(
+      backColor: Styles().colors?.surface,
+      padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
+      alignment: Alignment.center,
+      infoTextWidget: textWidget,
+      closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
+    ),);
+  }
+
+  void _onTapSettings() {
+    SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
+  }
+
   // Notifications Listener
 
   @override
@@ -293,6 +395,8 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     if (name == Surveys.notifySurveyResponseCreated) {
       _refreshHistory();
     } else if (name == FlexUI.notifyChanged) {
+      setState(() {});
+    } else if (name == Storage.notifySettingChanged && param == Storage().assessmentsEnableSaveKey && mounted) {
       setState(() {});
     }
   }

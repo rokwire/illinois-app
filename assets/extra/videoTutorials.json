@@ -1,0 +1,87 @@
+{
+	"videos": [
+		{
+			"id": "video.tutorial.4.0",
+			"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.mp4",
+			"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.webp",
+			"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.srt"
+		},
+		{
+			"id": "find.your.courses.4.1",
+			"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.mp4",
+			"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.webp",
+			"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.srt"
+		},
+		{
+			"id": "groups.overview.4.1",
+			"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.mp4",
+			"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.webp",
+			"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.srt"
+		},
+		{
+			"id": "wellness.rings.overview.4.1",
+			"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.mp4",
+			"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.webp",
+			"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.srt"
+		},
+		{
+			"id": "favorites.tutorial.4.2",
+			"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.mp4",
+			"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.webp",
+			"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.srt"
+		},
+		{
+			"id": "groups.create.new.4.2",
+			"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.mp4",
+			"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.webp",
+			"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.srt"
+		},
+		{
+			"id": "health.screener.4.2",
+			"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_health_screener.mp4",
+			"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_health_screener.webp",
+			"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_health_screener.srt"
+		},
+		{
+			"id": "creating.polls.5.0",
+			"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_5_0_creating_polls.mp4",
+			"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_5_0_creating_polls.webp",
+			"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_5_0_creating_polls.srt"
+		}
+	],
+	"onboarding": { "dev": "video.tutorial.4.0", "test": "video.tutorial.4.0", "production": "video.tutorial.4.0" },
+	"welcome": { "dev": "favorites.tutorial.4.2", "test": "favorites.tutorial.4.2", "production": "favorites.tutorial.4.2" },
+	"strings": {
+		"en": {
+			"video.tutorial.4.0": "Application overview",
+			"find.your.courses.4.1": "Find Your Courses",
+			"groups.overview.4.1": "Groups Overview",
+			"wellness.rings.overview.4.1": "Daily Wellness Rings",
+			"favorites.tutorial.4.2": "Favorites Tutorial",
+			"groups.create.new.4.2": "Creating a New Group",
+			"health.screener.4.2": "Illinois Health Screener",
+			"creating.polls.5.0": "Creating Polls"
+		},
+		"es": {
+			"video.tutorial.4.0": "Descripción general de la aplicación",
+			"find.your.courses.4.1": "Encuentra tus cursos",
+			"groups.overview.4.1": "Resumen de grupos",
+			"wellness.rings.overview.4.1": "Anillos de bienestar diarios",
+			"favorites.tutorial.4.2": "Tutorial de Favoritos",
+			"groups.create.new.4.2": "Creación de un nuevo grupo",
+			"health.screener.4.2": "Evaluador de salud de Illinois",
+			"creating.polls.5.0": "Creación de encuestas"
+		},
+		"zh": {
+			"video.tutorial.4.0": "應用概述",
+			"find.your.courses.4.1": "查找您的課程",
+			"groups.overview.4.1": "組概述",
+			"wellness.rings.overview.4.1": "每日健康戒指",
+			"favorites.tutorial.4.2": "收藏教程",
+			"groups.create.new.4.2": "創建一個新組",
+			"health.screener.4.2": "伊利諾伊州健康篩查員",
+			"creating.polls.5.0": "創建投票"
+		}
+	}
+}
+

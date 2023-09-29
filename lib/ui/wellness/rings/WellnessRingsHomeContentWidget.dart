@@ -174,10 +174,9 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
               }
             });
           },
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
           backgroundColor: Colors.white,
-          // padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
           borderColor: Styles().colors!.fillColorSecondary,
-          textColor: Styles().colors!.fillColorPrimary,
           rightIcon: Container(),
         ),
       )

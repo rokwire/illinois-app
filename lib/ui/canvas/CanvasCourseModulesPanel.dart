@@ -96,7 +96,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
                 Localization()
                     .getStringEx('panel.canvas_modules.load.failed.error.msg', 'Failed to load modules. Please, try again later.'),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+                style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
@@ -104,7 +104,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(Localization().getStringEx('panel.canvas_modules.empty.msg', 'There are no modules.'),
-                textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+                textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildModulesContent() {
@@ -143,7 +143,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(
                     child: Text(StringUtils.ensureNotEmpty(label),
-                        style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)))
+                        style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")))
               ])
             ])));
   }
@@ -163,7 +163,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
                         child: Text(StringUtils.ensureNotEmpty(module.name),
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant)))
+                            style: Styles().textStyles?.getTextStyle("panel.canvas.text.medium")))
                   ])
                 ]))));
   }
@@ -185,7 +185,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
             padding: EdgeInsets.only(left: 10),
             child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-                    style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                    style: Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat"),
                     items: _buildCourseDropDownItems,
                     value: _selectedCourseId,
                     itemHeight: null,
@@ -199,24 +199,16 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
     }
     List<DropdownMenuItem<int>> items = [];
     CanvasCourse? currentCourse = _getCurrentCourse(courseId: widget.courseId);
-    Color textColor = Styles().colors!.textSurfaceAccent!;
-    double textFontSize = 16;
     if (currentCourse != null) {
       items.add(DropdownMenuItem(
           value: currentCourse.id,
           child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
-              style: TextStyle(
-                  color: textColor,
-                  fontSize: textFontSize,
-                  fontFamily: ((_selectedCourseId == currentCourse.id) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+              style: ((_selectedCourseId == currentCourse.id) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular")))));
     }
     items.add(DropdownMenuItem(
         value: null,
         child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
-            style: TextStyle(
-                color: textColor,
-                fontSize: textFontSize,
-                fontFamily: ((_selectedCourseId == null) ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular)))));
+            style: ((_selectedCourseId == null) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular")))));
     return items;
   }
 

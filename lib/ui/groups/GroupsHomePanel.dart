@@ -266,7 +266,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildGroupsContentSelection() {
     return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
       progress: _myGroupsBusy,
-      textColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -304,9 +304,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           InkWell(onTap: _onFilterAttributes, child:
             Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
               Row(children: [
-                Text(filtersTitle, style: TextStyle(
-                  fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
-                ),),
+                Text(filtersTitle, style:  Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 4), child:
                   Styles().images?.getImage('chevron-right', width: 6, height: 10) ?? Container(),
                 )
@@ -339,7 +337,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
       if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
         for (ContentAttribute attribute in attributes) {
-          List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_contentAttributesSelection, complete: true);
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_contentAttributesSelection, complete: true);
           if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
             displayAttributeValues = List.from(displayAttributeValues.map((String attribute) => "'$attribute'"));
             if (attributesList.isNotEmpty) {
@@ -387,7 +385,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Padding(
           padding: EdgeInsets.symmetric(horizontal: 7, vertical: 14),
           child: Text(countLabel,
-              style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)));
+              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")));
     }
   }
 
@@ -397,7 +395,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           InkWell(onTap: _onTapCreate, child:
             Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
                 Padding(padding: EdgeInsets.only(left: 4), child:
                   Styles().images?.getImage('plus-circle', excludeFromSemantics: true)
                 )
@@ -422,6 +420,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
         contentAttributes: Groups().contentAttributes,
         selection: _contentAttributesSelection,
+        sortType: ContentAttributesSortType.alphabetical,
         filtersMode: true,
       ))).then((selection) {
         if ((selection != null) && mounted) {
@@ -503,7 +502,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       List<Widget> widgets = [];
       widgets.add(Container(height: 8));
       widgets.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),)
+        Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: Styles().textStyles?.getTextStyle("widget.title.large.fat"))
         )
       );
       widgets.add(Container(height: 8,));
@@ -564,7 +563,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         text = Localization().getStringEx("panel.groups_home.label.all_groups.filtered.empty", "No groups match the selected filter");
       }
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
-        Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+        Text(text, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
       );
     }
   }

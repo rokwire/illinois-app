@@ -360,11 +360,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       if (StringUtils.isNotEmpty(longDisplayLocation)) {
         locationTextValue = longDisplayLocation;
       } else if (StringUtils.isNotEmpty(locationTitle)) {
-        if (locationTextValue != null) {
-          locationTextValue += ', $locationTitle';
-        } else {
-          locationTextValue = locationTitle;
-        }
+        locationTextValue = locationTitle;
       }
       return InkWell(onTap: canLocation ? _onLocationDetailTapped : null, child:
         Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
@@ -423,7 +419,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                 Text(_appointment?.displayType ?? '', style: detailStyle),
 
               Visibility(visible: StringUtils.isNotEmpty(meetingUrl), child:
-                LinkButton(title: meetingUrl, hint: '', padding: EdgeInsets.only(top: _innerSpacingV), fontSize: 16, onTap: () => _launchUrl(meetingUrl),)
+                LinkButton(title: meetingUrl, hint: '', padding: EdgeInsets.only(top: _innerSpacingV), onTap: () => _launchUrl(meetingUrl),)
               ),
               
               Visibility(visible: StringUtils.isNotEmpty(meetingId), child:

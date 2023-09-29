@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -22,7 +23,6 @@ import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
-import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -187,7 +187,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(widget.contentEmptyMessage ?? Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+              Text(widget.contentEmptyMessage ?? Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"))
             ,)
           ),
         ),
@@ -204,7 +204,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(hint: "Heading", child:
-              Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat"))
             )
           ),
         )
@@ -361,7 +361,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateIlliniId() {
     Analytics().logSelect(target: "Illini ID");
-    IDCardPanel.present(context);
+    ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
 
   void _navigateLaundry() {
@@ -446,7 +446,7 @@ class _GuideFeatureButtonState extends State<GuideFeatureButton> {
               Container(height: 12),
               Row(children: [
                 Expanded(child:
-                  Text(widget.title!, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold)),
+                  Text(widget.title!, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.title.regular.semi_fat")),
                 ),
               ],)
 

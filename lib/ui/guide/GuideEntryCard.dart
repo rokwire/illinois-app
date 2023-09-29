@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -68,26 +69,26 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
     List<Widget> contentList = Guide().isEntryReminder(widget.guideEntry) ? <Widget>[
       Padding(padding: EdgeInsets.only(right: 17), child:
         Text(reminderDate ?? '',
-          style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 18, color: Styles().colors?.fillColorPrimary, ),),),
+          style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat")),),
       Container(height: 4),
       HtmlWidget(
           StringUtils.ensureNotEmpty(titleHtml),
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16),
+          textStyle: Styles().textStyles?.getTextStyle("widget.title.regular.medium_fat"),
       )
     ] : <Widget>[
       Padding(padding: EdgeInsets.only(right: 17), child:
         HtmlWidget(
           StringUtils.ensureNotEmpty(titleHtml),
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
+          textStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
         ),
       ),
       Container(height: 8),
       HtmlWidget(
         StringUtils.ensureNotEmpty(descriptionHtml),
         onTapUrl : (url) {_onTapLink(url); return true;},
-        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+        textStyle: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
       ),
     ];
 
@@ -98,7 +99,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),
       child: Stack(children: [
-        GestureDetector(onTap: _onTapEntry, child:
+        InkWell(onTap: _onTapEntry, child:
           Semantics(button: true, child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList,),

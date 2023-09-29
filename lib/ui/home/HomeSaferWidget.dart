@@ -6,6 +6,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/wallet/ICardHomeContentPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -14,7 +15,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
-import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -186,7 +186,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
   }
 
   void _showBuildingAccessPanel() {
-     IDCardPanel.present(context);
+     ICardHomeContentPanel.present(context, content: ICardContent.i_card);
   }
 
   void _onTestLocations() {

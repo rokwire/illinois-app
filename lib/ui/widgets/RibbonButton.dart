@@ -22,9 +22,10 @@ class RibbonButton extends rokwire.RibbonButton {
   RibbonButton({
   Key? key,
   String? label,
+  String? description,
   void Function()? onTap,
   Color? backgroundColor,
-  EdgeInsetsGeometry padding          = const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+  EdgeInsetsGeometry? padding,
 
   Widget? textWidget,
   TextStyle? textStyle,
@@ -32,6 +33,14 @@ class RibbonButton extends rokwire.RibbonButton {
   String? fontFamily,
   double fontSize                     = 16.0,
   TextAlign textAlign                 = TextAlign.left,
+
+  Widget? descriptionWidget,
+  TextStyle? descriptionTextStyle,
+  Color? descriptionTextColor,
+  String? descriptionFontFamily,
+  double descriptionFontSize = 14,
+  TextAlign descriptionTextAlign = TextAlign.left,
+  EdgeInsetsGeometry descriptionPadding = const EdgeInsets.only(top: 2),
 
   Widget? leftIcon,
   String? leftIconKey,
@@ -58,6 +67,7 @@ class RibbonButton extends rokwire.RibbonButton {
   }): super(
     key: key,
     label: label,
+    description: description,
     onTap: onTap,
     backgroundColor: backgroundColor,
     padding: padding,
@@ -68,6 +78,14 @@ class RibbonButton extends rokwire.RibbonButton {
     fontFamily: fontFamily,
     fontSize: fontSize,
     textAlign: textAlign,
+
+    descriptionWidget: descriptionWidget,
+    descriptionTextStyle: descriptionTextStyle,
+    descriptionTextColor: descriptionTextColor,
+    descriptionFontFamily: descriptionFontFamily,
+    descriptionFontSize: descriptionFontSize,
+    descriptionTextAlign: descriptionTextAlign,
+    descriptionPadding: descriptionPadding,
 
     leftIcon: leftIcon,
     leftIconKey: leftIconKey,
@@ -109,9 +127,10 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
   ToggleRibbonButton({
     Key? key,
     String? label,
+    String? description,
     void Function()? onTap,
     Color? backgroundColor,
-    EdgeInsetsGeometry padding          = const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    EdgeInsetsGeometry? padding,
 
     Widget? textWidget,
     TextStyle? textStyle,
@@ -119,6 +138,14 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
     String? fontFamily,
     double fontSize                     = 16.0,
     TextAlign textAlign                 = TextAlign.left,
+
+    Widget? descriptionWidget,
+    TextStyle? descriptionTextStyle,
+    Color? descriptionTextColor,
+    String? descriptionFontFamily,
+    double descriptionFontSize = 14,
+    TextAlign descriptionTextAlign = TextAlign.left,
+    EdgeInsetsGeometry descriptionPadding = const EdgeInsets.only(top: 2),
 
     Widget? leftIcon,
     String? leftIconKey,
@@ -143,9 +170,19 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
     Map<bool, String>? rightIconKeys = _rightIconKeys,
 
     Map<bool, String>? semanticsValues,
+
+    bool? progress,
+    Color? progressColor,
+    double? progressSize = 24,
+    double? progressStrokeWidth,
+    EdgeInsetsGeometry progressPadding = const EdgeInsets.symmetric(horizontal: 12),
+    AlignmentGeometry progressAlignment = Alignment.centerRight,
+    bool progressHidesIcon = true,
+
   }) : super(
     key: key,
     label: label,
+    description: description,
     onTap: onTap,
     backgroundColor: backgroundColor,
     padding: padding,
@@ -156,6 +193,14 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
     fontFamily: fontFamily,
     fontSize: fontSize,
     textAlign: textAlign,
+
+    descriptionWidget: descriptionWidget,
+    descriptionTextStyle: descriptionTextStyle,
+    descriptionTextColor: descriptionTextColor,
+    descriptionFontFamily: descriptionFontFamily,
+    descriptionFontSize: descriptionFontSize,
+    descriptionTextAlign: descriptionTextAlign,
+    descriptionPadding: descriptionPadding,
 
     leftIcon: leftIcon,
     leftIconKey: leftIconKey,
@@ -180,6 +225,14 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
     rightIconKeys: rightIconKeys,
 
     semanticsValues : semanticsValues,
+
+    progress: progress,
+    progressColor: progressColor,
+    progressSize: progressSize,
+    progressStrokeWidth: progressStrokeWidth,
+    progressPadding: progressPadding,
+    progressAlignment: progressAlignment,
+    progressHidesIcon: progressHidesIcon,
   );
 
   @override

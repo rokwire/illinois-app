@@ -148,7 +148,6 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                                                         _exploreTitle(),
                                                         _eventSponsor(),
                                                         _exploreDetails(),
-                                                        _exploreSubTitle(),
                                                         _buildUrlButtons()
                                                       ]
                                                   )
@@ -186,11 +185,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       children: <Widget>[
         Text(
           (category != null) ? category.toUpperCase() : "",
-          style: TextStyle(
-              fontFamily: Styles().fontFamilies!.bold,
-              fontSize: 14,
-              color: Styles().colors!.fillColorPrimary,
-              letterSpacing: 1),
+          style: Styles().textStyles?.getTextStyle("widget.title.small.fat.spaced")
         ),
         Expanded(child: Container()),
         Visibility(visible: starVisible, child: Container(child: Padding(padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
@@ -220,9 +215,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
             Expanded(
               child: Text(
                 widget.parentEvent!.exploreTitle!,
-                style: TextStyle(
-                    fontSize: 24,
-                    color: Styles().colors!.fillColorPrimary),
+                style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
               ),
             ),
           ],
@@ -241,10 +234,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
             Expanded(
               child: Text(
                 eventSponsorText,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Styles().colors!.textBackground,
-                    fontFamily: Styles().fontFamilies!.bold),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.fat")
               ),
             ),
           ],
@@ -322,10 +312,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                   child: Styles().images?.getImage('calendar'),
                 ),
                 Expanded(child: Text(displayTime,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground))),
+                    style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
               ],
             ),
           )
@@ -355,10 +342,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                     child: Styles().images?.getImage('location'), //Image.asset('images/icon-location.png'),
                   ),
                   Expanded(child: Text(locationText,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 16,
-                          color: Styles().colors!.textBackground))),
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
                 ],
               ),
             )
@@ -389,10 +373,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                     child: Styles().images?.getImage('laptop'), //TBD update icon res
                   ),
                   Expanded(child: Text(locationText,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 16,
-                          color: Styles().colors!.textBackground))),
+                      style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
                 ],
               ),
             )
@@ -418,10 +399,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                   child: Styles().images?.getImage('cost'),
                 ),
                 Expanded(child: Text(priceText,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground))),
+                    style: Styles().textStyles?.getTextStyle("widget.item.regular"))),
               ],
             ),
           )
@@ -451,9 +429,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                 Container(width: 5,),
                 Expanded(
                   child: Text(capitalizedTags.join(', '),
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.regular
-                    ),
+                    style: Styles().textStyles?.getTextStyle("widget.text.regular")
                   ),
                 )
               ],
@@ -465,32 +441,17 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     return Container();
   }
 
-  Widget _exploreSubTitle() {
-    String? subTitle = widget.parentEvent?.exploreSubTitle;
-    if (StringUtils.isEmpty(subTitle)) {
-      return Container();
-    }
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Text(
-          subTitle!,
-          style: TextStyle(
-              fontSize: 20,
-              color: Styles().colors!.textBackground),
-        ));
-  }
-
   Widget _exploreDescription() {
-    String? longDescription = widget.parentEvent!.exploreLongDescription;
-    bool showDescription = StringUtils.isNotEmpty(longDescription);
+    String? description = widget.parentEvent!.description;
+    bool showDescription = StringUtils.isNotEmpty(description);
     if (!showDescription) {
       return Container();
     }
     return Container(padding: EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 24), color: Styles().colors!.background, child:
     HtmlWidget(
-      StringUtils.ensureNotEmpty(longDescription),
+      StringUtils.ensureNotEmpty(description),
         onTapUrl : (url) {_launchUrl(url, 'Description'); return true;},
-        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+        textStyle: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
     )
       // Html(
       //   data: longDescription,
@@ -524,9 +485,9 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     Visibility(visible: visitWebsiteVisible, child: RoundedButton(
       label: websiteLabel,
       hint: websiteHint,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
       backgroundColor: Colors.white,
       borderColor: Styles().colors!.fillColorSecondary,
-      textColor: Styles().colors!.fillColorPrimary,
       onTap: () => _onTapVisitWebsite(titleUrl),
     ),);
 
@@ -539,9 +500,9 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
         Visibility(visible: getTicketsVisible, child: RoundedButton(
           label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Get tickets'),
           hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
           backgroundColor: Colors.white,
           borderColor: Styles().colors!.fillColorSecondary,
-          textColor: Styles().colors!.fillColorPrimary,
           onTap: () => _onTapGetTickets(ticketsUrl),
         ),),
         Visibility(visible: getTicketsVisible, child: buttonsDivider)
@@ -624,9 +585,9 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
             hint: (widget.browseGroup?.researchProject == true) ?
               Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
               Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorPrimary,
-            textColor: Styles().colors!.fillColorPrimary,
             progress: _addToGroupInProgress,
             onTap: _onTapAddToGroup,
           ),
@@ -707,7 +668,7 @@ class _EventsListState extends State<_EventsList>{
         title: Localization().getStringEx(titleKey, "Event Schedule"),
         slantImageKey: "slant-dark",
         slantColor: Styles().colors!.backgroundVariant,
-        titleTextColor: Styles().colors!.fillColorPrimary,
+        titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
         children: _buildListItems()
     );
   }
@@ -747,7 +708,7 @@ class _EventsListState extends State<_EventsList>{
                 child: Row(
                   children: <Widget>[
                     Expanded(
-                      child: Text(title, overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Colors.white),),
+                      child: Text(title, overflow: TextOverflow.ellipsis, maxLines: 1, style: Styles().textStyles?.getTextStyle("widget.colourful_button.title.accent")),
                     ),
                     Styles().images?.getImage('chevron-right-bold') ?? Container(),
                   ],
@@ -789,10 +750,10 @@ class _EventEntry extends StatelessWidget {
             children: <Widget>[
               Text(title, overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary),),
+                style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),),
               Text(subTitle, overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-                style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, letterSpacing: 0.5),)
+                style: Styles().textStyles?.getTextStyle("widget.item.small"))
             ],),),
           Visibility(
             visible: starVisible, child: Container(child: Padding(padding: EdgeInsets.only(left: 24),

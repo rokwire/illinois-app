@@ -85,41 +85,52 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
     List<dynamic> codes = FlexUI()['assessments.settings'] ?? [];
     for (String code in codes) {
       if (code == 'skills_self_evaluation') {
-        contentList.add(Padding(padding: const EdgeInsets.only(top: 16, bottom: 4), child: Row(children: [
-          Expanded(
-              child: Text('Skills Self-Evaluation',
-                  style:  Styles().textStyles?.getTextStyle("widget.detail.regular.fat")))
-        ])));
+        contentList.add(_buildTitleWidget(Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.title', 'Skills Self Evaluation')));
+        contentList.addAll(_buildAssessmentSettings('skills_self_evaluation', 'bessi'));
+      } else if (code == 'health_screener') {
+        contentList.add(_buildTitleWidget(Localization().getStringEx('panel.settings.home.assessments.health_screener.title', 'Health Screener')));
+        contentList.addAll(_buildAssessmentSettings('health_screener', 'health_screener'));
+      }
+    }
+    return contentList;
+  }
 
-        List<dynamic> bessiCodes = FlexUI()['assessments.settings.skills_self_evaluation'] ?? [];
-        for (String bessiCode in bessiCodes) {
-          if (bessiCode == 'save') {
-            contentList.add(ToggleRibbonButton(
-                label: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
-                toggled: Storage().assessmentsSaveResultsMap?['bessi'] ?? Auth2().privacyMatch(4),
-                border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-                onTap: _onSaveBessi));
-          } else if (bessiCode == 'save_progress') {
-            contentList.add(Text(
-              Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_progress.description', 'Progress on an evaluation that you started will be saved automatically until you cancel or complete it.'),
-              style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
-            ));
-          }
-        }
-        
+  Widget _buildTitleWidget(String text) {
+    return Padding(padding: const EdgeInsets.only(top: 16, bottom: 4), child: Row(children: [
+      Expanded(
+          child: Text(text,
+              style:  Styles().textStyles?.getTextStyle("widget.detail.regular.fat")))
+    ]));
+  }
+
+  List<Widget> _buildAssessmentSettings(String assessment, String name) {
+    List<dynamic> codes = FlexUI()['assessments.settings.$assessment'] ?? [];
+    List<Widget> contentList = [];
+    for (String code in codes) {
+      if (code == 'save') {
+        contentList.add(ToggleRibbonButton(
+            label: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
+            toggled: Storage().assessmentsSaveResultsMap?[name] ?? Auth2().privacyMatch(4),
+            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+            onTap: () => _onSave(name)));
+      } else if (code == 'save_progress') {
+        contentList.add(Text(
+            Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_progress.description', 'Progress on an evaluation that you started will be saved automatically until you cancel or complete it.'),
+            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
+        ));
       }
     }
 
     return contentList;
   }
 
-  void _onSaveBessi() {
-    Analytics().logSelect(target: 'Save skills self-evaluation results');
+  void _onSave(String assessmentName) {
+    Analytics().logSelect(target: 'Save assessment results');
     if (Auth2().privacyMatch(4)) {
       setState(() {
         Map<String, bool> assessmentsSaveResultsMap = Storage().assessmentsSaveResultsMap ?? {};
-        assessmentsSaveResultsMap['bessi'] = !(assessmentsSaveResultsMap['bessi'] ?? true);
+        assessmentsSaveResultsMap[assessmentName] = !(assessmentsSaveResultsMap[assessmentName] ?? true);
         Storage().assessmentsSaveResultsMap = assessmentsSaveResultsMap;
       });
     } else {

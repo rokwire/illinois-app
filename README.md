@@ -3,7 +3,7 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 
 ## Requirements
 
-### [Flutter](https://flutter.dev/docs/get-started/install) v3.3.2
+### [Flutter](https://flutter.dev/docs/get-started/install) v3.10.2
 
 ### [Android Studio](https://developer.android.com/studio) 2021.3.1+
 
@@ -24,6 +24,13 @@ Rokwire app flutter plugin is used by the Illinois app. It should be located in 
 ```
 cd illinois-app.git
 git clone https://github.com/rokwire/app-flutter-plugin.git plugin
+```
+
+### Make sure libs repo persists
+Rokwire app libs directory is used by the Illinois app for private external libraries. It should be located in the `libs` subdirectory of the application's root project directory. If it does not exist you need to clone it manually.
+```
+cd illinois-app
+git clone https://github.com/rokwire/illinois-app-libs.git libs
 ```
 
 ### Supply the following private configuration files:
@@ -82,9 +89,15 @@ Alternatively, you can use AESCrypt.encode from /lib/utils/Crypt.dart to generat
 The Firebase configuration file for iOS generated from Google Firebase console.
 
 #### • android/app/src/illinois/keys.properties
-Contains GoogleMaps API key for the Illinois flavor.
+Contains:
+- GoogleMaps API key for the Illinois flavor.
+- Origo configuration specific keys and ids.
 ```
 googleMapsApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
+origoAppId=XXXXXXXXXXXXXXXXX
+origoLockServiceCode=X
+origoAidFilter1=XXXXXXXXXXXXXXXXXXXX
+origoAidFilter2=XXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 #### • android/app/src/illinois/dev/google-services.json

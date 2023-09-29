@@ -178,11 +178,10 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
               ),
               StringUtils.isNotEmpty(_article?.link) ? Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 48), child:
                 RoundedButton(
-                  label: 'Share this article',
+                  label: 'Share this article', //TBD localize
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                   backgroundColor: Styles().colors!.background,
-                  textColor: Styles().colors!.fillColorPrimary,
                   borderColor: Styles().colors!.fillColorSecondary,
-                  fontSize: 16,
                   onTap: _shareArticle,
                 ),
               ) : Container()
@@ -220,6 +219,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
         child:
         HtmlWidget(
             StringUtils.ensureNotEmpty(fullText),
+            textStyle:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
             onTapUrl : (url) {
               Navigator.push(context, CupertinoPageRoute(
                       builder: (context) => WebPanel(url: url,)

@@ -75,7 +75,7 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
   Widget _buildErrorContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.syllabus_html.load.failed.error.msg', 'Failed to load syllabus content. Please, try again later.'),
-            textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
+            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildHtmlContent() {
@@ -83,13 +83,13 @@ class _CanvasSyllabusHtmlPanelState extends State<CanvasSyllabusHtmlPanel> {
         scrollDirection: Axis.vertical,
         child: Padding(
             padding: EdgeInsets.all(16),
-            child: Html(data: _syllabusBody, onLinkTap: (url, context, attributes, element) => _onTapLink(url), style: {
+            child: Html(data: _syllabusBody, onLinkTap: (url, context, element) => _onTapLink(url), style: {
               "body": Style(
                   color: Styles().colors!.fillColorPrimary,
                   fontFamily: Styles().fontFamilies!.bold,
                   fontSize: FontSize(18),
                   padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero)
+                  margin: Margins.zero)
             })));
   }
 
