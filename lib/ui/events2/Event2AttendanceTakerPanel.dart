@@ -864,8 +864,21 @@ class _AttendeeListItemWidget extends StatelessWidget {
       else if (selected) {
         return 'check-circle-filled';
       }
+      else {
+        return 'circle-outline-gray';
+      }
     }
-    return 'circle-outline-gray';
+    else {
+      if (highlighted) {
+        return 'check-circle-outline';
+      }
+      else if (selected) {
+        return 'check-circle-outline-gray';
+      }
+      else {
+        return 'circle-outline-gray';
+      }
+    }
   }
 
   Widget get _progressMarkWidget => Padding(padding: EdgeInsets.symmetric(horizontal: 18, vertical: 18), child:

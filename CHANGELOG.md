@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Acknowledge selected and highlighted states when guest list item is disabled [#3722](https://github.com/rokwire/illinois-app/issues/3722).
+
 
 ## [5.0.73] - 2023-09-27
 ### Changed
