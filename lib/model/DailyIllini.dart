@@ -16,6 +16,7 @@
 
 import 'dart:collection';
 
+import 'package:flutter/cupertino.dart';
 import 'package:html/parser.dart' as htmlParser;
 import 'package:html/dom.dart' as dom;
 import 'package:illinois/service/AppDateTime.dart';
@@ -28,9 +29,11 @@ class DailyIlliniItem {
   final String? link;
   final String? description;
   final String? thumbImageUrl;
+  final String? category;
   final DateTime? pubDateTimeUtc;
+  final String? summary;
 
-  DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc});
+  DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc, this.category, this.summary});
 
   String? get displayPubDate {
     DateTime? localDateTime = AppDateTime().getDeviceTimeFromUtcTime(pubDateTimeUtc);
@@ -43,12 +46,17 @@ class DailyIlliniItem {
     }
     String? pubDateString = XmlUtils.childText(xml, 'pubDate');
     String? descriptionString = XmlUtils.childCdata(xml, 'description');
+    String? categoryString = _getCategory(xml.toString());
+    String? summary = _getSummary(descriptionString);
     String? thumbImgUrl = _getThumbImageUrl(descriptionString);
+    debugPrint('summary:  $summary');
     return DailyIlliniItem(
       title: XmlUtils.childText(xml, 'title'),
       link: XmlUtils.childText(xml, 'link'),
+      category: categoryString,
       description: descriptionString,
       thumbImageUrl: thumbImgUrl,
+      summary: summary,
       // DateTime format:
       // Tue, 09 Aug 2022 12:00:17 +0000
       pubDateTimeUtc: DateTimeUtils.dateTimeFromString(pubDateString, format: "E, dd LLL yyyy hh:mm:ss Z", isUtc: true),
@@ -71,12 +79,13 @@ class DailyIlliniItem {
   ///
   static String? _getThumbImageUrl(String? descriptionText) {
     if (StringUtils.isEmpty(descriptionText)) {
+      debugPrint('Description is null');
       return null;
     }
     dom.Document document = htmlParser.parse(descriptionText);
     List<dom.Element> imgHtmlElements = document.getElementsByTagName('img');
     if (CollectionUtils.isNotEmpty(imgHtmlElements)) {
-      dom.Element? secondImgElement = (imgHtmlElements.length >= 2) ? imgHtmlElements[1] : null;
+      dom.Element? secondImgElement = (imgHtmlElements.length >= 1) ? imgHtmlElements[0] : null;
       if (secondImgElement != null) {
         LinkedHashMap<Object, String> imgAttributes = secondImgElement.attributes;
         if (imgAttributes.isNotEmpty) {
@@ -92,11 +101,66 @@ class DailyIlliniItem {
               }
               // return first src set value by default
               return srcSetValues.first.split(' ').first;
+            } else {
+              debugPrint('ImageLoad: srcSetValues is empty');
             }
+          } else {
+            debugPrint('ImageLoad: srcSetValue is empty');
           }
+        } else {
+          debugPrint('ImageLoad: imgAttributes is empty');
+        }
+      } else {
+        debugPrint('ImageLoad: second image element is null');
+      }
+    } else {
+      debugPrint('ImageLoad: cannot get img element tag');
+    }
+    return null;
+  }
+  static String? _getSummary(String? descriptionText) {
+    dom.Document doc = htmlParser.parse(descriptionText);
+    List<dom.Element> elements = doc.getElementsByTagName('p');
+    String summary = "";
+    for(dom.Element i in elements) {
+      if (i.innerHtml.contains("...")) {
+        summary = i.innerHtml;
+      }
+    }
+
+    return summary.substring(0, summary.indexOf("."));
+    int? i = descriptionText?.indexOf("<p>");
+    int? j = descriptionText?.indexOf("...");
+
+    return descriptionText?.substring(i! + 3, j! + 3);
+  }
+  static String? _getCategory(String? itemText) {
+    dom.Document doc = htmlParser.parse(itemText);
+    List<dom.Element> catElements = doc.getElementsByTagName('category');
+    for (int i = 0; i < catElements.length; i++) {
+      if (catElements[i].innerHtml.contains("Opinions")) {
+        return "Opinions";
+      } else if (catElements[i].innerHtml.contains("buzz")) {
+        return "buzz";
+      } else if (catElements[i].innerHtml.contains("Sports")) {
+        return "Sports";
+      } else if (catElements[i].innerHtml.contains("News")) {
+        return "News";
+      }
+    }
+    return "N/A";
+  }
+  List<DailyIlliniItem>? search(List<DailyIlliniItem> list, String cat) {
+    // TODO: implement search
+    List<DailyIlliniItem>? returnList;
+    for (DailyIlliniItem iter in list) {
+      if (iter.category != null) {
+        String c = iter.category.toString();
+        if (c.contains(cat)) {
+          returnList?.add(iter);
         }
       }
     }
-    return null;
+    return returnList;
   }
 }

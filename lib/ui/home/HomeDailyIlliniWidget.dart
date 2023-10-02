@@ -17,6 +17,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:convert/convert.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,11 @@ class HomeDailyIlliniWidget extends StatefulWidget {
 
   @override
   _HomeDailyIlliniWidgetState createState() => _HomeDailyIlliniWidgetState();
+
+  static _HomeDailyIlliniWidgetState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_HomeDailyIlliniWidgetState>();
 }
+
 
 class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implements NotificationsListener {
   List<DailyIlliniItem>? _illiniItems;
@@ -59,6 +64,9 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
   PageController? _pageController;
   GlobalKey _viewPagerKey = GlobalKey();
   final double _pageSpacing = 16;
+  String _string = "Not set yet";
+
+  set string(String value) => setState(() => _string = value);
 
   @override
   void initState() {
@@ -117,20 +125,30 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
       child: _buildContent(),
     );
   }
-
   Widget _buildContent() {
     List<Widget> widgetsList = <Widget>[];
     if (CollectionUtils.isNotEmpty(_illiniItems)) {
       int itemsCount = _illiniItems!.length;
-      for (int i = 0; i < itemsCount; i++) {
+      for (int i = 0; i < 3; i++) {
         bool isFirst = (i == 0);
         bool isLast = ((i + 1) == itemsCount);
         DailyIlliniItem item = _illiniItems![i];
-        widgetsList.add(_DailyIlliniItemWidget(
+        var summary = item.summary;
+        debugPrint('cock:  $summary');
+        if (i == 0) {
+          widgetsList.add(_MainStoryWidget(illiniItem: item,));
+        }
+        if (i == 1) {
+          widgetsList.add(_MinorStory1(illiniItem: item,));
+        }
+        if (i == 2) {
+          widgetsList.add(_MinorStory2(illiniItem: item,));
+        }
+        /*widgetsList.add(_DailyIlliniItemWidget(
             illiniItem: item,
             margin: EdgeInsets.only(right: _pageSpacing, bottom: 10),
             onTapPrevious: isFirst ? null : _onTapPrevious,
-            onTapNext: isLast ? null : _onTapNext));
+            onTapNext: isLast ? null : _onTapNext));*/
       }
     }
 
@@ -147,23 +165,32 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
       if (1 < widgetsList.length) {
         double pageHeight = MediaQuery.of(context).size.width;
 
-        contentWidget = Container(
-            constraints: BoxConstraints(minHeight: pageHeight),
-            child: ExpandablePageView(
-                key: _viewPagerKey,
-                controller: _pageController,
-                children: widgetsList,
-                estimatedPageSize: pageHeight));
+        contentWidget = Column(
+          children: <Widget>[
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList[0]),
+            SizedBox(height: 5,),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList[1]),
+            SizedBox(height: 5),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList[2]),
+            SizedBox(height: 5)]
+        );
       } else {
         contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList.first);
       }
 
-      return Column(children: [
+      //This column moves view all button to the top right
+      return Column(
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: LinkButton(
+                textStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, decoration: TextDecoration.underline),
+                title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'View All'),
+                hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to view the daily illini feed'),
+                onTap: _onViewAll),
+          ),
         Padding(padding: EdgeInsets.only(top: 8), child: contentWidget),
-        LinkButton(
-            title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'View All'),
-            hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to view the daily illini feed'),
-            onTap: _onViewAll)
+        //DailyIlliniPopupMenu(dotColor: Colors.blue, backgroundColor: Colors.white, padding: EdgeInsets.symmetric(), fontSize: 16),
       ]);
     }
   }
@@ -184,9 +211,11 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
     _pageController?.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 
-  void _onViewAll() {
-    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DailyIlliniListPanel()));
+  _onViewAll() async {
+    final Uri url = Uri.parse('https://dailyillini.com');
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 
   void _setLoading(bool loading) {
@@ -216,8 +245,12 @@ class _DailyIlliniListPanelState extends State<DailyIlliniListPanel> {
 
   @override
   Widget build(BuildContext context) {
+    MenuItems? selectedMenu;
     return Scaffold(
-        appBar: HeaderBar(title: HomeDailyIlliniWidget.title),
+        appBar: HeaderBar(
+          title: HomeDailyIlliniWidget.title,
+          actions: [DailyIlliniPopupMenu(dotColor: Styles().colors!.textColorPrimary, backgroundColor: Color(0xFF576379), padding: EdgeInsets.all(15), fontSize: 14)]
+        ),
         body: RefreshIndicator(
             onRefresh: _onPullToRefresh,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Expanded(child: _buildContent())])),
@@ -286,7 +319,132 @@ class _DailyIlliniListPanelState extends State<DailyIlliniListPanel> {
     }
   }
 }
+class _MainStoryWidget extends StatelessWidget {
+  final DailyIlliniItem? illiniItem;
 
+  _MainStoryWidget({this.illiniItem});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Padding(
+    padding: EdgeInsets.zero,
+    child: Align(
+      alignment: FractionalOffset.bottomCenter,
+      child: Container(
+        decoration: BoxDecoration(
+            color: Styles().colors!.white,
+            boxShadow: [
+              BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+            ],
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+        child: Column(children: <Widget>[
+          Column(children: [
+            _buildImage(),
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                    style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')))
+          ]),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate), textAlign: TextAlign.left,
+                  style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa")))
+        ])
+      ),
+    ));
+  }
+  Widget _buildImage() {
+    return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
+        ? ModalImageHolder(child: Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
+      if (loadingProgress == null) {
+        return child;
+      }
+      return Padding(padding: EdgeInsets.symmetric(vertical: 30), child: CircularProgressIndicator());
+    }, errorBuilder: (context, error, stackTrace) {
+      return _defaultPlaceholderImage();
+    }))
+        : _defaultPlaceholderImage();
+  }
+  Widget _defaultPlaceholderImage() {
+    return Row(children: [Expanded(child: Styles().images?.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
+  }
+}
+class _MinorStory1 extends StatelessWidget {
+  final DailyIlliniItem? illiniItem;
+
+  _MinorStory1({this.illiniItem});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Padding(
+        padding: EdgeInsets.zero,
+        child: Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors!.white,
+                  boxShadow: [
+                    BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                  ],
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: Column(children: <Widget>[
+                Column(children: [
+                  Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                      child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                          style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')))
+                ]),
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    child: Text(StringUtils.ensureNotEmpty(illiniItem?.summary),
+                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa")))
+              ])
+          ),
+        ));
+  }
+}
+
+class _MinorStory2 extends StatelessWidget {
+  final DailyIlliniItem? illiniItem;
+
+  _MinorStory2({this.illiniItem});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Padding(
+        padding: EdgeInsets.zero,
+        child: Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors!.white,
+                  boxShadow: [
+                    BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                  ],
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: Column(children: <Widget>[
+                Column(children: [
+                  Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                      child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                          style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
+                  Padding(
+                      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                      child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
+                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa"),))
+                ]),
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    child: Text(StringUtils.ensureNotEmpty(illiniItem?.summary),
+                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa")))
+              ])
+          ),
+        ));
+  }
+}
 class _DailyIlliniItemWidget extends StatelessWidget {
   final DailyIlliniItem? illiniItem;
   final EdgeInsetsGeometry? margin;
@@ -295,6 +453,12 @@ class _DailyIlliniItemWidget extends StatelessWidget {
 
   _DailyIlliniItemWidget({this.illiniItem, this.margin, this.onTapNext, this.onTapPrevious});
 
+  //This is the build function that builds the main body of our DailyIllini Home widget
+  //The padding is the rectangle that bounds the column so that it doesn't go to the edge of the screen
+  //the column on line 328 is the column that holds our image, next/prev buttons, and our title
+  //within the column on line 328 we see a _buildImage() that builds our image, a row that holds our next/prev buttons and a padding that holds our title for the article
+  //under this column we see a padding property that hold the date and time that the article was published
+  //TODO: we need to change the items in the column so we only load one image for one main story and get rid of the next/prev buttons, we also need to load 2 stories without an image underneath the first one
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -399,4 +563,109 @@ class _DailyIlliniLoadingWidget extends StatelessWidget {
                     width: 24,
                     child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(progressColor))))));
   }
+}
+
+
+//Popup menu code starts from here
+enum MenuItems {Featured, News, Opinion, Buzz, Sports}
+
+class DailyIlliniPopupMenu extends StatefulWidget {
+  final Color? dotColor;
+  final Color? backgroundColor;
+  final EdgeInsetsGeometry padding;
+  final double fontSize;
+  DailyIlliniPopupMenu({required this.dotColor, required this.backgroundColor, required this.padding, required this.fontSize});
+
+  get selectedMenu => null;
+
+  @override
+  State<DailyIlliniPopupMenu> createState() => _DailyIlliniPopupMenu(dotColor: this.dotColor, backgroundColor: this.backgroundColor, padding: this.padding, fontSize: fontSize);
+}
+
+class _DailyIlliniPopupMenu extends State<DailyIlliniPopupMenu> {
+  final Color? dotColor;
+  final Color? backgroundColor;
+  final EdgeInsetsGeometry padding;
+  final double fontSize;
+  MenuItems? selectedMenu = MenuItems.Featured;
+  String text = "Featured";
+
+  _DailyIlliniPopupMenu({required this.dotColor, required this.backgroundColor, required this.padding, required this.fontSize});
+
+  //This is the code that changes the popup menu names and effects, right now it doesn't effect the feed
+  //TODO: reload feed with updated filter input
+  @override
+  Widget build(BuildContext context) {
+    return Padding (
+      padding: padding,
+      child: PopupMenuButton<MenuItems>(
+        initialValue: selectedMenu,
+        child: ElevatedButton(
+          style: TextButton.styleFrom(
+            foregroundColor: backgroundColor,
+            textStyle: TextStyle(
+              fontSize: fontSize,
+              color: dotColor
+            ),
+          ),
+          onPressed: null,
+          child: Text(
+              text,
+              style: TextStyle(
+                  fontFamily: Styles().fontFamilies!.semiBold,
+                  color: dotColor)
+          )
+        ),
+        // Callback that sets the selected popup menu item.
+
+          //featured can be first items on webpage
+        onSelected: (MenuItems item) {
+          setState(() {
+            switch (item) {
+              case MenuItems.Featured:
+                text = "Featured";
+                break;
+              case MenuItems.News:
+                text = "News";
+                break;
+              case MenuItems.Opinion:
+                text = "Opinion";
+                break;
+              case MenuItems.Buzz:
+                text = "Buzz";
+                break;
+              case MenuItems.Sports:
+                text = "Sports";
+                break;
+            }
+          });
+          HomeDailyIlliniWidget.of(context)?.string = selectedMenu.toString();
+          selectedMenu = item;
+        },
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItems>>[
+              const PopupMenuItem<MenuItems>(
+                value: MenuItems.Featured,
+                child: Text('Featured'),
+              ),
+              const PopupMenuItem<MenuItems>(
+                value: MenuItems.News,
+                child: Text('News')
+              ),
+              const PopupMenuItem<MenuItems>(
+                value: MenuItems.Opinion,
+                child: Text('Opinion'),
+              ),
+              const PopupMenuItem<MenuItems>(
+                  value: MenuItems.Buzz,
+                  child: Text('Buzz')
+              ),
+              const PopupMenuItem<MenuItems> (
+                value: MenuItems.Sports,
+                child: Text("Sports")
+              )
+        ]
+      )
+    );
+  }
+
 }

@@ -37,11 +37,12 @@ class DailyIllini  /* with Service */ {
   // Service
 
   Future<List<DailyIlliniItem>?> loadFeed() async {
-    if (StringUtils.isEmpty(Config().dailyIlliniFeedUrl)) {
-      debugPrint('Failed to load Daily Illini feed - missing url.');
-      return null;
-    }
+    //if (StringUtils.isEmpty(Config().dailyIlliniFeedUrl)) {
+      //debugPrint('Failed to load Daily Illini feed - missing url.');
+      //return null;
+    //}
     String url = Config().dailyIlliniFeedUrl!;
+    url = 'https://dailyillini.com/feed';
     Response? response = await Network().get(url);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -50,7 +51,13 @@ class DailyIllini  /* with Service */ {
       XmlElement? rssXml = XmlUtils.child(feedXml, 'rss');
       XmlElement? channelXml = XmlUtils.child(rssXml, 'channel');
       Iterable<XmlElement>? itemsXmlList = XmlUtils.children(channelXml, 'item');
-      return DailyIlliniItem.listFromXml(itemsXmlList);
+      List<DailyIlliniItem>? ret = DailyIlliniItem.listFromXml(itemsXmlList);
+
+      if (ret != null) {
+        String? imageUrl = ret[0].thumbImageUrl;
+        debugPrint('ImageURL:  $imageUrl');
+      }
+      return ret;
     } else {
       debugPrint('Failed to load Daily Illini feed. Response: $responseCode $responseString');
     }
