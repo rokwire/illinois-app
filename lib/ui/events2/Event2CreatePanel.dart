@@ -174,11 +174,12 @@ class Event2CreatePanel extends StatefulWidget {
   }
 
   static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
-    RichText(textScaleFactor: textScaleFactor, text:
+    Semantics ( label: title,
+    child: RichText(textScaleFactor: textScaleFactor, text:
       TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
         TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
       ] : null),
-    );
+    ));
 
 
   static Widget buildSectionSubTitleWidget(String subTitle) =>
@@ -220,17 +221,19 @@ class Event2CreatePanel extends StatefulWidget {
     bool expanded = false,
     void Function()? onToggleExpanded,
     EdgeInsetsGeometry padding = sectionHeadingContentPadding
-  }) => InkWell(onTap: onToggleExpanded, child:
-      Padding(padding: padding, child:
-        Row(children: [
-          Expanded(child:
-            buildSectionTitleWidget(title, required: required),
-          ),
-          Padding(padding: EdgeInsets.only(left: 8), child:
-            Styles().images?.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
-          ),
-        ],),
-      ),
+  }) => Semantics(button: true, label: title,
+      child: InkWell(onTap: onToggleExpanded, child:
+        Padding(padding: padding, child:
+          Row(children: [
+            Expanded(child:
+              buildSectionTitleWidget(title, required: required),
+            ),
+            Padding(padding: EdgeInsets.only(left: 8), child:
+              Styles().images?.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
+            ),
+          ],),
+        ),
+      )
     );
 
   // Sections / Button Section
@@ -270,17 +273,19 @@ class Event2CreatePanel extends StatefulWidget {
       sectionHeadingContentPadding
     );
 
-    return InkWell(onTap: onTap, child:
-      Padding(padding: appliedPadding, child:
-        Row(children: [
-          Expanded(child:
-            leftWidget,
-          ),
-          Padding(padding: EdgeInsets.only(left: 8), child:
-            Styles().images?.getImage('chevron-right') ?? Container()
-          ),
-        ],),
-      ),
+    return Semantics( button: true,
+      child:InkWell(onTap: onTap, child:
+        Padding(padding: appliedPadding, child:
+          Row(children: [
+            Expanded(child:
+              leftWidget,
+            ),
+            Padding(padding: EdgeInsets.only(left: 8), child:
+              Styles().images?.getImage('chevron-right') ?? Container()
+            ),
+          ],),
+        ),
+      )
     );
   }
 
