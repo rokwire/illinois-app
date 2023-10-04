@@ -3659,7 +3659,7 @@
     "widget.group_card.status.hint": "status: %s ,for: ",
     "widget.group_card.member.label": "member",
     "widget.group_card.members.label": "members",
-    "panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view existing groups.",
+    "panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view the list of groups.",
 
     "widget.group.member.card.attended.label": "ATTENDED",
 
