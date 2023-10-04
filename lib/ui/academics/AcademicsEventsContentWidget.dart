@@ -145,7 +145,7 @@ class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWid
 
   Events2Query _buildQuery({int offset = 0, int limit =  _eventsPageLength}) => Events2Query(
       attributes: {
-        'category': 'Speakers & Seminars'
+        'category': 'Speakers and Seminars'
       },
       offset: offset,
       limit: limit,
