@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Loading "Speakers and Seminars" events [#3780](https://github.com/rokwire/illinois-app/issues/3780).
+- Fix group privacy message [#3784](https://github.com/rokwire/illinois-app/issues/3784).
 
 ## [5.0.74] - 2023-09-29
 ### Fixed
