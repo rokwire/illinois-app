@@ -3642,7 +3642,7 @@
 	"widget.group_card.status.hint": "status: %s ,for: ",
 	"widget.group_card.member.label": "成员",
 	"widget.group_card.members.label": "成员",
-	"panel.group_card.privacy_alert.msg": "当您的隐私等级设置于{{privacy_level_icon}}，您只能看到现有的群组。",
+	"panel.group_card.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can only view the list of groups.",
 
 	"widget.group.member.card.attended.label": "已参加",
 
