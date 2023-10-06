@@ -234,7 +234,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     });
 
     if (!_link) {
-      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text, scope: Onboarding2().loginAccountScope).then((result) {
+      Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((result) {
         _onPhoneVerified(result);
       });
     } else {
