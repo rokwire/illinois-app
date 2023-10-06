@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Privacy level on user sign in [#3781](https://github.com/rokwire/illinois-app/issues/3781).
+- Showing correct group events count [#3790](https://github.com/rokwire/illinois-app/issues/3790).
 
 ## [5.0.75] - 2023-10-04
 ### Fixed
