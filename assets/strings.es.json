@@ -296,8 +296,6 @@
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.mtd.title": "Autobuses MTD",
     "panel.browse.section.mtd.description": "Vea las ubicaciones, las rutas y la disponibilidad de las paradas de autobús de MTD.",
-    "panel.browse.section.my.title": "Mi",
-    "panel.browse.section.my.description": "Vistas personalizadas de todo lo que te interesa.",
     "panel.browse.section.inbox.title": "Notificaciones",
     "panel.browse.section.inbox.description": "Accesos directos a sus notificaciones en la aplicación de grupos, académicos o eventos deportivos y más.",
     "panel.browse.section.polls.title": "Centro",
@@ -329,11 +327,11 @@
 
     "panel.browse.entry.appointments.appointments.title": "Equipo",
 
-    "panel.browse.entry.athletics.my_game_day.title": "Equipos",
-    "panel.browse.entry.athletics.upcoming_games.title": "Próximos Eventos",
-    "panel.browse.entry.athletics.my_athletics.title": "Mis eventos",
+    "panel.browse.entry.athletics.sport_events.title": "Big 10 Events",
     "panel.browse.entry.athletics.sport_news.title": "Noticias",
-    "panel.browse.entry.athletics.my_news.title": "Mis noticias",
+    "panel.browse.entry.athletics.my_athletics.title": "My Big 10 Events",
+    "panel.browse.entry.athletics.my_news.title": "My Big 10 News",
+    "panel.browse.entry.athletics.my_game_day.title": "My Game Day",
     
     "panel.browse.entry.safer.building_access.title": "Acceso al edificio",
     "panel.browse.entry.safer.test_locations.title": "Ubicaciones de prueba",
@@ -380,23 +378,6 @@
     "panel.browse.entry.mtd.laundry.all_mtd_stops": "Todas las paradas de autobús",
     "panel.browse.entry.mtd.my_mtd_stops.title": "Mis paradas de autobús",
     "panel.browse.entry.mtd.my_mtd_destinations.title": "Mis destinos",
-
-    "panel.browse.entry.my.my_groups.title": "Mis grupos",
-    "panel.browse.entry.my.canvas_courses.title": "Mis cursos Gies Canvas",
-    "panel.browse.entry.my.student_courses.title": "Mis cursos",
-    "panel.browse.entry.my.my_game_day.title": "Mi dia de juego",
-    "panel.browse.entry.my.my_events.title": "Mis eventos",
-    "panel.browse.entry.my.my_dining.title": "Mis lugares para comer",
-    "panel.browse.entry.my.my_athletics.title": "Mis eventos de atletismo",
-    "panel.browse.entry.my.my_news.title": "Mis noticias de atletismo",
-    "panel.browse.entry.my.my_laundry.title": "Mi colada",
-    "panel.browse.entry.my.my_mtd_stops.title": "Mis paradas de autobús",
-    "panel.browse.entry.my.my_mtd_destinations.title": "Mis destinos",
-    "panel.browse.entry.my.my_inbox.title": "Mis Notificaciones",
-    "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
-    "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
-    "panel.browse.entry.my.wellness_mental_health.title": "Mis recursos de salud mental",
-    "panel.browse.entry.my.my_appointments.title": "Mis citas de McKinley",
 
     "panel.browse.entry.inbox.all_notifications.title": "Todas las notificaciones",
     "panel.browse.entry.inbox.unread_notifications.title": "Notificaciones no leídas",
@@ -3182,6 +3163,7 @@
     "panel.appointment.schedule.questions.header.title": "Schedule Appointment",
     "panel.appointment.reschedule.questions.header.title": "Reschedule Appointment",
 
+    "widget.game_day.label.my_game_day": "Mi dia de juego",
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
     "widget.game_day.label.no_games":"No Illini Big 10 events today.",
 

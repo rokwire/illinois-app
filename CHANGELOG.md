@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Event2DetailPanel update follow up survey message [#3788](https://github.com/rokwire/illinois-app/issues/3788).
+- Removed "My" section from Browse panel, "My Athletics" and "My News" moved to "Athletics" section, most of the Athletics section entries renamed [#3787](https://github.com/rokwire/illinois-app/issues/3787)
 ### Fixed 
 - Fix DeviceCalendar add to calendar functionality [#3789](https://github.com/rokwire/illinois-app/issues/3789).
 

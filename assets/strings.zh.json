@@ -296,8 +296,6 @@
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
 	"panel.browse.section.mtd.title": "MTD 巴士",
 	"panel.browse.section.mtd.description": "查看 MTD 巴士站位置、路线和实时动态。",
-	"panel.browse.section.my.title": "我的",
-	"panel.browse.section.my.description": "您感興趣的所有內容的個性化視圖。",
 	"panel.browse.section.inbox.title": "通知",
 	"panel.browse.section.inbox.description": "來自團體、學術或體育賽事等的應用內通知的快捷方式。",
 	"panel.browse.section.polls.title": "民意調查",
@@ -329,11 +327,11 @@
 
 	"panel.browse.entry.appointments.appointments.title": "約會",
 
-	"panel.browse.entry.athletics.my_game_day.title": "團隊",
-	"panel.browse.entry.athletics.upcoming_games.title": "接下來的活動",
-	"panel.browse.entry.athletics.my_athletics.title": "我的活動",
+	"panel.browse.entry.athletics.sport_events.title": "Big 10 Events",
 	"panel.browse.entry.athletics.sport_news.title": "消息",
-	"panel.browse.entry.athletics.my_news.title": "我的消息",
+	"panel.browse.entry.athletics.my_athletics.title": "My Big 10 Events",
+	"panel.browse.entry.athletics.my_news.title": "My Big 10 News",
+	"panel.browse.entry.athletics.my_game_day.title": "My Game Day",
 
 	"panel.browse.entry.safer.building_access.title": "建築物訪問",
 	"panel.browse.entry.safer.test_locations.title": "測試地點",
@@ -380,23 +378,6 @@
 	"panel.browse.entry.mtd.laundry.all_mtd_stops": "所有巴士站",
 	"panel.browse.entry.mtd.my_mtd_stops.title": "我的巴士站",
 	"panel.browse.entry.mtd.my_mtd_destinations.title": "我的目的地",
-
-	"panel.browse.entry.my.my_groups.title": "我的群組",
-	"panel.browse.entry.my.canvas_courses.title": "我的 Gies 帆布課程",
-	"panel.browse.entry.my.student_courses.title": "我的課程",
-	"panel.browse.entry.my.my_game_day.title": "我的比賽日",
-	"panel.browse.entry.my.my_events.title": "我的活動",
-	"panel.browse.entry.my.my_dining.title": "我的用餐地点",
-	"panel.browse.entry.my.my_athletics.title": "我的田徑活動",
-	"panel.browse.entry.my.my_news.title": "我的田徑新聞",
-	"panel.browse.entry.my.my_laundry.title": "我的洗衣房",
-	"panel.browse.entry.my.my_mtd_stops.title": "我的巴士站",
-	"panel.browse.entry.my.my_mtd_destinations.title": "我的目的地",
-	"panel.browse.entry.my.my_inbox.title": "我的通知",
-	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
-	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
-	"panel.browse.entry.my.wellness_mental_health.title": "我的心理健康資源",
-	"panel.browse.entry.my.my_appointments.title": "我的麥金利約會",
 
 	"panel.browse.entry.inbox.all_notifications.title": "所有通知",
 	"panel.browse.entry.inbox.unread_notifications.title": "未讀通知",
@@ -3182,6 +3163,7 @@
 	"panel.appointment.schedule.questions.header.title": "安排预约",
 	"panel.appointment.reschedule.questions.header.title": "重新预约",
 
+	"widget.game_day.label.my_game_day": "我的比賽日",
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 	"widget.game_day.label.no_games":"今日Illini 球队没有比赛.",
 
