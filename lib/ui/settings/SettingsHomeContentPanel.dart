@@ -311,7 +311,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> imp
       case SettingsContent.sports:
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case SettingsContent.calendar:
-        return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
+        return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'Add to My Device\'s Calendar');
       case SettingsContent.appointments:
         return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'MyMcKinley Appointments');
       case SettingsContent.favorites:
