@@ -37,6 +37,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class HomeDailyIlliniWidget extends StatefulWidget {
   final String? favoriteId;
@@ -135,6 +136,8 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
         DailyIlliniItem item = _illiniItems![i];
         // var summary = item.summary;
         // debugPrint('cock:  $summary');
+        var link = item.link;
+        debugPrint('link: $link');
         if (i == 0) {
           widgetsList.add(_MainStoryWidget(illiniItem: item,));
         }
@@ -342,14 +345,19 @@ class _MainStoryWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
-              child: _buildImage()
-          ),
+          InkWell(
+            onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link)),
+            child: ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                child: _buildImage()
+            )),
           Padding(
               padding: EdgeInsets.only(top: 12, bottom: 8, left: 20, right: 20),
-              child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                  style: Styles().textStyles?.getTextStyle('widget.title.extra_large.extra_fat'))),
+              child: InkWell(
+                  child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                      style: Styles().textStyles?.getTextStyle('widget.title.medium.extra_fat')),
+                  onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link))
+              )),
           Padding(
               padding: EdgeInsets.only(bottom: 6, left: 20),
               child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
@@ -360,14 +368,14 @@ class _MainStoryWidget extends StatelessWidget {
   }
   Widget _buildImage() {
     return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-        ? ModalImageHolder(child: Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
+        ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
       if (loadingProgress == null) {
         return child;
       }
       return Padding(padding: EdgeInsets.symmetric(vertical: 30), child: CircularProgressIndicator());
     }, errorBuilder: (context, error, stackTrace) {
       return _defaultPlaceholderImage();
-    }))
+    })
         : _defaultPlaceholderImage();
   }
   Widget _defaultPlaceholderImage() {
@@ -392,8 +400,11 @@ class _MinorStory extends StatelessWidget {
               Divider(color: Styles().colors!.blackTransparent06),
               Padding(
                   padding: EdgeInsets.only(top: 4, bottom: 8, left: 20, right: 20),
-                  child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle('widget.title.medium.extra_fat'))),
+                  child: InkWell(
+                      child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                          style: Styles().textStyles?.getTextStyle('widget.title.medium.extra_fat')),
+                      onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link))
+                  )),
               Padding(
                   padding: EdgeInsets.only(bottom: 6, left: 20),
                   child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
