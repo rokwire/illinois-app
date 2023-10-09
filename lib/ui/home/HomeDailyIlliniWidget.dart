@@ -181,15 +181,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
       //This column moves view all button to the top right
       return Column(
         children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: LinkButton(
-                textStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, decoration: TextDecoration.underline),
-                title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'View All'),
-                hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to view the daily illini feed'),
-                onTap: _onViewAll),
-          ),
-        Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             child: Container(
               decoration: BoxDecoration(
@@ -200,7 +192,12 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
                 borderRadius: BorderRadius.all(Radius.circular(4))),
               child: contentWidget,
             ),
-        ),
+          ),
+          LinkButton(
+            title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'View All'),
+            hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to view the daily illini feed'),
+            onTap: _onViewAll
+          ),
         //DailyIlliniPopupMenu(dotColor: Colors.blue, backgroundColor: Colors.white, padding: EdgeInsets.symmetric(), fontSize: 16),
       ]);
     }
