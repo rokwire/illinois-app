@@ -461,8 +461,8 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         if (showSurvey) {
           if (_isAdmin) {
             description = registrationAvailable ?
-              Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.admin', 'This event requires registration. Attendance will be taken and a follow-up survey is set.') :
-              Localization().getStringEx('panel.event2.detail.survey.description.reg.full.att.svy.admin', 'This event requires registration and its capacity is reached. Attendance will be taken and a follow-up survey is set.');
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.att.svy.admin', 'This event requires registration. Attendance will be taken and a follow-up survey will be sent.') :
+              Localization().getStringEx('panel.event2.detail.survey.description.reg.full.att.svy.admin', 'This event requires registration and its capacity is reached. Attendance will be taken and a follow-up survey will be sent.');
           }
           else switch (surveyHours) {
             case 0:  description = registrationAvailable ?
@@ -492,7 +492,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       if (hasAttendance) {
         if (showSurvey) {
           if (_isAdmin) {
-            description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.admin', 'Attendance will be taken at this event, and a follow-up survey is set.');
+            description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.admin', 'Attendance will be taken at this event, and a follow-up survey will be sent.');
           }
           else switch (surveyHours) {
             case 0:  description = Localization().getStringEx('panel.event2.detail.survey.description.att.svy.none', 'Attendance will be taken at this event and you will receive a notification with a follow-up survey after the event.'); break;

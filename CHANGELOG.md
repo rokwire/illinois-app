@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [5.0.77] - 2023-10-09
+### Changed
+- Event2DetailPanel update follow up survey message [#3788](https://github.com/rokwire/illinois-app/issues/3788).
+- Removed "My" section from Browse panel, "My Athletics" and "My News" moved to "Athletics" section, most of the Athletics section entries renamed [#3787](https://github.com/rokwire/illinois-app/issues/3787)
+### Fixed 
+- Fix DeviceCalendar add to calendar functionality [#3789](https://github.com/rokwire/illinois-app/issues/3789).
+
+## [5.0.76] - 2023-10-06
+### Fixed
+- Privacy level on user sign in [#3781](https://github.com/rokwire/illinois-app/issues/3781).
+- Showing correct group events count [#3790](https://github.com/rokwire/illinois-app/issues/3790).
+
+## [5.0.75] - 2023-10-04
+### Fixed
+- Loading "Speakers and Seminars" events [#3780](https://github.com/rokwire/illinois-app/issues/3780).
+- Fix group privacy message [#3784](https://github.com/rokwire/illinois-app/issues/3784).
+
 ## [5.0.74] - 2023-09-29
 ### Fixed
 - Acknowledge selected and highlighted states when guest list item is disabled [#3722](https://github.com/rokwire/illinois-app/issues/3722).

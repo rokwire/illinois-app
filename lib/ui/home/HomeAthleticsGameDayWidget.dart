@@ -40,7 +40,7 @@ class HomeAthleticsGameDayWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('panel.browse.entry.my.my_game_day.title', 'My Game Day');
+  static String get title => Localization().getStringEx('widget.game_day.label.my_game_day', 'My Game Day');
 
   State<HomeAthleticsGameDayWidget> createState() => _HomeAthleticsGameDayWidgetState();
 }

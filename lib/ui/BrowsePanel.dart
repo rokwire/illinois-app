@@ -596,23 +596,6 @@ class _BrowseEntry extends StatelessWidget {
       case "research_projects.open_research_projects": _onTapOpenResearchProjects(context); break;
       case "research_projects.my_research_projects": _onTapMyResearchProjects(context); break;
 
-      case "my.my_athletics":                _onTapMyAthletics(context); break;
-      case "my.my_news":                     _onTapMyNews(context); break;
-      case "my.my_campus_guide":             _onTapMyCampusGuide(context); break;
-      case "my.student_courses":             _onTapStudentCourses(context); break;
-      case "my.my_dining":                   _onTapMyDinings(context); break;
-      case "my.my_events":                   _onTapMyEvents(context); break;
-      case "my.my_game_day":                 _onTapMyGameDay(context); break;
-      case "my.canvas_courses":              _onTapCanvasCourses(context); break;
-      case "my.my_groups":                   _onTapMyGroups(context); break;
-      case "my.my_laundry":                  _onTapMyLaundry(context); break;
-      case "my.my_research_projects":        _onTapMyResearchProjects(context); break;
-      case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
-      case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
-      case "my.wellness_resources":          _onTapWellnessResources(context); break;
-      case "my.wellness_mental_health":      _onTapWellnessMentalHealth(context); break;
-      case "my.my_appointments":             _onTapWellnessAppointments(context); break;
-
       case "inbox.all_notifications":        _onTapNotifications(context); break;
       case "inbox.unread_notifications":     _onTapNotifications(context, unread: true); break;
 
