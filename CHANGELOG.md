@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Event2DetailPanel update follow up survey message [#3788](https://github.com/rokwire/illinois-app/issues/3788).
 
 ## [5.0.76] - 2023-10-06
 ### Fixed
