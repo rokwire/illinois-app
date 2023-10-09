@@ -297,8 +297,6 @@
     "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability.",
     "panel.browse.section.mtd.title": "MTD Buses",
     "panel.browse.section.mtd.description": "View MTD bus stop locations, routes, and availability.",
-    "panel.browse.section.my.title": "My",
-    "panel.browse.section.my.description": "Personalized views of everything you are interested in.",
     "panel.browse.section.inbox.title": "Notifications",
     "panel.browse.section.inbox.description": "Shortcuts to your in-app notifications from groups, academics, or athletics events, and more.",
     "panel.browse.section.polls.title": "Polls",
@@ -330,11 +328,11 @@
 
     "panel.browse.entry.appointments.appointments.title": "Appointments",
 
-    "panel.browse.entry.athletics.my_game_day.title": "Teams",
-    "panel.browse.entry.athletics.sport_events.title": "Upcoming Events",
-    "panel.browse.entry.athletics.my_athletics.title": "My Events",
+    "panel.browse.entry.athletics.sport_events.title": "Big 10 Events",
     "panel.browse.entry.athletics.sport_news.title": "News",
-    "panel.browse.entry.athletics.my_news.title": "My News",
+    "panel.browse.entry.athletics.my_athletics.title": "My Big 10 Events",
+    "panel.browse.entry.athletics.my_news.title": "My Big 10 News",
+    "panel.browse.entry.athletics.my_game_day.title": "My Game Day",
 
     "panel.browse.entry.safer.building_access.title": "Building Access",
     "panel.browse.entry.safer.test_locations.title": "Test Locations",
@@ -381,23 +379,6 @@
     "panel.browse.entry.mtd.all_mtd_stops.title": "All Bus Stops",
     "panel.browse.entry.mtd.my_mtd_stops.title": "My Bus Stops",
     "panel.browse.entry.mtd.my_mtd_destinations.title": "My Destinations",
-
-    "panel.browse.entry.my.my_groups.title": "My Groups",
-    "panel.browse.entry.my.canvas_courses.title": "My Gies Canvas Courses",
-    "panel.browse.entry.my.student_courses.title": "My Courses",
-    "panel.browse.entry.my.my_game_day.title": "My Game Day",
-    "panel.browse.entry.my.my_events.title": "My Events",
-    "panel.browse.entry.my.my_dining.title": "My Dining Locations",
-    "panel.browse.entry.my.my_athletics.title": "My Athletics Events",
-    "panel.browse.entry.my.my_news.title": "My Athletics News",
-    "panel.browse.entry.my.my_laundry.title": "My Laundry",
-    "panel.browse.entry.my.my_mtd_stops.title": "My Bus Stops",
-    "panel.browse.entry.my.my_mtd_destinations.title": "My Destinations",
-    "panel.browse.entry.my.my_inbox.title": "My Notifications",
-    "panel.browse.entry.my.my_campus_guide.title": "My Campus Guide",
-    "panel.browse.entry.my.wellness_resources.title": "My Wellness Resources",
-    "panel.browse.entry.my.wellness_mental_health.title": "My Mental Health Resources",
-    "panel.browse.entry.my.my_appointments.title": "MyMcKinley Appointments",
 
     "panel.browse.entry.inbox.all_notifications.title": "All Notifications",
     "panel.browse.entry.inbox.unread_notifications.title": "Unread Notifications",
@@ -3199,6 +3180,7 @@
     "panel.appointment.schedule.questions.header.title": "Schedule Appointment",
     "panel.appointment.reschedule.questions.header.title": "Reschedule Appointment",
 
+    "widget.game_day.label.my_game_day": "My Game Day",
     "widget.game_day.label.its_game_day":"It's Game Day!",
     "widget.game_day.label.no_games":"No Illini Big 10 events today.",
 
