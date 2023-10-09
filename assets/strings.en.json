@@ -1386,7 +1386,7 @@
     "panel.event2.detail.survey.description.reg.att.svy.multi": "This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.",
     "panel.event2.detail.survey.description.reg.att.svy.single": "This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey 1 hour after the event.",
     "panel.event2.detail.survey.description.reg.att.svy.none": "This event requires registration. Attendance will be taken and you will receive a notification with a follow-up survey after this event.",
-    "panel.event2.detail.survey.description.reg.att.svy.admin": "This event requires registration. Attendance will be taken and a will be sent.",
+    "panel.event2.detail.survey.description.reg.att.svy.admin": "This event requires registration. Attendance will be taken and a follow-up survey will be sent.",
     "panel.event2.detail.survey.description.reg.full": "Registration is required for this event and its capacity is reached.",
     "panel.event2.detail.survey.description.reg.full.att": "This event requires registration, its capacity is reached, and attendance will be taken.",
     "panel.event2.detail.survey.description.reg.full.att.svy.multi": "This event requires registration and its capacity is reached. Attendance will be taken and you will receive a notification with a follow-up survey {{hours}} hours after the event.",
