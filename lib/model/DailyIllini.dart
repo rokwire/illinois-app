@@ -31,13 +31,13 @@ class DailyIlliniItem {
   final String? thumbImageUrl;
   final String? category;
   final DateTime? pubDateTimeUtc;
-  final String? summary;
+  // final String? summary;
 
-  DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc, this.category, this.summary});
+  DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc, this.category});
 
   String? get displayPubDate {
     DateTime? localDateTime = AppDateTime().getDeviceTimeFromUtcTime(pubDateTimeUtc);
-    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL, d yyyy', ignoreTimeZone: true);
+    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: true);
   }
 
   static DailyIlliniItem? fromXml(XmlElement? xml) {
@@ -47,16 +47,16 @@ class DailyIlliniItem {
     String? pubDateString = XmlUtils.childText(xml, 'pubDate');
     String? descriptionString = XmlUtils.childCdata(xml, 'description');
     String? categoryString = _getCategory(xml.toString());
-    String? summary = _getSummary(descriptionString);
+    // String? summary = _getSummary(descriptionString);
     String? thumbImgUrl = _getThumbImageUrl(descriptionString);
-    debugPrint('summary:  $summary');
+    // debugPrint('summary:  $summary');
     return DailyIlliniItem(
       title: XmlUtils.childText(xml, 'title'),
       link: XmlUtils.childText(xml, 'link'),
       category: categoryString,
       description: descriptionString,
       thumbImageUrl: thumbImgUrl,
-      summary: summary,
+      // summary: summary,
       // DateTime format:
       // Tue, 09 Aug 2022 12:00:17 +0000
       pubDateTimeUtc: DateTimeUtils.dateTimeFromString(pubDateString, format: "E, dd LLL yyyy hh:mm:ss Z", isUtc: true),

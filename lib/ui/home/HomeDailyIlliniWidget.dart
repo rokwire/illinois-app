@@ -133,16 +133,13 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
         bool isFirst = (i == 0);
         bool isLast = ((i + 1) == itemsCount);
         DailyIlliniItem item = _illiniItems![i];
-        var summary = item.summary;
-        debugPrint('cock:  $summary');
+        // var summary = item.summary;
+        // debugPrint('cock:  $summary');
         if (i == 0) {
           widgetsList.add(_MainStoryWidget(illiniItem: item,));
         }
-        if (i == 1) {
-          widgetsList.add(_MinorStory1(illiniItem: item,));
-        }
-        if (i == 2) {
-          widgetsList.add(_MinorStory2(illiniItem: item,));
+        else {
+          widgetsList.add(_MinorStory(illiniItem: item,));
         }
         /*widgetsList.add(_DailyIlliniItemWidget(
             illiniItem: item,
@@ -167,14 +164,14 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
 
         contentWidget = Column(
           children: <Widget>[
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList[0]),
-            SizedBox(height: 5,),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList[1]),
-            SizedBox(height: 5),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList[2]),
-            SizedBox(height: 5)]
+            widgetsList[0],
+            widgetsList[1],
+            widgetsList[2],
+            SizedBox(height: 12),
+          ]
         );
       } else {
+
         contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList.first);
       }
 
@@ -189,7 +186,18 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
                 hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to view the daily illini feed'),
                 onTap: _onViewAll),
           ),
-        Padding(padding: EdgeInsets.only(top: 8), child: contentWidget),
+        Padding(
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Styles().colors!.white,
+                boxShadow: [
+                BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                ],
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: contentWidget,
+            ),
+        ),
         //DailyIlliniPopupMenu(dotColor: Colors.blue, backgroundColor: Colors.white, padding: EdgeInsets.symmetric(), fontSize: 16),
       ]);
     }
@@ -331,26 +339,22 @@ class _MainStoryWidget extends StatelessWidget {
     padding: EdgeInsets.zero,
     child: Align(
       alignment: FractionalOffset.bottomCenter,
-      child: Container(
-        decoration: BoxDecoration(
-            color: Styles().colors!.white,
-            boxShadow: [
-              BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
-            ],
-            borderRadius: BorderRadius.all(Radius.circular(4))),
-        child: Column(children: <Widget>[
-          Column(children: [
-            _buildImage(),
-            Padding(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                    style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')))
-          ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+              child: _buildImage()
+          ),
           Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate), textAlign: TextAlign.left,
-                  style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa")))
-        ])
+              padding: EdgeInsets.only(top: 12, bottom: 8, left: 20, right: 20),
+              child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                  style: Styles().textStyles?.getTextStyle('widget.title.extra_large.extra_fat'))),
+          Padding(
+              padding: EdgeInsets.only(bottom: 6, left: 20),
+              child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
+                style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"),))
+        ]
       ),
     ));
   }
@@ -370,10 +374,10 @@ class _MainStoryWidget extends StatelessWidget {
     return Row(children: [Expanded(child: Styles().images?.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
   }
 }
-class _MinorStory1 extends StatelessWidget {
+class _MinorStory extends StatelessWidget {
   final DailyIlliniItem? illiniItem;
 
-  _MinorStory1({this.illiniItem});
+  _MinorStory({this.illiniItem});
 
   @override
   Widget build(BuildContext context) {
@@ -382,69 +386,24 @@ class _MinorStory1 extends StatelessWidget {
         padding: EdgeInsets.zero,
         child: Align(
           alignment: FractionalOffset.bottomCenter,
-          child: Container(
-              decoration: BoxDecoration(
-                  color: Styles().colors!.white,
-                  boxShadow: [
-                    BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
-                  ],
-                  borderRadius: BorderRadius.all(Radius.circular(4))),
-              child: Column(children: <Widget>[
-                Column(children: [
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                      child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                          style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')))
-                ]),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                    child: Text(StringUtils.ensureNotEmpty(illiniItem?.summary),
-                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa")))
-              ])
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Divider(color: Styles().colors!.blackTransparent06),
+              Padding(
+                  padding: EdgeInsets.only(top: 4, bottom: 8, left: 20, right: 20),
+                  child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                      style: Styles().textStyles?.getTextStyle('widget.title.medium.extra_fat'))),
+              Padding(
+                  padding: EdgeInsets.only(bottom: 6, left: 20),
+                  child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
+                    style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"),))
+            ]
           ),
         ));
   }
 }
 
-class _MinorStory2 extends StatelessWidget {
-  final DailyIlliniItem? illiniItem;
-
-  _MinorStory2({this.illiniItem});
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Padding(
-        padding: EdgeInsets.zero,
-        child: Align(
-          alignment: FractionalOffset.bottomCenter,
-          child: Container(
-              decoration: BoxDecoration(
-                  color: Styles().colors!.white,
-                  boxShadow: [
-                    BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
-                  ],
-                  borderRadius: BorderRadius.all(Radius.circular(4))),
-              child: Column(children: <Widget>[
-                Column(children: [
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                      child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                          style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                      child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa"),))
-                ]),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                    child: Text(StringUtils.ensureNotEmpty(illiniItem?.summary),
-                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa")))
-              ])
-          ),
-        ));
-  }
-}
 class _DailyIlliniItemWidget extends StatelessWidget {
   final DailyIlliniItem? illiniItem;
   final EdgeInsetsGeometry? margin;
