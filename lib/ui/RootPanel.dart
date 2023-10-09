@@ -684,7 +684,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onCalendarPromptMessage(dynamic data) {
-        DeviceCalendarDialog.show(context: context);
+        DeviceCalendarDialog.show(context: context, eventData: data);
   }
 
   void _showPanel(Map<String, dynamic> content) {

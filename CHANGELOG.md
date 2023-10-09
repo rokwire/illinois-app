@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Event2DetailPanel update follow up survey message [#3788](https://github.com/rokwire/illinois-app/issues/3788).
+### Fixed 
+- Fix DeviceCalendar add to calendar functionality [#3789](https://github.com/rokwire/illinois-app/issues/3789).
 
 ## [5.0.76] - 2023-10-06
 ### Fixed
