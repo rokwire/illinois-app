@@ -342,27 +342,27 @@ class _MainStoryWidget extends StatelessWidget {
     padding: EdgeInsets.zero,
     child: Align(
       alignment: FractionalOffset.bottomCenter,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InkWell(
-            onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link)),
-            child: ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
-                child: _buildImage()
-            )),
-          Padding(
-              padding: EdgeInsets.only(top: 12, bottom: 8, left: 20, right: 20),
-              child: InkWell(
-                  child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle('widget.title.medium.extra_fat')),
-                  onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link))
-              )),
-          Padding(
-              padding: EdgeInsets.only(bottom: 6, left: 20),
-              child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"),))
-        ]
+      child: InkWell(
+        onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                  child: _buildImage()
+            ),
+            Padding(
+                padding: EdgeInsets.only(top: 12, bottom: 8, left: 20, right: 20),
+                child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                    style: Styles().textStyles?.getTextStyle('widget.title.extra_large.extra_fat')),
+            ),
+            Padding(
+                padding: EdgeInsets.only(bottom: 6, left: 20),
+                child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
+                  style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"))
+            ),
+          ],
+        ),
       ),
     ));
   }
@@ -394,22 +394,24 @@ class _MinorStory extends StatelessWidget {
         padding: EdgeInsets.zero,
         child: Align(
           alignment: FractionalOffset.bottomCenter,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Divider(color: Styles().colors!.blackTransparent06),
-              Padding(
+          child: InkWell(
+            onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Divider(color: Styles().colors!.blackTransparent06),
+                Padding(
                   padding: EdgeInsets.only(top: 4, bottom: 8, left: 20, right: 20),
-                  child: InkWell(
-                      child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                          style: Styles().textStyles?.getTextStyle('widget.title.medium.extra_fat')),
-                      onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link))
-                  )),
-              Padding(
-                  padding: EdgeInsets.only(bottom: 6, left: 20),
-                  child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                    style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"),))
-            ]
+                  child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                      style: Styles().textStyles?.getTextStyle('widget.title.medium.extra_fat')),
+                ),
+                Padding(
+                    padding: EdgeInsets.only(bottom: 6, left: 20),
+                    child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
+                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"))
+                ),
+              ],
+            ),
           ),
         ));
   }
