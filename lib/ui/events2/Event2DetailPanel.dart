@@ -65,8 +65,16 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Survey? _survey;
   bool? _hasSurveyResponse;
   Event2PersonsResult? _persons;
-  List<Event2>? _linkedEvents;
   Event2? _superEvent;
+
+  List<Event2>? _linkedEvents;
+  bool _linkedEventsLoading = false;
+  int? _totalLinkedEventsCount;
+  bool _extendingLinkedEvents = false;
+  bool? _lastPageLoadedAllLinkedEvents;
+  static const int _linkedEventsPageLength = 20;
+
+  ScrollController _scrollController = ScrollController();
 
   // Keep a copy of the user position in the State because it gets cleared somehow in the widget
   // when sending the appliction to background in iOS.
@@ -76,7 +84,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool _registrationLoading = false;
   bool _eventLoading = false;
   bool _eventProcessing = false;
-  bool _linkedEventsLoading = false;
   bool _registrationLaunching = false;
   bool _websiteLaunching = false;
   bool _onlineLaunching = false;
@@ -90,6 +97,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Auth2.notifyLoginChanged,
       Events2.notifyUpdated,
     ]);
+    _scrollController.addListener(_scrollListener);
     _event = widget.event;
     _superEvent = widget.superEvent;
     _survey = widget.survey;
@@ -149,7 +157,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
   Widget get _eventContent =>
   RefreshIndicator(onRefresh: _refreshEvent, child:
-    CustomScrollView(slivers: <Widget>[
+    CustomScrollView(controller: _scrollController, slivers: <Widget>[
       SliverToutHeaderBar(
         title: _event?.name,
         flexImageUrl:  _event?.imageUrl,
@@ -683,6 +691,9 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           ));
         }
       }
+      if (_extendingLinkedEvents) {
+        cardWidgets.add(Padding(padding: EdgeInsets.only(top: cardWidgets.isNotEmpty ? 8 : 0), child: _extendingLinkedEventsIndicator));
+      }
     }
     if (cardWidgets.isEmpty) {
       String? message;
@@ -715,6 +726,15 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     )
   );
 
+  Widget get _extendingLinkedEventsIndicator => Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+      child: Align(
+          alignment: Alignment.center,
+          child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))));
 
   List<Widget>? get _selectorWidget {
       Widget? customSelectorWidget = widget.eventSelector?.buildWidget(this);
@@ -1156,7 +1176,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
       int? linkedEventsIndex = ((linkedEventsGrouping != null) && (_linkedEvents == null)) ? futures.length : null;
       if (linkedEventsIndex != null) {
-        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
+        futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, limit: _linkedEventsPageLength)));
         //TMP: futures.add(Events2().loadEvents(Events2Query(searchText: 'Prairie')));
         setState(() {
           _linkedEventsLoading = true;
@@ -1195,6 +1215,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           }
           if (linkedEventsResult?.events != null) {
             _linkedEvents = linkedEventsResult?.events;
+            _lastPageLoadedAllLinkedEvents = (linkedEventsResult!.events!.length >= _linkedEventsPageLength);
+            if (linkedEventsResult.totalCount != null) {
+              _totalLinkedEventsCount = linkedEventsResult.totalCount;
+            }
           }
           if (superEvent != null) {
             _superEvent = superEvent;
@@ -1235,7 +1259,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
           Event2Grouping? linkedEventsGrouping = event.linkedEventsGroupingQuery;
           int? linkedEventsIndex = (linkedEventsGrouping != null) ? futures.length : null;
           if (linkedEventsIndex != null) {
-            futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping)));
+            futures.add(Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, limit: (_linkedEvents?.length ?? _linkedEventsPageLength))));
           }
 
           int? superEventIndex = event.isSuperEventChild ? futures.length : null;
@@ -1275,6 +1299,10 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
               }
               if (linkedEventsResult?.events != null) {
                 _linkedEvents = linkedEventsResult?.events;
+                _lastPageLoadedAllLinkedEvents = (linkedEventsResult!.events!.length >= _linkedEventsPageLength);
+                if (linkedEventsResult.totalCount != null) {
+                  _totalLinkedEventsCount = linkedEventsResult.totalCount;
+                }
               }
               if (superEvent != null) {
                 _superEvent = superEvent;
@@ -1305,6 +1333,45 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }
 
+  void _scrollListener() {
+    if ((_event?.hasLinkedEvents == true) &&
+        (_scrollController.offset >= _scrollController.position.maxScrollExtent) &&
+        (_hasMoreLinkedEvents != false) &&
+        !_linkedEventsLoading &&
+        !_extendingLinkedEvents) {
+      _extendLinkedEvents();
+    }
+  }
+
+  Future<void> _extendLinkedEvents() async {
+    Event2Grouping? linkedEventsGrouping = _event?.linkedEventsGroupingQuery;
+    if ((linkedEventsGrouping != null) && !_linkedEventsLoading && !_extendingLinkedEvents) {
+      setStateIfMounted(() {
+        _extendingLinkedEvents = true;
+      });
+      Events2ListResult? linkedEventsListResult = await Events2().loadEvents(Events2Query(grouping: linkedEventsGrouping, offset: _linkedEvents?.length ?? 0, limit: _linkedEventsPageLength));
+      List<Event2>? events = linkedEventsListResult?.events;
+      int? totalCount = linkedEventsListResult?.totalCount;
+
+      if (mounted && _extendingLinkedEvents && !_linkedEventsLoading) {
+        setState(() {
+          if (events != null) {
+            if (_linkedEvents != null) {
+              _linkedEvents?.addAll(events);
+            } else {
+              _linkedEvents = List<Event2>.from(events);
+            }
+            _lastPageLoadedAllLinkedEvents = (events.length >= _linkedEventsPageLength);
+          }
+          if (totalCount != null) {
+            _totalLinkedEventsCount = totalCount;
+          }
+          _extendingLinkedEvents = false;
+        });
+      }
+    }
+  }
+
   //Event getters
   bool get _isAdmin =>  _event?.userRole == Event2UserRole.admin;
   bool get _isAttendanceTaker =>  _event?.userRole == Event2UserRole.attendanceTaker;
@@ -1313,7 +1380,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   bool get _hasDisplayCategories => (_displayCategories?.isNotEmpty == true);
   bool get _isInternalRegistrationAvailable => (_event?.registrationDetails?.type == Event2RegistrationType.internal) &&
     (_event?.registrationDetails?.isRegistrationAvailable(_persons?.registrationOccupancy) == true);
-
+  bool? get _hasMoreLinkedEvents => (_totalLinkedEventsCount != null) ? ((_linkedEvents?.length ?? 0) < _totalLinkedEventsCount!) : _lastPageLoadedAllLinkedEvents;
 
   String? get _eventId => widget.event?.id ?? widget.eventId;
 
