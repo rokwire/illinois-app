@@ -31,7 +31,6 @@ class DailyIlliniItem {
   final String? thumbImageUrl;
   final String? category;
   final DateTime? pubDateTimeUtc;
-  // final String? summary;
 
   DailyIlliniItem({this.title, this.link, this.description, this.thumbImageUrl, this.pubDateTimeUtc, this.category});
 
@@ -47,16 +46,13 @@ class DailyIlliniItem {
     String? pubDateString = XmlUtils.childText(xml, 'pubDate');
     String? descriptionString = XmlUtils.childCdata(xml, 'description');
     String? categoryString = _getCategory(xml.toString());
-    // String? summary = _getSummary(descriptionString);
     String? thumbImgUrl = _getThumbImageUrl(descriptionString);
-    // debugPrint('summary:  $summary');
     return DailyIlliniItem(
       title: XmlUtils.childText(xml, 'title'),
       link: XmlUtils.childText(xml, 'link'),
       category: categoryString,
       description: descriptionString,
       thumbImageUrl: thumbImgUrl,
-      // summary: summary,
       // DateTime format:
       // Tue, 09 Aug 2022 12:00:17 +0000
       pubDateTimeUtc: DateTimeUtils.dateTimeFromString(pubDateString, format: "E, dd LLL yyyy hh:mm:ss Z", isUtc: true),
@@ -129,10 +125,6 @@ class DailyIlliniItem {
     }
 
     return summary.substring(0, summary.indexOf("."));
-    int? i = descriptionText?.indexOf("<p>");
-    int? j = descriptionText?.indexOf("...");
-
-    return descriptionText?.substring(i! + 3, j! + 3);
   }
   static String? _getCategory(String? itemText) {
     dom.Document doc = htmlParser.parse(itemText);
@@ -149,18 +141,5 @@ class DailyIlliniItem {
       }
     }
     return "N/A";
-  }
-  List<DailyIlliniItem>? search(List<DailyIlliniItem> list, String cat) {
-    // TODO: implement search
-    List<DailyIlliniItem>? returnList;
-    for (DailyIlliniItem iter in list) {
-      if (iter.category != null) {
-        String c = iter.category.toString();
-        if (c.contains(cat)) {
-          returnList?.add(iter);
-        }
-      }
-    }
-    return returnList;
   }
 }

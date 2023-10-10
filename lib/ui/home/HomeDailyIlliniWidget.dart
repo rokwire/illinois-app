@@ -129,13 +129,8 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
   Widget _buildContent() {
     List<Widget> widgetsList = <Widget>[];
     if (CollectionUtils.isNotEmpty(_illiniItems)) {
-      int itemsCount = _illiniItems!.length;
       for (int i = 0; i < 3; i++) {
-        bool isFirst = (i == 0);
-        bool isLast = ((i + 1) == itemsCount);
         DailyIlliniItem item = _illiniItems![i];
-        // var summary = item.summary;
-        // debugPrint('cock:  $summary');
         var link = item.link;
         debugPrint('link: $link');
         if (i == 0) {
@@ -144,11 +139,6 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
         else {
           widgetsList.add(_MinorStory(illiniItem: item,));
         }
-        /*widgetsList.add(_DailyIlliniItemWidget(
-            illiniItem: item,
-            margin: EdgeInsets.only(right: _pageSpacing, bottom: 10),
-            onTapPrevious: isFirst ? null : _onTapPrevious,
-            onTapNext: isLast ? null : _onTapNext));*/
       }
     }
 
@@ -163,7 +153,6 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
     } else {
       Widget contentWidget;
       if (1 < widgetsList.length) {
-        double pageHeight = MediaQuery.of(context).size.width;
 
         contentWidget = Column(
           children: <Widget>[
@@ -181,6 +170,14 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
       //This column moves view all button to the top right
       return Column(
         children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: LinkButton(
+                title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'View All'),
+                textStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, decoration: TextDecoration.underline),
+                hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to launch dailyillini.com website'),
+                onTap: () => launchUrlString("dailyillini.com")),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             child: Container(
@@ -193,12 +190,6 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
               child: contentWidget,
             ),
           ),
-          LinkButton(
-            title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'View All'),
-            hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to view the daily illini feed'),
-            onTap: _onViewAll
-          ),
-        //DailyIlliniPopupMenu(dotColor: Colors.blue, backgroundColor: Colors.white, padding: EdgeInsets.symmetric(), fontSize: 16),
       ]);
     }
   }
@@ -209,21 +200,6 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
       _illiniItems = items;
       _setLoading(false);
     });
-  }
-
-  void _onTapPrevious() {
-    _pageController?.previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
-  }
-
-  void _onTapNext() {
-    _pageController?.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
-  }
-
-  _onViewAll() async {
-    final Uri url = Uri.parse('https://dailyillini.com');
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
-    }
   }
 
   void _setLoading(bool loading) {
@@ -253,11 +229,9 @@ class _DailyIlliniListPanelState extends State<DailyIlliniListPanel> {
 
   @override
   Widget build(BuildContext context) {
-    MenuItems? selectedMenu;
     return Scaffold(
         appBar: HeaderBar(
           title: HomeDailyIlliniWidget.title,
-          actions: [DailyIlliniPopupMenu(dotColor: Styles().colors!.textColorPrimary, backgroundColor: Color(0xFF576379), padding: EdgeInsets.all(15), fontSize: 14)]
         ),
         body: RefreshIndicator(
             onRefresh: _onPullToRefresh,
@@ -427,7 +401,6 @@ class _DailyIlliniItemWidget extends StatelessWidget {
   //the column on line 328 is the column that holds our image, next/prev buttons, and our title
   //within the column on line 328 we see a _buildImage() that builds our image, a row that holds our next/prev buttons and a padding that holds our title for the article
   //under this column we see a padding property that hold the date and time that the article was published
-  //TODO: we need to change the items in the column so we only load one image for one main story and get rid of the next/prev buttons, we also need to load 2 stories without an image underneath the first one
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -532,109 +505,4 @@ class _DailyIlliniLoadingWidget extends StatelessWidget {
                     width: 24,
                     child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(progressColor))))));
   }
-}
-
-
-//Popup menu code starts from here
-enum MenuItems {Featured, News, Opinion, Buzz, Sports}
-
-class DailyIlliniPopupMenu extends StatefulWidget {
-  final Color? dotColor;
-  final Color? backgroundColor;
-  final EdgeInsetsGeometry padding;
-  final double fontSize;
-  DailyIlliniPopupMenu({required this.dotColor, required this.backgroundColor, required this.padding, required this.fontSize});
-
-  get selectedMenu => null;
-
-  @override
-  State<DailyIlliniPopupMenu> createState() => _DailyIlliniPopupMenu(dotColor: this.dotColor, backgroundColor: this.backgroundColor, padding: this.padding, fontSize: fontSize);
-}
-
-class _DailyIlliniPopupMenu extends State<DailyIlliniPopupMenu> {
-  final Color? dotColor;
-  final Color? backgroundColor;
-  final EdgeInsetsGeometry padding;
-  final double fontSize;
-  MenuItems? selectedMenu = MenuItems.Featured;
-  String text = "Featured";
-
-  _DailyIlliniPopupMenu({required this.dotColor, required this.backgroundColor, required this.padding, required this.fontSize});
-
-  //This is the code that changes the popup menu names and effects, right now it doesn't effect the feed
-  //TODO: reload feed with updated filter input
-  @override
-  Widget build(BuildContext context) {
-    return Padding (
-      padding: padding,
-      child: PopupMenuButton<MenuItems>(
-        initialValue: selectedMenu,
-        child: ElevatedButton(
-          style: TextButton.styleFrom(
-            foregroundColor: backgroundColor,
-            textStyle: TextStyle(
-              fontSize: fontSize,
-              color: dotColor
-            ),
-          ),
-          onPressed: null,
-          child: Text(
-              text,
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.semiBold,
-                  color: dotColor)
-          )
-        ),
-        // Callback that sets the selected popup menu item.
-
-          //featured can be first items on webpage
-        onSelected: (MenuItems item) {
-          setState(() {
-            switch (item) {
-              case MenuItems.Featured:
-                text = "Featured";
-                break;
-              case MenuItems.News:
-                text = "News";
-                break;
-              case MenuItems.Opinion:
-                text = "Opinion";
-                break;
-              case MenuItems.Buzz:
-                text = "Buzz";
-                break;
-              case MenuItems.Sports:
-                text = "Sports";
-                break;
-            }
-          });
-          HomeDailyIlliniWidget.of(context)?.string = selectedMenu.toString();
-          selectedMenu = item;
-        },
-        itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuItems>>[
-              const PopupMenuItem<MenuItems>(
-                value: MenuItems.Featured,
-                child: Text('Featured'),
-              ),
-              const PopupMenuItem<MenuItems>(
-                value: MenuItems.News,
-                child: Text('News')
-              ),
-              const PopupMenuItem<MenuItems>(
-                value: MenuItems.Opinion,
-                child: Text('Opinion'),
-              ),
-              const PopupMenuItem<MenuItems>(
-                  value: MenuItems.Buzz,
-                  child: Text('Buzz')
-              ),
-              const PopupMenuItem<MenuItems> (
-                value: MenuItems.Sports,
-                child: Text("Sports")
-              )
-        ]
-      )
-    );
-  }
-
 }
