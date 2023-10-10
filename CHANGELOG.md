@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.1.0] - 2023-10-02
 - N/A
 
+## [5.0.78] - 2023-10-10
+### Fixed
+- Showing all sub-events in Events2DetailPanel [#3790](https://github.com/rokwire/illinois-app/issues/3790).
+
 ## [5.0.77] - 2023-10-09
 ### Changed
 - Event2DetailPanel update follow up survey message [#3788](https://github.com/rokwire/illinois-app/issues/3788).
