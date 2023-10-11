@@ -3505,9 +3505,7 @@
 	"widget.home.twitter.button.all.title": "查看全部",
 	"widget.home.twitter.button.all.hint": "點擊查看所有推文",
 
-	"widget.home.daily_illini.header.label": "伊利尼日報",
-	"widget.home.daily_illini.item.page.next.hint": "下一頁",
-	"widget.home.daily_illini.item.page.previous.hint": "上一頁",
+	"widget.home.daily_illini.header.label": "The Daily Illini",
 	"widget.home.daily_illini.button.all.title": "查看全部",
 	"widget.home.daily_illini.button.all.hint": "點擊查看每日伊利尼日報",
 	"widget.home.daily_illini.text.empty.description": "無法加載伊利尼日報。",
