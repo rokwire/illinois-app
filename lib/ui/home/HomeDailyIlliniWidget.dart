@@ -42,7 +42,7 @@ class HomeDailyIlliniWidget extends StatefulWidget {
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
       HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position, title: title);
 
-  static String get title => Localization().getStringEx('widget.home.daily_illini.header.label', 'Daily Illini');
+  static String get title => Localization().getStringEx('widget.home.daily_illini.header.label', 'The Daily Illini');
 
   @override
   _HomeDailyIlliniWidgetState createState() => _HomeDailyIlliniWidgetState();
