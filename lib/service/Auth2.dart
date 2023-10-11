@@ -15,6 +15,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart' as rokwire;
 import 'package:rokwire_plugin/service/content.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -117,6 +118,7 @@ class Auth2 extends rokwire.Auth2 {
     }
     else if (state == AppLifecycleState.resumed) {
       //TMP: _convertFile('student.guide.import.json', 'Illinois_Student_Guide_Final.json');
+      //Log.d("UIUC Token: ${JsonUtils.encode(_uiucToken?.toJson())}", lineLength: 512);
 
       _refreshAuthCardIfNeeded();
 
@@ -148,7 +150,7 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   @override
-  Future<void> applyLogin(Auth2Account account, Auth2Token token, { Map<String, dynamic>? params }) async {
+  Future<void> applyLogin(Auth2Account account, Auth2Token token, { Auth2AccountScope? scope, Map<String, dynamic>? params }) async {
 
     Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
     Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
@@ -163,7 +165,7 @@ class Auth2 extends rokwire.Auth2 {
       await _loadAuthPictureFromNet(accountId: account.id, token: token) : null;
     await _saveAuthPictureToCache(_authPicture);
 
-    await super.applyLogin(account, token, params: params);
+    await super.applyLogin(account, token, scope: scope, params: params);
     
     NotificationService().notify(notifyCardChanged);
     NotificationService().notify(notifyPictureChanged);
@@ -289,6 +291,7 @@ class Auth2 extends rokwire.Auth2 {
     if ((authCard != null) && (authCard != _authCard)) {
       _authCard = authCard;
       await _saveAuthCardStringToCache(authCardString);
+      Log.d('Auth Card Refreshed');
       NotificationService().notify(notifyCardChanged);
     }
     return authCard;
@@ -348,7 +351,7 @@ class Auth2 extends rokwire.Auth2 {
 
   Future<Uint8List?> _refreshAuthPicture() async {
     Uint8List? authPicture = StringUtils.isNotEmpty(Auth2().account?.id) ? await Content().loadUserProfileImage(UserProfileImageType.small, accountId: Auth2().account?.id) : null;
-    if ((authPicture != null) && (authPicture != _authPicture)) {
+    if (authPicture != _authPicture) {
       _authPicture = authPicture;
       await _saveAuthPictureToCache(authPicture);
       NotificationService().notify(notifyPictureChanged);

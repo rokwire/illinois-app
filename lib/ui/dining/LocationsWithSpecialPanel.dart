@@ -83,7 +83,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx("panel.food_special_offers.title.text", "Specials"),
+        title: Localization().getStringEx("panel.food_special_offers.title.text", "Dining News"),
         //textStyle: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16 ),
       ),
       body: Column(
@@ -125,7 +125,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
                 Container(height: 16,),
                 HtmlWidget(
                     StringUtils.ensureNotEmpty(widget.special!.text),
-                    textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                    textStyle: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
                 ),
                 // Html(
                 //   data: widget.special!.text ?? "",
@@ -145,11 +145,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
                 Text(_hasLocations
                     ? Localization().getStringEx("panel.food_special_offers.available.text", "Available at these locations")
                     : Localization().getStringEx("panel.food_special_offers.not_available.text", "No available locations"),
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies!.extraBold,
-                      fontSize: 16,
-                      color: Styles().colors!.textBackground
-                  ),
+                  style: Styles().textStyles?.getTextStyle("widget.item.regular.extra_fat")
                 ),
                 Container(height: 16,),
               ],

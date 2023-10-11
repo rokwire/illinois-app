@@ -111,8 +111,6 @@ class Canvas with Service implements NotificationsListener {
 
   // Accessories
 
-  List<CanvasCourse>? get courses => _courses;
-
   bool get _isAvailable => ((_useCanvasApi && _isCanvasAvailable) || _isLmsAvailable);
   
   bool get _isLmsAvailable => StringUtils.isNotEmpty(Config().lmsUrl);
@@ -128,6 +126,40 @@ class Canvas with Service implements NotificationsListener {
   Map<String, String>? get _canvasAuthHeaders => _isCanvasAvailable
       ? {HttpHeaders.authorizationHeader: "${Config().canvasTokenType} ${Config().canvasToken}"}
       : null;
+
+  List<int>? get _medicineCoursesAccountIds => Config().canvasMedicineCoursesAccountIds;
+
+  List<CanvasCourse>? get courses => _courses;
+
+  List<CanvasCourse>? get medicineCourses {
+    List<CanvasCourse>? medicineCourses;
+    if (CollectionUtils.isNotEmpty(courses) && CollectionUtils.isNotEmpty(_medicineCoursesAccountIds)) {
+      medicineCourses = <CanvasCourse>[];
+      for (CanvasCourse course in courses!) {
+        int? courseAccountId = course.accountId;
+        if ((courseAccountId != null) && _medicineCoursesAccountIds!.contains(courseAccountId)) {
+          medicineCourses.add(course);
+        }
+      }
+    }
+    return medicineCourses;
+  }
+
+  List<CanvasCourse>? get giesCourses {
+    List<CanvasCourse>? giesCourses;
+    if (CollectionUtils.isNotEmpty(courses)) {
+      giesCourses = <CanvasCourse>[];
+      for (CanvasCourse course in courses!) {
+        int? courseAccountId = course.accountId;
+        if ((courseAccountId == null) ||
+            CollectionUtils.isEmpty(_medicineCoursesAccountIds) ||
+            !_medicineCoursesAccountIds!.contains(courseAccountId)) {
+          giesCourses.add(course);
+        }
+      }
+    }
+    return giesCourses;
+  }
 
   // Courses
 
@@ -285,7 +317,7 @@ class Canvas with Service implements NotificationsListener {
     }
   }
 
-    // Files and Folders
+  // Files and Folders
 
   Future<List<CanvasFileSystemEntity>?> loadFileSystemEntities({int? courseId, int? folderId}) async {
     if (!_useCanvasApi) { // Load this entities only when we use canvas API directly from app

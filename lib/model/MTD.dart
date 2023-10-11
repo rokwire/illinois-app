@@ -315,34 +315,20 @@ class MTDStop with Explore implements Favorite {
     }
   }
 
-
-  // ExploreJsonHandler
-
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) &&
-      (json['stop_id'] != null) &&
-      (json['stop_name'] != null) &&
-      (json['code'] != null);
-  }
-
   bool get hasLocation => (latitude != null) && (longitude != null);
 
   // Explore implementation
 
   @override String? get exploreId => id;
-  @override String get exploreTitle => name ?? '';
-  @override String? get exploreSubTitle => code ?? '';
-  @override String? get exploreShortDescription => null;
-  @override String? get exploreLongDescription => null;
-  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreTitle => name;
+  @override String? get exploreDescription => null;
+  @override DateTime? get exploreDateTimeUtc => null;
   @override String? get exploreImageURL => null;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => ExploreLocation(
     building : name,
     latitude : latitude,
     longitude : longitude,
   );
-  @override String? get exploreLocationDescription => code;
 
   // Favorite implementation
   static const String favoriteKeyName = "mtdBusStopIds";

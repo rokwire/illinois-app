@@ -15,7 +15,6 @@
  */
 
 import 'dart:collection';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -24,23 +23,22 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
@@ -50,7 +48,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/events.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
@@ -58,12 +55,12 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 class SavedPanel extends StatefulWidget {
 
   static const List<String> allFavoriteCategories = <String>[
     Event.favoriteKeyName,
+    Event2.favoriteKeyName,
     Dining.favoriteKeyName,
     Game.favoriteKeyName,
     News.favoriteKeyName,
@@ -75,7 +72,7 @@ class SavedPanel extends StatefulWidget {
 
   final List<String> favoriteCategories;
 
-  SavedPanel({this.favoriteCategories : allFavoriteCategories});
+  SavedPanel({this.favoriteCategories = allFavoriteCategories});
 
   @override
   _SavedPanelState createState() => _SavedPanelState();
@@ -85,7 +82,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Map<String, List<Favorite>?> _favorites = <String, List<Favorite>>{};
   bool _loadingFavorites = false;
-  bool _showNotificationPermissionPrompt = false;
 
   @override
   void initState() {
@@ -93,13 +89,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
-      FlexUI.notifyChanged,
-      Assets.notifyChanged,
       Guide.notifyChanged,
       Appointments.notifyUpcomingAppointmentsChanged,
     ]);
     _refreshFavorites();
-    _requestPermissionsStatus();
     super.initState();
   }
 
@@ -122,13 +115,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     else if (name == Auth2.notifyLoginChanged) {
       _refreshFavorites(showProgress: false);
     }
-    else if (name == FlexUI.notifyChanged) {
-      _requestPermissionsStatus();
-      setStateIfMounted(() { });
-    }
-    else if (name == Assets.notifyChanged) {
-      _refreshFavorites(favoriteCategories: {Dining.favoriteKeyName}, showProgress: false);
-    }
     else if (name == Guide.notifyChanged) {
       _refreshFavorites(favoriteCategories: {GuideFavorite.favoriteKeyName}, showProgress: false);
     }
@@ -143,7 +129,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       appBar: HeaderBar(title: _headerBarTitle,),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(children: <Widget>[
-          _buildNotificationPermision(),
           Expanded(child:
             _buildContent(),
           ),
@@ -244,55 +229,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     );
   }
 
-  Widget _buildNotificationPermision() {
-    return (_showNotificationPermissionPrompt) ? Padding(padding: const EdgeInsets.all(0), child:
-      Container(color: Styles().colors?.fillColorPrimary, child:
-        Column(children: <Widget>[
-          Row(children: <Widget>[
-            Expanded(child:
-              Padding(padding: EdgeInsets.all(16), child:
-                Text(Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."), style: Styles().textStyles?.getTextStyle("widget.title.light.regular.thin"),)
-              ),
-            ),
-            InkWell(onTap: _onAuthorizeSkip, child: 
-              Padding(padding: EdgeInsets.only(right: 16), child:
-                Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))
-              )
-          ],),
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-            ToggleRibbonButton(label: Localization().getStringEx("panel.saved.notifications.enable.label", "Enable notifications"), toggled: false, borderRadius: BorderRadius.all(Radius.circular(4)), onTap: _onAuthorize,),
-          ),
-        ]
-      )),
-    ) : Container();
-  }
-
-  Widget _buildNotificationPermissionPrompt(BuildContext context, firebase.AuthorizationStatus permissionStatus) {
-    String? message;
-    if (permissionStatus == firebase.AuthorizationStatus.authorized) {
-      message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
-    }
-    else if (permissionStatus == firebase.AuthorizationStatus.denied) {
-      message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
-    }
-    return Dialog(child:
-      Padding(padding: EdgeInsets.all(18), child:
-        Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx('app.title', 'Illinois'), style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.large"), ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 26), child:
-              Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular"),),
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-                TextButton(onPressed: _onAuthorizeOK, child:
-                  Text(Localization().getStringEx('dialog.ok.title', 'OK')))
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   // Content
 
   void _refreshFavorites({Set<String>? favoriteCategories, bool showProgress = true}) {
@@ -338,6 +274,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Future<List<Favorite>?> Function(LinkedHashSet<String>?) _favoriteCategoryLoader(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName: return _loadFavoriteEvents;
+      case Event2.favoriteKeyName: return _loadFavoriteEvents2;
       case Dining.favoriteKeyName: return _loadFavoriteDinings;
       case Game.favoriteKeyName: return _loadFavoriteGames;
       case News.favoriteKeyName: return _loadFavoriteNews;
@@ -354,6 +291,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Future<List<Favorite>?> _loadFavoriteEvents(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events().loadEventsByIds(favoriteIds), favoriteIds) : null;
+
+  Future<List<Favorite>?> _loadFavoriteEvents2(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Events2().loadEventsByIds(eventIds: favoriteIds?.toList()), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteDinings(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Dinings().loadBackendDinings(false, null, null), favoriteIds) : null;
@@ -437,6 +377,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   String? _favoriteCategoryTitle(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName:         return Localization().getStringEx('panel.saved.label.events', 'My Events');
+      case Event2.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.events2', 'My Events');
       case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining Locations");
       case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
       case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
@@ -452,6 +393,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   String? _favoriteCategoryIconKey(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName:         return 'events';
+      case Event2.favoriteKeyName:        return 'events';
       case Dining.favoriteKeyName:        return 'dining';
       case Game.favoriteKeyName:          return 'athletics';
       case News.favoriteKeyName:          return 'news';
@@ -472,20 +414,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return (favoritesCount == 0);
   }
 
-  void _requestPermissionsStatus() {
-    if (FlexUI().isNotificationsAvailable) {
-      firebase.FirebaseMessaging.instance.getNotificationSettings().then((settings) {
-        firebase.AuthorizationStatus status = settings.authorizationStatus;
-        // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
-        if ((Platform.isAndroid && (status == firebase.AuthorizationStatus.denied)) ||
-            (Platform.isIOS && (status == firebase.AuthorizationStatus.notDetermined))) {
-          setStateIfMounted(() {
-            _showNotificationPermissionPrompt = true;
-          });
-        }
-      });
-    }
-  }
   // Handlers
 
   Future<void>_onPullToRefresh() async {
@@ -493,45 +421,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (mounted) {
       setState(() {
         _favorites = favorites;
-      });
-    }
-  }
-
-  void _onAuthorizeOK() {
-      Analytics().logAlert(text:"Already have access", selection: "Ok");
-      Navigator.pop(context);
-      setState(() {
-        _showNotificationPermissionPrompt = false;
-      });
-  }
-
-
-  void _onAuthorize() {
-    _requestAuthorization();
-  }
-
-  void _onAuthorizeSkip(){
-    setState(() {
-      _showNotificationPermissionPrompt = false;
-    });
-  }
-
-  void _requestAuthorization() async {
-    firebase.FirebaseMessaging messagingInstance = firebase.FirebaseMessaging.instance;
-    firebase.NotificationSettings settings = await messagingInstance.getNotificationSettings();
-    firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;
-    // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
-    if ((Platform.isAndroid && (authorizationStatus != firebase.AuthorizationStatus.denied)) ||
-        (Platform.isIOS && (authorizationStatus != firebase.AuthorizationStatus.notDetermined))) {
-      showDialog(context: context, builder: (context) => _buildNotificationPermissionPrompt(context, authorizationStatus));
-    } else {
-      firebase.NotificationSettings requestSettings = await messagingInstance.requestPermission(
-          alert: true, announcement: false, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
-      if (requestSettings.authorizationStatus == firebase.AuthorizationStatus.authorized) {
-        Analytics().updateNotificationServices();
-      }
-      setStateIfMounted(() {
-        _showNotificationPermissionPrompt = false;
       });
     }
   }

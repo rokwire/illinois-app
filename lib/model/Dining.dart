@@ -35,13 +35,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Dining with Explore implements Favorite {
   String? id;
   String? title;
-  String? subTitle;
   String? diningType;
-  String? shortDescription;
-  String? longDescription;
+  String? description;
   String? imageURL;
   Map<String, dynamic>? onlineOrder;
-  String? placeID;
 
   ExploreLocation? location;
   List<PaymentType>? paymentTypes;
@@ -50,13 +47,10 @@ class Dining with Explore implements Favorite {
   Dining(
       {this.id,
       this.title,
-      this.subTitle,
       this.diningType,
-      this.shortDescription,
-      this.longDescription,
+      this.description,
       this.imageURL,
       this.onlineOrder,
-      this.placeID,
       this.location,
       this.paymentTypes,
       this.diningSchedules});
@@ -87,8 +81,7 @@ class Dining with Explore implements Favorite {
         id: id,
         title: json['DiningOptionName'],
         diningType: json['Type'],
-        shortDescription: json['MoreInfo'],
-        longDescription: json['MoreInfo'],
+        description: json['MoreInfo'],
         imageURL: json['ImageUrl'],
         onlineOrder: json['OnLineOrder'],
         location: ExploreLocation(
@@ -101,24 +94,16 @@ class Dining with Explore implements Favorite {
     );
   }
 
-  @override
   Map<String, dynamic> toJson() {
     return {
       // Explore
-      'id': id,
-      'title': title,
-      'shortDescription': shortDescription,
-      'longDescription': longDescription,
-      'imageURL': imageURL,
-      'placeID': placeID,
       'location': location?.toJson(),
 
       // Dining Location
       'DiningOptionID': id,
       'DiningOptionName': title,
-      'subTitle': subTitle,
       'Type': diningType,
-      'MoreInfo': shortDescription,
+      'MoreInfo': description,
       'ImageUrl': imageURL,
       'OnLineOrder': onlineOrder,
       'Address': location!.description,
@@ -133,13 +118,10 @@ class Dining with Explore implements Favorite {
     (other is Dining) &&
       (other.id == id) &&
       (other.title == title) &&
-      (other.subTitle == subTitle) &&
       (other.diningType == diningType) &&
-      (other.shortDescription == shortDescription) &&
-      (other.longDescription == longDescription) &&
+      (other.description == description) &&
       (other.imageURL == imageURL) &&
       (DeepCollectionEquality().equals(other.onlineOrder, onlineOrder)) &&
-      (other.placeID == placeID) &&
       (other.location == location) &&
       (DeepCollectionEquality().equals(other.paymentTypes, paymentTypes)) &&
       (DeepCollectionEquality().equals(other.diningSchedules, diningSchedules));
@@ -148,36 +130,26 @@ class Dining with Explore implements Favorite {
   int get hashCode =>
       (id?.hashCode ?? 0) ^
       (title?.hashCode ?? 0) ^
-      (subTitle?.hashCode ?? 0) ^
       (diningType?.hashCode ?? 0) ^
-      (shortDescription?.hashCode ?? 0) ^
-      (longDescription?.hashCode ?? 0) ^
+      (description?.hashCode ?? 0) ^
       (imageURL?.hashCode ?? 0) ^
       (DeepCollectionEquality().hash(onlineOrder)) ^
-      (placeID?.hashCode ?? 0) ^
       (location?.hashCode ?? 0) ^
       (DeepCollectionEquality().hash(paymentTypes)) ^
       (DeepCollectionEquality().hash(diningSchedules));
 
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) && (json['DiningOptionID'] != null);
-  }
-
   // Explore
   @override String?   get exploreId               { return id; }
   @override String?   get exploreTitle            { return title; }
-  @override String?   get exploreSubTitle         { return subTitle; }
-  @override String?   get exploreShortDescription { return shortDescription; }
-  @override String?   get exploreLongDescription  { return longDescription; }
-  @override DateTime? get exploreStartDateUtc     { return null; }
+  @override String?   get exploreDescription      { return description; }
+  @override DateTime? get exploreDateTimeUtc      { return null; }
   @override String?   get exploreImageURL         { return imageURL; }
-  @override String?   get explorePlaceId          { return null; }
   @override ExploreLocation? get exploreLocation  { return location; }
 
   // Favorite
   static const String favoriteKeyName = "diningPlaceIds";
   @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => exploreId;
+  @override String? get favoriteId => id;
 
   String? get displayWorkTime {
     if(diningSchedules != null && diningSchedules!.isNotEmpty) {

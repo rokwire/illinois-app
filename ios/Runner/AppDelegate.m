@@ -21,6 +21,7 @@
 #import "AppDelegate.h"
 #import "GeneratedPluginRegistrant.h"
 #import "AppKeys.h"
+#import "MobileAccessPlugin.h"
 #import "FlutterCompletion.h"
 
 #import "NSArray+InaTypedValue.h"
@@ -91,7 +92,10 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	
 	// Initialize Flutter plugins
 	[GeneratedPluginRegistrant registerWithRegistry:self];
-
+    
+	// Setup MobileAccessPlugin
+	[MobileAccessPlugin registerWithRegistrar:[self registrarForPlugin:@"MobileAccessPlugin"]];
+	
 	// Setup supported & preffered orientation
 	_preferredInterfaceOrientation = UIInterfaceOrientationPortrait;
 	_supportedInterfaceOrientations = [NSSet setWithObject:@(_preferredInterfaceOrientation)];
@@ -243,6 +247,12 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSString *googleMapsAPIKey = [self.secretKeys uiucConfigStringForPathKey:@"google.maps.api_key"];
 	if (0 < googleMapsAPIKey.length) {
 		[GMSServices provideAPIKey:googleMapsAPIKey];
+	}
+
+	// Initialize Орiго SDK
+	NSString *origoAppId = [self.secretKeys uiucConfigStringForPathKey:@"origo.app_id"];
+	if (0 < origoAppId.length) {
+		MobileAccessPlugin.sharedInstance.origoAppId = origoAppId;
 	}
 
 	result(@(YES));

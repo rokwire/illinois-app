@@ -100,10 +100,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
             _nutritionItem == null ? Container(
               child: Center(
                 child: Text(Localization().getStringEx("panel.food_details.label.nutrition_fatcts_not_available.title", "Nutrition information not available"),
-                  style: TextStyle(
-                      color: Styles().colors!.fillColorPrimary,
-                      fontSize: 14,
-                      fontFamily: Styles().fontFamilies!.medium),
+                  style: Styles().textStyles?.getTextStyle("widget.message.small.semi_fat"),
                 ),
               ),
             ):
@@ -128,11 +125,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                         Text(
                           Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS"),
                           textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.bold,
-                              color: Colors.white,
-                              fontSize: 14,
-                              letterSpacing: 1.0),
+                          style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced"),
                         ),
                       )
                     ],
@@ -203,11 +196,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                   child:Text(
                     Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS"),
                     textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        color: Colors.white,
-                        fontSize: 14,
-                        letterSpacing: 1.0),
+                    style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced")
                   ),
                 ),
               ],
@@ -254,11 +243,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                 Text(
                   Localization().getStringEx("panel.food_details.label.dietary_preferences.title", "DIETARY PREFERENCES"),
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies!.bold,
-                      color: Colors.white,
-                      fontSize: 14,
-                      letterSpacing: 1.0),
+                  style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat.spaced")
                 ),),
               ],
             ),
@@ -322,10 +307,7 @@ class _FactItem extends StatelessWidget {
                 child: Text(
                   StringUtils.isNotEmpty(label) ? label! : "",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      color: Styles().colors!.fillColorPrimary,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.bold),
+                  style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
                 ),
               ),
               Expanded(
@@ -333,10 +315,7 @@ class _FactItem extends StatelessWidget {
                 child: Text(
                 StringUtils.isNotEmpty(value) ? value! : "",
                 textAlign: TextAlign.right,
-                style: TextStyle(
-                    color: Styles().colors!.mediumGray,
-                    fontSize: 14,
-                    fontFamily: Styles().fontFamilies!.medium),
+                style: Styles().textStyles?.getTextStyle("widget.detail.light.small"),
               )),
             ],
           ),
@@ -374,10 +353,7 @@ class _IngredientItem extends StatelessWidget {
             children: <Widget>[
               Text(
                 StringUtils.isNotEmpty(label) ? label! : "",
-                style: TextStyle(
-                    color: Styles().colors!.fillColorPrimary,
-                    fontSize: 16,
-                    fontFamily: Styles().fontFamilies!.medium),
+                style: Styles().textStyles?.getTextStyle("widget.detail.medium"),
               ),
             ],
           ),

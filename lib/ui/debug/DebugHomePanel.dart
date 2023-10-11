@@ -20,18 +20,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/ui/debug/mobile_access/DebugMobileAccessHomePanel.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -43,6 +46,7 @@ import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/panels/survey_creation_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
@@ -61,6 +65,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   rokwire.ConfigEnvironment? _selectedEnv;
   Set<String> _rangingRegionIds = Set();
   bool _preparingRatingApp = false;
+
+  List<Survey>? _userSurveys;
 
   final TextEditingController _mapThresholdDistanceController = TextEditingController();
   final TextEditingController _geoFenceRegionRadiusController = TextEditingController();
@@ -86,6 +92,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     _selectedEnv = Config().configEnvironment;
 
     _updateRangingRegions();
+    _loadUserSurveys();
     super.initState();
   }
 
@@ -167,7 +174,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                 ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
                 ToggleRibbonButton(label: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
                 ToggleRibbonButton(label: 'Canvas LMS', toggled: (Storage().debugUseCanvasLms == true), onTap: _onUseCanvasLms),
-                    
+                ToggleRibbonButton(label: 'Sample Appointments', toggled: (Storage().debugUseSampleAppointments == true), onTap: _onUseSampleAppointments),
+                ToggleRibbonButton(label: 'Mobile icard - Use Identity BB', toggled: (Storage().debugUseIdentityBb == true), onTap: _onUseIdentityBb),
+                ToggleRibbonButton(label: 'Mobile icard - Automatic Credentials', toggled: (Storage().debugAutomaticCredentials == true), onTap: _onAutomaticCredentials),
+
                 Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
                 Container(color: Colors.white, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 16), child:
@@ -219,6 +229,13 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     )
                   ],),
                 ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+
+                Visibility(
+                  visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                  child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child: _buildSurveyCreation()),
+                ),
                 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
                 
@@ -263,6 +280,16 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       onTap: _clearLastAppReview,
                     ),
                   ],)
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  RoundedButton(
+                    label: "Clear Account Prefs",
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorPrimary,
+                    onTap: _onTapClearAccountPrefs
+                  )
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                   RoundedButton(
@@ -433,6 +460,19 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
 
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                    RoundedButton(
+                      label: 'Mobile Access Keys',
+                      backgroundColor: Styles().colors!.background,
+                      fontSize: 16.0,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapMobileAccessKeys
+                    )
+                  ),
+
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Container(height: 1, color: Styles().colors?.surfaceAccent ,),),
+
                 Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
                     RoundedButton(
@@ -465,6 +505,43 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     );
   }
 
+  Widget _buildSurveyCreation() {
+    List<Widget> userSurveyEntries = [];
+    for (Survey survey in _userSurveys ?? []) {
+      userSurveyEntries.add(Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Row(children: [
+          Expanded(flex: 2, child: Text(survey.title)),
+          Expanded(child: RoundedButton(
+            label: 'Edit',
+            backgroundColor: Styles().colors!.background,
+            textColor: Styles().colors!.fillColorPrimary,
+            fontFamily: Styles().fontFamilies!.bold,
+            fontSize: 16,
+            padding: EdgeInsets.all(8),
+            borderColor: Styles().colors!.fillColorPrimary,
+            borderWidth: 2,
+            onTap: () => _onTapCreateSurvey(survey: survey),
+          )),
+        ],),
+      ));
+    }
+    return Column(children: [
+      ...userSurveyEntries,
+      Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
+        label: 'Create New Survey',
+        backgroundColor: Styles().colors!.background,
+        textColor: Styles().colors!.fillColorPrimary,
+        fontFamily: Styles().fontFamilies!.bold,
+        fontSize: 16,
+        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+        borderColor: Styles().colors!.fillColorPrimary,
+        borderWidth: 2,
+        onTap: _onTapCreateSurvey,
+      )),
+    ]);
+  }
+
   // NotificationsListener
 
   @override
@@ -485,6 +562,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   // Helpers
+
+  void _loadUserSurveys() async {
+    if (Auth2().isLoggedIn) {
+      Surveys().loadCreatorSurveys().then((surveyList) {
+        if (mounted) {
+          setState(() {
+            _userSurveys = surveyList;
+          });
+        }
+      });
+    }
+  }
 
   String? _validateThresoldDistance(String? value) {
     return (int.tryParse(value!) == null) ? 'Please enter a number.' : null;
@@ -628,10 +717,33 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     });
   }
 
+  void _onUseSampleAppointments() {
+    setState(() {
+      Storage().debugUseSampleAppointments = (Storage().debugUseSampleAppointments != true);
+    });
+  }
+
+  void _onUseIdentityBb() {
+    setState(() {
+      Storage().debugUseIdentityBb = (Storage().debugUseIdentityBb != true);
+    });
+  }
+
+  void _onAutomaticCredentials() {
+    setState(() {
+      Storage().debugAutomaticCredentials = (Storage().debugAutomaticCredentials != true);
+    });
+  }
+
   void _onUseDeviceLocalTimeZoneToggled() {
     setState(() {
       Storage().useDeviceLocalTimeZone = !Storage().useDeviceLocalTimeZone!;
     });
+  }
+
+  void _onTapClearAccountPrefs() {
+    Auth2().prefs?.clear(notify: true);
+    AppAlert.showDialogResult(context, 'Successfully cleared user account prefs.');
   }
 
   void _onTapClearVoting() {
@@ -654,6 +766,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onCreateEventClicked() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
+  }
+
+  void _onTapCreateSurvey({Survey? survey}) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyCreationPanel(survey: survey, tabBar: uiuc.TabBar())));
   }
 
   void _onCreateInboxMessageClicked() {
@@ -742,7 +858,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _copyToClipboard(String? textContent){
-    Clipboard.setData(ClipboardData(text: textContent)).then((_){
+    Clipboard.setData(ClipboardData(text: textContent ?? '')).then((_){
       AppToast.show("Text data has been copied to the clipboard!");
     });
   }
@@ -802,6 +918,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapReviewApp() {
     InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
+  }
+
+  void _onTapMobileAccessKeys() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugMobileAccessHomePanel()));
   }
 
   void _onTapHttpProxy() {

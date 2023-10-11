@@ -30,7 +30,8 @@ class HomeCustomizeFavoritesPanel extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeCustomizeFavoritesPanelState();
 
   static Future<void> present(BuildContext context) {
-    MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    //MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
     double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
     return showModalBottomSheet<void>(
       context: context,
@@ -61,7 +62,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
 
   @override
   void initState() {
-    _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
+    _availableCodes = _buildAvailableCodes();
 
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
@@ -161,7 +162,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
       List<Map<String, dynamic>> unusedList = <Map<String, dynamic>>[];
 
       for (String code in fullContent) {
-        if (!(homeFavorites?.contains(code) ?? false)) {
+        if ((_availableCodes?.contains(code) ?? false) && !(homeFavorites?.contains(code) ?? false)) {
           dynamic title = HomePanel.dataFromCode(code, title: true);
           if (title is String) {
             unusedList.add({'title' : title, 'code': code});
@@ -322,9 +323,27 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
     }
   }
 
+  Set<String> _buildAvailableCodes() {
+    Set<String> availableCodes = <String>{};
+    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
+    if (fullContent != null) {
+      for (String code in fullContent) {
+        if (_isCodeAvailable(code)) {
+          availableCodes.add(code);
+        }
+      }
+    }
+    return availableCodes;
+  }
+
+  bool _isCodeAvailable(String code) {
+    dynamic codeContent = FlexUI()['home.$code'];
+    return !(codeContent is Iterable) || (0 < codeContent.length);
+  }
+
   void _updateAvailableCodes() {
-    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
+    Set<String> availableCodes = _buildAvailableCodes();
+    if (!DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
       setState(() {
         _availableCodes = availableCodes;
       });
@@ -431,10 +450,10 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
 
   void _setFavorite({required String code, required bool value}) {
     HomeFavorite favorite = HomeFavorite(code);
-    List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite.id}']);
-    if (avalableSectionFavorites != null) {
+    List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite.id}']);
+    if (availableSectionFavorites != null) {
       List<Favorite> favorites = <Favorite>[favorite];
-      for (String sectionEntry in avalableSectionFavorites) {
+      for (String sectionEntry in availableSectionFavorites) {
         favorites.add(HomeFavorite(sectionEntry, category: favorite.id));
       }
       Auth2().prefs?.setListFavorite(favorites, value);
@@ -606,9 +625,9 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   }
 
   void _setSectionFavorites(String favoriteId, bool value) {
-      List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.$favoriteId']);            
-      if (avalableSectionFavorites != null) {
-        Iterable<Favorite> favorites = avalableSectionFavorites.map((e) => HomeFavorite(e, category: favoriteId));
+      List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.$favoriteId']);            
+      if (availableSectionFavorites != null) {
+        Iterable<Favorite> favorites = availableSectionFavorites.map((e) => HomeFavorite(e, category: favoriteId));
         Auth2().prefs?.setListFavorite(favorites, value);
       }
   }

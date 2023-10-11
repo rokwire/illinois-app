@@ -111,6 +111,16 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     Color? leadingOvalColor,
     String? leadingIconKey = defaultLeadingIconKey,
     void Function()? onLeading,
+
+    Widget? titleWidget,
+    String? title,
+    TextStyle? textStyle,
+    Color? textColor,
+    String? fontFamily,
+    double? fontSize = 16.0,
+    double? letterSpacing = 1.0,
+    int? maxLines,
+    TextAlign? textAlign,
   }) : super(
     pinned: pinned,
     floating: floating,
@@ -134,6 +144,16 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     leadingOvalColor: leadingOvalColor ?? Styles().colors?.fillColorPrimary,
     leadingIconKey: leadingIconKey,
     onLeading: onLeading,
+
+    titleWidget: titleWidget,
+    title: title,
+    textStyle: textStyle,
+    textColor: textColor ?? Styles().colors?.white,
+    fontFamily: fontFamily ?? Styles().fontFamilies?.extraBold,
+    fontSize: fontSize,
+    letterSpacing: letterSpacing,
+    maxLines: maxLines,
+    textAlign: textAlign,
   );
 
   @override
@@ -169,7 +189,6 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     double? letterSpacing = 1.0,
     int? maxLines,
     TextAlign? textAlign,
-    bool? centerTitle = false,
 
     List<Widget>? actions,
   }) : super(key: key,
@@ -194,7 +213,6 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     letterSpacing: letterSpacing,
     maxLines: maxLines,
     textAlign: textAlign,
-    centerTitle: centerTitle,
 
     actions: actions,
   );
@@ -368,11 +386,11 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Styles().images?.getImage('images/notifications-white.png', excludeFromSemantics: true) ?? Container(), onPressed: () => _onTapNotifications())
       InkWell(onTap: () => _onTapNotifications(), child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 2), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 2), child:
           Stack(alignment: Alignment.topRight, children: [
-            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Styles().images?.getImage('notification-white', excludeFromSemantics: true,))),
+            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images?.getImage('notification-white', excludeFromSemantics: true,))),
             Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child:
-              Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child: 
+              Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child:
                 Text(unreadMsgsCount.toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.tiny")))))
           ])
         )

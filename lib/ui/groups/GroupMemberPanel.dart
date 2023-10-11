@@ -107,7 +107,10 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
   Future<void> _removeMembership() async{
     bool success = await Groups().deleteMembership(_group, widget.memberId);
     if(!success){
-      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"), [_member?.displayShortName ?? ""]);
+      throw sprintf( _isResearchProject?
+          Localization().getStringEx("panel.member_detail.label.error.project.format", "Unable to remove %s from this project") :
+          Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"),
+        [_member?.displayShortName ?? ""]);
     }
   }
 
@@ -161,12 +164,11 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(_member?.displayShortName ?? "",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
               ),
               Container(height: 6,),
               Text(dateDescriptionMsg,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),
+                style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
               )
             ],
           ),
@@ -203,11 +205,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
               ),
               Container(height: 8,),
               Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events."),
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.regular,
-                    fontSize: 16,
-                    color: Styles().colors!.textBackground
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
               ),
             ]
           ),
@@ -220,11 +218,11 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
 
   Widget _buildRemoveFromGroup() {
     return
-        RoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
+        RoundedButton(label: _isResearchProject?
+            Localization().getStringEx("panel.member_detail.button.remove.title.project", "Remove from Project") :
+            Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
           backgroundColor: Styles().colors!.white,
-          textColor: Styles().colors!.fillColorPrimary,
-          fontFamily: Styles().fontFamilies!.bold,
-          fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
           borderColor: Styles().colors!.fillColorPrimary,
           borderWidth: 2,
@@ -248,9 +246,12 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 26),
                   child: Text(
-                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),[_member?.displayName]),
+                    sprintf(_isResearchProject?
+                      Localization().getStringEx("panel.member_detail.label.confirm_remove.project.format", "Remove %s From this project?"):
+                      Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),
+                    [_member?.displayName]),
                     textAlign: TextAlign.left,
-                    style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white),
+                    style: Styles().textStyles?.getTextStyle("widget.dialog.message.medium")
                   ),
                 ),
                 Row(
@@ -258,8 +259,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                   children: <Widget>[
                     RoundedButton(
                       label: Localization().getStringEx("panel.member_detail.button.back.title", "Back"),
-                      fontFamily: "ProximaNovaRegular",
-                      textColor: Styles().colors!.fillColorPrimary,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.thin"),
                       borderColor: Styles().colors!.white,
                       backgroundColor: Styles().colors!.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -272,8 +272,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                     Container(width: 16,),
                         RoundedButton(
                           label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
-                          fontFamily: "ProximaNovaBold",
-                          textColor: Styles().colors!.fillColorPrimary,
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                           borderColor: Styles().colors!.white,
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -329,5 +328,9 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
 
   bool get _isLoading {
     return (_progressLoading > 0);
+  }
+
+  bool get _isResearchProject {
+    return _group?.isResearchProject ?? false;
   }
 }

@@ -44,7 +44,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
     return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(building.name ?? "", style: TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary, letterSpacing: 1),),
+          Text(building.name ?? "", style: Styles().textStyles?.getTextStyle("widget.title.extra_large.spaced")),
         ),
       ],),
     );
@@ -60,10 +60,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
               Styles().images?.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
-              Text(building.fullAddress ?? '', style:
-                TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16,
-                  decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
-                ),
+              Text(building.fullAddress ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
               ),
             )
           ],),

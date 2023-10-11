@@ -9,6 +9,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -24,7 +25,28 @@ class HomeLoginWidget extends StatefulWidget {
   _HomeLoginWidgetState createState() => _HomeLoginWidgetState();
 }
 
-class _HomeLoginWidgetState extends State<HomeLoginWidget> {
+class _HomeLoginWidgetState extends State<HomeLoginWidget> implements NotificationsListener {
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+    ]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2.notifyLoginChanged) {
+      setStateIfMounted(() { });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +127,9 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
           Semantics(explicitChildNodes: true, child: RoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Sign In with your NetID"),
             hint: '',
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
             borderColor: Styles().colors!.fillColorSecondary,
             backgroundColor: Styles().colors!.surface,
-            textColor: Styles().colors!.fillColorPrimary,
             progress: (_authLoading == true),
             onTap: ()=> _onTapConnectNetIdClicked(context),
           )),
@@ -161,9 +183,9 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
             Semantics(explicitChildNodes: true, child: RoundedButton(
               label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
               hint: '',
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.surface,
-              textColor: Styles().colors!.fillColorPrimary,
               onTap: ()=> _onTapPhoneOrEmailClicked(context),
             )),
             ),

@@ -75,9 +75,9 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
       Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign Up with Email') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign In with Email');
 
-    String? headingTitle; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add Your Email Address') : null;
+    // String? headingTitle; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add Your Email Address') : null;
 
-    String? heading; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) : null;
+    // String? heading; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) : null;
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
       (widget.link == true) ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :
@@ -112,15 +112,15 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
             Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
                 
-                (heading != null) ? 
-                  Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
-                      Text(heading, style:  Styles().textStyles?.getTextStyle("widget.title.medium"),)
-                  ),)],) : Container(),
+                // (heading != null) ?
+                //   Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
+                //       Text(heading, style:  Styles().textStyles?.getTextStyle("widget.title.medium"),)
+                //   ),)],) : Container(),
 
-                (headingTitle != null) ? 
-                  Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
-                    Text(headingTitle, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.settings.login.title.large"),)
-                  ),)],) : Container(),
+                // (headingTitle != null) ?
+                //   Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
+                //     Text(headingTitle, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.settings.login.title.large"),)
+                //   ),)],) : Container(),
 
                 Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
                   Text(description, style: Styles().textStyles?.getTextStyle("widget.title.medium"))
@@ -226,7 +226,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                           Row(mainAxisSize: MainAxisSize.min, children: [
                             Styles().images?.getImage(_isShowingPassword ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                             Container(width: 6),
-                            Text(showPassword, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),),
+                            Text(showPassword, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),),
                           ],)
                         ),
                       ),
@@ -240,8 +240,8 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                           Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
                             //Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
                               (_state == Auth2EmailAccountState.unverified)  ?
-                                Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.settings.login.button.underline")) :
-                                Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.settings.login.button.underline")),
+                                Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline")) :
+                                Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.underline")),
                             //],)
                           ),
                         ),
@@ -261,9 +261,9 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                 Padding(padding: EdgeInsets.only(bottom: 8), child: RoundedButton(
                   label:  buttonTitle,
                   hint: buttonHint,
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapLogin,
                   backgroundColor: Styles().colors?.white,
-                  textColor: Styles().colors?.fillColorPrimary,
                   borderColor: Styles().colors?.fillColorSecondary,
                   progress: _isSiging,
                 ),),
@@ -272,9 +272,9 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                   Padding(padding: EdgeInsets.only(bottom: 8), child: RoundedButton(
                     label:  Localization().getStringEx("panel.onboarding2.email.button.link.cancel.label", "Cancel"),
                     hint: Localization().getStringEx("panel.onboarding2.email.button.link.cancel.hint", ""),
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                     onTap: _onTapCancel,
                     backgroundColor: Styles().colors?.white,
-                    textColor: Styles().colors?.fillColorPrimary,
                     borderColor: Styles().colors?.fillColorSecondary,
                     progress: _isCanceling,
                   ),),

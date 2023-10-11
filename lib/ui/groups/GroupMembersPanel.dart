@@ -275,12 +275,13 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
 
     return Column(children: <Widget>[
-      SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
-      _buildMembersSearch(),
+        SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
+        _buildMembersSearch(),
+        _buildDateUpdatedFields(),
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
             RibbonButton(
-              textColor: Styles().colors!.fillColorSecondary,
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
               backgroundColor: Styles().colors!.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -359,6 +360,28 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ),
       ),
     );
+  }
+
+  Widget _buildDateUpdatedFields() {
+    if (!_isAdmin) {
+      return Container();
+    }
+    bool showSynced = _group?.authManEnabled == true && StringUtils.isNotEmpty(_group?.displayManagedMembershipUpdateTime);
+    bool showUpdated = StringUtils.isNotEmpty(_group?.displayMembershipUpdateTime);
+
+    return Visibility(visible: showSynced || showUpdated,
+      child: Container(child: Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+        Visibility(visible: showSynced,
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Last sync:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
+            Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+        ])),
+        Visibility(visible: showUpdated,
+          child: Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Last updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
+            Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+        ])))
+    ]))));
   }
 
   Future<void> _onPullToRefresh() async {
@@ -496,45 +519,45 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   String _getSectionHeading() {
     switch (_selectedMemberStatus) {
       case GroupMemberStatus.admin:
-        return _isResearchProject ? "Principle Investigators" : Localization().getStringEx("panel.manage_members.label.admins", "Admins");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.admins", "Principal Investigators") : Localization().getStringEx("panel.manage_members.label.admins", "Admins");
       case GroupMemberStatus.member:
-        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
       case GroupMemberStatus.pending:
-        return _isResearchProject ? "Requests" : Localization().getStringEx("panel.manage_members.label.requests", "Requests");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.requests", "Requests") : Localization().getStringEx("panel.manage_members.label.requests", "Requests");
       case GroupMemberStatus.rejected:
-        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
       default: // All
-        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? Localization().getStringEx("panel.manage_members.label.project.members", "Participants") : Localization().getStringEx("panel.manage_members.label.members", "Members");
     }
   }
 
   String _getEmptyMembersMessage() {
     switch (_selectedMemberStatus) {
       case GroupMemberStatus.admin:
-        return _isResearchProject ? 'There are no principle investigators.' : Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.admin.empty.project.message', 'There are no principal investigators.') : Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
       case GroupMemberStatus.member:
-        return _isResearchProject ? 'There are no participants.' : Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.member.empty.project.message', 'There are no participants.') : Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
       case GroupMemberStatus.pending:
-        return _isResearchProject ? 'There are no pending participants.' : Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.pending.empty.project.message', 'There are no pending participants.') : Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
       case GroupMemberStatus.rejected:
-        return _isResearchProject ? 'There are no rejected participants.' : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.rejected.empty.project.message', 'There are no rejected participants.') : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
       default: // All
-        return _isResearchProject ? 'There are no participants.' : Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.status.all.empty.project.message', 'There are no participants.') : Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
     }
   }
 
   String? _memberStatusToString(GroupMemberStatus? status) {
     switch (status) {
       case GroupMemberStatus.admin:
-        return _isResearchProject ? 'Principle Investigators' : Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.admin.project.label', 'Principal Investigator') : Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
       case GroupMemberStatus.member:
-        return _isResearchProject ? 'Participants' : Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.member.project.label', 'Participant') : Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
       case GroupMemberStatus.pending:
-        return Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.pending.project.label', 'Pending') : Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
       case GroupMemberStatus.rejected:
-        return Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Rejected');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.rejected.project.label', 'Rejected') : Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Rejected');
       default:
-        return Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
+        return _isResearchProject ? Localization().getStringEx('panel.manage_members.member.status.all.project.label', 'All') : Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
     }
   }
 
@@ -584,10 +607,9 @@ class _PendingMemberCard extends StatelessWidget {
                       RoundedButton(
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review Request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                         borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
-                        fontSize: 16,
                         rightIcon: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){

@@ -130,10 +130,8 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     }
 
     String submitText;
-    if (_selectedCount == 0) {
-      submitText = 'Target all potential participants';
-    }
-    else if (_targetAudienceCount == null) {
+
+    if (_targetAudienceCount == null) {
       submitText = 'Save';
     }
     else if (_targetAudienceCount == 0) {
@@ -215,11 +213,10 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           RoundedButton(
             label: submitText,
             hint: '',
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             borderColor: Styles().colors?.fillColorSecondary,
             backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors?.fillColorPrimary,
-            fontSize: 16,
             onTap: () => _onSubmit(),
           ),
           ),
@@ -466,14 +463,6 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
       });
     }
-  }
-
-  int get _selectedCount {
-    int selectedCount = 0;
-    for(LinkedHashSet<String> value in _selection.values) {
-      selectedCount += value.length;
-    }
-    return selectedCount;
   }
 
   Widget _buildLoading() {

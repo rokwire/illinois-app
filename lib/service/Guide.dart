@@ -25,6 +25,7 @@ enum GuideContentSource { Net, Debug }
 class Guide with Service implements NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
+  static const String notifyGuide = "edu.illinois.rokwire.guide";
   static const String notifyGuideDetail = "edu.illinois.rokwire.guide.detail";
   static const String notifyGuideList = "edu.illinois.rokwire.guide.list";
 
@@ -58,6 +59,7 @@ class Guide with Service implements NotificationsListener {
   void createService() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
+      Storage.notifySettingChanged,
       AppLivecycle.notifyStateChanged,
       DeepLink.notifyUri,
     ]);
@@ -120,6 +122,10 @@ class Guide with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
       _initDefaultFavorites();
+    } else if (name == Storage.notifySettingChanged) {
+      if (param == Storage.onBoardingPassedKey) {
+        _initDefaultFavorites();
+      }
     } else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == DeepLink.notifyUri) {
@@ -167,7 +173,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   Future<List<dynamic>?> _loadContentJsonFromCache() async {
-    return JsonUtils.decodeList(await _loadContentStringFromCache());
+    return await JsonUtils.decodeListAsync(await _loadContentStringFromCache());
   }
 
   Future<String?> _loadContentStringFromNet() async {
@@ -185,8 +191,8 @@ class Guide with Service implements NotificationsListener {
   Future<void> _updateContentFromNet() async {
     if ((_contentSource == null) || (_contentSource == GuideContentSource.Net)) {
       String? contentString = await _loadContentStringFromNet();
-      List<dynamic>? contentList = JsonUtils.decodeList(contentString);
-      if ((contentList != null) && !DeepCollectionEquality().equals(_contentList, contentList)) {
+      List<dynamic>? contentList = await JsonUtils.decodeListAsync(contentString);
+      if ((contentList != null) && !await CollectionUtils.equalsAsync(_contentList, contentList)) {
         _contentList = contentList;
         _contentMap = _buildContentMap(_contentList);
         _contentSource = GuideContentSource.Net;
@@ -204,7 +210,7 @@ class Guide with Service implements NotificationsListener {
       contentMap = LinkedHashMap<String, Map<String, dynamic>?>();
       for (dynamic contentEntry in contentList) {
         Map<String, dynamic>? mapEntry = JsonUtils.mapValue(contentEntry);
-        String? id = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['_id']) : null;
+        String? id = (mapEntry != null) ? JsonUtils.stringValue(mapEntry['content_id']) : null;
         if (id != null) {
           contentMap[id] = mapEntry;
         }
@@ -228,7 +234,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   Map<String, dynamic>? entryById(String? id) {
-    return (_contentMap != null) ? _contentMap![id] : null;
+    return ((_contentMap != null) && (id != null)) ? _contentMap![id] : null;
   }
 
   dynamic entryValue(Map<String, dynamic>? entry, String key) {
@@ -243,7 +249,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   String? entryId(Map<String, dynamic>? entry) {
-    return JsonUtils.stringValue(entryValue(entry, '_id'));
+    return JsonUtils.stringValue(entryValue(entry, 'content_id'));
   }
 
   String? entryGuide(Map<String, dynamic>? entry) {
@@ -424,6 +430,11 @@ class Guide with Service implements NotificationsListener {
     false;
   }
 
+  bool _isEntryPromotion(Map<String, dynamic>? entry) {
+    Map<String, dynamic>? promotion = (entry != null) ? JsonUtils.mapValue(entryValue(entry, 'promotion')) : null;
+    return (promotion != null);
+  }
+
   static bool _checkPromotionInterval(Map<String, dynamic>? promotion) {
     Map<String, dynamic>? interval = (promotion != null) ? JsonUtils.mapValue(promotion['interval']) : null;
     if (interval != null) {
@@ -473,7 +484,7 @@ class Guide with Service implements NotificationsListener {
 
   void _initDefaultFavorites() {
 
-    if (_contentList != null) {
+    if ((Storage().onBoardingPassed == true) && (_contentList != null)) {
       Set<String> modifiedFavoriteKeys = <String>{};
       Map<String, LinkedHashSet<String>> favorites = <String, LinkedHashSet<String>>{};
       for (dynamic contentEntry in _contentList!) {
@@ -481,17 +492,13 @@ class Guide with Service implements NotificationsListener {
         bool? isFavorite = JsonUtils.boolValue(entryValue(guideEntry, 'content_type_favorite'));
         if (isFavorite == true) {
           String? guideEntryId = entryId(guideEntry);
-          String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
-          if ((guideEntryId != null) && (guideEntryContentType != null)) {
-            String processedKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType, processed: true);
-            LinkedHashSet<String> processedGuideEntryIds = (favorites[processedKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(processedKeyName)?? LinkedHashSet<String>()));
-            if (!processedGuideEntryIds.contains(guideEntryId)) {
-              String favoriteKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType);
-              LinkedHashSet<String> favoriteGuideEntryIds = (favorites[favoriteKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(favoriteKeyName) ?? LinkedHashSet<String>()));
-              favoriteGuideEntryIds.add(guideEntryId); // Mark guideEntryId as favorite
-              processedGuideEntryIds.add(guideEntryId); // Mark guideEntryId as processed
-              modifiedFavoriteKeys.add(favoriteKeyName);
-              modifiedFavoriteKeys.add(processedKeyName);
+          if (guideEntryId != null) {
+            String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
+            if (guideEntryContentType != null) {
+              _processDefaultFavorites(guideEntryId: guideEntryId, guideEntryContentType: guideEntryContentType, favorites: favorites, modifiedFavoriteKeys: modifiedFavoriteKeys);
+            }
+            if (_isEntryPromotion(guideEntry)) {
+              _processDefaultFavorites(guideEntryId: guideEntryId, guideEntryContentType: campusHighlightContentType, favorites: favorites, modifiedFavoriteKeys: modifiedFavoriteKeys);
             }
           }
         }
@@ -500,6 +507,24 @@ class Guide with Service implements NotificationsListener {
       for (String modifiedFavoriteKey in modifiedFavoriteKeys) {
         Auth2().prefs?.setFavorites(modifiedFavoriteKey, favorites[modifiedFavoriteKey]);
       }
+    }
+  }
+
+  void _processDefaultFavorites({
+    required String guideEntryId,
+    required String guideEntryContentType,
+    required Map<String, LinkedHashSet<String>> favorites,
+    required Set<String> modifiedFavoriteKeys
+  }) {
+    String processedKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType, processed: true);
+    LinkedHashSet<String> processedGuideEntryIds = (favorites[processedKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(processedKeyName)?? LinkedHashSet<String>()));
+    if (!processedGuideEntryIds.contains(guideEntryId)) {
+      String favoriteKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType);
+      LinkedHashSet<String> favoriteGuideEntryIds = (favorites[favoriteKeyName] ??= LinkedHashSet<String>.from(Auth2().prefs?.getFavorites(favoriteKeyName) ?? LinkedHashSet<String>()));
+      favoriteGuideEntryIds.add(guideEntryId); // Mark guideEntryId as favorite
+      processedGuideEntryIds.add(guideEntryId); // Mark guideEntryId as processed
+      modifiedFavoriteKeys.add(favoriteKeyName);
+      modifiedFavoriteKeys.add(processedKeyName);
     }
   }
 
@@ -573,7 +598,15 @@ class Guide with Service implements NotificationsListener {
           (guideUri.authority == uri.authority))
       {
 
-        if (uri.path == '/guide_detail') {
+        if (uri.path == '/guide') {
+          if (_guideUriCache != null) {
+            _guideUriCache?.add(uri);
+          }
+          else {
+            NotificationService().notify(notifyGuide, null);
+          }
+        }
+        else if (uri.path == '/guide_detail') {
           if (_guideUriCache != null) {
             _guideUriCache?.add(uri);
           }
@@ -652,7 +685,7 @@ class Guide with Service implements NotificationsListener {
     // ID
     dynamic sourceValue = sourceEntry['id'];
     if (sourceValue != null) {
-      contentEntry['_id'] = sourceValue;
+      contentEntry['content_id'] = sourceValue;
     }
 
     // Shared Fields

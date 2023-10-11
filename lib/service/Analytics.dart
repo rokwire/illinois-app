@@ -25,6 +25,7 @@ import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
@@ -65,6 +66,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogStdOSName                       = "os_name";
   static const String   LogStdOSVersionName                = "os_version";
   static const String   LogStdLocaleName                   = "locale";
+  static const String   LogStdSystemLocaleName             = "system_locale";
+  static const String   LogStdSelectedLocaleName           = "selected_locale";
   static const String   LogStdDeviceModelName              = "device_model";
   static const String   LogStdConnectionName               = "connection";
   static const String   LogStdLocationSvcName              = "location_services";
@@ -99,6 +102,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdOSName,
     LogStdOSVersionName,
     LogStdLocaleName,
+    LogStdSystemLocaleName,
+    LogStdSelectedLocaleName,
     LogStdDeviceModelName,
     LogStdConnectionName,
     LogStdLocationSvcName,
@@ -203,6 +208,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogMapDisplayShowActionName        = "show";
   static const String   LogMapDisplayHideActionName        = "hide";
 
+  static const String   LogMapSelectEventName             = "map_select";
+  static const String   LogMapSelectTarget                = "target";
+
   // GeoFence Regions
   static const String   LogGeoFenceRegionEventName         = "geofence_region";
   static const String   LogGeoFenceRegionAction            = "action";
@@ -224,6 +232,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAuthLoginNetIdActionName        = "login_netid";
   static const String   LogAuthLoginPhoneActionName        = "login_phone";
   static const String   LogAuthLoginEmailActionName        = "login_email";
+  static const String   LogAuthLoginUsernameActionName     = "username";
   static const String   LogAuthLogoutActionName            = "logout";
   static const String   LogAuthResult                      = "result";
 
@@ -281,6 +290,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeEventId                = "event_id";
   static const String   LogAttributeEventName              = "event_name";
   static const String   LogAttributeEventCategory          = "event_category";
+  static const String   LogAttributeEventAttributes        = "event_attributes";
   static const String   LogAttributeRecurrenceId           = "recurrence_id";
   static const String   LogAttributeDiningId               = "dining_id";
   static const String   LogAttributeDiningName             = "dining_name";
@@ -490,18 +500,19 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
 
-    if (state == AppLifecycleState.paused) {
-      logLivecycle(name: LogLivecycleEventBackground);
+    if (super.isInitialized) {
+      if (state == AppLifecycleState.paused) {
+        logLivecycle(name: LogLivecycleEventBackground);
+      }
+      else if (state == AppLifecycleState.resumed) {
+        _updateSessionUuid();
+        _updateNotificationServices();
+        logLivecycle(name: LogLivecycleEventForeground);
+      }
+      else if (state == AppLifecycleState.detached) {
+        logLivecycle(name: Analytics.LogLivecycleEventDestroy);
+      }
     }
-    else if (state == AppLifecycleState.resumed) {
-      _updateSessionUuid();
-      _updateNotificationServices();
-      logLivecycle(name: LogLivecycleEventForeground);
-    }
-    else if (state == AppLifecycleState.detached) {
-      logLivecycle(name: Analytics.LogLivecycleEventDestroy);
-    }
-
   }
 
   // App Naviagtion Service
@@ -665,6 +676,12 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         }
         else if (attributeName == LogStdLocaleName) {
           analyticsEvent[LogStdLocaleName] = Platform.localeName;
+        }
+        else if (attributeName == LogStdSystemLocaleName) {
+          analyticsEvent[LogStdSystemLocaleName] = (Localization().selectedLocale == null);
+        }
+        else if (attributeName == LogStdSelectedLocaleName) {
+          analyticsEvent[LogStdSelectedLocaleName] = Localization().selectedLocale?.languageCode;
         }
         else if (attributeName == LogStdDeviceModelName) {
           analyticsEvent[LogStdDeviceModelName] = super.deviceModel;
@@ -909,6 +926,14 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     });
   }
 
+  void logMapSelect({String? target}) {
+    
+    logEvent({
+      LogEventName             : LogMapSelectEventName,
+      LogMapSelectTarget       : target
+    });
+  }
+
   void logGeoFenceRegion({String? action, String? regionId}) {
 
     Map<String, GeoFenceRegion?>? regions = GeoFence().regions;
@@ -944,6 +969,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         case Auth2LoginType.phone:
         case Auth2LoginType.phoneTwilio:  action = LogAuthLoginPhoneActionName; break;
         case Auth2LoginType.email:        action = LogAuthLoginEmailActionName; break;
+        case Auth2LoginType.username:     action = LogAuthLoginUsernameActionName; break;
         case Auth2LoginType.apiKey:
         case Auth2LoginType.anonymous:    break;
       }

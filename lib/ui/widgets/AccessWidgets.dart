@@ -27,10 +27,17 @@ import 'package:sprintf/sprintf.dart';
 
 class AccessCard extends StatefulWidget {
   final String resource;
+  final EdgeInsetsGeometry padding;
 
-  const AccessCard({required this.resource,});
+  const AccessCard({
+    required this.resource,
+    required this.padding,
+  });
 
-  static AccessCard? builder({required String resource}) => _AccessContent.mayAccessResource(resource) ? null : AccessCard(resource: resource);
+  static AccessCard? builder({
+    required String resource,
+    EdgeInsetsGeometry padding = const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0)
+  }) => _AccessContent.mayAccessResource(resource) ? null : AccessCard(resource: resource, padding: padding);
 
   @override
   _AccessCardState createState() => _AccessCardState();
@@ -60,7 +67,7 @@ class _AccessCardState extends State<AccessCard> implements NotificationsListene
       String defaultTitle = _AccessContent.defaultStringKey(titleKey);
       String resourceName = Localization().getStringEx('widget.access.${widget.resource}.name', widget.resource);
 
-      return Padding(padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0), child:
+      return Padding(padding: widget.padding, child:
         Container(
           decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(children: <Widget>[

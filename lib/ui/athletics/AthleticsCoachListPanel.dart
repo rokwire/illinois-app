@@ -64,9 +64,8 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
     List<Widget> widgets = [];
     if(widget.allCoaches != null) {
       widget.allCoaches!.forEach((coach) =>
-      {
         widgets.add(_CoachItem(coach,listener: this,))
-      });
+      );
     }
 
     return widgets;
@@ -113,7 +112,7 @@ class _CoachListHeading extends StatelessWidget{
                 ],
               ),
               SizedBox(height: 10.0,),
-              Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "2019-2020 Coach"),
+              Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "All Staff"),
                 style: Styles().textStyles?.getTextStyle("widget.heading.large.extra_fat")
               ),
             ],

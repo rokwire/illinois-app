@@ -49,7 +49,7 @@ class HomeWellnessMentalHealthWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.wellness_mental_health.header.label', 'My Wellness Metnal Heatlh');
+  static String get title => Localization().getStringEx('widget.home.wellness_mental_health.header.label', 'My Mental Health Resources');
 
   @override
   State<HomeWellnessMentalHealthWidget> createState() => _HomeWellnessMentalHealthWidgetState();
@@ -121,7 +121,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
   Widget _buildEmpty() {
     String favoriteKey = WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey);
-    String message = Localization().getStringEx("widget.home.wellness_mental_health.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Wellness Metnal Heatlh</b></a> so you can quickly find them here.")
+    String message = Localization().getStringEx("widget.home.wellness_mental_health.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Metnal Heatlh Resources</b></a> so you can quickly find them here.")
       .replaceAll(localUrlMacro, '$localScheme://$favoriteKey');
 
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
@@ -176,11 +176,12 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
     return Column(children: [
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.wellness_mental_health.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.wellness_mental_health.button.all.hint', 'Tap to view all wellness mental heatlh'),
-        onTap: _onViewAll,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount, centerWidget:
+        LinkButton(
+          title: Localization().getStringEx('widget.home.wellness_mental_health.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.wellness_mental_health.button.all.hint', 'Tap to view all mental heatlh resources'),
+          onTap: _onViewAll,
+        ),
       ),
     ],);
   }
@@ -254,7 +255,7 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
 
   void _onCommand(Map<String, dynamic> resourceItem) {
     String? title = Guide().entryListTitle(resourceItem);
-    Analytics().logSelect(target: "Mental Health: '$title'" , source: widget.runtimeType.toString());
+    Analytics().logSelect(target: "Mental Health Resource: '$title'" , source: widget.runtimeType.toString());
 
     String? id = Guide().entryId(resourceItem);
     String? url = "${Guide().guideDetailUrl}?guide_id=$id";

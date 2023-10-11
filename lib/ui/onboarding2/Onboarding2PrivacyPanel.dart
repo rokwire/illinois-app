@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/PrivacySlider.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'Onboarding2Widgets.dart';
 
@@ -216,11 +212,10 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                       child: RoundedButton(
                         label: _continueButtonLabel,
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
-                        fontSize: 16,
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         backgroundColor: Styles().colors!.white,
                         borderColor: Styles().colors!.fillColorSecondaryVariant,
-                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: () => _goNext(context),
                       ),),
                     Container(height: 16,)
@@ -536,16 +531,6 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 
   void _openPrivacyPolicy(){
     Analytics().logSelect(target: "Privacy Statement");
-    if (Config().privacyPolicyUrl != null) {
-      if (Platform.isIOS) {
-        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
-        if (privacyPolicyUri != null) {
-          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
-        }
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
-      }
-    }
+    AppPrivacyPolicy.launch(context);
   }
 }

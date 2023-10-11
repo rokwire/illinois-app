@@ -22,6 +22,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -67,9 +68,9 @@ class ExplorePanel extends StatefulWidget {
 
   final ExploreType exploreType;
   final ExploreFilter? initialFilter;
-  final String? browseGroupId;
+  final Group? browseGroup;
 
-  ExplorePanel({required this.exploreType, this.initialFilter, this.browseGroupId });
+  ExplorePanel({required this.exploreType, this.initialFilter, this.browseGroup });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
@@ -139,14 +140,12 @@ class ExplorePanelState extends State<ExplorePanel>
     
     if (widget.exploreType == ExploreType.Events) {
       _loadEventCategories().then((List<dynamic>? result) {
-        if (mounted) {
-          setState(() {
-            _eventCategories = result;
-          });
-        }
+        _eventCategories = result;
+        _loadExplores();
       });
+    } else {
+      _loadExplores();
     }
-    _loadExplores();
 
     super.initState();
   }
@@ -446,10 +445,10 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   ///
-  /// Load athletics games if "All Categories" or "Athletics" categories are selected
+  /// Load athletics games if "All Categories" or "Big 10 Athletics" categories are selected
   ///
   bool _shouldLoadGames(Set<String?>? selectedCategories) {
-    return CollectionUtils.isEmpty(selectedCategories) || selectedCategories!.contains('Athletics');
+    return CollectionUtils.isEmpty(selectedCategories) || selectedCategories!.contains('Big 10 Athletics');
   }
 
   ///
@@ -489,13 +488,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (CollectionUtils.isEmpty(explores)) {
       return;
     }
-    explores.sort((Explore first, Explore second) {
-      if (first.exploreStartDateUtc == null || second.exploreStartDateUtc == null) {
-        return 0;
-      } else {
-        return (first.exploreStartDateUtc!.isBefore(second.exploreStartDateUtc!)) ? -1 : 1;
-      }
-    });
+    explores.sort();
   }
 
   Set<int>? _getSelectedFilterIndexes(List<ExploreFilter>? selectedFilterList, ExploreFilterType filterType) {
@@ -687,7 +680,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _onTapSearch() {
     Analytics().logSelect(target: "Search");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel(browseGroup: widget.browseGroup,)));
   }
 
   Widget _buildContent() {
@@ -722,7 +715,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Widget _buildEventsDisplayTypesDropDownButton() {
     return RibbonButton(
-      textColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -888,7 +881,7 @@ class ExplorePanelState extends State<ExplorePanel>
       Center(child:
         Column(children: <Widget>[
           Container(height: MediaQuery.of(context).size.height / 5),
-          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: TextStyle(fontSize: 16),),
+          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: Styles().textStyles?.getTextStyle("widget.message.regular")),
           Container(height: 8),
           Text(message),
           Container(height: MediaQuery.of(context).size.height / 5 * 3),
@@ -972,6 +965,12 @@ class ExplorePanelState extends State<ExplorePanel>
 
     for (int i = 0; i < visibleFilters.length; i++) {
       ExploreFilter selectedFilter = visibleFilters[i];
+      // Do not show categories filter if selected category is athletics "Big 10 Athletics" (e.g only one selected index with value 2)
+      if ((selectedFilter.type == ExploreFilterType.categories) &&
+          (widget.initialFilter?.type == ExploreFilterType.categories) &&
+          (widget.initialFilter?.selectedIndexes.contains(2) ?? false)) {
+        continue;
+      }
       List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues[filterValueIndex];
@@ -996,7 +995,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     if (event?.isComposite ?? false) {
       Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event, browseGroupId: widget.browseGroupId,)));
+          context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event, browseGroup: widget.browseGroup,)));
     }
     else if (event?.isGameEvent ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
@@ -1007,7 +1006,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ExploreDetailPanel(explore: explore, browseGroupId: widget.browseGroupId,)
+          ExploreDetailPanel(explore: explore, browseGroup: widget.browseGroup,)
       )).then(
           (value){
             if(value!=null && value == true){
@@ -1149,7 +1148,7 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
     showInstructionsPopup = (widget.showPopupStorageKey != null) ? Storage().getBoolWithName(widget.showPopupStorageKey!) : null;
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     String dontShow = Localization().getStringEx("panel.explore.instructions.mtd.dont_show.msg", "Don't show me this again.");
@@ -1164,8 +1163,7 @@ class _MTDInstructionsPopupState extends State<ExploreOptionalMessagePopup> {
                   Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
                   Padding(padding: EdgeInsets.only(top: 18), child:
                     Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
-                  ),
-                  Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small")),
+                  )
                 ]),
               ),
 

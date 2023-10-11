@@ -17,19 +17,20 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:illinois/model/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/Voter.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -50,13 +51,28 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   bool _hiddenByUser = false;
   VoterRule? _voterRule;
   bool _nrvPlaceVisible = false;
+  bool _loading = false;
+  List<VoterRule>? _voterRules;
   Map<String, dynamic>? _stringsContent;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged, Auth2UserPrefs.notifyVoterChanged, GeoFence.notifyCurrentRegionsUpdated, Assets.notifyChanged]);
-    _loadAssetsStrings();
-    _loadVoterRule();
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+      Auth2UserPrefs.notifyVoterChanged,
+      GeoFence.notifyCurrentRegionsUpdated
+    ]);
+    
+    _loading = true;
+    Content().loadContentItem('voter').then((dynamic value) {
+      setStateIfMounted(() {
+        Map<String, dynamic>? voterJson = JsonUtils.mapValue(value);
+        _voterRules = (voterJson != null) ? VoterRule.listFromJson(JsonUtils.listValue(voterJson['rules'])) : null;
+        _stringsContent = (voterJson != null) ? JsonUtils.mapValue(voterJson['strings']) : null;
+        _voterRule = VoterRule.getVoterRuleForToday(_voterRules, _uniLocalTime);
+        _loading = false;
+      });
+    });
     super.initState();
   }
 
@@ -67,7 +83,9 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => _loading ? _buildLoadingContent() : _buildVoterContent();
+
+  Widget _buildVoterContent() {
     bool voterWidgetVisible = _isVoterWidgetVisible();
     String voterTitle = _getVoterTitle(voterWidgetVisible)!;
     String voterText = _getVoterText(voterWidgetVisible)!;
@@ -137,7 +155,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
               )),
               Row(children: <Widget>[RoundedButton(
                 label: vbmButtonTitle ?? '',
-                textColor: Styles().colors!.fillColorPrimary,
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                 borderColor: Styles().colors!.fillColorSecondary,
                 backgroundColor: Styles().colors!.white,
                 contentWeight: 0.0,
@@ -151,23 +169,17 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     );
   }
 
-  void _loadVoterRule() {
-    _voterRule = Voter().getVoterRuleForToday();
-  }
+  Widget _buildLoadingContent() => Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
+    Center(child:
+      SizedBox(width: 32, height: 32, child:
+        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+      ),
+    ),
+  );
 
   void _reloadVoterRule() {
-    setState(() {
-      _loadVoterRule();
-    });
-  }
-
-  void _loadAssetsStrings() {
-    _stringsContent = Assets()['voter.strings'];
-  }
-
-  void _reloadAssetsStrings() {
-    setState(() {
-      _loadAssetsStrings();
+    setStateIfMounted(() {
+      _voterRule = VoterRule.getVoterRuleForToday(_voterRules, _uniLocalTime);
     });
   }
 
@@ -268,7 +280,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
           if (ruleOption.value == 'vbm_no') { // Special case for showing two widgets
             optionWidgets.add(Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[RoundedButton(
               label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
-              textColor: Styles().colors!.fillColorPrimary,
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
               contentWeight: 0.0,
@@ -281,7 +293,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
           } else {
             optionWidgets.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[RoundedButton(
               label: Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent) ?? '',
-              textColor: Styles().colors!.fillColorPrimary,
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
               borderColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
               contentWeight: 0.0,
@@ -391,6 +403,8 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     }
   }
 
+  DateTime? get _uniLocalTime => AppDateTime().getUniLocalTimeFromUtcTime(AppDateTime().now.toUtc());
+
   // NotificationsListener
 
   @override
@@ -398,9 +412,6 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     if (name == Auth2UserPrefs.notifyVoterChanged) {
       _reloadVoterRule();
     } else if (name == AppLivecycle.notifyStateChanged && AppLifecycleState.resumed == param) {
-      _reloadVoterRule();
-    } else if (name == Assets.notifyChanged) {
-      _reloadAssetsStrings();
       _reloadVoterRule();
     } else if(name == GeoFence.notifyCurrentRegionsUpdated) {
       _showRegionAlertIfNeeded();

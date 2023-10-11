@@ -75,7 +75,6 @@ class DailyIlliniItem {
   ///
   static String? _getThumbImageUrl(String? descriptionText) {
     if (StringUtils.isEmpty(descriptionText)) {
-      debugPrint('Description is null');
       return null;
     }
     dom.Document document = htmlParser.parse(descriptionText);
@@ -97,49 +96,11 @@ class DailyIlliniItem {
               }
               // return first src set value by default
               return srcSetValues.first.split(' ').first;
-            } else {
-              debugPrint('ImageLoad: srcSetValues is empty');
             }
-          } else {
-            debugPrint('ImageLoad: srcSetValue is empty');
           }
-        } else {
-          debugPrint('ImageLoad: imgAttributes is empty');
         }
-      } else {
-        debugPrint('ImageLoad: second image element is null');
       }
-    } else {
-      debugPrint('ImageLoad: cannot get img element tag');
     }
     return null;
-  }
-  static String? _getSummary(String? descriptionText) {
-    dom.Document doc = htmlParser.parse(descriptionText);
-    List<dom.Element> elements = doc.getElementsByTagName('p');
-    String summary = "";
-    for(dom.Element i in elements) {
-      if (i.innerHtml.contains("...")) {
-        summary = i.innerHtml;
-      }
-    }
-
-    return summary.substring(0, summary.indexOf("."));
-  }
-  static String? _getCategory(String? itemText) {
-    dom.Document doc = htmlParser.parse(itemText);
-    List<dom.Element> catElements = doc.getElementsByTagName('category');
-    for (int i = 0; i < catElements.length; i++) {
-      if (catElements[i].innerHtml.contains("Opinions")) {
-        return "Opinions";
-      } else if (catElements[i].innerHtml.contains("buzz")) {
-        return "buzz";
-      } else if (catElements[i].innerHtml.contains("Sports")) {
-        return "Sports";
-      } else if (catElements[i].innerHtml.contains("News")) {
-        return "News";
-      }
-    }
-    return "N/A";
   }
 }

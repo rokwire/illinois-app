@@ -20,16 +20,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
 import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
-import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/appointments/AppointmentCard.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -40,7 +38,6 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final List<Explore>? explores;
@@ -155,23 +152,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
 
   void _onTapExplore(Explore explore) {
     Analytics().logSelect(target: explore.exploreTitle);
-
-    //show the detail panel
-    String? url = ((widget.exploreMapType == ExploreMapType.MentalHealth) && (explore is Building)) ?
-      Wellness().mentalHealthBuildingUrl(buildingId: (this as Building).id) : null;
-    
-    if (url == null) {
-      explore.exploreLaunchDetail(context, initialLocationData: widget.initialLocationData,);
-    }
-    else if (DeepLink().isAppUrl(url)) {
-      DeepLink().launchUrl(url);
-    }
-    else {
-      Uri? uri = Uri.tryParse(url);
-      if (uri != null) {
-        launchUrl(uri, mode: LaunchMode.externalApplication);
-      }
-    }
+    explore.exploreLaunchDetail(context, initialLocationData: widget.initialLocationData,);
   }
 
   void _onTapMTDStop(MTDStop? stop) {

@@ -89,14 +89,13 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
                       Padding(padding: EdgeInsets.only(top: 20), child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         RoundedButton(
                           label: Localization().getStringEx('widget.home.wellness.todo.items.add.button', 'Add Item'), borderColor: Styles().colors!.fillColorSecondary,
-                          textColor: Styles().colors!.fillColorPrimary,
+                            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small"),
                           leftIcon: Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
-                          iconPadding: 8, rightIconPadding: EdgeInsets.only(right: 8), fontSize: 14, contentWeight: 0, 
-                          fontFamily: Styles().fontFamilies!.regular, padding: EdgeInsets.zero, onTap: _onTapAddItem),
+                          iconPadding: 8, rightIconPadding: EdgeInsets.only(right: 8), contentWeight: 0, padding: EdgeInsets.zero, onTap: _onTapAddItem),
                         LinkButton(
                           title: Localization().getStringEx('widget.home.wellness.todo.items.view_all.label', 'View All'),
                           hint: Localization().getStringEx('widget.home.wellness.todo.items.view_all.hint', 'Tap to view all To Do items'),
-                          fontSize: 14,
+                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline"),
                           onTap: _onTapViewAll,
                         ),
                       ]))
@@ -142,7 +141,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   }
 
   Widget _buildToDoItemWidget(ToDoItem item) {
-    Widget? completedWidget = Styles().images?.getImage(item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', excludeFromSemantics: true);
+    Widget? completedWidget = Styles().images?.getImage(item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', color: Styles().colors?.fillColorSecondary , excludeFromSemantics: true);
     return GestureDetector(onTap: () => _onTapToDoItem(item), child: Padding(padding: EdgeInsets.only(top: 10), child: Container(color: Colors.transparent, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(right: 10), child: completedWidget),
       Expanded(child: Text(StringUtils.ensureNotEmpty(item.name), maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.start, style: Styles().textStyles?.getTextStyle("widget.info.small")))

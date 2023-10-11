@@ -176,9 +176,9 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                         "Confirm phone number"),
                     hint: Localization().getStringEx(
                         "panel.onboarding.confirm_phone.button.confirm.hint", ""),
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                     borderColor: Styles().colors!.fillColorSecondary,
                     backgroundColor: Styles().colors!.background,
-                    textColor: Styles().colors!.fillColorPrimary,
                     onTap: () => _onTapConfirm())
                 ),
                 Visibility(
@@ -190,9 +190,9 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                           "panel.onboarding.confirm_phone.button.link.cancel.label", "Cancel"),
                       hint: Localization().getStringEx(
                           "panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                       borderColor: Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.background,
-                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: () => _onTapCancel())
                   ),
                 ),

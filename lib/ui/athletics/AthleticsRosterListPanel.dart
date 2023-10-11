@@ -153,9 +153,8 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
       List<Roster> clonedRosters = allRosters!.map((r) => r).toList();
       clonedRosters.sort((r1, r2) => r1.name!.compareTo(r2.name!));
       clonedRosters.forEach((roster) =>
-      {
         widgets.add(_RosterItem(roster, widget.sport, this, showTopGrey: false,))
-      });
+      );
     }
 
     return widgets;
@@ -195,9 +194,8 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
       List<Roster> clonedRosters = allRosters!.map((r) => r).toList();
       clonedRosters.sort((r1, r2) => r1.number >= r2.number ? 1 : -1);
       clonedRosters.forEach((roster) =>
-      {
         widgets.add(_RosterItem(roster, widget.sport, this, showTopGrey: false,))
-      });
+      );
     }
 
     return widgets;
@@ -249,7 +247,7 @@ class _RosterListHeading extends StatelessWidget{
                 ],
               ),
               SizedBox(height: 10.0,),
-              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", '2019-2020 Roster') ,
+              Text(Localization().getStringEx("panel.athletics_roster_list.label.heading.title", 'Full Roster') ,
                 style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat")
               ),
             ],

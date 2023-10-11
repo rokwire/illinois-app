@@ -30,7 +30,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -246,10 +245,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                   Flexible(
                                       flex: 1,
                                       child: RoundedButton(
-                                          label:
-                                          Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
+                                          label: Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
+                                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                                           borderColor: Styles().colors!.fillColorSecondary,
-                                          textColor: Styles().colors!.fillColorPrimary,
                                           backgroundColor: Styles().colors!.white,
                                           onTap: _onTapUpdateMainPost)),
                                 ])
@@ -348,8 +346,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: (_editingReply != null) ?
                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
                           Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
                         onTap: _onTapSend)),
                 Container(width: 20),
@@ -359,8 +357,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: Localization().getStringEx(
                             'panel.group.detail.post.create.button.cancel.title',
                             'Cancel'),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                         borderColor: Styles().colors!.textSurface,
-                        textColor: Styles().colors!.fillColorPrimary,
                         backgroundColor: Styles().colors!.white,
                         onTap: _onTapCancel))
               ])
@@ -415,7 +413,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       String? optionsIconPath;
       void Function()? optionsFunctionTap;
       if (_isReplyVisible) {
-        optionsIconPath = 'options';
+        optionsIconPath = 'more';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
       replyWidgetList.add(
@@ -744,10 +742,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapPostLink(String? url) {
     Analytics().logSelect(target: 'link');
-    if (StringUtils.isNotEmpty(url)) {
-      Navigator.push(context,
-          CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-    }
+    UrlUtils.launchExternal(url);
   }
 
   void _reloadPost() {

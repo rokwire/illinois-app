@@ -109,11 +109,10 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                 RoundedButton(
                   label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign In with NetID'),
                   hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
-                  fontSize: 16,
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   borderColor: Styles().colors!.fillColorSecondary,
                   backgroundColor: Styles().colors!.white,
-                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: _onLoginTapped,
                 ),
                 Onboarding2UnderlinedButton(

@@ -18,12 +18,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/events2/Event2CreatePanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2HomePanel.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
-import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -35,10 +38,9 @@ import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPollListPanel.dart';
@@ -56,7 +58,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
@@ -64,6 +65,7 @@ import 'GroupSettingsPanel.dart';
 enum _DetailTab { Events, Posts, Polls, About }
 
 class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  static final String routeName = 'group_detail_content_panel';
 
   final Group? group;
   final String? groupIdentifier;
@@ -92,7 +94,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
-  List<Event>?       _groupEvents;
+  List<Event2>?       _groupEvents;
   List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>?      _groupAdmins;
 
@@ -240,6 +242,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (mounted) {
       if (group != null) {
         _group = group;
+        if (_isResearchProject && _isMember) {
+          _currentTab = _DetailTab.About;
+        }
         _redirectToPostIfExists();
         _loadGroupAdmins();
         _loadInitialPosts();
@@ -272,12 +277,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
+    Groups().loadEventsV3(_group?.id, limit: 3).then((Events2ListResult? eventsResult) {
       if (mounted) {
         setState(() {
-          bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
-          _allEventsCount = hasEventsMap ? eventsMap!.keys.first : 0;
-          _groupEvents = hasEventsMap ? eventsMap!.values.first : null;
+          _allEventsCount = eventsResult?.totalCount ?? 0;
+          _groupEvents = eventsResult?.events;
           _updatingEvents = false;
         });
       }
@@ -285,12 +289,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _refreshEvents() {
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<Event>>? eventsMap) {
-      if (mounted) {
+    Groups().loadEventsV3(_group?.id, limit: 3).then((Events2ListResult? eventsResult) {
+      if (mounted && (eventsResult != null)) {
         setState(() {
-          bool hasEventsMap = CollectionUtils.isNotEmpty(eventsMap?.values);
-          _allEventsCount = hasEventsMap ? eventsMap!.keys.first : 0;
-          _groupEvents = hasEventsMap ? eventsMap!.values.first : null;
+          _allEventsCount = eventsResult.totalCount ?? 0;
+          _groupEvents = eventsResult.events;
         });
       }
     });
@@ -585,7 +588,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildGroupContent() {
     List<Widget> content = [
       _buildImageHeader(),
-      _buildDateUpdatedFields(),
       _buildGroupInfo()
     ];
     if (_isMemberOrAdmin) {
@@ -635,22 +637,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ],
       ),
     ) : Container();
-  }
-
-  Widget _buildDateUpdatedFields() {
-    if (!_isAdmin) {
-      return Container();
-    }
-    return Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(top: 10, left: 16, right: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.managed.membership.label', 'Managed Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-        Text(StringUtils.ensureNotEmpty(_group?.displayManagedMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-      ]),
-      Padding(padding: EdgeInsets.only(top: 5), child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Padding(padding: EdgeInsets.only(right: 5), child: Text(Localization().getStringEx('panel.group_detail.date.updated.membership.label', 'Membership Updated:'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))),
-        Text(StringUtils.ensureNotEmpty(_group?.displayMembershipUpdateTime, defaultValue: 'N/A'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
-      ]))
-    ])));
   }
 
   Widget _buildGroupInfo() {
@@ -867,10 +853,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
       Widget tabWidget = RoundedButton(
           label: title,
+          textStyle: isSelected ? Styles().textStyles?.getTextStyle("widget.colourful_button.title.accent") : Styles().textStyles?.getTextStyle("widget.button.title.medium.thin"),
           backgroundColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.background,
-          textColor: (isSelected ? Colors.white : Styles().colors!.fillColorPrimary),
-          fontFamily: isSelected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
-          fontSize: 16,
           contentWeight: 0.0,
           borderColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
           borderWidth: 1,
@@ -902,17 +886,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 //    }
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
-      for (Event? groupEvent in _groupEvents!) {
+      for (Event2? groupEvent in _groupEvents!) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: _group));
       }
 
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:
         RoundedButton(
           label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
+          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
           backgroundColor: Styles().colors!.white,
-          textColor: Styles().colors!.fillColorPrimary,
-          fontFamily: Styles().fontFamilies!.bold,
-          fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           borderColor: Styles().colors!.fillColorSecondary,
           borderWidth: 2,
@@ -1015,10 +997,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             padding: EdgeInsets.only(top: 16),
             child: RoundedButton(
                 label: Localization().getStringEx('panel.group_detail.button.all_polls.title', 'See all polls'),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                 backgroundColor: Styles().colors!.white,
-                textColor: Styles().colors!.fillColorPrimary,
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                 borderColor: Styles().colors!.fillColorSecondary,
                 borderWidth: 2,
@@ -1117,7 +1097,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
     if ((groupAttributes != null) && (contentAttributes != null) && (attributes != null)) {
       for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(groupAttributes, complete: true);
+        List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(groupAttributes, complete: true);
         if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
           attributesList.add(Row(children: [
             Text("${attribute.displayTitle}: ", overflow: TextOverflow.ellipsis, maxLines: 1, style:
@@ -1138,7 +1118,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildWebsiteLinkButton() {
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.more_info.title", 'More Info'),
-      textColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
       rightIconKey: 'external-link',
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -1210,7 +1190,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
     content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
 
-    String headingText = _isResearchProject ? 'Principle Investigator(s)' : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
+    String headingText = _isResearchProject ? Localization().getStringEx('panel.group_detail.label.project.admins', 'Principal Investigator(s)') : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
 
     return Stack(children: [
       Container(
@@ -1237,10 +1217,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
             backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.bold,
-            fontSize: 16,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
@@ -1277,10 +1255,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             ),
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
               RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
+                textStyle: requestToJoinEnabled ?  Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
                 backgroundColor: Styles().colors!.white,
-                textColor: requestToJoinEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 16,
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 borderColor: requestToJoinEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                 borderWidth: 2,
@@ -1307,10 +1283,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
             backgroundColor: Styles().colors!.white,
-            textColor: Styles().colors!.fillColorPrimary,
-            fontFamily: Styles().fontFamilies!.bold,
-            fontSize: 16,
             padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: Styles().colors!.fillColorSecondary,
             borderWidth: 2,
@@ -1351,8 +1325,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   Expanded(flex: leftAreaFlex, child: Container()),
                   Expanded(flex: negativeButtonFlex, child: RoundedButton(
                       label: StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
-                      fontFamily: "ProximaNovaRegular",
-                      textColor: Styles().colors!.fillColorPrimary,
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large"),
                       borderColor: Styles().colors!.white,
                       backgroundColor: Styles().colors!.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -1363,8 +1336,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   Container(width: 16),
                   Expanded(flex: positiveButtonFlex, child: RoundedButton(
                     label: positiveButtonLabel ?? '',
-                    fontFamily: "ProximaNovaBold",
-                    textColor: Styles().colors!.fillColorPrimary,
+                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                     borderColor: Styles().colors!.white,
                     backgroundColor: Styles().colors!.white,
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -1556,13 +1528,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onWebsite() {
     Analytics().logSelect(target: 'Group url', attributes: _group?.analyticsAttributes);
-    String? url = _group?.webURL;
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        launchUrl(uri);
-      }
-    }
+    UrlUtils.launchExternal(_group?.webURL);
   }
 
   void _onPolicy () {
@@ -1794,12 +1760,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreateEvent(){
     Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Event2CreatePanel(
+        eventSelector: GroupEventSelector(GroupEventData(group: _group), showSelectionButton: false, enablePostingToAdminGroups: true, padding: EdgeInsets.only(top: 16)))));
   }
 
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, browseGroup: _group, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
+    Event2HomePanel.present(context, eventSelector: GroupEventSelector(GroupEventData(group: _group,), enablePostingToAdminGroups: true));
+
   }
 
   void _onTapCreatePost() {
@@ -1939,4 +1908,277 @@ class _OfficerCard extends StatelessWidget {
       ],),
     );
   }
+}
+
+class GroupEventSelector extends Event2Selector{
+  final bool showSelectionButton;
+  final bool enableMembersSelection;
+  final bool enablePostingToAdminGroups;
+  final EdgeInsetsGeometry padding;
+  GroupEventData data;
+
+  GroupEventSelector(this.data, {
+    this.showSelectionButton = true,
+    this.enableMembersSelection = false,
+    this.enablePostingToAdminGroups = false,
+    this.padding = const EdgeInsets.symmetric(vertical: 10),
+  }) : super(data);
+
+  @override
+  void init(State<StatefulWidget> state) {
+    super.init(state);
+    if(enableMembersSelection) {
+      _initMemberSelection(state);
+    }
+  }
+
+  @override
+  Widget? buildWidget(State<StatefulWidget> state) {
+    _updateDataFromState(state);
+    return Container(
+        padding: padding,
+        child: Column(
+          children: [
+            Visibility(visible: showSelectionButton,
+              child: RoundedButton(
+                label: (data.group?.researchProject == true) ?
+                Localization().getStringEx('panel.explore_detail.button.add_to_project.title', 'Add Event To Project') :
+                Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group'),
+                hint: (data.group?.researchProject == true) ?
+                Localization().getStringEx('panel.explore_detail.button.add_to_project.hint', '') :
+                Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', ''),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                backgroundColor: Colors.white,
+                borderColor: Styles().colors!.fillColorPrimary,
+                progress: data.bindingInProgress ?? false,
+                onTap: ()=>_onTapAddToGroup(state),
+              ),
+            ),
+            Container(height: 6,),
+            Visibility(visible: enableMembersSelection,
+              child: GroupMembersSelectionWidget(
+              selectedMembers: data.membersSelection,
+              groupId: data.group?.id,
+              onSelectionChanged: (members){
+                state.setStateIfMounted(() {
+                  data.membersSelection = members;
+                });
+              },)),
+          ],
+        )
+    );
+  }
+
+ @override
+  Future<void> prepareSelection(State state) async {
+    await super.prepareSelection(state);
+    _updateDataFromState(state);
+    if(enablePostingToAdminGroups) {
+      await _selectOtherAdminGroups(state);
+    }
+  }
+
+  @override
+  Future<dynamic> Function(Event2 source)? event2SelectorServiceAPI() =>
+    (data.updateExistingEvent == true) ? _updateEvent : _createEvent;
+
+  @override
+  Future <void> performSelection(State state) async {
+    //await _bindEvent();
+    state.setStateIfMounted(() {data.bindingInProgress = false;});
+    if (StringUtils.isNotEmpty(data.serviceAPIError)) {
+      bool? confirmed = await AppAlert.showDialogResult(state.context, data.serviceAPIError);
+      if(confirmed == true)
+        Log.d("The user confirms the error");
+    }
+  }
+
+  @override
+  void finishSelection(State state){
+    if (state.mounted) {
+      Navigator.of(state.context).popUntil((Route route) {
+        return route.settings.name == GroupDetailPanel.routeName;
+      });
+    }
+  }
+
+  void _updateDataFromState(State state){
+    if(state is Event2SelectorDataProvider){
+      Event2SelectorData? rawData = (state as Event2SelectorDataProvider).selectorData;
+      data = (rawData is GroupEventData) ? rawData : data;
+    }
+  }
+
+  void _onTapAddToGroup(State state) async{
+    Analytics().logSelect(target: "Add To Group");
+    state.setStateIfMounted(() {data.bindingInProgress = true;});
+    await prepareSelection(state);
+    await _bindEvent();
+    await performSelection(state);
+    finishSelection(state);
+  }
+
+  void _initMemberSelection(State<StatefulWidget> state){
+    if(data.group?.id != null && data.event?.id != null && CollectionUtils.isEmpty(data.membersSelection)){
+      Groups().loadGroupEventMemberSelection(data.group?.id, data.event?.id).then((memberSelection) { //Check do we already have selection {update mode}
+        state.setStateIfMounted(() {
+          if(memberSelection != null) {
+            data.membersSelection = memberSelection;
+          }
+        });
+      });
+    }
+  }
+
+  //Event to Group binding
+  Future<void> _bindEvent() async{
+    Future<bool> Function({String? groupId, String? eventId, List<Member>? toMembers}) serviceAPI = data.updateExistingEvent == true ? Groups().updateLinkedEventMembers : Groups().linkEventToGroup;
+    List<Future<bool>> futures = [
+      serviceAPI(groupId: data.group?.id, eventId: data.event?.id, toMembers: data.membersSelection)
+    ];
+    if (data.adminGroupsSelection?.isNotEmpty == true) {
+      for (Group group in data.adminGroupsSelection!) {
+        futures.add(serviceAPI(groupId: group.id, eventId: data.event?.id, toMembers: data.membersSelection));
+      }
+    }
+
+    List<bool> results = await Future.wait(futures);
+
+    List<String> failedBindingGroupNames = [];
+    for (int index = 0; index < results.length; index++) {
+      if (!results[index]) {
+        Group? group = (0 < index) ? data.adminGroupsSelection![index - 1] : data.group;
+        if (group?.title != null) {
+          failedBindingGroupNames.add(group!.title!);
+        }
+      }
+    }
+    if (failedBindingGroupNames.isNotEmpty) {
+      data.serviceAPIError = _constructBindingFailureMsg(event: data.event, failedGroupNames: failedBindingGroupNames);
+    }
+  }
+
+  Future<dynamic> _createEvent(Event2 event) async {
+    if (data.adminGroupsSelection?.isNotEmpty == true) {
+      return await _createEventForGroups(event);
+    }
+    else {
+      return await Groups().createEventForGroupV3(event, groupId: data.group?.id, toMembers: data.membersSelection);
+    }
+  }
+
+  Future<dynamic> _createEventForGroups(Event2 event) async {
+    List<String> groupIds = <String>[];
+    ListUtils.add(groupIds, data.group?.id);
+    data.adminGroupsSelection?.forEach((Group group) => ListUtils.add(groupIds, group.id));
+
+    dynamic result = await Groups().createEventForGroupsV3(event, groupIds: groupIds);
+    if ((result is CreateEventForGroupsV3Param) && (result.event != null)) {
+      data.serviceAPIError = _constructFailedGroupsMessage(
+        targetGroups: data.adminGroupsSelection,
+        succeededGroupIds: result.groupIds
+      );
+      return result.event;
+    }
+    else {
+      return result;
+    }
+  }
+
+  Future<dynamic> _updateEvent(Event2 event) async =>
+    await Groups().updateEventForGroupV3(event, groupId: data.group?.id, toMembers: data.membersSelection);
+
+
+  //Other admin groups
+  Future<void> _selectOtherAdminGroups(State state) async{
+    if (CollectionUtils.isEmpty(data.membersSelection)) { //Do not allow to save to other groups if membersSelection is performed. Causes a bug that these members may not be also members of the rest of the groups
+      if(data.group?.id != null) {
+        List<Group>? otherAdminGroups = await Groups().loadAdminUserGroups(excludeIds: [data.group!.id!]);
+        List<Group>? otherSelectedGroups = await showDialog(context: state.context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherAdminGroups));
+        state.setStateIfMounted(() {data.adminGroupsSelection = otherSelectedGroups;});
+      }
+    }
+  }
+
+  String? _constructFailedGroupsMessage({List<Group>? targetGroups, List<String>? succeededGroupIds}) {
+    List<String>? failedGroupNames;
+    if (targetGroups != null) {
+      Set<String>? succeededMap = (succeededGroupIds != null) ? Set.from(succeededGroupIds) : null;
+      for (Group group in targetGroups) {
+        if ((succeededMap?.contains(group.id) != true) && (group.title != null)) {
+          (failedGroupNames ??= <String>[]).add(group.title!);
+        }
+      }
+    }
+    return (failedGroupNames?.isNotEmpty == true) ? (Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ') + failedGroupNames!.join(', ')) : null;
+  }
+
+  ///
+  /// Returns the group for which the binding has failed. Empty == success
+  ///
+  /*Future<List<String>> _bindEventToSelectedAdminGroups(Event2 event) async{
+    List<String> failedForGroups = [];
+    // Save the event to the other selected groups that the user is admin.
+    if (CollectionUtils.isNotEmpty(data.adminGroupsSelection)) {
+      for (Group group in data.adminGroupsSelection!) {
+          bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: group.id, eventId: event.id, toMembers: data.membersSelection);
+          if (eventLinkedToGroup == false) {
+            // Failed to link event to group
+            ListUtils.add(failedForGroups, group.title);
+          }
+        }
+      }
+
+    return failedForGroups;
+  }*/
+
+  String? _constructBindingFailureMsg({List<String?>? failedGroupNames, Event2? event}){
+    String? failedMsg;
+    if(StringUtils.isEmpty(event?.id)){
+      failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.');
+    } else if(CollectionUtils.isNotEmpty(failedGroupNames)){
+      failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ');
+      failedMsg += failedGroupNames!.join(', ');
+    }
+
+    return failedMsg;
+  }
+}
+
+class GroupEventData extends Event2SelectorData{
+  GroupEventData({Group? group, Event2? event, List<Member>? memberSelection}):
+        super(data: {
+          "group" : group,
+          "event" : event,
+          "members_selection" : memberSelection,
+          "update_existing_event" : (event?.id != null)
+        });
+
+  void set group(Group? group) => data["group"] = group;
+  Group? get group {
+      dynamic groupData = data["group"];
+      return (groupData is Group)? groupData : null;
+  }
+
+  void set membersSelection(List<Member>? selection) => data["members_selection"] = selection;
+  List<Member>? get membersSelection {
+    dynamic selectionData = data["members_selection"];
+    return (selectionData is List<Member>)? selectionData : null;
+  }
+
+  bool? get bindingInProgress => JsonUtils.boolValue(data["binding_in_progress"]);
+  void set bindingInProgress(bool? progress) => data["binding_in_progress"] = progress;
+
+  void set updateExistingEvent(bool? value) => data["update_existing_event"] = value;
+  bool? get updateExistingEvent {
+    return JsonUtils.boolValue(data["update_existing_event"]);
+  }
+
+  void set adminGroupsSelection(List<Group>? otherGroups) => data["other_admin_groups"] = otherGroups;
+  List<Group>? get adminGroupsSelection {
+    return JsonUtils.listValue<Group>(data["other_admin_groups"]);
+  }
+
+  String? get serviceAPIError => JsonUtils.stringValue(data['service_api_error']);
+  set serviceAPIError(String? value) => data['service_api_error'] = value;
 }

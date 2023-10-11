@@ -161,11 +161,11 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
     return Padding(
         padding: EdgeInsets.only(top: 40),
         child: RoundedButton(
+            label: Localization().getStringEx('panel.laundry.issues_detail.continue.button', 'Continue'),
+            textStyle: Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
             backgroundColor: Styles().colors!.fillColorPrimary,
-            textColor: Styles().colors!.white,
             contentWeight: 0.6,
             borderColor: Styles().colors!.fillColorPrimary,
-            label: Localization().getStringEx('panel.laundry.issues_detail.continue.button', 'Continue'),
             onTap: _onTapContinue,
             rightIcon: Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true)));
   }

@@ -7,6 +7,7 @@ extension RecentItemExt on RecentItem {
   Color? get headerColor {
     switch (type) {
       case RecentItemType.event:   return Styles().colors?.eventColor;
+      case RecentItemType.event2:  return Styles().colors?.eventColor;
       case RecentItemType.dining:  return  Styles().colors?.diningColor;
       case RecentItemType.game:    return  Styles().colors?.fillColorPrimary;
       case RecentItemType.news:    return  Styles().colors?.fillColorPrimary;
@@ -19,6 +20,7 @@ extension RecentItemExt on RecentItem {
   String? get iconKey {
     switch (type) {
       case RecentItemType.event:   return 'calendar';
+      case RecentItemType.event2:  return 'calendar';
       case RecentItemType.dining:  return 'dining';
       case RecentItemType.game:    return 'athletics';
       case RecentItemType.news:    return 'news';

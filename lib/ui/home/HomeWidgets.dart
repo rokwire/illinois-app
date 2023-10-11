@@ -345,10 +345,10 @@ class HomeFavoriteButton extends FavoriteButton {
 
   @override
   bool? get isFavorite {
-    List<String>? avalableSectionFavorites = ((favorite != null) && (favorite?.id != null) && (favorite?.category == null)) ? JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']) : null;
-    if (avalableSectionFavorites != null) {
+    List<String>? availableSectionFavorites = ((favorite != null) && (favorite?.id != null) && (favorite?.category == null)) ? JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']) : null;
+    if (availableSectionFavorites != null) {
       int favCount = 0, unfavCount = 0;
-      for (String code in avalableSectionFavorites) {
+      for (String code in availableSectionFavorites) {
         if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: favorite?.id)) ?? false) {
           favCount++;
         }
@@ -356,10 +356,10 @@ class HomeFavoriteButton extends FavoriteButton {
           unfavCount++;
         }
       }
-      if (favCount == avalableSectionFavorites.length) {
+      if (favCount == availableSectionFavorites.length) {
         return true;
       }
-      else if (unfavCount == avalableSectionFavorites.length) {
+      else if (unfavCount == availableSectionFavorites.length) {
         return false;
       }
       else {
@@ -399,10 +399,10 @@ class HomeFavoriteButton extends FavoriteButton {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
         // process toggle home panel widget
-        List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
-        if (avalableSectionFavorites != null) {
+        List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
+        if (availableSectionFavorites != null) {
           List<Favorite> favorites = <Favorite>[favorite!];
-          for(String sectionEntry in avalableSectionFavorites) {
+          for(String sectionEntry in availableSectionFavorites) {
             favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
           }
           Auth2().prefs?.setListFavorite(favorites, value);
@@ -433,9 +433,9 @@ class HomeFavoriteButton extends FavoriteButton {
         else {
           // turn off home widget entry
           int sectionFavoritesCount = 0;
-          List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
-          if (avalableSectionFavorites != null) {
-            for (String sectionEntry in avalableSectionFavorites) {
+          List<String>? availableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
+          if (availableSectionFavorites != null) {
+            for (String sectionEntry in availableSectionFavorites) {
               if (Auth2().prefs?.isFavorite(HomeFavorite(sectionEntry, category: favorite?.category)) ?? false) {
                 sectionFavoritesCount++;
               }

@@ -25,12 +25,13 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String? favoriteKey;
   final String? guideEntryId;
-  GuideDetailPanel({ this.guideEntryId, this.favoriteKey = GuideFavorite.favoriteKeyName });
+  final Map<String, dynamic>? guideEntry;
+  final bool showTabBar;
+  GuideDetailPanel({ this.guideEntryId, this.guideEntry, this.favoriteKey = GuideFavorite.favoriteKeyName, this.showTabBar = true });
 
   @override
   _GuideDetailPanelState createState() => _GuideDetailPanelState();
@@ -39,35 +40,20 @@ class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
   Map<String, dynamic> get analyticsPageAttributes => Guide().entryAnalyticsAttributes(Guide().entryById(guideEntryId)) ?? {};
 }
 
-class _GuideDetailPanelState extends State<GuideDetailPanel> implements NotificationsListener {
+class _GuideDetailPanelState extends State<GuideDetailPanel> {
 
   Map<String, dynamic>? _guideEntry;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [
-      Guide.notifyChanged,
-    ]);
-    _guideEntry = Guide().entryById(widget.guideEntryId);
+    _guideEntry = Guide().entryById(widget.guideEntryId) ?? widget.guideEntry;
     RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
     super.initState();
   }
 
   @override
   void dispose() {
-    NotificationService().unsubscribe(this);
     super.dispose();
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Guide.notifyChanged) {
-      setStateIfMounted(() {
-        _guideEntry = Guide().entryById(widget.guideEntryId);
-      });
-    }
   }
 
   @override
@@ -75,16 +61,16 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     return Scaffold(
       appBar: HeaderBar(title: JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'header_title'))),
       body: Column(children: <Widget>[
-          Expanded(child:
-            SingleChildScrollView(child:
-              SafeArea(child:
-                GuideDetailWidget(guideEntryId: widget.guideEntryId, favoriteKey: widget.favoriteKey,)
-              ),
+        Expanded(child:
+          SingleChildScrollView(child:
+            SafeArea(child:
+              GuideDetailWidget(guideEntryId: widget.guideEntryId, guideEntry: widget.guideEntry, favoriteKey: widget.favoriteKey,)
             ),
           ),
-          uiuc.TabBar(),
-        ],),
+        ),
+      ],),
       backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: widget.showTabBar ? uiuc.TabBar() : null,
     );
   }
 }
@@ -92,8 +78,9 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
 class GuideDetailWidget extends StatefulWidget {
   final String? favoriteKey;
   final String? guideEntryId;
+  final Map<String, dynamic>? guideEntry;
   final Color? headingColor;
-  GuideDetailWidget({Key? key, this.guideEntryId, this.favoriteKey, this.headingColor }) : super(key: key);
+  GuideDetailWidget({Key? key, this.guideEntryId, this.guideEntry, this.favoriteKey, this.headingColor }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GuideDetailWidgetState();
@@ -101,6 +88,7 @@ class GuideDetailWidget extends StatefulWidget {
 
 class _GuideDetailWidgetState extends State<GuideDetailWidget> implements NotificationsListener {
   Map<String, dynamic>? _guideEntry;
+  String? _guideEntryId;
   bool _isFavorite = false;
 
   @override
@@ -110,8 +98,9 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
     ]);
-    _guideEntry = Guide().entryById(widget.guideEntryId);
-    _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: widget.guideEntryId));
+    _guideEntry = Guide().entryById(widget.guideEntryId) ?? widget.guideEntry;
+    _guideEntryId = Guide().entryId(_guideEntry);
+    _isFavorite = (widget.favoriteKey != null) && (_guideEntryId != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: _guideEntryId));
     super.initState();
   }
 
@@ -126,13 +115,17 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
   @override
   void onNotification(String name, dynamic param) {
     if (name == Guide.notifyChanged) {
-      setStateIfMounted(() {
-        _guideEntry = Guide().entryById(widget.guideEntryId);
-      });
+      if ((widget.guideEntryId != null) && mounted) {
+        setState(() {
+          _guideEntry = Guide().entryById(widget.guideEntryId) ?? widget.guideEntry;
+          _guideEntryId = Guide().entryId(_guideEntry);
+          _isFavorite = (widget.favoriteKey != null) && (_guideEntryId != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: _guideEntryId));
+        });
+      }
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {
-        _isFavorite = (widget.favoriteKey != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: widget.guideEntryId));
+        _isFavorite = (widget.favoriteKey != null) && (_guideEntryId != null) && Auth2().isFavorite(FavoriteItem(key: widget.favoriteKey!, id: _guideEntryId));
       });
     }
     else if (name == FlexUI.notifyChanged) {
@@ -151,7 +144,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     else {
       return Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.guide_detail.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+          Text(Localization().getStringEx('panel.guide_detail.label.content.empty', 'Empty guide content'), style: Styles().textStyles?.getTextStyle("widget.message.regular.fat")),
         ),
       );
     }
@@ -172,7 +165,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     String? category = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'category'));
     contentList.add(
       Padding(padding: EdgeInsets.only(bottom: 8), child:
-        Semantics(hint: "Heading", child:Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)),
+        Semantics(hint: "Heading", child:Text(category?.toUpperCase() ?? '', style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"))),
     ),);
 
     String? titleHtml = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'detail_title')) ?? JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'title'));
@@ -182,7 +175,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         HtmlWidget(
           titleHtml ?? "",
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 36),
+          textStyle: Styles().textStyles?.getTextStyle("widget.title.extra_huge.extra_fat"),
         )
           // Html(data: titleHtml,
           //   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
@@ -196,7 +189,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
       contentList.add(
         Padding(padding: EdgeInsets.zero, child:
           Text(dateString ?? '',
-            style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),),
+            style: Styles().textStyles?.getTextStyle("widget.item.regular")),
       ),);
     }
 
@@ -207,7 +200,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         HtmlWidget(
           descriptionHtml ?? "",
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+          textStyle: Styles().textStyles?.getTextStyle("widget.item.large"),
         )
       ),);
     }
@@ -232,13 +225,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
           bool hasLocation = (locationGps != null);
 
           if (text != null) {
-            TextDecoration? linkTextDecoration;
-            Color? linkTextDecorationColor;
-            if (hasUri || hasLocation) {
-              linkTextDecoration = TextDecoration.underline;
-              linkTextDecorationColor = Styles().colors!.fillColorSecondary;
-            }
-            
+            bool underline = hasUri || hasLocation;
             contentList.add(Semantics(button: true, child:
               GestureDetector(onTap: () => (locationGps != null) ? _onTapLocation(locationGps) : (hasUri ? _onTapLink(url, useInternalBrowser: useInternalBrowser) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -246,7 +233,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                     (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(left: 8), child:
-                        Text(text, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.regular, decoration: linkTextDecoration, decorationColor: linkTextDecorationColor))
+                        Text(text, style: underline ? Styles().textStyles?.getTextStyle("widget.button.title.regular.thin.underline") :  Styles().textStyles?.getTextStyle("widget.button.title.regular.thin"))
                       ),
                     ),
                   ],)
@@ -271,27 +258,30 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     String? imageUrl = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'image'));
     Uri? imageUri = (imageUrl != null) ? Uri.tryParse(imageUrl) : null;
     if (StringUtils.isNotEmpty(imageUri?.scheme)) {
-      return Stack(alignment: Alignment.bottomCenter, children: [
-        Container(color: widget.headingColor ?? Styles().colors?.white, padding: EdgeInsets.all(16), child:
-          Row(children: [
-            Expanded(child:
-              Column(children: [
-                Image.network(imageUrl!, excludeFromSemantics: true,),
-              ]),
+      return Semantics(
+          label: "Image",
+          button: true,
+          child:Stack(alignment: Alignment.bottomCenter, children: [
+            Container(color: widget.headingColor ?? Styles().colors?.white, padding: EdgeInsets.all(16), child:
+              Row(children: [
+                Expanded(child:
+                  Column(children: [
+                    Image.network(imageUrl!, excludeFromSemantics: true,),
+                  ]),
+                ),
+              ],)
             ),
-          ],)
-        ),
-        Container(color: Styles().colors!.background, height: 48, width: MediaQuery.of(context).size.width),
-        Container(padding: EdgeInsets.all(16), child:
-          Row(children: [
-            Expanded(child:
-              Column(children: [
-                ModalImageHolder(child: Image.network(imageUrl, excludeFromSemantics: true,)),
-              ]),
+            Container(color: Styles().colors!.background, height: 48, width: MediaQuery.of(context).size.width),
+            Container(padding: EdgeInsets.all(16), child:
+              Row(children: [
+                Expanded(child:
+                  Column(children: [
+                    ModalImageHolder(child: Image.network(imageUrl, excludeFromSemantics: true,)),
+                  ]),
+                ),
+              ],)
             ),
-          ],)
-        ),
-      ],);
+          ],));
     }
     else {
       return Container();
@@ -305,7 +295,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     if (StringUtils.isNotEmpty(title)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-          Text(title ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 36, fontFamily: Styles().fontFamilies!.bold),),
+          Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.extra_huge.fat")),
       ),);
     }
 
@@ -316,7 +306,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         HtmlWidget(
           descriptionHtml ?? "",
           onTapUrl : (url) {_onTapLink(url); return true;},
-          textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+          textStyle:  Styles().textStyles?.getTextStyle("widget.item.large"),
         )
       ),);
     }
@@ -332,7 +322,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                 HtmlWidget(
                   sectionHtml ?? "",
                   onTapUrl : (url) {_onTapLink(url); return true;},
-                  textStyle:  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.title.large.fat"),
                 )
             ),);
           }
@@ -348,7 +338,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                       HtmlWidget(
                         headingHtml ?? "",
                         onTapUrl : (url) {_onTapLink(url); return true;},
-                        textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.item.large")
                       )
                     ),);
                 }
@@ -378,12 +368,12 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                         Padding(padding: EdgeInsets.only(top: numberTopPadding, bottom: numberBottomPadding), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(left: numberLeftPadding, right: numberRightPadding), child:
-                              Text(sprintf(numberTextFormat, [numberIndex + 1]), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),),
+                              Text(sprintf(numberTextFormat, [numberIndex + 1]), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),), //Custom TextStyle
                             Expanded(child:
                               HtmlWidget(
                                 numberHtml,
                                 onTapUrl : (url) {_onTapLink(url); return true;},
-                                textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                                textStyle: Styles().textStyles?.getTextStyle("widget.item.large")
                               )
                             ),
                           ],)
@@ -416,12 +406,12 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
                         Padding(padding: EdgeInsets.only(top: bulletTopPadding, bottom: bulletBottomPadding), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(left: bulletLeftPadding, right: bulletRightPadding), child:
-                              Text(bulletText, style: TextStyle(color: bulletColor, fontSize: bulletFontSize, fontFamily: bulletFontFamily),),),
+                              Text(bulletText, style: TextStyle(color: bulletColor, fontSize: bulletFontSize, fontFamily: bulletFontFamily),),),//Custom TextStyle
                             Expanded(child:
                               HtmlWidget(
                                 bulletHtml,
                                 onTapUrl : (url) {_onTapLink(url); return true;},
-                                textStyle:  TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 20),
+                                textStyle: Styles().textStyles?.getTextStyle("widget.item.large")
                               )
                             ),
                           ],)
@@ -451,10 +441,8 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
             buttonWidgets.add(
               Padding(padding: EdgeInsets.only(top: 16), child:
                 RoundedButton(label: text ?? '',
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                   backgroundColor: Styles().colors!.white,
-                  textColor: Styles().colors!.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 16,
                   borderColor: Styles().colors!.fillColorSecondary,
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -534,7 +522,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
     ),);
   }
 
-  bool get _canFavorite => (widget.favoriteKey != null) && Auth2().canFavorite;
+  bool get _canFavorite => (widget.favoriteKey != null) && (_guideEntryId != null) && Auth2().canFavorite;
 
   void _onTapFavorite() {
     if (widget.favoriteKey != null) {
@@ -559,7 +547,7 @@ class _GuideDetailWidgetState extends State<GuideDetailWidget> implements Notifi
         } else {
           Uri? uri = Uri.tryParse(url!);
           if (uri != null) {
-            launchUrl(uri);
+            UrlUtils.launchExternal(url);
           }
         }
       }

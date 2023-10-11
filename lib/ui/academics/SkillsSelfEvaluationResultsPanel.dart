@@ -14,7 +14,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Polls.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationOccupationListPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -99,6 +99,18 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.section.title', 'Results'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.header'), textAlign: TextAlign.center,),
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
+        // TODO: Need to change the look and size of the button
+        Align(alignment: Alignment.center, child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 16),
+          child: RoundedButton(
+            label: Localization().getStringEx("panel.skills_self_evaluation.go_to_results.button.label", 'Career Explorer'),
+            textColor: Styles().colors?.fillColorPrimaryVariant,
+            backgroundColor: Styles().colors?.surface,
+            onTap: () {
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillSelfEvaluationOccupationListPanel(percentages: _latestResponse?.survey.stats?.percentages ?? {})));
+            }
+          ),
+        )),
         _buildScoresHeader(),
       ]),
       decoration: BoxDecoration(
@@ -116,7 +128,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   Widget _buildScoresHeader() {
-    return Padding(padding: const EdgeInsets.only(top: 40, left: 28, right: 28), child: Column(
+    return Padding(padding: const EdgeInsets.only(top: 20, left: 28, right: 28), child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Divider(color: Styles().colors?.surface, thickness: 2),
@@ -262,7 +274,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
   void _loadResults() {
     _setLoading(true);
-    Surveys().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
+    Surveys().loadUserSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       _responses.clear();
       if (CollectionUtils.isNotEmpty(responses)) {
         responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
@@ -280,7 +292,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["bessi_results", "bessi_profile"]).then((content) {
+    SkillsSelfEvaluation.loadContentItems(["bessi_results", "bessi_profile"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _resultsContentItems.clear();
         _profileContentItems.clear();

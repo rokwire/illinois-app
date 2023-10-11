@@ -123,14 +123,9 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   List _buildDisplayList() {
     List displayList = [];
     if (CollectionUtils.isNotEmpty(_schedule?.games)) {
-      DateTime now = DateTime.now();
       for (Game? game in _schedule!.games!) {
-        DateTime? gameDateTime = game!.dateTimeUniLocal;
-        if (gameDateTime != null) {
-          if ((_displayUpcoming && gameDateTime.isAfter(now)) ||
-              (!_displayUpcoming && gameDateTime.isBefore(now))) {
-            displayList.add(game);
-          }
+        if (_isGameDisplayed(game)) {
+          displayList.add(game);
         }
       }
       displayList.sort((a, b) {
@@ -142,9 +137,23 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
     return displayList;
   }
 
+  bool _isGameDisplayed(Game? game) {
+    DateTime? startDateTimeLocal = game?.dateTimeUtc?.toLocal();
+    if (startDateTimeLocal == null) {
+      return false;
+    }
+    DateTime now = DateTime.now();
+    DateTime nowMidnight = DateTime(now.year, now.month, now.day, 0, 0, 0);
+    if (_displayUpcoming) {
+      return startDateTimeLocal.isAfter(nowMidnight);
+    } else {
+      return startDateTimeLocal.isBefore(nowMidnight);
+    }
+  }
+
   int _compareSchedulesAscending(Game a, Game b) {
-    DateTime? dateTimeA = a.dateTimeUniLocal;
-    DateTime? dateTimeB = b.dateTimeUniLocal;
+    DateTime? dateTimeA = a.dateTimeUtc;
+    DateTime? dateTimeB = b.dateTimeUtc;
     if ((dateTimeA != null)) {
       return (dateTimeB != null) ? dateTimeA.compareTo(dateTimeB) : -1;
     }
@@ -154,8 +163,8 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   }
 
   int _compareSchedulesDescending(Game a, Game b) {
-    DateTime? dateTimeA = a.dateTimeUniLocal;
-    DateTime? dateTimeB = b.dateTimeUniLocal;
+    DateTime? dateTimeA = a.dateTimeUtc;
+    DateTime? dateTimeB = b.dateTimeUtc;
     if ((dateTimeA != null)) {
       return (dateTimeB != null) ? dateTimeB.compareTo(dateTimeA) : 1;
     }

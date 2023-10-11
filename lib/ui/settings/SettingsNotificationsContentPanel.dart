@@ -46,7 +46,7 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       AppAlert.showMessage(context,Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else if (ModalRoute.of(context)?.settings.name != routeName) {
-      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
       showModalBottomSheet(
         context: context,
@@ -77,14 +77,60 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       Inbox().readMessage(message.messageId);
     }
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
+      FirebaseMessaging.payloadTypeHome,
+      FirebaseMessaging.payloadTypeBrowse,
+      FirebaseMessaging.payloadTypeMap,
+      FirebaseMessaging.payloadTypeMapEvents,
+      FirebaseMessaging.payloadTypeMapDining,
+      FirebaseMessaging.payloadTypeMapBuildings,
+      FirebaseMessaging.payloadTypeMapStudentCourses,
+      FirebaseMessaging.payloadTypeMapAppointments,
+      FirebaseMessaging.payloadTypeMapMtdStops,
+      FirebaseMessaging.payloadTypeMapMtdDestinations,
+      FirebaseMessaging.payloadTypeMapMentalHealth,
+      FirebaseMessaging.payloadTypeMapStateFarmWayfinding,
+      FirebaseMessaging.payloadTypeAcademics,
+      FirebaseMessaging.payloadTypeAcademicsAppointments,
+      FirebaseMessaging.payloadTypeAcademicsCanvasCourses,
+      FirebaseMessaging.payloadTypeAcademicsDueDateCatalog,
+      FirebaseMessaging.payloadTypeAcademicsEvents,
+      FirebaseMessaging.payloadTypeAcademicsGiesCheckilst,
+      FirebaseMessaging.payloadTypeAcademicsMedicineCourses,
+      FirebaseMessaging.payloadTypeAcademicsMyIllini,
+      FirebaseMessaging.payloadTypeAcademicsSkillsSelfEvaluation,
+      FirebaseMessaging.payloadTypeAcademicsStudentCourses,
+      FirebaseMessaging.payloadTypeAcademicsToDoList,
+      FirebaseMessaging.payloadTypeAcademicsUiucCheckilst,
+      FirebaseMessaging.payloadTypeWellness,
+      FirebaseMessaging.payloadTypeWellnessAppointments,
+      FirebaseMessaging.payloadTypeWellnessDailyTips,
+      FirebaseMessaging.payloadTypeWellnessHealthScreener,
+      FirebaseMessaging.payloadTypeWellnessMentalHealth,
+      FirebaseMessaging.payloadTypeWellnessPodcast,
+      FirebaseMessaging.payloadTypeWellnessResources,
+      FirebaseMessaging.payloadTypeWellnessRings,
+      FirebaseMessaging.payloadTypeWellnessStruggling,
+      FirebaseMessaging.payloadTypeWellnessTodoList,
+      FirebaseMessaging.payloadTypeWellnessToDoItem,
       FirebaseMessaging.payloadTypeEventDetail,
+      FirebaseMessaging.payloadTypeEvent,
       FirebaseMessaging.payloadTypeGameDetail,
       FirebaseMessaging.payloadTypeAthleticsGameStarted,
       FirebaseMessaging.payloadTypeAthleticsNewDetail,
       FirebaseMessaging.payloadTypeGroup,
-      FirebaseMessaging.payloadTypeWellnessToDoItem,
       FirebaseMessaging.payloadTypeAppointment,
-      FirebaseMessaging.payloadTypePoll
+      FirebaseMessaging.payloadTypePoll,
+      FirebaseMessaging.payloadTypeProfileMy,
+      FirebaseMessaging.payloadTypeProfileWhoAreYou,
+      FirebaseMessaging.payloadTypeProfilePrivacy,
+      FirebaseMessaging.payloadTypeSettingsSections,
+      FirebaseMessaging.payloadTypeSettingsInterests,
+      FirebaseMessaging.payloadTypeSettingsFoodFilters,
+      FirebaseMessaging.payloadTypeSettingsSports,
+      FirebaseMessaging.payloadTypeSettingsFavorites,
+      FirebaseMessaging.payloadTypeSettingsAssessments,
+      FirebaseMessaging.payloadTypeSettingsCalendar,
+      FirebaseMessaging.payloadTypeSettingsAppointments
     });
   }
 
@@ -181,7 +227,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
           RibbonButton(
-            textColor: Styles().colors!.fillColorSecondary,
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
             backgroundColor: Styles().colors!.white,
             borderRadius: BorderRadius.all(Radius.circular(5)),
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -266,7 +312,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   void _evalContentWidgetHeight() {
     double takenHeight = 0;
     try {
-      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       takenHeight += mediaQuery.viewPadding.top + mediaQuery.viewInsets.top + 16;
 
       final RenderObject? contentDropDownRenderBox = _contentDropDownKey.currentContext?.findRenderObject();

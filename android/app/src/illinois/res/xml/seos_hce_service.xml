@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+                   android:description="@string/mobile_access_hce_service_description"
+                   android:requireDeviceUnlock="false">
+
+    <aid-group android:description="@string/mobile_access_hce_service_aid_group_description" android:category="other">
+        <!-- This is the real aid. Use this if you want to test with ASSA ABLOY readers -->
+        <aid-filter android:name="@string/hceAidFilter1"/>
+        <aid-filter android:name="@string/hceAidFilter2"/>
+    </aid-group>
+</host-apdu-service>

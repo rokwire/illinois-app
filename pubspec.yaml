@@ -11,12 +11,12 @@ description: Illinois client application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 4.3.36+1736
+version: 5.1.0+1900
 
 publish_to: none
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.17.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -27,15 +27,15 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.4
-  intl: ^0.17.0
+  intl: ^0.18.0
   http: ^0.13.3
   flutter_widget_from_html: ^0.9.1
   geolocator: ^8.0.0
   url_launcher: ^6.0.10
-  xml: ^5.1.2
+  xml: ^6.3.0
   sprintf: ^6.0.0
   path: ^1.8.0
-  collection: ^1.15.0
+  collection: ^1.17.1
   convert: ^3.0.1
   roundcheckbox: ^2.0.4+1
   path_provider: ^2.0.4
@@ -51,13 +51,16 @@ dependencies:
   package_info: ^2.0.2
   device_calendar: ^4.0.1
   image_cropping: ^0.0.11
-  dropdown_button2: ^1.2.2
+  dropdown_button2: ^2.1.3
   video_player: ^2.3.0
   just_audio: ^0.9.21
   flutter_barcode_scanner: ^2.0.0
   confetti: ^0.7.0
   flutter_colorpicker: ^1.0.3
   in_app_review: ^2.0.4
+  speech_to_text: ^6.1.1
+  visibility_detector: ^0.4.0+2
+  flutter_beep: ^1.0.0
 # google_maps_flutter: ^2.2.5
 
   rokwire_plugin:

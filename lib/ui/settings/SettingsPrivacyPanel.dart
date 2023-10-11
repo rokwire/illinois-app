@@ -19,10 +19,11 @@ import 'dart:math';
 import "package:flutter/material.dart";
 import "package:illinois/model/PrivacyData.dart";
 import "package:illinois/service/Analytics.dart";
-import "package:rokwire_plugin/service/assets.dart";
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import "package:illinois/service/Config.dart";
 import "package:illinois/service/FlexUI.dart";
+import 'package:rokwire_plugin/service/content.dart';
 import "package:rokwire_plugin/service/localization.dart";
 import "package:rokwire_plugin/service/notification_service.dart";
 import "package:rokwire_plugin/service/onboarding.dart";
@@ -54,6 +55,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   ScrollController? _controller;
   bool _disabled = false;
   bool _updating = false;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -61,15 +63,20 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
     NotificationService().subscribe(this,[
       Localization.notifyLocaleChanged,
-      Assets.notifyChanged
     ]);
 
     _controller = ScrollController();
     _controller!.addListener(_scrollListener);
     _disabled = (widget.mode != SettingsPrivacyPanelMode.regular);
+    _sliderValue = this._privacyLevel;
 
-    _loadPrivacyData();
-    _loadPrivacyLevel();
+    _loading = true;
+    Content().loadContentItem('privacy').then((dynamic value) {
+      setStateIfMounted(() {
+        _data = PrivacyData.fromJson(JsonUtils.mapValue(value));
+        _loading = false;
+      });
+    });
 
   }
 
@@ -83,11 +90,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Assets.notifyChanged) {
-      setState(() {
-        _loadPrivacyData();
-      });
-    } else if (name == Localization.notifyLocaleChanged) {
+    if (name == Localization.notifyLocaleChanged) {
       //We need to refresh because the text fields are preloaded with the locale
       _data?.reload();
       setState(() {});
@@ -103,17 +106,6 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     }
   }
 
-  void _loadPrivacyLevel() async {
-    setState(() {
-      _sliderValue = this._privacyLevel;
-    });
-  }
-
-  void _loadPrivacyData() async {
-    dynamic _jsonData = Assets()["privacy"];
-    _data = PrivacyData.fromJson(_jsonData);
-  }
-
   double get _privacyLevel {
     return Auth2().prefs?.privacyLevel?.toDouble() ?? 5.0;
   }
@@ -124,7 +116,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
       appBar: (widget.mode == SettingsPrivacyPanelMode.regular)
         ? HeaderBar(title: Localization().getStringEx("panel.settings.privacy.privacy.label.title", "Choose Your Privacy Level"),)
         : null,
-      body: _buildContentWidget(),
+      body: _loading ? _buildLoadingWidget() : _buildContentWidget(),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: (widget.mode == SettingsPrivacyPanelMode.regular) ? uiuc.TabBar() : null,
     );
@@ -202,9 +194,9 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                       hint: _disabled
                           ? Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.disabled.hint", "")
                           : Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.hint", ""),
+                      textStyle: _disabled ? Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat.variant_two") : Styles().textStyles?.getTextStyle("widget.colourful_button.title.large.accent"),
                       borderColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.fillColorSecondary,
                       backgroundColor: Styles().colors!.fillColorPrimaryVariant,
-                      textColor: _disabled ? Styles().colors!.disabledTextColorTwo : Styles().colors!.white,
                       progress: _updating,
                       onTap: () => _onSaveClicked()),
                 )
@@ -519,6 +511,12 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
 
   }
 
+  Widget _buildLoadingWidget() => Center(child:
+    SizedBox(width: 32, height: 32, child:
+      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+    )
+  );
+
   int? get _sliderIntValue {
     return _sliderValue?.round();
   }
@@ -632,8 +630,8 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
         decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
         padding: EdgeInsets.symmetric(horizontal: 0),
         child: Theme(data: ThemeData(/*accentColor: Styles().colors!.white,*/
+            /*backgroundColor: Styles().colors!.white,*/
             dividerColor: Colors.white,
-            backgroundColor: Styles().colors!.white,
             ),
             child: ExpansionTile(
               key: expansionTileKey,

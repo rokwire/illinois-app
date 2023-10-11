@@ -17,6 +17,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/attributes/ContentAttributesPanel.dart';
@@ -265,7 +266,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildGroupsContentSelection() {
     return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
       progress: _myGroupsBusy,
-      textColor: Styles().colors!.fillColorSecondary,
+      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -281,6 +282,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Row(children: <Widget>[ Expanded(child:
         Wrap(alignment: WrapAlignment.spaceBetween, runAlignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.start, children: <Widget>[
           _buildFiltersBar(),
+          _buildGroupsCountBar(),
           _buildCommandsBar(),
         ],),
       )]),
@@ -302,9 +304,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           InkWell(onTap: _onFilterAttributes, child:
             Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
               Row(children: [
-                Text(filtersTitle, style: TextStyle(
-                  fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
-                ),),
+                Text(filtersTitle, style:  Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 4), child:
                   Styles().images?.getImage('chevron-right', width: 6, height: 10) ?? Container(),
                 )
@@ -329,34 +329,64 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildContentAttributesDescription() {
-
-    List<InlineSpan> attributesList = <InlineSpan>[];
-    ContentAttributes? contentAttributes = Groups().contentAttributes;
-    List<ContentAttribute>? attributes = contentAttributes?.attributes;
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.fat");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
-    if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
-      for (ContentAttribute attribute in attributes) {
-        List<String>? displayAttributeValues = attribute.displayAttributeValuesListFromSelection(_contentAttributesSelection, complete: true);
-        if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
-          displayAttributeValues = List.from(displayAttributeValues.map((String attribute) => "'$attribute'"));
-          if (attributesList.isNotEmpty) {
-            attributesList.add(TextSpan(text: " and " , style : regularStyle,));
+    if (_selectedContentType == rokwire.GroupsContentType.all) {
+      List<InlineSpan> attributesList = <InlineSpan>[];
+      ContentAttributes? contentAttributes = Groups().contentAttributes;
+      List<ContentAttribute>? attributes = contentAttributes?.attributes;
+      TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.fat");
+      TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+      if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
+        for (ContentAttribute attribute in attributes) {
+          List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_contentAttributesSelection, complete: true);
+          if ((displayAttributeValues != null) && displayAttributeValues.isNotEmpty) {
+            displayAttributeValues = List.from(displayAttributeValues.map((String attribute) => "'$attribute'"));
+            if (attributesList.isNotEmpty) {
+              attributesList.add(TextSpan(text: " and " , style : regularStyle,));
+            }
+            attributesList.addAll(<InlineSpan>[
+              TextSpan(text: "${attribute.displayTitle}" , style : boldStyle,),
+              TextSpan(text: " is ${displayAttributeValues.join(' or ')}" , style : regularStyle,),
+            ]);
           }
-          attributesList.addAll(<InlineSpan>[
-            TextSpan(text: "${attribute.displayTitle}" , style : boldStyle,),
-            TextSpan(text: " is ${displayAttributeValues.join(' or ')}" , style : regularStyle,),
-          ]);
         }
       }
-    }
 
-    return attributesList.isNotEmpty ? 
-      Padding(padding: EdgeInsets.only(top: 0, bottom: 4, right: 12), child: 
-        Row(children: [ Expanded(child:
-          RichText(text: TextSpan(style: regularStyle, children: attributesList))
-        ),],)
-      ) : Container();
+      return attributesList.isNotEmpty ? 
+        Padding(padding: EdgeInsets.only(top: 0, bottom: 4, right: 12), child: 
+          Row(children: [ Expanded(child:
+            RichText(text: TextSpan(style: regularStyle, children: attributesList))
+          ),],)
+        ) : Container();
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _buildGroupsCountBar() {
+    if ((_selectedContentType != rokwire.GroupsContentType.all) || _isGroupsLoading) {
+      return SizedBox();
+    } else {
+      late int groupsCount;
+      switch (_selectedContentType) {
+        case rokwire.GroupsContentType.all:
+          groupsCount = _allGroups?.length ?? 0;
+          break;
+        case rokwire.GroupsContentType.my:
+          groupsCount = _userGroups?.length ?? 0;
+          break;
+        default:
+          groupsCount = 0;
+          break;
+      }
+      String groupsLabel = (groupsCount == 1)
+          ? Localization().getStringEx("panel.groups_home.groups.count.single.label", "group")
+          : Localization().getStringEx("panel.groups_home.groups.count.plural.label", "groups");
+      String countLabel = '$groupsCount $groupsLabel';
+      return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 7, vertical: 14),
+          child: Text(countLabel,
+              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")));
+    }
   }
 
   Widget _buildCommandsBar() {
@@ -365,7 +395,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           InkWell(onTap: _onTapCreate, child:
             Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
                 Padding(padding: EdgeInsets.only(left: 4), child:
                   Styles().images?.getImage('plus-circle', excludeFromSemantics: true)
                 )
@@ -390,6 +420,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         description: Localization().getStringEx('panel.group.attributes.filters.header.description', 'Choose one or more attributes to filter the list of groups.'),
         contentAttributes: Groups().contentAttributes,
         selection: _contentAttributesSelection,
+        sortType: ContentAttributesSortType.alphabetical,
         filtersMode: true,
       ))).then((selection) {
         if ((selection != null) && mounted) {
@@ -419,9 +450,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
 
     if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
-      String text = Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet");
-      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
-        Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+      return Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+          child: RichText(
+              textAlign: TextAlign.left,
+              text: TextSpan(
+                  style: Styles().textStyles?.getTextStyle("widget.message.dark.regular"),
+                  children:[
+                    TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
+                    TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles?.getTextStyle("widget.link.button.title.regular"),
+                        recognizer: TapGestureRecognizer()..onTap = () {
+                          Analytics().logSelect(target: "All Groups");
+                          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
+                        }, ),
+                      TextSpan(text:"."),
+              ]
+              ))
       );
     }
     else {
@@ -458,7 +502,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       List<Widget> widgets = [];
       widgets.add(Container(height: 8));
       widgets.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),)
+        Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: Styles().textStyles?.getTextStyle("widget.title.large.fat"))
         )
       );
       widgets.add(Container(height: 8,));
@@ -513,13 +557,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
       else if (_allGroups!.isEmpty) {
-        text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups created yet");
+        text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups matching your filters.");
       }
       else {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.filtered.empty", "No groups match the selected filter");
       }
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
-        Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+        Text(text, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
       );
     }
   }

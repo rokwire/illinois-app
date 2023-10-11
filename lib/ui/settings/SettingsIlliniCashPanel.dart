@@ -149,9 +149,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               ? 'chevron-left-white'
               : 'chevron-left-bold',
           title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
-          textColor: widget.scrollController == null
-              ? Styles().colors!.white
-              : Styles().colors!.fillColorPrimary,
+          textStyle:  widget.scrollController == null ? Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles?.getTextStyle("widget.title.regular.extra_fat"),
         ),
         SliverList(
           delegate: SliverChildListDelegate([
@@ -215,9 +213,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               RoundedButton(
                 label: Localization().getStringEx('panel.settings.illini_cash.button.log_in.title', 'Sign in to View'),
                 hint: Localization().getStringEx('panel.settings.illini_cash.button.log_in.hint', ''),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                 backgroundColor: Styles().colors!.white,
-                fontSize: 16.0,
-                textColor: Styles().colors!.fillColorPrimary,
                 textAlign: TextAlign.center,
                 borderColor: Styles().colors!.fillColorSecondary,
                 onTap: _onTapLogIn,
@@ -233,7 +230,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     final String servicesUrlMacro = '{{services_url}}';
     final String whiteSpaceMacro = '{{white_space}}';
     final String externalLinIconMacro = '{{external_link_icon}}';
-    String contentHtml = Localization().getStringEx("panel.settings.illini_cash.label.for_yourself_or", "Use Illini Cash to purchase food, books, printing, and <a href='{{services_url}}'>other selected services</a>{{white_space}}<img src='asset:{{external_link_icon}}' alt=''/> with your Illinois app or i-card.");
+    String contentHtml = Localization().getStringEx("panel.settings.illini_cash.label.for_yourself_or", "Use Illini Cash to purchase food, books, printing, and <a href='{{services_url}}'>other selected services</a>{{white_space}}<img src='asset:{{external_link_icon}}' alt=''/> with your Illinois app or Illini ID.");
     contentHtml = contentHtml.replaceAll(servicesUrlMacro, Config().illiniCashServicesUrl ?? '');
     contentHtml = contentHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
     contentHtml = contentHtml.replaceAll(whiteSpaceMacro, '&nbsp;');
@@ -263,9 +260,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                           'Add Illini Cash'),
                       hint: Localization().getStringEx(
                           'panel.settings.illini_cash.button.add_cash.hint', ''),
+                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                       backgroundColor: Styles().colors!.white,
-                      fontSize: 16.0,
-                      textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.fillColorSecondary,
                       onTap: _onAddIlliniCashTapped,
                     ),
@@ -360,13 +356,12 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
             Expanded(child: RoundedButton(
-              textColor: Styles().colors!.fillColorPrimary,
               label: Localization().getStringEx('panel.settings.illini_cash.button.view_history.title', 'View History'),
               hint: Localization().getStringEx('panel.settings.illini_cash.button.view_history.hint', ''),
+              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
               borderColor: Styles().colors!.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              fontSize: 16,
               onTap: _onTapViewHistory,)),
           ],)
       ],),);

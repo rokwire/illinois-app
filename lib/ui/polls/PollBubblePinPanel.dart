@@ -264,11 +264,10 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         child: RoundedButton(
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
+            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
             backgroundColor: Styles().colors!.white,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             progress: _loading,
-            fontSize: 16.0,
-            textColor: Styles().colors!.fillColorPrimary,
             borderColor: Styles().colors!.fillColorSecondary,
             onTap: () { _onContinue(); }
           ),       

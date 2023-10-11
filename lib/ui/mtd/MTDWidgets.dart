@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Favorite.dart';
@@ -411,11 +412,13 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
       _refreshingDepartures = true;
       MTD().getDepartures(stopId: widget.stop.id!, previewTime: 1440).then((List<MTDDeparture>? departures) {
         //debugPrint('Did refresh departures for ${widget.stop.name}: ${departures?.length}');
-        _refreshingDepartures = false;
-        if (mounted && (departures != null)) {
-          setState(() {
-            _departures = departures;
-          });
+        if (_refreshingDepartures) {
+          _refreshingDepartures = false;
+          if (mounted && (departures != null) && !DeepCollectionEquality().equals(_departures, departures)) {
+            setState(() {
+              _departures = departures;
+            });
+          }
         }
       });
     }

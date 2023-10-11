@@ -28,7 +28,6 @@ import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
@@ -186,9 +185,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     hint: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image.hint","") : Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
                                     RoundedButton(
                                       label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                                       onTap: _onTapAddImage,
                                       backgroundColor: Styles().colors!.white,
-                                      textColor: Styles().colors!.fillColorPrimary,
                                       borderColor: Styles().colors!.fillColorSecondary,
                                       contentWeight: 0.67,
                                     )
@@ -547,9 +546,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               Expanded(
                                   child: RoundedButton(
                                     label:  Localization().getStringEx("panel.create_event.additional_info.button.cancel.title","Cancel"),
+                                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                                     backgroundColor: Colors.white,
                                     borderColor: Styles().colors!.fillColorPrimary,
-                                    textColor: Styles().colors!.fillColorPrimary,
                                     onTap: _onTapCancel,
                                   )),
                               (widget.group!=null)? Container():
@@ -561,9 +560,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child: RoundedButton(
                                 label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
                                                 Localization().getStringEx("panel.create_event.additional_info.button.preview.title","Preview"),
+                                textStyle: isValid ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
                                 backgroundColor: Colors.white,
                                 borderColor: isValid ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                                textColor: isValid ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                                 onTap: isEdit? _onTapUpdate : _onTapPreview,
                               )),
                               (widget.group==null)? Container():
@@ -571,9 +570,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child: RoundedButton(
                                     label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
                                     Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event"),
+                                    textStyle: isValid ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
                                     backgroundColor: Colors.white,
                                     borderColor: isValid ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                                    textColor: isValid ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                                     onTap: isEdit? _onTapUpdate : _onTapCreate,
                                   ))
                             ],
@@ -997,12 +996,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             children: <Widget>[
                               Expanded(
                                   child: RoundedButton(
-                                    backgroundColor: Styles().colors!.white,
-                                    textColor: Styles().colors!.fillColorPrimary,
-                                    borderColor: Styles().colors!.fillColorSecondary,
-                                    fontSize: 16,
-                                    onTap: _onTapSelectLocation,
                                     label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
+                                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                                    backgroundColor: Styles().colors!.white,
+                                    borderColor: Styles().colors!.fillColorSecondary,
+                                    onTap: _onTapSelectLocation,
                                   ))
                             ],
                           )),
@@ -1339,8 +1337,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _isInPerson = event.isInPerson ?? false;
       _isFree = event.isEventFree?? false;
       _location = event.location;
-      if (event.longDescription != null) {
-        _eventDescriptionController.text = event.longDescription!;
+      if (event.description != null) {
+        _eventDescriptionController.text = event.description!;
       }
       if (event.registrationUrl != null) {
         _eventPurchaseUrlController.text = event.registrationUrl!;
@@ -1655,7 +1653,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       bool hasGroup = (widget.group != null);
       Event mainEvent = _constructEventFromData();
       Event? eventToDisplay;
-      Group? groupToDisplay;
+      // Group? groupToDisplay; //deprecated
       List<String> createEventFailedForGroupNames = [];
       List<Group>? otherGroupsToSave;
 
@@ -1677,7 +1675,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           if (eventLinkedToGroup) {
             // Succeeded to link event to group
             eventToDisplay = mainEvent;
-            groupToDisplay = widget.group;
+            // groupToDisplay = widget.group;
           } else {
             // Failed to link event to group
             ListUtils.add(createEventFailedForGroupNames, widget.group?.title);
@@ -1699,7 +1697,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               // Succeeded to link event to group
               if (eventToDisplay == null) {
                 eventToDisplay = mainEvent;
-                groupToDisplay = group;
+                // groupToDisplay = group;
               }
             } else {
               // Failed to link event to group
@@ -1714,7 +1712,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
       String failedMsg;
       if (CollectionUtils.isNotEmpty(createEventFailedForGroupNames)) {
-        failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ');
+        failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error binding this event to the following groups: ');
         failedMsg += createEventFailedForGroupNames.join(', ');
       } else if (StringUtils.isEmpty(mainEventId)) {
         failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.');
@@ -1729,8 +1727,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       if (eventToDisplay != null) {
-        Navigator.pushReplacement(
-            context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: eventToDisplay, group: groupToDisplay, previewMode: true)));
+        //deprecated. Now using Events2
+        // Navigator.pushReplacement(
+        //     context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: eventToDisplay, group: groupToDisplay, previewMode: true)));
       }
     }
   }
@@ -1758,14 +1757,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
   
   Event _populateEventWithData(Event event){
-    if(_location==null) {
-      _location = new ExploreLocation();
-    }
-    _location!.description =  (_eventLocationController.text.toString());
-    String? longitude = (_eventLongitudeController.text.toString()) ;
-    String? latitude = (_eventLatitudeController.text.toString());
-    _location!.latitude = num.tryParse(latitude);
-    _location!.longitude =  num.tryParse(longitude);
+
+    _location = ExploreLocation.fromOther(_location,
+      description: _eventLocationController.text,
+      latitude: double.tryParse(_eventLatitudeController.text),
+      longitude: double.tryParse(_eventLongitudeController.text),
+    );
 
     event.imageURL = _imageUrl;
     event.category = _selectedCategory != null ? _selectedCategory["category"] : "";
@@ -1786,7 +1783,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     }
     event.allDay = _allDay;
     event.location = _location;
-    event.longDescription = _eventDescriptionController.text;
+    event.description = _eventDescriptionController.text;
     event.registrationUrl = StringUtils.isNotEmpty(_eventPurchaseUrlController.text)?_eventPurchaseUrlController.text : null;
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;

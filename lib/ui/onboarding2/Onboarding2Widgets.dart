@@ -1,16 +1,10 @@
 
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String? title;
@@ -208,7 +202,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                             text: new TextSpan(
                                 children:[
                                   TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
-                                  WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: () => _openPrivacyPolicy(context), padding: EdgeInsets.all(0),fontFamily: Styles().fontFamilies!.regular,fontSize: 14,)),
+                                  WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: () => _openPrivacyPolicy(context), padding: EdgeInsets.all(0), textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.underline"))),
                                   WidgetSpan(child: Container(
                                       decoration: BoxDecoration(
                                           border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1, ),)
@@ -233,29 +227,18 @@ class Onboarding2InfoDialog extends StatelessWidget{
 
   void _openPrivacyPolicy(BuildContext context) {
     Analytics().logSelect(target: "Privacy Policy");
-    if (Config().privacyPolicyUrl != null) {
-      if (Platform.isIOS) {
-        Uri? privacyPolicyUri = Uri.tryParse(Config().privacyPolicyUrl!);
-        if (privacyPolicyUri != null) {
-          launchUrl(privacyPolicyUri, mode: LaunchMode.externalApplication);
-        }
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, showTabBar: false, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
-      }
-    }
+    AppPrivacyPolicy.launch(context);
   }
 }
 
-class Onboarding2UnderlinedButton extends StatelessWidget{
+class Onboarding2UnderlinedButton extends StatelessWidget{ //TBD check if we can replace with UnderlineButton
   final Function? onTap;
   final String? title;
   final String? hint;
-  final double fontSize;
+  final TextStyle? textStyle;
   final EdgeInsets padding;
-  final String? fontFamily;
 
-  const Onboarding2UnderlinedButton({Key? key, this.onTap, this.title, this.hint, this.fontSize = 16, this.padding = const EdgeInsets.symmetric(vertical: 20), this.fontFamily}) : super(key: key);
+  const Onboarding2UnderlinedButton({Key? key, this.onTap, this.title, this.hint, this.padding = const EdgeInsets.symmetric(vertical: 20), this.textStyle}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -274,9 +257,11 @@ class Onboarding2UnderlinedButton extends StatelessWidget{
                   padding: EdgeInsets.only(bottom: 2),
                   child: Text(
                     title!,
-                    style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")?.copyWith(fontSize: fontSize)
+                    style: textStyle ?? defaultTextStyle
                   )))),
     );
   }
+
+  TextStyle? get defaultTextStyle => Styles().textStyles?.getTextStyle("widget.button.title.medium.underline");
 
 }

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
-import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/explore.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/ui/events2/Event2Widgets.dart';
+import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
-import 'package:rokwire_plugin/service/events.dart';
+import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class AcademicsEventsContentWidget extends StatefulWidget {
   AcademicsEventsContentWidget();
@@ -36,117 +36,219 @@ class AcademicsEventsContentWidget extends StatefulWidget {
 }
 
 class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWidget> {
-  List<Explore>? _events;
-  bool _loading = false;
+  ScrollController _scrollController = ScrollController();
+
+  Client? _initClient;
+  Client? _refreshClient;
+  Client? _extendClient;
+
+  List<Event2>? _events;
+  String? _eventsErrorText;
+  int? _totalEventsCount;
+  bool? _lastPageLoadedAll;
+  static const int _eventsPageLength = 6;
 
   @override
   void initState() {
+    _scrollController.addListener(_scrollListener);
+    _init();
     super.initState();
-    _loadEvents();
-  }
-
-  void _loadEvents() {
-    _setLoading(true);
-    Events().loadEvents(categories: {'Academic'}, eventFilter: EventTimeFilter.next7Day).then((events) {
-      _events = events;
-      _sortEvents(_events);
-      _setLoading(false);
-    });
-  }
-
-  void _sortEvents(List<Explore>? explores) {
-    if (CollectionUtils.isEmpty(explores)) {
-      return;
-    }
-    explores!.sort((Explore first, Explore second) {
-      if (first.exploreStartDateUtc == null || second.exploreStartDateUtc == null) {
-        return 0;
-      } else {
-        return (first.exploreStartDateUtc!.isBefore(second.exploreStartDateUtc!)) ? -1 : 1;
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildContent();
+    return RefreshIndicator(onRefresh: _onRefresh, child:
+      SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
+        _buildResultContent()
+      ),
+    );
   }
 
-  Widget _buildContent() {
-    if (Connectivity().isOffline) {
-      return _buildOfflineContent();
-    } else if (_loading) {
-      return _buildLoadingContent();
-    } else if (CollectionUtils.isEmpty(_events)) {
-      return _buildEmptyContent();
-    } else {
-      return _buildEventsContent();
+  Widget _buildResultContent() {
+    if (_initClient != null) {
+      return _buildLoadingContent(); 
+    }
+    else if (Connectivity().isOffline) {
+      return _buildMessageContent(Localization().getStringEx('panel.academics.section.events.offline.msg', 'No Speakers & Seminars events are available while offline.'));
+    }
+    else if (_events == null) {
+      return _buildMessageContent(_eventsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred'),
+        title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed')
+      );
+    }
+    else if (_events?.length == 0) {
+      return _buildMessageContent(Localization().getStringEx('panel.academics.section.events.empty.msg', 'There are no upcoming Speakers & Seminars events.'));
+    }
+    else {
+      return _buildListContent();
     }
   }
 
-  Widget _buildOfflineContent() {
-    String message =
-        Localization().getStringEx('panel.academics.section.events.offline.msg', 'No academic events available while offline.');
-    return _buildCenterWidget(Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style:  Styles().textStyles?.getTextStyle("widget.message.regular")),
-      Container(height: 8),
-      Text(message)
-    ]));
-  }
-
-  Widget _buildLoadingContent() {
-    return _buildCenterWidget(CircularProgressIndicator());
-  }
-
-  Widget _buildEmptyContent() {
-    String message = Localization().getStringEx('panel.academics.section.events.empty.msg', 'No academic events.');
-    return _buildCenterWidget(Text(message, textAlign: TextAlign.center));
-  }
-
-  Widget _buildEventsContent() {
-    List<Widget> contentList = <Widget>[];
-    if (CollectionUtils.isNotEmpty(_events)) {
-      for (Explore event in _events!) {
-        contentList.add(_buildExploreEntry(event));
-        contentList.add(Divider(color: Colors.transparent));
-      }
+  Widget _buildListContent() {
+    List<Widget> cardsList = <Widget>[];
+    for (Event2 event in _events!) {
+      cardsList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+        Event2Card(event, onTap: () => _onTapEvent(event),),
+      ),);
     }
-    return Column(children: contentList);
+    if (_extendClient != null) {
+      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child:
+        _extendIndicator
+      ));
+    }
+    return Padding(padding: EdgeInsets.zero, child:
+      Column(children:  cardsList,)
+    );
   }
 
-  Widget _buildExploreEntry(Explore event) {
-    ExploreCard exploreCard =
-        ExploreCard(explore: event, horizontalPadding: 0, onTap: () => _onTapEvent(event), hideInterests: true, showTopBorder: true);
-    return exploreCard;
+  Widget get _extendIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
+    Align(alignment: Alignment.center, child:
+      SizedBox(width: 24, height: 24, child:
+        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
+
+  Widget _buildLoadingContent() => Padding(padding: EdgeInsets.only(left: 16, right: 16, top: _screenHeight / 4, bottom: 3 * _screenHeight / 4), child:
+    Center(child:
+      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+    ),
+  );
+
+  Widget _buildMessageContent(String message, { String? title }) =>
+    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: _screenHeight / 6), child:
+      Column(children: [
+        (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        ) : Container(),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+      ],),
+    );
+
+  double get _screenHeight => MediaQuery.of(context).size.height;
+
+  void _onTapEvent(Event2 event) {
+    Analytics().logSelect(target: 'Event: ${event.name}');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event,)));
   }
 
-  Widget _buildCenterWidget(Widget widget) {
-    return Center(
-        child: Column(children: <Widget>[
-      Container(height: MediaQuery.of(context).size.height / 5),
-      widget,
-      Container(height: MediaQuery.of(context).size.height / 5 * 3)
-    ]));
+  Future<void> _onRefresh() {
+    Analytics().logSelect(target: 'Refresh');
+    return _refresh();
   }
 
-  void _onTapEvent(Explore explore) {
-    Analytics().logSelect(target: explore.exploreTitle);
-    Event? event = (explore is Event) ? explore : null;
-    if (event?.isComposite ?? false) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event)));
-    } else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: explore))).then((value) {
-        if (value != null && value == true) {
-          Navigator.pop(context);
+  bool? get _hasMoreEvents => (_totalEventsCount != null) ?
+    ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;
+
+  void _scrollListener() {
+    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreEvents != false) && (_initClient == null) && (_extendClient == null) && (_refreshClient == null) && (_refreshClient == null)) {
+      _extend();
+    }
+  }
+
+  Events2Query _buildQuery({int offset = 0, int limit =  _eventsPageLength}) => Events2Query(
+      attributes: {
+        'category': 'Speakers and Seminars'
+      },
+      offset: offset,
+      limit: limit,
+      sortType: Event2SortType.dateTime,
+      sortOrder: Event2SortOrder.ascending
+    );
+
+  Future<void> _init() async {
+    Client client = Client(); 
+
+    _initClient?.close();
+    _refreshClient?.close();
+    _extendClient?.close();
+
+    _initClient = client;
+    _refreshClient = _extendClient = null;
+    
+    dynamic result = await Events2().loadEventsEx(_buildQuery(), client: _initClient);
+    Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+    List<Event2>? events = listResult?.events;
+    int? totalEventsCount = listResult?.totalCount;
+    String? errorTextResult = (result is String) ? result : null;
+
+    if (mounted && identical(_initClient, client))
+    setState(() {
+      _events = (events != null) ? List<Event2>.from(events) : null;
+      _totalEventsCount = totalEventsCount;
+      _lastPageLoadedAll = (events != null) ? (events.length >= _eventsPageLength) : null;
+      _eventsErrorText = errorTextResult;
+      _initClient = null;
+    });
+  }
+
+  Future<void> _refresh() async {
+    Client client = Client();
+    
+    _initClient?.close();
+    _refreshClient?.close();
+    _extendClient?.close();
+    
+    setState(() {
+      _refreshClient = client;
+      _initClient = _extendClient = null;
+    });
+
+    int limit = max(_events?.length ?? 0, _eventsPageLength);
+    dynamic result = await Events2().loadEventsEx(_buildQuery(limit: limit), client: _refreshClient);
+    Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+    List<Event2>? events = listResult?.events;
+    int? totalEventsCount = listResult?.totalCount;
+    String? errorTextResult = (result is String) ? result : null;
+
+    if (mounted && identical(_refreshClient, client)) {
+      setState(() {
+        if (events != null) {
+          _events = List<Event2>.from(events);
+          _lastPageLoadedAll = (events.length >= limit);
+          _eventsErrorText = null;
         }
+        else if (_events == null) {
+          // If there was events content, preserve it. Otherwise, show the error
+          _eventsErrorText = errorTextResult;
+        }
+        if (totalEventsCount != null) {
+          _totalEventsCount = totalEventsCount;
+        }
+        _refreshClient = null;
       });
     }
   }
 
-  void _setLoading(bool loading) {
-    _loading = loading;
-    if (mounted) {
-      setState(() {});
+  Future<void> _extend() async {
+    Client client = Client();
+    
+    _initClient?.close();
+    _refreshClient?.close();
+    _extendClient?.close();
+    
+    setState(() {
+      _extendClient = client;
+      _initClient = _refreshClient = null;
+    });
+
+    Events2ListResult? listResult = await Events2().loadEvents(_buildQuery(offset: _events?.length ?? 0), client: _extendClient);
+    List<Event2>? events = listResult?.events;
+    int? totalEventsCount = listResult?.totalCount;
+
+    if (mounted && identical(_extendClient, client)) {
+      setState(() {
+        if (events != null) {
+          if (_events != null) {
+            _events?.addAll(events);
+          }
+          else {
+            _events = List<Event2>.from(events);
+          }
+          _lastPageLoadedAll = (events.length >= _eventsPageLength);
+        }
+        if (totalEventsCount != null) {
+          _totalEventsCount = totalEventsCount;
+        }
+        _extendClient = null;
+      });
     }
   }
 }

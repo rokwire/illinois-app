@@ -17,9 +17,8 @@
 import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
-import 'package:rokwire_plugin/service/assets.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -102,10 +101,6 @@ class Game with Explore implements Favorite {
     ) : null;
   }
 
-  static bool canJson(Map<String, dynamic>? json) {
-    return (json != null) && (json['sport'] != null) && (json['id'] != null);
-  }
-
   @override
   bool operator ==(other) =>
       (other is Game) &&
@@ -166,58 +161,9 @@ class Game with Explore implements Favorite {
     return DateTimeUtils.dateTimeFromString(endDateString, format: dateFormat);
   }
 
-  ///
-  /// Requirement 1:
-  /// Workaround because of the wrong dates that come from server.
-  /// endpoint: http://fightingillini.com/services/schedule_xml_2.aspx
-  /// json example:
-  ///
-  /// {
-  ///      ...
-  ///      "date": "10/5/2019",
-  ///      ...
-  ///      "datetime_utc": "2019-10-05T00:00:00Z",
-  ///      ...
-  ///      "time": "2:30 / 3 PM CT",
-  ///      ...
-  /// }
-  ///
-  /// Requirement 2: 'If an event is longer than 1 day, then please show the Date as (for example) Sep 26 - Sep 29.'
-  ///
-  String get displayTime {
-    int hourUtc = dateTimeUtc!.hour;
-    int minuteUtc = dateTimeUtc!.minute;
-    int secondUtc = dateTimeUtc!.second;
-    int millisUtc = dateTimeUtc!.millisecond;
-    bool useStringDateTimes = (hourUtc == 0 && minuteUtc == 0 && secondUtc == 0 && millisUtc == 0);
-    String displayDateFormat = 'MMM dd';
-    if (isMoreThanOneDay) {
-      if (isNotTheSameYear) {
-        displayDateFormat += ' yyyy';
-      }
-      DateTime? startDisplayDate = useStringDateTimes ? date : dateTimeUtc;
-      DateTime? endDisplayDate = useStringDateTimes ? (endDate ?? endDateTimeUtc) : endDateTimeUtc;
-      String? startDateFormatted = AppDateTime().formatDateTime(startDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
-      String? endDateFormatted = AppDateTime().formatDateTime(endDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
-      return '$startDateFormatted - $endDateFormatted';
-    } else if (useStringDateTimes) {
-      String dateFormatted = AppDateTime().formatDateTime(date, format: displayDateFormat, ignoreTimeZone: true, showTzSuffix: false)!; //another workaround
-      dateFormatted += ' ${StringUtils.ensureNotEmpty(timeToString)}';
-      return dateFormatted;
-    } else {
-      return AppDateTimeUtils.getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
-    }
-  }
-
   bool get isMoreThanOneDay {
     int gameEventDays = (endDateTimeUtc?.difference(dateTimeUtc!).inDays ?? 0).abs();
     return (gameEventDays >= 1);
-  }
-
-  bool get isNotTheSameYear {
-    int startYear = dateTimeUtc?.year ?? 0;
-    int endYear = endDateTimeUtc?.year ?? 0;
-    return (startYear != endYear);
   }
 
   String? get imageUrl {
@@ -227,14 +173,6 @@ class Game with Explore implements Favorite {
     } else {
       return _randomImageURL;
     }
-  }
-
-  String? get shortDescription {
-    return description;
-  }
-
-  String? get longDescription {
-    return description;
   }
 
   String? get newsTitle {
@@ -256,7 +194,7 @@ class Game with Explore implements Favorite {
 
   String? get _randomImageURL {
     if (randomImageURL == null) {
-      randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.${sport!.shortName}') ?? '';
+      randomImageURL = Content().randomImageUrl('sports.${sport!.shortName}');
     }
     return randomImageURL!.isNotEmpty ? randomImageURL : null;
   }
@@ -272,13 +210,10 @@ class Game with Explore implements Favorite {
   // Explore implementation
 
   @override String? get exploreId => id;
-  @override String get exploreTitle => title;
-  @override String? get exploreSubTitle => null;
-  @override String? get exploreShortDescription => shortDescription;
-  @override String? get exploreLongDescription => longDescription;
-  @override DateTime? get exploreStartDateUtc => dateTimeUtc;
+  @override String? get exploreTitle => title;
+  @override String? get exploreDescription => description;
+  @override DateTime? get exploreDateTimeUtc => dateTimeUtc;
   @override String? get exploreImageURL => imageUrl;
-  @override String? get explorePlaceId => null;
   @override ExploreLocation? get exploreLocation => _exploreLocation;
 
   ////////////////////////////
@@ -288,7 +223,6 @@ class Game with Explore implements Favorite {
   @override String get favoriteKey => favoriteKeyName;
   @override String? get favoriteId => id;
   
-  @override
   Map<String, dynamic> toJson() {
     return {
       "id": id,

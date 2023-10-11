@@ -68,7 +68,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                 Expanded(child: Container()),
-                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
+                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"), contentWeight: 0.0, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
               ])),
               Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
               Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")))),
@@ -162,7 +162,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
                   onSubmitted: (_) => () {},
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+                  style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -272,7 +272,7 @@ class _TagSelectionWidget extends StatelessWidget {
                       Flexible(
                           child: Text(label,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16))),
+                              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"))),
                       Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                     ])))));
   }

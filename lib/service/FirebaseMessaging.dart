@@ -42,22 +42,72 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static String get notifyForegroundMessage      => rokwire.FirebaseMessaging.notifyForegroundMessage;
   static String get notifyGroupsNotification     => rokwire.FirebaseMessaging.notifyGroupsNotification;
 
-  static const String notifyPopupMessage                   = "edu.illinois.rokwire.firebase.messaging.message.popup";
-  static const String notifyScoreMessage                   = "edu.illinois.rokwire.firebase.messaging.message.score";
-  static const String notifyConfigUpdate                   = "edu.illinois.rokwire.firebase.messaging.config.update";
-  static const String notifyPollNotification               = "edu.illinois.rokwire.firebase.messaging.poll";
-  static const String notifyPollOpen                       = "edu.illinois.rokwire.firebase.messaging.poll.create";
-  static const String notifyEventDetail                    = "edu.illinois.rokwire.firebase.messaging.event.detail";
-  static const String notifyGameDetail                     = "edu.illinois.rokwire.firebase.messaging.game.detail";
-  static const String notifyAthleticsGameStarted           = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
-  static const String notifyAthleticsNewsUpdated           = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
-  static const String notifySettingUpdated                 = "edu.illinois.rokwire.firebase.messaging.setting.updated";
-  static const String notifyGroupPostNotification          = "edu.illinois.rokwire.firebase.messaging.group.posts.updated";
-  static const String notifyHomeNotification               = "edu.illinois.rokwire.firebase.messaging.home";
-  static const String notifyInboxNotification              = "edu.illinois.rokwire.firebase.messaging.inbox";
-  static const String notifyCanvasAppDeepLinkNotification  = "edu.illinois.rokwire.firebase.messaging.app.canvas.deeplink";
-  static const String notifyAppointmentNotification        = "edu.illinois.rokwire.firebase.messaging.appointment";
-  static const String notifyWellnessToDoItemNotification   = "edu.illinois.rokwire.firebase.messaging.wellness.to_do";
+  static const String notifyBase                                       = 'edu.illinois.rokwire.firebase.messaging';
+  static const String notifyPopupMessage                               = "$notifyBase.message.popup";
+  static const String notifyScoreMessage                               = "$notifyBase.message.score";
+  static const String notifyConfigUpdate                               = "$notifyBase.config.update";
+  static const String notifyPollNotification                           = "$notifyBase.poll";
+  static const String notifyPollOpen                                   = "$notifyBase.poll.create";
+  static const String notifyEventsNotification                         = "$notifyBase.events";
+  static const String notifyEventDetail                                = "$notifyBase.event.detail";
+  static const String notifyEventAttendeeSurveyInvitation              = "$notifyBase.event.attendee.survey.invitation";
+  static const String notifyGameDetail                                 = "$notifyBase.game.detail";
+  static const String notifyAthleticsGameStarted                       = "$notifyBase.athletics_game.started";
+  static const String notifyAthleticsNewsUpdated                       = "$notifyBase.athletics.news.updated";
+  static const String notifyAthleticsTeam                              = "$notifyBase.athletics.team";
+  static const String notifyAthleticsTeamRoster                        = "$notifyBase.athletics.team.roster";
+  static const String notifySettingUpdated                             = "$notifyBase.setting.updated";
+  static const String notifyGroupPostNotification                      = "$notifyBase.group.posts.updated";
+  static const String notifyHomeNotification                           = "$notifyBase.home";
+  static const String notifyBrowseNotification                         = "$notifyBase.browse";
+  static const String notifyMapNotification                            = "$notifyBase.map";
+  static const String notifyMapEventsNotification                      = '$notifyBase.map.events';
+  static const String notifyMapDiningNotification                      = '$notifyBase.map.dining';
+  static const String notifyMapBuildingsNotification                   = '$notifyBase.map.buildings';
+  static const String notifyMapStudentCoursesNotification              = '$notifyBase.map.student_courses';
+  static const String notifyMapAppointmentsNotification                = '$notifyBase.map.appointments';
+  static const String notifyMapMtdStopsNotification                    = '$notifyBase.map.mtd_stops';
+  static const String notifyMapMtdDestinationsNotification             = '$notifyBase.map.mtd_destinations';
+  static const String notifyMapMentalHealthNotification                = '$notifyBase.map.mental_health';
+  static const String notifyMapStateFarmWayfindingNotification         = '$notifyBase.map.state_farm_wayfinding';
+  static const String notifyAcademicsNotification                      = "$notifyBase.academics";
+  static const String notifyAcademicsAppointmentsNotification          = "$notifyBase.academics.appointments";
+  static const String notifyAcademicsCanvasCoursesNotification         = "$notifyBase.academics.canvas_courses";
+  static const String notifyAcademicsDueDateCatalogNotification        = "$notifyBase.academics.due_date_catalog";
+  static const String notifyAcademicsEventsNotification                = "$notifyBase.academics.events";
+  static const String notifyAcademicsGiesChecklistNotification         = "$notifyBase.academics.gies_checklist";
+  static const String notifyAcademicsMedicineCoursesNotification       = "$notifyBase.academics.medicine_courses";
+  static const String notifyAcademicsMyIlliniNotification              = "$notifyBase.academics.my_illini";
+  static const String notifyAcademicsSkillsSelfEvaluationNotification  = "$notifyBase.academics.skills_self_evaluation";
+  static const String notifyAcademicsStudentCoursesNotification        = "$notifyBase.academics.student_courses";
+  static const String notifyAcademicsToDoListNotification              = "$notifyBase.academics.todo_list";
+  static const String notifyAcademicsUiucChecklistNotification         = "$notifyBase.academics.uiuc_checklist";
+  static const String notifyWellnessNotification                       = "$notifyBase.wellness";
+  static const String notifyWellnessDailyTipsNotification              = "$notifyBase.wellness.daily_tips";
+  static const String notifyWellnessRingsNotification                  = "$notifyBase.wellness.rings";
+  static const String notifyWellnessTodoListNotification               = "$notifyBase.wellness.todo_list";
+  static const String notifyWellnessAppointmentsNotification           = "$notifyBase.wellness.appointments";
+  static const String notifyWellnessHealthScreenerNotification         = "$notifyBase.wellness.health_screener";
+  static const String notifyWellnessPodcastNotification                = "$notifyBase.wellness.podcast";
+  static const String notifyWellnessResourcesNotification              = "$notifyBase.wellness.resources";
+  static const String notifyWellnessStrugglingNotification             = "$notifyBase.wellness.struggling";
+  static const String notifyWellnessMentalHealthNotification           = "$notifyBase.wellness.mental_health";
+  static const String notifyInboxNotification                          = "$notifyBase.inbox";
+  static const String notifyCanvasAppDeepLinkNotification              = "$notifyBase.app.canvas.deeplink";
+  static const String notifyAppointmentNotification                    = "$notifyBase.appointment";
+  static const String notifyWellnessToDoItemNotification               = "$notifyBase.wellness.to_do";
+  static const String notifyProfileMyNotification                      = "$notifyBase.profile.my";
+  static const String notifyProfileWhoAreYouNotification               = "$notifyBase.profile.who_are_you";
+  static const String notifyProfilePrivacyNotification                 = "$notifyBase.profile.privacy";
+  static const String notifySettingsSectionsNotification               = "$notifyBase.settings.sections";
+  static const String notifySettingsInterestsNotification              = "$notifyBase.settings.interests";
+  static const String notifySettingsFoodFiltersNotification            = "$notifyBase.settings.food_filters";
+  static const String notifySettingsSportsNotification                 = "$notifyBase.settings.sports";
+  static const String notifySettingsFavoritesNotification              = "$notifyBase.settings.favorites";
+  static const String notifySettingsAssessmentsNotification            = "$notifyBase.settings.assessments";
+  static const String notifySettingsCalendarNotification               = "$notifyBase.settings.calendar";
+  static const String notifySettingsAppointmentsNotification           = "$notifyBase.settings.appointments";
+  static const String notifyGuideArticleDetailNotification             = "$notifyBase.guide.article.detail";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -132,17 +182,66 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeConfigUpdate = 'config_update';
   static const String payloadTypePopupMessage = 'popup_message';
   static const String payloadTypeOpenPoll = 'poll_open';
+  static const String payloadTypeEvents = 'events';
   static const String payloadTypeEventDetail = 'event_detail';
+  static const String payloadTypeEvent = 'event';
   static const String payloadTypeGameDetail = 'game_detail';
   static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
   static const String payloadTypeAthleticsNewDetail = 'athletics_news_detail';
+  static const String payloadTypeAthleticsTeam = 'athletics.team';
+  static const String payloadTypeAthleticsTeamRoster = 'athletics.team.roster';
   static const String payloadTypeGroup = 'group';
   static const String payloadTypeHome = 'home';
+  static const String payloadTypeBrowse = 'browse';
+  static const String payloadTypeMap = 'map';
+  static const String payloadTypeMapEvents = 'map.events';
+  static const String payloadTypeMapDining = 'map.dining';
+  static const String payloadTypeMapBuildings = 'map.buildings';
+  static const String payloadTypeMapStudentCourses = 'map.student_courses';
+  static const String payloadTypeMapAppointments = 'map.appointments';
+  static const String payloadTypeMapMtdStops = 'map.mtd_stops';
+  static const String payloadTypeMapMtdDestinations = 'map.mtd_destinations';
+  static const String payloadTypeMapMentalHealth = 'map.mental_health';
+  static const String payloadTypeMapStateFarmWayfinding = 'map.state_farm_wayfinding';
+  static const String payloadTypeAcademics = 'academics';
+  static const String payloadTypeAcademicsGiesCheckilst = 'academics.gies_checklist';
+  static const String payloadTypeAcademicsUiucCheckilst = 'academics.uiuc_checklist';
+  static const String payloadTypeAcademicsEvents = 'academics.events';
+  static const String payloadTypeAcademicsCanvasCourses = 'academics.canvas_courses';
+  static const String payloadTypeAcademicsMedicineCourses = 'academics.medicine_courses';
+  static const String payloadTypeAcademicsStudentCourses = 'academics.student_courses';
+  static const String payloadTypeAcademicsSkillsSelfEvaluation = 'academics.skills_self_evaluation';
+  static const String payloadTypeAcademicsToDoList = 'academics.todo_list';
+  static const String payloadTypeAcademicsDueDateCatalog = 'academics.due_date_catalog';
+  static const String payloadTypeAcademicsMyIllini = 'academics.my_illini';
+  static const String payloadTypeAcademicsAppointments = 'academics.appointments';
+  static const String payloadTypeWellness = 'wellness';
+  static const String payloadTypeWellnessDailyTips = 'wellness.daily_tips';
+  static const String payloadTypeWellnessRings = 'wellness.rings';
+  static const String payloadTypeWellnessTodoList = 'wellness.todo';
+  static const String payloadTypeWellnessAppointments = 'wellness.appointments';
+  static const String payloadTypeWellnessHealthScreener = 'wellness.health_screener';
+  static const String payloadTypeWellnessPodcast = 'wellness.podcast';
+  static const String payloadTypeWellnessResources = 'wellness.resources';
+  static const String payloadTypeWellnessStruggling = 'wellness.struggling';
+  static const String payloadTypeWellnessMentalHealth = 'wellness.mental_health';
   static const String payloadTypeInbox = 'inbox';
   static const String payloadTypeCanvasAppDeepLink = 'canvas_app_deeplink';
   static const String payloadTypeAppointment = 'appointment';
   static const String payloadTypeWellnessToDoItem = 'wellness_todo_entry';
   static const String payloadTypePoll = 'poll';
+  static const String payloadTypeProfileMy = 'profile.my';
+  static const String payloadTypeProfileWhoAreYou = 'profile.who_are_you';
+  static const String payloadTypeProfilePrivacy = 'profile.privacy';
+  static const String payloadTypeSettingsSections = 'settings.sections';
+  static const String payloadTypeSettingsInterests = 'settings.interests';
+  static const String payloadTypeSettingsFoodFilters = 'settings.food_filters';
+  static const String payloadTypeSettingsSports = 'settings.sports';
+  static const String payloadTypeSettingsFavorites = 'settings.favorites';
+  static const String payloadTypeSettingsAssessments = 'settings.assessments';
+  static const String payloadTypeSettingsCalendar = 'settings.calendar';
+  static const String payloadTypeSettingsAppointments = 'settings.appointments';
+  static const String payloadTypeGuideArticleDetail= 'guide.article.detail';
 
   DateTime? _pausedDateTime;
   
@@ -264,8 +363,18 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypePoll) {
       NotificationService().notify(notifyPollNotification, data);
     }
+    else if (type == payloadTypeEvents) {
+      NotificationService().notify(notifyEventsNotification, data);
+    }
     else if (type == payloadTypeEventDetail) {
       NotificationService().notify(notifyEventDetail, data);
+    }
+    else if (type == payloadTypeEvent) {
+      String? entityType = JsonUtils.stringValue(data?['entity_type']);
+      String? operation = JsonUtils.stringValue(data?['operation']);
+      if ((entityType == 'event_attendance') && (operation == 'survey_invite')) {
+        NotificationService().notify(notifyEventAttendeeSurveyInvitation, data);
+      }
     }
     else if (type == payloadTypeGameDetail) {
       NotificationService().notify(notifyGameDetail, data);
@@ -275,6 +384,12 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeAthleticsNewDetail) {
       NotificationService().notify(notifyAthleticsNewsUpdated, data);
+    }
+    else if (type == payloadTypeAthleticsTeam) {
+      NotificationService().notify(notifyAthleticsTeam, data);
+    }
+    else if (type == payloadTypeAthleticsTeamRoster) {
+      NotificationService().notify(notifyAthleticsTeamRoster, data);
     }
     else if (type == payloadTypeGroup) {
       String? groupPostId = JsonUtils.stringValue(data?['post_id']);
@@ -287,6 +402,105 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypeHome) {
       NotificationService().notify(notifyHomeNotification, data);
     }
+    else if (type == payloadTypeBrowse) {
+      NotificationService().notify(notifyBrowseNotification, data);
+    }
+    else if (type == payloadTypeMap) {
+      NotificationService().notify(notifyMapNotification, data);
+    }
+    else if (type == payloadTypeMapEvents) {
+      NotificationService().notify(notifyMapEventsNotification, data);
+    }
+    else if (type == payloadTypeMapDining) {
+      NotificationService().notify(notifyMapDiningNotification, data);
+    }
+    else if (type == payloadTypeMapBuildings) {
+      NotificationService().notify(notifyMapBuildingsNotification, data);
+    }
+    else if (type == payloadTypeMapStudentCourses) {
+      NotificationService().notify(notifyMapStudentCoursesNotification, data);
+    }
+    else if (type == payloadTypeMapAppointments) {
+      NotificationService().notify(notifyMapAppointmentsNotification, data);
+    }
+    else if (type == payloadTypeMapMtdStops) {
+      NotificationService().notify(notifyMapMtdStopsNotification, data);
+    }
+    else if (type == payloadTypeMapMtdDestinations) {
+      NotificationService().notify(notifyMapMtdDestinationsNotification, data);
+    }
+    else if (type == payloadTypeMapMentalHealth) {
+      NotificationService().notify(notifyMapMentalHealthNotification, data);
+    }
+    else if (type == payloadTypeMapStateFarmWayfinding) {
+      NotificationService().notify(notifyMapStateFarmWayfindingNotification, data);
+    }
+    else if (type == payloadTypeAcademics) {
+      NotificationService().notify(notifyAcademicsNotification, data);
+    }
+    else if (type == payloadTypeAcademicsAppointments) {
+      NotificationService().notify(notifyAcademicsAppointmentsNotification, data);
+    }
+    else if (type == payloadTypeAcademicsCanvasCourses) {
+      NotificationService().notify(notifyAcademicsCanvasCoursesNotification, data);
+    }
+    else if (type == payloadTypeAcademicsDueDateCatalog) {
+      NotificationService().notify(notifyAcademicsDueDateCatalogNotification, data);
+    }
+    else if (type == payloadTypeAcademicsEvents) {
+      NotificationService().notify(notifyAcademicsEventsNotification, data);
+    }
+    else if (type == payloadTypeAcademicsGiesCheckilst) {
+      NotificationService().notify(notifyAcademicsGiesChecklistNotification, data);
+    }
+    else if (type == payloadTypeAcademicsMedicineCourses) {
+      NotificationService().notify(notifyAcademicsMedicineCoursesNotification, data);
+    }
+    else if (type == payloadTypeAcademicsMyIllini) {
+      NotificationService().notify(notifyAcademicsMyIlliniNotification, data);
+    }
+    else if (type == payloadTypeAcademicsSkillsSelfEvaluation) {
+      NotificationService().notify(notifyAcademicsSkillsSelfEvaluationNotification, data);
+    }
+    else if (type == payloadTypeAcademicsStudentCourses) {
+      NotificationService().notify(notifyAcademicsStudentCoursesNotification, data);
+    }
+    else if (type == payloadTypeAcademicsToDoList) {
+      NotificationService().notify(notifyAcademicsToDoListNotification, data);
+    }
+    else if (type == payloadTypeAcademicsUiucCheckilst) {
+      NotificationService().notify(notifyAcademicsUiucChecklistNotification, data);
+    }
+    else if (type == payloadTypeWellness) {
+      NotificationService().notify(notifyWellnessNotification, data);
+    }
+    else if (type == payloadTypeWellnessAppointments) {
+      NotificationService().notify(notifyWellnessAppointmentsNotification, data);
+    }
+    else if (type == payloadTypeWellnessDailyTips) {
+      NotificationService().notify(notifyWellnessDailyTipsNotification, data);
+    }
+    else if (type == payloadTypeWellnessHealthScreener) {
+      NotificationService().notify(notifyWellnessHealthScreenerNotification, data);
+    }
+    else if (type == payloadTypeWellnessMentalHealth) {
+      NotificationService().notify(notifyWellnessMentalHealthNotification, data);
+    }
+    else if (type == payloadTypeWellnessPodcast) {
+      NotificationService().notify(notifyWellnessPodcastNotification, data);
+    }
+    else if (type == payloadTypeWellnessResources) {
+      NotificationService().notify(notifyWellnessResourcesNotification, data);
+    }
+    else if (type == payloadTypeWellnessRings) {
+      NotificationService().notify(notifyWellnessRingsNotification, data);
+    }
+    else if (type == payloadTypeWellnessStruggling) {
+      NotificationService().notify(notifyWellnessStrugglingNotification, data);
+    }
+    else if (type == payloadTypeWellnessTodoList) {
+      NotificationService().notify(notifyWellnessTodoListNotification, data);
+    }
     else if (type == payloadTypeInbox) {
       NotificationService().notify(notifyInboxNotification, data);
     }
@@ -298,6 +512,45 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeWellnessToDoItem) {
       NotificationService().notify(notifyWellnessToDoItemNotification, data);
+    }
+    else if (type == payloadTypeProfileMy) {
+      NotificationService().notify(notifyProfileMyNotification, data);
+    }
+    else if (type == payloadTypeProfileWhoAreYou) {
+      NotificationService().notify(notifyProfileWhoAreYouNotification, data);
+    }
+    else if (type == payloadTypeProfilePrivacy) {
+      NotificationService().notify(notifyProfilePrivacyNotification, data);
+    }
+    else if (type == payloadTypeSettingsSections) {
+      NotificationService().notify(notifySettingsSectionsNotification, data);
+    }
+    else if (type == payloadTypeSettingsInterests) {
+      NotificationService().notify(notifySettingsInterestsNotification, data);
+    }
+    else if (type == payloadTypeSettingsInterests) {
+      NotificationService().notify(notifySettingsInterestsNotification, data);
+    }
+    else if (type == payloadTypeSettingsFoodFilters) {
+      NotificationService().notify(notifySettingsFoodFiltersNotification, data);
+    }
+    else if (type == payloadTypeSettingsSports) {
+      NotificationService().notify(notifySettingsSportsNotification, data);
+    }
+    else if (type == payloadTypeSettingsFavorites) {
+      NotificationService().notify(notifySettingsFavoritesNotification, data);
+    }
+    else if (type == payloadTypeSettingsAssessments) {
+      NotificationService().notify(notifySettingsAssessmentsNotification, data);
+    }
+    else if (type == payloadTypeSettingsCalendar) {
+      NotificationService().notify(notifySettingsCalendarNotification, data);
+    }
+    else if (type == payloadTypeSettingsAppointments) {
+      NotificationService().notify(notifySettingsAppointmentsNotification, data);
+    }
+    else if (type == payloadTypeGuideArticleDetail) {
+      NotificationService().notify(notifyGuideArticleDetailNotification, data);
     }
     else if (_isScoreTypeMessage(type)) {
       NotificationService().notify(notifyScoreMessage, data);

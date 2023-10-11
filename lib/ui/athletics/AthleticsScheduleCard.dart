@@ -20,6 +20,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
@@ -85,7 +86,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     }
 
     String title = widget._game?.title ?? "";
-    String subTitle = widget._game?.shortDescription ?? "";
+    String subTitle = widget._game?.description ?? "";
     String displayTime = widget._game?.displayTime ?? "";
 
     return GestureDetector(
@@ -150,14 +151,14 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardSubTitle() {
-    return StringUtils.isNotEmpty(widget._game!.shortDescription)
+    return StringUtils.isNotEmpty(widget._game!.description)
         ? Padding(
             padding: EdgeInsets.only(left: 24, right: 24, top: 8),
             child: Row(
               children: <Widget>[
                 Expanded(
                     child: Text(
-                  widget._game!.shortDescription!,
+                  widget._game!.description!,
                   style: Styles().textStyles?.getTextStyle('widget.card.detail.regular.fat')
                 ))
               ],

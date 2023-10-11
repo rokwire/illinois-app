@@ -13,6 +13,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class StudentCoursesContentWidget extends StatefulWidget {
@@ -160,16 +161,18 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
 
-    return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
-      DropdownButtonHideUnderline(child:
-        DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
-          isExpanded: false,
-          style: getTermDropDownItemStyle(selected: true),
-          //alignment: AlignmentDirectional.centerEnd,
-          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: getTermDropDownItemStyle(selected: true)) : null,
-          items: _buildTermDropDownItems(),
-          onChanged: _onTermDropDownValueChanged
+    return Visibility(visible: CollectionUtils.isNotEmpty(StudentCourses().terms), child:
+      Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton<String>(
+            icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
+            isExpanded: false,
+            style: getTermDropDownItemStyle(selected: true),
+            //alignment: AlignmentDirectional.centerEnd,
+            hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: getTermDropDownItemStyle(selected: true)) : null,
+            items: _buildTermDropDownItems(),
+            onChanged: _onTermDropDownValueChanged
+          ),
         ),
       ),
     );
@@ -270,15 +273,17 @@ class StudentCourseCard extends StatelessWidget {
                     ),
                   ),
                   
-                  Visibility(visible: courseLocation.isNotEmpty && course.hasLocation, child:
-                    InkWell(onTap: _onLocaltion, child:
+                  Visibility(visible: courseLocation.isNotEmpty, child:
+                    InkWell(onTap: course.hasValidLocation ? _onLocaltion : null, child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
                         Row(children: [
                           Padding(padding: EdgeInsets.only(right: 6), child:
                             Styles().images?.getImage('location', excludeFromSemantics: true),
                           ),
                           Expanded(child:
-                            Text(courseLocation, style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
+                            Text(courseLocation, style: course.hasValidLocation ?
+                              Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline") :
+                              Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
                             ),
                           )
                           
@@ -346,6 +351,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
               slivers: <Widget>[
                 SliverToutHeaderBar(
                   flexRightToLeftTriangleColor: Colors.white,
+                  flexImageKey: 'course-detail-default',
                 ),
                 SliverList(
                   delegate: SliverChildListDelegate(
@@ -452,16 +458,17 @@ class StudentCourseDetailPanel extends StatelessWidget {
 
   Widget _buildLocation(){
     String courseLocation = course?.section?.displayLocation ?? '';
-    return Visibility(visible: courseLocation.isNotEmpty && (course?.hasLocation ?? false), child:
-      InkWell(onTap: _onLocation, child:
+    return Visibility(visible: courseLocation.isNotEmpty, child:
+      InkWell(onTap: (course?.hasValidLocation ?? false) ? _onLocation : null, child:
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
               Styles().images?.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
-              Text(courseLocation, style:
-               Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
+              Text(courseLocation, style: (course?.hasValidLocation ?? false) ?
+                Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline") :
+                Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
               ),
             )
           ],),

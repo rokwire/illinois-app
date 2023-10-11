@@ -6,8 +6,8 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -39,8 +39,8 @@ extension EventExt on Event {
   }
 
   Map<String, dynamic>? get analyticsAttributes => {
-    Analytics.LogAttributeEventId: exploreId,
-    Analytics.LogAttributeEventName: exploreTitle,
+    Analytics.LogAttributeEventId: id,
+    Analytics.LogAttributeEventName: title,
     Analytics.LogAttributeEventCategory: category,
     Analytics.LogAttributeRecurrenceId: recurrenceId,
     Analytics.LogAttributeLocation : location?.analyticsValue,
@@ -53,8 +53,8 @@ extension EventExt on Event {
   String? get randomImageUrl {
     if (randomImageURL == null) {
       String listKey = ((category == "Athletics" || category == "Recreation") && (registrationLabel != null && registrationLabel!.isNotEmpty)) ?
-        'images.random.sports.$registrationLabel' : 'images.random.events.$category';
-      randomImageURL = Assets().randomStringFromListWithKey(listKey);
+        'sports.$registrationLabel' : 'events.$category';
+      randomImageURL = Content().randomImageUrl(listKey);
     }
     return randomImageURL;
   }
@@ -90,7 +90,7 @@ extension EventExt on Event {
 
   String? get displayStartEndTime {
     if (allDay!) {
-      return Localization().getStringEx('model.explore.time.all_day', 'All day');
+      return Localization().getStringEx('model.explore.date_time.all_day', 'All day');
     }
     String? startTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: startDateGmt, allDay: allDay);
     String? endTime = AppDateTimeUtils.getDisplayTime(dateTimeUtc: endDateGmt, allDay: allDay);

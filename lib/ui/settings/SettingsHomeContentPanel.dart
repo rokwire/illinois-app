@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/MobileAccess.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -25,8 +26,11 @@ import 'package:illinois/ui/settings/SettingsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsICardContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsLanguageContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -36,7 +40,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments }
+enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments, i_card, language }
 
 class SettingsHomeContentPanel extends StatefulWidget {
   static final String routeName = 'settings_home_content_panel';
@@ -48,9 +52,9 @@ class SettingsHomeContentPanel extends StatefulWidget {
   @override
   _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
 
-  static void present(BuildContext context, {SettingsContent? content}) {
+  static void present(BuildContext context, { SettingsContent? content}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
-      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      MediaQueryData mediaQuery = MediaQueryData.fromView(View.of(context));
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
       showModalBottomSheet(
         context: context,
@@ -76,7 +80,7 @@ class SettingsHomeContentPanel extends StatefulWidget {
   }
 }
 
-class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
+class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> implements NotificationsListener {
   static SettingsContent? _lastSelectedContent;
   late SettingsContent _selectedContent;
   bool _contentValuesVisible = false;
@@ -84,7 +88,17 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      MobileAccess.notifyMobileStudentIdChanged,
+      Localization.notifyLocaleChanged,
+    ]);
     _selectedContent = widget.content ?? (_lastSelectedContent ?? SettingsContent.sections);
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -148,7 +162,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
                 RibbonButton(
-                  textColor: Styles().colors!.fillColorSecondary,
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
                   backgroundColor: Styles().colors!.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -205,7 +219,10 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
     for (SettingsContent section in SettingsContent.values) {
       if ((_selectedContent != section)) {
-        sectionList.add(_buildContentItem(section));
+        // Add i_card content only if icard mobile is available
+        if ((section != SettingsContent.i_card) || (MobileAccess().isMobileAccessAvailable)) {
+          sectionList.add(_buildContentItem(section));
+        }
       }
     }
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: sectionList)));
@@ -262,6 +279,10 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Container();
       case SettingsContent.assessments:
         return SettingsAssessmentsContentWidget();
+      case SettingsContent.i_card:
+        return SettingsICardContentWidget();
+      case SettingsContent.language:
+        return SettingsLanguageContentWidget();
     }
   }
 
@@ -290,13 +311,29 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
       case SettingsContent.sports:
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case SettingsContent.calendar:
-        return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
+        return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'Add to My Device\'s Calendar');
       case SettingsContent.appointments:
         return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'MyMcKinley Appointments');
       case SettingsContent.favorites:
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'Customize Favorites');
       case SettingsContent.assessments:
         return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
+      case SettingsContent.i_card:
+        return Localization().getStringEx('panel.settings.home.settings.sections.i_card.label', 'Illini ID');
+      case SettingsContent.language:
+        return Localization().getStringEx('panel.settings.home.settings.sections.language.label', 'My Language');
+    }
+  }
+
+  // NotificationsListener
+  
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == MobileAccess.notifyMobileStudentIdChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == Localization.notifyLocaleChanged) {
+      setStateIfMounted(() {});
     }
   }
 }

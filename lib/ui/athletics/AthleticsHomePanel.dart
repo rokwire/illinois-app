@@ -26,6 +26,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/ext/Game.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -161,10 +162,10 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                 child: RoundedButton(
                                   label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See More Events'),
                                   hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
+                                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
                                   onTap: _onTapMoreUpcomingEvents,
                                   backgroundColor: Styles().colors!.background,
                                   borderColor: Styles().colors!.fillColorSecondary,
-                                  textColor: Styles().colors!.fillColorPrimary,
                                 ),
                               ),
                               Expanded(flex: 1, child: Container())
@@ -430,7 +431,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   void _onTapMoreUpcomingEvents() {
     Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
-      ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3});
+      ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {2});
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(exploreType: ExploreType.Events, initialFilter: initialFilter)));
     }
     else {
@@ -594,7 +595,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
     bool isFavorite = Auth2().isFavorite(widget.game);
     String? interestsLabelValue = _getInterestsLabelValue();
     bool showInterests = StringUtils.isNotEmpty(interestsLabelValue);
-    String? description = widget.game.shortDescription;
+    String? description = widget.game.description;
     bool showDescription = widget.showDescription && StringUtils.isNotEmpty(description);
 
     return GestureDetector(behavior: HitTestBehavior.translucent, onTap: widget.onTap, child:
@@ -672,10 +673,9 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       RoundedButton(
                         label: Localization().getStringEx('widget.athletics_card.button.get_tickets.title', 'Get Tickets'),
                         hint: Localization().getStringEx('widget.athletics_card.button.get_tickets.hint', ''),
+                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
                         backgroundColor: Colors.white,
-                        fontSize: 16,
                         borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: _onTapGetTickets,
                       ),
                     ),
@@ -742,8 +742,8 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
   }
 
   Widget? _athleticsTimeDetail() {
-    String displayTime = widget.game.displayTime;
-    if (displayTime.isNotEmpty) {
+    String? displayTime = widget.game.displayTime;
+    if (StringUtils.isNotEmpty(displayTime)) {
       return Padding(
         padding: _detailPadding,
         child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
@@ -752,7 +752,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
             Padding(
               padding: _iconPadding,
             ),
-            Text(displayTime,
+            Text(displayTime!,
                 style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
           ],
         )),

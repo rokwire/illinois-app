@@ -53,7 +53,7 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
     if (code == 'dinings_all') {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.dinings.all.button.title', 'Residence Hall Dining'),
-        description: Localization().getStringEx('widget.home.dinings.all.button.description', 'Students, faculty, staff, and guests are welcome to eat at any residence hall dining location.'),
+        description: Localization().getStringEx('widget.home.dinings.all.button.description', 'Students, faculty, staff, and visitors are welcome to eat at any residence hall dining location.'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapDiningsAll,
       );

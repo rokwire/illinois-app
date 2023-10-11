@@ -19,10 +19,12 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/model/Appointment.dart';
+import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -33,15 +35,18 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:http/http.dart' as http;
 import 'package:illinois/service/Auth2.dart';
+import 'package:uuid/uuid.dart';
 
 enum AppointmentsTimeSource { upcoming, past }
 
-class Appointments with Service implements ExploreJsonHandler, NotificationsListener {
+class Appointments with Service implements NotificationsListener {
   static const String notifyAppointmentDetail = "edu.illinois.rokwire.appointments.detail";
   static const String notifyPastAppointmentsChanged = "edu.illinois.rokwire.appointments.past.changed";
   static const String notifyUpcomingAppointmentsChanged = "edu.illinois.rokwire.appointments.upcoming.changed";
   static const String notifyAppointmentsAccountChanged = "edu.illinois.rokwire.appointments.account.changed";
   
+  static const String notifyAppointmentsChanged = "edu.illinois.rokwire.appointments.changed";
+
   static const String _appointmentRemindersNotificationsEnabledKey = 'edu.illinois.rokwire.settings.inbox.notification.appointments.reminders.notifications.enabled';
   
   DateTime? _pausedDateTime;
@@ -73,14 +78,12 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged
     ]);
-    Explore.addJsonHandler(this);
     _appointmentDetailsCache = <Map<String, dynamic>>[];
     super.createService();
   }
 
   @override
   void destroyService() {
-    Explore.removeJsonHandler(this);
     NotificationService().unsubscribe(this);
     super.destroyService();
   }
@@ -431,10 +434,6 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     NotificationService().notify(notifyAppointmentsAccountChanged);
   }
 
-  // ExploreJsonHandler
-  @override bool exploreCanJson(Map<String, dynamic>? json) => Appointment.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Appointment.fromJson(json);
-
   // DeepLinks
   String get appointmentDetailUrl => '${DeepLink().appUrl}/appointment';
 
@@ -483,44 +482,452 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     }
   }
 
+
+  // Service
+
+  bool get _isServiceAvailable => StringUtils.isNotEmpty(Config().appointmentsUrl) && StringUtils.isNotEmpty(Gateway().externalAuthorizationHeaderValue);
+
+  // Debug
+  
+  bool? get _useSampleData => Storage().debugUseSampleAppointments;
+
   // Providers
 
-  Future<List<AppointmentProvider>?> loadProviders() async =>
-    <AppointmentProvider>[
-      AppointmentProvider(id: '1', name: 'McKinley'),
-      AppointmentProvider(id: '2', name: 'Grainger'),
-      AppointmentProvider(id: '3', name: 'Lorem Ipsum'),
-      AppointmentProvider(id: '4', name: 'Sit Dolor Amet'),
-    ];
+  Future<List<AppointmentProvider>?> loadProviders() async {
+    if (_useSampleData == true) {
+      await Future.delayed(Duration(milliseconds: 1500));
+      return _sampleProviders;
+    }
+    else if (_isServiceAvailable) {
+      String? url = "${Config().appointmentsUrl}/services/providers";
+      http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
+      return (response?.statusCode == 200) ? AppointmentProvider.listFromJson(JsonUtils.decodeList(response?.body)) : null;
+    }
+    else {
+      return null;
+    }
+  }
+
+  static const List<AppointmentProvider> _sampleProviders =  <AppointmentProvider>[
+    AppointmentProvider(id: '1', name: 'McKinley', supportsSchedule: true, supportsReschedule: true, supportsCancel: true),
+    AppointmentProvider(id: '2', name: 'Grainger', supportsSchedule: true, supportsReschedule: true, supportsCancel: false),
+    AppointmentProvider(id: '3', name: 'Lorem Ipsum', supportsSchedule: true, supportsReschedule: false, supportsCancel: false),
+    AppointmentProvider(id: '4', name: 'Sit Dolor Amet', supportsSchedule: false, supportsReschedule: false, supportsCancel: false),
+  ];
 
   // Units
 
-  Future<List<AppointmentUnit>?> loadUnits({ required String providerId }) async =>
-    <AppointmentUnit>[
-      AppointmentUnit(id: '11', providerId: providerId, name: 'House of Horror', location: AppointmentLocation(title: '1109 S Lincoln Ave Urbana, IL 61801', phone: '+1 415 370 9574'), hoursOfOperation: '8:00am - 17:30pm'),
-      AppointmentUnit(id: '12', providerId: providerId, name: "Dante's Inferno", location: AppointmentLocation(title: '1103 S Sixth St Champaign, IL 61820', phone: '+1 650 207 7211'), hoursOfOperation: '8:30am - 12:30pm'),
-      AppointmentUnit(id: '13', providerId: providerId, name: 'Spem Omnem Hic', location: AppointmentLocation(title: '1402 Springfield Ave Urbana, IL 61801', phone: '+1 217 300 5249'), hoursOfOperation: '7:00am - 9:00pm'),
-      AppointmentUnit(id: '14', providerId: providerId, name: 'Blood, Toil, Tears, and Sweat', location: AppointmentLocation(title: '505 E Armory Ave  Champaign, IL 61820', phone: '+1 217 898 1338'), hoursOfOperation: '10:00am - 12:30pm'),
-    ];
+  Future<List<AppointmentUnit>?> loadUnits({ required String providerId }) async {
+    if (_useSampleData == true) {
+      await Future.delayed(Duration(milliseconds: 1500));
+      return _sampleUnits;
+    }
+    else if (_isServiceAvailable) {
+      String? url = "${Config().appointmentsUrl}/services/units?provider-id=$providerId";
+      http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
+      return (response?.statusCode == 200) ? AppointmentUnit.listFromJson(JsonUtils.decodeList(response?.body)) : null;
+    }
+    else {
+      return null;
+    }
+  }
 
-  // Time Slots
+  Future<AppointmentUnit?> loadUnit({required String providerId, required String unitId}) async {
+    List<AppointmentUnit>? units = await loadUnits(providerId: providerId);
+    return AppointmentUnit.findInList(units, id: unitId);
+  }
 
-  Future<List<AppointmentTimeSlot>?> loadTimeSlots({ required DateTime dateLocal }) async {
-    DateTime midnighDateUtc = DateUtils.dateOnly(dateLocal).toUtc();
-    DateTime startDateUtc = midnighDateUtc.add(Duration(hours: 8));
-    DateTime endDateUtc = startDateUtc.add(Duration(hours: 12));
-    Duration slotDuration = Duration(minutes: 30);
+  static List<AppointmentUnit> get _sampleUnits => <AppointmentUnit>[
+    AppointmentUnit(id: '11', name: 'House of Horror', collegeName: 'Hell College of Engineering', collegeCode: "HC", address: '1109 S Lincoln Ave Urbana, IL 61801', hoursOfOperation: '8:00am - 17:30pm', numberOfPersons: 12, nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 14, 30), imageUrl: null /*'https://horrorhouse.bg/wp-content/uploads/2020/09/logo-new.png' */, notes: 'Lorem ipsum sit dolor amet.'),
+    AppointmentUnit(id: '12', name: "Dante's Inferno", collegeName: 'Magical College of Arts', collegeCode: "M", address: '1103 S Sixth St Champaign, IL 61820', hoursOfOperation: '8:30am - 12:30pm', numberOfPersons: 1, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 09, 30), imageUrl: null /*'https://images.fineartamerica.com/images-medium-large-5/dantes-inferno-c1520-granger.jpg' */, notes: 'Proin sed lacinia ex.'),
+    AppointmentUnit(id: '13', name: 'Spem Omnem Hic', collegeName: 'Gryffindor', collegeCode: "GF", address: '1402 Springfield Ave Urbana, IL 61801', hoursOfOperation: '7:00am - 9:00pm', numberOfPersons: 0, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 16, 00), imageUrl: null /*'https://assets.justinmind.com/wp-content/uploads/2018/11/Lorem-Ipsum-alternatives-768x492.png' */, notes: 'Class aptent taciti sociosqu ad litora.'),
+    AppointmentUnit(id: '14', name: 'Blood, Toil, Tears, and Sweat', collegeName: 'Wizengamot', collegeCode: "WG", address: '505 E Armory Ave  Champaign, IL 61820', hoursOfOperation: '10:00am - 12:30pm', numberOfPersons: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), imageUrl: null /*'https://cdn.britannica.com/25/139425-138-050505D0/consideration-London-Houses-of-Parliament.jpg?w=450&h=450&c=crop' */, notes: 'Donec iaculis est eget leo egestas ullamcorper.'),
+  ];
+
+  // Persons
+
+  Future<List<AppointmentPerson>?> loadPersons({ required String providerId, required String unitId }) async {
+    if (_useSampleData == true) {
+      await Future.delayed(Duration(milliseconds: 1500));
+      return _samplePersons;
+    }
+    else if (_isServiceAvailable) {
+      String? url = "${Config().appointmentsUrl}/services/people?provider-id=$providerId&unit-id=$unitId";
+      http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
+      return (response?.statusCode == 200) ? AppointmentPerson.listFromJson(JsonUtils.decodeList(response?.body)) : null;
+    }
+    else {
+      return null;
+    }
+  }
+
+  Future<AppointmentPerson?> loadPerson({required String providerId, required String unitId, required String personId}) async {
+    List<AppointmentPerson>? persons = await loadPersons(providerId: providerId, unitId: unitId);
+    return AppointmentPerson.findInList(persons, id: personId);
+  }
+
+  static List<AppointmentPerson> _samplePersons = <AppointmentPerson>[
+    AppointmentPerson(id: '21', name: 'Agatha Christie', numberOfAvailableSlots:  321, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 08, 30), notes: _randomNote, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZcTCeGIZqe_mVUqcGGEGLh-L9wLCcnh3PLiXv4vWtBxRQABhBuq_G4yEoqub35xAQ6dU&usqp=CAU'),
+    AppointmentPerson(id: '22', name: 'Amanda Lear',     numberOfAvailableSlots:   42, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 14, 00), notes: _randomNote, imageUrl: 'https://filmitena.com/img/Actor/Middle/199175_Mid_20220525231650.jpg'),
+    AppointmentPerson(id: '23', name: 'Bill Gates',      numberOfAvailableSlots:    1, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 16, 30), notes: _randomNote, imageUrl: 'https://cdn.britannica.com/47/188747-050-1D34E743/Bill-Gates-2011.jpg'),
+    AppointmentPerson(id: '24', name: 'Chalres Darwin',  numberOfAvailableSlots:    0, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 09, 00), notes: _randomNote, imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/gettyimages-79035252.jpg?resize=1200:*'),
+    AppointmentPerson(id: '25', name: 'Fredy Mercury',   numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 05, 11, 30), notes: _randomNote, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0T3LLSiq7oVJOuaHmELD9weLl_rc6qsTWBdRNJlAEpaJjlo50iD269nPFBtpT6lVXljU&usqp=CAU'),
+    AppointmentPerson(id: '26', name: 'Frank Zapa',      numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 02, 15, 00), notes: _randomNote, imageUrl: 'https://ensembleparamirabo.com/sites/default/files/styles/photo_carree/public/compositeurs/zappa.jpg?h=9d6ce95a&itok=in8Bun6k'),
+    AppointmentPerson(id: '27', name: 'Michael Jackson', numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 03, 08, 00), notes: _randomNote, imageUrl: 'https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/08/29/22d69e08-aa71-11e8-8796-d12ba807e6e9_1280x720_113417.JPG?itok=Y1Fzf3rv'),
+    AppointmentPerson(id: '28', name: 'Speedy Gonzales', numberOfAvailableSlots: null, nextAvailableTimeUtc: DateTime.utc(2023, 09, 04, 11, 30), notes: _randomNote, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4x3cdYc6BQgsXy_OOsOvjjvTWQlRmSolj1d4KaIPyfNIri6f6AKNgcLtmNSsLQHK5_g4&usqp=CAU'),
+  ];
+
+  // Time Slots And Questions
+
+  Future<AppointmentTimeSlotsAndQuestions?> loadTimeSlotsAndQuestions({required DateTime startDateUtc, required DateTime endDateUtc,
+    String? providerId, String? unitId, String? personId, }) async {
+    if (_useSampleData == true) {
+      await Future.delayed(Duration(milliseconds: 1500));
+      return AppointmentTimeSlotsAndQuestions(
+        timeSlots: _sampleTimeSlots(startDateUtc: startDateUtc, endDateUtc: endDateUtc),
+        questions: _sampleQuestions,
+      );
+    }
+    else if (_isServiceAvailable) {
+      int startTime = startDateUtc.millisecondsSinceEpoch.abs();
+      int endTime = endDateUtc.millisecondsSinceEpoch.abs();
+      String urlParams = 'start-time=$startTime&end-time=$endTime';
+      if (providerId != null) {
+        urlParams += "&provider-id=$providerId";
+      }
+      if (unitId != null) {
+        urlParams += "&unit-id=$unitId";
+      }
+      if (personId != null) {
+        urlParams += "&person-id=$personId";
+      }
+      String? url = "${Config().appointmentsUrl}/services/slots?$urlParams";
+      http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
+      return (response?.statusCode == 200) ? AppointmentTimeSlotsAndQuestions.fromJson(JsonUtils.decodeMap(response?.body)) : null;
+    }
+    else {
+      return null;
+    }
+  }
+
+  List<AppointmentTimeSlot> _sampleTimeSlots({ required DateTime startDateUtc, required DateTime endDateUtc }) {
+    
+    DateTime dayUtc = startDateUtc;
     List<AppointmentTimeSlot> result = <AppointmentTimeSlot>[];
-    DateTime dateTimeUtc = startDateUtc;
-    while (dateTimeUtc.isBefore(endDateUtc)) {
-      DateTime endDateTime = dateTimeUtc.add(slotDuration);
-      result.add(AppointmentTimeSlot(
-        filled: Random().nextInt(4) == 0,
-        startTimeUtc: dateTimeUtc,
-        endTimeUtc: endDateTime
-      ));
-      dateTimeUtc = endDateTime;
+    while (dayUtc.isBefore(endDateUtc)) {
+      DateTime dayLocal = dayUtc.toUniOrLocal();
+      if ((dayLocal.weekday != DateTime.saturday) && (dayLocal.weekday != DateTime.sunday)) {
+        final Duration slotDuration = Duration(minutes: 30);
+        
+        DateTime slotStartTimeUtc = dayUtc.add(Duration(hours: 8));
+        DateTime endTimeUtc = slotStartTimeUtc.add(Duration(hours: 4));
+        while (slotStartTimeUtc.isBefore(endTimeUtc)) {
+          DateTime slotEndTimeUtc = slotStartTimeUtc.add(slotDuration);
+          result.add(AppointmentTimeSlot(
+            startTimeUtc: slotStartTimeUtc,
+            endTimeUtc: slotEndTimeUtc,
+            capacity: 16,
+            filled: (Random().nextInt(4) == 0) ? 16 : 0,
+          ));
+          slotStartTimeUtc = slotEndTimeUtc;
+        }
+
+        slotStartTimeUtc = dayUtc.add(Duration(hours: 14));
+        endTimeUtc = slotStartTimeUtc.add(Duration(hours: 4));
+        while (slotStartTimeUtc.isBefore(endTimeUtc)) {
+          DateTime slotEndTimeUtc = slotStartTimeUtc.add(slotDuration);
+          result.add(AppointmentTimeSlot(
+            startTimeUtc: slotStartTimeUtc,
+            endTimeUtc: slotEndTimeUtc,
+            capacity: 16,
+            filled: (Random().nextInt(4) == 0) ? 16 : 0,
+          ));
+          slotStartTimeUtc = slotEndTimeUtc;
+        }
+      }
+      dayUtc = dayUtc.add(Duration(days: 1));
     }
     return result;
+  }
+
+  static List<AppointmentQuestion> _sampleQuestions = <AppointmentQuestion>[
+    AppointmentQuestion(id: "31", title: "Why do you want this appointment?", type: AppointmentQuestionType.text, required: true),
+    AppointmentQuestion(id: "32", title: "What is your temperature?", type: AppointmentQuestionType.select, values: ["Below 36℃", "36-37℃", "37-38℃", "38-39℃", "39-40℃", "Over 40℃"], required: true),
+    AppointmentQuestion(id: "33", title: "What are your symptoms?", type: AppointmentQuestionType.multiSelect, values: ["Fever", "Chills", "Shaking or Shivering", "Shortness of breath", "Difficulty breathing", "Muscle or joint pain", "Fatigue", "Loss of taste and/or smell", "Fever or chills", "Cough", "Sore Throat", "Nausea or vomiting", "Diarrhea"], required: true),
+    AppointmentQuestion(id: "34", title: "Are you feeling sick?", type: AppointmentQuestionType.checkbox, required: true),
+  ];
+
+  static List<AppointmentAnswer> _sampleAnswers = <AppointmentAnswer>[
+    AppointmentAnswer(questionId: "31", values: ["I don't know."]),
+    AppointmentAnswer(questionId: "32", values: ["36-37℃"]),
+    AppointmentAnswer(questionId: "33", values: ["Fever", "Chills", "Cough"]),
+    AppointmentAnswer(questionId: "34", values: ["true"]),
+  ];
+
+  // Appointments
+
+  Future<List<Appointment>?> loadAppointments({String? providerId}) async {
+    if (_useSampleData == true) {
+      await Future.delayed(Duration(milliseconds: 1500));
+      AppointmentProvider? provider = (providerId != null) ? _sampleProviders.firstWhere((provider) => provider.id == providerId, orElse: () => _sampleProviders.first) : null;
+      if (provider != null) {
+        return _sampleAppointments(provider: provider);
+      }
+      else {
+        List<Appointment> result = <Appointment>[];
+        for(AppointmentProvider provider in _sampleProviders) {
+          result.addAll(_sampleAppointments(provider: provider));
+        }
+        return result;
+      }
+    }
+    else if (_isServiceAvailable) {
+      String url = "${Config().appointmentsUrl}/services/v2/appointments";
+      if (providerId != null) {
+        url += "?providers-ids=$providerId";
+      }
+      http.Response? response = await Network().get(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
+      return (response?.statusCode == 200) ? Appointment.listFromJson(JsonUtils.decodeList(response?.body)) : null;
+    }
+    else {
+      return null;
+    }
+  }
+
+  List<Appointment> _sampleAppointments({ required AppointmentProvider provider }) {
+    DateTime now = DateTime.now();
+    List<Appointment> appointments = <Appointment>[];
+
+    for (int index = 0; index < 5; index++) {
+      appointments.add(_sampleAppointment(provider: provider, day: now.add(Duration(days: index + 5))));
+    }
+    
+    for (int index = 0; index < 5; index++) {
+      appointments.add(_sampleAppointment(provider: provider, day: now.subtract(Duration(days: index + 5))));
+    }
+
+    return appointments;
+  }
+
+  Appointment _sampleAppointment({required AppointmentProvider provider, required DateTime day}) {
+    String id = Uuid().v1();
+    AppointmentType type = ((Random().nextInt(3) % 3) == 0) ? AppointmentType.online : AppointmentType.in_person;
+
+    List<AppointmentUnit> units = _sampleUnits;
+    AppointmentUnit unit = units[Random().nextInt(units.length)];
+    AppointmentLocation location = AppointmentLocation.fromUnit(unit);
+
+    AppointmentOnlineDetails? details = (type == AppointmentType.online) ? AppointmentOnlineDetails(
+      meetingId: id.substring(0, 8).toUpperCase(),
+      url: "https://mymckinley.illinois.edu",
+      meetingPasscode: id.substring(24, 30).toUpperCase(),
+    ) : null;
+    
+    List<AppointmentPerson> persons = _samplePersons;
+    AppointmentPerson person = persons[Random().nextInt(persons.length)];
+    AppointmentHost host = AppointmentHost.fromPerson(person);
+    
+    bool cancelled = (provider.supportsCancel == true) && ((Random().nextInt(3) % 5) == 0);
+
+    DateTime startTimeUtc = DateTime(day.year, day.month, day.day, Random().nextInt(8) + 8, 30).toUtc();
+    DateTime endTimeUtc = startTimeUtc.add(Duration(minutes: 30));
+
+    return Appointment(
+      id: id,
+      type: type,
+      startTimeUtc: startTimeUtc,
+      endTimeUtc: endTimeUtc,
+
+      provider: provider,
+      unitId: unit.id,
+      personId: person.id,
+      answers: _sampleAnswers,
+
+      host: host,
+      location: location,
+      onlineDetails: details,
+      instructions: _randomNote,
+      cancelled: cancelled,
+    );
+  }
+
+  static const List<String> _sampleNotes = <String>[
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ut dolor blandit, ornare sapien scelerisque, dignissim ligula. Donec ligula eros, elementum quis neque in",
+    "Facilisis ornare magna. Nulla at mi ut turpis dapibus volutpat porttitor sit amet mi. Vestibulum molestie felis non accumsan consectetur.",
+    "Curabitur at neque in ipsum molestie mollis ornare vitae urna. Pellentesque tincidunt imperdiet purus, eu facilisis nulla dictum id. Donec elementum mattis turpis, sed vestibulum tortor porttitor ac.",
+    "Maecenas vitae lectus ut tortor viverra accumsan id eget ex. Proin in neque quam. Donec lacinia porttitor mi eu pretium. Praesent fermentum massa eget egestas placerat.",
+    "Nulla orci eros, accumsan in fringilla vel, ultrices eu risus. Vivamus fringilla quis mauris eu iaculis. Nulla aliquet ipsum quis semper vehicula. Morbi gravida condimentum velit vel venenatis.",
+    "Ut quis metus et dolor tincidunt sagittis. Ut id velit libero. Ut pharetra dapibus ligula, at facilisis orci mattis nec. Suspendisse auctor varius venenatis. Vivamus bibendum elementum accumsan.",
+    "Phasellus dapibus bibendum turpis, ut volutpat eros venenatis vitae. Sed tincidunt pulvinar odio maximus porta. Cras semper venenatis pretium. Vestibulum malesuada leo at ex euismod euismod.",
+    "Proin imperdiet dictum diam ut dapibus. Sed massa lorem, pulvinar non suscipit et, sollicitudin ac orci. Phasellus auctor eros sem, id egestas diam tristique at.",
+    "Quisque congue est eu sodales tempor. Duis nunc lectus, pretium id blandit eget, feugiat eu turpis. Morbi dolor magna, rhoncus ac elit sed, dictum venenatis nisi. Aenean in auctor orci, et tristique dolor.",
+    "Etiam interdum ullamcorper est, sit amet venenatis leo tristique quis. Aenean at neque ut purus tincidunt laoreet auctor eget dolor. Quisque eget porttitor dui.",
+  ];
+
+  static String get _randomNote => _sampleNotes[Random().nextInt(_sampleNotes.length)];
+  
+  /*<Appointment>[
+
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26bc","type":"InPerson","provider":provider.toJson(),"date":"2023-04-14T07:30:444Z","location":{"id":"555556","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26ba","type":"InPerson","provider":provider.toJson(),"date":"2023-04-13T07:30:444Z","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-f231198c26ba","type":"Online","provider":provider.toJson(),"date":"2023-04-12T08:22:444Z","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","type":"InPerson","provider":provider.toJson(),"date":"2023-04-11T10:30:444Z","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3","type":"Online","provider":provider.toJson(),"date":"2023-04-10T11:34:444Z","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
+    
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26bc","provider":provider.toJson(),"date":"2023-02-14T07:30:444Z","type":"InPerson","location":{"id":"555556","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-02-13T07:30:444Z","type":"InPerson","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":40.10291,"longitude":-88.21961,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3-2174-438b-f231198c26ba","provider":provider.toJson(),"date":"2023-02-12T08:22:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}) ?? Appointment(),
+    Appointment.fromJson({"id":"2174-438b-94d4-f231198c26ba","provider":provider.toJson(),"date":"2023-02-11T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":40.08514,"longitude":-88.27801,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}}) ?? Appointment(),
+    Appointment.fromJson({"id":"08c122e3","provider":provider.toJson(),"date":"2023-02-10T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}) ?? Appointment(),
+  ];*/
+
+  Future<Appointment?> createAppointment({
+    AppointmentProvider? provider,
+    AppointmentUnit? unit,
+    AppointmentPerson? person,
+    AppointmentType? type,
+    AppointmentTimeSlot? timeSlot,
+    List<AppointmentAnswer>? answers,
+  }) async {
+    if (_useSampleData == true) {
+      await Future.delayed(Duration(milliseconds: 1500));
+      if (Random().nextInt(2) == 0) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment(provider: provider, unitId: unit?.id, personId: person?.id, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
+      }
+      else {
+        throw AppointmentsException.unknown('Random Create Failure');
+      }
+    }
+    else if (_isServiceAvailable) {
+      String? url = "${Config().appointmentsUrl}/services/appointments";
+      Map<String, String?> headers = {
+        'Content-Type': 'application/json'
+      };
+      headers.addAll(Gateway().externalAuthorizationHeader);
+      String? post = JsonUtils.encode({
+        'provider_id': provider?.id,
+        'unit_id': unit?.id,
+        'person_id': person?.id,
+        'slot_id': timeSlot?.id,
+        'type': appointmentTypeToString(type),
+        'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
+        'answers': AppointmentAnswer.listToJson(answers),
+      });
+      http.Response? response = await Network().post(url, body: post, headers: headers, auth: Auth2());
+      if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
+      }
+      throw AppointmentsException.fromServerResponse(response);
+    }
+    else {
+      throw AppointmentsException.notAvailable();
+    }
+  }
+
+  Future<Appointment?> updateAppointment(Appointment appointment, {
+    AppointmentType? type,
+    AppointmentTimeSlot? timeSlot,
+    List<AppointmentAnswer>? answers,
+  }) async {
+    if (_useSampleData == true) {
+      await Future.delayed(Duration(milliseconds: 1500));
+      if (Random().nextInt(2) == 0) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromOther(appointment, type: type, startTimeUtc: timeSlot?.startTimeUtc, endTimeUtc: timeSlot?.endTimeUtc, answers: answers);
+      }
+      else {
+        throw AppointmentsException.unknown('Random Update Failure');
+      }
+    }
+    else if (_isServiceAvailable) {
+      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      Map<String, String?> headers = {
+        'Content-Type': 'application/json'
+      };
+      headers.addAll(Gateway().externalAuthorizationHeader);
+      String? post = JsonUtils.encode({
+        'type': appointmentTypeToString(type),
+        'time': timeSlot?.startTimeUtc?.millisecondsSinceEpoch,
+        'slot_id': timeSlot?.id,
+        'answers': AppointmentAnswer.listToJson(answers),
+      });
+      http.Response? response = await Network().put(url, body: post, headers: headers, auth: Auth2());
+      if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromJson(JsonUtils.decodeMap(response?.body));
+      }
+      throw AppointmentsException.fromServerResponse(response);
+    }
+    else {
+      throw AppointmentsException.notAvailable();
+    }
+  }
+
+  Future<Appointment?> cancelAppointment(Appointment appointment) async {
+    if (_useSampleData == true) {
+      await Future.delayed(Duration(milliseconds: 1500));
+      if (Random().nextInt(2) == 0) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromOther(appointment, cancelled: true);
+      }
+      else {
+        throw AppointmentsException.unknown('Random Update Failure');
+      }
+    }
+    else if (_isServiceAvailable) {
+      String? url = "${Config().appointmentsUrl}/services/appointments/${appointment.id}";
+      http.Response? response = await Network().delete(url, headers: Gateway().externalAuthorizationHeader, auth: Auth2());
+      if (response?.statusCode == 200) {
+        NotificationService().notify(notifyAppointmentsChanged);
+        return Appointment.fromOther(appointment, cancelled: true);
+      }
+      throw AppointmentsException.fromServerResponse(response);
+    }
+    else {
+      throw AppointmentsException.notAvailable();
+    }
+  }
+}
+
+enum AppointmentsError { serverResponse, notAvailable, internal, unknown }
+
+class AppointmentsException implements Exception {
+  final AppointmentsError error;
+  final String? description;
+
+  AppointmentsException({ this.error = AppointmentsError.unknown, this.description});
+
+  factory AppointmentsException.fromServerResponse(http.Response? response) => AppointmentsException(
+    error: AppointmentsError.serverResponse,
+    description: StringUtils.isNotEmpty(response?.body) ? response?.body : response?.reasonPhrase
+  );
+
+  factory AppointmentsException.notAvailable([String? description]) => AppointmentsException(
+    error: AppointmentsError.notAvailable,
+    description: description
+  );
+
+  factory AppointmentsException.internal([String? description]) => AppointmentsException(
+    error: AppointmentsError.internal,
+    description: description
+  );
+  
+  factory AppointmentsException.unknown([String? description]) => AppointmentsException(
+    error: AppointmentsError.unknown,
+    description: description
+  );
+
+  @override
+  String toString() => description ?? errorDescription;
+
+  String get errorDescription {
+    switch (error) {
+      case AppointmentsError.serverResponse: return 'Server Response Error';
+      case AppointmentsError.notAvailable: return 'Service Not Available';
+      case AppointmentsError.internal: return 'Internal Error Occured';
+      case AppointmentsError.unknown: return 'Unknown Error Occured';
+    }
   }
 }

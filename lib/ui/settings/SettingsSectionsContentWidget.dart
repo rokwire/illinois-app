@@ -298,11 +298,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         contentList.add(Padding(
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
+                label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                 contentWeight: 0.45,
-                fontSize: 16,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Sign Out"),
                 onTap: _onDisconnectNetIdClicked)));
       }
     }
@@ -346,11 +346,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         contentList.add(Padding(
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
+                label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect", "Sign Out"),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                 contentWeight: 0.45,
-                fontSize: 16,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect", "Sign Out"),
                 onTap: _onDisconnectNetIdClicked)));
       }
     }
@@ -393,11 +393,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         contentList.add(Padding(
             padding: EdgeInsets.only(top: 12),
             child: RoundedButton(
+                label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect", "Sign Out"),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
                 contentWeight: 0.45,
-                fontSize: 16,
                 conentAlignment: MainAxisAlignment.start,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect", "Sign Out"),
                 onTap: _onDisconnectNetIdClicked)));
       }
     }
@@ -871,7 +871,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     if (StringUtils.isNotEmpty(url)) {
       Uri? uri = Uri.tryParse(url!);
       if (uri != null) {
-        launchUrl(uri);
+        UrlUtils.launchExternal(url);
       }
     }
   }

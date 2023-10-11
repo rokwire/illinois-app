@@ -605,7 +605,7 @@ class WellnessRings with Service implements NotificationsListener{
       List<dynamic>? history = JsonUtils.listValue(responseData?["history"]);
       return (history?.isNotEmpty ?? false) ? WellnessRingDefinition.fromJson(history!.last ): null;
     } else {
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to add wellness ring definition. Response:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -635,7 +635,7 @@ class WellnessRings with Service implements NotificationsListener{
         return []; //successful but empty
       }
     } else {
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to get ring definitions. Response:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -704,7 +704,7 @@ class WellnessRings with Service implements NotificationsListener{
       List<dynamic>? responseData = JsonUtils.decodeList(responseString);
       return (responseData?.isNotEmpty ?? false) ? WellnessRingRecord.listFromJson(responseData): [] /*successful but empty*/;
     } else {
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to get wellness ring record. Response:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -722,7 +722,7 @@ class WellnessRings with Service implements NotificationsListener{
       // List<dynamic>? responseData = JsonUtils.decodeList(responseString);
       return true;
     } else {
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to add wellness ring record. Response:\n$responseCode: $responseString');
       return false;
     }
   }
@@ -742,7 +742,7 @@ class WellnessRings with Service implements NotificationsListener{
       return true;
     } else {
       String? responseString = response?.body;
-      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      Log.w('Failed to delete wellness ring. Response:\n$responseCode: $responseString');
       return false;
     }
   }

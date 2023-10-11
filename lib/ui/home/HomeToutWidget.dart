@@ -9,7 +9,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -106,45 +106,40 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   Widget _buildImageWidget(String imageUrl) {
     final double triangleHeight = 40;
     return Stack(children: [
-    ModalImageHolder(child: Image.network(imageUrl, semanticLabel: 'tout',
-          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+      Semantics(label: "tout", image: true, excludeSemantics: true, child:
+        ModalImageHolder(child: Image.network(imageUrl, semanticLabel: '', loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
-        return (loadingProgress != null)
-            ? Container(
-                color: Styles().colors?.fillColorPrimary,
-                width: imageWidth,
-                height: imageHeight,
-                child: Center(
-                    child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white))))
-            : child;
-      })),
-      Align(
-          alignment: Alignment.topCenter,
-          child: CustomPaint(
-              painter: TrianglePainter(
-                  painterColor: Styles().colors!.fillColorSecondaryTransparent05,
-                  horzDir: TriangleHorzDirection.rightToLeft,
-                  vertDir: TriangleVertDirection.bottomToTop),
-              child: Container(height: triangleHeight))),
-      Positioned.fill(
-          child: Align(
-              alignment: Alignment.bottomCenter,
-              child: CustomPaint(
-                  painter: TrianglePainter(
-                      painterColor: Styles().colors!.fillColorSecondaryTransparent05,
-                      horzDir: TriangleHorzDirection.leftToRight,
-                      vertDir: TriangleVertDirection.topToBottom),
-                  child: Container(height: triangleHeight)))),
-      Positioned.fill(
-          child: Align(
-              alignment: Alignment.bottomCenter,
-              child: CustomPaint(
-                  painter: TrianglePainter(
-                      painterColor: Styles().colors!.fillColorPrimary,
-                      horzDir: TriangleHorzDirection.rightToLeft,
-                      vertDir: TriangleVertDirection.topToBottom),
-                  child: Container(height: triangleHeight))))
+        return (loadingProgress != null) ?
+          Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+            Center(child:
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white))
+            )
+          ) :
+          AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
+            Container(color: Styles().colors?.fillColorPrimary, child: child)
+          );
+      }))),
+      Align(alignment: Alignment.topCenter, child:
+        CustomPaint(painter: TrianglePainter(
+              painterColor: Styles().colors!.fillColorSecondaryTransparent05,
+              horzDir: TriangleHorzDirection.rightToLeft,
+              vertDir: TriangleVertDirection.bottomToTop),
+          child: Container(height: triangleHeight))),
+      Positioned.fill(child:
+        Align(alignment: Alignment.bottomCenter, child:
+          CustomPaint(painter: TrianglePainter(
+                painterColor: Styles().colors!.fillColorSecondaryTransparent05,
+                horzDir: TriangleHorzDirection.leftToRight,
+                vertDir: TriangleVertDirection.topToBottom),
+            child: Container(height: triangleHeight)))),
+      Positioned.fill(child:
+        Align(alignment: Alignment.bottomCenter, child:
+          CustomPaint(painter: TrianglePainter(
+                painterColor: Styles().colors!.fillColorPrimary,
+                horzDir: TriangleHorzDirection.rightToLeft,
+                vertDir: TriangleVertDirection.topToBottom),
+            child: Container(height: triangleHeight))))
     ]);
   }
 
@@ -192,7 +187,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
 
   void _updateContent({DayPart? dayPart}) {
     _dayPart = dayPart ?? DateTimeUtils.getDayPart();
-    Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout.${dayPartToString(_dayPart)}');
+    Storage().homeToutImageUrl = _imageUrl = Content().randomImageUrl('home.tout.${dayPartToString(_dayPart)}');
     Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
   }
 

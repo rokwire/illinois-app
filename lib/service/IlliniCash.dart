@@ -564,7 +564,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       if(tokenElements.isNotEmpty){
         for(XmlElement element in tokenElements){
           if(element.name.local == "Token"){
-            return element.text;
+            return element.innerText;
           }
         }
       }
@@ -679,7 +679,7 @@ class _CreditCardResponse{
       var elements = document.findAllElements(elementName);
       for(XmlElement element in elements){
         if(element.name.local == elementName) {
-          return element.text;
+          return element.innerText;
         }
       }
     }

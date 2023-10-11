@@ -47,7 +47,7 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
   Map<String, dynamic> get secretCanvas => JsonUtils.mapValue(secretKeys['canvas']) ?? {};
-  
+
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
   Map<String, dynamic> get onboardingInfo => JsonUtils.mapValue(content['onboarding']) ?? {};
 
@@ -60,6 +60,8 @@ class Config extends rokwire.Config {
 
   Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
   Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
+
+  Map<String, dynamic> get wellness => JsonUtils.mapValue(content['wellness']) ?? {};
 
   // Getters: Secret Keys
 
@@ -94,6 +96,7 @@ class Config extends rokwire.Config {
   String? get feedbackUrl            => JsonUtils.stringValue(otherUniversityServices['feedback_url']);
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
+  String? get privacyPolicyGuideId   => JsonUtils.stringValue(otherUniversityServices['privacy_policy_guide_id']);
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
   String? get canvasUrl              => JsonUtils.stringValue(otherUniversityServices['canvas_url']);
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
@@ -104,7 +107,8 @@ class Config extends rokwire.Config {
   String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
   String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
   String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
-  String? get dailyIlliniFeedUrl     => 'https://dailyillini.com/feed';
+  String? get dailyIlliniFeedUrl     => JsonUtils.stringValue(otherUniversityServices['daily_illini_feed_url']);
+  String? get eventAttendanceUrl     => JsonUtils.stringValue(otherUniversityServices['event_attendance_url']);
 
   // Getters: Platform Building Blocks
   String? get gatewayUrl             => JsonUtils.stringValue(platformBuildingBlocks['gateway_url']);
@@ -115,6 +119,9 @@ class Config extends rokwire.Config {
   String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);
   String? get wellnessUrl            => JsonUtils.stringValue(platformBuildingBlocks["wellness_url"]);
   String? get appointmentsUrl        => JsonUtils.stringValue(platformBuildingBlocks["appointments_url"]);
+  String? get occupationsUrl         => JsonUtils.stringValue(platformBuildingBlocks["occupations_url"]);
+  String? get assistantUrl           => JsonUtils.stringValue(platformBuildingBlocks["assistant_url"]);
+  String? get identityUrl            => JsonUtils.stringValue(platformBuildingBlocks["identity_url"]);
 
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);
@@ -161,6 +168,13 @@ class Config extends rokwire.Config {
 
   String? get canvasCourseDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['course_format']);
   String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
+  List<int>? get canvasMedicineCoursesAccountIds => JsonUtils.listIntsValue(canvas['medicine_courses_account_ids']);
+
+  // Getters: Wellness
+
+  String? get wellnessMentalHealthCcUrl => JsonUtils.stringValue(wellness['mental_health_cc_url']);
+  String? get wellnessMentalHealthThumbUrl => JsonUtils.stringValue(wellness['mental_health_thumb_url']);
+  String? get wellnessMentalHealthVideoUrl => JsonUtils.stringValue(wellness['mental_health_video_url']);
 
   // Getters: McKinley
 
@@ -196,6 +210,8 @@ class Config extends rokwire.Config {
 
   String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
   String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
+
+  int get mobileAccessDeleteTimeoutMins   => JsonUtils.intValue(settings['mobileAccessDeleteTimeout']) ?? 10;
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

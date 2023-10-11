@@ -60,25 +60,25 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
                     child: Text(StringUtils.ensureNotEmpty(widget.notification.subject),
                         maxLines: 5,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimaryVariant)))
+                        style:  Styles().textStyles?.getTextStyle("panel.canvas.text.medium")))
               ]),
               Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Row(children: [
                     Expanded(
                         child: Text(StringUtils.ensureNotEmpty(widget.notification.startAtDisplayDate),
-                            style:
-                                TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)))
+                            style:  Styles().textStyles?.getTextStyle("widget.info.small") 
+                          ))
                   ])),
               Visibility(
                   visible: StringUtils.isNotEmpty(widget.notification.message),
-                  child: Html(data: widget.notification.message, onLinkTap: (url, context, attributes, element) => _onTapLink(url), style: {
+                  child: Html(data: widget.notification.message, onLinkTap: (url, context, element) => _onTapLink(url), style: {
                     "body": Style(
                         color: Styles().colors!.textSurfaceAccent,
                         fontFamily: Styles().fontFamilies!.bold,
                         fontSize: FontSize(16),
                         padding: EdgeInsets.zero,
-                        margin: EdgeInsets.zero)
+                        margin: Margins.zero)
                   }))
             ])));
   }
