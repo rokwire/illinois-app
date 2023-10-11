@@ -79,23 +79,21 @@ class DailyIlliniItem {
     dom.Document document = htmlParser.parse(descriptionText);
     List<dom.Element> imgHtmlElements = document.getElementsByTagName('img');
     if (CollectionUtils.isNotEmpty(imgHtmlElements)) {
-      dom.Element? secondImgElement = (imgHtmlElements.length >= 1) ? imgHtmlElements[0] : null;
-      if (secondImgElement != null) {
-        LinkedHashMap<Object, String> imgAttributes = secondImgElement.attributes;
-        if (imgAttributes.isNotEmpty) {
-          String? srcSetValue = imgAttributes['srcset'];
-          if (StringUtils.isNotEmpty(srcSetValue)) {
-            List<String>? srcSetValues = srcSetValue!.split(', ');
-            if (CollectionUtils.isNotEmpty(srcSetValues)) {
-              final String img475SizeTag = ' 475w';
-              for (String srcValue in srcSetValues) {
-                if (srcValue.endsWith(img475SizeTag)) {
-                  return srcValue.substring(0, (srcValue.length - img475SizeTag.length));
-                }
+      dom.Element secondImgElement = (imgHtmlElements.length >= 2) ? imgHtmlElements[1] : imgHtmlElements[0];
+      LinkedHashMap<Object, String> imgAttributes = secondImgElement.attributes;
+      if (imgAttributes.isNotEmpty) {
+        String? srcSetValue = imgAttributes['srcset'];
+        if (StringUtils.isNotEmpty(srcSetValue)) {
+          List<String>? srcSetValues = srcSetValue!.split(', ');
+          if (CollectionUtils.isNotEmpty(srcSetValues)) {
+            final String img475SizeTag = ' 475w';
+            for (String srcValue in srcSetValues) {
+              if (srcValue.endsWith(img475SizeTag)) {
+                return srcValue.substring(0, (srcValue.length - img475SizeTag.length));
               }
-              // return first src set value by default
-              return srcSetValues.first.split(' ').first;
             }
+            // return first src set value by default
+            return srcSetValues.first.split(' ').first;
           }
         }
       }
