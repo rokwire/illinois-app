@@ -15,26 +15,20 @@
  */
 
 import 'dart:async';
-import 'dart:io';
 
-import 'package:convert/convert.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/DailyIllini.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DailyIllini.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -63,11 +57,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
   bool _loadingItems = false;
   DateTime? _pausedDateTime;
   PageController? _pageController;
-  GlobalKey _viewPagerKey = GlobalKey();
   final double _pageSpacing = 16;
-  String _string = "Not set yet";
-
-  set string(String value) => setState(() => _string = value);
 
   @override
   void initState() {
@@ -126,6 +116,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
       child: _buildContent(),
     );
   }
+
   Widget _buildContent() {
     List<Widget> widgetsList = <Widget>[];
     if (CollectionUtils.isNotEmpty(_illiniItems)) {
@@ -137,7 +128,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
           widgetsList.add(_MainStoryWidget(illiniItem: item,));
         }
         else {
-          widgetsList.add(_MinorStory(illiniItem: item,));
+          widgetsList.add(_MinorStoryWidget(illiniItem: item,));
         }
       }
     }
@@ -167,17 +158,8 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
         contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList.first);
       }
 
-      //This column moves view all button to the top right
       return Column(
         children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: LinkButton(
-                title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'View All'),
-                textStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, decoration: TextDecoration.underline),
-                hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to launch dailyillini.com website'),
-                onTap: () => launchUrlString("dailyillini.com")),
-          ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             child: Container(
@@ -190,7 +172,19 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
               child: contentWidget,
             ),
           ),
+          LinkButton(
+              title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'More Stories'),
+              hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to go to the Daily Illini home page'),
+              onTap: _onViewAll
+          ),
       ]);
+    }
+  }
+
+  _onViewAll() async {
+    final Uri url = Uri.parse('https://dailyillini.com');
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
     }
   }
 
@@ -210,97 +204,6 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
   }
 }
 
-class DailyIlliniListPanel extends StatefulWidget {
-
-  @override
-  _DailyIlliniListPanelState createState() => _DailyIlliniListPanelState();
-}
-
-class _DailyIlliniListPanelState extends State<DailyIlliniListPanel> {
-
-  List<DailyIlliniItem>? _illiniItems;
-  bool _loadingItems = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadFeedItems();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: HeaderBar(
-          title: HomeDailyIlliniWidget.title,
-        ),
-        body: RefreshIndicator(
-            onRefresh: _onPullToRefresh,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Expanded(child: _buildContent())])),
-        backgroundColor: Styles().colors!.background);
-  }
-
-  Widget _buildContent() {
-    if (_loadingItems) {
-      return Center(
-          child: SizedBox(
-              height: 32,
-              width: 32,
-              child: CircularProgressIndicator(
-                  strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary!))));
-    } else {
-      if (CollectionUtils.isNotEmpty(_illiniItems)) {
-        int itemsCount = _illiniItems!.length;
-        return ListView.separated(
-            separatorBuilder: (context, index) => Container(height: 24),
-            itemCount: itemsCount,
-            itemBuilder: _buildListItemEntry);
-      } else {
-        return Column(children: <Widget>[
-          Expanded(child: Container(), flex: 1),
-          Text(Localization().getStringEx('widget.home.daily_illini.text.empty.description', 'Failed to load daily illini feed.'),
-              textAlign: TextAlign.center),
-          Expanded(child: Container(), flex: 3)
-        ]);
-      }
-    }
-  }
-  
-  Widget _buildListItemEntry(BuildContext context, int index) {
-    DailyIlliniItem? item = (index < ((_illiniItems?.length) ?? 0)) ? _illiniItems![index] : null;
-    if (item == null) {
-      return Container();
-    }
-    return _DailyIlliniItemWidget(
-        illiniItem: item, margin: (0 < index) ? EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.only(left: 16, right: 16, top: 16));
-  }
-
-  void _loadFeedItems() {
-    _setLoadingItems(true);
-    DailyIllini().loadFeed().then((items) {
-      _illiniItems = items;
-      _setLoadingItems(false);
-    });
-  }
-
-  Future<void> _onPullToRefresh() async {
-    // Reload without progress indicator
-    DailyIllini().loadFeed().then((items) {
-      _illiniItems = items;
-      _updateState();
-    });
-  }
-
-  void _setLoadingItems(bool loading) {
-    _loadingItems = loading;
-    _updateState();
-  }
-
-  void _updateState() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-}
 class _MainStoryWidget extends StatelessWidget {
   final DailyIlliniItem? illiniItem;
 
@@ -308,7 +211,6 @@ class _MainStoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Padding(
     padding: EdgeInsets.zero,
     child: Align(
@@ -353,14 +255,14 @@ class _MainStoryWidget extends StatelessWidget {
     return Row(children: [Expanded(child: Styles().images?.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
   }
 }
-class _MinorStory extends StatelessWidget {
+
+class _MinorStoryWidget extends StatelessWidget {
   final DailyIlliniItem? illiniItem;
 
-  _MinorStory({this.illiniItem});
+  _MinorStoryWidget({this.illiniItem});
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Padding(
         padding: EdgeInsets.zero,
         child: Align(
@@ -385,105 +287,6 @@ class _MinorStory extends StatelessWidget {
             ),
           ),
         ));
-  }
-}
-
-class _DailyIlliniItemWidget extends StatelessWidget {
-  final DailyIlliniItem? illiniItem;
-  final EdgeInsetsGeometry? margin;
-  final void Function()? onTapNext;
-  final void Function()? onTapPrevious;
-
-  _DailyIlliniItemWidget({this.illiniItem, this.margin, this.onTapNext, this.onTapPrevious});
-
-  //This is the build function that builds the main body of our DailyIllini Home widget
-  //The padding is the rectangle that bounds the column so that it doesn't go to the edge of the screen
-  //the column on line 328 is the column that holds our image, next/prev buttons, and our title
-  //within the column on line 328 we see a _buildImage() that builds our image, a row that holds our next/prev buttons and a padding that holds our title for the article
-  //under this column we see a padding property that hold the date and time that the article was published
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-        padding: margin ?? EdgeInsets.zero,
-        child: GestureDetector(
-            onTap: _onTap,
-            child: Container(
-                decoration: BoxDecoration(
-                    color: Styles().colors!.white,
-                    boxShadow: [
-                      BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
-                    ],
-                    borderRadius: BorderRadius.all(Radius.circular(4))),
-                clipBehavior: Clip.hardEdge,
-                child: Column(children: <Widget>[
-                  Column(children: [
-                    _buildImage(),
-                    Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      _buildNavigationButton(
-                          navigationDirection: '<',
-                          semanticsLabel: Localization().getStringEx('widget.home.daily_illini.item.page.previous.hint', 'Previous page'),
-                          onTap: onTapPrevious),
-                      _buildNavigationButton(
-                          navigationDirection: '>',
-                          semanticsLabel: Localization().getStringEx('widget.home.daily_illini.item.page.next.hint', 'Next page'),
-                          onTap: onTapNext)
-                      
-                    ]),
-                    Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                        child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.center,
-                            style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')))
-                  ]),
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                      child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                          style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fa")))
-                ]))));
-  }
-
-  Widget _buildImage() {
-    return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-        ? ModalImageHolder(child: Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) {
-              return child;
-            }
-            return Padding(padding: EdgeInsets.symmetric(vertical: 30), child: CircularProgressIndicator());
-          }, errorBuilder: (context, error, stackTrace) {
-            return _defaultPlaceholderImage();
-          }))
-        : _defaultPlaceholderImage();
-  }
-
-  Widget _defaultPlaceholderImage() {
-    return Row(children: [Expanded(child: Styles().images?.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
-  }
-
-  Widget _buildNavigationButton({required String navigationDirection, required String semanticsLabel, void Function()? onTap}) {
-    return Visibility(
-        visible: (onTap != null),
-        child: Semantics(
-            label: semanticsLabel,
-            button: true,
-            child: GestureDetector(
-                onTap: onTap ?? () {},
-                child: Container(
-                    color: Colors.transparent,
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-                    child: Text(navigationDirection,
-                        semanticsLabel: "",
-                        style: Styles().textStyles?.getTextStyle("widget.button.title.extra_large")
-                    )))));
-  }
-
-  void _onTap() {
-    String? url = illiniItem!.link;
-    if (StringUtils.isNotEmpty(url)) {
-      Uri? uri = Uri.tryParse(url!);
-      if (uri != null) {
-        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
-        launchUrl(uri, mode: launchMode);
-      }
-    }
   }
 }
 

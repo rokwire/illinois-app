@@ -16,7 +16,6 @@
 
 import 'dart:collection';
 
-import 'package:flutter/cupertino.dart';
 import 'package:html/parser.dart' as htmlParser;
 import 'package:html/dom.dart' as dom;
 import 'package:illinois/service/AppDateTime.dart';
@@ -102,5 +101,22 @@ class DailyIlliniItem {
       }
     }
     return null;
+  }
+
+  static String? _getCategory(String? itemText) {
+    dom.Document doc = htmlParser.parse(itemText);
+    List<dom.Element> catElements = doc.getElementsByTagName('category');
+    for (int i = 0; i < catElements.length; i++) {
+      if (catElements[i].innerHtml.contains("Opinions")) {
+        return "Opinions";
+      } else if (catElements[i].innerHtml.contains("buzz")) {
+        return "buzz";
+      } else if (catElements[i].innerHtml.contains("Sports")) {
+        return "Sports";
+      } else if (catElements[i].innerHtml.contains("News")) {
+        return "News";
+      }
+    }
+    return "N/A";
   }
 }
