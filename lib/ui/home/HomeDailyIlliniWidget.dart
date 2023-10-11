@@ -122,8 +122,6 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
     if (CollectionUtils.isNotEmpty(_illiniItems)) {
       for (int i = 0; i < 3; i++) {
         DailyIlliniItem item = _illiniItems![i];
-        var link = item.link;
-        debugPrint('link: $link');
         if (i == 0) {
           widgetsList.add(_MainStoryWidget(illiniItem: item,));
         }
