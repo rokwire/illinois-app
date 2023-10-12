@@ -65,7 +65,7 @@
     </queries>
 
     <application
-        android:name="App"
+        android:name="${applicationName}"
         android:allowBackup="false"
         android:restoreAnyVersion="true"
         android:icon="@mipmap/ic_launcher"
