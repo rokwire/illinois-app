@@ -661,7 +661,7 @@ class _SettingsAddIlliniCashPanelState
   }
 
   bool get _isCCValid{
-    return isCardValidNumber(_ccNumber, checkLength: true);
+    return isCardNumberValid(cardNumber: _ccNumber, checkLength: true);
   }
 
   String get _ccNumber{

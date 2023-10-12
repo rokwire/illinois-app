@@ -71,10 +71,11 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   void _initVideoPlayer() {
     if (_video != null) {
-      String? tutorialUrl = _video!.videoUrl;
-      if (StringUtils.isNotEmpty(tutorialUrl)) {
+      String? tutorialUrl = _video?.videoUrl;
+      Uri? tutorialUri = (tutorialUrl != null) ? Uri.tryParse(tutorialUrl) : null;
+      if (tutorialUri != null) {
         String? ccUrl = _video!.ccUrl;
-        _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions(ccUrl));
+        _controller = VideoPlayerController.networkUrl(tutorialUri, closedCaptionFile: _loadClosedCaptions(ccUrl));
         _controller!.addListener(_checkVideoStateChanged);
         _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
           _currentCaptionText = _controller!.value.caption.text;

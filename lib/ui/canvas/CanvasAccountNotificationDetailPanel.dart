@@ -77,7 +77,7 @@ class _CanvasAccountNotificationDetailPanelState extends State<CanvasAccountNoti
                         color: Styles().colors!.textSurfaceAccent,
                         fontFamily: Styles().fontFamilies!.bold,
                         fontSize: FontSize(16),
-                        padding: EdgeInsets.zero,
+                        padding: HtmlPaddings.zero,
                         margin: Margins.zero)
                   }))
             ])));
