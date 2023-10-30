@@ -229,12 +229,11 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           children: [
             _buildStreakWidget(),
             Container(
-              height: 150,
+              height: 160,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width:150,
                     child: Styles().images?.getImage('skills-innovation') ?? Container(),
                   ),
                   Container(height: 16,),
@@ -290,54 +289,54 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   List<Widget> _buildUnitWidgets(Color? color, Color? colorAccent, List<Content> contentList, int moduleNumber){
     List<Widget> unitWidgets = <Widget>[];
-    // Widget bigCircle = new Container(
-    //   width: 100.0,
-    //   height: 90.0,
-    //   decoration: new BoxDecoration(
-    //     color: Colors.white,
-    //     shape: BoxShape.circle,
-    //   ),
-    // );
+    Widget bigCircle = new Container(
+      width: 82.0,
+      height: 82.0,
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+    );
     for(int i =0; i< contentList.length; i++ ){
-      // unitWidgets.add(Center(
-      //   // elevated button
-      //   child: Stack(
-      //     children: [
-      //       bigCircle,
-      //       Padding(
-      //           padding: EdgeInsets.only(top: 10, left: 8),
-      //           child: ElevatedButton(
-      //             onPressed: () {},
-      //             // icon of the button
-      //             child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
-      //             // styling the button
-      //             style: ElevatedButton.styleFrom(
-      //               shape: CircleBorder(),
-      //               padding: EdgeInsets.all(10),
-      //               // Button color
-      //               backgroundColor: colorAccent,
-      //             ),
-      //           ),
-      //       ),
-      //     ],
-      //   ),
-      // ),);
-      unitWidgets.add(
-        Center(
-          child: ElevatedButton(
-            onPressed: () {},
-            // icon of the button
-            child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
-            // styling the button
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(12),
-              // Button color
-              backgroundColor: colorAccent,
+      unitWidgets.add(Center(
+        // elevated button
+        child: Stack(
+          children: [
+            bigCircle,
+            Padding(
+                padding: EdgeInsets.only(top: 6, left: 6),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  // icon of the button
+                  child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
+                  // styling the button
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(10),
+                    // Button color
+                    backgroundColor: colorAccent,
+                  ),
+                ),
             ),
-          ),
-        )
-      );
+          ],
+        ),
+      ),);
+      // unitWidgets.add(
+      //   Center(
+      //     child: ElevatedButton(
+      //       onPressed: () {},
+      //       // icon of the button
+      //       child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
+      //       // styling the button
+      //       style: ElevatedButton.styleFrom(
+      //         shape: CircleBorder(),
+      //         padding: EdgeInsets.all(12),
+      //         // Button color
+      //         backgroundColor: colorAccent,
+      //       ),
+      //     ),
+      //   )
+      // );
       unitWidgets.add(Container(height: 16,));
     }
 
@@ -364,20 +363,23 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () {},
-                // icon of the button
-                child: Icon(
-                  Icons.menu_book_rounded,
-                  color: color,
-                  size: 30.0,
-                ),
-                // styling the button
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(16),
-                  // Button color
-                  backgroundColor: Colors.white,
+              Padding(
+                padding: EdgeInsets.only(top: 4),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  // icon of the button
+                  child: Icon(
+                    Icons.menu_book_rounded,
+                    color: color,
+                    size: 30.0,
+                  ),
+                  // styling the button
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(16),
+                    // Button color
+                    backgroundColor: Colors.white,
+                  ),
                 ),
               ),
               Text('Resources', style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat")),

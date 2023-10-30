@@ -154,7 +154,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       ),
       Expanded(child:
         Stack(children: [
-          Padding(padding: _skillsSelfEvaluationSelected ? EdgeInsets.zero : EdgeInsets.only(top: 16, left: 16, right: 16,), child:
+          Padding(padding: _skillsSelfEvaluationSelected || _skillsDashboardSelected ? EdgeInsets.zero : EdgeInsets.only(top: 16, left: 16, right: 16,), child:
             _contentWidget
           ),
           _buildContentValuesContainer()
@@ -428,6 +428,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
   
   bool get _skillsSelfEvaluationSelected => _selectedContent == AcademicsContent.skills_self_evaluation;
+  bool get _skillsDashboardSelected => _selectedContent == AcademicsContent.skills_dashboard;
 
   bool _isCheckListCompleted(String contentKey) {
     int stepsCount = CheckList(contentKey).progressSteps?.length ?? 0;
