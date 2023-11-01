@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +25,12 @@ import 'package:illinois/service/DailyIllini.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -152,8 +154,13 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
           ]
         );
       } else {
-
         contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList.first);
+      }
+
+      _onViewAll() async {
+        final Uri url = Uri.parse(Config().dailyIlliniHomepageUrl!);
+        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
+        launchUrl(url, mode: launchMode);
       }
 
       return Column(
@@ -179,13 +186,6 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
     }
   }
 
-  _onViewAll() async {
-    final Uri url = Uri.parse('https://dailyillini.com');
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
   void _loadFeedItems() {
     _setLoading(true);
     DailyIllini().loadFeed().then((items) {
@@ -202,10 +202,25 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
   }
 }
 
-class _MainStoryWidget extends StatelessWidget {
+abstract class _StoryWidget extends StatelessWidget {
   final DailyIlliniItem? illiniItem;
 
-  _MainStoryWidget({this.illiniItem});
+  _StoryWidget({this.illiniItem});
+
+  void _onTap() {
+    String? url = illiniItem!.link;
+    if (StringUtils.isNotEmpty(url)) {
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        LaunchMode launchMode = Platform.isAndroid ? LaunchMode.externalApplication : LaunchMode.platformDefault;
+        launchUrl(uri, mode: launchMode);
+      }
+    }
+  }
+}
+
+class _MainStoryWidget extends _StoryWidget {
+  _MainStoryWidget({super.illiniItem});
 
   @override
   Widget build(BuildContext context) {
@@ -213,51 +228,56 @@ class _MainStoryWidget extends StatelessWidget {
     padding: EdgeInsets.zero,
     child: Align(
       alignment: FractionalOffset.bottomCenter,
-      child: InkWell(
-        onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
-                  child: _buildImage()
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                child: _buildImage()
+          ),
+          InkWell(
+            onTap: _onTap,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 12, bottom: 8, left: 20, right: 20),
+                  child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
+                      style: Styles().textStyles?.getTextStyle('widget.title.extra_large.extra_fat')),
+                ),
+                Padding(
+                    padding: EdgeInsets.only(bottom: 6, left: 20),
+                    child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
+                        style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"))
+                ),
+              ],
             ),
-            Padding(
-                padding: EdgeInsets.only(top: 12, bottom: 8, left: 20, right: 20),
-                child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.left,
-                    style: Styles().textStyles?.getTextStyle('widget.title.extra_large.extra_fat')),
-            ),
-            Padding(
-                padding: EdgeInsets.only(bottom: 6, left: 20),
-                child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
-                  style: Styles().textStyles?.getTextStyle("widget.info.small.medium_fat"))
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     ));
   }
+
   Widget _buildImage() {
     return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-        ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
+        ? ModalImageHolder(child: Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
       if (loadingProgress == null) {
         return child;
       }
       return Padding(padding: EdgeInsets.symmetric(vertical: 30), child: CircularProgressIndicator());
     }, errorBuilder: (context, error, stackTrace) {
       return _defaultPlaceholderImage();
-    })
+    }))
         : _defaultPlaceholderImage();
   }
+
   Widget _defaultPlaceholderImage() {
     return Row(children: [Expanded(child: Styles().images?.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
   }
 }
 
-class _MinorStoryWidget extends StatelessWidget {
-  final DailyIlliniItem? illiniItem;
-
-  _MinorStoryWidget({this.illiniItem});
+class _MinorStoryWidget extends _StoryWidget {
+  _MinorStoryWidget({super.illiniItem});
 
   @override
   Widget build(BuildContext context) {
@@ -266,7 +286,7 @@ class _MinorStoryWidget extends StatelessWidget {
         child: Align(
           alignment: FractionalOffset.bottomCenter,
           child: InkWell(
-            onTap: () => launchUrlString(StringUtils.ensureNotEmpty(illiniItem?.link)),
+            onTap: _onTap,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
