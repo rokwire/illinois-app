@@ -17,7 +17,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/DailyIllini.dart';
@@ -33,7 +32,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class HomeDailyIlliniWidget extends StatefulWidget {
   final String? favoriteId;
@@ -133,28 +131,39 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
       }
     }
 
-    if (_loadingItems == true) {
-      widgetsList.add(
-          _DailyIlliniLoadingWidget(progressColor: Styles().colors!.white!, padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)));
-    }
-
-    if (widgetsList.isEmpty) {
+    if (widgetsList.isEmpty && !_loadingItems) {
       return HomeMessageCard(
           message: Localization().getStringEx('widget.home.daily_illini.text.empty.description', 'Failed to load daily illini feed.'));
     } else {
       Widget contentWidget;
-      if (1 < widgetsList.length) {
-
-        contentWidget = Column(
-          children: <Widget>[
-            widgetsList[0],
-            widgetsList[1],
-            widgetsList[2],
-            SizedBox(height: 12),
-          ]
+      if (widgetsList.length >= 3) {
+        contentWidget = Padding(
+          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Styles().colors!.white,
+                boxShadow: [
+                  BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                ],
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+            child: Column(
+                children: <Widget>[
+                  widgetsList[0],
+                  widgetsList[1],
+                  widgetsList[2],
+                  SizedBox(height: 12),
+                ]
+            ),
+          ),
         );
       } else {
-        contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: widgetsList.first);
+        contentWidget = Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: _DailyIlliniLoadingWidget(
+            progressColor: Styles().colors!.white!,
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          ),
+        );
       }
 
       _onViewAll() async {
@@ -165,18 +174,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
 
       return Column(
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Styles().colors!.white,
-                boxShadow: [
-                BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
-                ],
-                borderRadius: BorderRadius.all(Radius.circular(4))),
-              child: contentWidget,
-            ),
-          ),
+          contentWidget,
           LinkButton(
               title: Localization().getStringEx('widget.home.daily_illini.button.all.title', 'More Stories'),
               hint: Localization().getStringEx('widget.home.daily_illini.button.all.hint', 'Tap to go to the Daily Illini home page'),
