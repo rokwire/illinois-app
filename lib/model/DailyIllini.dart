@@ -35,7 +35,7 @@ class DailyIlliniItem {
 
   String? get displayPubDate {
     DateTime? localDateTime = AppDateTime().getDeviceTimeFromUtcTime(pubDateTimeUtc);
-    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: true);
+    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: false);
   }
 
   static DailyIlliniItem? fromXml(XmlElement? xml) {
@@ -53,8 +53,8 @@ class DailyIlliniItem {
       description: descriptionString,
       thumbImageUrl: thumbImgUrl,
       // DateTime format:
-      // Tue, 09 Aug 2022 12:00:17 +0000
-      pubDateTimeUtc: DateTimeUtils.dateTimeFromString(pubDateString, format: "E, dd LLL yyyy hh:mm:ss Z", isUtc: true),
+      // Tue, 09 Aug 2022 13:00:17 +0000
+      pubDateTimeUtc: DateTimeUtils.dateTimeFromString(pubDateString, format: "E, dd LLL yyyy HH:mm:ss Z", isUtc: true),
     );
   }
 
