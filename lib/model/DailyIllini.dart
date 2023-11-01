@@ -35,7 +35,7 @@ class DailyIlliniItem {
 
   String? get displayPubDate {
     DateTime? localDateTime = AppDateTime().getDeviceTimeFromUtcTime(pubDateTimeUtc);
-    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: false);
+    return AppDateTime().formatDateTime(localDateTime, format: 'LLLL d, yyyy', ignoreTimeZone: true);
   }
 
   static DailyIlliniItem? fromXml(XmlElement? xml) {
