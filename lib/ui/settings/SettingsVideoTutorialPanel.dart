@@ -63,8 +63,9 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
 
   void _initVideoPlayer() {
     String? tutorialUrl = widget.videoTutorial.videoUrl;
-    if (StringUtils.isNotEmpty(tutorialUrl)) {
-      _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions());
+    Uri? tutorialUri = (tutorialUrl != null) ? Uri.tryParse(tutorialUrl) : null;
+    if (tutorialUri != null) {
+      _controller = VideoPlayerController.networkUrl(tutorialUri, closedCaptionFile: _loadClosedCaptions());
       _controller!.addListener(_checkVideoStateChanged);
       _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
         _currentCaptionText = _controller!.value.caption.text;

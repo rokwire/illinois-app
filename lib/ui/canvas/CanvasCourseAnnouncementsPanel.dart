@@ -192,7 +192,7 @@ class _CanvasCourseAnnouncementsPanelState extends State<CanvasCourseAnnouncemen
                             fontSize: FontSize(16),
                             textOverflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                            padding: EdgeInsets.zero,
+                            padding: HtmlPaddings.zero,
                             margin: Margins.zero)
                       }))
                 ]))));
