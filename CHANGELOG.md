@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Upgraded for Flutter 3.13.7 [#3805](https://github.com/rokwire/illinois-app/issues/3805).
+- Update Daily Illini home screen widget to show three stories on one card [#3079](https://github.com/rokwire/illinois-app/issues/3079).
 
 ## [5.1.0] - 2023-10-02
 - N/A
