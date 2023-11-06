@@ -19,7 +19,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   final PageController controller = PageController();
   Course _course = Course();
   List<String> moduleIconNames = ["skills-social-button", "skills-management-button", "skills-cooperation-button", "skills-emotional-button", "skills-innovation-button"];
-
+  int moduleNumber = 0;
 
   @override
   void initState() {
@@ -61,47 +61,9 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   @override
   Widget build(BuildContext context) {
 
-    return PageView(
-      controller: controller,
-      children: <Widget>[
-        SizedBox(
-          width: double.infinity,
-          child: Container(
-            color: Styles().colors!.essentialSkillsCoachPurple,
-            child: _buildSocialView(),
-          ),
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: Container(
-            color: Styles().colors!.essentialSkillsCoachBlue,
-            child: _buildSelfManagementView(),
-          ),
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: Container(
-            color: Styles().colors!.essentialSkillsCoachRed,
-            child: _buildCooperationView(),
-          ),
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: Container(
-            color: Styles().colors!.essentialSkillsCoachOrange,
-            child: _buildEmotionalResilienceView(),
-          ),
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: Container(
-            color: Styles().colors!.essentialSkillsCoachGreen,
-            child: _buildInnovationView(),
-          ),
-        ),
-      ],
+    return SingleChildScrollView(
+      child: _buildModuleView(),
     );
-
   }
 
   @override
@@ -109,140 +71,107 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     // TODO: implement onNotification
   }
 
-  //TODO refactor views to be more dynamic
-  Widget _buildSocialView(){
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          children: [
-            _buildStreakWidget(),
-            Container(
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    child: Styles().images?.getImage('skills-social') ?? Container(),
-                  ),
-                  Container(height: 16,),
-                  Text('Social Engagement Skills',style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
-                ],
-              ),
-            ),
-            Column(
-                children:_buildModuleUnitWidgets(Styles().colors!.essentialSkillsCoachPurple, Styles().colors!.essentialSkillsCoachPurpleAccent, 0)
-            ),
-          ],
-        ),
-      ),
-    );
+  Widget _buildModuleView(){
+    switch (moduleNumber){
+      case 0:
+        return Container(
+          color: Styles().colors!.essentialSkillsCoachPurple,
+          child: _buildModuleInfoView("skills-social", Styles().colors!.essentialSkillsCoachPurple, Styles().colors!.essentialSkillsCoachPurpleAccent),
+        );
+      case 1:
+        return Container(
+          color: Styles().colors!.essentialSkillsCoachBlue,
+          child: _buildModuleInfoView("skills-management", Styles().colors!.essentialSkillsCoachBlue, Styles().colors!.essentialSkillsCoachBlueAccent),
+
+        );
+      case 2:
+        return Container(
+          color: Styles().colors!.essentialSkillsCoachRed,
+          child: _buildModuleInfoView("skills-cooperation", Styles().colors!.essentialSkillsCoachRed, Styles().colors!.essentialSkillsCoachRedAccent),
+
+        );
+      case 3:
+        return Container(
+          color: Styles().colors!.essentialSkillsCoachOrange,
+          child: _buildModuleInfoView("skills-emotional", Styles().colors!.essentialSkillsCoachOrange, Styles().colors!.essentialSkillsCoachOrangeAccent),
+
+        );
+      case 4:
+        return Container(
+          color: Styles().colors!.essentialSkillsCoachGreen,
+          child: _buildModuleInfoView("skills-innovation", Styles().colors!.essentialSkillsCoachGreen, Styles().colors!.essentialSkillsCoachGreenAccent),
+        );
+      default:
+        return Container();
+    }
   }
 
-  Widget _buildSelfManagementView(){
+  Widget _buildModuleInfoView(String moduleType, Color? color, Color? colorAccent,){
     return SingleChildScrollView(
       child: Center(
         child: Column(
           children: [
             _buildStreakWidget(),
-            Container(
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    child: Styles().images?.getImage('skills-management') ?? Container(),
-                  ),
-                  Container(height: 16,),
-                  Text('Self Management Skills', style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
-                ],
-              ),
-            ),
-            Column(
-                children:_buildModuleUnitWidgets(Styles().colors!.essentialSkillsCoachBlue, Styles().colors!.essentialSkillsCoachBlueAccent, 1)
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+            GestureDetector(
+              onHorizontalDragEnd: (details) {
+                if (details.primaryVelocity! > 0 && moduleNumber != 0) {
+                  setState(() {
+                    moduleNumber= moduleNumber-1;
+                  });
+                }
 
-  Widget _buildCooperationView(){
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          children: [
-            _buildStreakWidget(),
-            Container(
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    child: Styles().images?.getImage('skills-cooperation') ?? Container(),
-                  ),
-                  Container(height: 16,),
-                  Text('Cooperation Skills', style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
-                ],
-              ),
-            ),
-            Column(
-                children:_buildModuleUnitWidgets(Styles().colors!.essentialSkillsCoachRed, Styles().colors!.essentialSkillsCoachRedAccent, 2)
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+                if (details.primaryVelocity! < 0 && moduleNumber != 4) {
+                  setState(() {
+                    moduleNumber= moduleNumber+1;
+                  });
+                }
+              },
+              child: Container(
+                height: 150,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(8),
+                      child:  Container(
+                        child: Styles().images?.getImage(moduleType) ?? Container(),
+                      ),
 
-  Widget _buildEmotionalResilienceView(){
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          children: [
-            _buildStreakWidget(),
-            Container(
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    child: Styles().images?.getImage('skills-emotional') ?? Container(),
-                  ),
-                  Container(height: 16,),
-                  Text('Emotional Resilience Skills', style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
-                ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left_rounded),
+                          color: Colors.white,
+                          onPressed: () {
+                            if (moduleNumber != 0){
+                              setState(() {
+                                moduleNumber= moduleNumber-1;
+                              });
+                            }
+                          },
+                        ),
+                        Text(_course.moduleList[moduleNumber].name,style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right_rounded),
+                          color: Colors.white,
+                          onPressed: () {
+                            if (moduleNumber != 4){
+                              setState(() {
+                                moduleNumber= moduleNumber+1;
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
             Column(
-                children:_buildModuleUnitWidgets(Styles().colors!.essentialSkillsCoachOrange, Styles().colors!.essentialSkillsCoachOrangeAccent, 3)
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInnovationView(){
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          children: [
-            _buildStreakWidget(),
-            Container(
-              height: 160,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    child: Styles().images?.getImage('skills-innovation') ?? Container(),
-                  ),
-                  Container(height: 16,),
-                  Text('Innovation Skills', style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
-                ],
-              ),
-            ),
-            Column(
-                children:_buildModuleUnitWidgets(Styles().colors!.essentialSkillsCoachGreen, Styles().colors!.essentialSkillsCoachGreenAccent, 4)
+                children:_buildModuleUnitWidgets(color, colorAccent, moduleNumber)
             ),
           ],
         ),
@@ -265,11 +194,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           child: ElevatedButton(
             onPressed: () {},
             // icon of the button
-            child: Icon(
-              Icons.check_rounded,
-              color: Colors.white,
-              size: 60.0,
-            ),
+            child: Styles().images?.getImage("skills-check") ?? Container(),
             // styling the button
             style: ElevatedButton.styleFrom(
               shape: CircleBorder(),
@@ -304,19 +229,22 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           children: [
             bigCircle,
             Padding(
-                padding: EdgeInsets.only(top: 6, left: 6),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  // icon of the button
+              padding: EdgeInsets.only(top: 4, left: 4),
+              child: ElevatedButton(
+                onPressed: () {},
+                // icon of the button
+                child: Padding(
+                  padding: EdgeInsets.all(4),
                   child: Styles().images?.getImage(moduleIconNames[moduleNumber]) ?? Container(),
-                  // styling the button
-                  style: ElevatedButton.styleFrom(
-                    shape: CircleBorder(),
-                    padding: EdgeInsets.all(10),
-                    // Button color
-                    backgroundColor: colorAccent,
-                  ),
                 ),
+                // styling the button
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(8),
+                  // Button color
+                  backgroundColor: colorAccent,
+                ),
+              ),
             ),
           ],
         ),
@@ -347,43 +275,52 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
     return Container(
       color: colorAccent,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Unit ' + (unitNumber + 1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.huge.fat")),
-              Container(
-                width: 150,
-                child: Text(_course.moduleList[moduleNumber].unitList[unitNumber].name, style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat")),
-              )
-            ],
+          Padding(
+            padding: EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Unit ' + (unitNumber + 1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.huge.fat")),
+                Container(
+                  width: 200,
+                  child: Text(_course.moduleList[moduleNumber].unitList[unitNumber].name, style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat")),
+                )
+              ],
+            ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 4),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  // icon of the button
-                  child: Icon(
-                    Icons.menu_book_rounded,
-                    color: color,
-                    size: 30.0,
-                  ),
-                  // styling the button
-                  style: ElevatedButton.styleFrom(
-                    shape: CircleBorder(),
-                    padding: EdgeInsets.all(16),
-                    // Button color
-                    backgroundColor: Colors.white,
+          Padding(
+            padding: EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    // icon of the button
+                    child: Icon(
+                      Icons.menu_book_rounded,
+                      color: color,
+                      size: 30.0,
+                    ),
+                    // styling the button
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      padding: EdgeInsets.all(16),
+                      // Button color
+                      backgroundColor: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              Text('Resources', style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat")),
-            ],
+                Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Text('Resources', style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat")),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -418,11 +355,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           child: ElevatedButton(
             onPressed: () {},
             // icon of the button
-            child: Icon(
-              Icons.question_mark_rounded,
-              color: Colors.white,
-              size: 60.0,
-            ),
+            child: Styles().images?.getImage("skills-question") ?? Container(),
             // styling the button
             style: ElevatedButton.styleFrom(
               shape: CircleBorder(),
@@ -438,11 +371,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           child: ElevatedButton(
             onPressed: () {},
             // icon of the button
-            child: Icon(
-              Icons.play_arrow_rounded,
-              color: Colors.white,
-              size: 60.0,
-            ),
+            child: Styles().images?.getImage("skills-play") ?? Container(),
             // styling the button
             style: ElevatedButton.styleFrom(
               shape: CircleBorder(),
