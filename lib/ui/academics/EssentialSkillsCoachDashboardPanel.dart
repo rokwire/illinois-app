@@ -20,6 +20,8 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
   Course _course = Course();
   List<String> moduleIconNames = ["skills-social-button", "skills-management-button", "skills-cooperation-button", "skills-emotional-button", "skills-innovation-button"];
   int moduleNumber = 0;
+  bool _isFirstModule = true;
+  bool _isLastModule = false;
 
   @override
   void initState() {
@@ -60,6 +62,19 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
 
   @override
   Widget build(BuildContext context) {
+
+    if(moduleNumber != 0){
+      _isFirstModule = false;
+    }else{
+      _isFirstModule = true;
+    }
+
+    if(moduleNumber !=4){
+      _isLastModule = false;
+    }else{
+      _isLastModule = true;
+    }
+
 
     return SingleChildScrollView(
       child: _buildModuleView(),
@@ -141,28 +156,32 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.chevron_left_rounded),
-                          color: Colors.white,
-                          onPressed: () {
-                            if (moduleNumber != 0){
-                              setState(() {
-                                moduleNumber= moduleNumber-1;
-                              });
-                            }
-                          },
+                        (
+                          _isFirstModule ? Container(width: 30) : IconButton(
+                            icon: const Icon(Icons.chevron_left_rounded),
+                            color: Colors.white,
+                            onPressed: () {
+                              if (moduleNumber != 0){
+                                setState(() {
+                                  moduleNumber= moduleNumber-1;
+                                });
+                              }
+                            },
+                          )
                         ),
-                        Text(_course.moduleList[moduleNumber].name,style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
-                        IconButton(
-                          icon: const Icon(Icons.chevron_right_rounded),
-                          color: Colors.white,
-                          onPressed: () {
-                            if (moduleNumber != 4){
-                              setState(() {
-                                moduleNumber= moduleNumber+1;
-                              });
-                            }
-                          },
+                        Text(_course.moduleList[moduleNumber].name,style: Styles().textStyles?.getTextStyle("widget.title.light.large.fat")),
+                        (
+                          _isLastModule ? Container(width: 30): IconButton(
+                            icon: const Icon(Icons.chevron_right_rounded),
+                            color: Colors.white,
+                            onPressed: () {
+                              if (moduleNumber != 4){
+                                setState(() {
+                                  moduleNumber= moduleNumber+1;
+                                });
+                              }
+                            },
+                          )
                         ),
                       ],
                     )
@@ -286,7 +305,7 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
                 Text('Unit ' + (unitNumber + 1).toString(), style: Styles().textStyles?.getTextStyle("widget.title.light.huge.fat")),
                 Container(
                   width: 200,
-                  child: Text(_course.moduleList[moduleNumber].unitList[unitNumber].name, style: Styles().textStyles?.getTextStyle("widget.title.light.small.fat")),
+                  child: Text(_course.moduleList[moduleNumber].unitList[unitNumber].name, style: Styles().textStyles?.getTextStyle("widget.title.light.regular.fat")),
                 )
               ],
             ),
@@ -371,7 +390,10 @@ class _EssentialSkillsCoachDashboardPanelState extends State<EssentialSkillsCoac
           child: ElevatedButton(
             onPressed: () {},
             // icon of the button
-            child: Styles().images?.getImage("skills-play") ?? Container(),
+            child: Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: Styles().images?.getImage("skills-play") ?? Container(),
+            ),
             // styling the button
             style: ElevatedButton.styleFrom(
               shape: CircleBorder(),
