@@ -550,13 +550,12 @@ packages:
     source: hosted
     version: "8.2.2"
   font_awesome_flutter:
-    dependency: transitive
+    dependency: "direct main"
     description:
-      name: font_awesome_flutter
-      sha256: "5fb789145cae1f4c3245c58b3f8fb287d055c26323879eab57a7bf0cfd1e45f3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "10.5.0"
+      path: "plugin/plugins/font_awesome_flutter"
+      relative: true
+    source: path
+    version: "10.6.0"
   fwfh_cached_network_image:
     dependency: transitive
     description:
