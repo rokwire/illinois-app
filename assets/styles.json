@@ -829,6 +829,12 @@
 
     "clock-white": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
 
+    "comment-vacuum-start": "Below is a sample for fa pro icons. Remove them when there is no need.",
+    "lightVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "light", "color": "fillColorSecondary", "size": 38},
+    "thinVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "thin", "color": "fillColorSecondary", "size": 38},
+    "solidVacuum": {"src": "0xe04d", "type": "fa.icon", "weight": "solid", "color": "fillColorSecondary", "size": 38},
+    "comment-vacuum-end": "Above is a sample for fa pro icons. Remove them when there is no need.",
+
     "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"},
     "circle-outline-gray": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 24},
     "chevron-up-gray": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},

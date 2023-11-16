@@ -495,7 +495,17 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     onTap: _onTapCrash
                   )
                 ),
-                
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5), child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Padding(padding: EdgeInsets.only(bottom: 10), child: Text('Font Awesome Pro Icons: ', style: Styles().textStyles?.getTextStyle('widget.message.medium'))),
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      Center(child: Styles().images?.getImage('thinVacuum')),
+                      Center(child: Styles().images?.getImage('lightVacuum')),
+                      Center(child: Styles().images?.getImage('solidVacuum'))
+                    ])
+                  ])
+                ),
+
                 Container(height: 16),
               ],),
             ),
