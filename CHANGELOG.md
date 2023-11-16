@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Upgraded for Flutter 3.13.7 [#3805](https://github.com/rokwire/illinois-app/issues/3805).
 - Spanish strings [#3814](https://github.com/rokwire/illinois-app/issues/3814).
+### Added
+- Use Font Awesome Pro icons [#3816](https://github.com/rokwire/illinois-app/issues/3816).
 
 ## [5.1.0] - 2023-10-02
 - N/A
