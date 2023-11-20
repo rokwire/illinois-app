@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated academics and wellness tab icons with test purposes [#3818](https://github.com/rokwire/illinois-app/issues/3818).
+### Added
+- Added rokwireillinois Twitter user account [#3820](https://github.com/rokwire/illinois-app/issues/3820).
 
 ## [5.1.1] - 2023-11-16
 ### Changed
