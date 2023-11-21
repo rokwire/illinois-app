@@ -1,12 +1,12 @@
 PODS:
-  - "app_settings (3.0.0+1)":
+  - app_settings (5.1.1):
     - Flutter
   - audio_session (0.0.1):
     - Flutter
   - BerTlv (0.2.5)
-  - CocoaLumberjack (3.8.0):
-    - CocoaLumberjack/Core (= 3.8.0)
-  - CocoaLumberjack/Core (3.8.0)
+  - CocoaLumberjack (3.8.2):
+    - CocoaLumberjack/Core (= 3.8.2)
+  - CocoaLumberjack/Core (3.8.2)
   - connectivity_plus (0.0.1):
     - Flutter
     - ReachabilitySwift
@@ -14,34 +14,34 @@ PODS:
     - Flutter
   - device_info (0.0.1):
     - Flutter
-  - Firebase/CoreOnly (10.15.0):
-    - FirebaseCore (= 10.15.0)
-  - Firebase/Crashlytics (10.15.0):
+  - Firebase/CoreOnly (10.18.0):
+    - FirebaseCore (= 10.18.0)
+  - Firebase/Crashlytics (10.18.0):
     - Firebase/CoreOnly
-    - FirebaseCrashlytics (~> 10.15.0)
-  - Firebase/Messaging (10.15.0):
+    - FirebaseCrashlytics (~> 10.18.0)
+  - Firebase/Messaging (10.18.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 10.15.0)
-  - firebase_core (2.17.0):
-    - Firebase/CoreOnly (= 10.15.0)
+    - FirebaseMessaging (~> 10.18.0)
+  - firebase_core (2.23.0):
+    - Firebase/CoreOnly (= 10.18.0)
     - Flutter
-  - firebase_crashlytics (3.3.7):
-    - Firebase/Crashlytics (= 10.15.0)
+  - firebase_crashlytics (3.4.5):
+    - Firebase/Crashlytics (= 10.18.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (14.6.9):
-    - Firebase/Messaging (= 10.15.0)
+  - firebase_messaging (14.7.5):
+    - Firebase/Messaging (= 10.18.0)
     - firebase_core
     - Flutter
-  - FirebaseCore (10.15.0):
+  - FirebaseCore (10.18.0):
     - FirebaseCoreInternal (~> 10.0)
-    - GoogleUtilities/Environment (~> 7.8)
-    - GoogleUtilities/Logger (~> 7.8)
-  - FirebaseCoreExtension (10.16.0):
+    - GoogleUtilities/Environment (~> 7.12)
+    - GoogleUtilities/Logger (~> 7.12)
+  - FirebaseCoreExtension (10.18.0):
     - FirebaseCore (~> 10.0)
-  - FirebaseCoreInternal (10.16.0):
+  - FirebaseCoreInternal (10.18.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseCrashlytics (10.15.0):
+  - FirebaseCrashlytics (10.18.0):
     - FirebaseCore (~> 10.5)
     - FirebaseInstallations (~> 10.0)
     - FirebaseSessions (~> 10.5)
@@ -49,12 +49,12 @@ PODS:
     - GoogleUtilities/Environment (~> 7.8)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (~> 2.1)
-  - FirebaseInstallations (10.16.0):
+  - FirebaseInstallations (10.18.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - PromisesObjC (~> 2.1)
-  - FirebaseMessaging (10.15.0):
+  - FirebaseMessaging (10.18.0):
     - FirebaseCore (~> 10.0)
     - FirebaseInstallations (~> 10.0)
     - GoogleDataTransport (~> 9.2)
@@ -63,7 +63,7 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseSessions (10.16.0):
+  - FirebaseSessions (10.18.0):
     - FirebaseCore (~> 10.5)
     - FirebaseCoreExtension (~> 10.0)
     - FirebaseInstallations (~> 10.0)
@@ -104,22 +104,22 @@ PODS:
   - GoogleMaps/Base (7.2.0)
   - GoogleMaps/Maps (7.2.0):
     - GoogleMaps/Base
-  - GoogleUtilities/AppDelegateSwizzler (7.11.5):
+  - GoogleUtilities/AppDelegateSwizzler (7.12.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.11.5):
+  - GoogleUtilities/Environment (7.12.0):
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.11.5):
+  - GoogleUtilities/Logger (7.12.0):
     - GoogleUtilities/Environment
-  - GoogleUtilities/Network (7.11.5):
+  - GoogleUtilities/Network (7.12.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.11.5)"
-  - GoogleUtilities/Reachability (7.11.5):
+  - "GoogleUtilities/NSData+zlib (7.12.0)"
+  - GoogleUtilities/Reachability (7.12.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.11.5):
+  - GoogleUtilities/UserDefaults (7.12.0):
     - GoogleUtilities/Logger
   - image_picker_ios (0.0.1):
     - Flutter
@@ -129,11 +129,11 @@ PODS:
   - just_audio (0.0.1):
     - Flutter
   - Mixpanel (5.0.2)
-  - nanopb (2.30909.0):
-    - nanopb/decode (= 2.30909.0)
-    - nanopb/encode (= 2.30909.0)
-  - nanopb/decode (2.30909.0)
-  - nanopb/encode (2.30909.0)
+  - nanopb (2.30909.1):
+    - nanopb/decode (= 2.30909.1)
+    - nanopb/encode (= 2.30909.1)
+  - nanopb/decode (2.30909.1)
+  - nanopb/encode (2.30909.1)
   - OrigoSDK-Debug (1.10.0):
     - BerTlv
     - CocoaLumberjack
@@ -342,24 +342,24 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
-  app_settings: 54b8813f690b34f757c0bf97a46637bed5acc76c
+  app_settings: 017320c6a680cdc94c799949d95b84cb69389ebc
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   BerTlv: c94b89a7b93bf8c1881691a8d105ec87a4a10759
-  CocoaLumberjack: 78abfb691154e2a9df8ded4350d504ee19d90732
+  CocoaLumberjack: f8d89a516e7710fdb2e9b8f1560b16ec6040eef0
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   device_calendar: 9cb33f88a02e19652ec7b8b122ca778f751b1f7b
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
-  Firebase: 66043bd4579e5b73811f96829c694c7af8d67435
-  firebase_core: 28e84c2a4fcf6a50ef83f47b145ded8c1fa331e4
-  firebase_crashlytics: 36b8a72e23437dbb69bd97102661ce31b6721be5
-  firebase_messaging: 91ec967913a5d144f951b3c3ac17a57796d38735
-  FirebaseCore: 2cec518b43635f96afe7ac3a9c513e47558abd2e
-  FirebaseCoreExtension: 2dbc745b337eb99d2026a7a309ae037bd873f45e
-  FirebaseCoreInternal: 26233f705cc4531236818a07ac84d20c333e505a
-  FirebaseCrashlytics: a83f26fb922a3fe181eb738fb4dcf0c92bba6455
-  FirebaseInstallations: b822f91a61f7d1ba763e5ccc9d4f2e6f2ed3b3ee
-  FirebaseMessaging: 0c0ae1eb722ef0c07f7801e5ded8dccd1357d6d4
-  FirebaseSessions: 96e7781e545929cde06dd91088ddbb0841391b43
+  Firebase: 414ad272f8d02dfbf12662a9d43f4bba9bec2a06
+  firebase_core: 29d66baf806970cda37c93621b27cd369b27db1b
+  firebase_crashlytics: d568dbe2dfb06c3f3ba985c7f6a59f2961288512
+  firebase_messaging: 0a39f2514e1f27b0274b0d2fa99048f57856ee7c
+  FirebaseCore: 2322423314d92f946219c8791674d2f3345b598f
+  FirebaseCoreExtension: 62b201498aa10535801cdf3448c7f4db5e24ed80
+  FirebaseCoreInternal: 8eb002e564b533bdcf1ba011f33f2b5c10e2ed4a
+  FirebaseCrashlytics: 86d5bce01f42fa1db265f87ff1d591f04db610ec
+  FirebaseInstallations: e842042ec6ac1fd2e37d7706363ebe7f662afea4
+  FirebaseMessaging: 9bc34a98d2e0237e1b121915120d4d48ddcf301e
+  FirebaseSessions: f90fe9212ee2818641eda051c0835c9c4e30d9ae
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
   flutter_beep: 54fb393b22dfa0f0e4573c81b1c74dd71c4e5af8
@@ -373,17 +373,17 @@ SPEC CHECKSUMS:
   google_maps_flutter_ios: 3e0b99383a8003b8169d06e7e324170bd0424105
   GoogleDataTransport: 54dee9d48d14580407f8f5fbf2f496e92437a2f2
   GoogleMaps: 65ce5426e2398bb81433c8076f2ab6419c2c5537
-  GoogleUtilities: 13e2c67ede716b8741c7989e26893d151b2b2084
+  GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
   in_app_review: 318597b3a06c22bb46dc454d56828c85f444f99d
   JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   Mixpanel: 62e5fb088d56a7ba1369aeb335d0bff7ebae061e
-  nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   OrigoSDK-Debug: 425bf16ad0796cb41a1b9239031b09ba33946376
   OrigoSDK-Release: 5e57c26ed74121d287ad820d3b7001e018561fb9
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
-  package_info_plus: fd030dabf36271f146f1f3beacd48f564b0f17f7
+  package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   PromisesSwift: 28dca69a9c40779916ac2d6985a0192a5cb4a265
@@ -398,8 +398,8 @@ SPEC CHECKSUMS:
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
-  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
-  video_player_avfoundation: 8563f13d8fc8b2c29dc2d09e60b660e4e8128837
+  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
+  video_player_avfoundation: e9e6f9cae7d7a6d9b43519b0aab382bca60fcfd1
   wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
   ZXingObjC: 512b34b9b6920e8ef0461a4159d0814c5e48c28a
