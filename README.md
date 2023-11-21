@@ -33,6 +33,19 @@ cd illinois-app
 git clone https://github.com/rokwire/illinois-app-libs.git libs
 ```
 
+### font_awesome_flutter plugin:
+If `font_awesome_flutter` pro repo is not available then use the regular `font_awesome_flutter` plugin. Comment the lines in pubspec.yaml:
+```
+# font_awesome_flutter: '>= 4.7.0' # comment if published plugin is used
+
+...
+# dependency_overrides:
+#  font_awesome_flutter:
+#    path: plugin/plugins/font_awesome_flutter
+```
+
+For more details, please see `app-flutter-plugin`'s `README.md` file.
+
 ### Supply the following private configuration files:
 
 #### • .travis.yml
