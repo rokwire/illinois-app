@@ -515,7 +515,7 @@ class _DetailRibbonButton extends StatelessWidget {
         child: GestureDetector(
           onTap: onTap,
           child: Container(
-            height: 28+ 16* MediaQuery.of(context).textScaleFactor,
+            height: MediaQuery.of(context).textScaler.scale(28+ 16),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
               child: Row(

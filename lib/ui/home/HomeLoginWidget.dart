@@ -113,7 +113,7 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Padding(padding: EdgeInsets.zero, child:
-          RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
+          RichText(textScaler: MediaQuery.of(context).textScaler, text:
           TextSpan(style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
@@ -170,7 +170,7 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
         Padding(padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.zero, child:
-            RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
+            RichText(textScaler: MediaQuery.of(context).textScaler, text:
             TextSpan(style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
               TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
               TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2", "Verify your phone number or sign up/in by email.")),

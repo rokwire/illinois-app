@@ -168,14 +168,14 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildInnerSectionHeadingWidget(String title, { bool required = false, String? prefixImageKey, String? suffixImageKey, EdgeInsetsGeometry padding = innerSectionHeadingPadding }) =>
     buildSectionHeadingWidget(title, required: required, prefixImageKey: prefixImageKey, suffixImageKey: suffixImageKey, padding : padding);
 
-  static double get textScaleFactor {
+  static TextScaler get textScaler {
     BuildContext? context = App.instance?.currentContext;
-    return (context != null) ? MediaQuery.of(context).textScaleFactor : 1.0;
+    return (context != null) ? MediaQuery.of(context).textScaler : TextScaler.noScaling;
   }
 
   static Widget buildSectionTitleWidget(String title, { bool required = false, TextStyle? textStyle, TextStyle? requiredTextStyle,  }) =>
     Semantics ( label: title,
-    child: RichText(textScaleFactor: textScaleFactor, text:
+    child: RichText(textScaler: textScaler, text:
       TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
         TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
       ] : null),
@@ -707,7 +707,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
           Row(children: [
             Expanded(child:
-              RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
+              RichText(textScaler: MediaQuery.of(context).textScaler, text:
                 TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
                   TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
                 ])
@@ -1057,7 +1057,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     return Semantics(label: "$title, required", container: true, child:
       Row(children: <Widget>[
         Expanded(flex: 4, child:
-          RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
+          RichText(textScaler: MediaQuery.of(context).textScaler, text:
             TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: "", children: <InlineSpan>[
               TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
             ])
@@ -1239,7 +1239,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       Semantics(label: semanticsLabel, header: true, excludeSemantics: true, child:
         Row(children: [
           Expanded(child:
-            RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
+            RichText(textScaler: MediaQuery.of(context).textScaler, text:
               TextSpan(text: title, style: Event2CreatePanel.headingTextStype, children: <InlineSpan>[
                 TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
                 TextSpan(text: _free ? '' : ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
@@ -1306,7 +1306,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
       return Row(children: [
         Expanded(child:
-          RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
+          RichText(textScaler: MediaQuery.of(context).textScaler, text: TextSpan(style: regularStyle, children: descriptionList))
         ),
       ],);
     }
@@ -1493,7 +1493,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
       return Row(children: [
         Expanded(child:
-          RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
+          RichText(textScaler: MediaQuery.of(context).textScaler, text: TextSpan(style: regularStyle, children: descriptionList))
         ),
       ],);
     }
@@ -1775,7 +1775,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
     return Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
       Row(children: [ Expanded(child:
-        RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text: TextSpan(style: regularStyle, children: descriptionList))
+        RichText(textScaler: MediaQuery.of(context).textScaler, text: TextSpan(style: regularStyle, children: descriptionList))
       ),],),
     );
   }

@@ -297,7 +297,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
             ],),),
             Expanded(key: progressKey, child:Stack(children: <Widget>[
               CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-              Container(height: 15 + 16*MediaQuery.of(context).textScaleFactor, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              Container(height: 15 + MediaQuery.of(context).textScaler.scale(16), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                 Padding(padding: EdgeInsets.only(left: 5), child:
                 Row(children: <Widget>[
                   Expanded(child:

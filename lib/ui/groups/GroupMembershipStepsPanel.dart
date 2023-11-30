@@ -201,11 +201,11 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     }
 
     List<Widget> commands = [
-      GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title:Localization().getStringEx("panel.membership_request.label.contact_event", 'Connect event'), onTap: () { _addEvent(stepIndex: index);  },),
+      GroupMembershipAddButton(height: 26 + MediaQuery.of(context).textScaler.scale(16), title:Localization().getStringEx("panel.membership_request.label.contact_event", 'Connect event'), onTap: () { _addEvent(stepIndex: index);  },),
       Container(width: 10,)
     ];
     if ((index + 1) == _steps.length) {
-      commands.add(GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title: Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add step'), onTap: () { _addStep();  },),);
+      commands.add(GroupMembershipAddButton(height: 26 + MediaQuery.of(context).textScaler.scale(16), title: Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add step'), onTap: () { _addStep();  },),);
     }
 
     stepContent.add(Padding(padding: EdgeInsets.only(top: 8), child: SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(children: commands,),),));

@@ -127,7 +127,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     content.add(Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Expanded(child: Container(),),
       GroupMembershipAddButton(
-        height: 26 + 16*MediaQuery.of(context).textScaleFactor ,
+        height: 26 + MediaQuery.of(context).textScaler.scale(16),
         title: Localization().getStringEx("panel.membership_questions.button.add_question.title", 'Add Question'),
         onTap: _addQuestion,
         enabled: _addButtonEnabled,

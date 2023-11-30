@@ -635,7 +635,7 @@ class _EventSmallCard extends StatelessWidget {
   _EventSmallCard({this.event, this.type, this.onTap});
 
   static double _getScaledCardHeight(BuildContext context){
-      return  (_cardHeight-_cardTitleHeight) + (_cardTitleHeight*MediaQuery.of(context).textScaleFactor);
+      return  (_cardHeight-_cardTitleHeight) + (MediaQuery.of(context).textScaler.scale(_cardTitleHeight));
   }
 
   @override

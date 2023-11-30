@@ -170,7 +170,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
       }
     }
 
-    double pageHeight = 90 * 2 * MediaQuery.of(context).textScaleFactor;
+    double pageHeight = 90 * MediaQuery.of(context).textScaler.scale(2);
 
     if (_pageController == null) {
       double screenWidth = MediaQuery.of(context).size.width;

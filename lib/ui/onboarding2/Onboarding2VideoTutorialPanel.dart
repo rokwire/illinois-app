@@ -163,7 +163,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
 
   @override
   Widget build(BuildContext context) {
-    double buttonWidth = MediaQuery.of(context).textScaleFactor * 120;
+    double buttonWidth = MediaQuery.of(context).textScaler.scale(120);
     return Scaffold(
         backgroundColor: Styles().colors!.blackTransparent06,
         body: SafeArea(
