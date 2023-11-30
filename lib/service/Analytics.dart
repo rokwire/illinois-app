@@ -605,7 +605,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
-      'timestamp': location.timestamp?.millisecondsSinceEpoch,
+      'timestamp': location.timestamp.millisecondsSinceEpoch,
     } : null;
   }
   
