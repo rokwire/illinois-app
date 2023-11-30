@@ -540,7 +540,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       contactList.add(
           _buildDetailWidget(
         // Text(details?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline')),
-              RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
+              RichText(textScaler: MediaQuery.of(context).textScaler, text:
                 TextSpan(style: Styles().textStyles?.getTextStyle("widget.explore.card.detail.regular"), children: <TextSpan>[
                   TextSpan(text: StringUtils.isNotEmpty(contact?.firstName)?"${contact?.firstName}, " : ""),
                   TextSpan(text: StringUtils.isNotEmpty(contact?.lastName)?"${contact?.lastName}, " : ""),

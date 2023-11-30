@@ -553,7 +553,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
             text: _sortDropdownItemTitle(sortType),
             style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
           ),
-          textScaleFactor: MediaQuery.of(context).textScaleFactor,
+          textScaler: MediaQuery.of(context).textScaler,
           textDirection: TextDirection.ltr,
         )..layout()).size;
       if (width < sizeFull.width) {

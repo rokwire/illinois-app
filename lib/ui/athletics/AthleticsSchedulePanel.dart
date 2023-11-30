@@ -220,7 +220,7 @@ class _ScheduleTabButton extends StatelessWidget {
           button: true,
           excludeSemantics: true,
           child:Container(
-            height: 32 + 16*MediaQuery.of(context).textScaleFactor,
+            height: MediaQuery.of(context).textScaler.scale(32 + 16),
             decoration: BoxDecoration(
               color: selected! ? Colors.white : Styles().colors!.lightGray,
               border: Border.fromBorderSide(borderSide),

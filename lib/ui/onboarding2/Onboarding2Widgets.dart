@@ -185,7 +185,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                         content ?? Container(),
                         Container(height:10),
 //                        RichText(
-//                            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+//                            textScaler: MediaQuery.of(context).textScaler,
 //                            text: new TextSpan(
 //                                children: <TextSpan>[
 //                                  TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
@@ -198,7 +198,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
 //                        ),
 
                         RichText(
-                            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                            textScaler: MediaQuery.of(context).textScaler,
                             text: new TextSpan(
                                 children:[
                                   TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),

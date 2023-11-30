@@ -223,7 +223,7 @@ class StudentCourseCard extends StatelessWidget {
   StudentCourseCard({Key? key, required this.course}) : super(key: key);
 
   static double height(BuildContext context) =>
-    MediaQuery.of(context).textScaleFactor * (36 + 18 + (6 + 16) + 16 /*+ (6 + 18) + (12 + 18)*/);
+  MediaQuery.of(context).textScaler.scale(36 + 18 + (6 + 16) + 16 + (6 + 18) + (12 + 18));
 
   @override
   Widget build(BuildContext context) {

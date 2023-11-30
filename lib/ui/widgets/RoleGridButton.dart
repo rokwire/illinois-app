@@ -28,7 +28,7 @@ class RoleGridButton extends TileToggleButton {
   static final double  minimumTitleRowsCount = 2;
   static final double  fontSizeHeightFactor = 1.2;
 
-  final double scaleFactor;
+  final TextScaler textScaler;
 
   RoleGridButton({
     required String title,
@@ -41,7 +41,7 @@ class RoleGridButton extends TileToggleButton {
     dynamic data,
     double? sortOrder,
     void Function(RoleGridButton)? onTap,
-    this.scaleFactor = 1.0,
+    this.textScaler = TextScaler.noScaling,
   }) : super(
     title: title,
     hint: hint,
@@ -62,10 +62,10 @@ class RoleGridButton extends TileToggleButton {
 
   @protected Widget get defaultIconWidget =>  Container(constraints: BoxConstraints(minHeight: 40), child: super.defaultIconWidget);
   @protected Widget get displayTitleWidget =>  Container(constraints: BoxConstraints(minHeight: _titleMinHeight), child: super.displayTitleWidget);
-  double get _titleMinHeight => (minimumTitleRowsCount * titleFontSize * fontSizeHeightFactor * scaleFactor) ;
+  double get _titleMinHeight => textScaler.scale(minimumTitleRowsCount * titleFontSize * fontSizeHeightFactor) ;
 
 
-  static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, double? scaleFactor, void Function(RoleGridButton)? onTap }) {
+  static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, TextScaler? textScaler, void Function(RoleGridButton)? onTap }) {
     if (role == UserRole.student) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University Student'),
@@ -77,7 +77,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
-        scaleFactor: scaleFactor ?? 1,
+        textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
     else if (role == UserRole.visitor) {
@@ -91,7 +91,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
-        scaleFactor: scaleFactor ?? 1,
+        textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
     else if (role == UserRole.fan) {
@@ -105,7 +105,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
-        scaleFactor: scaleFactor ?? 1,
+        textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
     else if (role == UserRole.employee) {
@@ -119,7 +119,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
-        scaleFactor: scaleFactor ?? 1,
+        textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
     else if (role == UserRole.alumni) {
@@ -133,7 +133,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
-        scaleFactor: scaleFactor ?? 1,
+        textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
     else if (role == UserRole.parent) {
@@ -147,7 +147,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
-        scaleFactor: scaleFactor ?? 1,
+        textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
 
@@ -162,7 +162,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
-        scaleFactor: scaleFactor ?? 1,
+        textScaler: textScaler ?? TextScaler.noScaling,
       );
     }
     else {
@@ -170,7 +170,7 @@ class RoleGridButton extends TileToggleButton {
     }
   }
 
-  static Widget gridFromFlexUI({ Set<UserRole>? selectedRoles, double gridSpacing = 5, void Function(RoleGridButton)? onTap, double? scaleFactor }) {
+  static Widget gridFromFlexUI({ Set<UserRole>? selectedRoles, double gridSpacing = 5, void Function(RoleGridButton)? onTap, TextScaler? textScaler }) {
     List<Widget> roleButtons1 = <Widget>[], roleButtons2 = <Widget>[];
     List<String> codes = JsonUtils.listStringsValue(FlexUI()['roles']) ?? [];
     int index = 1;
@@ -181,7 +181,7 @@ class RoleGridButton extends TileToggleButton {
       RoleGridButton? button = RoleGridButton.fromRole(role,
         selected: selected,
         sortOrder: index.toDouble(),
-        scaleFactor: scaleFactor,
+        textScaler: textScaler,
         onTap: onTap
       );
 

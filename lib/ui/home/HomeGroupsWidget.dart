@@ -183,7 +183,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       }
     }
 
-    double pageHeight = 92 * 2 * MediaQuery.of(context).textScaleFactor;
+    double pageHeight = 92 * MediaQuery.of(context).textScaler.scale(2);
 
     if (_pageController == null) {
       double screenWidth = MediaQuery.of(context).size.width;

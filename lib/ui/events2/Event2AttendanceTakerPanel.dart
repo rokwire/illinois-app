@@ -845,7 +845,7 @@ class _AttendeeListItemWidget extends StatelessWidget {
 
     String? registrantNetId = registrant.identifier?.netId;
     String? registrantType = event2UserRegistrationToDisplayString(registrant.registrationType);
-    return (registrantType != null) ? RichText(textScaleFactor: MediaQuery.of(context).textScaleFactor, text:
+    return (registrantType != null) ? RichText(textScaler: MediaQuery.of(context).textScaler, text:
       TextSpan(text: registrantNetId, style: Styles().textStyles?.getTextStyle(titleStyleKey),  children: <InlineSpan>[
         TextSpan(text: " (${registrantType.toLowerCase()})", style: Styles().textStyles?.getTextStyle(descriptionStyleKey),),
       ])

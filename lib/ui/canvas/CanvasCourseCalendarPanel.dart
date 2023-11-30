@@ -415,7 +415,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
   }
 
   Widget _buildCourseDropDown() {
-    double height = MediaQuery.of(context).textScaleFactor * 62;
+    double height = MediaQuery.of(context).textScaler.scale(62);
     return Container(
         height: height,
         decoration: BoxDecoration(

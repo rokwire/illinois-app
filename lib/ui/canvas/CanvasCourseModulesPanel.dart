@@ -174,7 +174,7 @@ class _CanvasCourseModulesPanelState extends State<CanvasCourseModulesPanel> {
   }
 
   Widget _buildCourseDropDownWidget() {
-    double height = MediaQuery.of(context).textScaleFactor * 62;
+    double height = MediaQuery.of(context).textScaler.scale(62);
     return Container(
         height: height,
         decoration: BoxDecoration(

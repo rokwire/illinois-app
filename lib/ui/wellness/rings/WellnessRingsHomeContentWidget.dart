@@ -361,7 +361,7 @@ class _TabButton extends StatelessWidget {
             button: true,
             excludeSemantics: true,
             child: Container(
-                height: 24 + 16 * MediaQuery.of(context).textScaleFactor,
+                height: 24 + MediaQuery.of(context).textScaler.scale(16),
                 decoration: BoxDecoration(
                     color: selected! ? Colors.white : Styles().colors!.lightGray, border: _border, borderRadius: _borderRadius),
                 child: Center(

@@ -355,7 +355,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
             text: _sortDropdownItemTitle(sortType),
             style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
           ),
-          textScaleFactor: MediaQuery.of(context).textScaleFactor,
+          textScaler: MediaQuery.of(context).textScaler,
           textDirection: TextDirection.ltr,
         )..layout()).size;
       if (width < sizeFull.width) {
