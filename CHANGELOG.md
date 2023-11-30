@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.1.4] - 2023-11-29
 ### Changed
 - Upgrade to Flutter 3.16.0 [#3825](https://github.com/rokwire/app-flutter-plugin/issues/3825).
+- Replaced textScaleFactor usage with textScaler [#3832](https://github.com/rokwire/illinois-app/issues/3832).
 - Use AI Proxy BB instead of Assistant BB [#3830](https://github.com/rokwire/illinois-app/issues/3830).
 
 ## [5.1.3] - 2023-11-21
