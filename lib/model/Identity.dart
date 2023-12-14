@@ -360,6 +360,8 @@ class RenewMobileIdResult {
         mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])));
   }
 
+  bool get isRenewed => (status == RenewMobileIdStatus.renewed);
+
   static RenewMobileIdStatus? renewMobileIdStatusFromString(String? value) {
     switch (value) {
       case 'RENEWED':

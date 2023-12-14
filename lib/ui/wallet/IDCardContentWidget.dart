@@ -555,13 +555,13 @@ class _IDCardContentWidgetState extends State<IDCardContentWidget>
     setStateIfMounted(() {
       _renewingMobileId = true;
     });
-    MobileAccess().renewMobileId().then((studentId) {
-      bool success = (studentId != null);
+    MobileAccess().renewMobileId().then((result) {
+      bool success = (result?.isRenewed == true);
       late String msg;
       if (success) {
         msg = Localization().getStringEx('widget.id_card.mobile_access.renew.success.msg', 'Mobile Access was successfully renewed.');
       } else {
-        msg = Localization().getStringEx('widget.id_card.mobile_access.renew.fail.msg', 'Failed to renew Mobile Access.');
+        msg = sprintf(Localization().getStringEx('widget.id_card.mobile_access.renew.fail.msg', 'Failed to renew Mobile Access. Reason: %s'), [result?.resultDescription ?? 'unknown']);
       }
       setStateIfMounted(() {
         _renewingMobileId = false;

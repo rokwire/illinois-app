@@ -3605,7 +3605,7 @@
 	"widget.id_card.mobile_access.pending.label": "Pending",
 	"widget.id_card.mobile_access.issuing.label": "Issuing",
 	"widget.id_card.mobile_access.renew.success.msg": "Mobile Access was successfully renewed.",
-	"widget.id_card.mobile_access.renew.fail.msg": "Failed to renew Mobile Access.",
+	"widget.id_card.mobile_access.renew.fail.msg": "Failed to renew Mobile Access. Reason: %s",
 
 	"widget.bus_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",
