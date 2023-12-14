@@ -222,6 +222,7 @@ class StudentId {
       return null;
     }
     bool isActiveCard = ('Y' == JsonUtils.stringValue(json['is_active_card']));
+    String? birthYearValue = JsonUtils.stringValue(json['birth_year']);
     bool canRenewMobileId = ('yes' == JsonUtils.stringValue(json['can_renew_mobileid'])?.toLowerCase());
     return StudentId(
         fullName: JsonUtils.stringValue(json['full_name']),
@@ -237,7 +238,7 @@ class StudentId {
         resultCode: JsonUtils.intValue(int.tryParse(json['result_code'])),
         resultDescription: JsonUtils.stringValue(json['result_description']),
         isActiveCard: isActiveCard,
-        birthYear: JsonUtils.intValue(int.tryParse(json['birth_year'])),
+        birthYear: (birthYearValue != null) ? int.tryParse(birthYearValue) : null,
         mobileIdStatus: mobileIdStatusFromString(JsonUtils.stringValue(json['mobileid_status'])),
         mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])),
         canRenewMobileId: canRenewMobileId);
