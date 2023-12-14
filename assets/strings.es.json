@@ -3622,6 +3622,10 @@
     "widget.id_card.mobile_access.request_register_device.success.msg": "El registro de los dispositivos se inició correctamente.",
     "widget.id_card.mobile_access.delete_credential.success.msg": "Favor de esperar 10 minutos hasta que el acceso móvil esté disponible para descargar.",
     "widget.id_card.mobile_access.delete_credential.failed.msg": "Error al solicitar el acceso móvil.",
+    "widget.id_card.mobile_access.pending.label": "Pending",
+    "widget.id_card.mobile_access.issuing.label": "Issuing",
+    "widget.id_card.mobile_access.renew.success.msg": "Mobile Access was successfully renewed.",
+    "widget.id_card.mobile_access.renew.fail.msg": "Failed to renew Mobile Access. Reason: %s",
 
     "widget.bus_pass.header.title": "Pase de Autobús MTD",
     "widget.card.label.uin.title": "UIN",

@@ -88,7 +88,7 @@ class Identity /* with Service */ {
     }
   }
 
-  Future<StudentId?> renewMobileId() async {
+  Future<RenewMobileIdResult?> renewMobileId() async {
     if (StringUtils.isEmpty(Config().identityUrl)) {
       Log.e('Identity: renewMobileId - missing identity url.');
       return null;
@@ -97,9 +97,9 @@ class Identity /* with Service */ {
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      return StudentId.fromJson(JsonUtils.decodeMap(responseString));
+      return RenewMobileIdResult.fromJson(JsonUtils.decodeMap(responseString));
     } else {
-      Log.e('Identity: Failed to renew mobile id. Reason ($responseCode): $responseString');
+      Log.e('Identity: Renew mobile id failed. Reason ($responseCode): $responseString');
       return null;
     }
   }
