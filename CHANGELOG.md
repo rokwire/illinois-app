@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Replaced textScaleFactor usage with textScaler [#3832](https://github.com/rokwire/illinois-app/issues/3832).
+- Acknowledge the latest changes for renewing mobile access [#3840](https://github.com/rokwire/illinois-app/issues/3840).
 
 ## [5.1.4] - 2023-11-29
 ### Changed
