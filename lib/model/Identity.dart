@@ -338,7 +338,47 @@ class MobileIdCredential {
   }
 }
 
+class RenewMobileIdResult {
+  final int? resultCode;
+  final String? resultDescription;
+  final String? uin;
+  final RenewMobileIdStatus? status;
+  final List<MobileIdCredential>? mobileCredentials;
+
+  RenewMobileIdResult({this.resultCode, this.resultDescription, this.uin, this.status, this.mobileCredentials});
+
+  static RenewMobileIdResult? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    String? resultCodeValue = JsonUtils.stringValue(json['result_code']);
+    return RenewMobileIdResult(
+        resultCode: (resultCodeValue != null) ? int.tryParse(resultCodeValue) : null,
+        resultDescription: JsonUtils.stringValue(json['result_description']),
+        uin: JsonUtils.stringValue(json['UIN']),
+        status: renewMobileIdStatusFromString(JsonUtils.stringValue(json['mobileid_status'])),
+        mobileCredentials: MobileIdCredential.fromJsonList(JsonUtils.listValue(json['mobile_credentials'])));
+  }
+
+  static RenewMobileIdStatus? renewMobileIdStatusFromString(String? value) {
+    switch (value) {
+      case 'RENEWED':
+        return RenewMobileIdStatus.renewed;
+      case 'UINERROR':
+        return RenewMobileIdStatus.uin_error;
+      case 'INACTIVE':
+        return RenewMobileIdStatus.inactive;
+      case 'NOACTION':
+        return RenewMobileIdStatus.no_action;
+      default:
+        return null;
+    }
+  }
+}
+
 enum MobileIdStatus { eligible, active, pending, issuing, ineligible }
+
+enum RenewMobileIdStatus { renewed, uin_error, inactive, no_action }
 
 final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 final String _expirationDateFormat = 'yyyy-MM-dd';
