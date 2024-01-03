@@ -33,9 +33,11 @@ class SoundRecorderDialog extends StatefulWidget {
 }
 
 class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
-  late RecorderMode _mode;
   late PlayerController _controller;
   bool  _processing = false;
+
+  late RecorderMode _mode;
+  // RecorderMode get _mode => _controller.hasRecord ? RecorderMode.play : RecorderMode.record;
 
   @override
   void initState() {
@@ -184,6 +186,8 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   void _onTapSave(){
     //TBD
+    AppToast.show("TBD implement SAVE");
+    _closeModal();
   }
 
   void _onTapReset(){
