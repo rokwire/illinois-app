@@ -144,6 +144,12 @@
 @import path_provider_foundation;
 #endif
 
+#if __has_include(<record/RecordPlugin.h>)
+#import <record/RecordPlugin.h>
+#else
+@import record;
+#endif
+
 #if __has_include(<rokwire_plugin/RokwirePlugin.h>)
 #import <rokwire_plugin/RokwirePlugin.h>
 #else
@@ -230,6 +236,7 @@
   [FLTPackageInfoPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPackageInfoPlugin"]];
   [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
+  [RecordPlugin registerWithRegistrar:[registry registrarForPlugin:@"RecordPlugin"]];
   [RokwirePlugin registerWithRegistrar:[registry registrarForPlugin:@"RokwirePlugin"]];
   [FLTSharePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharePlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];

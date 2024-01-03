@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:record/record.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -34,14 +36,13 @@ class SoundRecorderDialog extends StatefulWidget {
 
 class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   late PlayerController _controller;
-  bool  _processing = false;
 
-  late RecorderMode _mode;
-  // RecorderMode get _mode => _controller.hasRecord ? RecorderMode.play : RecorderMode.record;
+  // late RecorderMode _mode;
+  RecorderMode get _mode => _controller.hasRecord ? RecorderMode.play : RecorderMode.record;
 
   @override
   void initState() {
-    _mode = widget.mode ?? RecorderMode.record;
+    // _mode = widget.mode ?? RecorderMode.record;
     _controller = PlayerController(notifyChanged: (fn) =>setStateIfMounted(fn));
     _controller.init();
     super.initState();
@@ -76,7 +77,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                             GestureDetector(
                               onTap:(){
                                   if(_mode == RecorderMode.play){
-                                    if(_processing){
+                                    if(_controller.isPlaying){
                                       _onPausePlay();
                                     }else {
                                       _onPlay();
@@ -153,35 +154,19 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 
   void _onStartRecording(){
-    setStateIfMounted(() {
-      _processing = true;
-    });
     _controller.startRecording();
   }
 
   void _onStopRecording(){
-    setStateIfMounted(() {
-      _processing = false;
-    });
-    _controller.stopRecording();
-
-    setStateIfMounted(() { //TBD REMOVE AFTER TEST
-      _mode = RecorderMode.play;
-    });
+    _controller.stopRecording().then((value) => _controller.loadPlayer());
   }
 
   void _onPlay(){
-    setStateIfMounted(() {
-      _processing = !_processing;
-    });
     _controller.playRecord();
   }
 
   void _onPausePlay(){
-    setStateIfMounted(() {
-      _processing = !_processing;
-    });
-    _controller.pauseRecord();
+    _controller.stopRecord();
   }
 
   void _onTapSave(){
@@ -192,9 +177,6 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   void _onTapReset(){
     _controller.resetRecord();
-    setStateIfMounted((){
-      _mode = RecorderMode.record; //TBD better way - depend on controller states
-    });
   }
 
   void _onTapClose() {
@@ -206,14 +188,14 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     Navigator.of(context).pop();
   }
 
-  Color? get _playButtonColor => _mode == RecorderMode.record && _processing ?
+  Color? get _playButtonColor => _mode == RecorderMode.record && _controller.isRecording ?
     Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary;
 
   Widget? get _playButtonIcon {
     double iconSize = 58;
     if(_mode == RecorderMode.play){
-      return _processing ?
-        Styles().images?.getImage('play-circle-white', excludeFromSemantics: true, size: iconSize) : //TBD
+      return _controller.isPlaying ?
+        Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors?.white,)) : //TBD
         Styles().images?.getImage('play-circle-white', excludeFromSemantics: true, size: iconSize); //TBD
     } else {
       return Styles().images?.getImage('play-circle-white', excludeFromSemantics: true, size: iconSize); //TBD
@@ -222,7 +204,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   String get _statusText{
     if(_mode == RecorderMode.record){
-      return _processing ?
+      return _controller.isRecording ?
         Localization().getStringEx("", "Recording") :
         Localization().getStringEx("", "Record");
     } else {
@@ -232,11 +214,11 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   String get _hintText{
     if(_mode == RecorderMode.record){
-      return _processing ?
+      return _controller.isRecording ?
       Localization().getStringEx("", "Release to stop") :
       Localization().getStringEx("", "Hold to record");
     } else {
-      return _processing ? Localization().getStringEx("", "Pause listening"):Localization().getStringEx("", "Listen to your recording");
+      return _controller.isPlaying ? Localization().getStringEx("", "Stop listening to your recording"):Localization().getStringEx("", "Listen to your recording");
     }
   }
 
@@ -245,73 +227,100 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   bool get _saveEnabled => _mode == RecorderMode.play;
 }
 
-class PlayerController{
+class PlayerController {
   final Function(void Function()) notifyChanged;
 
-  late dynamic audioRecord;
-  String audioPath = "";
-
-  bool playing=false;
-  bool recording=false;
+  late Record _audioRecord;
+  late AudioPlayer _audioPlayer;
+  Duration? _playerTimer;
+  String _audioPath = "";
+  bool _recording = false;
 
   PlayerController({required this.notifyChanged});
 
-  void init(){
-    //TBD
+  void init() {
+    _audioRecord = Record();
+    _audioPlayer = AudioPlayer();
+    _audioPlayer.positionStream.listen((elapsedDuration) {
+      notifyChanged(() => _playerTimer = elapsedDuration);
+    });
   }
 
-  void dispose(){
-    //TBD
+  void dispose() {
+    _audioRecord.dispose();
+    _audioPlayer.dispose();
   }
 
-  void startRecording() async{
+  void startRecording() async {
     try {
-      recording = true;
       Log.d("START RECODING");
-      AppToast.show("START RECODING");
-      //TBD
+      if (await _audioRecord.hasPermission()) {
+        notifyChanged(() => _recording = true);
+        await _audioRecord.start();
+        _recording = await _audioRecord.isRecording();
+      }
     } catch (e, stackTrace) {
       Log.d("START RECODING: ${e} - ${stackTrace}");
     }
   }
 
-  void stopRecording() async{
+  Future<void> stopRecording() async {
+    Log.d("STOP RECODING");
     try {
-      recording = false;
-      Log.d("STOP RECODING");
-      AppToast.show("STOP RECODING");
-      //TBD
+      String? path = await _audioRecord.stop();
+      _recording = await _audioRecord.isRecording();
+      notifyChanged(() {
+        _audioPath = path!;
+      });
+      Log.d("STOP RECODING audioPath = $_audioPath");
     } catch (e) {
       Log.d("STOP RECODING: ${e}");
     }
   }
 
-  void playRecord() async{
+  Future<void> loadPlayer() async {
+    Log.d("AUDIO PREPARING");
+    await _audioPlayer.setFilePath(_audioPath);
+    notifyChanged(() {});
+  }
+
+  void playRecord() async {
     try {
-      playing = true;
-      Log.d("AUDIO PLAYING");
-      AppToast.show("AUDIO PLAYING");
-      //TBD
+      if (hasRecord) {
+        await loadPlayer(); //Reset
+        await _audioPlayer.play().then((_) => stopRecord());
+      }
     } catch (e) {
       Log.d("AUDIO PLAYING: ${e}");
     }
   }
 
-  void pauseRecord() async{
+  void pauseRecord() async {
     try {
-      playing = false;
-      Log.d("AUDIO PAUSED");
-      AppToast.show("AUDIO PAUSED");
-      //TBD
+      if (_audioPlayer.playing) {
+        Log.d("AUDIO PAUSED");
+        _audioPlayer.pause();
+      }
     } catch (e) {
       Log.d("AUDIO PAUSED: ${e}");
     }
   }
 
+  void stopRecord() async {
+    try {
+      if (_audioPlayer.playing) {
+        Log.d("AUDIO STOPPED");
+        _audioPlayer.stop().then((_) => _playerTimer = null);
+      }
+    } catch (e) {
+      Log.d("AUDIO STOPPED: ${e}");
+    }
+  }
+
   Future<void> deleteRecording() async {
-    if (audioPath.isNotEmpty) {
+    if (_audioPath.isNotEmpty) {
       try {
-        File file = File(audioPath);
+        File file = File(_audioPath);
         if (file.existsSync()) {
           file.deleteSync();
           Log.d("FILE DELETED");
@@ -321,21 +330,40 @@ class PlayerController{
       }
 
       notifyChanged(() {
-        audioPath = "";
+        _audioPath = "";
       });
     }
   }
 
-  void resetRecord(){
-    //TBD
+  void resetRecord() {
+    deleteRecording();
   }
 
   //Getters
-  dynamic get record => null; //TBD Update return type
 
-  String get timerText{
-    return playing ? "0:05/0:15" : "0:00/0:15"; //TBD implement
+  bool get isRecording => _recording;
+
+  bool get hasRecord => StringUtils.isNotEmpty(_audioPath);
+
+  String get recordPath => _audioPath;
+
+  bool get isPlaying => _audioPlayer.playing;
+
+  String get timerText {
+    return "$_playerElapsedTime/$_playerLengthText";
   }
 
-  bool get hasRecord => StringUtils.isNotEmpty(audioPath);//TBD
+  String get _playerElapsedTime =>
+      _playerTimer != null ? displayDuration(_playerTimer!) : "00:00";
+
+  String get _playerLengthText =>
+      _audioPlayer.duration != null ? displayDuration(_audioPlayer.duration!) : "00:00";
+
+  String displayDuration(Duration duration) {
+    final HH =  (duration.inHours).toString().padLeft(2, '0');
+    final mm = (duration.inMinutes % 60).toString().padLeft(2, '0');
+    final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
+
+    return duration.inHours > 1 ? '$HH:$mm:$ss' : '$mm:$ss';
+  }
 }
