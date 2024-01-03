@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/Log.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'dart:io';
 
 import '../../service/Analytics.dart';
 
@@ -37,7 +40,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   @override
   void initState() {
     _mode = widget.mode ?? RecorderMode.record;
-    _controller = PlayerController();
+    _controller = PlayerController(notifyChanged: (fn) =>setStateIfMounted(fn));
     _controller.init();
     super.initState();
   }
@@ -186,7 +189,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   void _onTapReset(){
     _controller.resetRecord();
     setStateIfMounted((){
-      _mode = RecorderMode.record;
+      _mode = RecorderMode.record; //TBD better way - depend on controller states
     });
   }
 
@@ -198,10 +201,6 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   void _closeModal() {
     Navigator.of(context).pop();
   }
-
-  bool get _resetEnabled => _mode == RecorderMode.play;
-
-  bool get _saveEnabled => _mode == RecorderMode.play;
 
   Color? get _playButtonColor => _mode == RecorderMode.record && _processing ?
     Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary;
@@ -236,9 +235,22 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
       return _processing ? Localization().getStringEx("", "Pause listening"):Localization().getStringEx("", "Listen to your recording");
     }
   }
+
+  bool get _resetEnabled => _mode == RecorderMode.play;
+
+  bool get _saveEnabled => _mode == RecorderMode.play;
 }
 
 class PlayerController{
+  final Function(void Function()) notifyChanged;
+
+  late dynamic audioRecord;
+  String audioPath = "";
+
+  bool playing=false;
+  bool recording=false;
+
+  PlayerController({required this.notifyChanged});
 
   void init(){
     //TBD
@@ -248,31 +260,78 @@ class PlayerController{
     //TBD
   }
 
-  void startRecording(){
-    //TBD
+  void startRecording() async{
+    try {
+      recording = true;
+      Log.d("START RECODING");
+      AppToast.show("START RECODING");
+      //TBD
+    } catch (e, stackTrace) {
+      Log.d("START RECODING: ${e} - ${stackTrace}");
+    }
   }
 
-  void stopRecording(){
-    //TBD
+  void stopRecording() async{
+    try {
+      recording = false;
+      Log.d("STOP RECODING");
+      AppToast.show("STOP RECODING");
+      //TBD
+    } catch (e) {
+      Log.d("STOP RECODING: ${e}");
+    }
   }
 
-  void playRecord(){
-    //TBD
+  void playRecord() async{
+    try {
+      playing = true;
+      Log.d("AUDIO PLAYING");
+      AppToast.show("AUDIO PLAYING");
+      //TBD
+    } catch (e) {
+      Log.d("AUDIO PLAYING: ${e}");
+    }
   }
 
-  void pauseRecord(){
-    //TBD
+  void pauseRecord() async{
+    try {
+      playing = false;
+      Log.d("AUDIO PAUSED");
+      AppToast.show("AUDIO PAUSED");
+      //TBD
+    } catch (e) {
+      Log.d("AUDIO PAUSED: ${e}");
+    }
+  }
+
+  Future<void> deleteRecording() async {
+    if (audioPath.isNotEmpty) {
+      try {
+        File file = File(audioPath);
+        if (file.existsSync()) {
+          file.deleteSync();
+          Log.d("FILE DELETED");
+        }
+      } catch (e) {
+        Log.d("FILE NOT DELETED: ${e}");
+      }
+
+      notifyChanged(() {
+        audioPath = "";
+      });
+    }
   }
 
   void resetRecord(){
-
-  }
-
-  dynamic get record{
     //TBD
   }
 
+  //Getters
+  dynamic get record => null; //TBD Update return type
+
   String get timerText{
-    return "0:05/0:15"; //TBD implement
+    return playing ? "0:05/0:15" : "0:00/0:15"; //TBD implement
   }
+
+  bool get hasRecord => StringUtils.isNotEmpty(audioPath);//TBD
 }
