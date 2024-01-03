@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:just_audio/just_audio.dart';
@@ -14,21 +15,23 @@ import '../../service/Analytics.dart';
 
 enum RecorderMode{record, play}
 class SoundRecorderDialog extends StatefulWidget {
-  final RecorderMode? mode;
+  //TMP:
+  static final String storage_key = "profile_audio_pronouncement";
+  final String? initialRecordPath; //TBD update type
 
-  const SoundRecorderDialog({super.key, this.mode});
+  const SoundRecorderDialog({super.key, this.initialRecordPath});
 
   @override
   _SoundRecorderDialogState createState() => _SoundRecorderDialogState();
 
-  static show(BuildContext context, {RecorderMode?mode}) {
-    showDialog(
+  static Future show(BuildContext context, {String? initialRecordPath}) {
+    return showDialog(
         context: context,
         builder: (_) =>
             Material(
               type: MaterialType.transparency,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: SoundRecorderDialog(mode: mode),
+              child: SoundRecorderDialog(initialRecordPath: initialRecordPath),
             )
     );
   }
@@ -37,13 +40,14 @@ class SoundRecorderDialog extends StatefulWidget {
 class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   late PlayerController _controller;
 
-  // late RecorderMode _mode;
   RecorderMode get _mode => _controller.hasRecord ? RecorderMode.play : RecorderMode.record;
 
   @override
   void initState() {
-    // _mode = widget.mode ?? RecorderMode.record;
-    _controller = PlayerController(notifyChanged: (fn) =>setStateIfMounted(fn));
+    _controller = PlayerController(
+      initialRecordPath: widget.initialRecordPath,
+      notifyChanged: (fn) =>setStateIfMounted(fn)
+    );
     _controller.init();
     super.initState();
   }
@@ -153,30 +157,27 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
         )));
   }
 
-  void _onStartRecording(){
-    _controller.startRecording();
-  }
+  void _onStopRecording() =>
+      _controller.stopRecording().then(
+              (_) => _controller.loadPlayer());  //automatically load after recording is done
 
-  void _onStopRecording(){
-    _controller.stopRecording().then((value) => _controller.loadPlayer());
-  }
+  void _onStartRecording() => _controller.startRecording();
 
-  void _onPlay(){
-    _controller.playRecord();
-  }
+  void _onPlay() => _controller.playRecord();
 
-  void _onPausePlay(){
-    _controller.stopRecord();
+  void _onPausePlay() => _controller.stopRecord();
+
+  void _onTapReset() {
+    _controller.resetRecord();
+    Storage().setStringWithName(SoundRecorderDialog.storage_key, null); //TBD remove
   }
 
   void _onTapSave(){
     //TBD
     AppToast.show("TBD implement SAVE");
+    //TMP: TBD REMOVE
+    Storage().setStringWithName(SoundRecorderDialog.storage_key, _controller._audioPath);
     _closeModal();
-  }
-
-  void _onTapReset(){
-    _controller.resetRecord();
   }
 
   void _onTapClose() {
@@ -184,9 +185,12 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     _closeModal();
   }
 
-  void _closeModal() {
+  void _closeModal(){
+    _controller.stopRecord();
+    _controller.stopRecord();
     Navigator.of(context).pop();
   }
+
 
   Color? get _playButtonColor => _mode == RecorderMode.record && _controller.isRecording ?
     Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary;
@@ -208,7 +212,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
         Localization().getStringEx("", "Recording") :
         Localization().getStringEx("", "Record");
     } else {
-      return _controller.timerText;
+      return _controller.playerDisplayTime;
     }
   }
 
@@ -229,6 +233,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
 class PlayerController {
   final Function(void Function()) notifyChanged;
+  final String? initialRecordPath; //TBD update to link when ready
 
   late Record _audioRecord;
   late AudioPlayer _audioPlayer;
@@ -236,7 +241,7 @@ class PlayerController {
   String _audioPath = "";
   bool _recording = false;
 
-  PlayerController({required this.notifyChanged});
+  PlayerController({required this.notifyChanged, this.initialRecordPath});
 
   void init() {
     _audioRecord = Record();
@@ -244,6 +249,10 @@ class PlayerController {
     _audioPlayer.positionStream.listen((elapsedDuration) {
       notifyChanged(() => _playerTimer = elapsedDuration);
     });
+    if(initialRecordPath != null){
+      _audioPath = initialRecordPath!;
+      loadPlayer();
+    }
   }
 
   void dispose() {
@@ -340,7 +349,6 @@ class PlayerController {
   }
 
   //Getters
-
   bool get isRecording => _recording;
 
   bool get hasRecord => StringUtils.isNotEmpty(_audioPath);
@@ -349,14 +357,14 @@ class PlayerController {
 
   bool get isPlaying => _audioPlayer.playing;
 
-  String get timerText {
-    return "$_playerElapsedTime/$_playerLengthText";
+  String get playerDisplayTime {
+    return "$_playerElapsedTime/$_playerLengthTime";
   }
 
   String get _playerElapsedTime =>
       _playerTimer != null ? displayDuration(_playerTimer!) : "00:00";
 
-  String get _playerLengthText =>
+  String get _playerLengthTime =>
       _audioPlayer.duration != null ? displayDuration(_audioPlayer.duration!) : "00:00";
 
   String displayDuration(Duration duration) {
@@ -365,5 +373,18 @@ class PlayerController {
     final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
 
     return duration.inHours > 1 ? '$HH:$mm:$ss' : '$mm:$ss';
+  }
+}
+
+class NamePronouncementPlayer{
+  static void play(String filePath) async { //TBD play from url
+    try{
+    AudioPlayer _audioPlayer = AudioPlayer();
+    await _audioPlayer.setFilePath(filePath);
+    _audioPlayer.play().then(
+            (_) => _audioPlayer.dispose());
+    }catch(e){
+      print(e);
+    }
   }
 }

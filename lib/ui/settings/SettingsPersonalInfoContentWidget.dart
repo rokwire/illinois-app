@@ -40,6 +40,8 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+import '../../service/Storage.dart';
+
 class SettingsPersonalInfoContentWidget extends StatefulWidget {
   final String? parentRouteName;
 
@@ -903,10 +905,13 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               ),
             ),
             Visibility(visible: _hasStoredPronouncement, child:
-            Container(),//TBD
+              InkWell(onTap: _onEditNamePronouncement, child:
+                Container(width: 30, height: 30, color: Styles().colors?.fillColorPrimary,),)//TBD
             ),
+            Container(width: 12,),
             Visibility(visible: _hasStoredPronouncement, child:
-            Container()//TBD
+              InkWell(onTap: _onDeleteNamePronouncement, child:
+                Container(width: 30, height: 30, color: Styles().colors?.fillColorSecondary,),)//TBD
             )
           ],
         )
@@ -914,11 +919,23 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   }
 
   void _onPlayNamePronouncement(){
-      //TBD
+    if(_storedAudioPronouncement != null) {
+      NamePronouncementPlayer.play(_storedAudioPronouncement!);
+    }
   }
 
   void _onRecordNamePronouncement(){
-     SoundRecorderDialog.show(context);
+     SoundRecorderDialog.show(context).then((_) => setStateIfMounted(() { }));
+  }
+
+  void _onEditNamePronouncement(){
+    SoundRecorderDialog.show(context, initialRecordPath: _storedAudioPronouncement);
+  }
+
+  void _onDeleteNamePronouncement(){
+    //TBD Implement
+    Storage().setStringWithName(SoundRecorderDialog.storage_key, null);
+    setStateIfMounted(() { });
   }
 
 
@@ -954,7 +971,9 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return (_profileImageBytes != null);
   }
 
-  bool get _hasStoredPronouncement => false;
+  bool get _hasStoredPronouncement => StringUtils.isNotEmpty(_storedAudioPronouncement);
+
+  String? get _storedAudioPronouncement => Storage().getStringWithName(SoundRecorderDialog.storage_key); //TBD implement from profile. Add profile chenge listener
 
   TextStyle? get _formFieldLabelTextStyle {
     return  Styles().textStyles?.getTextStyle("widget.item.small");
