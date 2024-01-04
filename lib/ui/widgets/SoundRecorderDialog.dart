@@ -76,7 +76,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                       Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 38, vertical: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 16),
                           child: Column(children: [
                             GestureDetector(
                               onTap:(){
@@ -99,45 +99,47 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                                 }
                               } ,
                               child: Container(
-                                padding: EdgeInsets.all(12),
+                                // padding: EdgeInsets.all(12),
                                 // height: 48, width: 48,
-                                decoration: BoxDecoration(
-                                    color: _playButtonColor,
-                                    shape: BoxShape.circle,
-                                ),
+                                // decoration: BoxDecoration(
+                                //     color: _playButtonColor,
+                                //     shape: BoxShape.circle,
+                                // ),
                                 child: _playButtonIcon ?? Container()
                               ),
                             ),
-                            Container(height: 6,),
+                            Container(height: 8,),
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                               child: Text(_statusText, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),)
                             ),
                             Container(
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                child: Text(_hintText, style: Styles().textStyles?.getTextStyle("widget.item.small"),)
+                                child: Text(_hintText, style: Styles().textStyles?.getTextStyle("widget.detail.regular"),)
                             ),
                             Container(height: 16,),
-                            Row(
-                              children: [
-                                SmallRoundedButton( rightIcon: Container(),
-                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                                  label: Localization().getStringEx("", "Reset"),
-                                  onTap: _onTapReset,
-                                  enabled: _resetEnabled,
-                                  borderColor: _resetEnabled ? null : Styles().colors?.disabledTextColor,
-                                  textColor: _resetEnabled ? null : Styles().colors?.disabledTextColor,
-                                ),
-                                Container(width: 24,),
-                                SmallRoundedButton( rightIcon: Container(),
-                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                                  label: Localization().getStringEx("", "Save"),
-                                  onTap: _onTapSave,
-                                  enabled: _saveEnabled,
-                                  borderColor: _saveEnabled ? null : Styles().colors?.disabledTextColor,
-                                  textColor: _saveEnabled ? null : Styles().colors?.disabledTextColor,
-                                ),
-                            ],),
+                            Container(padding: EdgeInsets.symmetric(horizontal: 24), child:
+                              Row(
+                                children: [
+                                  SmallRoundedButton( rightIcon: Container(),
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                                    label: Localization().getStringEx("", "Reset"),
+                                    onTap: _onTapReset,
+                                    enabled: _resetEnabled,
+                                    borderColor: _resetEnabled ? null : Styles().colors?.disabledTextColor,
+                                    textColor: _resetEnabled ? null : Styles().colors?.disabledTextColor,
+                                  ),
+                                  Container(width: 16,),
+                                  SmallRoundedButton( rightIcon: Container(),
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                                    label: Localization().getStringEx("", "Save"),
+                                    onTap: _onTapSave,
+                                    enabled: _saveEnabled,
+                                    borderColor: _saveEnabled ? null : Styles().colors?.disabledTextColor,
+                                    textColor: _saveEnabled ? null : Styles().colors?.disabledTextColor,
+                                  ),
+                              ],),
+                            ),
                           ],)
                         )
                       ]),
@@ -191,18 +193,16 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     Navigator.of(context).pop();
   }
 
-
-  Color? get _playButtonColor => _mode == RecorderMode.record && _controller.isRecording ?
-    Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary;
-
   Widget? get _playButtonIcon {
-    double iconSize = 58;
     if(_mode == RecorderMode.play){
-      return _controller.isPlaying ?
-        Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors?.white,)) : //TBD
-        Styles().images?.getImage('play-circle-white', excludeFromSemantics: true, size: iconSize); //TBD
+      return Styles().images?.getImage('icon-play', excludeFromSemantics: true,);
+        // _controller.isPlaying ?
+        // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors?.white,)) : //TBD do we need another icon for stop?
+        //Styles().images?.getImage('icon-play', excludeFromSemantics: true, size: iconSize);
     } else {
-      return Styles().images?.getImage('play-circle-white', excludeFromSemantics: true, size: iconSize); //TBD
+      return _controller.isRecording ?
+        Styles().images?.getImage('icon-recording', excludeFromSemantics: true,) :
+        Styles().images?.getImage('icon-record', excludeFromSemantics: true,);
     }
   }
 
@@ -362,14 +362,14 @@ class PlayerController {
   }
 
   String get _playerElapsedTime =>
-      _playerTimer != null ? displayDuration(_playerTimer!) : "00:00";
+      _playerTimer != null ? displayDuration(_playerTimer!) : "0:00";
 
   String get _playerLengthTime =>
-      _audioPlayer.duration != null ? displayDuration(_audioPlayer.duration!) : "00:00";
+      _audioPlayer.duration != null ? displayDuration(_audioPlayer.duration!) : "0:00";
 
   String displayDuration(Duration duration) {
-    final HH =  (duration.inHours).toString().padLeft(2, '0');
-    final mm = (duration.inMinutes % 60).toString().padLeft(2, '0');
+    final HH =  (duration.inHours).toString().padLeft(1, '0');
+    final mm = (duration.inMinutes % 60).toString().padLeft(1, '0');
     final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
 
     return duration.inHours > 1 ? '$HH:$mm:$ss' : '$mm:$ss';

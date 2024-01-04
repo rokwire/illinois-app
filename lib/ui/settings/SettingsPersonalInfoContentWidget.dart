@@ -884,8 +884,12 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   Widget _buildNamePronouncement(){
     return Container(
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(),//TBD
+            Container( padding: EdgeInsets.only(right: 8, top: 4),
+              child:  Styles().images?.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
+            ),
+            
             Visibility(visible: !_hasStoredPronouncement, child:
               Expanded(
                   child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
@@ -896,22 +900,25 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               ),
             ),
             Visibility(visible: _hasStoredPronouncement, child:
-              Expanded(
-                  child: GestureDetector(onTap:  _onPlayNamePronouncement, child:
+                  GestureDetector(onTap:  _onPlayNamePronouncement, child:
                     Text( Localization().getStringEx("", "Your name pronunciation recording"),
                       style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
                     ),
                   )
-              ),
             ),
             Visibility(visible: _hasStoredPronouncement, child:
               InkWell(onTap: _onEditNamePronouncement, child:
-                Container(width: 30, height: 30, color: Styles().colors?.fillColorPrimary,),)//TBD
+                Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 4), child:
+                  Styles().images?.getImage('edit', excludeFromSemantics: true)
+                )
+              )//TBD
             ),
-            Container(width: 12,),
             Visibility(visible: _hasStoredPronouncement, child:
               InkWell(onTap: _onDeleteNamePronouncement, child:
-                Container(width: 30, height: 30, color: Styles().colors?.fillColorSecondary,),)//TBD
+                Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 4), child:
+                  Styles().images?.getImage('icon-delete-record', excludeFromSemantics: true)//TBD
+                )
+              )
             )
           ],
         )
