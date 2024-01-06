@@ -38,13 +38,13 @@ class SoundRecorderDialog extends StatefulWidget {
 }
 
 class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
-  late PlayerController _controller;
+  late RecorderController _controller;
 
   RecorderMode get _mode => _controller.hasRecord ? RecorderMode.play : RecorderMode.record;
 
   @override
   void initState() {
-    _controller = PlayerController(
+    _controller = RecorderController(
       initialRecordPath: widget.initialRecordPath,
       notifyChanged: (fn) =>setStateIfMounted(fn)
     );
@@ -231,7 +231,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   bool get _saveEnabled => _mode == RecorderMode.play;
 }
 
-class PlayerController {
+class RecorderController {
   final Function(void Function()) notifyChanged;
   final String? initialRecordPath; //TBD update to link when ready
 
@@ -241,7 +241,7 @@ class PlayerController {
   String _audioPath = "";
   bool _recording = false;
 
-  PlayerController({required this.notifyChanged, this.initialRecordPath});
+  RecorderController({required this.notifyChanged, this.initialRecordPath});
 
   void init() {
     _audioRecord = Record();
@@ -376,7 +376,7 @@ class PlayerController {
   }
 }
 
-class NamePronouncementWidget extends StatefulWidget {
+class NamePronouncementWidget extends StatefulWidget { //TBD move to EditProfile widgets
   // final String audioPath;
 
   // const NamePronouncementWidget({super.key, required this.audioPath}); //TBD work with urls
@@ -445,11 +445,15 @@ class _NamePronouncementState extends State<NamePronouncementWidget>{
   }
 
   void _onPlayNamePronouncement() async {
-    if(_audioPlayer.playing){
-     await _audioPlayer.stop();
-    } else {
-      _loadAudioRecord();
-      await _audioPlayer.play();
+    try {
+      if (_audioPlayer.playing) {
+        await _audioPlayer.stop();
+      } else {
+        _loadAudioRecord();
+        await _audioPlayer.play();
+      }
+    } catch (e){
+      Log.e(e.toString());
     }
   }
 
