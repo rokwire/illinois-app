@@ -140,7 +140,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
           value: Auth2().account?.authType?.uiucUser?.fullName ?? ""),
-      _buildNamePronouncement(),
+      NamePronouncementWidget(),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
           value: Auth2().account?.authType?.uiucUser?.middleName ?? ""),
@@ -881,71 +881,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     await Auth2().deleteUser();
   }
 
-  Widget _buildNamePronouncement(){
-    return Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container( padding: EdgeInsets.only(right: 8, top: 4),
-              child:  Styles().images?.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
-            ),
-            
-            Visibility(visible: !_hasStoredPronouncement, child:
-              Expanded(
-                  child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
-                    Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed by students (Ex: Please call me Dr. Last Name,First Name, or Nickname. )"),
-                      style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
-                    ),
-                  )
-              ),
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-                  GestureDetector(onTap:  _onPlayNamePronouncement, child:
-                    Text( Localization().getStringEx("", "Your name pronunciation recording"),
-                      style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
-                    ),
-                  )
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-              InkWell(onTap: _onEditNamePronouncement, child:
-                Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 4), child:
-                  Styles().images?.getImage('edit', excludeFromSemantics: true)
-                )
-              )//TBD
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-              InkWell(onTap: _onDeleteNamePronouncement, child:
-                Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 4), child:
-                  Styles().images?.getImage('icon-delete-record', excludeFromSemantics: true)//TBD
-                )
-              )
-            )
-          ],
-        )
-    );
-  }
-
-  void _onPlayNamePronouncement(){
-    if(_storedAudioPronouncement != null) {
-      NamePronouncementPlayer.play(_storedAudioPronouncement!);
-    }
-  }
-
-  void _onRecordNamePronouncement(){
-     SoundRecorderDialog.show(context).then((_) => setStateIfMounted(() { }));
-  }
-
-  void _onEditNamePronouncement(){
-    SoundRecorderDialog.show(context, initialRecordPath: _storedAudioPronouncement);
-  }
-
-  void _onDeleteNamePronouncement(){
-    //TBD Implement
-    Storage().setStringWithName(SoundRecorderDialog.storage_key, null);
-    setStateIfMounted(() { });
-  }
-
-
   bool get _canSave{
     return _isEmailChanged || _isNameChanged;
   }
@@ -977,10 +912,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   bool get _hasProfilePicture {
     return (_profileImageBytes != null);
   }
-
-  bool get _hasStoredPronouncement => StringUtils.isNotEmpty(_storedAudioPronouncement);
-
-  String? get _storedAudioPronouncement => Storage().getStringWithName(SoundRecorderDialog.storage_key); //TBD implement from profile. Add profile chenge listener
 
   TextStyle? get _formFieldLabelTextStyle {
     return  Styles().textStyles?.getTextStyle("widget.item.small");

@@ -376,15 +376,106 @@ class PlayerController {
   }
 }
 
-class NamePronouncementPlayer{
-  static void play(String filePath) async { //TBD play from url
-    try{
-    AudioPlayer _audioPlayer = AudioPlayer();
-    await _audioPlayer.setFilePath(filePath);
-    _audioPlayer.play().then(
-            (_) => _audioPlayer.dispose());
-    }catch(e){
-      print(e);
+class NamePronouncementWidget extends StatefulWidget {
+  // final String audioPath;
+
+  // const NamePronouncementWidget({super.key, required this.audioPath}); //TBD work with urls
+
+  @override
+  State<StatefulWidget> createState() => _NamePronouncementState();
+}
+
+class _NamePronouncementState extends State<NamePronouncementWidget>{
+  late AudioPlayer _audioPlayer;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _audioPlayer.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container( padding: EdgeInsets.only(right: 8, top: 4),
+                child:  Styles().images?.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
+            ),
+            Visibility(visible: !_hasStoredPronouncement, child:
+            Expanded(
+                child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
+                  Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed by students (Ex: Please call me Dr. Last Name,First Name, or Nickname. )"),
+                    style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
+                  ),
+                )
+              ),
+            ),
+            Visibility(visible: _hasStoredPronouncement, child:
+              GestureDetector(onTap:  _onPlayNamePronouncement, child:
+                Text( Localization().getStringEx("", "Your name pronunciation recording"),
+                  style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
+                ),
+              )
+            ),
+            Visibility(visible: _hasStoredPronouncement, child:
+              InkWell(onTap: _onEditRecord, child:
+                Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 4), child:
+                  Styles().images?.getImage('edit', excludeFromSemantics: true)
+               )
+              )
+            ),
+            Visibility(visible: _hasStoredPronouncement, child:
+              InkWell(onTap: _onDeleteNamePronouncement, child:
+                Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 4), child:
+                  Styles().images?.getImage('icon-delete-record', excludeFromSemantics: true)
+                )
+              )
+            )
+          ],
+        )
+    );
+  }
+
+  void _onPlayNamePronouncement() async {
+    if(_audioPlayer.playing){
+     await _audioPlayer.stop();
+    } else {
+      _loadAudioRecord();
+      await _audioPlayer.play();
     }
   }
+
+  void _onRecordNamePronouncement(){
+    SoundRecorderDialog.show(context).then((_) => setStateIfMounted(() { })); //TBD from notify
+  }
+
+  void _onEditRecord(){
+    SoundRecorderDialog.show(context, initialRecordPath: _storedAudioPronouncement).then((_) => setStateIfMounted(() { }));//TBD from notify
+  }
+
+  void _onDeleteNamePronouncement(){
+    //TBD Implement
+    Storage().setStringWithName(SoundRecorderDialog.storage_key, null);
+    setStateIfMounted(() { });
+  }
+
+  void _loadAudioRecord() async {
+    Log.d("AUDIO PREPARING");
+    if(_hasStoredPronouncement) {
+      await _audioPlayer.setFilePath(_storedAudioPronouncement!);
+    }
+  }
+
+  bool get _hasStoredPronouncement => StringUtils.isNotEmpty(_storedAudioPronouncement);
+
+  String? get _storedAudioPronouncement => Storage().getStringWithName(SoundRecorderDialog.storage_key); //TBD implement from profile. Add profile chenge listener
 }
+
