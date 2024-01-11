@@ -3259,11 +3259,13 @@
     "widget.home.recent_items.button.all.hint":"Toca para ver todos los elementos",
 
     "widget.home.event2_feed.label.header.title":"Todos los Eventos",
-    "widget.home.event2_feed.text.empty.description": "No hay eventos disponibles.",
+    "widget.home.event2_feed.text.empty.description": "There are no events available.",
+    "widget.home.event2_feed.text.offline.description": "Events are not available while offline.",
     "widget.home.event2_feed.button.all.title":"Ver Todos",
     "widget.home.event2_feed.button.all.hint":"Toca para ver todos los eventos",
 
     "widget.home.my_events2.label.header.title":"My Events",
+    "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
 
     "widget.home.groups.my.label.header.title":"Mis grupos",
     "widget.home.groups.all.label.header.title":"Todos los grupos",

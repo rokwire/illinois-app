@@ -38,10 +38,12 @@ import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -54,6 +56,8 @@ abstract class HomeEvent2Widget extends StatefulWidget {
   HomeEvent2Widget({super.key, this.favoriteId, this.updateController});
 
   String get _title;
+
+  Widget _emptyContentWidget(BuildContext context);
 
   //@override
   //State<StatefulWidget> createState() => _HomeEvent2WidgetState();
@@ -74,10 +78,19 @@ class HomeEvent2FeedWidget extends HomeEvent2Widget {
   String get _title => title;
 
   @override
+  Widget _emptyContentWidget(BuildContext context) => HomeMessageCard(
+    message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
+  );
+
+  @override
   State<StatefulWidget> createState() => _HomeEvent2WidgetState();
 }
 
 class HomeMyEvents2Widget extends HomeEvent2Widget {
+
+  static const String localScheme = 'local';
+  static const String localEventFeedHost = 'event2_feed';
+  static const String localUrlMacro = '{{local_url}}';
 
   HomeMyEvents2Widget({super.key, super.favoriteId, super.updateController});
 
@@ -90,6 +103,20 @@ class HomeMyEvents2Widget extends HomeEvent2Widget {
 
   @override
   String get _title => title;
+
+  @override
+  Widget _emptyContentWidget(BuildContext context) => HomeMessageHtmlCard(
+    message: Localization().getStringEx("widget.home.my_events2.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here.")
+      .replaceAll(localUrlMacro, '$localScheme://$localEventFeedHost'),
+    linkColor: Styles().colors?.eventColor,
+    onTapLink : (url) {
+      Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+      if ((uri?.scheme == localScheme) && (uri?.host == localEventFeedHost)) {
+        Analytics().logSelect(target: 'Events Feed', source: runtimeType.toString());
+        Event2HomePanel.present(context);
+      }
+    },
+  );
 
   @override
   State<StatefulWidget> createState() => _HomeEvent2WidgetState(
@@ -145,6 +172,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
   void initState() {
 
     NotificationService().subscribe(this, [
+      Connectivity.notifyStatusChanged,
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
       Storage.notifySettingChanged,
@@ -194,6 +222,9 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
         _reloadIfVisible();
       }
     }
+    else if (name == Connectivity.notifyStatusChanged) {
+      _reloadIfVisible(); // or mark as needs refresh
+    }
     else if (name == Events2.notifyChanged) {
       _reloadIfVisible(); // or mark as needs refresh
     }
@@ -230,7 +261,13 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
   }
 
   Widget _buildContent() {
-    if (_loadingEvents || _loadingLocationServicesStatus) {
+    if (Connectivity().isOffline) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
+        message: Localization().getStringEx("widget.home.event2_feed.text.offline.description", "Events are not available while offline."),
+      );
+    }
+    else if (_loadingEvents || _loadingLocationServicesStatus) {
       return HomeProgressWidget();
     }
     else if (_events == null) {
@@ -240,7 +277,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
       );
     }
     else if (_events?.length == 0) {
-      return HomeMessageCard(message: Localization().getStringEx('panel.events2.home.message.empty.description', 'There are no events matching the selected filters.'));
+      return widget._emptyContentWidget(context);
     }
     else {
       return _buildEventsContent();
@@ -465,7 +502,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
         _extendingEvents = false;
       });
 
-      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      dynamic result = Connectivity().isNotOffline ? await Events2().loadEventsEx(await _queryParam(limit: limit)) : null;
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
       String? errorTextResult = (result is String) ? result : null;
@@ -501,7 +538,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
       });
 
       int limit = max(_events?.length ?? 0, _eventsPageLength);
-      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      dynamic result = Connectivity().isNotOffline ? await Events2().loadEventsEx(await _queryParam(limit: limit)) : null;
       Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
       List<Event2>? events = listResult?.events;
       int? totalCount = listResult?.totalCount;
@@ -529,7 +566,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
   }
 
   Future<void> _extend() async {
-    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents) {
+    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents && Connectivity().isNotOffline) {
       setStateIfMounted(() {
         _extendingEvents = true;
       });

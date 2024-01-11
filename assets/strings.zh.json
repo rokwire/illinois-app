@@ -3243,11 +3243,13 @@
 	"widget.home.recent_items.button.all.hint":"點擊查看所有項目",
 
 	"widget.home.event2_feed.label.header.title":"All Events",
-	"widget.home.event2_feed.text.empty.description": "没有公告的活动。",
+	"widget.home.event2_feed.text.empty.description": "There are no events available.",
+ 	"widget.home.event2_feed.text.offline.description": "Events are not available while offline.",
 	"widget.home.event2_feed.button.all.title":"检视全部",
 	"widget.home.event2_feed.button.all.hint":"点击以活动",
 
 	"widget.home.my_events2.label.header.title":"My Events",
+	"widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
 
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有群組",

@@ -619,19 +619,21 @@ class HomeMessageHtmlCard extends StatelessWidget {
   final String? title;
   final String? message;
   final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
+  final Color? linkColor;
   final void Function(String? url)? onTapLink;
 
   HomeMessageHtmlCard({Key? key,
-    this.title,
-    this.message,
+    this.title, this.message,
     this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-    this.onTapLink
+    this.padding = const EdgeInsets.all(16),
+    this.linkColor, this.onTapLink
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
-      Container(padding: EdgeInsets.all(16),
+      Container(padding: padding,
         decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
@@ -639,9 +641,9 @@ class HomeMessageHtmlCard extends StatelessWidget {
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
                 HtmlWidget(
                     StringUtils.ensureNotEmpty(title),
-                    onTapUrl : (url) {_onTapLink(url); return true;},
+                    onTapUrl : (url) { _onTapLink(url); return true; },
                     textStyle:  Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"),
-                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+                    customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors?.fillColorSecondary ?? Colors.blue)} : null
                 )
               ),
             )
@@ -650,9 +652,9 @@ class HomeMessageHtmlCard extends StatelessWidget {
             Expanded(child:
                 HtmlWidget(
                   StringUtils.ensureNotEmpty(message),
-                  onTapUrl : (url) {_onTapLink(url); return true;},
+                  onTapUrl : (url) { _onTapLink(url); return true; },
                   textStyle:  Styles().textStyles?.getTextStyle("widget.card.detail.regular"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(linkColor ?? Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
                )
             )
           ]) : Container(),
