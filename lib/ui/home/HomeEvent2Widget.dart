@@ -46,12 +46,22 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:timezone/timezone.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class HomeEvent2FeedWidget extends StatefulWidget {
+abstract class HomeEvent2Widget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeEvent2FeedWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeEvent2Widget({super.key, this.favoriteId, this.updateController});
+
+  String get _title;
+
+  //@override
+  //State<StatefulWidget> createState() => _HomeEvent2WidgetState();
+}
+
+class HomeEvent2FeedWidget extends HomeEvent2Widget {
+
+  HomeEvent2FeedWidget({super.key, super.favoriteId, super.updateController});
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
@@ -60,12 +70,48 @@ class HomeEvent2FeedWidget extends StatefulWidget {
 
   static String get title => Localization().getStringEx('widget.home.event2_feed.label.header.title', 'All Events');
 
-  State<HomeEvent2FeedWidget> createState() => _HomeEvent2FeedWidgetState();
+  @override
+  String get _title => title;
+
+  @override
+  State<StatefulWidget> createState() => _HomeEvent2WidgetState();
+}
+
+class HomeMyEvents2Widget extends HomeEvent2Widget {
+
+  HomeMyEvents2Widget({super.key, super.favoriteId, super.updateController});
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.my_events2.label.header.title', 'My Events');
+
+  @override
+  String get _title => title;
+
+  @override
+  State<StatefulWidget> createState() => _HomeEvent2WidgetState(
+    timeFilter: Event2TimeFilter.upcoming, customStartTime: null, customEndTime: null,
+    types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]),
+    attributes: <String, dynamic>{},
+    sortType: Event2SortType.dateTime,
+  );
 }
 
 enum _Staled { none, refresh, reload }
 
-class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements NotificationsListener {
+class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements NotificationsListener {
+  final Event2TimeFilter? timeFilter;
+  final TZDateTime? customStartTime;
+  final TZDateTime? customEndTime;
+
+  final LinkedHashSet<Event2TypeFilter>? types;
+  final Map<String, dynamic>? attributes;
+
+  final Event2SortType? sortType;
+
   List<Event2>? _events;
   bool? _lastPageLoadedAll;
   int? _totalEventsCount;
@@ -89,6 +135,11 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   Key _pageViewKey = UniqueKey();
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   final double _pageSpacing = 16;
+
+  _HomeEvent2WidgetState({
+    this.timeFilter, this.customStartTime, this.customEndTime,
+    this.attributes, this.types, this.sortType
+  });
 
   @override
   void initState() {
@@ -171,7 +222,7 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   Widget build(BuildContext context) {
     return VisibilityDetector(key: _visibilityDetectorKey, onVisibilityChanged: _onVisibilityChanged, child:
       HomeSlantWidget(favoriteId: widget.favoriteId,
-        title: HomeEvent2FeedWidget.title,
+        title: widget._title,
         titleIconKey: 'events',
         child: _buildContent(),
       )
@@ -292,7 +343,10 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
 
   void _onTapViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Event2HomePanel.present(context);
+    Event2HomePanel.present(context,
+      timeFilter: timeFilter, customStartTime: customEndTime, customEndTime: customEndTime,
+      types: types, attributes: attributes, sortType: sortType,
+    );
   }
 
   // Visibility
@@ -351,19 +405,30 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
   // Event2 Query
 
   Future<Events2Query> _queryParam({int offset = 0, int limit = _eventsPageLength}) async {
-    Event2TimeFilter timeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
-    TZDateTime? customStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
-    TZDateTime? customEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
-    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
-    Map<String, dynamic>? attributes = Storage().events2Attributes;
-    Event2SortType? sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    Event2TimeFilter queryTimeFilter;
+    TZDateTime? queryCustomStartTime, queryCustomEndTime;
+
+    if ((timeFilter != null) && (timeFilter != Event2TimeFilter.customRange) || ((customStartTime != null) && (customEndTime != null))) {
+      queryTimeFilter = timeFilter ?? Event2TimeFilter.upcoming;
+      queryCustomStartTime = (queryTimeFilter == Event2TimeFilter.customRange) ? customStartTime : null;
+      queryCustomEndTime = (queryTimeFilter == Event2TimeFilter.customRange) ? customEndTime : null;
+    }
+    else {
+      queryTimeFilter = event2TimeFilterFromString(Storage().events2Time) ?? Event2TimeFilter.upcoming;
+      queryCustomStartTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomStartTime));
+      queryCustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
+    }
+
+    LinkedHashSet<Event2TypeFilter>? queryTypes = types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+    Map<String, dynamic>? queryAttributes = attributes ?? Storage().events2Attributes;
+    Event2SortType? querySortType = sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
 
     bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
-    if ((types?.contains(Event2TypeFilter.nearby) == true) && locationNotAvailable) {
-      types?.remove(Event2TypeFilter.nearby);
+    if ((queryTypes?.contains(Event2TypeFilter.nearby) == true) && locationNotAvailable) {
+      queryTypes?.remove(Event2TypeFilter.nearby);
     }
-    if ((sortType == Event2SortType.proximity) && locationNotAvailable) {
-      sortType = Event2SortType.dateTime;
+    if ((querySortType == Event2SortType.proximity) && locationNotAvailable) {
+      querySortType = Event2SortType.dateTime;
     }
 
     if (((types?.contains(Event2TypeFilter.nearby) == true) || (sortType == Event2SortType.proximity)) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed)) {
@@ -373,12 +438,12 @@ class _HomeEvent2FeedWidgetState extends State<HomeEvent2FeedWidget> implements 
     return Events2Query(
       offset: offset,
       limit: limit,
-      timeFilter: timeFilter,
-      customStartTimeUtc: customStartTime?.toUtc(),
-      customEndTimeUtc: customEndTime?.toUtc(),
-      types: types,
-      attributes: attributes,
-      sortType: sortType,
+      timeFilter: queryTimeFilter,
+      customStartTimeUtc: queryCustomStartTime?.toUtc(),
+      customEndTimeUtc: queryCustomEndTime?.toUtc(),
+      types: queryTypes,
+      attributes: queryAttributes,
+      sortType: querySortType,
       sortOrder: Event2SortOrder.ascending,
       location: _currentLocation,
     );

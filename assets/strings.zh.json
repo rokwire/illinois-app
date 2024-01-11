@@ -3247,6 +3247,8 @@
 	"widget.home.event2_feed.button.all.title":"检视全部",
 	"widget.home.event2_feed.button.all.hint":"点击以活动",
 
+	"widget.home.my_events2.label.header.title":"My Events",
+
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有群組",
 	"widget.home.groups.my.text.empty.description": "您還沒有創建任何組。",

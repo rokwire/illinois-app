@@ -3263,6 +3263,8 @@
     "widget.home.event2_feed.button.all.title":"Ver Todos",
     "widget.home.event2_feed.button.all.hint":"Toca para ver todos los eventos",
 
+    "widget.home.my_events2.label.header.title":"My Events",
+
     "widget.home.groups.my.label.header.title":"Mis grupos",
     "widget.home.groups.all.label.header.title":"Todos los grupos",
     "widget.home.groups.my.text.empty.description": "Aún no has creado ningún grupo.",

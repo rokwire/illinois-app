@@ -3259,6 +3259,8 @@
     "widget.home.event2_feed.button.all.title": "View All",
     "widget.home.event2_feed.button.all.hint": "Tap to view all events",
 
+    "widget.home.my_events2.label.header.title":"My Events",
+
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.text.empty.description": "There are no recently viewed items available.",
     "widget.home.recent_items.button.all.title":"View All",
