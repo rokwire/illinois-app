@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added favorite and admin event filter types, My events updated to use it [#3851](https://github.com/rokwire/illinois-app/issues/3851).
+### Changed
+- Make Promote group/event available to everyone [#3838](https://github.com/rokwire/illinois-app/issues/3838).
 
 ## [5.1.5] - 2024-01-03
 ### Added
