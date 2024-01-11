@@ -3256,8 +3256,12 @@
 
     "widget.home.event2_feed.label.header.title":"All Events",
     "widget.home.event2_feed.text.empty.description": "There are no events available.",
+    "widget.home.event2_feed.text.offline.description": "Events are not available while offline.",
     "widget.home.event2_feed.button.all.title": "View All",
     "widget.home.event2_feed.button.all.hint": "Tap to view all events",
+
+    "widget.home.my_events2.label.header.title":"My Events",
+    "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.text.empty.description": "There are no recently viewed items available.",
@@ -3789,6 +3793,8 @@
     "model.event2.event_type.private": "Private",
     "model.event2.event_type.nearby": "Nearby",
     "model.event2.event_type.super_event": "Multi-event",
+    "model.event2.event_type.admin": "Admin",
+    "model.event2.event_type.favorite": "Starred",
 
     "model.event2.event_time.upcoming": "Upcoming",
     "model.event2.event_time.today": "Today",

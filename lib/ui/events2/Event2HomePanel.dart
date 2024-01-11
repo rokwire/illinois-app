@@ -49,11 +49,14 @@ class Event2HomePanel extends StatefulWidget {
   final LinkedHashSet<Event2TypeFilter>? types;
   final Map<String, dynamic>? attributes;
 
+  final Event2SortType? sortType;
+
   final Event2Selector? eventSelector;
 
   Event2HomePanel({Key? key,
     this.timeFilter, this.customStartTime, this.customEndTime,
-    this.types, this.attributes, this.eventSelector
+    this.types, this.attributes, this.sortType,
+    this.eventSelector
   }) : super(key: key);
 
   @override
@@ -61,9 +64,19 @@ class Event2HomePanel extends StatefulWidget {
 
   // Filters onboarding
 
-  static void present(BuildContext context, {Event2Selector? eventSelector, Map<String, dynamic>? attributes}) {
-    if (attributes != null) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector, attributes: attributes, types: LinkedHashSet<Event2TypeFilter>(),)));
+  static void present(BuildContext context, {
+    Event2TimeFilter? timeFilter, TZDateTime? customStartTime, TZDateTime? customEndTime,
+    LinkedHashSet<Event2TypeFilter>? types, Map<String, dynamic>? attributes, Event2SortType? sortType,
+    Event2Selector? eventSelector
+  }) {
+    if ((timeFilter != null) || (attributes != null) || (types != null)) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(
+        timeFilter: timeFilter ?? Event2TimeFilter.upcoming, customStartTime: customStartTime, customEndTime: customEndTime,
+        types: types ?? LinkedHashSet<Event2TypeFilter>(),
+        attributes: attributes ?? <String, dynamic>{},
+        sortType: sortType ?? Event2SortType.dateTime,
+        eventSelector: eventSelector,
+      )));
     }
     else if (Storage().events2Attributes != null) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: Event2HomePanel.routeName), builder: (context) => Event2HomePanel(eventSelector: eventSelector,)));
@@ -364,7 +377,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
     _scrollController.addListener(_scrollListener);
 
     if ((widget.timeFilter != null) && ((widget.timeFilter != Event2TimeFilter.customRange) || ((widget.customStartTime != null) && (widget.customEndTime != null)))) {
-      _timeFilter = widget.timeFilter!;
+      _timeFilter = widget.timeFilter ?? Event2TimeFilter.upcoming;
       _customStartTime = (_timeFilter == Event2TimeFilter.customRange) ? widget.customStartTime : null;
       _customEndTime = (_timeFilter == Event2TimeFilter.customRange) ? widget.customEndTime : null;
     }
@@ -376,7 +389,7 @@ class _Event2HomePanelState extends State<Event2HomePanel> implements Notificati
 
     _types = widget.types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types)) ?? LinkedHashSet<Event2TypeFilter>();
     _attributes = widget.attributes ?? Storage().events2Attributes ?? <String, dynamic>{};
-    _sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    _sortType = widget.sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
 
     _initLocationServicesStatus().then((_) {
       _ensureCurrentLocation();
