@@ -302,6 +302,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       ...?_priceDetailWidget,
       ...?_privacyDetailWidget,
       ...?_superEventDetailWidget,
+      ...?_promoteButton,
       ...?_addToCalendarButton,
       ...?_adminSettingsButtonWidget,
       ...?_attendanceDetailWidget,
@@ -569,6 +570,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     _detailSpacerWidget
   ];
 
+  List<Widget>? get _promoteButton => <Widget>[
+    InkWell(onTap: _onPromote, child:
+       _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.promote.title', 'Share this event'), 'qr', underlined: true)),
+    _detailSpacerWidget
+  ];
+
   Widget get _buttonsWidget {
     List<Widget> buttons = <Widget>[
       ...?_followUpSurveyButtonWidget,
@@ -745,7 +752,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
       Padding(padding: EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16), child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           _buildSettingButton(title: "Edit event", onTap: _onSettingEditEvent),
-          _buildSettingButton(title: "Promote this event", onTap: _onSettingPromote),
           _buildSettingButton(title: "Event registration", onTap: _onSettingEventRegistration),
           _buildSettingButton(title: "Event attendance", onTap: _onSettingAttendance),
           _buildSettingButton(title: _event?.attendanceDetails?.isNotEmpty == true ? "Event follow-up survey" : null, onTap: _onSettingSurvey),
@@ -980,7 +986,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }  
   void _onAddToCalendar(){
-      DeviceCalendar().addToCalendar(_event);
+    DeviceCalendar().addToCalendar(_event);
+  }
+
+  void _onPromote(){
+    Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel(event: _event)));
   }
 
   void _onContactEmail(String? email){
@@ -1028,11 +1039,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         });
       }
     });
-  }
-
-  void _onSettingPromote(){
-    Analytics().logSelect(target: "Promote Event", attributes: _event?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2QrCodePanel(event: _event)));
   }
 
   void _onSettingEventRegistration(){

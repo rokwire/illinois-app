@@ -713,16 +713,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapSettings,
         ));
-        if (!_isResearchProject) {
-          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
-          commands.add(RibbonButton(
-            label: _isResearchProject ? 'Promote this project' : Localization().getStringEx("panel.group_detail.button.group_promote.title", "Promote this group"),
-            hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
-            leftIconKey: 'qr',
-            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-            onTap: _onTapPromote,
-          ));
-        }
         //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
         /*if (_isAttendanceGroup && !_isResearchProject) {
           commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
@@ -749,14 +739,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         padding: EdgeInsets.symmetric(vertical: 14),
         onTap: _onTapNotifications,
       ));
+      if (!_isResearchProject) {
+        commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+        commands.add(_buildPromoteCommand());
+      }
       if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
         commands.add(_buildWebsiteLinkCommand());
       }
     }
     else {
+      if (!_isResearchProject) {
+        if (CollectionUtils.isNotEmpty(commands)) {
+          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+        }
+        commands.add(_buildPromoteCommand());
+      }
       if (StringUtils.isNotEmpty(_group?.webURL) && !_isResearchProject) {
-        commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+        if (CollectionUtils.isNotEmpty(commands)) {
+          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+        }
         commands.add(_buildWebsiteLinkCommand());
       }
 
@@ -1078,6 +1080,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           Text(description!, style: Styles().textStyles?.getTextStyle('panel.group.detail.regular'), ),
         ],),) :
       Container(width: 0, height: 0);
+  }
+
+  Widget _buildPromoteCommand() {
+    return RibbonButton(
+      label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Share this group"),
+      hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
+      leftIconKey: 'qr',
+      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+      onTap: _onTapPromote,
+    );
   }
 
   Widget _buildWebsiteLinkCommand() {
