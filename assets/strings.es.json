@@ -3792,6 +3792,8 @@
     "model.event2.event_type.private": "Privado",
     "model.event2.event_type.nearby": "Cerca",
     "model.event2.event_type.super_event": "Multi-evento",
+    "model.event2.event_type.admin": "Administrador",
+    "model.event2.event_type.favorite": "Protagonizado",
 
     "model.event2.event_time.upcoming": "Próximos",
     "model.event2.event_time.today": "Hoy",
