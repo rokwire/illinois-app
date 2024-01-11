@@ -106,6 +106,8 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBarBack, child:
         _buildScaffoldContent(),

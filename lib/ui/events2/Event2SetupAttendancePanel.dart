@@ -71,6 +71,8 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBarBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBarBack, child:
         _buildScaffoldContent(),

@@ -517,6 +517,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       panels.add(_panels[rootTab] ?? Container());
     }
 
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(
         child: Container(
           color: Colors.white,

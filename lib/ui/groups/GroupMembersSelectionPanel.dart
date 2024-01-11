@@ -65,6 +65,8 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
   Widget build(BuildContext context) {
     bool hasGroupMembers = CollectionUtils.isNotEmpty(_selectedMembers);
 
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return new WillPopScope(
       onWillPop: () async{
         _onTapDone();
