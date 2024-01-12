@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Make event card to look the same in list and page display modes [#3854](https://github.com/rokwire/illinois-app/issues/3854).
+- Make All Events widget a default widget for all NEW app users [#3856](https://github.com/rokwire/illinois-app/issues/3856).
 
 ## [5.1.6] - 2024-01-11
 ### Added
