@@ -36,6 +36,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -177,6 +178,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
       FlexUI.notifyChanged,
       Storage.notifySettingChanged,
       Events2.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
     ]);
 
@@ -212,7 +214,7 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
     else if (name == FlexUI.notifyChanged) {
       _currentLocation = null;
       _updateLocationServicesStatus(() {
-        if (_needsContentUpdateOnLocationServicesStatusUpdate()) {
+        if (_needsContentUpdateOnLocationServicesStatusUpdate) {
           _reloadIfVisible();
         }
       });
@@ -227,6 +229,11 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
     }
     else if (name == Events2.notifyChanged) {
       _reloadIfVisible(); // or mark as needs refresh
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (_needsContentUpdateOnFavoritesChanged) {
+        _reloadIfVisible(); // or mark as needs refresh
+      }
     }
     else if (name == Auth2.notifyLoginChanged) {
       _reloadIfVisible(); // or mark as needs refresh
@@ -432,12 +439,13 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
     }
   }
 
-  bool _needsContentUpdateOnLocationServicesStatusUpdate() {
+  bool get _needsContentUpdateOnLocationServicesStatusUpdate {
     bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
-    LinkedHashSet<Event2TypeFilter>? types = LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
-    Event2SortType? sortType = event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
-    return (locationNotAvailable && ((types?.contains(Event2TypeFilter.nearby) == true) || (sortType == Event2SortType.proximity)));
+    return (locationNotAvailable && ((_queryTypes?.contains(Event2TypeFilter.nearby) == true) || (_querySortType == Event2SortType.proximity)));
   }
+
+  bool get _needsContentUpdateOnFavoritesChanged =>
+      (_queryTypes?.contains(Event2TypeFilter.favorite) == true);
 
   // Event2 Query
 
@@ -456,9 +464,8 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
       queryCustomEndTime = TZDateTimeExt.fromJson(JsonUtils.decode(Storage().events2CustomEndTime));
     }
 
-    LinkedHashSet<Event2TypeFilter>? queryTypes = types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
-    Map<String, dynamic>? queryAttributes = attributes ?? Storage().events2Attributes;
-    Event2SortType? querySortType = sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
+    LinkedHashSet<Event2TypeFilter>? queryTypes = _queryTypes;
+    Event2SortType? querySortType = _querySortType;
 
     bool locationNotAvailable = ((_locationServicesStatus == LocationServicesStatus.serviceDisabled) || ((_locationServicesStatus == LocationServicesStatus.permissionDenied)));
     if ((queryTypes?.contains(Event2TypeFilter.nearby) == true) && locationNotAvailable) {
@@ -479,12 +486,21 @@ class _HomeEvent2WidgetState extends State<HomeEvent2Widget> implements Notifica
       customStartTimeUtc: queryCustomStartTime?.toUtc(),
       customEndTimeUtc: queryCustomEndTime?.toUtc(),
       types: queryTypes,
-      attributes: queryAttributes,
+      attributes: _queryAttributes,
       sortType: querySortType,
       sortOrder: Event2SortOrder.ascending,
       location: _currentLocation,
     );
   }
+
+  LinkedHashSet<Event2TypeFilter>? get _queryTypes =>
+    types ?? LinkedHashSetUtils.from<Event2TypeFilter>(event2TypeFilterListFromStringList(Storage().events2Types));
+
+  Map<String, dynamic>? get _queryAttributes =>
+    attributes ?? Storage().events2Attributes;
+
+  Event2SortType? get _querySortType =>
+    sortType ?? event2SortTypeFromString(Storage().events2SortType) ?? Event2SortType.dateTime;
 
   Future<void> _reloadIfVisible({ int limit = _eventsPageLength }) async {
     if (_visible) {
