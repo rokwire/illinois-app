@@ -1402,21 +1402,6 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   void set _selectorEvent(Event2 event) => selectorData?.event = event;
 }
 
-extension _Event2Ext on Event2 {
-
-  Event2Grouping? get linkedEventsGroupingQuery {
-    if (isSuperEvent) {
-      return Event2Grouping.superEvent(id);
-    }
-    else if (isRecurring) {
-      return Event2Grouping.recurrence(grouping?.recurrenceId);
-    }
-    else {
-      return null;
-    }
-  }
-}
-
 //EventSelector Interface
 abstract class Event2Selector<T extends Event2SelectorData> {
   final T data; //Pass initial data (containing group etc)
