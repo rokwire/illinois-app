@@ -1,4 +1,6 @@
 
+import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Event2.dart';
@@ -6,6 +8,9 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/events2/Event2DetailPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/content_attributes.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -14,6 +19,12 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+import '../home/HomeWidgets.dart';
+
+//
+// Event2FilterCommandButton
+//
 
 class Event2FilterCommandButton extends StatelessWidget {
   final String? title;
@@ -90,6 +101,10 @@ class Event2FilterCommandButton extends StatelessWidget {
 
 }
 
+//
+// Event2ImageCommandButton
+//
+
 class Event2ImageCommandButton extends StatelessWidget {
   final String imageKey;
   final String? label;
@@ -112,6 +127,10 @@ class Event2ImageCommandButton extends StatelessWidget {
       ),
     );
 }
+
+//
+// Event2Card
+//
 
 class Event2Card extends StatefulWidget {
   final Event2 event;
@@ -181,6 +200,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
       case Event2CardDisplayMode.list: return _listContentWidget;
       case Event2CardDisplayMode.page: return _pageContentWidget;
       case Event2CardDisplayMode.link: return _linkContentWidget;
+      case Event2CardDisplayMode.cardLink: return _cardLinkContentWidget;
     }
   }
 
@@ -196,6 +216,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
               _detailsWidget,
             ]),
           ),
+          ..._linkedEventsPagerWidget,
         ],),
       ),
     );
@@ -215,6 +236,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
               _detailsWidget,
             ]),
           ),
+          ..._linkedEventsPagerWidget,
         ]),
       ),
     );
@@ -238,6 +260,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
                 _detailsWidget,
               ]),
             ),
+            ..._linkedEventsPagerWidget,
           ]),
         ),
       ),
@@ -259,6 +282,26 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         ],)
       ),
     );
+
+  Widget get _cardLinkContentWidget =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      _eventHeadingWidget,
+      Container(decoration: _linkBottomContentDecoration, child:
+        ClipRRect(borderRadius: _linkContentBottomBorderRadius, child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 16, top: 14, bottom: 14), child:
+                Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  _linkTitleWidget,
+                  _linkDetailWidget,
+                ],),
+              ),
+            ),
+            _favoriteButton
+          ],)
+        ),
+      ),
+    ]);
 
   Widget get _linkTitleWidget {
     String? title;
@@ -321,7 +364,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))
   ];
 
-  static Radius get _pageContentRadius => Radius.circular(4);
+  static Radius get _pageContentRadius => Radius.circular(4.0);
   static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(_pageContentRadius);
   static BorderRadiusGeometry get _pageContentTopBorderRadius => BorderRadius.vertical(top: _pageContentRadius);
   static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
@@ -330,10 +373,27 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     color: Styles().colors?.white,
     borderRadius: _linkContentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 2.0, offset: Offset(0, 1))]
+    boxShadow: _linkContentShadow
   );
 
-  static BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.circular(4.0);
+  static Decoration get _linkBottomContentDecoration => BoxDecoration(
+    color: Styles().colors?.surface,
+    borderRadius: _linkContentBottomBorderRadius,
+    border: Border(
+      left: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+      right: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+      bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+    ),
+    boxShadow: _linkContentShadow
+  );
+
+  static List<BoxShadow> get _linkContentShadow => [
+    BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 1.0, blurRadius: 2.0, offset: Offset(0, 1))
+  ];
+
+  static Radius get _linkContentRadius => Radius.circular(4.0);
+  static BorderRadiusGeometry get _linkContentBorderRadius => BorderRadius.all(_linkContentRadius);
+  static BorderRadiusGeometry get _linkContentBottomBorderRadius => BorderRadius.vertical(bottom: _linkContentRadius);
 
   bool get _hasImage => StringUtils.isNotEmpty(widget.event.imageUrl);
 
@@ -349,9 +409,8 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1)),
   );
 
-  Widget get _pageHeadingWidget => Container(height: _pageHeadingHeight, color: widget.event.uiColor);
-
-  double get _pageHeadingHeight => 7;
+  Widget get _eventHeadingWidget => Container(height: _eventHeadingHeight, color: widget.event.uiColor,);
+  double get _eventHeadingHeight => 7;
 
   Widget get _contentHeadingWidget =>
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -520,13 +579,260 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
   }
 
+  List<Widget> get _linkedEventsPagerWidget {
+    Event2Grouping? linkedGroupingQuery = widget.event.linkedEventsGroupingQuery;
+    return (linkedGroupingQuery != null) ? <Widget>[
+      Container(color: Styles().colors?.surfaceAccent, height: 1,),
+      Padding(padding: const EdgeInsets.symmetric(vertical: 16), child:
+        LinkedEvents2Pager(linkedGroupingQuery, userLocation: widget.userLocation)
+      )
+    ] : <Widget>[];
+  }
+
   void _onFavorite() {
     Analytics().logSelect(target: "Favorite: ${widget.event.name}");
     Auth2().prefs?.toggleFavorite(widget.event);
   }
 }
 
-enum Event2CardDisplayMode { list, page, link }
+enum Event2CardDisplayMode { list, page, link, cardLink }
+
+//
+// LinkedEvents2Pager
+//
+
+class LinkedEvents2Pager extends StatefulWidget {
+  final Event2Grouping linkedGroupingQuery;
+  final Position? userLocation;
+  LinkedEvents2Pager(this.linkedGroupingQuery, {super.key, this.userLocation });
+
+  @override
+  State<StatefulWidget> createState() => _LinkedEvents2PagerState();
+}
+
+class _LinkedEvents2PagerState extends State<LinkedEvents2Pager> {
+
+  static const int _eventsPageLength = 16;
+  static const String _progressContentKey = '_progress_';
+
+  List<Event2>? _events;
+  bool? _lastPageLoadedAll;
+  int? _totalEventsCount;
+  String? _eventsErrorText;
+  bool _loadingEvents = false;
+  bool _extendingEvents = false;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
+
+  @override
+  void initState() {
+    _reload();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loadingEvents) {
+      return _progressContent;
+    }
+    else if (_events == null) {
+      return _buildMessageContent(
+        title: Localization().getStringEx('panel.events2.home.message.failed.title', 'Failed'),
+        message: _eventsErrorText ?? Localization().getStringEx('logic.general.unknown_error', 'Unknown Error Occurred')
+      );
+    }
+    else if (_events?.length == 0) {
+      return _buildMessageContent(
+        message: Localization().getStringEx('widget.home.event2_feed.text.empty.description', 'There are no events available.')
+      );
+    }
+    else {
+      return _eventsPager;
+    }
+  }
+
+  Widget get _eventsPager {
+
+    int eventsCount = _events?.length ?? 0;
+    if ((_hasMoreEvents != false) || (1 < eventsCount)) {
+
+      List<Widget> pages = <Widget>[];
+      for (int index = 0; index < eventsCount; index++) {
+        Event2 event = _events![index];
+        String contentKey = "${event.id}-$index";
+        pages.add(Padding(
+          key: _contentKeys[contentKey] ??= GlobalKey(),
+          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 4),
+          child: Event2Card(event,
+            displayMode: Event2CardDisplayMode.cardLink,
+            linkType: widget.linkedGroupingQuery.type,
+            userLocation: widget.userLocation,
+            onTap: () => _onTapEvent2(event),
+          )
+        ));
+      }
+
+      if (_hasMoreEvents != false) {
+        pages.add(Padding(
+          key: _contentKeys[_progressContentKey] ??= GlobalKey(),
+          padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+          child: HomeProgressWidget(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+          ),
+        ));
+      }
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width - 32;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      return Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
+          children: pages,
+          onPageChanged: _onPageChanged,
+        ),
+      );
+    }
+    else {
+      return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+        Event2Card(_events!.first,
+          displayMode: Event2CardDisplayMode.cardLink,
+          linkType: widget.linkedGroupingQuery.type,
+          userLocation: widget.userLocation,
+          onTap: () => _onTapEvent2(_events!.first)
+        )
+      );
+    }
+  }
+
+  Widget get _progressContent =>
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
+      Center(child:
+        Container(width: 24, height: 24, child:
+          CircularProgressIndicator(strokeWidth: 3, color: Styles().colors?.fillColorSecondary),
+        )
+      ),
+    );
+
+  Widget _buildMessageContent({String? title, String? message}) =>
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
+      Column(children: <Widget>[
+        StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
+          Expanded(child:
+            Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
+              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.medium.fat"), textAlign: TextAlign.center,)
+            ),
+          )
+        ]) : Container(),
+        StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
+          Expanded(child:
+            Text(message ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"), textAlign: TextAlign.center)
+          )
+        ]) : Container(),
+      ]),
+    );
+
+  double get _pageHeight {
+    double? minContentHeight;
+    for (GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+    return minContentHeight ?? 0;
+  }
+
+  bool? get _hasMoreEvents => (_totalEventsCount != null) ?
+    ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;
+
+  void _onPageChanged(int index) {
+    if ((_events?.length ?? 0) < (index + 1) && (_hasMoreEvents != false) && !_extendingEvents && !_loadingEvents) {
+      _extend();
+    }
+  }
+
+  void _onTapEvent2(Event2 event) {
+    Analytics().logSelect(target: "Event: '${event.name}'", source: widget.runtimeType.toString());
+    if (event.hasGame) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: event.game)));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Event2DetailPanel(event: event)));
+    }
+  }
+
+  Future<void> _reload({ int limit = _eventsPageLength }) async {
+    if (!_loadingEvents) {
+      setStateIfMounted(() {
+        _loadingEvents = true;
+        _extendingEvents = false;
+      });
+      dynamic result = await Events2().loadEventsEx(Events2Query(grouping: widget.linkedGroupingQuery, limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      String? errorTextResult = (result is String) ? result : null;
+
+      setStateIfMounted(() {
+        _events = (events != null) ? List<Event2>.from(events) : null;
+        _totalEventsCount = listResult?.totalCount;
+        _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+        _eventsErrorText = errorTextResult;
+        _loadingEvents = false;
+        _pageViewKey = UniqueKey();
+        _contentKeys.clear();
+      });
+    }
+  }
+
+  Future<void> _extend() async {
+    if (!_loadingEvents && !_extendingEvents) {
+      setStateIfMounted(() {
+        _extendingEvents = true;
+      });
+
+      Events2ListResult? loadResult = await Events2().loadEvents(Events2Query(grouping: widget.linkedGroupingQuery, offset: _events?.length ?? 0, limit: _eventsPageLength));
+      List<Event2>? events = loadResult?.events;
+      int? totalCount = loadResult?.totalCount;
+
+      if (mounted && _extendingEvents && !_loadingEvents) {
+        setState(() {
+          if (events != null) {
+            if (_events != null) {
+              _events?.addAll(events);
+            }
+            else {
+              _events = List<Event2>.from(events);
+            }
+            _lastPageLoadedAll = (events.length >= _eventsPageLength);
+          }
+          if (totalCount != null) {
+            _totalEventsCount = totalCount;
+          }
+          _extendingEvents = false;
+        });
+      }
+    }
+  }
+}
+
+//
+// Event2Popup
+//
 
 class Event2Popup {
   
