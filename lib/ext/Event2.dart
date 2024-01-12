@@ -289,21 +289,33 @@ extension Event2Ext on Event2 {
   }
 
   bool get isFavorite =>
-      //isRecurring //TBD Recurring id
-      // ? Auth2().isListFavorite(recurringEvents?.cast<Favorite>());
-      Auth2().isFavorite(this);
+    //isRecurring //TBD Recurring id
+    // ? Auth2().isListFavorite(recurringEvents?.cast<Favorite>());
+    Auth2().isFavorite(this);
 
   bool get canUserEdit =>
-      userRole == Event2UserRole.admin;
+    userRole == Event2UserRole.admin;
 
   bool get canUserDelete =>
-      userRole == Event2UserRole.admin;
+    userRole == Event2UserRole.admin;
 
   bool get hasGame =>
-      game != null;
+    game != null;
 
   Game? get game =>
-      isSportEvent ? Game.fromJson(data) : null;
+    isSportEvent ? Game.fromJson(data) : null;
+
+  Event2Grouping? get linkedEventsGroupingQuery {
+    if (isSuperEvent) {
+      return Event2Grouping.superEvent(id);
+    }
+    else if (isRecurring) {
+      return Event2Grouping.recurrence(grouping?.recurrenceId);
+    }
+    else {
+      return null;
+    }
+  }
 }
 
 extension Event2ContactExt on Event2Contact {
