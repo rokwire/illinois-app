@@ -201,6 +201,9 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
 
   Widget get _pageContentWidget =>
+    _hasImage ? _pageImageContentWidget : _pageStandardContentWidget;
+
+  Widget get _pageStandardContentWidget =>
     Container(decoration: _pageContentDecoration, child:
       ClipRRect(borderRadius: _pageContentBorderRadius, child:
         Column(mainAxisSize: MainAxisSize.min, children: [
@@ -215,6 +218,30 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         ]),
       ),
     );
+
+  Widget get _pageImageContentWidget =>
+    Column(mainAxisSize: MainAxisSize.min, children: [
+      Container(decoration: _pageTopContentDecoration, child:
+        ClipRRect(borderRadius: _pageContentTopBorderRadius, child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            _imageHeadingWidget,
+          ])
+        ),
+      ),
+      Container(decoration: _pageBottomContentDecoration, child:
+        ClipRRect(borderRadius: _pageContentBottomBorderRadius, child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            _contentHeadingWidget,
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _titleWidget,
+                _detailsWidget,
+              ]),
+            ),
+          ]),
+        ),
+      ),
+    ]);
 
   Widget get _linkContentWidget =>
     Container(decoration: _linkContentDecoration, child:
@@ -271,10 +298,33 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     color: Styles().colors?.surface,
     borderRadius: _pageContentBorderRadius,
     border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-    boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
+    boxShadow: _pageContentShadow
   );
 
-  static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(Radius.circular(4));
+  static Decoration get _pageTopContentDecoration => BoxDecoration(
+    borderRadius: _pageContentTopBorderRadius,
+    boxShadow: _pageContentShadow
+  );
+
+  static Decoration get _pageBottomContentDecoration => BoxDecoration(
+    color: Styles().colors?.surface,
+    borderRadius: _pageContentBottomBorderRadius,
+    border: Border(
+      left: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+      right: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+      bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+    ),
+    boxShadow: _pageContentShadow
+  );
+
+  static List<BoxShadow> get _pageContentShadow => [
+    BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))
+  ];
+
+  static Radius get _pageContentRadius => Radius.circular(4);
+  static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(_pageContentRadius);
+  static BorderRadiusGeometry get _pageContentTopBorderRadius => BorderRadius.vertical(top: _pageContentRadius);
+  static BorderRadiusGeometry get _pageContentBottomBorderRadius => BorderRadius.vertical(bottom: _pageContentRadius);
 
   static Decoration get _linkContentDecoration => BoxDecoration(
     color: Styles().colors?.white,
