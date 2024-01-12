@@ -201,33 +201,20 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     );
 
   Widget get _pageContentWidget =>
-    Stack(children: [
-      Container(decoration: _pageContentDecoration, child:
+    Container(decoration: _pageContentDecoration, child:
+      ClipRRect(borderRadius: _pageContentBorderRadius, child:
         Column(mainAxisSize: MainAxisSize.min, children: [
-          Padding(padding: EdgeInsets.only(top: _pageHeadingHeight), child:
-            _contentHeadingWidget,
-          ),
+          _imageHeadingWidget,
+          _contentHeadingWidget,
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Visibility(visible: true, child:
-                Expanded(flex: 3, child:
-                  Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _titleWidget,
-                    _detailsWidget,
-                  ]),
-                ),
-              ),
-              Visibility(visible: _hasImage, child:
-                Expanded(flex: 1, child:
-                  _imageDetailWidget,
-                )
-              ),
+            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              _titleWidget,
+              _detailsWidget,
             ]),
           ),
-        ],),
+        ]),
       ),
-      _pageHeadingWidget,
-    ],);
+    );
 
   Widget get _linkContentWidget =>
     Container(decoration: _linkContentDecoration, child:
@@ -287,7 +274,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
   );
 
-  static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.vertical(bottom: Radius.circular(4));
+  static BorderRadiusGeometry get _pageContentBorderRadius => BorderRadius.all(Radius.circular(4));
 
   static Decoration get _linkContentDecoration => BoxDecoration(
     color: Styles().colors?.white,
@@ -316,13 +303,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
 
   double get _pageHeadingHeight => 7;
 
-  Widget get _imageDetailWidget =>
-    AspectRatio(aspectRatio: 1.3, child:
-      Image.network(widget.event.imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)
-    );
-  
-
-  Widget get _contentHeadingWidget => 
+  Widget get _contentHeadingWidget =>
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 16, top: 16, bottom: 8), child:
