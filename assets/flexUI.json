@@ -222,12 +222,7 @@
 	"defaults": {
 		"favorites": {
 			"content": {
-				"home": ["wallet"],
-				"_home.app_help": ["faqs", "feedback", "review"],
-				"_home.dinings": ["dinings_all", "dinings_open"],
-				"_home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
-				"_home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "all_notifications"],
-				"_home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
+				"home": ["event_feed", "wallet"],
 				"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"]
 			},
 			"rules": {
