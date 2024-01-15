@@ -1348,6 +1348,8 @@
     "panel.event2.detail.general.contacts.title": "Contactos",
     "panel.event2.detail.general.admin_settings.title": "Configuración del Administrador del Evento",
     "panel.event2.detail.general.add_to_calendar.title": "Agregar al Calendario",
+    "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
+    "panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
     "panel.event2.detail.general.promote.title": "Share this event",
     "panel.event2.detail.general.super_event.abbreviation.title": "Múltiple",
     "panel.event2.detail.general.recurrence.abbreviation.title": "Se repite",
@@ -3872,6 +3874,7 @@
     "logic.date_time.greeting.evening": "Buena noches",
     "logic.date_time.greeting.night": "Buenas noches",
 
+    "logic.calendar.create_event_succeeded": "Event added to calendar.",
     "logic.calendar.create_event_failed": "No se pudo crear el evento.",
     "logic.calendar.permission_denied": "No se puede guardar el evento en el calendario. Permisos no concedidos.",
 

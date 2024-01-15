@@ -1349,6 +1349,8 @@
     "panel.event2.detail.general.contacts.title": "Contacts",
     "panel.event2.detail.general.admin_settings.title": "Event Admin Settings",
     "panel.event2.detail.general.add_to_calendar.title": "Add to Calendar",
+    "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
+    "panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
     "panel.event2.detail.general.promote.title": "Share this event",
     "panel.event2.detail.general.super_event.abbreviation.title": "Multi",
     "panel.event2.detail.general.recurrence.abbreviation.title": "Repeats",
@@ -3869,6 +3871,7 @@
     "logic.date_time.greeting.evening": "Good evening",
     "logic.date_time.greeting.night": "Good night",
 
+    "logic.calendar.create_event_succeeded": "Event added to calendar.",
     "logic.calendar.create_event_failed": "Failed to create event.",
     "logic.calendar.permission_denied": "Unable to save event to calendar. Permissions not granted.",
 
