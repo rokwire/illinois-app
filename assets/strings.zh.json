@@ -27,6 +27,8 @@
 	"dialog.apply.hint":"",
 	"dialog.send.title":"發送",
 	"dialog.send.hint":"",
+	"dialog.show.title":"Show",
+	"dialog.show.hint":"",
 
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",

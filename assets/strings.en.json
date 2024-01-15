@@ -27,6 +27,8 @@
     "dialog.apply.hint":"",
     "dialog.send.title":"Send",
     "dialog.send.hint":"",
+    "dialog.show.title":"Show",
+    "dialog.show.hint":"",
 
     "tabbar.home.title":"Home",
     "tabbar.home.hint":"Home Page",
