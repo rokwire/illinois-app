@@ -66,12 +66,15 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
         final String fileName = 'event - $eventName';
         result = await ImageUtils.saveToFs(updatedImageBytes, fileName) ?? false;
       }
-      String platformTargetText = (defaultTargetPlatform == TargetPlatform.android)
+
+      const String destinationMacro = '{{Destination}}';
+      String messageSource = (result
+          ? (Localization().getStringEx("panel.event_qr_code.alert.save.success.msg", "Successfully saved qr code in $destinationMacro"))
+          : Localization().getStringEx("panel.event_qr_code.alert.save.fail.msg", "Failed to save qr code in $destinationMacro"));
+      String destinationTargetText = (defaultTargetPlatform == TargetPlatform.android)
           ? Localization().getStringEx("panel.event_qr_code.alert.save.success.pictures", "Pictures")
           : Localization().getStringEx("panel.event_qr_code.alert.save.success.gallery", "Gallery");
-      String message = result
-          ? (Localization().getStringEx("panel.event_qr_code.alert.save.success.msg", "Successfully saved qr code in ") + platformTargetText)
-          : Localization().getStringEx("panel.event_qr_code.alert.save.fail.msg", "Failed to save qr code in ") + platformTargetText;
+      String message = messageSource.replaceAll(destinationMacro, destinationTargetText);
       AppAlert.showDialogResult(context, message).then((value) {
         if(result) {
           Navigator.of(context).pop();
