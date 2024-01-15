@@ -699,8 +699,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
     String? body = content["body"];
     Function? completion = content["onComplete"];
-    AppAlert.showDialogResult(context, body).then((value){
-      if(completion != null){
+    AppAlert.showDialogResult(context, body, buttonTitle: Localization().getStringEx("dialog.show.title", "Show")).then((bool? result) {
+      if ((result == true) && (completion != null)) {
         completion();
       }
     });

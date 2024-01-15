@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated some display strings in Event2QRCodePanel [#3838](https://github.com/rokwire/illinois-app/issues/3838).
 ### Fixed
 - Make sure to display result of Add to Calendar operation [#3789](https://github.com/rokwire/illinois-app/issues/3789).
+- Obey user selection when processing Firebase message [#2774](https://github.com/rokwire/illinois-app/issues/2774).
 
 ## [5.1.7] - 2024-01-12
 ### Changed
