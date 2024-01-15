@@ -84,7 +84,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx('panel.event_qr_code.title', 'Promote this event'),
+        title: Localization().getStringEx('panel.event_qr_code.title', 'Share this event'),
         textAlign: TextAlign.center,
       ),
       body: SingleChildScrollView(
@@ -96,7 +96,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                    Localization().getStringEx('panel.event_qr_code.description.label', 'Invite others to join this event by sharing a link or the QR code after saving it to your photo library.'),
+                    Localization().getStringEx('panel.event_qr_code.description.label', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
                     style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                 ),
                 Padding(
