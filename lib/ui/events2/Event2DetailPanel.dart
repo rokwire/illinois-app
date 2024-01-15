@@ -986,7 +986,12 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }  
   void _onAddToCalendar(){
-    DeviceCalendar().addToCalendar(_event);
+    DeviceCalendar().addToCalendar(_event).then((bool result) {
+      AppAlert.showDialogResult(context, result
+        ? Localization().getStringEx('panel.event2.detail.general.add_to_calendar.succeeded.message', 'Added to Calendar')
+        : Localization().getStringEx('panel.event2.detail.general.add_to_calendar.failed.message', 'Failed to add to Calendar')
+      );
+    });
   }
 
   void _onPromote(){

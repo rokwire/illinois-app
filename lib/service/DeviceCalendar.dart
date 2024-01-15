@@ -80,6 +80,11 @@ class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsList
     }
   }
 
+  @protected
+  void onCreateOrUpdateEventSucceeded(Result<String>? createEventResult) {
+    AppToast.show(Localization().getStringEx('logic.calendar.create_event_succeeded', 'Event added to calendar.'));
+  }
+
   @override
   void onCreateOrUpdateEventFailed(Result<String>? createEventResult) {
     AppToast.show(createEventResult?.data ?? createEventResult?.errors.toString() ?? Localization().getStringEx('logic.calendar.create_event_failed', 'Failed to create event.'));
