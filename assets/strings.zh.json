@@ -2517,6 +2517,18 @@
 	"panel.group_qr_code.button.save.title": "储存二维码",
 	"panel.group_qr_code.button.share.title": "分享连结",
 
+	"panel.event_qr_code.alert.no_qr_code.msg": "There is no QR Code",
+	"panel.event_qr_code.alert.save.success.pictures": "Pictures",
+	"panel.event_qr_code.alert.save.success.gallery": "Gallery",
+	"panel.event_qr_code.alert.save.success.msg": "Successfully saved qr code in {{Destination}}",
+	"panel.event_qr_code.alert.save.fail.msg": "Failed to save qr code in {{Destination}}",
+	"panel.event_qr_code.title": "Share this event",
+	"panel.event_qr_code.description.label": "Invite others to view this event by sharing a link or the QR code after saving it to your photo library.",
+	"panel.event_qr_code.code.hint": "QR code image",
+	"panel.event_qr_code.primary.heading.title": "Event promotion Key",
+	"panel.event_qr_code.button.save.title": "Save QR Code",
+	"panel.event_qr_code.button.share.title": "Share Link",
+
 	"panel.find_event.filter.tags.all": "所有标签",
 	"panel.find_event.filter.tags.my": "我的标签",
 	"panel.find_event.filter.time.upcoming": "即将发生的",
