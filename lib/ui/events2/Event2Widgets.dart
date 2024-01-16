@@ -504,18 +504,24 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
         _buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.in_person.label', 'In Person'), 'location'),
       ];
 
-      String? locationText = widget.event.location?.displayName ?? widget.event.location?.displayAddress ?? widget.event.location?.displayDescription; // ?? widget.event.location?.displayCoordinates
-      if (locationText != null) {
-        details.add(
-          _buildDetailWidget(Text(locationText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
-        );
+      String? displayName = widget.event.location?.displayName;
+      if (displayName != null) {
+        details.add(_buildLocationTextDetailWidget(displayName));
+      }
+
+      String? displayAddress = widget.event.location?.displayAddress;
+      if ((displayAddress != null) && (displayAddress != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayAddress));
+      }
+
+      String? displayDescription = widget.event.location?.displayDescription; // ?? widget.event.location?.displayCoordinates
+      if ((displayDescription != null) && (displayDescription != displayAddress) && (displayDescription != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayDescription));
       }
 
       String? distanceText = widget.event.getDisplayDistance(_userLocation);
       if (distanceText != null) {
-        details.add(
-          _buildDetailWidget(Text(distanceText, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero)
-        );
+        details.add(_buildLocationTextDetailWidget(distanceText));
       }
 
       return details;
@@ -527,22 +533,18 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
     if (widget.event.hasLinkedEvents) {
       List<Widget> details = <Widget>[];
       if (widget.event.isSuperEvent) {
-        details.add(_buildTextDetailWidget(
-          Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'),
-          'event',
-        ));
+        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.super_event.label', 'Multi-Event'), 'event',));
       }
       if (widget.event.isRecurring) {
-        details.add(_buildTextDetailWidget(
-          Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'),
-          'recurrence',
-        ));
+        details.add(_buildTextDetailWidget(Localization().getStringEx('widget.event2.card.detail.recurring.label', 'Repeats'), 'recurrence',));
       }
       return details.isNotEmpty ? details : null;
     }
     return null;
   }
-  
+
+  Widget _buildLocationTextDetailWidget(String text) =>
+    _buildDetailWidget(Text(text, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'),), 'location', iconVisible: false, contentPadding: EdgeInsets.zero);
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     EdgeInsetsGeometry contentPadding = const EdgeInsets.only(top: 4),
@@ -551,10 +553,7 @@ class _Event2CardState extends State<Event2Card>  implements NotificationsListen
   }) =>
     _buildDetailWidget(
       Text(text, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'), maxLines: maxLines, overflow: TextOverflow.ellipsis,),
-      iconKey,
-      contentPadding: contentPadding,
-      iconPadding: iconPadding,
-      iconVisible: iconVisible
+      iconKey, contentPadding: contentPadding, iconPadding: iconPadding, iconVisible: iconVisible
     );
 
   Widget _buildDetailWidget(Widget contentWidget, String iconKey, {

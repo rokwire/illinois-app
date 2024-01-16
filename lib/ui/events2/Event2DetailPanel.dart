@@ -352,8 +352,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
 
       bool canLocation = _event?.location?.isLocationCoordinateValid ?? false;
 
-      String textDetailStyleName = canLocation ?
-        'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular';
+      String textDetailStyleName = canLocation ? 'widget.explore.card.detail.regular.underline' : 'widget.explore.card.detail.regular';
       TextStyle? textDetailStyle = Styles().textStyles?.getTextStyle(textDetailStyleName);
       
       List<Widget> details = <Widget>[
@@ -362,24 +361,24 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
         ),
       ];
 
-      String? locationText = _event?.location?.displayName ?? _event?.location?.displayAddress ?? _event?.location?.displayDescription; // ?? _event?.location?.displayCoordinates;
-      if (locationText != null) {
-        details.add(
-          _buildDetailWidget(Text(locationText, maxLines: 1, style: textDetailStyle), 'location',
-            iconVisible: false,
-            detailPadding: EdgeInsets.zero
-          )
-        );
+      String? displayName = _event?.location?.displayName;
+      if (displayName != null) {
+        details.add(_buildLocationTextDetailWidget(displayName, textStyle: textDetailStyle));
+      }
+
+      String? displayAddress = _event?.location?.displayAddress;
+      if ((displayAddress != null) && (displayAddress != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayAddress, textStyle: textDetailStyle));
+      }
+
+      String? displayDescription = _event?.location?.displayDescription;
+      if ((displayDescription != null) && (displayDescription != displayAddress) && (displayDescription != displayName)) {
+        details.add(_buildLocationTextDetailWidget(displayDescription, textStyle: textDetailStyle));
       }
 
       String? distanceText = _event?.getDisplayDistance(_userLocation);
       if (distanceText != null) {
-        details.add(
-          _buildDetailWidget(Text(distanceText, maxLines: 1, style: textDetailStyle,), 'location',
-            iconVisible: false,
-            detailPadding: EdgeInsets.zero
-          )
-        );
+        details.add(_buildLocationTextDetailWidget(distanceText, textStyle: textDetailStyle));
       }
 
       if (canLocation) {
@@ -761,6 +760,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     );
 
   Widget get _detailSpacerWidget => Container(height: 8,);
+
+  Widget _buildLocationTextDetailWidget(String text, { TextStyle? textStyle }) =>
+    _buildDetailWidget(Text(text, style: textStyle ?? Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'), maxLines: 1, overflow: TextOverflow.ellipsis),
+      'location', iconVisible: false, detailPadding: EdgeInsets.zero
+    );
 
   Widget _buildTextDetailWidget(String text, String iconKey, {
     TextStyle? textStyle, // 'widget.info.medium' : 'widget.info.medium.underline'

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed content update check in ContentAttributesPanel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
+- Fixed Event2 location detail display [#3842](https://github.com/rokwire/illinois-app/issues/3842) [#3843](https://github.com/rokwire/illinois-app/issues/3843).
 
 ## [5.1.8] - 2024-01-15
 ### Changed
