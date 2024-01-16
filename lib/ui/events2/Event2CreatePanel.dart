@@ -595,6 +595,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: _canGoBack, child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBack, child:
         _buildScaffoldContent(),

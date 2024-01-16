@@ -5,6 +5,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [5.1.8] - 2024-01-15
+### Changed
+- Updated some display strings in Event2QRCodePanel [#3838](https://github.com/rokwire/illinois-app/issues/3838).
+### Fixed
+- Make sure to display result of Add to Calendar operation [#3789](https://github.com/rokwire/illinois-app/issues/3789).
+- Obey user selection when processing Firebase message [#2774](https://github.com/rokwire/illinois-app/issues/2774).
+
+## [5.1.7] - 2024-01-12
+### Changed
+- Make event card to look the same in list and page display modes [#3854](https://github.com/rokwire/illinois-app/issues/3854).
+- Make All Events widget a default widget for all NEW app users [#3856](https://github.com/rokwire/illinois-app/issues/3856).
+### Fixed
+- Fixed My Events widget content update of when favorites get changed [#3851](https://github.com/rokwire/illinois-app/issues/3851).
+### Added
+- Added linked events horizontal scroller in event cards [#3860](https://github.com/rokwire/illinois-app/issues/3860).
+
+## [5.1.6] - 2024-01-11
+### Added
+- Added favorite and admin event filter types, My events updated to use it [#3851](https://github.com/rokwire/illinois-app/issues/3851).
+### Changed
+- Make Promote group/event available to everyone [#3838](https://github.com/rokwire/illinois-app/issues/3838).
+
 ## [5.1.5] - 2024-01-03
 ### Added
 - Introduced Name Pronouncement Dialog [#3846](https://github.com/rokwire/illinois-app/issues/3846).

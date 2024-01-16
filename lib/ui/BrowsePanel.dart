@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -948,6 +949,11 @@ class _BrowseEntry extends StatelessWidget {
     Event2HomePanel.present(context);
   }
 
+  void _onTapMyEvents(BuildContext context) {
+    Analytics().logSelect(target: "My Events");
+    Event2HomePanel.present(context, types: LinkedHashSet<Event2TypeFilter>.from([Event2TypeFilter.favorite]));
+  }
+
   /*void _onTapSuggestedEvents(BuildContext context) {
     Analytics().logSelect(target: "Suggested Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(exploreType: ExploreType.Events); } ));
@@ -991,11 +997,6 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyGameDay(BuildContext context) {
     Analytics().logSelect(target: "My Game Day");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
-  }
-
-  void _onTapMyEvents(BuildContext context) {
-    Analytics().logSelect(target: "My Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [Event2.favoriteKeyName]); } )); // Event.favoriteKeyName
   }
 
   void _onTapMyDinings(BuildContext context) {

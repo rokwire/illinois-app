@@ -517,6 +517,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       panels.add(_panels[rootTab] ?? Container());
     }
 
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(
         child: Container(
           color: Colors.white,
@@ -697,8 +699,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
     String? body = content["body"];
     Function? completion = content["onComplete"];
-    AppAlert.showDialogResult(context, body).then((value){
-      if(completion != null){
+    AppAlert.showDialogResult(context, body, buttonTitle: Localization().getStringEx("dialog.show.title", "Show")).then((bool? result) {
+      if ((result == true) && (completion != null)) {
         completion();
       }
     });

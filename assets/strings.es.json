@@ -27,6 +27,8 @@
     "dialog.apply.hint":"",
     "dialog.send.title":"Enviar",
     "dialog.send.hint":"",
+    "dialog.show.title":"Show",
+    "dialog.show.hint":"",
 
     "tabbar.home.title":"Inicio",
     "tabbar.home.hint":"Página de inicio",
@@ -1348,6 +1350,9 @@
     "panel.event2.detail.general.contacts.title": "Contactos",
     "panel.event2.detail.general.admin_settings.title": "Configuración del Administrador del Evento",
     "panel.event2.detail.general.add_to_calendar.title": "Agregar al Calendario",
+    "panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
+    "panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
+    "panel.event2.detail.general.promote.title": "Share this event",
     "panel.event2.detail.general.super_event.abbreviation.title": "Múltiple",
     "panel.event2.detail.general.recurrence.abbreviation.title": "Se repite",
     "panel.event2.detail.general.super_event.list.title": "Eventos múltiples",
@@ -2416,7 +2421,7 @@
     "panel.group_detail.button.manage_members.title": "Administrar los Miembros",
     "panel.group_detail.button.manage_members.hint": "",
     "panel.group_detail.button.group_settings.title": "Configuración del Grupo",
-    "panel.group_detail.button.group_promote.title": "Promocionar este grupo",
+    "panel.group_detail.button.group_promote.title": "Share this group",
     "panel.group_detail.button.group_promote.hint": "",
     "panel.group_detail.button.take_attendance.title": "Pasar la Lista",
     "panel.group_detail.button.take_attendance.hint": "",
@@ -2530,6 +2535,18 @@
     "panel.group_qr_code.primary.heading.title": "Clave de Promoción del Grupo",
     "panel.group_qr_code.button.save.title": "Guardar el código QR",
     "panel.group_qr_code.button.share.title": "Compartir el Enlace",
+
+    "panel.event_qr_code.alert.no_qr_code.msg": "There is no QR Code",
+    "panel.event_qr_code.alert.save.success.pictures": "Pictures",
+    "panel.event_qr_code.alert.save.success.gallery": "Gallery",
+    "panel.event_qr_code.alert.save.success.msg": "Successfully saved qr code in {{Destination}}",
+    "panel.event_qr_code.alert.save.fail.msg": "Failed to save qr code in {{Destination}}",
+    "panel.event_qr_code.title": "Share this event",
+    "panel.event_qr_code.description.label": "Invite others to view this event by sharing a link or the QR code after saving it to your photo library.",
+    "panel.event_qr_code.code.hint": "QR code image",
+    "panel.event_qr_code.primary.heading.title": "Event promotion Key",
+    "panel.event_qr_code.button.save.title": "Save QR Code",
+    "panel.event_qr_code.button.share.title": "Share Link",
 
     "panel.find_event.filter.tags.all": "Todas las Etiquetas",
     "panel.find_event.filter.tags.my": "Mis Etiquetas",
@@ -3259,9 +3276,13 @@
     "widget.home.recent_items.button.all.hint":"Toca para ver todos los elementos",
 
     "widget.home.event2_feed.label.header.title":"Todos los Eventos",
-    "widget.home.event2_feed.text.empty.description": "No hay eventos disponibles.",
+    "widget.home.event2_feed.text.empty.description": "There are no events available.",
+    "widget.home.event2_feed.text.offline.description": "Events are not available while offline.",
     "widget.home.event2_feed.button.all.title":"Ver Todos",
     "widget.home.event2_feed.button.all.hint":"Toca para ver todos los eventos",
+
+    "widget.home.my_events2.label.header.title":"My Events",
+    "widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
 
     "widget.home.groups.my.label.header.title":"Mis grupos",
     "widget.home.groups.all.label.header.title":"Todos los grupos",
@@ -3792,6 +3813,8 @@
     "model.event2.event_type.private": "Privado",
     "model.event2.event_type.nearby": "Cerca",
     "model.event2.event_type.super_event": "Multi-evento",
+    "model.event2.event_type.admin": "Administrador",
+    "model.event2.event_type.favorite": "Protagonizado",
 
     "model.event2.event_time.upcoming": "Próximos",
     "model.event2.event_time.today": "Hoy",
@@ -3853,6 +3876,7 @@
     "logic.date_time.greeting.evening": "Buena noches",
     "logic.date_time.greeting.night": "Buenas noches",
 
+    "logic.calendar.create_event_succeeded": "Event added to calendar.",
     "logic.calendar.create_event_failed": "No se pudo crear el evento.",
     "logic.calendar.permission_denied": "No se puede guardar el evento en el calendario. Permisos no concedidos.",
 

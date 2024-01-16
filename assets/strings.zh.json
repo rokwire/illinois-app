@@ -27,6 +27,8 @@
 	"dialog.apply.hint":"",
 	"dialog.send.title":"發送",
 	"dialog.send.hint":"",
+	"dialog.show.title":"Show",
+	"dialog.show.hint":"",
 
 	"tabbar.home.title":"主页",
 	"tabbar.home.hint":"主页",
@@ -1334,6 +1336,9 @@
 	"panel.event2.detail.general.contacts.title": "联络信息",
 	"panel.event2.detail.general.admin_settings.title": "活动管理员设定",
 	"panel.event2.detail.general.add_to_calendar.title": "加入日历",
+	"panel.event2.detail.general.add_to_calendar.succeeded.message": "Added to Calendar",
+	"panel.event2.detail.general.add_to_calendar.failed.message": "Failed to add to Calendar",
+	"panel.event2.detail.general.promote.title": "Share this event",
 	"panel.event2.detail.general.super_event.abbreviation.title": "Multi",
 	"panel.event2.detail.general.recurrence.abbreviation.title": "重复",
 	"panel.event2.detail.general.super_event.list.title": "多个活动",
@@ -2402,7 +2407,7 @@
 	"panel.group_detail.button.manage_members.hint": "",
 	"panel.group_detail.button.group_settings.title": "群组设定",
 	"panel.group_detail.button.group_settings.hint": "",
-	"panel.group_detail.button.group_promote.title": "宣传此群组",
+	"panel.group_detail.button.group_promote.title": "Share this group",
 	"panel.group_detail.button.group_promote.hint": "",
 	"panel.group_detail.button.take_attendance.title": "签到",
 	"panel.group_detail.button.take_attendance.hint": "",
@@ -2515,6 +2520,18 @@
 	"panel.group_qr_code.primary.heading.title": "群组宣传密钥",
 	"panel.group_qr_code.button.save.title": "储存二维码",
 	"panel.group_qr_code.button.share.title": "分享连结",
+
+	"panel.event_qr_code.alert.no_qr_code.msg": "There is no QR Code",
+	"panel.event_qr_code.alert.save.success.pictures": "Pictures",
+	"panel.event_qr_code.alert.save.success.gallery": "Gallery",
+	"panel.event_qr_code.alert.save.success.msg": "Successfully saved qr code in {{Destination}}",
+	"panel.event_qr_code.alert.save.fail.msg": "Failed to save qr code in {{Destination}}",
+	"panel.event_qr_code.title": "Share this event",
+	"panel.event_qr_code.description.label": "Invite others to view this event by sharing a link or the QR code after saving it to your photo library.",
+	"panel.event_qr_code.code.hint": "QR code image",
+	"panel.event_qr_code.primary.heading.title": "Event promotion Key",
+	"panel.event_qr_code.button.save.title": "Save QR Code",
+	"panel.event_qr_code.button.share.title": "Share Link",
 
 	"panel.find_event.filter.tags.all": "所有标签",
 	"panel.find_event.filter.tags.my": "我的标签",
@@ -3243,9 +3260,13 @@
 	"widget.home.recent_items.button.all.hint":"點擊查看所有項目",
 
 	"widget.home.event2_feed.label.header.title":"All Events",
-	"widget.home.event2_feed.text.empty.description": "没有公告的活动。",
+	"widget.home.event2_feed.text.empty.description": "There are no events available.",
+ 	"widget.home.event2_feed.text.offline.description": "Events are not available while offline.",
 	"widget.home.event2_feed.button.all.title":"检视全部",
 	"widget.home.event2_feed.button.all.hint":"点击以活动",
+
+	"widget.home.my_events2.label.header.title":"My Events",
+	"widget.home.my_events2.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events Feed</b></a> for quick access here.",
 
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有群組",
@@ -3770,6 +3791,8 @@
 	"model.event2.event_type.private": "私人",
 	"model.event2.event_type.nearby": "附近",
 	"model.event2.event_type.super_event": "多人",
+	"model.event2.event_type.admin": "行政",
+	"model.event2.event_type.favorite": "已加星標",
 
 	"model.event2.event_time.upcoming": "即将到來",
 	"model.event2.event_time.today": "今日",
@@ -3831,6 +3854,7 @@
 	"logic.date_time.greeting.evening": "晚上好",
 	"logic.date_time.greeting.night": "晚安",
 
+	"logic.calendar.create_event_succeeded": "Event added to calendar.",
 	"logic.calendar.create_event_failed": "創建活動失敗。",
 	"logic.calendar.permission_denied": "無法將事件保存到日曆。 未授予權限。",
 

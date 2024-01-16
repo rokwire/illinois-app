@@ -44,6 +44,8 @@ class _Event2SetupSponsorshipAndContactsPanelState extends State<Event2SetupSpon
 
   @override
   Widget build(BuildContext context) {
+    // TBD: Replace with PopScope
+    // ignore: deprecated_member_use
     return WillPopScope(onWillPop: () => AppPopScope.back(_onHeaderBack), child: Platform.isIOS ?
       BackGestureDetector(onBack: _onHeaderBack, child:
         _buildScaffoldContent(),

@@ -66,12 +66,15 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
         final String fileName = 'event - $eventName';
         result = await ImageUtils.saveToFs(updatedImageBytes, fileName) ?? false;
       }
-      String platformTargetText = (defaultTargetPlatform == TargetPlatform.android)
+
+      const String destinationMacro = '{{Destination}}';
+      String messageSource = (result
+          ? (Localization().getStringEx("panel.event_qr_code.alert.save.success.msg", "Successfully saved qr code in $destinationMacro"))
+          : Localization().getStringEx("panel.event_qr_code.alert.save.fail.msg", "Failed to save qr code in $destinationMacro"));
+      String destinationTargetText = (defaultTargetPlatform == TargetPlatform.android)
           ? Localization().getStringEx("panel.event_qr_code.alert.save.success.pictures", "Pictures")
           : Localization().getStringEx("panel.event_qr_code.alert.save.success.gallery", "Gallery");
-      String message = result
-          ? (Localization().getStringEx("panel.event_qr_code.alert.save.success.msg", "Successfully saved qr code in ") + platformTargetText)
-          : Localization().getStringEx("panel.event_qr_code.alert.save.fail.msg", "Failed to save qr code in ") + platformTargetText;
+      String message = messageSource.replaceAll(destinationMacro, destinationTargetText);
       AppAlert.showDialogResult(context, message).then((value) {
         if(result) {
           Navigator.of(context).pop();
@@ -84,7 +87,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx('panel.event_qr_code.title', 'Promote this event'),
+        title: Localization().getStringEx('panel.event_qr_code.title', 'Share this event'),
         textAlign: TextAlign.center,
       ),
       body: SingleChildScrollView(
@@ -96,7 +99,7 @@ class _EventQrCodePanelState extends State<Event2QrCodePanel> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                    Localization().getStringEx('panel.event_qr_code.description.label', 'Invite others to join this event by sharing a link or the QR code after saving it to your photo library.'),
+                    Localization().getStringEx('panel.event_qr_code.description.label', 'Invite others to view this event by sharing a link or the QR code after saving it to your photo library.'),
                     style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
                 ),
                 Padding(

@@ -39,7 +39,7 @@ import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeCustomizeFavoritesPanel.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
-import 'package:illinois/ui/home/HomeEvent2FeedWidget.dart';
+import 'package:illinois/ui/home/HomeEvent2Widget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeInboxWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
@@ -59,7 +59,6 @@ import 'package:illinois/ui/home/HomeWellnessTipsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -149,6 +148,15 @@ class HomePanel extends StatefulWidget {
         return HomeEvent2FeedWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
       } else {
         return HomeEvent2FeedWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController,);
+      }
+    }
+    else if (code == 'my_events') {
+      if (title) {
+        return HomeMyEvents2Widget.title;
+      } else if (handle) {
+        return HomeMyEvents2Widget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position,);
+      } else {
+        return HomeMyEvents2Widget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController);
       }
     }
     /*else if (code == 'suggested_events') {
@@ -413,15 +421,6 @@ class HomePanel extends StatefulWidget {
       }
     }
 
-    else if (code == 'my_events') {
-      if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: Event2.favoriteKeyName); 
-      } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _globalKey(globalKeys, code), favoriteId: code, dragAndDropHost: dragAndDropHost, position: position, favoriteKey: Event2.favoriteKeyName, );
-      } else {
-        return HomeFavoritesWidget(key: _globalKey(globalKeys, code), favoriteId: code, updateController: updateController, favoriteKey: Event2.favoriteKeyName);
-      }
-    }
     else if (code == 'my_dining') {
       if (title) {
         return HomeFavoritesWidget.titleFromKey(favoriteKey: Dining.favoriteKeyName);
