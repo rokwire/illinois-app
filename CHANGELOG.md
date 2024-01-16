@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed content update check in ContentAttributesPanel [#3828](https://github.com/rokwire/illinois-app/issues/3828).
+
 ## [5.1.8] - 2024-01-15
 ### Changed
 - Updated some display strings in Event2QRCodePanel [#3838](https://github.com/rokwire/illinois-app/issues/3838).

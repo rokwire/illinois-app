@@ -59,6 +59,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
 
   Map<String, LinkedHashSet<dynamic>> _selection = <String, LinkedHashSet<dynamic>>{};
   Map<String, LinkedHashSet<dynamic>> _initialSelection = <String, LinkedHashSet<dynamic>>{};
+  ContentAttributes? _initialContentAttributes;
 
   int get requirementsScope => widget.filtersMode ? contentAttributeRequirementsFunctionalScopeFilter : contentAttributeRequirementsFunctionalScopeCreate;
 
@@ -68,6 +69,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
       _selection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<dynamic>>();
       _initialSelection = ContentAttributes.selectionFromAttributesSelection(widget.selection) ?? Map<String, LinkedHashSet<dynamic>>();
     }
+    _initialContentAttributes = widget.contentAttributes?.clone();
     super.initState();
   }
 
@@ -358,7 +360,7 @@ class _ContentAttributesPanelState extends State<ContentAttributesPanel> {
   List<Widget>? get _headerBarActions {
     List<Widget> actions = <Widget>[];
     if (!_isOnboardingMode) {
-      if (!DeepCollectionEquality().equals(_initialSelection, _selection) && (widget.filtersMode ? _isSelectionNotEmpty : _isSelectionValid)) {
+      if ((!DeepCollectionEquality().equals(_initialSelection, _selection) || (_initialContentAttributes != widget.contentAttributes)) && (widget.filtersMode ? _isSelectionNotEmpty : _isSelectionValid)) {
         actions.add(_buildHeaderBarButton(
           title:  Localization().getStringEx('dialog.apply.title', 'Apply'),
           onTap: _onTapApply,
