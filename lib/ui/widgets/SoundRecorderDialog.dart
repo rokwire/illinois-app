@@ -1,50 +1,56 @@
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:http/http.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path/path.dart' as Path;
+import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/Log.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'dart:io';
 
 import '../../service/Analytics.dart';
+import '../../service/Auth2.dart';
+import '../../service/Config.dart';
 
 enum RecorderMode{record, play}
 class SoundRecorderDialog extends StatefulWidget {
-  //TMP:
-  static final String storage_key = "profile_audio_pronouncement";
   final String? initialRecordPath; //TBD update type
+  final List<int>? initialRecordBytes; //TBD update type
 
-  const SoundRecorderDialog({super.key, this.initialRecordPath});
+  const SoundRecorderDialog({super.key, this.initialRecordPath, this.initialRecordBytes});
 
   @override
   _SoundRecorderDialogState createState() => _SoundRecorderDialogState();
 
-  static Future show(BuildContext context, {String? initialRecordPath}) {
+  static Future show(BuildContext context, {String? initialRecordPath, List<int>? initialRecordBytes}) {
     return showDialog(
         context: context,
         builder: (_) =>
             Material(
               type: MaterialType.transparency,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: SoundRecorderDialog(initialRecordPath: initialRecordPath),
+              child: SoundRecorderDialog(initialRecordPath: initialRecordPath, initialRecordBytes: initialRecordBytes),
             )
     );
   }
 }
 
 class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
-  late RecorderController _controller;
+  late SoundRecorderController _controller;
 
   RecorderMode get _mode => _controller.hasRecord ? RecorderMode.play : RecorderMode.record;
 
   @override
   void initState() {
-    _controller = RecorderController(
+    _controller = SoundRecorderController(
       initialRecordPath: widget.initialRecordPath,
       notifyChanged: (fn) =>setStateIfMounted(fn)
     );
@@ -161,7 +167,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   void _onStopRecording() =>
       _controller.stopRecording().then(
-              (_) => _controller.loadPlayer());  //automatically load after recording is done
+              (_) => _controller.preparePlayer());  //automatically load after recording is done
 
   void _onStartRecording() => _controller.startRecording();
 
@@ -171,14 +177,25 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   void _onTapReset() {
     _controller.resetRecord();
-    Storage().setStringWithName(SoundRecorderDialog.storage_key, null); //TBD remove
   }
 
-  void _onTapSave(){
-    //TBD
-    AppToast.show("TBD implement SAVE");
-    //TMP: TBD REMOVE
-    Storage().setStringWithName(SoundRecorderDialog.storage_key, _controller._audioPath);
+  void _onTapSave() async {
+    //TBD Loading/progress
+    try {
+      File? audioFile = _controller.recordFile;
+      if (audioFile?.existsSync() == true) {
+        AudioResult result = await VoiceRecordAPI().uploadVoiceRecord(_controller._audioPath);
+        if(result.resultType == AudioResultType.succeeded){
+          //TBD notify changed
+          Log.d(result.data ?? "");
+        } else {
+          //TBD error
+          Log.d(result.errorMessage ?? "");
+        }
+      }
+    }catch(e){
+      Log.e(e.toString());
+    }
     _closeModal();
   }
 
@@ -187,8 +204,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     _closeModal();
   }
 
-  void _closeModal(){
-    _controller.stopRecord();
+  void _closeModal() {
     _controller.stopRecord();
     Navigator.of(context).pop();
   }
@@ -206,16 +222,6 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     }
   }
 
-  String get _statusText{
-    if(_mode == RecorderMode.record){
-      return _controller.isRecording ?
-        Localization().getStringEx("", "Recording") :
-        Localization().getStringEx("", "Record");
-    } else {
-      return _controller.playerDisplayTime;
-    }
-  }
-
   String get _hintText{
     if(_mode == RecorderMode.record){
       return _controller.isRecording ?
@@ -226,22 +232,51 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     }
   }
 
+  String get _statusText{
+    if(_mode == RecorderMode.record){
+      return _controller.isRecording ?
+        Localization().getStringEx("", "Recording") :
+        Localization().getStringEx("", "Record");
+    } else {
+      return playerDisplayTime;
+    }
+  }
+
+  String get playerDisplayTime => "$_playerElapsedTime/$_playerLengthTime";
+
+  String get _playerElapsedTime => durationToDisplayTime(_controller._playerTimer) ?? _defaultPlayerTime;
+
+  String get _playerLengthTime => durationToDisplayTime(_controller.playerLength) ?? _defaultPlayerTime ;
+
+  String get _defaultPlayerTime => "0:00";
+
   bool get _resetEnabled => _mode == RecorderMode.play;
 
   bool get _saveEnabled => _mode == RecorderMode.play;
+
+  String? durationToDisplayTime(Duration? duration) {
+    if(duration == null)
+      return null;
+
+    final HH =  (duration.inHours).toString().padLeft(1, '0');
+    final mm = (duration.inMinutes % 60).toString().padLeft(1, '0');
+    final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
+
+    return duration.inHours > 1 ? '$HH:$mm:$ss' : '$mm:$ss';
+  }
 }
 
-class RecorderController {
+class SoundRecorderController {
   final Function(void Function()) notifyChanged;
   final String? initialRecordPath; //TBD update to link when ready
 
   late Record _audioRecord;
   late AudioPlayer _audioPlayer;
   Duration? _playerTimer;
-  String _audioPath = "";
+  String? _audioPath = "";
   bool _recording = false;
 
-  RecorderController({required this.notifyChanged, this.initialRecordPath});
+  SoundRecorderController({required this.notifyChanged, this.initialRecordPath});
 
   void init() {
     _audioRecord = Record();
@@ -251,7 +286,7 @@ class RecorderController {
     });
     if(initialRecordPath != null){
       _audioPath = initialRecordPath!;
-      loadPlayer();
+      preparePlayer();
     }
   }
 
@@ -287,16 +322,19 @@ class RecorderController {
     }
   }
 
-  Future<void> loadPlayer() async {
+  //Sets the audioPath to player. This loads the Time and Length of the audio
+  Future<void> preparePlayer() async {
     Log.d("AUDIO PREPARING");
-    await _audioPlayer.setFilePath(_audioPath);
-    notifyChanged(() {});
+    if(StringUtils.isNotEmpty(_audioPath)) {
+      await _audioPlayer.setFilePath(_audioPath!);
+      notifyChanged(() {});
+    }
   }
 
   void playRecord() async {
     try {
       if (hasRecord) {
-        await loadPlayer(); //Reset
+        await preparePlayer(); //Reset
         await _audioPlayer.play().then((_) => stopRecord());
       }
     } catch (e) {
@@ -326,10 +364,20 @@ class RecorderController {
     }
   }
 
-  Future<void> deleteRecording() async {
-    if (_audioPath.isNotEmpty) {
+  void resetRecord() {
+    if(_audioPath != initialRecordPath){ //If newly recorded. Do not delete the Initial record file
+      _deleteRecord();
+    }
+    notifyChanged(() {
+      _audioPath = null;
+    });
+    //TBD additional notification if needed
+  }
+
+  Future<void> _deleteRecord() async {
+    if (_audioPath?.isNotEmpty == true) {
       try {
-        File file = File(_audioPath);
+        File file = File(_audioPath!);
         if (file.existsSync()) {
           file.deleteSync();
           Log.d("FILE DELETED");
@@ -337,15 +385,7 @@ class RecorderController {
       } catch (e) {
         Log.d("FILE NOT DELETED: ${e}");
       }
-
-      notifyChanged(() {
-        _audioPath = "";
-      });
     }
-  }
-
-  void resetRecord() {
-    deleteRecording();
   }
 
   //Getters
@@ -353,33 +393,18 @@ class RecorderController {
 
   bool get hasRecord => StringUtils.isNotEmpty(_audioPath);
 
-  String get recordPath => _audioPath;
+  String? get recordPath => _audioPath;
+
+  File? get recordFile => StringUtils.isNotEmpty(recordPath) ? File(recordPath!) : null;
 
   bool get isPlaying => _audioPlayer.playing;
 
-  String get playerDisplayTime {
-    return "$_playerElapsedTime/$_playerLengthTime";
-  }
+  Duration? get playerLength => _audioPlayer.duration;
 
-  String get _playerElapsedTime =>
-      _playerTimer != null ? displayDuration(_playerTimer!) : "0:00";
-
-  String get _playerLengthTime =>
-      _audioPlayer.duration != null ? displayDuration(_audioPlayer.duration!) : "0:00";
-
-  String displayDuration(Duration duration) {
-    final HH =  (duration.inHours).toString().padLeft(1, '0');
-    final mm = (duration.inMinutes % 60).toString().padLeft(1, '0');
-    final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
-
-    return duration.inHours > 1 ? '$HH:$mm:$ss' : '$mm:$ss';
-  }
+  Duration? get playerTime => _playerTimer;
 }
 
 class NamePronouncementWidget extends StatefulWidget { //TBD move to EditProfile widgets
-  // final String audioPath;
-
-  // const NamePronouncementWidget({super.key, required this.audioPath}); //TBD work with urls
 
   @override
   State<StatefulWidget> createState() => _NamePronouncementState();
@@ -387,11 +412,15 @@ class NamePronouncementWidget extends StatefulWidget { //TBD move to EditProfile
 
 class _NamePronouncementState extends State<NamePronouncementWidget>{
   late AudioPlayer _audioPlayer;
+  String? _storedRecordPath;
+  // List<int>? _storedRecordBytes;
 
   @override
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer();
+    _loadUserRecord();
+    // _prepareAudioPlayer();
   }
 
   @override
@@ -449,12 +478,22 @@ class _NamePronouncementState extends State<NamePronouncementWidget>{
       if (_audioPlayer.playing) {
         await _audioPlayer.stop();
       } else {
-        _loadAudioRecord();
+        _prepareAudioPlayer();
         await _audioPlayer.play();
       }
     } catch (e){
       Log.e(e.toString());
     }
+  }
+
+  void _prepareAudioPlayer() async {
+    Log.d("AUDIO PREPARING");
+    if(_hasStoredPronouncement) {
+      await _audioPlayer.setFilePath(_storedAudioPronouncement!);
+    }
+    // String url = "${Config().contentUrl}/voice_record";
+    // Map<String, String> headers = Auth2().networkAuthHeaders ?? {};
+    // _audioPlayer.setUrl(url, headers: headers);
   }
 
   void _onRecordNamePronouncement(){
@@ -463,23 +502,136 @@ class _NamePronouncementState extends State<NamePronouncementWidget>{
 
   void _onEditRecord(){
     SoundRecorderDialog.show(context, initialRecordPath: _storedAudioPronouncement).then((_) => setStateIfMounted(() { }));//TBD from notify
+    // SoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement).then((_) => setStateIfMounted(() { }));//TBD from notify
   }
 
   void _onDeleteNamePronouncement(){
-    //TBD Implement
-    Storage().setStringWithName(SoundRecorderDialog.storage_key, null);
-    setStateIfMounted(() { });
+    //TBD Implement progress/loading
+    VoiceRecordAPI().deleteVoiceRecord().then((result) {
+      if(result?.resultType == AudioResultType.succeeded){
+        setStateIfMounted(() {
+          _storedRecordPath = null;
+          // _storedRecordBytes = null;
+        });
+      } else {
+        //TBD handle error
+      }
+    });
   }
 
-  void _loadAudioRecord() async {
-    Log.d("AUDIO PREPARING");
-    if(_hasStoredPronouncement) {
-      await _audioPlayer.setFilePath(_storedAudioPronouncement!);
-    }
+  void _loadUserRecord() async { //Call when updated. Implement Proper Notification handling for when Record is uploaded
+    //TBD Implement progress/loading
+    VoiceRecordAPI().retrieveVoiceRecord().then((result) async {
+      if(result?.resultType == AudioResultType.succeeded){
+          setStateIfMounted(() {
+            _storedRecordPath =  result!.data is String ? result.data as String : null ;//Returns directly the file path
+          });
+      } else {
+        //TBD handle error
+      }
+    });
   }
+
+  // bool get _hasStoredPronouncement => CollectionUtils.isNotEmpty(_storedAudioPronouncement);
+
+  // List<int>? get _storedAudioPronouncement => _storedRecordBytes;
 
   bool get _hasStoredPronouncement => StringUtils.isNotEmpty(_storedAudioPronouncement);
 
-  String? get _storedAudioPronouncement => Storage().getStringWithName(SoundRecorderDialog.storage_key); //TBD implement from profile. Add profile chenge listener
+  String? get _storedAudioPronouncement => _storedRecordPath;
 }
 
+//TBD move methods to content.dart
+class VoiceRecordAPI {
+  static const String profileVoiceRecordFileName = "profile_voice_record.m4a"; //TBD move to proper place
+
+  Future<AudioResult> uploadVoiceRecord(String? filePath) async{ //TBD return type
+    String? serviceUrl = Config().contentUrl;
+    if (StringUtils.isEmpty(serviceUrl)) {
+      return AudioResult.error(AudioErrorType.serviceNotAvailable, 'Missing voice_record BB url.');
+    }
+    if (StringUtils.isEmpty(filePath)) {
+      return AudioResult.error(AudioErrorType.fileNameNotSupplied, 'Missing file name.');
+    }
+    String url = "$serviceUrl/voice_record";
+    File audioFile = File(filePath!);
+
+    StreamedResponse? response = await Network().multipartPost(
+        url: url,
+        fileKey: "voiceRecord",
+        fileName: "record.m4a",
+        // fileName: audioFile.name,
+        fileBytes: audioFile.readAsBytesSync(),
+        contentType: 'audio/m4a',
+        auth: Auth2()
+    );
+
+    int responseCode = response?.statusCode ?? -1;
+    String? responseString = (await response?.stream.bytesToString());
+    if (responseCode == 200) {
+      return AudioResult.succeed(responseString);
+    } else {
+      debugPrint("Failed to upload audio. Reason: $responseCode $responseString");
+      return AudioResult.error(AudioErrorType.uploadFailed, "Failed to upload audio. $responseString", response);
+    }
+  }
+
+  Future<AudioResult?> retrieveVoiceRecord() async {
+    String? serviceUrl = Config().contentUrl;
+    if (StringUtils.isEmpty(serviceUrl)) {
+      return AudioResult.error(AudioErrorType.serviceNotAvailable, 'Missing voice_record BB url.');
+    }
+    String url = "$serviceUrl/voice_record";
+
+    Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    if (responseCode == 200) {
+      Directory fileDir= await getApplicationCacheDirectory();
+      String filePath = Path.join(fileDir.path, VoiceRecordAPI.profileVoiceRecordFileName);
+      Uint8List? storedRecordBytes = response?.bodyBytes;
+      try{
+        if(CollectionUtils.isNotEmpty(storedRecordBytes)){
+          File(filePath).writeAsBytesSync(storedRecordBytes!);
+        }
+      }catch (e){
+        Log.e(e.toString());
+      }
+      return AudioResult.succeed(filePath);
+    } else {
+      debugPrint('Failed to retrieve user audio voice_record');
+      return AudioResult.error(AudioErrorType.retrieveFailed, response?.body);
+    }
+  }
+
+  Future<AudioResult?> deleteVoiceRecord() async {
+    //TBD
+
+    return AudioResult.succeed(null);
+    // return AudioResult.error(AudioErrorType.deleteFailed, "TBD Implement");
+  }
+}
+
+enum AudioResultType { error, cancelled, succeeded }
+enum AudioErrorType {serviceNotAvailable, fileNameNotSupplied, uploadFailed, retrieveFailed, deleteFailed}
+
+class AudioResult {
+  AudioResultType? resultType;
+  AudioErrorType? errorType;
+  String? errorMessage;
+  dynamic data;
+
+  AudioResult.error(this.errorType, this.errorMessage, [this.data]) :
+        resultType = AudioResultType.error;
+
+  AudioResult.cancel() :
+        resultType = AudioResultType.cancelled;
+
+  AudioResult.succeed(this.data) :
+        resultType = AudioResultType.succeeded;
+}
+
+extension FileExtention on FileSystemEntity{ //file.name
+  String? get name {
+    return this.path.split(Platform.pathSeparator).last;
+  }
+}
