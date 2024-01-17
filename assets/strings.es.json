@@ -329,11 +329,12 @@
 
     "panel.browse.entry.appointments.appointments.title": "Citas",
 
-    "panel.browse.entry.athletics.sport_events.title": "Eventos del Big 10",
+    "panel.browse.entry.athletics.sport_events.title": "Eventos",
     "panel.browse.entry.athletics.sport_news.title": "Noticias",
+    "panel.browse.entry.athletics.sport_teams.title": "Equipos",
     "panel.browse.entry.athletics.my_athletics.title": "Mis Eventos del Big 10",
-    "panel.browse.entry.athletics.my_news.title": "Mis Noticias del Big 10",
-    "panel.browse.entry.athletics.my_game_day.title": "Mi Día de Juegos",
+    "panel.browse.entry.athletics.my_news.title": "Mis noticias",
+    "panel.browse.entry.athletics.my_game_day.title": "¡Es el día del juego!",
 
     "panel.browse.entry.safer.building_access.title": "Acceso al edificio",
     "panel.browse.entry.safer.test_locations.title": "Ubicaciones de prueba",

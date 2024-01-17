@@ -548,6 +548,7 @@ class _BrowseEntry extends StatelessWidget {
       case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.my_athletics":         _onTapMyAthletics(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
+      case "athletics.sport_teams":          _onTapSportTeams(context); break;
       case "athletics.my_news":              _onTapMyNews(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
@@ -792,6 +793,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapSportNews(BuildContext context) {
     Analytics().logSelect(target: "Athletics News");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+  }
+
+  void _onTapSportTeams(BuildContext context) {
+    Analytics().logSelect(target: "Athletics Teams");
+    //TBD: DD - implement
   }
 
   void _onTapBuildingAccess(BuildContext context) {

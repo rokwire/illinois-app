@@ -30,7 +30,7 @@
 			"browse.academics": ["gies_checklist", "new_student_checklist", "skills_self_evaluation", "student_courses", "canvas_courses", "campus_reminders", "wellness_todo", "due_date_catalog", "appointments"],
 			"browse.appointments": ["appointments"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
-			"browse.athletics": ["my_athletics", "my_game_day", "my_news", "sport_events", "sport_news"],
+			"browse.athletics": ["my_athletics", "my_game_day", "my_news", "sport_events", "sport_news", "sport_teams"],
 			"browse.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 			"browse.laundry": ["laundry", "my_laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_safety_resources", "campus_guide", "my_campus_guide"],
