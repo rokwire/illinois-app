@@ -598,6 +598,15 @@
 
     "panel.athletics_news_article.header.title": "NOTICIAS",
 
+    "panel.athletics.content.home.title.label": "Atletismo",
+
+    "panel.athletics.content.section.events.label": "10 grandes eventos",
+    "panel.athletics.content.section.game_day.label": "¡Es el día del juego!",
+    "panel.athletics.content.section.my_events.label": "Mis 10 grandes eventos",
+    "panel.athletics.content.section.my_news.label": "Mis noticias",
+    "panel.athletics.content.section.news.label": "Noticias",
+    "panel.athletics.content.section.teams.label": "Equipos",
+
     "panel.onboarding.button.continue.title":"Continuar",
     "panel.onboarding.button.continue.hint":"",
 

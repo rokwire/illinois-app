@@ -598,6 +598,15 @@
 
 	"panel.athletics_news_article.header.title":"新闻",
 
+	"panel.athletics.content.home.title.label": "競技",
+
+	"panel.athletics.content.section.events.label": "十大活動",
+	"panel.athletics.content.section.game_day.label": "今天是比賽日！",
+	"panel.athletics.content.section.my_events.label": "我的十大事件",
+	"panel.athletics.content.section.my_news.label": "我的消息",
+	"panel.athletics.content.section.news.label": "訊息",
+	"panel.athletics.content.section.teams.label": "團隊",
+
 	"panel.onboarding.button.continue.title":"继续",
 	"panel.onboarding.button.continue.hint":"",
 
