@@ -1748,7 +1748,6 @@
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
     "panel.settings.notifications.header.inbox.label": "Notificaciones",
 
-    "panel.settings.home.calendar.settings.add_events.label": "Agregar eventos guardados al calendario",
     "panel.settings.home.calendar.settings.prompt.label": "Indicar cuando se guardan los eventos o las citas en el calendario",
     "panel.settings.home.calendar.on_campus.location_services.required.label": "requiere servicios de localización",
     "panel.settings.home.calendar.on_campus.location_services.not_available.label": "No disponible",
@@ -3874,9 +3873,6 @@
     "model.device_calendar.prompt.add.event": "Would you like to add this event to your device\\'s calendar?",
     "model.device_calendar.message.add.event.succeeded": "Event added to Calendar",
     "model.device_calendar.message.add.event.failed": "Failed to add event to Calendar",
-    "model.device_calendar.prompt.remove.event": "Would you like to remove this event from your device\\'s calendar?",
-    "model.device_calendar.message.remove.event.succeeded": "Event removed from Calendar",
-    "model.device_calendar.message.remove.event.failed": "Failed to remove event from Calendar",
 
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",

@@ -20,7 +20,6 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ext/DeviceCalendar.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
@@ -42,7 +41,6 @@ import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:rokwire_plugin/model/actions.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -56,7 +54,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/device_calendar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
@@ -186,7 +183,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
       ExploreMapPanel.notifySelect,
-      Auth2UserPrefs.notifyFavoriteChanged,
     ]);
 
     _tabs = _getTabs();
@@ -463,9 +459,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
-    }
-    else if (name == Auth2UserPrefs.notifyFavoriteChanged) {
-      DeviceCalendar().processFavorite(context, param);
     }
 
   }

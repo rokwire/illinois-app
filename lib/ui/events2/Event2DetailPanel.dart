@@ -564,11 +564,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     _detailSpacerWidget
   ] : null;
 
-  List<Widget>? get _addToCalendarButton => DeviceCalendar().canAddToCalendar ? <Widget>[
+  List<Widget>? get _addToCalendarButton => <Widget>[
     InkWell(onTap: _onAddToCalendar, child:
        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)),
     _detailSpacerWidget
-  ] : null;
+  ];
 
   List<Widget>? get _promoteButton => <Widget>[
     InkWell(onTap: _onPromote, child:
