@@ -17,6 +17,127 @@ import 'dart:io';
 
 import '../../service/Analytics.dart';
 
+class NamePronouncementWidget extends StatefulWidget { //TBD move to EditProfile widgets
+
+  @override
+  State<StatefulWidget> createState() => _NamePronouncementState();
+}
+
+class _NamePronouncementState extends State<NamePronouncementWidget> implements NotificationsListener {
+  late AudioPlayer _audioPlayer;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [Auth2.notifyVoiceRecordChanged]);
+    _audioPlayer = AudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _audioPlayer.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container( padding: EdgeInsets.only(right: 8, top: 4),
+                child:  _loading ? _progressIndicator :
+                Styles().images?.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
+            ),
+            Visibility(visible: !_hasStoredPronouncement, child:
+            Expanded(
+                child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
+                Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed by students (Ex: Please call me Dr. Last Name,First Name, or Nickname. )"),
+                  style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
+                ),
+                )
+            ),
+            ),
+            Visibility(visible: _hasStoredPronouncement, child:
+            GestureDetector(onTap:  _onPlayNamePronouncement, child:
+            Text( Localization().getStringEx("", "Your name pronunciation recording"),
+              style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
+            ),
+            )
+            ),
+            Visibility(visible: _hasStoredPronouncement, child:
+            InkWell(onTap: _onEditRecord, child:
+            Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 4), child:
+            Styles().images?.getImage('edit', excludeFromSemantics: true)
+            )
+            )
+            ),
+            Visibility(visible: _hasStoredPronouncement, child:
+            InkWell(onTap: _onDeleteNamePronouncement, child:
+            Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 4), child:
+            Styles().images?.getImage('icon-delete-record', excludeFromSemantics: true)
+            )
+            )
+            )
+          ],
+        )
+    );
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if(name == Auth2.notifyVoiceRecordChanged){
+      setStateIfMounted(() { });
+    }
+  }
+
+  Widget get _progressIndicator => SizedBox(width: 16, height: 16, child:
+  CircularProgressIndicator(strokeWidth: 2, color: Styles().colors?.fillColorSecondary,));
+
+  void _onPlayNamePronouncement() async {
+    try {
+      if (_audioPlayer.playing) {
+        await _audioPlayer.stop();
+      } else {
+        _prepareAudioPlayer();
+        await _audioPlayer.play();
+      }
+    } catch (e){
+      Log.e(e.toString());
+    }
+  }
+
+  void _prepareAudioPlayer() async {
+    Log.d("AUDIO PREPARING");
+    if(_hasStoredPronouncement) {
+      await _audioPlayer.setAudioSource(BytesAudioSource(_storedAudioPronouncement!));
+    }
+  }
+
+  void _onRecordNamePronouncement(){
+    SoundRecorderDialog.show(context);
+  }
+
+  void _onEditRecord(){
+    SoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
+  }
+
+  void _onDeleteNamePronouncement(){
+    setStateIfMounted(() => _loading = true);
+    Content().deleteVoiceRecord().then((result) {
+      setStateIfMounted(() => _loading = false);
+      if(result?.resultType != AudioResultType.succeeded){
+        //TBD handle error
+      }
+    });
+  }
+
+  bool get _hasStoredPronouncement => CollectionUtils.isNotEmpty(_storedAudioPronouncement);
+
+  Uint8List? get _storedAudioPronouncement => Auth2().authVoiceRecord;
+}
+
 enum RecorderMode{record, play}
 class SoundRecorderDialog extends StatefulWidget {
   final Uint8List? initialRecordBytes;
@@ -408,127 +529,6 @@ class SoundRecorderController {
   Duration? get playerLength => _audioPlayer.duration;
 
   Duration? get playerTime => _playerTimer;
-}
-
-class NamePronouncementWidget extends StatefulWidget { //TBD move to EditProfile widgets
-
-  @override
-  State<StatefulWidget> createState() => _NamePronouncementState();
-}
-
-class _NamePronouncementState extends State<NamePronouncementWidget> implements NotificationsListener {
-  late AudioPlayer _audioPlayer;
-  bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    NotificationService().subscribe(this, [Auth2.notifyVoiceRecordChanged]);
-    _audioPlayer = AudioPlayer();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _audioPlayer.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container( padding: EdgeInsets.only(right: 8, top: 4),
-                child:  _loading ? _progressIndicator :
-                  Styles().images?.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
-            ),
-            Visibility(visible: !_hasStoredPronouncement, child:
-            Expanded(
-                child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
-                  Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed by students (Ex: Please call me Dr. Last Name,First Name, or Nickname. )"),
-                    style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
-                  ),
-                )
-              ),
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-              GestureDetector(onTap:  _onPlayNamePronouncement, child:
-                Text( Localization().getStringEx("", "Your name pronunciation recording"),
-                  style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
-                ),
-              )
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-              InkWell(onTap: _onEditRecord, child:
-                Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 4), child:
-                  Styles().images?.getImage('edit', excludeFromSemantics: true)
-               )
-              )
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-              InkWell(onTap: _onDeleteNamePronouncement, child:
-                Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 4), child:
-                  Styles().images?.getImage('icon-delete-record', excludeFromSemantics: true)
-                )
-              )
-            )
-          ],
-        )
-    );
-  }
-
-  @override
-  void onNotification(String name, param) {
-    if(name == Auth2.notifyVoiceRecordChanged){
-      setStateIfMounted(() { });
-    }
-  }
-
-  Widget get _progressIndicator => SizedBox(width: 16, height: 16, child:
-    CircularProgressIndicator(strokeWidth: 2, color: Styles().colors?.fillColorSecondary,));
-
-  void _onPlayNamePronouncement() async {
-    try {
-      if (_audioPlayer.playing) {
-        await _audioPlayer.stop();
-      } else {
-        _prepareAudioPlayer();
-        await _audioPlayer.play();
-      }
-    } catch (e){
-      Log.e(e.toString());
-    }
-  }
-
-  void _prepareAudioPlayer() async {
-    Log.d("AUDIO PREPARING");
-    if(_hasStoredPronouncement) {
-      await _audioPlayer.setAudioSource(BytesAudioSource(_storedAudioPronouncement!));
-    }
-  }
-
-  void _onRecordNamePronouncement(){
-    SoundRecorderDialog.show(context);
-  }
-
-  void _onEditRecord(){
-    SoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
-  }
-
-  void _onDeleteNamePronouncement(){
-    setStateIfMounted(() => _loading = true);
-    Content().deleteVoiceRecord().then((result) {
-      setStateIfMounted(() => _loading = false);
-      if(result?.resultType != AudioResultType.succeeded){
-        //TBD handle error
-      }
-    });
-  }
-
-  bool get _hasStoredPronouncement => CollectionUtils.isNotEmpty(_storedAudioPronouncement);
-
-  Uint8List? get _storedAudioPronouncement => Auth2().authVoiceRecord;
 }
 
 class BytesAudioSource extends StreamAudioSource{
