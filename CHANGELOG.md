@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Cleaned up DeviceCalendar service [#3868](https://github.com/rokwire/illinois-app/issues/3868).
+### Changed
+- Voice Recording upload/retrieve/delete updates [#3846](https://github.com/rokwire/illinois-app/issues/3846).
 
 ## [5.1.9] - 2024-01-16
 ### Fixed

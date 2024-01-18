@@ -980,6 +980,12 @@
     "event-filters-background": {"src": "images/event-filters-background.png", "type": "flutter.asset"},
     "event-onboarding-header": {"src": "images/event-onboarding-header.png", "type": "flutter.asset"},
 
+    "icon-record": {"src": "images/icon-record.png", "type": "flutter.asset"},
+    "icon-recording": {"src": "images/icon-recording.png", "type": "flutter.asset"},
+    "icon-play": {"src": "images/icon-play.png", "type": "flutter.asset"},
+    "icon-delete-record": {"src": "images/icon-delete-record.png", "type": "flutter.asset", "size": 18},
+    "icon-soundbyte": {"src": "images/icon-soundbyte.png", "type": "flutter.asset", "size": 18},
+
     "course-detail-default": {"src": "images/course-detail-default.png", "type": "flutter.asset"}
   }
 }

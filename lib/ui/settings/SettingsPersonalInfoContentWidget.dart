@@ -24,9 +24,9 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
+import 'package:illinois/ui/settings/SettingsVoiceRecordigWidgets.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/SoundRecorderDialog.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -140,7 +140,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
           value: Auth2().account?.authType?.uiucUser?.fullName ?? ""),
-      _buildNamePronouncement(),
+      NamePronouncementWidget(),
       _PersonalInfoEntry(
           title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
           value: Auth2().account?.authType?.uiucUser?.middleName ?? ""),
@@ -881,64 +881,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     await Auth2().deleteUser();
   }
 
-  Widget _buildNamePronouncement(){
-    return Container(
-        child: Row(
-          children: [
-            Container(),//TBD
-            Visibility(visible: !_hasStoredPronouncement, child:
-              Expanded(
-                  child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
-                    Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed by students (Ex: Please call me Dr. Last Name,First Name, or Nickname. )"),
-                      style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
-                    ),
-                  )
-              ),
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-              Expanded(
-                  child: GestureDetector(onTap:  _onPlayNamePronouncement, child:
-                    Text( Localization().getStringEx("", "Your name pronunciation recording"),
-                      style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
-                    ),
-                  )
-              ),
-            ),
-            Visibility(visible: _hasStoredPronouncement, child:
-              InkWell(onTap: _onEditNamePronouncement, child:
-                Container(width: 30, height: 30, color: Styles().colors?.fillColorPrimary,),)//TBD
-            ),
-            Container(width: 12,),
-            Visibility(visible: _hasStoredPronouncement, child:
-              InkWell(onTap: _onDeleteNamePronouncement, child:
-                Container(width: 30, height: 30, color: Styles().colors?.fillColorSecondary,),)//TBD
-            )
-          ],
-        )
-    );
-  }
-
-  void _onPlayNamePronouncement(){
-    if(_storedAudioPronouncement != null) {
-      NamePronouncementPlayer.play(_storedAudioPronouncement!);
-    }
-  }
-
-  void _onRecordNamePronouncement(){
-     SoundRecorderDialog.show(context).then((_) => setStateIfMounted(() { }));
-  }
-
-  void _onEditNamePronouncement(){
-    SoundRecorderDialog.show(context, initialRecordPath: _storedAudioPronouncement);
-  }
-
-  void _onDeleteNamePronouncement(){
-    //TBD Implement
-    Storage().setStringWithName(SoundRecorderDialog.storage_key, null);
-    setStateIfMounted(() { });
-  }
-
-
   bool get _canSave{
     return _isEmailChanged || _isNameChanged;
   }
@@ -970,10 +912,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   bool get _hasProfilePicture {
     return (_profileImageBytes != null);
   }
-
-  bool get _hasStoredPronouncement => StringUtils.isNotEmpty(_storedAudioPronouncement);
-
-  String? get _storedAudioPronouncement => Storage().getStringWithName(SoundRecorderDialog.storage_key); //TBD implement from profile. Add profile chenge listener
 
   TextStyle? get _formFieldLabelTextStyle {
     return  Styles().textStyles?.getTextStyle("widget.item.small");
