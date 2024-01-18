@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -9,11 +8,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class DeviceCalendarAddPrompt extends StatefulWidget {
-  final dynamic eventData;
 
-  const DeviceCalendarAddPrompt({super.key, required this.eventData});
+  const DeviceCalendarAddPrompt({super.key});
 
-  static void show({required BuildContext context, dynamic eventData}) => showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: DeviceCalendarAddPrompt(eventData: eventData,)));
+  static Future<bool?> show(BuildContext context) =>
+    showDialog<bool?>(context: context, builder: (_) =>
+      Material(type: MaterialType.transparency, child: DeviceCalendarAddPrompt())
+    );
 
   @override
   State<StatefulWidget> createState() => _DeviceCalendarAddPromptState();
@@ -70,22 +71,21 @@ class _DeviceCalendarAddPromptState extends State<DeviceCalendarAddPrompt>{
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                     textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium"),
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    toggled: Storage().calendarCanPrompt == true,
+                    toggled: Storage().calendarShouldPrompt,
                     onTap: _onPromptChange
                 ),
                 Container(height: 8,),
             ]),
         ));
 
-  void _onConfirm() {
-    Navigator.of(context).pop();
-    DeviceCalendar().placeEvent(widget.eventData);
-  }
+  void _onConfirm() =>
+    Navigator.of(context).pop(true);
 
-  void _onDecline() => Navigator.of(context).pop();
+  void _onDecline() =>
+    Navigator.of(context).pop(false);
 
   void _onPromptChange() =>
     setStateIfMounted(() {
-      Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);
+      Storage().calendarShouldPrompt = !Storage().calendarShouldPrompt;
     });
 }

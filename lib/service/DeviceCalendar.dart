@@ -12,8 +12,6 @@ import 'package:device_calendar/device_calendar.dart';
 
 class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsListener {
 
-  static String get notifyPromptPopup            => rokwire.DeviceCalendar.notifyPromptPopup;
-
   // Singletone Factory
 
   @protected
@@ -44,18 +42,14 @@ class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsList
     }
   }
 
-  Future<bool> addToCalendar(dynamic event) async {
-    DeviceCalendarEvent? deviceCalendarEvent = DeviceCalendarEvent.from(event);
-    return deviceCalendarEvent != null ?  await super.addEvent(deviceCalendarEvent) : false;
-  }
-
   void _processFavorite(dynamic event) {
     DeviceCalendarEvent? deviceCalendarEvent = Storage().calendarEnabledToAutoSave == true ? DeviceCalendarEvent.from(event) : null;
     if(deviceCalendarEvent==null)
       return;
 
+    //TBD: Prompt
     if (Auth2().isFavorite(event)) {
-      addEvent(deviceCalendarEvent);
+      placeEvent(deviceCalendarEvent);
     }
     else {
       deleteEvent(deviceCalendarEvent);

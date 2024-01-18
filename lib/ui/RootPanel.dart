@@ -40,11 +40,9 @@ import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
-import 'package:illinois/ui/widgets/DeviceCalendarAddPrompt.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -181,7 +179,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Styles.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
-      DeviceCalendar.notifyPromptPopup,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
       ExploreMapPanel.notifySelect,
@@ -210,10 +207,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == DeviceCalendar.notifyPromptPopup) {
-      _onCalendarPromptMessage(param);
-    }
-    else if (name == Alerts.notifyAlert) {
+    if (name == Alerts.notifyAlert) {
       Alerts.handleNotification(context, param);
     }
     else if (name == ActionBuilder.notifyShowPanel) {
@@ -659,10 +653,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         ),
       ),
     );
-  }
-
-  void _onCalendarPromptMessage(dynamic data) {
-    DeviceCalendarAddPrompt.show(context: context, eventData: data);
   }
 
   void _showPanel(Map<String, dynamic> content) {

@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/ext/DeviceCalendar.dart';
 import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Survey.dart';
@@ -990,7 +991,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }  
   void _onAddToCalendar(){
-    DeviceCalendar().addToCalendar(_event).then((bool result) {
+    DeviceCalendar().addToCalendar(context, _event).then((bool result) {
       AppAlert.showDialogResult(context, result
         ? Localization().getStringEx('panel.event2.detail.general.add_to_calendar.succeeded.message', 'Added to Calendar')
         : Localization().getStringEx('panel.event2.detail.general.add_to_calendar.failed.message', 'Failed to add to Calendar')
