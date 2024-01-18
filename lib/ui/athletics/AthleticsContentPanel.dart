@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/athletics/AthleticsEventsContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -102,8 +103,8 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
         appBar: _headerBar,
         body: Column(children: <Widget>[
           Container(
-              color: Styles().colors?.background,
-              padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+              color: Styles().colors?.fillColorPrimary,
+              padding: EdgeInsets.all(16),
               child: Semantics(
                   hint: Localization().getStringEx("dropdown.hint", "DropDown"),
                   container: true,
@@ -112,14 +113,12 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
                       backgroundColor: Styles().colors!.white,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                      rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
+                      rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
                       label: _getContentLabel(_selectedContent),
                       onTap: _changeSettingsContentValuesVisibility))),
           Expanded(
               child: Stack(children: [
-            Padding(
-                padding: EdgeInsets.only(top: 16.0),
-                child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget))),
+                SingleChildScrollView(child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget)),
             _buildContentValuesContainer()
           ]))
         ]),
@@ -237,7 +236,8 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      //TBD: DD - implement
+      case AthleticsContent.events:
+        return AthleticsEventsContentWidget();
       default:
         return Container();
     }

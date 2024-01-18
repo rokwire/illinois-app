@@ -600,6 +600,8 @@
     "panel.athletics_news_article.header.title": "NEWS",
 
     "panel.athletics.content.home.title.label": "Athletics",
+    "panel.athletics.content.common.filter.teams.label": "Teams",
+
     "panel.athletics.content.section.events.label": "Big 10 Events",
     "panel.athletics.content.section.game_day.label": "It's Game Day!",
     "panel.athletics.content.section.my_events.label": "My Big 10 Events",
