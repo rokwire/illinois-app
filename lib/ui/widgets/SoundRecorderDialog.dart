@@ -2,23 +2,20 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:path/path.dart' as Path;
-import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/Log.dart';
-import 'package:rokwire_plugin/service/network.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'dart:io';
 
 import '../../service/Analytics.dart';
-import '../../service/Auth2.dart';
-import '../../service/Config.dart';
 
 enum RecorderMode{record, play}
 class SoundRecorderDialog extends StatefulWidget {
@@ -184,7 +181,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     try {
       File? audioFile = _controller.recordFile;
       if (audioFile?.existsSync() == true) {
-        AudioResult result = await VoiceRecordAPI().uploadVoiceRecord(_controller._audioPath);
+        AudioResult result = await Content().uploadVoiceRecord(audioFile!.readAsBytesSync());
         if(result.resultType == AudioResultType.succeeded){
           //TBD notify changed
           Log.d(result.data ?? "");
@@ -410,17 +407,14 @@ class NamePronouncementWidget extends StatefulWidget { //TBD move to EditProfile
   State<StatefulWidget> createState() => _NamePronouncementState();
 }
 
-class _NamePronouncementState extends State<NamePronouncementWidget>{
+class _NamePronouncementState extends State<NamePronouncementWidget> implements NotificationsListener {
   late AudioPlayer _audioPlayer;
-  String? _storedRecordPath;
-  // List<int>? _storedRecordBytes;
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [Auth2.notifyVoiceRecordChanged]);
     _audioPlayer = AudioPlayer();
-    _loadUserRecord();
-    // _prepareAudioPlayer();
   }
 
   @override
@@ -473,6 +467,13 @@ class _NamePronouncementState extends State<NamePronouncementWidget>{
     );
   }
 
+  @override
+  void onNotification(String name, param) {
+    if(name == Auth2.notifyVoiceRecordChanged){
+      setStateIfMounted(() { });
+    }
+  }
+
   void _onPlayNamePronouncement() async {
     try {
       if (_audioPlayer.playing) {
@@ -489,149 +490,47 @@ class _NamePronouncementState extends State<NamePronouncementWidget>{
   void _prepareAudioPlayer() async {
     Log.d("AUDIO PREPARING");
     if(_hasStoredPronouncement) {
-      await _audioPlayer.setFilePath(_storedAudioPronouncement!);
+      await _audioPlayer.setAudioSource(BytesAudioSource(_storedAudioPronouncement!));
     }
-    // String url = "${Config().contentUrl}/voice_record";
-    // Map<String, String> headers = Auth2().networkAuthHeaders ?? {};
-    // _audioPlayer.setUrl(url, headers: headers);
   }
 
   void _onRecordNamePronouncement(){
-    SoundRecorderDialog.show(context).then((_) => setStateIfMounted(() { })); //TBD from notify
+    SoundRecorderDialog.show(context);
   }
 
   void _onEditRecord(){
-    SoundRecorderDialog.show(context, initialRecordPath: _storedAudioPronouncement).then((_) => setStateIfMounted(() { }));//TBD from notify
-    // SoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement).then((_) => setStateIfMounted(() { }));//TBD from notify
+    SoundRecorderDialog.show(context, initialRecordBytes: _storedAudioPronouncement);
   }
 
   void _onDeleteNamePronouncement(){
-    //TBD Implement progress/loading
-    VoiceRecordAPI().deleteVoiceRecord().then((result) {
-      if(result?.resultType == AudioResultType.succeeded){
-        setStateIfMounted(() {
-          _storedRecordPath = null;
-          // _storedRecordBytes = null;
-        });
-      } else {
+    //TBD Implement progress/loading delete
+    Content().deleteVoiceRecord().then((result) {
+      //TBD Implement progress/loading delete
+      if(result?.resultType != AudioResultType.succeeded){
         //TBD handle error
       }
     });
   }
 
-  void _loadUserRecord() async { //Call when updated. Implement Proper Notification handling for when Record is uploaded
-    //TBD Implement progress/loading
-    VoiceRecordAPI().retrieveVoiceRecord().then((result) async {
-      if(result?.resultType == AudioResultType.succeeded){
-          setStateIfMounted(() {
-            _storedRecordPath =  result!.data is String ? result.data as String : null ;//Returns directly the file path
-          });
-      } else {
-        //TBD handle error
-      }
-    });
-  }
+  bool get _hasStoredPronouncement => CollectionUtils.isNotEmpty(_storedAudioPronouncement);
 
-  // bool get _hasStoredPronouncement => CollectionUtils.isNotEmpty(_storedAudioPronouncement);
-
-  // List<int>? get _storedAudioPronouncement => _storedRecordBytes;
-
-  bool get _hasStoredPronouncement => StringUtils.isNotEmpty(_storedAudioPronouncement);
-
-  String? get _storedAudioPronouncement => _storedRecordPath;
+  Uint8List? get _storedAudioPronouncement => Auth2().authVoiceRecord;
 }
 
-//TBD move methods to content.dart
-class VoiceRecordAPI {
-  static const String profileVoiceRecordFileName = "profile_voice_record.m4a"; //TBD move to proper place
+class BytesAudioSource extends StreamAudioSource{
+  final Uint8List _data;
 
-  Future<AudioResult> uploadVoiceRecord(String? filePath) async{ //TBD return type
-    String? serviceUrl = Config().contentUrl;
-    if (StringUtils.isEmpty(serviceUrl)) {
-      return AudioResult.error(AudioErrorType.serviceNotAvailable, 'Missing voice_record BB url.');
-    }
-    if (StringUtils.isEmpty(filePath)) {
-      return AudioResult.error(AudioErrorType.fileNameNotSupplied, 'Missing file name.');
-    }
-    String url = "$serviceUrl/voice_record";
-    File audioFile = File(filePath!);
+  BytesAudioSource(this._data);
 
-    StreamedResponse? response = await Network().multipartPost(
-        url: url,
-        fileKey: "voiceRecord",
-        fileName: "record.m4a",
-        // fileName: audioFile.name,
-        fileBytes: audioFile.readAsBytesSync(),
-        contentType: 'audio/m4a',
-        auth: Auth2()
+  @override
+  Future<StreamAudioResponse> request([int? start, int? end]) async {
+    // Returning the stream audio response with the parameters
+    return StreamAudioResponse(
+      sourceLength: _data.length,
+      contentLength: (end ?? _data.length) - (start ?? 0),
+      offset: start ?? 0,
+      stream: Stream.fromIterable([_data.sublist(start ?? 0, end)]),
+      contentType: 'audio/m4a',
     );
-
-    int responseCode = response?.statusCode ?? -1;
-    String? responseString = (await response?.stream.bytesToString());
-    if (responseCode == 200) {
-      return AudioResult.succeed(responseString);
-    } else {
-      debugPrint("Failed to upload audio. Reason: $responseCode $responseString");
-      return AudioResult.error(AudioErrorType.uploadFailed, "Failed to upload audio. $responseString", response);
-    }
-  }
-
-  Future<AudioResult?> retrieveVoiceRecord() async {
-    String? serviceUrl = Config().contentUrl;
-    if (StringUtils.isEmpty(serviceUrl)) {
-      return AudioResult.error(AudioErrorType.serviceNotAvailable, 'Missing voice_record BB url.');
-    }
-    String url = "$serviceUrl/voice_record";
-
-    Response? response = await Network().get(url, auth: Auth2());
-    int? responseCode = response?.statusCode;
-    if (responseCode == 200) {
-      Directory fileDir= await getApplicationCacheDirectory();
-      String filePath = Path.join(fileDir.path, VoiceRecordAPI.profileVoiceRecordFileName);
-      Uint8List? storedRecordBytes = response?.bodyBytes;
-      try{
-        if(CollectionUtils.isNotEmpty(storedRecordBytes)){
-          File(filePath).writeAsBytesSync(storedRecordBytes!);
-        }
-      }catch (e){
-        Log.e(e.toString());
-      }
-      return AudioResult.succeed(filePath);
-    } else {
-      debugPrint('Failed to retrieve user audio voice_record');
-      return AudioResult.error(AudioErrorType.retrieveFailed, response?.body);
-    }
-  }
-
-  Future<AudioResult?> deleteVoiceRecord() async {
-    //TBD
-
-    return AudioResult.succeed(null);
-    // return AudioResult.error(AudioErrorType.deleteFailed, "TBD Implement");
-  }
-}
-
-enum AudioResultType { error, cancelled, succeeded }
-enum AudioErrorType {serviceNotAvailable, fileNameNotSupplied, uploadFailed, retrieveFailed, deleteFailed}
-
-class AudioResult {
-  AudioResultType? resultType;
-  AudioErrorType? errorType;
-  String? errorMessage;
-  dynamic data;
-
-  AudioResult.error(this.errorType, this.errorMessage, [this.data]) :
-        resultType = AudioResultType.error;
-
-  AudioResult.cancel() :
-        resultType = AudioResultType.cancelled;
-
-  AudioResult.succeed(this.data) :
-        resultType = AudioResultType.succeeded;
-}
-
-extension FileExtention on FileSystemEntity{ //file.name
-  String? get name {
-    return this.path.split(Platform.pathSeparator).last;
   }
 }
