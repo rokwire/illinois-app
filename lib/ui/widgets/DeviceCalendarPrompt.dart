@@ -80,10 +80,8 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                           borderColor: Styles().colors!.fillColorSecondary,
                           backgroundColor: Styles().colors!.white,
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          onTap: (){
-                            Navigator.of(context).pop();
-                            _onConfirm();
-                          }))),
+                          onTap: _onConfirm
+                        ))),
                 ]),
                 Container(height: 16,),
                 ToggleRibbonButton(
@@ -109,4 +107,46 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
     setStateIfMounted(() {
       Storage().calendarShouldPrompt = !Storage().calendarShouldPrompt;
     });
+}
+
+class DeviceCalendarMessage extends StatelessWidget {
+  final String message;
+
+  const DeviceCalendarMessage(this.message, { super.key });
+
+  static Future<bool?> show(BuildContext context, String message) =>
+    showDialog<bool?>(context: context, builder: (_) =>
+      Material(type: MaterialType.transparency, child: DeviceCalendarMessage(message,))
+    );
+
+  @override
+  Widget build(BuildContext context) => Dialog(child:
+    Padding(padding: EdgeInsets.all(16), child:
+      Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+        Padding( padding: EdgeInsets.all(8), child:
+          Text(message, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"), textAlign: TextAlign.center,),
+        ),
+        Container(height: 8,),
+        Row(mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 1, child: Container()),
+            Expanded(flex: 2, child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+                RoundedButton(
+                  label: Localization().getStringEx("dialog.ok.title", "OK"),
+                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                  borderColor: Styles().colors!.fillColorPrimary,
+                  backgroundColor: Styles().colors!.white,
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  onTap: () => Navigator.of(context).pop()
+                  )
+              ),
+            ),
+            Expanded(flex: 1, child: Container()),
+        ]),
+
+      ]),
+    )
+  );
 }

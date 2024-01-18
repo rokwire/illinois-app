@@ -564,11 +564,11 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     _detailSpacerWidget
   ] : null;
 
-  List<Widget>? get _addToCalendarButton => <Widget>[
+  List<Widget>? get _addToCalendarButton => DeviceCalendar().canAddToCalendar ? <Widget>[
     InkWell(onTap: _onAddToCalendar, child:
        _buildTextDetailWidget(Localization().getStringEx('panel.event2.detail.general.add_to_calendar.title', 'Add to Calendar'), 'event-save-to-calendar', underlined: true)),
     _detailSpacerWidget
-  ];
+  ] : null;
 
   List<Widget>? get _promoteButton => <Widget>[
     InkWell(onTap: _onPromote, child:
@@ -991,12 +991,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
     }
   }  
   void _onAddToCalendar(){
-    DeviceCalendar().addToCalendar(context, _event).then((bool result) {
-      AppAlert.showDialogResult(context, result
-        ? Localization().getStringEx('panel.event2.detail.general.add_to_calendar.succeeded.message', 'Added to Calendar')
-        : Localization().getStringEx('panel.event2.detail.general.add_to_calendar.failed.message', 'Failed to add to Calendar')
-      );
-    });
+    DeviceCalendar().addToCalendar(context, _event);
   }
 
   void _onPromote(){

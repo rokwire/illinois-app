@@ -3,49 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/DeviceCalendar.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/widgets/DeviceCalendarPrompt.dart';
+import 'package:rokwire_plugin/model/device_calendar.dart' as rokwire;
 import 'package:rokwire_plugin/service/device_calendar.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 
 extension DeviceCalendarExt on DeviceCalendar {
 
-  Future<bool> addToCalendar(BuildContext context, dynamic event) async {
+  void addToCalendar(BuildContext context, dynamic event) async {
     if (canAddToCalendar) {
       if (shouldPrompt) {
         bool? addConfirmed = await DeviceCalendarAddEventPrompt.show(context);
         if (addConfirmed == true) {
-          return _addToCalendar(event);
-        }
-        else {
-          debugPrint("Add to Calendar not confirmed");
-          return false;
+          _addToCalendar(context, event);
         }
       }
       else {
-        return _addToCalendar(event);
+        _addToCalendar(context, event);
       }
-    }
-    else {
-      debugPrint("Add to Calendar is not enabled");
-      return false;
     }
   }
 
-  Future<bool> _addToCalendar(dynamic event) async {
-    DeviceCalendarEvent? deviceCalendarEvent = DeviceCalendarEvent.from(event);
-    if (deviceCalendarEvent != null) {
-      //init check
-      bool initResult = await loadDefaultCalendarIfNeeded();
-      if (initResult) {
-        return placeCalendarEvent(event);
-      }
-      else {
-        debugPrint("Unable to init plugin");
-        return false;
-      }
-    }
-    else {
-      debugPrint("Failed to create calendar event");
-      return false;
-    }
+  void _addToCalendar(BuildContext context, dynamic event) async {
+    DeviceCalendarEvent? calendarEvent = DeviceCalendarEvent.from(event);
+    rokwire.DeviceCalendarError? error = (calendarEvent != null) ? await placeCalendarEvent(calendarEvent) : rokwire.DeviceCalendarError.internal();
+    DeviceCalendarMessage.show(context, (error != null)  ?
+      Localization().getStringEx('model.device_calendar.message.add.event.succeeded', 'Event added to Calendar') :
+      Localization().getStringEx('model.device_calendar.message.add.event.failed', 'Failed to add event to Calendar')
+    );
   }
 
   void processFavorite(BuildContext context, dynamic event) async {
@@ -57,17 +41,24 @@ extension DeviceCalendarExt on DeviceCalendar {
           String message = isFavorite ? DeviceCalendarAddEventPrompt.message : DeviceCalendarRemoveEventPrompt.message;
           bool? processConfirmed = await DeviceCalendarPrompt.show(context, message);
           if (processConfirmed == true) {
-            await _processFavorite(deviceCalendarEvent, isFavorite);
+            _processFavorite(context, deviceCalendarEvent, isFavorite);
           }
         }
         else {
-          await _processFavorite(deviceCalendarEvent, isFavorite);
+          _processFavorite(context, deviceCalendarEvent, isFavorite);
         }
       }
     }
   }
 
-  Future<bool> _processFavorite(DeviceCalendarEvent deviceCalendarEvent, bool isFavorite) =>
-    isFavorite ? placeCalendarEvent(deviceCalendarEvent) : deleteEvent(deviceCalendarEvent);
+  void _processFavorite(BuildContext context, DeviceCalendarEvent deviceCalendarEvent, bool isFavorite) async {
+    rokwire.DeviceCalendarError? error = isFavorite ? await placeCalendarEvent(deviceCalendarEvent) : await removeCalendarEvent(deviceCalendarEvent);
+    if (shouldPrompt) {
+      DeviceCalendarMessage.show(context, (error != null)  ?
+        (isFavorite ? Localization().getStringEx('model.device_calendar.message.add.event.succeeded', 'Event added to Calendar') : Localization().getStringEx('model.device_calendar.message.remove.event.succeeded', 'Event removed from Calendar')) :
+        (isFavorite ? Localization().getStringEx('model.device_calendar.message.add.event.failed', 'Failed to add event to Calendar') : Localization().getStringEx('model.device_calendar.message.remove.event.failed', 'Failed to remove event from Calendar'))
+      );
+    }
+  }
 }
 
