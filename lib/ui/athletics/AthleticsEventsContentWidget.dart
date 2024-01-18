@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
@@ -33,6 +34,7 @@ class AthleticsEventsContentWidget extends StatefulWidget {
 
 class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWidget> implements NotificationsListener {
   List<Event2>? _events;
+  List<Sport>? _teamsFilter;
   bool _loading = false;
 
   @override
@@ -85,12 +87,19 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
                               Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 5),
                                   child: Text(Localization().getStringEx('panel.athletics.content.common.filter.teams.label', 'Teams'),
-                                      style: Styles().textStyles?.getTextStyle("widget.button.title.small.fat"))),
+                                      style: Styles().textStyles?.getTextStyle('widget.button.title.small.fat'))),
                               Styles().images?.getImage('chevron-right-gray') ?? Container()
                             ])))),
                 Expanded(child: Container())
               ]))),
-      Divider(thickness: 1, color: Styles().colors!.lightGray!, height: 1)
+      Divider(thickness: 1, color: Styles().colors!.lightGray!, height: 1),
+      Container(
+          decoration: BoxDecoration(color: Styles().colors?.white, boxShadow: kElevationToShadow[2]),
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(children: [
+                Expanded(child: Text(_teamsFilterLabel, style: Styles().textStyles?.getTextStyle('widget.button.title.small')))
+              ])))
     ]);
   }
 
@@ -122,6 +131,14 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
     setStateIfMounted(() {
       _loading = loading;
     });
+  }
+
+  String get _teamsFilterLabel {
+    String filterPrefix = Localization().getStringEx('key', 'Filter:');
+    String? teamsFilterDisplayString = CollectionUtils.isNotEmpty(_teamsFilter)
+        ? _teamsFilter!.map((team) => team.title).toList().join(',')
+        : Localization().getStringEx('key', 'None');
+    return '$filterPrefix $teamsFilterDisplayString';
   }
 
   // Notifications Listener
