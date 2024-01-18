@@ -3849,6 +3849,9 @@
 	"model.academics.appointment2.type.in_person.label": "親自",
 	"model.academics.appointment2.type.online.label": "在線的",
 
+	"model.device_calendar.prompt.add.event": "Would you like to add this event to your device\\'s calendar?",
+	"model.device_calendar.prompt.remove.event": "Would you like to remove this event from your device\\'s calendar?",
+
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
 	"logic.date_time.greeting.evening": "晚上好",

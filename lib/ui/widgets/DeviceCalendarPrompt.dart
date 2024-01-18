@@ -7,20 +7,41 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-class DeviceCalendarAddPrompt extends StatefulWidget {
+class DeviceCalendarAddEventPrompt extends DeviceCalendarPrompt {
+  static String get message => Localization().getStringEx('model.device_calendar.prompt.add.event', 'Would you like to add this event to your device\'s calendar?');
 
-  const DeviceCalendarAddPrompt({super.key});
+  DeviceCalendarAddEventPrompt({Key? key}) :
+    super(message, key: key);
 
   static Future<bool?> show(BuildContext context) =>
+    DeviceCalendarPrompt.show(context, message);
+}
+
+class DeviceCalendarRemoveEventPrompt extends DeviceCalendarPrompt {
+  static String get message => Localization().getStringEx('model.device_calendar.prompt.remove.event', 'Would you like to remove this event from your device\'s calendar?');
+
+  DeviceCalendarRemoveEventPrompt({Key? key}) :
+    super(message, key: key);
+
+  static Future<bool?> show(BuildContext context) =>
+    DeviceCalendarPrompt.show(context, message);
+}
+
+class DeviceCalendarPrompt extends StatefulWidget {
+  final String prompt;
+
+  const DeviceCalendarPrompt(this.prompt, { super.key });
+
+  static Future<bool?> show(BuildContext context, String prompt) =>
     showDialog<bool?>(context: context, builder: (_) =>
-      Material(type: MaterialType.transparency, child: DeviceCalendarAddPrompt())
+      Material(type: MaterialType.transparency, child: DeviceCalendarPrompt(prompt,))
     );
 
   @override
-  State<StatefulWidget> createState() => _DeviceCalendarAddPromptState();
+  State<StatefulWidget> createState() => _DeviceCalendarPromptState();
 }
 
-class _DeviceCalendarAddPromptState extends State<DeviceCalendarAddPrompt>{
+class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
 
   @override
   Widget build(BuildContext context) =>
@@ -32,7 +53,7 @@ class _DeviceCalendarAddPromptState extends State<DeviceCalendarAddPrompt>{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
                 Padding( padding: EdgeInsets.all(8),
-                  child: Text(Localization().getStringEx('prompt.device_calendar.msg.add_event', 'Would you like to add this event to your device\'s calendar?'),
+                  child: Text(widget.prompt,
                     style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"),
                     textAlign: TextAlign.center,
                   ),

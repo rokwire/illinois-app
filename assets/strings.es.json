@@ -3871,6 +3871,9 @@
     "model.academics.appointment2.type.in_person.label": "En persona",
     "model.academics.appointment2.type.online.label": "En línea",
 
+    "model.device_calendar.prompt.add.event": "Would you like to add this event to your device\\'s calendar?",
+    "model.device_calendar.prompt.remove.event": "Would you like to remove this event from your device\\'s calendar?",
+
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",
     "logic.date_time.greeting.evening": "Buena noches",
