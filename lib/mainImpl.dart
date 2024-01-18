@@ -31,7 +31,6 @@ import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/SpeechToText.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Content.dart';
@@ -64,6 +63,7 @@ import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
+import 'package:rokwire_plugin/service/device_calendar.dart';
 import 'package:rokwire_plugin/service/events2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';

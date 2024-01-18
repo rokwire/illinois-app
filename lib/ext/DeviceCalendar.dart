@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/DeviceCalendar.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/ui/widgets/DeviceCalendarPrompt.dart';
+import 'package:rokwire_plugin/service/device_calendar.dart';
 
 extension DeviceCalendarExt on DeviceCalendar {
 
