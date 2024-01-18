@@ -17,7 +17,7 @@ import 'dart:io';
 
 import '../../service/Analytics.dart';
 
-class NamePronouncementWidget extends StatefulWidget { //TBD move to EditProfile widgets
+class NamePronouncementWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _NamePronouncementState();
@@ -128,7 +128,7 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
     Content().deleteVoiceRecord().then((result) {
       setStateIfMounted(() => _loading = false);
       if(result?.resultType != AudioResultType.succeeded){
-        //TBD handle error
+        AppAlert.showMessage(context, Localization().getStringEx("", "Unable to delete. Please try again."));
       }
     });
   }
@@ -302,23 +302,26 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
     if(_saveEnabled == false)
       return;
 
-   setStateIfMounted(() => _loading = true);
     try {
       File? audioFile = _controller.recordFile;
       if (audioFile?.existsSync() == true) {
+        setStateIfMounted(() => _loading = true);
         AudioResult result = await Content().uploadVoiceRecord(audioFile!.readAsBytesSync());
         if(result.resultType == AudioResultType.succeeded){
           setStateIfMounted(() => _loading = false);
           Log.d(result.data ?? "");
+          _closeModal();
         } else {
           Log.d(result.errorMessage ?? "");
+          AppAlert.showMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
         }
+      } else {
+        AppAlert.showMessage(context, Localization().getStringEx("", "Unable to Save. Please try again."));
+        Log.d("No File to save");
       }
-      Log.d("No File to save");
     }catch(e){
       Log.e(e.toString());
     }
-    _closeModal();
   }
 
   void _onTapClose() {
