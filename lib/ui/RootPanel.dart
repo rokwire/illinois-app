@@ -20,7 +20,6 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
@@ -182,7 +181,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
       DeviceCalendar.notifyPromptPopup,
-      DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
       ExploreMapPanel.notifySelect,
@@ -213,9 +211,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void onNotification(String name, dynamic param) {
     if (name == DeviceCalendar.notifyPromptPopup) {
       _onCalendarPromptMessage(param);
-    }
-    else if (name == DeviceCalendar.notifyShowConsoleMessage) {
-      _showConsoleMessage(param);
     }
     else if (name == Alerts.notifyAlert) {
       Alerts.handleNotification(context, param);
@@ -838,25 +833,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _presentPollResult(String? pollId) {
     Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubbleResultPanel(pollId: pollId)));
-  }
-
-  void _showConsoleMessage(message){
-    AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: Text(message??""),
-        actions: <Widget>[
-          TextButton(
-              child:
-              Text("Ok"),
-              onPressed: () => Navigator.of(context).pop()),
-          TextButton(
-              child: Text("Copy"),
-              onPressed: () {
-                Clipboard.setData(ClipboardData(text: message)).then((_){
-                  AppToast.show("Text data has been copied to the clipboard!");
-                });
-              } )
-        ]);
   }
 
   static List<String>? _getTabbarCodes() {
