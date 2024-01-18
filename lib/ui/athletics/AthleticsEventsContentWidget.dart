@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/athletics/AthleticsEventCard.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -34,13 +40,24 @@ class AthleticsEventsContentWidget extends StatefulWidget {
 
 class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWidget> implements NotificationsListener {
   List<Event2>? _events;
+  bool? _lastPageLoadedAll;
+  int? _totalEventsCount;
+  String? _eventsErrorText;
+  bool _loadingEvents = false;
+  bool _refreshingEvents = false;
+  bool _extendingEvents = false;
+  static const int _eventsPageLength = 16;
+
   List<Sport>? _teamsFilter;
-  bool _loading = false;
+
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, []);
+    NotificationService().subscribe(this, [Events2.notifyChanged]);
+    _scrollController.addListener(_scrollListener);
+    _reload();
   }
 
   @override
@@ -53,12 +70,18 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   Widget build(BuildContext context) {
     return Column(children: [
       _buildTeamsFilter(),
-      _buildContent()
+      Expanded(child: RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
+            child: _buildContent(),
+          )))
     ]);
   }
 
   Widget _buildContent() {
-    if (_loading) {
+    if (_loadingEvents) {
       return _buildLoadingContent();
     } else if (CollectionUtils.isEmpty(_events)) {
       return _buildEmptyContent();
@@ -104,33 +127,167 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
   }
 
   Widget _buildEventsContent() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [Text('TBD: to be implemented')]));
+    List<Widget> cardsList = <Widget>[];
+    for (Event2 event in _events!) {
+      Game? game = event.game;
+      if (game != null) {
+        cardsList.add(Padding(
+            padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0),
+            child: AthleticsEventCard(game: game, onTap: () => _onTapGame(game), showImage: true)));
+      }
+    }
+    if (_extendingEvents) {
+      cardsList.add(Padding(padding: EdgeInsets.only(top: cardsList.isNotEmpty ? 8 : 0), child: _buildExtendingWidget()));
+    }
+    return Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(children: cardsList));
   }
 
   Widget _buildLoadingContent() {
     return Center(
         child: Column(children: <Widget>[
       Container(height: MediaQuery.of(context).size.height / 5),
-      CircularProgressIndicator(),
+      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary),
       Container(height: MediaQuery.of(context).size.height / 5 * 3)
     ]));
   }
 
   Widget _buildEmptyContent() {
+    //TBD: DD - to be implemented
     return Text('TBD: to be implemented');
   }
 
+  Widget _buildExtendingWidget() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+        child: Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                    strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))));
+  }
+
   void _onTapTeamsFilter() {
-    Analytics().logSelect(target: "Teams");
+    Analytics().logSelect(target: 'Teams');
     //TBD: DD - implement
   }
 
-  void _setLoading(bool loading) {
-    setStateIfMounted(() {
-      _loading = loading;
-    });
+  void _onTapGame(Game game) {
+    Analytics().logSelect(target: 'Athletics Event');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: game)));
+  }
+
+  Events2Query _queryParam({int offset = 0, int limit = _eventsPageLength}) {
+    return Events2Query(
+      offset: offset,
+      limit: limit,
+      timeFilter: Event2TimeFilter.upcoming,
+      //TBD: DD - store the athletics categories in a single place
+      attributes: {'category': 'Big 10 Athletics'},
+      sortType: Event2SortType.dateTime,
+      sortOrder: Event2SortOrder.ascending
+    );
+  }
+
+  Future<void> _reload({ int limit = _eventsPageLength }) async {
+    if (!_loadingEvents && !_refreshingEvents) {
+      setStateIfMounted(() {
+        _loadingEvents = true;
+        _extendingEvents = false;
+      });
+
+      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      String? errorTextResult = (result is String) ? result : null;
+
+      setStateIfMounted(() {
+        _events = (events != null) ? List<Event2>.from(events) : null;
+        _totalEventsCount = listResult?.totalCount;
+        _lastPageLoadedAll = (events != null) ? (events.length >= limit) : null;
+        _eventsErrorText = errorTextResult;
+        _loadingEvents = false;
+      });
+    }
+  }
+
+  void _scrollListener() {
+    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreEvents != false) && !_loadingEvents && !_extendingEvents) {
+      _extend();
+    }
+  }
+
+  Future<void> _onRefresh() {
+    Analytics().logSelect(target: 'Refresh');
+    return _refresh();
+  }
+
+  bool? get _hasMoreEvents => (_totalEventsCount != null) ?
+  ((_events?.length ?? 0) < _totalEventsCount!) : _lastPageLoadedAll;
+
+  Future<void> _refresh() async {
+
+    if (!_loadingEvents && !_refreshingEvents) {
+      setStateIfMounted(() {
+        _refreshingEvents = true;
+        _extendingEvents = false;
+      });
+
+      int limit = max(_events?.length ?? 0, _eventsPageLength);
+      dynamic result = await Events2().loadEventsEx(await _queryParam(limit: limit));
+      Events2ListResult? listResult = (result is Events2ListResult) ? result : null;
+      List<Event2>? events = listResult?.events;
+      int? totalCount = listResult?.totalCount;
+      String? errorTextResult = (result is String) ? result : null;
+
+      setStateIfMounted(() {
+        if (events != null) {
+          _events = List<Event2>.from(events);
+          _lastPageLoadedAll = (events.length >= limit);
+          _eventsErrorText = null;
+        }
+        else if (_events == null) {
+          // If there was events content, preserve it. Otherwise, show the error
+          _eventsErrorText = errorTextResult;
+        }
+        if (totalCount != null) {
+          _totalEventsCount = totalCount;
+        }
+        _refreshingEvents = false;
+      });
+    }
+  }
+
+  Future<void> _extend() async {
+    if (!_loadingEvents && !_refreshingEvents && !_extendingEvents) {
+      setStateIfMounted(() {
+        _extendingEvents = true;
+      });
+
+      Events2ListResult? listResult = await Events2().loadEvents(await _queryParam(offset: _events?.length ?? 0, limit: _eventsPageLength));
+      List<Event2>? events = listResult?.events;
+      int? totalCount = listResult?.totalCount;
+
+      if (mounted && _extendingEvents && !_loadingEvents && !_refreshingEvents) {
+        setState(() {
+          if (events != null) {
+            if (_events != null) {
+              _events?.addAll(events);
+            }
+            else {
+              _events = List<Event2>.from(events);
+            }
+            _lastPageLoadedAll = (events.length >= _eventsPageLength);
+          }
+          if (totalCount != null) {
+            _totalEventsCount = totalCount;
+          }
+          _extendingEvents = false;
+        });
+      }
+
+    }
   }
 
   String get _teamsFilterLabel {
@@ -145,6 +302,8 @@ class _AthleticsEventsContentWidgetState extends State<AthleticsEventsContentWid
 
   @override
   void onNotification(String name, param) {
-    if (name == Events2.notifyChanged) {}
+    if (name == Events2.notifyChanged) {
+      _reload();
+    }
   }
 }

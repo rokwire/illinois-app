@@ -118,7 +118,7 @@ class _AthleticsContentPanelState extends State<AthleticsContentPanel> with Auto
                       onTap: _changeSettingsContentValuesVisibility))),
           Expanded(
               child: Stack(children: [
-                SingleChildScrollView(child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget)),
+                Container(child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget)),
             _buildContentValuesContainer()
           ]))
         ]),
