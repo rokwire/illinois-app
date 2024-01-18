@@ -40,6 +40,7 @@ import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
+import 'package:illinois/ui/widgets/DeviceCalendarAddPrompt.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -661,7 +662,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onCalendarPromptMessage(dynamic data) {
-        DeviceCalendarDialog.show(context: context, eventData: data);
+    DeviceCalendarAddPrompt.show(context: context, eventData: data);
   }
 
   void _showPanel(Map<String, dynamic> content) {
