@@ -24,10 +24,18 @@ extension DeviceCalendarExt on DeviceCalendar {
   void _addToCalendar(BuildContext context, dynamic event) async {
     DeviceCalendarEvent? calendarEvent = DeviceCalendarEvent.from(event);
     rokwire.DeviceCalendarError? error = (calendarEvent != null) ? await placeCalendarEvent(calendarEvent) : rokwire.DeviceCalendarError.internal();
-    DeviceCalendarMessage.show(context, (error != null)  ?
-      Localization().getStringEx('model.device_calendar.message.add.event.succeeded', 'Event added to Calendar') :
-      Localization().getStringEx('model.device_calendar.message.add.event.failed', 'Failed to add event to Calendar')
-    );
+    String message;
+    if (error == null) {
+      message = Localization().getStringEx('model.device_calendar.message.add.event.succeeded', 'Event added to Calendar');
+    }
+    else if (error.code == rokwire.DeviceCalendarErrorCodes.permissionDenied) {
+      message = Localization().getStringEx('model.device_calendar.message.add.event.failed.permission.denied', 'Permission denined to add event to Calendar');
+    }
+    else {
+      message = Localization().getStringEx('model.device_calendar.message.add.event.failed', 'Failed to add event to Calendar');
+    }
+
+    DeviceCalendarMessage.show(context, message);
   }
 }
 

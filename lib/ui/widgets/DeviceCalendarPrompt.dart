@@ -17,16 +17,6 @@ class DeviceCalendarAddEventPrompt extends DeviceCalendarPrompt {
     DeviceCalendarPrompt.show(context, message);
 }
 
-class DeviceCalendarRemoveEventPrompt extends DeviceCalendarPrompt {
-  static String get message => Localization().getStringEx('model.device_calendar.prompt.remove.event', 'Would you like to remove this event from your device\'s calendar?');
-
-  DeviceCalendarRemoveEventPrompt({Key? key}) :
-    super(message, key: key);
-
-  static Future<bool?> show(BuildContext context) =>
-    DeviceCalendarPrompt.show(context, message);
-}
-
 class DeviceCalendarPrompt extends StatefulWidget {
   final String prompt;
 

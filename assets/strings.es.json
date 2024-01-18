@@ -3870,9 +3870,10 @@
     "model.academics.appointment2.type.in_person.label": "En persona",
     "model.academics.appointment2.type.online.label": "En línea",
 
-    "model.device_calendar.prompt.add.event": "Would you like to add this event to your device\\'s calendar?",
+    "model.device_calendar.prompt.add.event": "Would you like to add this event to your device's calendar?",
     "model.device_calendar.message.add.event.succeeded": "Event added to Calendar",
     "model.device_calendar.message.add.event.failed": "Failed to add event to Calendar",
+    "model.device_calendar.message.add.event.failed.permission.denied": "Permission denined to add event to Calendar",
 
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",
