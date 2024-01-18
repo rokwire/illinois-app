@@ -235,10 +235,9 @@ class Storage extends rokwire.Storage {
   set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
 
   // Calendar
-
-  @override String get calendarEventsTableKey => 'calendar_events_table';
-  @override String get calendarEnableSaveKey => 'calendar_enabled_to_save';
-  @override String get calendarEnablePromptKey => 'calendar_enabled_to_prompt';
+  String get calendarShouldPromptKey => 'calendar_enabled_to_prompt';
+  bool get calendarShouldPrompt => getBoolWithName(calendarShouldPromptKey, defaultValue: true) ?? true;
+  set calendarShouldPrompt(bool value) => setBoolWithName(calendarShouldPromptKey, value);
 
   // Checklist
   static const String _navPagesKey  = 'checklist_nav_pages';
