@@ -8,6 +8,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event2.dart';
+import 'package:rokwire_plugin/model/device_calendar.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/events2.dart';
@@ -94,7 +95,7 @@ class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsList
   }
 }
 
-class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
+class _DeviceCalendarEvent extends DeviceCalendarEvent {
   //String? internalEventId;
   //String? title;
   //String? deepLinkUrl;
