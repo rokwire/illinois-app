@@ -19,22 +19,21 @@ import '../../service/Analytics.dart';
 
 enum RecorderMode{record, play}
 class SoundRecorderDialog extends StatefulWidget {
-  final String? initialRecordPath; //TBD update type
-  final List<int>? initialRecordBytes; //TBD update type
+  final Uint8List? initialRecordBytes;
 
-  const SoundRecorderDialog({super.key, this.initialRecordPath, this.initialRecordBytes});
+  const SoundRecorderDialog({super.key, this.initialRecordBytes});
 
   @override
   _SoundRecorderDialogState createState() => _SoundRecorderDialogState();
 
-  static Future show(BuildContext context, {String? initialRecordPath, List<int>? initialRecordBytes}) {
+  static Future show(BuildContext context, {String? initialRecordPath, Uint8List? initialRecordBytes}) {
     return showDialog(
         context: context,
         builder: (_) =>
             Material(
               type: MaterialType.transparency,
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: SoundRecorderDialog(initialRecordPath: initialRecordPath, initialRecordBytes: initialRecordBytes),
+              child: SoundRecorderDialog(initialRecordBytes: initialRecordBytes),
             )
     );
   }
@@ -42,13 +41,14 @@ class SoundRecorderDialog extends StatefulWidget {
 
 class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   late SoundRecorderController _controller;
+  bool _loading = false;
 
-  RecorderMode get _mode => _controller.hasRecord ? RecorderMode.play : RecorderMode.record;
+  RecorderMode get _mode => _controller.canPlay ? RecorderMode.play : RecorderMode.record;
 
   @override
   void initState() {
     _controller = SoundRecorderController(
-      initialRecordPath: widget.initialRecordPath,
+      initialRecordBytes: widget.initialRecordBytes,
       notifyChanged: (fn) =>setStateIfMounted(fn)
     );
     _controller.init();
@@ -136,6 +136,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                                   SmallRoundedButton( rightIcon: Container(),
                                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                                     label: Localization().getStringEx("", "Save"),
+                                    progress: _loading,
                                     onTap: _onTapSave,
                                     enabled: _saveEnabled,
                                     borderColor: _saveEnabled ? null : Styles().colors?.disabledTextColor,
@@ -177,19 +178,22 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   }
 
   void _onTapSave() async {
-    //TBD Loading/progress
+    if(_saveEnabled == false)
+      return;
+
+   setStateIfMounted(() => _loading = true);
     try {
       File? audioFile = _controller.recordFile;
       if (audioFile?.existsSync() == true) {
         AudioResult result = await Content().uploadVoiceRecord(audioFile!.readAsBytesSync());
         if(result.resultType == AudioResultType.succeeded){
-          //TBD notify changed
+          setStateIfMounted(() => _loading = false);
           Log.d(result.data ?? "");
         } else {
-          //TBD error
           Log.d(result.errorMessage ?? "");
         }
       }
+      Log.d("No File to save");
     }catch(e){
       Log.e(e.toString());
     }
@@ -235,11 +239,11 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
         Localization().getStringEx("", "Recording") :
         Localization().getStringEx("", "Record");
     } else {
-      return playerDisplayTime;
+      return _playerDisplayTime;
     }
   }
 
-  String get playerDisplayTime => "$_playerElapsedTime/$_playerLengthTime";
+  String get _playerDisplayTime => "$_playerElapsedTime/$_playerLengthTime";
 
   String get _playerElapsedTime => durationToDisplayTime(_controller._playerTimer) ?? _defaultPlayerTime;
 
@@ -249,7 +253,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   bool get _resetEnabled => _mode == RecorderMode.play;
 
-  bool get _saveEnabled => _mode == RecorderMode.play;
+  bool get _saveEnabled => _controller.hasRecord;
 
   String? durationToDisplayTime(Duration? duration) {
     if(duration == null)
@@ -265,15 +269,17 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
 class SoundRecorderController {
   final Function(void Function()) notifyChanged;
-  final String? initialRecordPath; //TBD update to link when ready
+  final Uint8List? initialRecordBytes;
 
   late Record _audioRecord;
   late AudioPlayer _audioPlayer;
   Duration? _playerTimer;
-  String? _audioPath = "";
+  String? _audioRecordPath = ""; //The result file when we make new record
+
+  Uint8List? _initialAudioBytes;//The bytes that we can initially play from already stored audio
   bool _recording = false;
 
-  SoundRecorderController({required this.notifyChanged, this.initialRecordPath});
+  SoundRecorderController({required this.notifyChanged, this.initialRecordBytes});
 
   void init() {
     _audioRecord = Record();
@@ -281,8 +287,8 @@ class SoundRecorderController {
     _audioPlayer.positionStream.listen((elapsedDuration) {
       notifyChanged(() => _playerTimer = elapsedDuration);
     });
-    if(initialRecordPath != null){
-      _audioPath = initialRecordPath!;
+    if(initialRecordBytes!= null){
+      _initialAudioBytes = initialRecordBytes;
       preparePlayer();
     }
   }
@@ -311,9 +317,9 @@ class SoundRecorderController {
       String? path = await _audioRecord.stop();
       _recording = await _audioRecord.isRecording();
       notifyChanged(() {
-        _audioPath = path!;
+        _audioRecordPath = path!;
       });
-      Log.d("STOP RECODING audioPath = $_audioPath");
+      Log.d("STOP RECODING audioPath = $_audioRecordPath");
     } catch (e) {
       Log.d("STOP RECODING: ${e}");
     }
@@ -322,15 +328,18 @@ class SoundRecorderController {
   //Sets the audioPath to player. This loads the Time and Length of the audio
   Future<void> preparePlayer() async {
     Log.d("AUDIO PREPARING");
-    if(StringUtils.isNotEmpty(_audioPath)) {
-      await _audioPlayer.setFilePath(_audioPath!);
+    if(StringUtils.isNotEmpty(_audioRecordPath)) {
+      await _audioPlayer.setFilePath(_audioRecordPath!);
+      notifyChanged(() {});
+    } else if (_initialAudioBytes != null) {
+      await _audioPlayer.setAudioSource(BytesAudioSource(_initialAudioBytes!));
       notifyChanged(() {});
     }
   }
 
   void playRecord() async {
     try {
-      if (hasRecord) {
+      if (canPlay) {
         await preparePlayer(); //Reset
         await _audioPlayer.play().then((_) => stopRecord());
       }
@@ -362,19 +371,17 @@ class SoundRecorderController {
   }
 
   void resetRecord() {
-    if(_audioPath != initialRecordPath){ //If newly recorded. Do not delete the Initial record file
       _deleteRecord();
-    }
-    notifyChanged(() {
-      _audioPath = null;
-    });
-    //TBD additional notification if needed
+      notifyChanged(() {
+        _audioRecordPath = null;
+        _initialAudioBytes = null;
+      });
   }
 
   Future<void> _deleteRecord() async {
-    if (_audioPath?.isNotEmpty == true) {
+    if (_audioRecordPath?.isNotEmpty == true) {
       try {
-        File file = File(_audioPath!);
+        File file = File(_audioRecordPath!);
         if (file.existsSync()) {
           file.deleteSync();
           Log.d("FILE DELETED");
@@ -388,11 +395,13 @@ class SoundRecorderController {
   //Getters
   bool get isRecording => _recording;
 
-  bool get hasRecord => StringUtils.isNotEmpty(_audioPath);
+  bool get hasRecord => StringUtils.isNotEmpty(_audioRecordPath);
 
-  String? get recordPath => _audioPath;
+  String? get recordPath => _audioRecordPath;
 
   File? get recordFile => StringUtils.isNotEmpty(recordPath) ? File(recordPath!) : null;
+
+  bool get canPlay => StringUtils.isNotEmpty(_audioRecordPath) || _initialAudioBytes != null;
 
   bool get isPlaying => _audioPlayer.playing;
 
@@ -409,6 +418,7 @@ class NamePronouncementWidget extends StatefulWidget { //TBD move to EditProfile
 
 class _NamePronouncementState extends State<NamePronouncementWidget> implements NotificationsListener {
   late AudioPlayer _audioPlayer;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -430,7 +440,8 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container( padding: EdgeInsets.only(right: 8, top: 4),
-                child:  Styles().images?.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
+                child:  _loading ? _progressIndicator :
+                  Styles().images?.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
             ),
             Visibility(visible: !_hasStoredPronouncement, child:
             Expanded(
@@ -474,6 +485,9 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
     }
   }
 
+  Widget get _progressIndicator => SizedBox(width: 16, height: 16, child:
+    CircularProgressIndicator(strokeWidth: 2, color: Styles().colors?.fillColorSecondary,));
+
   void _onPlayNamePronouncement() async {
     try {
       if (_audioPlayer.playing) {
@@ -503,9 +517,9 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
   }
 
   void _onDeleteNamePronouncement(){
-    //TBD Implement progress/loading delete
+    setStateIfMounted(() => _loading = true);
     Content().deleteVoiceRecord().then((result) {
-      //TBD Implement progress/loading delete
+      setStateIfMounted(() => _loading = false);
       if(result?.resultType != AudioResultType.succeeded){
         //TBD handle error
       }
