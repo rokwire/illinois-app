@@ -29,7 +29,6 @@ import 'package:device_calendar/device_calendar.dart';
 class DeviceCalendar extends rokwire.DeviceCalendar implements NotificationsListener {
 
   static String get notifyPromptPopup            => rokwire.DeviceCalendar.notifyPromptPopup;
-  static String get notifyCalendarSelectionPopup => rokwire.DeviceCalendar.notifyCalendarSelectionPopup;
   static String get notifyShowConsoleMessage     => rokwire.DeviceCalendar.notifyShowConsoleMessage;
 
   // Singletone Factory

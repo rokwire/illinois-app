@@ -67,7 +67,6 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
-import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/popups/alerts.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
@@ -183,7 +182,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
       DeviceCalendar.notifyPromptPopup,
-      DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifySelect,
@@ -215,9 +213,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void onNotification(String name, dynamic param) {
     if (name == DeviceCalendar.notifyPromptPopup) {
       _onCalendarPromptMessage(param);
-    }
-    else if (name == DeviceCalendar.notifyCalendarSelectionPopup) {
-      _promptCalendarSelection(param);
     }
     else if (name == DeviceCalendar.notifyShowConsoleMessage) {
       _showConsoleMessage(param);
@@ -668,21 +663,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         ),
       ),
     );
-  }
-
-  void _promptCalendarSelection(dynamic data){
-      CalendarSelectionDialog.show(context: context,
-          onContinue:( selectedCalendar) {
-            Navigator.of(context).pop();
-//            data["calendar"] = selectedCalendar;
-            //Store the selection even if the event is not stored
-            if(selectedCalendar!=null){
-              DeviceCalendar().calendar = selectedCalendar;
-            }
-            NotificationService().notify(
-                DeviceCalendar.notifyPromptPopup, data);
-          }
-      );
   }
 
   void _onCalendarPromptMessage(dynamic data) {
