@@ -20,6 +20,7 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
@@ -40,6 +41,7 @@ import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
+import 'package:illinois/ui/widgets/InAppNotificationToast.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -515,7 +517,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 children: panels,
               ),
             bottomNavigationBar: uiuc.TabBar(tabController: _tabBarController),
-            backgroundColor: Styles().colors!.background,
+            backgroundColor: Styles().colors.background,
           ),
         ),
         onWillPop: _onWillPop);
@@ -599,13 +601,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               children: <Widget>[
                 Expanded(
                   child: Container(
-                    color: Styles().colors!.fillColorPrimary,
+                    color: Styles().colors.fillColorPrimary,
                     child: Padding(
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
                           Localization().getStringEx("app.title", "Illinois"),
-                          style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular"),
+                          style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),
                         ),
                       ),
                     ),
@@ -618,7 +620,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Localization().getStringEx(
                   "common.message.exit_app", "Are you sure you want to exit?"),
               textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular.fat")
+              style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular.fat")
             ),
             Container(height: 26,),
             Padding(
@@ -633,8 +635,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(true);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.yes.title", 'Yes')),
                   Container(height: 10,),
                   RoundedButton(
@@ -644,8 +646,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(false);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.no.title", 'No'))
                 ],
               ),
@@ -665,12 +667,29 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
     String? body = content["body"];
-    Function? completion = content["onComplete"];
-    AppAlert.showDialogResult(context, body, buttonTitle: Localization().getStringEx("dialog.show.title", "Show")).then((bool? result) {
-      if ((result == true) && (completion != null)) {
-        completion();
-      }
-    });
+    void Function()? completion = content["onComplete"];
+    if (body != null) {
+      FToast toast = FToast();
+      AppToast.show(context,
+        toast: toast,
+        gravity: ToastGravity.TOP,
+        child: InAppNotificationToast.message(body,
+          actionText: Localization().getStringEx('dialog.show.title', 'Show'),
+          onAction: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
+          onMessage: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
+        )
+      );
+      /*AppAlert.showDialogResult(context, body, buttonTitle: Localization().getStringEx('dialog.show.title', 'Show')).then((bool? result) {
+        if ((result == true) && (completion != null)) {
+          completion();
+        }
+      });*/
+    }
+  }
+
+  void _onFirebaseForegroundMessageCompletition(FToast toast, void Function() completion) {
+    toast.removeCustomToast();
+    completion.call();
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {

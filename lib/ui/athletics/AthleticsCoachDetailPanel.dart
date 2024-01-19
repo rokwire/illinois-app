@@ -71,18 +71,18 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                 Padding(
                   padding: EdgeInsets.all(16),
                   child: Text(widget.coach.title!,
-                    style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.extra_large")
+                    style: Styles().textStyles.getTextStyle("panel.athletics.coach_detail.title.extra_large")
                   ),
                 ),
 
                 Container(
                     padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
-                    color: Styles().colors!.background,
+                    color: Styles().colors.background,
                     child: Visibility(visible: StringUtils.isNotEmpty(widget.coach.htmlBio), child: Container(
                       child: HtmlWidget(
                           StringUtils.ensureNotEmpty(widget.coach.htmlBio),
                           onTapUrl : (url) {_launchUrl(url, context: context); return true;},
-                          textStyle:  Styles().textStyles?.getTextStyle("widget.detail.regular")
+                          textStyle:  Styles().textStyles.getTextStyle("widget.detail.regular")
                       )
                     ))
                 )
@@ -91,7 +91,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
           ),
         ],
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -135,7 +135,7 @@ class _CoachDetailHeading extends StatelessWidget{
             child: Stack(
               children: <Widget>[
                 Container(
-                  color: Styles().colors!.fillColorPrimaryVariant,
+                  color: Styles().colors.fillColorPrimaryVariant,
                   child: Container(
                     margin: EdgeInsets.only(right:(_photoWidth + (_photoMargin + _horizontalMargin))),
                     child: Padding(
@@ -147,12 +147,12 @@ class _CoachDetailHeading extends StatelessWidget{
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Styles().images?.getImage(sport!.iconPath!) ?? Container(),
+                                Styles().images.getImage(sport!.iconPath!) ?? Container(),
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(sport!.name!,
-                                      style: Styles().textStyles?.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
+                                      style: Styles().textStyles.getTextStyle("panel.athletics.coach_detail.title.regular.accent")
                                     ),
                                   ),
                                 )
@@ -165,7 +165,7 @@ class _CoachDetailHeading extends StatelessWidget{
                                 children: <Widget>[
                                   Expanded(
                                     child: Text(coach!.name!,
-                                      style: Styles().textStyles?.getTextStyle("widget.heading.large.fat")
+                                      style: Styles().textStyles.getTextStyle("widget.heading.large.fat")
                                     ),
                                   ),
                                 ],
@@ -185,7 +185,7 @@ class _CoachDetailHeading extends StatelessWidget{
                     onTap: onTapPhoto,
                     child: Container(
                       margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
+                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                       child: (StringUtils.isNotEmpty(coach?.thumbPhotoUrl) ?
                       Image.network(coach!.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: _photoWidth, color: Colors.white,)

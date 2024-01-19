@@ -276,9 +276,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
         //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
         title: Localization().getStringEx('app.title', 'Illinois'),
         theme: ThemeData(
-          appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
-          primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
-          fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
+          appBarTheme: AppBarTheme(backgroundColor: Styles().colors.fillColorPrimaryVariant),
+          primaryColor: Styles().colors.fillColorPrimaryVariant,
+          fontFamily: Styles().fontFamilies.extraBold),
         home: _homePanel,
       ),
     );

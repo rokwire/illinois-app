@@ -102,7 +102,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     else if (_providers?.length == 1) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(padding: EdgeInsets.zero, child:
-          Text(_providers?.first.name ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.fat'))
+          Text(_providers?.first.name ?? '', style: Styles().textStyles.getTextStyle('widget.title.large.fat'))
         ),
         _buildAppointmentsContent(),
       ]);
@@ -126,10 +126,10 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   Widget _buildProvidersDropdown() {
     return Semantics(hint: Localization().getStringEx("dropdown.hint", "DropDown"), container: true, child:
       RibbonButton(
-        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-        backgroundColor: Styles().colors!.white,
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+        backgroundColor: Styles().colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: _isProvidersExpanded ? 'chevron-up' : 'chevron-down',
         label: (_selectedProvider != null) ? (_selectedProvider?.name ?? '') : Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: _onProvidersDropdown
@@ -152,7 +152,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     return Positioned.fill(child:
       BlockSemantics(child:
         GestureDetector(onTap: _onDismissProvidersDropdown, child:
-          Container(color: Styles().colors!.blackTransparent06)
+          Container(color: Styles().colors.blackTransparent06)
         )
       )
     );
@@ -160,12 +160,12 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
   Widget _buildProvidersDropdownItems() {
     List<Widget> items = <Widget>[];
-    items.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    items.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
 
     if (_providers != null) {
       items.add(RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: Localization().getStringEx('panel.academics.appointments.home.label.providers.all', 'All Providers'),
         onTap: () => _onTapProvider(null)
@@ -173,8 +173,8 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
       for (AppointmentProvider provider in _providers!) {
         items.add(RibbonButton(
-          backgroundColor: Styles().colors!.white,
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          backgroundColor: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           rightIconKey: null,
           label: provider.name,
           onTap: () => _onTapProvider(provider)
@@ -278,14 +278,14 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
 
   Widget _buildHeading(String text) {
     return Padding(padding: EdgeInsets.only(top: 16), child:
-      Text(text, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle('panel.wellness_appointments.title.large'))
+      Text(text, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle('panel.wellness_appointments.title.large'))
     );
   }
 
   Widget _buildStatusContent(String text) {
     return Padding(padding: EdgeInsets.only(top: 16), child:
     Row(children: [Expanded(child:
-      Text(text, textAlign: TextAlign.left, style:Styles().textStyles?.getTextStyle("widget.message.medium.thin")),
+      Text(text, textAlign: TextAlign.left, style:Styles().textStyles.getTextStyle("widget.message.medium.thin")),
     )],)
     );
   }
@@ -293,7 +293,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   Widget _buildLoadingContent() {
     return Center(child:
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
       )
     );
   }
@@ -301,7 +301,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
   Widget _buildMessageContent(String message) {
     return Center(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
-        Text(message, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        Text(message, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
       )
     );
   }
@@ -310,7 +310,7 @@ class _AcademicsAppointmentsContentWidgetState extends State<AcademicsAppointmen
     return Visibility(visible: _canScheduleAppointment, child:
       LinkButton(
         title: Localization().getStringEx('panel.wellness.appointments.home.schedule_appointment.label', 'Schedule an Appointment'),
-        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular.underline"),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.regular.underline"),
         padding: EdgeInsets.only(top: 8, bottom: 16),
         onTap: _onScheduleAppointment,
       ),
@@ -438,7 +438,7 @@ class AppointmentsListPanel extends StatelessWidget {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.academics.appointments.home.header.title', 'Appointments')),
       body: Padding(padding: EdgeInsets.all(16), child: AcademicsAppointmentsContentWidget()),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar()
     );
   }

@@ -165,7 +165,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   Widget build(BuildContext context) {
     double buttonWidth = MediaQuery.of(context).textScaler.scale(120);
     return Scaffold(
-        backgroundColor: Styles().colors!.blackTransparent06,
+        backgroundColor: Styles().colors.blackTransparent06,
         body: SafeArea(
             child: Stack(alignment: Alignment.center, children: [
           _buildVideoContent(),
@@ -205,7 +205,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                         Stack(children: [
                           Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: Semantics(label: Localization().getStringEx('panel.onboarding2.video.semantics.label', 'Onboarding video'), child: VideoPlayer(_controller!)))),
                           ClosedCaption(
-                              text: _currentCaptionText, textStyle: Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
+                              text: _currentCaptionText, textStyle: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
                         ]),
                         Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
                       ]))));
@@ -216,7 +216,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     } else {
       return Center(
           child: Text(Localization().getStringEx('panel.onboarding2.video.missing.msg', 'Missing video'),
-              style: Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.message.empty")));
+              style: Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.message.empty")));
     }
   }
 
@@ -232,11 +232,11 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                         height: 30,
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!), width: 2),
+                                color: (_ccEnabled ? Styles().colors.white : Styles().colors.disabledTextColorTwo), width: 2),
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',
-                                style: _ccEnabled? Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.cc.enabled") : Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.cc.disabled")))))));
+                                style: _ccEnabled? Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.enabled") : Styles().textStyles.getTextStyle("panel.onboarding2.video_tutorial.cc.disabled")))))));
   }
 
   void _onTapBack() {

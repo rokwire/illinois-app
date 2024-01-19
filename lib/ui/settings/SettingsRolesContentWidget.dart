@@ -55,7 +55,7 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
   @override
   Widget build(BuildContext context) {
     return Container(
-          color: Styles().colors!.background,
+          color: Styles().colors.background,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -64,7 +64,7 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
                   padding: EdgeInsets.only(top: 16, left: 4, right: 4),
                   child: Text(
                     Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
-                    style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
+                    style: Styles().textStyles.getTextStyle("widget.item.small.thin")
                   ),
                 ),
               ),
@@ -72,7 +72,7 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
                 padding: EdgeInsets.only(top: 10,  left: 4, right: 4),
                 child: Text(
                     Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am a...'),
-                    style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat")
+                    style: Styles().textStyles.getTextStyle("widget.title.medium.extra_fat")
                 ),
               ),
               Padding(

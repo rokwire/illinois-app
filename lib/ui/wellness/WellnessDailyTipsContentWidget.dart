@@ -87,14 +87,14 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   }
 
   Widget _buildTipDescription() {
-    Color? textColor = Styles().colors!.white;
-    Color? backColor = _tipColor ?? Styles().colors?.accentColor3;
+    Color? textColor = Styles().colors.white;
+    Color? backColor = _tipColor ?? Styles().colors.accentColor3;
     return Container(color: backColor, padding: EdgeInsets.all(42), child:
       HtmlWidget(
         StringUtils.ensureNotEmpty(Wellness().dailyTip),
           onTapUrl : (url) {_launchUrl(url); return true;},
-          textStyle:  Styles().textStyles?.getTextStyle("widget.title.light.medium_large.extra_fat"),
-          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(textColor ?? Colors.white)} : null
+          textStyle:  Styles().textStyles.getTextStyle("widget.title.light.medium_large.extra_fat"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(textColor)} : null
       )
     );
   }
@@ -103,7 +103,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return Padding(padding: EdgeInsets.only(top: 16), child:
       Semantics(label: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), hint: Localization().getStringEx('panel.wellness.sections.dimensions.hint', 'Tap to see the 8 Dimensions of Wellness'), button: true, image: true, child:
         InkWell(onTap: _onTapEightDimensionsImage, child:
-          Styles().images?.getImage('wellness-wheel-small', excludeFromSemantics: true,),
+          Styles().images.getImage('wellness-wheel-small', excludeFromSemantics: true,),
         ),
       ),
     );
@@ -115,26 +115,26 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
         child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-                style: Styles().textStyles?.getTextStyle("widget.detail.regular"),
+                style: Styles().textStyles.getTextStyle("widget.detail.regular"),
                 children: [
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.wellness.text', 'Wellness '),
-                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+                      style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.description.text',
                           'is a state of optimal well-being that is oriented toward maximizing an individual\'s potential. This is a life-long process of moving towards enhancing your ')),
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.dimensions.text',
                           'physical, mental, environmental, financial, spiritual, vocational, emotional, and social wellness.'),
-                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"))
+                      style: Styles().textStyles.getTextStyle("widget.detail.regular.fat"))
                 ])));
   }
 
   Widget _buildEightDimensionButton() {
     return RoundedButton(
         label: Localization().getStringEx('panel.wellness.sections.dimensions.button', 'Learn more about the 8 dimensions'),
-        textStyle: Styles().textStyles?.getTextStyle("panel.wellness.tips.button.title.small"),
-        rightIcon: Styles().images?.getImage('external-link', excludeFromSemantics: true),
+        textStyle: Styles().textStyles.getTextStyle("panel.wellness.tips.button.title.small"),
+        rightIcon: Styles().images.getImage('external-link', excludeFromSemantics: true),
         rightIconPadding: EdgeInsets.only(left: 4, right: 6),
         onTap: onTapEightDimension);
   }
@@ -149,18 +149,18 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   Widget _buildEightDimensionsPopup(BuildContext context) {
     return Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
       ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
-        Container(color: Styles().colors!.white, child:
+        Container(color: Styles().colors.white, child:
           Stack(children: [
             Padding(padding: EdgeInsets.symmetric(vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
                 Row(children: [
                   Expanded(child:
                     Semantics( header: true, inMutuallyExclusiveGroup: true,
-                      child:Text(Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), textAlign: TextAlign.center, style:Styles().textStyles?.getTextStyle("panel.wellness.todo.dialog.heading.large")),
+                      child:Text(Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), textAlign: TextAlign.center, style:Styles().textStyles.getTextStyle("panel.wellness.todo.dialog.heading.large")),
                   )),
                 ],),
                 Container(height: 16),
-                Styles().images?.getImage('wellness-wheel', semanticLabel: "Circular diagram with 8 dimensions title in center. Then a 2nd ring of icons representing different dimensions in the next ring of diagram. In the Third and final ring of diagram, there are names of dimensions: Environmental, Financial, Spiritual, Vocational, Emotional, Social, Physical, Mental.") ?? Container(), //TBD localize
+                Styles().images.getImage('wellness-wheel', semanticLabel: "Circular diagram with 8 dimensions title in center. Then a 2nd ring of icons representing different dimensions in the next ring of diagram. In the Third and final ring of diagram, there are names of dimensions: Environmental, Financial, Spiritual, Vocational, Emotional, Social, Physical, Mental.") ?? Container(), //TBD localize
               ],),
             ),
             Column(mainAxisSize: MainAxisSize.min, children: [
@@ -169,7 +169,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                 Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
                   InkWell(onTap : () => _onClosePopup(context), child:
                     Padding(padding: EdgeInsets.all(18), child: 
-                      Styles().images?.getImage('close', excludeFromSemantics: true),
+                      Styles().images.getImage('close', excludeFromSemantics: true),
                     ),
                   ),
                 ),

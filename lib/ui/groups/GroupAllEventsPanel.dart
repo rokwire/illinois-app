@@ -52,7 +52,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18), child: _loadingEvents ? _loadingIndicator : _buildEvents())
             ])),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -77,7 +77,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
         padding: EdgeInsets.only(top: 150),
         child: Center(
             child: SizedBox(
-                width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3))));
+                width: 32, height: 32, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3))));
   }
 
   Widget get _extendingIndicator => Container(
@@ -88,7 +88,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
-                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))));
+                  strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary)))));
 
   void _load() {
     if (!_loadingEvents) {

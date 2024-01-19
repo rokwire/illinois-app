@@ -70,7 +70,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
             Column(children: <Widget>[_buildPollsContent()])
           ]))
         ]),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -123,10 +123,10 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
           Container(height: 100),
           Text(message,
               textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")),
+              style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat")),
           Container(height: 16),
           Text(description,
-              textAlign: TextAlign.center, style:Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+              textAlign: TextAlign.center, style:Styles().textStyles.getTextStyle("widget.item.regular.thin"))
         ]));
   }
 
@@ -141,10 +141,10 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
           Container(height: 46),
           Text(Localization().getStringEx('panel.group_polls.text.error', 'Error'),
               textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle("widget.title.extra_large.extra_fat")),
+              style: Styles().textStyles.getTextStyle("widget.title.extra_large.extra_fat")),
           Container(height: 16),
           Text(StringUtils.ensureNotEmpty(_pollsError),
-              textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
+              textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"))
         ]));
   }
 

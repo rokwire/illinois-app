@@ -46,7 +46,7 @@ class FavoriteStarIcon extends StatelessWidget {
       }
     }
     
-    return Styles().images?.getImage(imageKey ?? 'star-outline-gray', excludeFromSemantics: true);
+    return Styles().images.getImage(imageKey ?? 'star-outline-gray', excludeFromSemantics: true);
   }
 }
 

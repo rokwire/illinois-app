@@ -19,7 +19,7 @@ extension GameExt on Game {
     Analytics.LogAttributeLocation : location?.location,
   };
 
-  Color? get uiColor => Styles().colors?.fillColorPrimary;
+  Color? get uiColor => Styles().colors.fillColorPrimary;
 
   ///
   /// Note: Old requirements defined games were introduced

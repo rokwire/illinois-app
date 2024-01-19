@@ -93,7 +93,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                         "Confirm your code"),
                     textAlign: TextAlign.center,
                     style:
-                        TextStyle(fontSize: 36, color: Styles().colors!.fillColorPrimary),
+                        TextStyle(fontSize: 36, color: Styles().colors.fillColorPrimary),
                   ),
                 ),
                 Container(
@@ -106,8 +106,8 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 18,
-                        color: Styles().colors!.fillColorPrimary,
-                        fontFamily: Styles().fontFamilies!.regular),
+                        color: Styles().colors.fillColorPrimary,
+                        fontFamily: Styles().fontFamilies.regular),
                   ),
                 ),
                 Container(
@@ -120,8 +120,8 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         fontSize: 16,
-                        color: Styles().colors!.fillColorPrimary,
-                        fontFamily: Styles().fontFamilies!.bold),
+                        color: Styles().colors.fillColorPrimary,
+                        fontFamily: Styles().fontFamilies.bold),
                   ),
                 ),
                 Padding(
@@ -135,12 +135,12 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                         controller: _codeController,
                         autofocus: false,
                         onSubmitted: (_) => _clearErrorMsg,
-                        cursorColor: Styles().colors!.textBackground,
+                        cursorColor: Styles().colors.textBackground,
                         keyboardType: TextInputType.number,
                         style: TextStyle(
                             fontSize: 16,
-                            fontFamily: Styles().fontFamilies!.regular,
-                            color: Styles().colors!.textBackground),
+                            fontFamily: Styles().fontFamilies.regular,
+                            color: Styles().colors.textBackground),
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -164,7 +164,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                       style: TextStyle(
                           color: Colors.red,
                           fontSize: 14,
-                          fontFamily: Styles().fontFamilies!.medium),
+                          fontFamily: Styles().fontFamilies.medium),
                     ),
                   ),
                 ),
@@ -176,9 +176,9 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                         "Confirm phone number"),
                     hint: Localization().getStringEx(
                         "panel.onboarding.confirm_phone.button.confirm.hint", ""),
-                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                    borderColor: Styles().colors!.fillColorSecondary,
-                    backgroundColor: Styles().colors!.background,
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                    borderColor: Styles().colors.fillColorSecondary,
+                    backgroundColor: Styles().colors.background,
                     onTap: () => _onTapConfirm())
                 ),
                 Visibility(
@@ -190,9 +190,9 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                           "panel.onboarding.confirm_phone.button.link.cancel.label", "Cancel"),
                       hint: Localization().getStringEx(
                           "panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      backgroundColor: Styles().colors!.background,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: Styles().colors.background,
                       onTap: () => _onTapCancel())
                   ),
                 ),

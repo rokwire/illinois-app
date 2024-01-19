@@ -50,13 +50,13 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
           children: [
             Container( padding: EdgeInsets.only(right: 8, top: 4),
                 child:  _loading ? _progressIndicator :
-                Styles().images?.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
+                Styles().images.getImage(_hasStoredPronouncement ? 'icon-soundbyte' : 'plus-circle', excludeFromSemantics: true)
             ),
             Visibility(visible: !_hasStoredPronouncement, child:
             Expanded(
                 child: GestureDetector(onTap:  _onRecordNamePronouncement, child:
                 Text( Localization().getStringEx("", "Add name pronunciation and how you prefer to be addressed by students (Ex: Please call me Dr. Last Name,First Name, or Nickname. )"),
-                  style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
+                  style: Styles().textStyles.getTextStyle("widget.info.medium.underline"),
                 ),
                 )
             ),
@@ -64,21 +64,21 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
             Visibility(visible: _hasStoredPronouncement, child:
             GestureDetector(onTap:  _onPlayNamePronouncement, child:
             Text( Localization().getStringEx("", "Your name pronunciation recording"),
-              style: Styles().textStyles?.getTextStyle("widget.info.medium.underline"),
+              style: Styles().textStyles.getTextStyle("widget.info.medium.underline"),
             ),
             )
             ),
             Visibility(visible: _hasStoredPronouncement, child:
             InkWell(onTap: _onEditRecord, child:
             Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 4), child:
-            Styles().images?.getImage('edit', excludeFromSemantics: true)
+            Styles().images.getImage('edit', excludeFromSemantics: true)
             )
             )
             ),
             Visibility(visible: _hasStoredPronouncement, child:
             InkWell(onTap: _onDeleteNamePronouncement, child:
             Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 4), child:
-            Styles().images?.getImage('icon-delete-record', excludeFromSemantics: true)
+            Styles().images.getImage('icon-delete-record', excludeFromSemantics: true)
             )
             )
             )
@@ -95,7 +95,7 @@ class _NamePronouncementState extends State<NamePronouncementWidget> implements 
   }
 
   Widget get _progressIndicator => SizedBox(width: 16, height: 16, child:
-  CircularProgressIndicator(strokeWidth: 2, color: Styles().colors?.fillColorSecondary,));
+  CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,));
 
   void _onPlayNamePronouncement() async {
     try {
@@ -193,7 +193,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
           padding: EdgeInsets.all(5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5)),
-              color: Styles().colors!.background,
+              color: Styles().colors.background,
             ),
             child: Stack(
                 alignment: Alignment.topRight,
@@ -237,11 +237,11 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                             Container(height: 8,),
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                              child: Text(_statusText, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),)
+                              child: Text(_statusText, style: Styles().textStyles.getTextStyle("widget.detail.regular.fat"),)
                             ),
                             Container(
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                child: Text(_hintText, style: Styles().textStyles?.getTextStyle("widget.detail.regular"),)
+                                child: Text(_hintText, style: Styles().textStyles.getTextStyle("widget.detail.regular"),)
                             ),
                             Container(height: 16,),
                             Container(padding: EdgeInsets.symmetric(horizontal: 24), child:
@@ -252,8 +252,8 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                                     label: Localization().getStringEx("", "Reset"),
                                     onTap: _onTapReset,
                                     enabled: _resetEnabled,
-                                    borderColor: _resetEnabled ? null : Styles().colors?.disabledTextColor,
-                                    textColor: _resetEnabled ? null : Styles().colors?.disabledTextColor,
+                                    borderColor: _resetEnabled ? null : Styles().colors.disabledTextColor,
+                                    textColor: _resetEnabled ? null : Styles().colors.disabledTextColor,
                                   ),
                                   Container(width: 16,),
                                   SmallRoundedButton( rightIcon: Container(),
@@ -262,8 +262,8 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                                     progress: _loading,
                                     onTap: _onTapSave,
                                     enabled: _saveEnabled,
-                                    borderColor: _saveEnabled ? null : Styles().colors?.disabledTextColor,
-                                    textColor: _saveEnabled ? null : Styles().colors?.disabledTextColor,
+                                    borderColor: _saveEnabled ? null : Styles().colors.disabledTextColor,
+                                    textColor: _saveEnabled ? null : Styles().colors.disabledTextColor,
                                   ),
                               ],),
                             ),
@@ -280,7 +280,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
                             _onTapClose();
                           },
                           child: Container( padding: EdgeInsets.all(16), child:
-                          Styles().images?.getImage('close', excludeFromSemantics: true)))),
+                          Styles().images.getImage('close', excludeFromSemantics: true)))),
                 ]
             )
         )));
@@ -338,14 +338,14 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
   Widget? get _playButtonIcon {
     if(_mode == RecorderMode.play){
-      return Styles().images?.getImage('icon-play', excludeFromSemantics: true,);
+      return Styles().images.getImage('icon-play', excludeFromSemantics: true,);
         // _controller.isPlaying ?
-        // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors?.white,)) : //TBD do we need another icon for stop?
-        //Styles().images?.getImage('icon-play', excludeFromSemantics: true, size: iconSize);
+        // Container(padding: EdgeInsets.all(20), child: Container(width: 20, height: 20, color: Styles().colors.white,)) : //TBD do we need another icon for stop?
+        //Styles().images.getImage('icon-play', excludeFromSemantics: true, size: iconSize);
     } else {
       return _controller.isRecording ?
-        Styles().images?.getImage('icon-recording', excludeFromSemantics: true,) :
-        Styles().images?.getImage('icon-record', excludeFromSemantics: true,);
+        Styles().images.getImage('icon-recording', excludeFromSemantics: true,) :
+        Styles().images.getImage('icon-record', excludeFromSemantics: true,);
     }
   }
 

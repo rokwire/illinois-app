@@ -44,7 +44,7 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
             children: <Widget>[
                 Padding( padding: EdgeInsets.all(8),
                   child: Text(widget.prompt,
-                    style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"),
+                    style: Styles().textStyles.getTextStyle("widget.message.medium.thin"),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -56,9 +56,9 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                       Padding(padding: EdgeInsets.all(8),
                         child: RoundedButton(
                           label: Localization().getStringEx("dialog.no.title","No"),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-                          borderColor: Styles().colors!.fillColorPrimary,
-                          backgroundColor: Styles().colors!.white,
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                          borderColor: Styles().colors.fillColorPrimary,
+                          backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           onTap: _onDecline
                           ))),
@@ -66,9 +66,9 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                       Padding(padding: EdgeInsets.all(8),
                         child: RoundedButton(
                           label: Localization().getStringEx("dialog.yes.title","Yes"),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-                          borderColor: Styles().colors!.fillColorSecondary,
-                          backgroundColor: Styles().colors!.white,
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                          borderColor: Styles().colors.fillColorSecondary,
+                          backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           onTap: _onConfirm
                         ))),
@@ -76,9 +76,9 @@ class _DeviceCalendarPromptState extends State<DeviceCalendarPrompt>{
                 Container(height: 16,),
                 ToggleRibbonButton(
                     label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events or appointments to calendar'),
-                    border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+                    border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium"),
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     toggled: Storage().calendarShouldPrompt,
                     onTap: _onPromptChange
@@ -114,7 +114,7 @@ class DeviceCalendarMessage extends StatelessWidget {
     Padding(padding: EdgeInsets.all(16), child:
       Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
         Padding( padding: EdgeInsets.all(8), child:
-          Text(message, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"), textAlign: TextAlign.center,),
+          Text(message, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"), textAlign: TextAlign.center,),
         ),
         Container(height: 8,),
         Row(mainAxisSize: MainAxisSize.min,
@@ -125,9 +125,9 @@ class DeviceCalendarMessage extends StatelessWidget {
               Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                 RoundedButton(
                   label: Localization().getStringEx("dialog.ok.title", "OK"),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-                  borderColor: Styles().colors!.fillColorPrimary,
-                  backgroundColor: Styles().colors!.white,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                  borderColor: Styles().colors.fillColorPrimary,
+                  backgroundColor: Styles().colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   onTap: () => Navigator.of(context).pop()
                   )

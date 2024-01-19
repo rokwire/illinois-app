@@ -83,9 +83,9 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
         contentList.add(Container(height: 4));
         contentList.add(ToggleRibbonButton(
             label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events to calendar'),
-            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+            border: Border.all(color: Styles().colors.blackTransparent018, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            textStyle: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
+            textStyle: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
             toggled: Storage().calendarShouldPrompt,
             onTap: _onPrompt));
       }
@@ -97,7 +97,7 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
         Row(children: [
           Expanded(
               child: Text('Calendar',
-                  style:  Styles().textStyles?.getTextStyle("widget.detail.regular.fat")))
+                  style:  Styles().textStyles.getTextStyle("widget.detail.regular.fat")))
         ])
       ]);
     }

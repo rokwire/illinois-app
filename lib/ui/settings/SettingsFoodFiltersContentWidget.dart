@@ -59,7 +59,7 @@ class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersCo
                     Container(height: 20,),
                     Container(
                       decoration: BoxDecoration(
-                          color: Styles().colors!.fillColorPrimary,
+                          color: Styles().colors.fillColorPrimary,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(4),
                               topRight: Radius.circular(4))),
@@ -76,7 +76,7 @@ class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersCo
                               child: Text(
                                 onlyShow,
                                 textAlign: TextAlign.left,
-                                style: Styles().textStyles?.getTextStyle("panel.settings.food_filter.title")
+                                style: Styles().textStyles.getTextStyle("panel.settings.food_filter.title")
                                 ),
                               )
                             ],
@@ -88,7 +88,7 @@ class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersCo
                     Container(height: 20,),
                     Container(
                       decoration: BoxDecoration(
-                          color: Styles().colors!.fillColorPrimary,
+                          color: Styles().colors.fillColorPrimary,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(4),
                               topRight: Radius.circular(4))),
@@ -105,7 +105,7 @@ class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersCo
                             child: Text(
                               Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", "EXCLUDE FOODS WITH INGREDIENTS"),
                               textAlign: TextAlign.left,
-                              style: Styles().textStyles?.getTextStyle("panel.settings.food_filter.title")
+                              style: Styles().textStyles.getTextStyle("panel.settings.food_filter.title")
                               ),
                               )
                             ],

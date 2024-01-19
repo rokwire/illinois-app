@@ -130,7 +130,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: widget.scrollController == null
           ? uiuc.TabBar()
           : Container(height: 0,),
@@ -149,7 +149,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               ? 'chevron-left-white'
               : 'chevron-left-bold',
           title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
-          textStyle:  widget.scrollController == null ? Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles?.getTextStyle("widget.title.regular.extra_fat"),
+          textStyle:  widget.scrollController == null ? Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat") : Styles().textStyles.getTextStyle("widget.title.regular.extra_fat"),
         ),
         SliverList(
           delegate: SliverChildListDelegate([
@@ -183,9 +183,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       
       contentWidget = VerticalTitleValueSection(
         title: title,
-        titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
+        titleTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
         value: status,
-        valueTextStyle: Styles().textStyles?.getTextStyle("widget.detail.medium"),
+        valueTextStyle: Styles().textStyles.getTextStyle("widget.detail.medium"),
       );
     }
     else {
@@ -213,10 +213,10 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               RoundedButton(
                 label: Localization().getStringEx('panel.settings.illini_cash.button.log_in.title', 'Sign in to View'),
                 hint: Localization().getStringEx('panel.settings.illini_cash.button.log_in.hint', ''),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-                backgroundColor: Styles().colors!.white,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                backgroundColor: Styles().colors.white,
                 textAlign: TextAlign.center,
-                borderColor: Styles().colors!.fillColorSecondary,
+                borderColor: Styles().colors.fillColorSecondary,
                 onTap: _onTapLogIn,
               ),
             ),
@@ -245,8 +245,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               child: HtmlWidget(
                   StringUtils.ensureNotEmpty(contentHtml),
                   onTapUrl : (url) {_onTapLink(context, url); return true;},
-                  textStyle: Styles().textStyles?.getTextStyle("widget.message.small"),
-                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondaryVariant ?? Colors.red)} : null
+                  textStyle: Styles().textStyles.getTextStyle("widget.message.small"),
+                  customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondaryVariant)} : null
               )
             ),
             Row(
@@ -260,9 +260,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                           'Add Illini Cash'),
                       hint: Localization().getStringEx(
                           'panel.settings.illini_cash.button.add_cash.hint', ''),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
-                      backgroundColor: Styles().colors!.white,
-                      borderColor: Styles().colors!.fillColorSecondary,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
+                      backgroundColor: Styles().colors.white,
+                      borderColor: Styles().colors.fillColorSecondary,
                       onTap: _onAddIlliniCashTapped,
                     ),
                   ),
@@ -292,7 +292,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       header: true,
       excludeSemantics: true,
       child: Container(
-        color: Styles().colors!.fillColorPrimaryVariant,
+        color: Styles().colors.fillColorPrimaryVariant,
         height: 56,
         child: Align(
           alignment: Alignment.centerLeft,
@@ -300,12 +300,12 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
-                Styles().images?.getImage(StringUtils.ensureNotEmpty(iconSrc, defaultValue: 'settings'), excludeFromSemantics: true) ?? Container(),
+                Styles().images.getImage(StringUtils.ensureNotEmpty(iconSrc, defaultValue: 'settings'), excludeFromSemantics: true) ?? Container(),
                 Padding(
                   padding: EdgeInsets.only(left: 12),
                   child: Text(
                     StringUtils.ensureNotEmpty(title),
-                    style: Styles().textStyles?.getTextStyle("widget.heading.large"),
+                    style: Styles().textStyles.getTextStyle("widget.heading.large"),
                   ),
                 )
               ],
@@ -329,7 +329,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
               Localization().getStringEx("panel.settings.illini_cash.label.custom_period", "Custom Period"),
-              style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+              style: Styles().textStyles.getTextStyle("widget.detail.regular")
             ),
           ),
           Padding(
@@ -358,9 +358,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             Expanded(child: RoundedButton(
               label: Localization().getStringEx('panel.settings.illini_cash.button.view_history.title', 'View History'),
               hint: Localization().getStringEx('panel.settings.illini_cash.button.view_history.hint', ''),
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
               backgroundColor: Colors.white,
-              borderColor: Styles().colors!.fillColorSecondary,
+              borderColor: Styles().colors.fillColorSecondary,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onTap: _onTapViewHistory,)),
           ],)
@@ -386,7 +386,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           ''), excludeSemantics: true, child: Center(child: Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 20),
         child: Text(text,
-          style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),),),),);
+          style: Styles().textStyles.getTextStyle("widget.detail.regular.fat"),),),),);
     }
     if (_transactions == null || _transactions!.isEmpty) {
       String text = Localization().getStringEx(
@@ -398,7 +398,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
         padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 20),
         child: Text(text,
           textAlign: TextAlign.center,
-          style: Styles().textStyles?.getTextStyle("widget.detail.small"),),),),);
+          style: Styles().textStyles.getTextStyle("widget.detail.small"),),),),);
     }
     String dateHeader = Localization().getStringEx('panel.settings.illini_cash.label.date', 'Date');
     String locationHeader = Localization().getStringEx('panel.settings.illini_cash.label.location', 'Location');
@@ -479,9 +479,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   Widget _buildBalanceTableHeaderItem(String text){
-      return _buildBalanceTableItem(text: text, backColor: Styles().colors!.fillColorPrimaryVariant,
+      return _buildBalanceTableItem(text: text, backColor: Styles().colors.fillColorPrimaryVariant,
           showBorder: false,
-          textStyle: Styles().textStyles?.getTextStyle("widget.heading.medium_small"));
+          textStyle: Styles().textStyles.getTextStyle("widget.heading.medium_small"));
   }
 
   Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle}) {
@@ -491,13 +491,13 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
              height: 40,
              alignment: Alignment.centerLeft,
              decoration: BoxDecoration(
-               color: backColor ?? Styles().colors!.background,
+               color: backColor ?? Styles().colors.background,
                border: showBorder?
                Border.all(
-                   color: Styles().colors!.surfaceAccent!,
+                   color: Styles().colors.surfaceAccent,
                    width: 1,
                    style: BorderStyle.solid) :
-               Border.all(color: backColor ?? Styles().colors!.background!,width: 0)
+               Border.all(color: backColor ?? Styles().colors.background,width: 0)
              ),
               child: Padding(
                   padding: EdgeInsets.all(8),
@@ -505,14 +505,14 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                   Text(text,
                     maxLines: 1,
                     style: textStyle!=null? textStyle:
-                    Styles().textStyles?.getTextStyle("panel.settings.detail.title.small"),),
+                    Styles().textStyles.getTextStyle("panel.settings.detail.title.small"),),
               )
     );
   }
 
   Widget _buildAmountView(String balance){
-    return _buildBalanceTableItem(text: balance, backColor: Styles().colors!.background,
-        textStyle: Styles().textStyles?.getTextStyle("panel.settings.detail.title.small.fat"));
+    return _buildBalanceTableItem(text: balance, backColor: Styles().colors.background,
+        textStyle: Styles().textStyles.getTextStyle("panel.settings.detail.title.small.fat"));
   }
 
   Widget _buildPrivacyAlertSection() {
@@ -530,7 +530,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: RichText(text: TextSpan(
-        style: Styles().textStyles?.getTextStyle("panel.settings.heading.title.large"),
+        style: Styles().textStyles.getTextStyle("panel.settings.heading.title.large"),
         children: [
           TextSpan(text: privacyMsgStart),
           WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelIcon()),
@@ -540,9 +540,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   Widget _buildPrivacyLevelIcon() {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-        Text(privacyLevel, style:  Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat"))
+    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorSecondary, width: 2), color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
+        Text(privacyLevel, style:  Styles().textStyles.getTextStyle("widget.title.medium.extra_fat"))
       ),
     );
   }
@@ -705,8 +705,8 @@ class _DateLabel extends StatelessWidget {
     return Container(width: 70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(label!, style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.regular"),),
-        Container(height: 2, color: Styles().colors!.surfaceAccent,)
+        Text(label!, style: Styles().textStyles.getTextStyle("panel.settings.detail.title.regular"),),
+        Container(height: 2, color: Styles().colors.surfaceAccent,)
       ],),);
   }
 }
@@ -725,9 +725,9 @@ class _DateValue extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(title!, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),),
-          Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
-        ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
+          Text(title!, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),),
+          Styles().images.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
+        ],), Container(height: 2, color: Styles().colors.fillColorSecondary,)
     ],),),);
   }
 }

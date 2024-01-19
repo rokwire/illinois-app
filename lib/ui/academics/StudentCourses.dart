@@ -134,7 +134,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
         _buildTermsDropDown(),
       ),
       Expanded(flex: 1, child: Container()),
-      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.fillColorSecondary),),
+      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),
       Expanded(flex: 4, child: Container()),
     ]);
   }
@@ -147,7 +147,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       Expanded(flex: 1, child: Container()),
       Padding(padding: EdgeInsets.symmetric(horizontal: 28), child:
         Center(child:
-          Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))
+          Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))
         ),
       ),
       Expanded(flex: 4, child: Container()),
@@ -155,8 +155,8 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
   }
 
   TextStyle? getTermDropDownItemStyle({bool selected = false}) => selected ?
-  Styles().textStyles?.getTextStyle("widget.message.regular") :
-  Styles().textStyles?.getTextStyle("widget.message.regular.semi_fat");
+  Styles().textStyles.getTextStyle("widget.message.regular") :
+  Styles().textStyles.getTextStyle("widget.message.regular.semi_fat");
 
   Widget _buildTermsDropDown() {
     StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
@@ -165,7 +165,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
         DropdownButtonHideUnderline(child:
           DropdownButton<String>(
-            icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
+            icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images.getImage('chevron-down', excludeFromSemantics: true)),
             isExpanded: false,
             style: getTermDropDownItemStyle(selected: true),
             //alignment: AlignmentDirectional.centerEnd,
@@ -235,8 +235,8 @@ class StudentCourseCard extends StatelessWidget {
         Stack(children: [
           Container(
             decoration: BoxDecoration(
-              color: Styles().colors!.surface,
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              color: Styles().colors.surface,
+              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
             child:
@@ -244,18 +244,18 @@ class StudentCourseCard extends StatelessWidget {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   
                   Row(children: [Expanded(child:
-                    Text(course.title ?? '', style: Styles().textStyles?.getTextStyle("widget.card.title.regular.extra_fat")),
+                    Text(course.title ?? '', style: Styles().textStyles.getTextStyle("widget.card.title.regular.extra_fat")),
                   )]),
                   
                   Padding(padding: EdgeInsets.only(top: 6), child:
                     Row(children: [Expanded(child:
-                      Text(course.displayInfo, style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
+                      Text(course.displayInfo, style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
                     )]),
                   ),
                   
                   Padding(padding: EdgeInsets.zero, child:
                     Row(children: [Expanded(child:
-                      Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course.section?.instructor ?? '']), style: Styles().textStyles?.getTextStyle("widget.card.detail.medium"),)
+                      Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course.section?.instructor ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.medium"),)
                     )]),
                   ),
                   
@@ -263,10 +263,10 @@ class StudentCourseCard extends StatelessWidget {
                     Padding(padding: EdgeInsets.only(top: 6), child:
                       Row(children: [
                         Padding(padding: EdgeInsets.only(right: 6), child:
-                          Styles().images?.getImage('calendar', excludeFromSemantics: true),
+                          Styles().images.getImage('calendar', excludeFromSemantics: true),
                         ),
                         Expanded(child:
-                          Text(courseSchedule, style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")),
+                          Text(courseSchedule, style: Styles().textStyles.getTextStyle("widget.card.detail.medium")),
                         )
                         
                       ],),
@@ -278,12 +278,12 @@ class StudentCourseCard extends StatelessWidget {
                       Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
                         Row(children: [
                           Padding(padding: EdgeInsets.only(right: 6), child:
-                            Styles().images?.getImage('location', excludeFromSemantics: true),
+                            Styles().images.getImage('location', excludeFromSemantics: true),
                           ),
                           Expanded(child:
                             Text(courseLocation, style: course.hasValidLocation ?
-                              Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline") :
-                              Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
+                              Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline") :
+                              Styles().textStyles.getTextStyle("widget.button.light.title.medium")
                             ),
                           )
                           
@@ -295,7 +295,7 @@ class StudentCourseCard extends StatelessWidget {
                 ],)
               ),
           ),
-          Container(color: Styles().colors?.fillColorSecondary, height: 4),
+          Container(color: Styles().colors.fillColorSecondary, height: 4),
         ]),
       ),
     );
@@ -321,7 +321,7 @@ class StudentCoursesListPanel extends StatelessWidget {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.student_courses.header.title', 'My Courses')),
       body: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child: StudentCoursesContentWidget()),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -336,7 +336,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -412,7 +412,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
             Expanded(
               child: Text(
                 course?.title ?? "",
-                style: Styles().textStyles?.getTextStyle("widget.student_courses.title.extra_large")
+                style: Styles().textStyles.getTextStyle("widget.student_courses.title.extra_large")
               ),
             ),
           ],
@@ -425,7 +425,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Text(
           course?.displayInfo ?? "",
-          style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+          style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
         )) :
     Container();
   }
@@ -434,7 +434,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
     return
       Padding(padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(children: [Expanded(child:
-          Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course?.section?.instructor ?? '']), style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),)
+          Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course?.section?.instructor ?? '']), style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),)
         )]),
     );
   }
@@ -445,10 +445,10 @@ class StudentCourseDetailPanel extends StatelessWidget {
       Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Row(children: [
           Padding(padding: EdgeInsets.only(right: 6), child:
-            Styles().images?.getImage('calendar', excludeFromSemantics: true),
+            Styles().images.getImage('calendar', excludeFromSemantics: true),
           ),
           Expanded(child:
-            Text(courseSchedule, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
+            Text(courseSchedule, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
           )
 
         ],),
@@ -463,12 +463,12 @@ class StudentCourseDetailPanel extends StatelessWidget {
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
-              Styles().images?.getImage('location', excludeFromSemantics: true),
+              Styles().images.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
               Text(courseLocation, style: (course?.hasValidLocation ?? false) ?
-                Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline") :
-                Styles().textStyles?.getTextStyle("widget.button.light.title.medium")
+                Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline") :
+                Styles().textStyles.getTextStyle("widget.button.light.title.medium")
               ),
             )
           ],),
