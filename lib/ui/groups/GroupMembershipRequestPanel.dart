@@ -97,7 +97,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         ),
         _buildSubmit(),
       ],),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -107,7 +107,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       Localization().getStringEx("panel.membership_request.label.group.description", 'This group asks you to answer the following question(s) for membership consideration.') :
       Localization().getStringEx("panel.membership_request.label.project.description", 'This Research Project wants you to answer the following question(s) for participation consideration.');
     return Padding(padding: EdgeInsets.only(left: outerPadding, right: outerPadding, top: outerPadding), child:
-      Text(headingText, style: Styles().textStyles?.getTextStyle("widget.description.variant.regular.thin"))
+      Text(headingText, style: Styles().textStyles.getTextStyle("widget.description.variant.regular.thin"))
     );
   }
 
@@ -122,14 +122,14 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   Widget _buildQuestion({required String question, TextEditingController? controller, FocusNode? focusNode}) {
     return Padding(padding: EdgeInsets.symmetric(horizontal: outerPadding, vertical: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(question, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
+        Text(question, style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
         Padding(padding: EdgeInsets.only(top: 8),
           child: TextField(
             maxLines: 6,
             controller: controller,
             focusNode: focusNode,
             decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+            style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
           ),
         ),
       ],)
@@ -138,12 +138,12 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
   Widget _buildSubmit() {
     if (widget.group?.researchProject != true) {
-      return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
+      return Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border(top: BorderSide(color: Styles().colors.surfaceAccent!, width: 1))), child:
         Padding(padding: EdgeInsets.all(16), child:
           RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
-            backgroundColor: Styles().colors!.white,
-            borderColor: Styles().colors!.fillColorSecondary,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+            backgroundColor: Styles().colors.white,
+            borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             progress: (_submitting == true),
@@ -167,22 +167,22 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               InkWell(onTap: _onResearchProjectConsent, child:
                 Padding(padding: EdgeInsets.only(left: outerPadding, right: 8, top: 16, bottom: 16), child:
-                  Styles().images?.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
+                  Styles().images.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
                 ),
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.only(right: 16, top: 16, bottom: 16), child:
-                  Text(widget.group?.researchConsentStatement ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                  Text(widget.group?.researchConsentStatement ?? '', style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
                 ),
               ),
             ]),
           ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
             RoundedButton(label: "Request to participate",
-              textStyle: requestToJoinEnabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
-              backgroundColor: Styles().colors!.white,
+              textStyle: requestToJoinEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
+              backgroundColor: Styles().colors.white,
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              borderColor: requestToJoinEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+              borderColor: requestToJoinEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
               borderWidth: 2,
               onTap:() { _onSubmit();  }
             ),

@@ -131,7 +131,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
       body: Column(children: <Widget>[
         Expanded(child:
@@ -166,7 +166,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(_dining?.exploreTitle ?? '', style: Styles().textStyles?.getTextStyle("widget.title.extra_large.spaced")),
+          Text(_dining?.exploreTitle ?? '', style: Styles().textStyles.getTextStyle("widget.title.extra_large.spaced")),
         ),
         Visibility(visible: starVisible, child:
           GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onFavorite, child:
@@ -174,7 +174,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
               label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
               hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''), child:
                 Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-                  Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+                  Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                 )
             )
           ),
@@ -234,7 +234,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             _divider(),
             Row(children: <Widget>[
               Expanded(child:
-                Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted Payment"), style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
+                Text(Localization().getStringEx("panel.explore_detail.label.accepted_payment", "Accepted Payment"), style: Styles().textStyles.getTextStyle("widget.item.small.thin")),
               ),
               FilterSelector(
                 title: Localization().getStringEx("panel.explore_detail.label.accepted_payment_details","Details"),
@@ -277,9 +277,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     return Align(alignment: Alignment.centerRight, child:
       RoundedButton(
         label: Localization().getStringEx('panel.explore_detail.button.order_online', 'Order Online'),
-        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-        backgroundColor: Styles().colors!.white,
-        borderColor: Styles().colors!.fillColorSecondary,
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+        backgroundColor: Styles().colors.white,
+        borderColor: Styles().colors.fillColorSecondary,
         onTap: () => _onTapOrderOnline(onlineOrderPlatformDetails),
       ),
     );
@@ -303,7 +303,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   Widget _divider() {
     return Padding(padding: EdgeInsets.symmetric(vertical: 0), child:
-      Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
+      Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
     );
   }
 
@@ -316,10 +316,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 10), child:
-                Styles().images?.getImage('location', excludeFromSemantics: true),
+                Styles().images.getImage('location', excludeFromSemantics: true),
               ),
               Expanded(child:
-                Text(locationText, style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                Text(locationText, style: Styles().textStyles.getTextStyle("widget.item.regular"))
               ),],
             ),
           )
@@ -341,7 +341,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Semantics(excludeSemantics: true, label: displayTime, hint: displayHint, button: hasAdditionalInformation? true : null, child:
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 10), child:
-                  Styles().images?.getImage('time', excludeFromSemantics: true)
+                  Styles().images.getImage('time', excludeFromSemantics: true)
                 ),
                 Expanded(child:
                   FilterSelector(
@@ -381,11 +381,11 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
               Semantics(container:true, child:
                 Row(children: <Widget>[
                   Expanded(child:
-                    Text(meal!, textAlign: TextAlign.start, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
+                    Text(meal!, textAlign: TextAlign.start, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
                   ),
                   Expanded(child:
                     Semantics(excludeSemantics: true, label: timeHint, child:
-                      Text(mealDisplayTime, textAlign: TextAlign.end, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
+                      Text(mealDisplayTime, textAlign: TextAlign.end, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
                     )
                   )
                 ],)
@@ -411,7 +411,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       HtmlWidget(
         StringUtils.ensureNotEmpty(description),
         onTapUrl : (url) {_launchUrl(url, 'Description'); return true;},
-        textStyle:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+        textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
       )
     ) : Container();
   }
@@ -433,15 +433,15 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       return Padding(padding: EdgeInsets.only(top: 10, bottom: 20), child:
         Column(children: [
           Text(Localization().getStringEx('panel.explore_detail.label.text_and_tell', 'Text and tell us about your dining experience!'), style:
-              Styles().textStyles?.getTextStyle("widget.message.regular.fat")),
+              Styles().textStyles.getTextStyle("widget.message.regular.fat")),
           Container(height: 10,),
           Row(children: [
             Expanded(child:
               StringUtils.isNotEmpty(_diningFeedback?.feedbackUrl) ? RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.text_feedback', 'Text Feedback'),
-                backgroundColor: Styles().colors?.white,
-                borderColor: Styles().colors!.fillColorSecondary,
-                textStyle: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
+                backgroundColor: Styles().colors.white,
+                borderColor: Styles().colors.fillColorSecondary,
+                textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 onTap: () => _onTapTextFeedback(),
               ) : Container()
@@ -450,9 +450,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Expanded(child:
               StringUtils.isNotEmpty(_diningFeedback?.dieticianUrl) ? RoundedButton(
                 label: Localization().getStringEx('panel.explore_detail.button.ask_dietician', 'Ask a Dietitian'),
-                backgroundColor: Styles().colors?.white,
-                borderColor: Styles().colors!.fillColorSecondary,
-                textStyle: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
+                backgroundColor: Styles().colors.white,
+                borderColor: Styles().colors.fillColorSecondary,
+                textStyle: Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 onTap: () => _onTapAskDietician(),
               ) : Container()
@@ -697,15 +697,15 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
       ? Localization().getStringEx("widget.food_detail.button.filters_applied.hint", "")
       : Localization().getStringEx("widget.food_detail.button.filters_empty.hint", "");
     
-    return hasMenuData ? Container(color: Styles().colors!.background, child:
+    return hasMenuData ? Container(color: Styles().colors.background, child:
       Column(children: <Widget>[
-        Container(color: Styles().colors!.background, height: 1,),
+        Container(color: Styles().colors.background, height: 1,),
         HorizontalDiningSpecials(locationId: widget.dining!.id, specials: _specials,),
         Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
           Row(children: <Widget>[
             Expanded(flex: 2, child:
               Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"), style:
-                  Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
+                  Styles().textStyles.getTextStyle("widget.title.regular.fat"),
               ),
             ),
             Expanded(flex: 5, child:
@@ -714,11 +714,11 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                   Row(children: <Widget>[
                     Expanded(child:
                       Text(filtersLabel, textAlign: TextAlign.right, style:
-                          Styles().textStyles?.getTextStyle("widget.title.regular"),
+                          Styles().textStyles.getTextStyle("widget.title.regular"),
                       )
                     ),
                     Padding(padding: EdgeInsets.only(left: 4), child:
-                      Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
+                      Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
                     )
                   ],),
                 ),
@@ -729,14 +729,14 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
         Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
           Row(children: <Widget>[
             Expanded(child:
-              Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '', style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
+              Text((_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '', style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
             ),
             Semantics(
               label: Localization().getStringEx("widget.food_detail.button.prev_menu.title", "Previous dining date"),
               hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
               excludeSemantics: true,
               child: _CircularButton(
-                image: Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true),
+                image: Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true),
                 onTap: decrementDateFilter,
               ),
             ),
@@ -746,7 +746,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
               hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
               excludeSemantics: true,
               child: _CircularButton(
-                image: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true),
+                image: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true),
                 onTap: incrementDateFilter,
               ),
             ),
@@ -816,7 +816,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
           if (products.isNotEmpty) {
 
             if (list.isNotEmpty) {
-              list.add(Container(height: 1, color: Styles().colors!.white,));
+              list.add(Container(height: 1, color: Styles().colors.white,));
             }
 
             list.add(
@@ -850,7 +850,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
         : "";
     return workTimeDisplayText.isNotEmpty ? Column(children: <Widget>[
       Center(child:
-        Text(workTimeDisplayText, style: Styles().textStyles?.getTextStyle("widget.title.small")),
+        Text(workTimeDisplayText, style: Styles().textStyles.getTextStyle("widget.title.small")),
       ),
       Container(height: 10,),
     ],) : Container();
@@ -1036,13 +1036,13 @@ class _StationItemState extends State<_StationItem>{
         button: true,
         excludeSemantics: true,
         child: GestureDetector(onTap: onTap, child:
-          Container(color: Styles().colors!.fillColorPrimary, child:
+          Container(color: Styles().colors.fillColorPrimary, child:
             Padding(padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16), child:
               Row(children: <Widget>[
                 Expanded(child:
-                  Text(widget.title!, style: Styles().textStyles?.getTextStyle("widget.colourful_button.title.accent")),
+                  Text(widget.title!, style: Styles().textStyles.getTextStyle("widget.colourful_button.title.accent")),
                 ),
-                Styles().images?.getImage(expanded ? 'chevron-down' : 'chevron-up', excludeFromSemantics: true) ?? Container(),
+                Styles().images.getImage(expanded ? 'chevron-down' : 'chevron-up', excludeFromSemantics: true) ?? Container(),
               ],),
             ),
           ),
@@ -1056,8 +1056,8 @@ class _StationItemState extends State<_StationItem>{
     return (widget.productItems.isNotEmpty && expanded) ?  Container(
         decoration: BoxDecoration(
           border: Border(
-            left: BorderSide(color: Styles().colors!.surfaceAccent!),
-            right: BorderSide(color: Styles().colors!.surfaceAccent!)
+            left: BorderSide(color: Styles().colors.surfaceAccent!),
+            right: BorderSide(color: Styles().colors.surfaceAccent!)
           )
         ),
         child: Column(
@@ -1068,10 +1068,10 @@ class _StationItemState extends State<_StationItem>{
 
   List<Widget> _createExpandedItems() {
     List<Widget> list = [];
-    list.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
+    list.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
     for(DiningProductItem productItem in widget.productItems) {
       list.add(_ProductItem(productItem: productItem, onTap: () => _onProductItemTapped(productItem),));
-      list.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
+      list.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
     }
     return list;
   }
@@ -1090,9 +1090,9 @@ class _ProductItem extends StatelessWidget {
           Padding(padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16), child:
             Row(children: <Widget>[
               Expanded(child:
-                Text(productItem!.name!, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")),
+                Text(productItem!.name!, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat")),
               ),
-              Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
+              Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true) ?? Container(),
             ],),
           ),
         ),
@@ -1112,7 +1112,7 @@ class _CircularButton extends StatelessWidget{
     return GestureDetector(onTap: onTap, child:
       Container(width: 40, height: 40,
         decoration: BoxDecoration(
-          border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 1),
+          border: Border.all(color: Styles().colors.fillColorSecondary!, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         child: image,
@@ -1160,19 +1160,19 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Row(children: <Widget>[
             Expanded(child:
-              Container(decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)),), child:
+              Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)),), child:
                   Row(children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-                        Text(widget.title ?? '', style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular.fat")),
+                        Text(widget.title ?? '', style: Styles().textStyles.getTextStyle("widget.dialog.message.regular.fat")),
                       )
                     ),
                     Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true, child:
                       InkWell(onTap: _onClose, child:
                         Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2),), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white!, width: 2),), child:
                             Center(child:
-                              Text('\u00D7', style: Styles().textStyles?.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
+                              Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large"),semanticsLabel: "", ),
                             ),
                           ),
                         )
@@ -1186,7 +1186,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Row(children: [
                 Expanded(child:
-                  Text(widget.message ?? '', style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),),
+                  Text(widget.message ?? '', style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),),
                 ),
               ]),
               Container(height: 4,),
@@ -1195,7 +1195,7 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
                 controller: _textController,
                 maxLines: 8,
                 decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
-                style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+                style: Styles().textStyles.getTextStyle("widget.detail.regular")
               ),
               Container(height: 16,),
               Row(children: [
@@ -1204,8 +1204,8 @@ class _FeedbackBodyWidgetState extends State<_FeedbackBodyWidget> {
                   RoundedButton(
                     label: Localization().getStringEx("dialog.send.title", "Send"),
                     backgroundColor: Colors.transparent,
-                    textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
-                    borderColor: Styles().colors!.fillColorSecondary,
+                    textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+                    borderColor: Styles().colors.fillColorSecondary,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     onTap: () => _onSend(),
                   ),

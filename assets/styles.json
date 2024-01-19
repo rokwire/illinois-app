@@ -103,7 +103,7 @@
     "test_overrides7" : {"extends": "test_overrides4",  "font_family": "bold",  "color": "fillColorSecondary", "inherit" :  false},
     "test_overrides8" : {"extends": "test_overrides3",  "size": 24.0, "color":  "fillColorPrimary", "override" :  false},
     "test_overrides9" : {"extends": "test_overrides3", "size": 24.0, "color": "fillColorPrimary"},
-    "usage" : "Styles().textStyles?.getTextStyle()",
+    "usage" : "Styles().textStyles.getTextStyle()",
 
     "header_bar": { "font_family": "extra_bold", "size": 16.0, "color": "textColorPrimary"},
 

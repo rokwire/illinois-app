@@ -209,8 +209,8 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
-            color: Styles().colors?.white,
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           GestureDetector(
@@ -223,7 +223,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                         Padding(
                             padding: EdgeInsets.only(bottom: 16),
                             child: Text(StringUtils.ensureNotEmpty(videoTitle),
-                                style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
+                                style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
                           hasImage
                                   ? ClipRRect(
@@ -236,7 +236,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                           VideoPlayButton(hasBackground: !hasImage)
                         ])
                       ])))),
-          Container(color: Styles().colors?.accentColor3, height: 4)
+          Container(color: Styles().colors.accentColor3, height: 4)
         ]));
   }
 

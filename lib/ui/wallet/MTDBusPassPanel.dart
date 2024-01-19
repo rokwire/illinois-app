@@ -141,7 +141,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             Align(alignment: Alignment.bottomCenter, child:
               Padding(padding: EdgeInsets.only(bottom: 10), child:
                 Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                  InkWell(onTap: _onClose, child: Styles().images?.getImage('close-circle-white-large', excludeFromSemantics: true)),
+                  InkWell(onTap: _onClose, child: Styles().images.getImage('close-circle-white-large', excludeFromSemantics: true)),
                 ),
               ),
             ),
@@ -151,14 +151,14 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
           Stack(children: <Widget>[
             Padding( padding: EdgeInsets.all(16), child:
               Semantics(header: true, child:
-                Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style: Styles().textStyles?.getTextStyle("panel.mtd_bus.heading.title")),
+                Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style: Styles().textStyles.getTextStyle("panel.mtd_bus.heading.title")),
               ),
             ),
             Align(alignment: Alignment.topRight, child:
               Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
                 InkWell(onTap: _onClose, child:
                   Container(width: 48, height: 48, alignment: Alignment.center,
-                      child: Styles().images?.getImage('close-dark', excludeFromSemantics: true)),
+                      child: Styles().images.getImage('close-dark', excludeFromSemantics: true)),
                 ),
               )
             ),
@@ -177,7 +177,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       Column(children: <Widget>[
         _buildAvatar(),
-        Text(Auth2().authCard?.role ?? '', style: Styles().textStyles?.getTextStyle("panel.mtd_bus.role")),
+        Text(Auth2().authCard?.role ?? '', style: Styles().textStyles.getTextStyle("panel.mtd_bus.role")),
         BusClockWidget(),
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.only(top: 10), child:
@@ -187,13 +187,13 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.only(top: 20), child:
             Opacity(opacity: busPassAvailable ? 1 : 0, child:
-              Styles().images?.getImage('transit-logo', excludeFromSemantics: true)
+              Styles().images.getImage('transit-logo', excludeFromSemantics: true)
             )
           ),
         ),
         Align(alignment: Alignment.center, child:
           Container(width: _photoSize, padding: EdgeInsets.only(top: 12, left: 6, right: 6), child:
-            Text(description, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.mtd_bus.description.label")),
+            Text(description, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.mtd_bus.description.label")),
           ),
         ),
       ],)
@@ -219,7 +219,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             alignment: Alignment.topCenter,
             child: Padding(
                 padding: EdgeInsets.only(top: _photoSize - _iconSize / 2 - 5, left: 15),
-                child: Styles().images?.getImage(
+                child: Styles().images.getImage(
                   'university-logo-circle-dark',
                   excludeFromSemantics: true,
                   width: _iconSize,
@@ -258,7 +258,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
         _buildBusIcon(),
         Container(width: 8,),
         Container(
-          child: Text(_busNumber!, style: Styles().textStyles?.getTextStyle("panel.mtd_bus.buss_number.label"),),
+          child: Text(_busNumber!, style: Styles().textStyles.getTextStyle("panel.mtd_bus.buss_number.label"),),
         ),
       ],
     ));
@@ -270,7 +270,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
       width: iconSize-1,
       height: iconSize-1,
       color: _activeColor,
-      child: Styles().images?.getImage(
+      child: Styles().images.getImage(
         'transit-logo-cutout-dark',
         excludeFromSemantics: true,
         width: iconSize,
@@ -366,11 +366,11 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Color? get _activeColor {
-    return _activeBusColor??Styles().colors!.fillColorSecondary;
+    return _activeBusColor??Styles().colors.fillColorSecondary;
   }
 
   Color? get _backgroundColor {
-    return Styles().colors!.fillColorPrimaryVariant;
+    return Styles().colors.fillColorPrimaryVariant;
   }
 
   String? get _busNumber {
@@ -433,7 +433,7 @@ class _RotatingBorderState extends State<RotatingBorder>
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [widget.activeColor!, widget.baseGradientColor ?? Styles().colors!.fillColorSecondary!],
+                  colors: [widget.activeColor!, widget.baseGradientColor ?? Styles().colors.fillColorSecondary!],
                   stops:  [0.0, 1.0],
                 )
             ),
@@ -470,7 +470,7 @@ class _BusClockState extends State<BusClockWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(_timeString!, style: Styles().textStyles?.getTextStyle("panel.mtd_bus.clock.time"));
+    return Text(_timeString!, style: Styles().textStyles.getTextStyle("panel.mtd_bus.clock.time"));
   }
 
   void _updateTime() {

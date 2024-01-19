@@ -71,7 +71,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
                       Container(height: 16,),
                       Container(
                         child: Text(Localization().getStringEx('panel.wellness.ring.select.description', 'Select a ring type or create your own custom ring.'),
-                          style: Styles().textStyles?.getTextStyle('panel.wellness.ring.select_predefined.message.regular')
+                          style: Styles().textStyles.getTextStyle('panel.wellness.ring.select_predefined.message.regular')
                       )),
                       Container(height: 12,),
                       _buildPredefinedButtons(),
@@ -82,15 +82,15 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
           Container(
             child: SmallRoundedButton(label: 'Next', onTap: _openDetailPanel, backgroundColor: Colors.white, rightIconPadding: EdgeInsets.only(right: 16, left: 16, ), padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
               enabled: _nextButtonEnabled,
-              borderColor: _nextButtonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColorTwo,
-              textStyle: _nextButtonEnabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.medium.fat.variant_two"),
-              rightIcon: Styles().images?.getImage(_nextButtonEnabled ? 'chevron-right-bold' : 'chevron-right-gray', excludeFromSemantics: true),
+              borderColor: _nextButtonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.disabledTextColorTwo,
+              textStyle: _nextButtonEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.disabled.title.medium.fat.variant_two"),
+              rightIcon: Styles().images.getImage(_nextButtonEnabled ? 'chevron-right-bold' : 'chevron-right-gray', excludeFromSemantics: true),
             ),
           ),
           Container(height: 50,)
         ],
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -182,7 +182,7 @@ class _WellnessRingButtonState extends State<_WellnessRingButton>{
     GestureDetector(onTap: () => widget.onTapWidget(context), child:
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Expanded(child:
-      Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+      Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)), child:
       Padding(padding: EdgeInsets.only(right: 19, left: 16, top:13, bottom: 19), child:
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -193,13 +193,13 @@ class _WellnessRingButtonState extends State<_WellnessRingButton>{
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.label , style: Styles().textStyles?.getTextStyle('anel.wellness.ring.select_predefined.button.label.regular'), textAlign: TextAlign.start,),
+                Text(widget.label , style: Styles().textStyles.getTextStyle('anel.wellness.ring.select_predefined.button.label.regular'), textAlign: TextAlign.start,),
                 Container(height: 12,),
-                Text(widget.description ?? "" , style: Styles().textStyles?.getTextStyle('panel.wellness.ring.select_predefined.button.description.regular'), textAlign: TextAlign.start),
+                Text(widget.description ?? "" , style: Styles().textStyles.getTextStyle('panel.wellness.ring.select_predefined.button.description.regular'), textAlign: TextAlign.start),
           ])),
           Container(width: 7,),
           Container(
-            child: _buildRadioButton(color: Styles().colors!.fillColorPrimary!),
+            child: _buildRadioButton(color: Styles().colors.fillColorPrimary!),
           )
         ],),
       ),

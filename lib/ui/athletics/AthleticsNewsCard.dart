@@ -106,7 +106,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
         children: <Widget>[
           Expanded(
             child: Container(
-              color: Styles().colors!.fillColorPrimary,
+              color: Styles().colors.fillColorPrimary,
               constraints: new BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width - 106),
               child: Padding(
@@ -115,7 +115,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                      Text(
                       (category != null) ? category.toUpperCase() : "",
                       softWrap: true,
-                      style: Styles().textStyles?.getTextStyle('widget.heading.medium_small'),
+                      style: Styles().textStyles.getTextStyle('widget.heading.medium_small'),
                     )
                  ),
               ),
@@ -143,7 +143,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                         padding: EdgeInsets.only(
                             left: 24,
                             bottom: 0),
-                        child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+                        child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                     ))
                 )),)
         ],
@@ -156,7 +156,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
       padding: EdgeInsets.only(left: 24, right: 24, top: 12),
       child: Text(
         (widget.news!.title != null) ? widget.news!.title! : "",
-        style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
+        style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat'),
       ),
     );
   }
@@ -187,12 +187,12 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
         padding: _detailPadding,
         child: Row(
           children: <Widget>[
-            Styles().images?.getImage('news', excludeFromSemantics: true) ?? Container(),
+            Styles().images.getImage('news', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
             Text(displayTime,
-                style: Styles().textStyles?.getTextStyle('widget.card.detail.medium'),),
+                style: Styles().textStyles.getTextStyle('widget.card.detail.medium'),),
           ],
         ),
       );
@@ -202,7 +202,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   Widget _topBorder() {
-    Color? borderColor = Styles().colors!.fillColorPrimary;
+    Color? borderColor = Styles().colors.fillColorPrimary;
     return _showTopBorder()? Container(height: 7,color: borderColor) : Container();
   }
 

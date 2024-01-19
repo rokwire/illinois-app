@@ -108,28 +108,28 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
   Widget build(BuildContext context) {
     return Semantics(container: true, child: Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Padding(padding: EdgeInsets.zero, child:
           RichText(textScaler: MediaQuery.of(context).textScaler, text:
-          TextSpan(style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
+          TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_3", " or ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID to access features connected to your university account.")),
           ],),
           )),
-          Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
+          Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
           Semantics(explicitChildNodes: true, child: RoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Sign In with your NetID"),
             hint: '',
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-            borderColor: Styles().colors!.fillColorSecondary,
-            backgroundColor: Styles().colors!.surface,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+            borderColor: Styles().colors.fillColorSecondary,
+            backgroundColor: Styles().colors.surface,
             progress: (_authLoading == true),
             onTap: ()=> _onTapConnectNetIdClicked(context),
           )),
@@ -165,27 +165,27 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   Widget build(BuildContext context) {
     return Semantics(container: true, child: Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.zero, child:
             RichText(textScaler: MediaQuery.of(context).textScaler, text:
-            TextSpan(style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
-              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
+            TextSpan(style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), children: <TextSpan>[
+              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: Styles().textStyles.getTextStyle("widget.detail.regular.fat")),
               TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2", "Verify your phone number or sign up/in by email.")),
             ],),
             )),
 
-            Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
+            Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
             Semantics(explicitChildNodes: true, child: RoundedButton(
               label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Continue"),
               hint: '',
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-              borderColor: Styles().colors!.fillColorSecondary,
-              backgroundColor: Styles().colors!.surface,
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+              borderColor: Styles().colors.fillColorSecondary,
+              backgroundColor: Styles().colors.surface,
               onTap: ()=> _onTapPhoneOrEmailClicked(context),
             )),
             ),

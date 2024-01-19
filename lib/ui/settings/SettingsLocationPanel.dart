@@ -35,7 +35,7 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
         title: Localization().getStringEx("panel.settings.location.label.title", "Location"),
       ),
       body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -52,7 +52,7 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(
               Localization().getStringEx("panel.settings.location.label.desctiption", "Find events and places on campus near you."),
-              style: Styles().textStyles?.getTextStyle("widget.description.regular.fat"),
+              style: Styles().textStyles.getTextStyle("widget.description.regular.fat"),
             ),
           ),
           Container(
@@ -141,9 +141,9 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
     return Container(
           padding: EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-              color: Styles().colors!.surface,
+              color: Styles().colors.surface,
               borderRadius: BorderRadius.all(Radius.circular(4)),
-              boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
+              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -152,7 +152,7 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 11,vertical: 4),
-                    child: Styles().images?.getImage(
+                    child: Styles().images.getImage(
                       widget.enabled ? widget.iconKey: widget.iconDisabledKey,
                       excludeFromSemantics: true,
                     ),
@@ -167,8 +167,8 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                             child: Text(
                               widget.title!,
                               style: widget.enabled?
-                                Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") :
-                                Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+                                Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.enabled") :
+                                Styles().textStyles.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
                             )),
                         _buildAdditionalInfo(),
                       ],
@@ -178,7 +178,7 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                     width: 10,
                   ),
                   Container(
-                    child: Styles().images?.getImage(
+                    child: Styles().images.getImage(
                       widget.enabled ?
                         (widget.toggled ? 'toggle-on' : 'toggle-off') :
                         "toggle-disabled",
@@ -205,14 +205,14 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
               ),
               Container(
                 height: 1,
-                color: widget.enabled? Styles().colors!.surfaceAccent: Styles().colors!.surfaceAccentTransparent15,
+                color: widget.enabled? Styles().colors.surfaceAccent: Styles().colors.surfaceAccentTransparent15,
               ),
               Container(height: 12),
               Text(
                 widget.additionalInfo!,
                 style: widget.enabled?
-                  Styles().textStyles?.getTextStyle("panel.settings.location.toggle_button.additional_info.enabled") :
-                  Styles().textStyles?.getTextStyle("panel.settings.location.toggle_button.additional_info.disabled")
+                  Styles().textStyles.getTextStyle("panel.settings.location.toggle_button.additional_info.enabled") :
+                  Styles().textStyles.getTextStyle("panel.settings.location.toggle_button.additional_info.disabled")
               ),
             ],
           );

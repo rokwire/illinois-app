@@ -125,7 +125,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors!.blackTransparent06,
+        backgroundColor: Styles().colors.blackTransparent06,
         appBar: HeaderBar(
             title: StringUtils.ensureNotEmpty(widget.videoTutorial.title,
                 defaultValue: Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial"))),
@@ -167,7 +167,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
                                                     padding: const EdgeInsets.symmetric(horizontal: 2.0),
                                                     child: Text(StringUtils.ensureNotEmpty(_currentCaptionText),
                                                         textAlign: TextAlign.center,
-                                                        style:  Styles().textStyles?.getTextStyle("panel.settings.video_tutorial.caption.detail")))))))
+                                                        style:  Styles().textStyles.getTextStyle("panel.settings.video_tutorial.caption.detail")))))))
                               ]),
                               Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
                             ]))),
@@ -180,7 +180,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
     } else {
       return Center(
           child: Text(Localization().getStringEx('panel.settings.video_tutorial.video.missing.msg', 'Missing video'),
-              style: Styles().textStyles?.getTextStyle("panel.settings.video_tutorial.msg")));
+              style: Styles().textStyles.getTextStyle("panel.settings.video_tutorial.msg")));
     }
   }
 
@@ -198,11 +198,11 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
                         height: 30,
                         decoration: BoxDecoration(
                             border: Border.all(
-                                color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!), width: 2),
+                                color: (_ccEnabled ? Styles().colors.white! : Styles().colors.disabledTextColorTwo!), width: 2),
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',
-                                style: Styles().textStyles?.getTextStyle("panel.settings.video_tutorial.button"))))))));
+                                style: Styles().textStyles.getTextStyle("panel.settings.video_tutorial.button"))))))));
   }
 
   void _onTapPlayPause() {

@@ -119,7 +119,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -139,7 +139,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       HeaderBar(),
       Expanded(child:
         Center(child:
-          CircularProgressIndicator(strokeWidth: 2, color: Styles().colors!.fillColorSecondary)
+          CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary)
         )
       )
     ]);
@@ -152,7 +152,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         Center(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
             Text(Localization().getStringEx("panel.appointment.detail.error.msg", 'Failed to load appointment data.'), style:
-              Styles().textStyles?.getTextStyle('widget.message.large.fat')
+              Styles().textStyles.getTextStyle('widget.message.large.fat')
             )
           )
         )
@@ -202,14 +202,14 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       Row(children: <Widget>[
         Expanded(child:
           Text(_appointment!.title!, maxLines: 1, overflow: TextOverflow.ellipsis, style:
-            Styles().textStyles?.getTextStyle("widget.title.medium_large")
+            Styles().textStyles.getTextStyle("widget.title.medium_large")
           )
         ),
         Visibility(visible: starVisible, child:
           GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onFavorite, child:
             Container(padding: EdgeInsets.only(left: 8, top: 16, bottom: 12), child:
               Semantics(label: semanticsTitle, hint: semanticsHint, button: true, child:
-                Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
+                Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
               )
             )
           )
@@ -327,11 +327,11 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
             SizedBox(width: _iconSize, height: _iconSize, child:
-              Styles().images?.getImage('calendar', excludeFromSemantics: true)
+              Styles().images.getImage('calendar', excludeFromSemantics: true)
             )
           ),
           Expanded(child:
-            Text(displayTime!, style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+            Text(displayTime!, style: Styles().textStyles.getTextStyle("widget.item.regular"))
           )
         ])
       ));
@@ -340,7 +340,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     if (_appointment!.cancelled == true) {
       conentList.add(Padding(padding: EdgeInsets.only(left: _innerSpacingH), child:
         Text(Localization().getStringEx('panel.appointment.detail.cancelled.label', 'Cancelled'),style:
-          Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large")
+          Styles().textStyles.getTextStyle("panel.appointment_detail.title.large")
         )
       ));
     }
@@ -355,7 +355,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       String? longDisplayLocation = _appointment?.getLongDisplayLocation(_locationData) ?? "";
       String? locationTitle = _appointment?.location?.title;
       bool canLocation = StringUtils.isNotEmpty(locationTitle);
-      TextStyle? linkStyle = Styles().textStyles?.getTextStyle(canLocation ? 'widget.button.light.title.medium.underline' : 'widget.button.light.title.medium');
+      TextStyle? linkStyle = Styles().textStyles.getTextStyle(canLocation ? 'widget.button.light.title.medium.underline' : 'widget.button.light.title.medium');
       String? locationTextValue;
       if (StringUtils.isNotEmpty(longDisplayLocation)) {
         locationTextValue = longDisplayLocation;
@@ -367,7 +367,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
               SizedBox(width: _iconSize, height: _iconSize, child:
-                Styles().images?.getImage('location', excludeFromSemantics: true)
+                Styles().images.getImage('location', excludeFromSemantics: true)
               ),
             ),
             Expanded(child:
@@ -403,7 +403,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       String? displayMeetingPasscode = (meetingPasscode != null) ?
         sprintf(Localization().getStringEx('panel.appointment.detail.meeting.passcode.label', 'Passcode: %s'), [meetingPasscode]) : null;
       
-      TextStyle? detailStyle = Styles().textStyles?.getTextStyle('widget.item.regular');
+      TextStyle? detailStyle = Styles().textStyles.getTextStyle('widget.item.regular');
 
       return Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -411,7 +411,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
               SizedBox(width: _iconSize, height: _iconSize, child:
-                Styles().images?.getImage('laptop', excludeFromSemantics: true)
+                Styles().images.getImage('laptop', excludeFromSemantics: true)
               ),
             ),
             Expanded(child:
@@ -452,13 +452,13 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
           SizedBox(width: _iconSize, height: _iconSize, child:
-            Styles().images?.getImage('person', excludeFromSemantics: true)
+            Styles().images.getImage('person', excludeFromSemantics: true)
           ),
         ),
 
         Expanded(child:
           Text(displayHostName ?? '', style:
-            Styles().textStyles?.getTextStyle('widget.item.regular'))
+            Styles().textStyles.getTextStyle('widget.item.regular'))
         )
       ])
     ) : null;
@@ -469,12 +469,12 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
           SizedBox(width: _iconSize, height: _iconSize, child:
-            Styles().images?.getImage('info', excludeFromSemantics: true)
+            Styles().images.getImage('info', excludeFromSemantics: true)
           ),
         ),
         Expanded(child:
           Text(Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep'), style:
-            Styles().textStyles?.getTextStyle("widget.item.regular")
+            Styles().textStyles.getTextStyle("widget.item.regular")
           )
         )
       ])
@@ -485,11 +485,11 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     return StringUtils.isNotEmpty(_appointment?.location?.phone) ? Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
-          Styles().images?.getImage('phone', excludeFromSemantics: true)
+          Styles().images.getImage('phone', excludeFromSemantics: true)
         ),
         Expanded(child:
           Text(_appointment?.location?.phone ?? '', style:
-            Styles().textStyles?.getTextStyle("widget.item.regular")
+            Styles().textStyles.getTextStyle("widget.item.regular")
           )
         )
       ])
@@ -501,11 +501,11 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       Padding(padding: EdgeInsets.only(bottom: _detailSpacingV), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Padding(padding: EdgeInsets.only(right: _innerSpacingH), child:
-            Styles().images?.getImage('external-link', excludeFromSemantics: true)
+            Styles().images.getImage('external-link', excludeFromSemantics: true)
           ),
           Expanded(child:
             Text(Config().saferMcKinleyUrl ?? '', style:
-              Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
+              Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")
             )
           )
         ])
@@ -521,8 +521,8 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       return Padding(padding: EdgeInsets.only(top: 10), child:
         HtmlWidget(instructionsHtml,
           onTapUrl : (url) {_launchUrl(url); return true;},
-          textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
-          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
+          textStyle:  Styles().textStyles.getTextStyle("widget.info.regular"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textSurface ?? Colors.blue)} : null
         )
       );
     }
@@ -548,8 +548,8 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         HtmlWidget(descriptionHtml,
           onTapUrl : (url) {_launchUrl(url); return true;},
-          textStyle:  Styles().textStyles?.getTextStyle("widget.info.regular"),
-          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.textSurface ?? Colors.blue)} : null
+          textStyle:  Styles().textStyles.getTextStyle("widget.info.regular"),
+          customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.textSurface ?? Colors.blue)} : null
         )
       );
     }

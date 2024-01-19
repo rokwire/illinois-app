@@ -199,7 +199,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
         onLeading: _onHeaderBarBack,
       ),
       body: _buildPanelContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -208,7 +208,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     return RefreshIndicator(onRefresh: _onRefresh, child:
       SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Container(color: Styles().colors?.white, child:
+          Container(color: Styles().colors.white, child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildSearchBar(),
               _buildCommandBar(),
@@ -239,8 +239,8 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   );
 
   Decoration get _searchBarDecoration => BoxDecoration(
-    color: Styles().colors?.white,
-    border: Border(bottom: BorderSide(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1))
+    color: Styles().colors.white,
+    border: Border(bottom: BorderSide(color: Styles().colors.disabledTextColor ?? Color(0xFF717273), width: 1))
   );
 
   Widget _buildSearchTextField() => Semantics(
@@ -254,9 +254,9 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
       onChanged: (text) => _onTextChanged(text),
       onSubmitted: (_) => _onTapSearch(),
       autofocus: true,
-      cursorColor: Styles().colors!.fillColorSecondary,
+      cursorColor: Styles().colors.fillColorSecondary,
       keyboardType: TextInputType.text,
-      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+      style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
       decoration: InputDecoration(
         border: InputBorder.none,
       ),
@@ -267,7 +267,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
       InkWell(onTap: onTap, child:
         Padding(padding: EdgeInsets.all(12), child:
-          Styles().images?.getImage(image, excludeFromSemantics: true),
+          Styles().images.getImage(image, excludeFromSemantics: true),
         ),
       ),
     );
@@ -297,7 +297,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
         LinkButton(
           title: Localization().getStringEx('panel.events2.home.bar.button.map.title', 'Map'), 
           hint: Localization().getStringEx('panel.events2.home.bar.button.map.hint', 'Tap to view map'),
-          textStyle: Styles().textStyles?.getTextStyle('widget.button.title.regular.underline'),
+          textStyle: Styles().textStyles.getTextStyle('widget.button.title.regular.underline'),
           padding: EdgeInsets.only(left: 0, right: 8, top: 12, bottom: 12),
           onTap: _onMapView,
         ),
@@ -340,8 +340,8 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
           value: sortType,
           child: Semantics(label: displaySortType, container: true, button: true,
             child: Text(displaySortType, overflow: TextOverflow.ellipsis, style: (_sortType == sortType) ?
-              Styles().textStyles?.getTextStyle("widget.message.regular.fat") :
-              Styles().textStyles?.getTextStyle("widget.message.regular"),
+              Styles().textStyles.getTextStyle("widget.message.regular.fat") :
+              Styles().textStyles.getTextStyle("widget.message.regular"),
               semanticsLabel: "",
         ))));
       }
@@ -355,7 +355,7 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
       final Size sizeFull = (TextPainter(
           text: TextSpan(
             text: _sortDropdownItemTitle(sortType),
-            style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
+            style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),
           ),
           textScaler: MediaQuery.of(context).textScaler,
           textDirection: TextDirection.ltr,
@@ -380,8 +380,8 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
 
   Widget _buildContentDescription() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
     
     descriptionList.add(TextSpan(text: Localization().getStringEx('panel.event2.search.search.label.title', 'Search: ') , style: boldStyle,));
     descriptionList.add(TextSpan(text: _searchText ?? '' , style: regularStyle,));
@@ -404,10 +404,10 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   }
 
   Decoration get _contentDescriptionDecoration => BoxDecoration(
-    color: Styles().colors?.white,
+    color: Styles().colors.white,
     border: Border(
-      top: BorderSide(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1),
-      bottom: BorderSide(color: Styles().colors?.disabledTextColor ?? Color(0xFF717273), width: 1),
+      top: BorderSide(color: Styles().colors.disabledTextColor ?? Color(0xFF717273), width: 1),
+      bottom: BorderSide(color: Styles().colors.disabledTextColor ?? Color(0xFF717273), width: 1),
     )
   );
 
@@ -513,11 +513,11 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
   Widget get _extendIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
     Align(alignment: Alignment.center, child:
       SizedBox(width: 24, height: 24, child:
-        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
+        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
 
   Widget _buildLoadingContent() => Padding(padding: EdgeInsets.only(left: 32, right: 32, top: _screenHeight / 4, bottom: 3 * _screenHeight / 4), child:
     Center(child:
-      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
     ),
   );
 
@@ -525,9 +525,9 @@ class _Event2SearchPanelState extends State<Event2SearchPanel> implements Notifi
     Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-          Text(title, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
         ) : Container(),
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
       ],),
     );
 

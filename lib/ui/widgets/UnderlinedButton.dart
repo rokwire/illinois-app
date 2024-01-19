@@ -38,17 +38,17 @@ class UnderlinedButton extends StatelessWidget {
                         child: Container(
                             decoration: BoxDecoration(
                                 border: Border(bottom: BorderSide(
-                                  color: Styles().colors!.fillColorSecondary!,
+                                  color: Styles().colors.fillColorSecondary!,
                                   width: 1,),)
                             ),
                             padding: EdgeInsets.only(bottom: 2),
                             child: Text(
                               title!,
-                              style: Styles().textStyles?.getTextStyle("widget.button.title.medium")?.copyWith(fontSize: fontSize, fontFamily: fontFamily ?? Styles().fontFamilies!.medium),
+                              style: Styles().textStyles.getTextStyle("widget.button.title.medium")?.copyWith(fontSize: fontSize, fontFamily: fontFamily ?? Styles().fontFamilies.medium),
                             )))),
                 progress ?
                 Align(alignment: Alignment.center,
-                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary!), )
+                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary!), )
                 ) : Container(),
               ],
             )

@@ -90,7 +90,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.research_projects.home.header_bar.title', 'Research at Illinois'), leading: RootHeaderBarLeading.Back,),
       body: _buildPage(),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -125,10 +125,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   Widget _buildContentTypeDropdownButton() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
       RibbonButton(
-        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-        backgroundColor: Styles().colors?.white,
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+        backgroundColor: Styles().colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
         rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
         label: _getContentTypeName(_selectedContentType),
         onTap: _onTapContentTypeDropdownButton
@@ -151,7 +151,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   Widget _buildContentTypesDropdownList() {
     
     List<Widget> contentList = <Widget>[];
-    contentList.add(Container(color: Styles().colors?.fillColorSecondary, height: 2));
+    contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (ResearchProjectsContentType contentType in ResearchProjectsContentType.values) {
       if ((_selectedContentType != contentType)) {
         contentList.add(_buildContentTypeDropdownItem(contentType));
@@ -159,16 +159,16 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     }
     if (_canCreateResearchProject) {
       contentList.add(RibbonButton(
-        backgroundColor: Styles().colors?.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
         rightIconKey: null,
         label: Localization().getStringEx('panel.research_projects.home.dropdown.create.title', 'Create New Research Project'),
         onTap: _onTapCreate
       ),);
     }
     contentList.add(RibbonButton(
-      backgroundColor: Styles().colors?.white,
-      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      backgroundColor: Styles().colors.white,
+      border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
         rightIconKey: null,
       label: Localization().getStringEx('panel.research_projects.home.dropdown.search.title', 'Search Research Projects'),
       onTap: _onTapSearch
@@ -182,8 +182,8 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   Widget _buildContentTypeDropdownItem(ResearchProjectsContentType contentType) {
     return RibbonButton(
-        backgroundColor: Styles().colors?.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
         rightIconKey: null,
         label: _getContentTypeName(contentType),
         onTap: () => _onTapContentTypeDropdownItem(contentType));
@@ -251,9 +251,9 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
           InkWell(onTap: _onTapCreate, child: 
             Padding(padding: EdgeInsets.only(left: 0, right: 4, top: 12, bottom: 12), child:
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(createTitle, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")),
+                Text(createTitle, style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat")),
                 Padding(padding: EdgeInsets.only(left: 5), child:
-                  Styles().images?.getImage('plus-circle')
+                  Styles().images.getImage('plus-circle')
                 )
               ])
             ),
@@ -264,7 +264,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         Semantics(label: searchTitle, button: true, child:
           InkWell(onTap: _onTapSearch, child: 
             Padding(padding: EdgeInsets.only(left: 4, right: 16, top: 10, bottom: 10), child:
-              Styles().images?.getImage('search', excludeFromSemantics: true),
+              Styles().images.getImage('search', excludeFromSemantics: true),
             ),
           ),
         ),
@@ -331,7 +331,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     if (_activeFilterType == _FilterType.category) {
       for (String category in _categories) {
         if (filterWidgets.isNotEmpty) {
-          filterWidgets.add(Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,));
+          filterWidgets.add(Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,));
         }
         filterWidgets.add(FilterListItem(
           title: category,
@@ -343,7 +343,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     else if (_activeFilterType == _FilterType.tags) {
       for (_TagFilter tagFilter in _TagFilter.values) {
         if (filterWidgets.isNotEmpty) {
-          filterWidgets.add(Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,));
+          filterWidgets.add(Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,));
         }
         filterWidgets.add(FilterListItem(
           title: _filterTagToDisplayString(tagFilter),
@@ -356,7 +356,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     return Semantics(child:
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 40), child:
         Semantics(child:
-          Container(decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.circular(5.0),), child:
+          Container(decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.circular(5.0),), child:
             Padding(padding: EdgeInsets.only(top: 2), child:
               Container(color: Colors.white, child:
                 SingleChildScrollView(child:
@@ -437,7 +437,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   Widget _buildLoading() {
     return Align(alignment: Alignment.center, child:
-      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3, ),
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3, ),
     );
   }
 
@@ -447,7 +447,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         Row(children: [
           Expanded(child:
             Text(status ,style:
-              Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
+              Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
           ),
         ],)
     );

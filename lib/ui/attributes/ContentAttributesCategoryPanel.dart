@@ -102,7 +102,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
 
     return Scaffold(
       appBar: HeaderBar(title: title, actions: _headerBarActions,),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       body: Column(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
@@ -144,9 +144,9 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white!, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat"),
+                  style: Styles().textStyles.getTextStyle("widget.heading.regular.fat"),
                   semanticsLabel: '',
                 ),
               ),
@@ -154,7 +154,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
           ),
         ),
         //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
         //),
       ),
     );
@@ -170,12 +170,12 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
     }
     else if (sourceData == _ContentItem.separator) {
       return Container(color: Colors.white, padding: EdgeInsets.symmetric(horizontal: 12), child:
-        Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,)
+        Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,)
       );
     }
     else if (sourceData == _ContentItem.groupSeparator) {
       return Container(color: Colors.white, padding: EdgeInsets.symmetric(horizontal: 0), child:
-        Container(height: 1, color: Styles().colors!.fillColorPrimary,)
+        Container(height: 1, color: Styles().colors.fillColorPrimary,)
       );
     }
     else if (sourceData == _ContentItem.spacing) {
@@ -189,7 +189,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
   Widget _buildCaptionWidget(String title) {
     return Container(
       decoration: BoxDecoration(
-        color: Styles().colors!.fillColorPrimary,
+        color: Styles().colors.fillColorPrimary,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))
       ),
       child: Semantics(label: title, header: true, child:
@@ -197,7 +197,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
           Row(children: <Widget>[
             Expanded(child:
               Text(title, textAlign: TextAlign.left, style:
-                Styles().textStyles?.getTextStyle("panel.settings.food_filter.title"),
+                Styles().textStyles.getTextStyle("panel.settings.food_filter.title"),
                 semanticsLabel: '',
               ),
             )
@@ -218,8 +218,8 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
       widget.attribute.displayString(attributeValue.info) : null;
 
     TextStyle? textStyle = (attributeValue.value != null) ?
-      Styles().textStyles?.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
-      Styles().textStyles?.getTextStyle("widget.label.regular.thin");
+      Styles().textStyles.getTextStyle(isSelected ? "widget.group.dropdown_button.item.selected" : "widget.group.dropdown_button.item.not_selected") :
+      Styles().textStyles.getTextStyle("widget.label.regular.thin");
     
     String? imageAsset = (attributeValue.value != null) ?
       (multipleSelection ?
@@ -249,7 +249,7 @@ class _ContentAttributesCategoryPanelState extends State<ContentAttributesCatego
                   )
                 ),
 
-                Styles().images?.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
+                Styles().images.getImage(imageAsset, excludeFromSemantics: true) ?? Container()
               ]),
             ]),
           )

@@ -71,32 +71,32 @@ class Event2CreatePanel extends StatefulWidget {
   static const EdgeInsetsGeometry textEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 20);
   static const EdgeInsetsGeometry innerTextEditContentPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 16);
 
-  static TextStyle? get headingTextStype => Styles().textStyles?.getTextStyle("widget.title.small.fat.spaced");
-  static TextStyle? get subTitleTextStype => Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
-  static TextStyle? get textEditStyle => Styles().textStyles?.getTextStyle('widget.input_field.dark.text.regular.thin');
+  static TextStyle? get headingTextStype => Styles().textStyles.getTextStyle("widget.title.small.fat.spaced");
+  static TextStyle? get subTitleTextStype => Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
+  static TextStyle? get textEditStyle => Styles().textStyles.getTextStyle('widget.input_field.dark.text.regular.thin');
 
   static BoxDecoration get sectionDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors!.mediumGray2!, width: 1),
+    border: Border.all(color: Styles().colors.mediumGray2!, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(8))
   );
 
   static BoxDecoration get sectionSplitterDecoration => BoxDecoration(
-    border: Border(top: BorderSide(color: Styles().colors!.mediumGray2!, width: 1))
+    border: Border(top: BorderSide(color: Styles().colors.mediumGray2!, width: 1))
   );
 
   static InputDecoration textEditDecoration({EdgeInsetsGeometry? padding}) => InputDecoration(
-    fillColor: Styles().colors?.surface,
+    fillColor: Styles().colors.surface,
     filled: true,
     border: OutlineInputBorder(
-      borderSide: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),
+      borderSide: BorderSide(color: Styles().colors.surfaceAccent!, width: 1),
       borderRadius: BorderRadius.circular(8)
     ),
     contentPadding: padding,
   );
 
   static BoxDecoration get dropdownButtonDecoration => BoxDecoration(
-    color: Styles().colors?.surface,
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    color: Styles().colors.surface,
+    border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
@@ -136,7 +136,7 @@ class Event2CreatePanel extends StatefulWidget {
 
     List<Widget> contentList = <Widget>[];
 
-    Widget? prefixImageWidget = (prefixImageKey != null) ? Styles().images?.getImage(prefixImageKey) : null;
+    Widget? prefixImageWidget = (prefixImageKey != null) ? Styles().images.getImage(prefixImageKey) : null;
     if (prefixImageWidget != null) {
       contentList.add(Padding(padding: EdgeInsets.only(right: 6), child:
         prefixImageWidget,
@@ -147,11 +147,11 @@ class Event2CreatePanel extends StatefulWidget {
     
     if (required) {
       contentList.add(Padding(padding: EdgeInsets.only(left: 2), child:
-        Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"),),
+        Text('*', style: Styles().textStyles.getTextStyle("widget.label.small.fat"),),
       ));
     }
 
-    Widget? suffixImageWidget = (suffixImageKey != null) ? Styles().images?.getImage(suffixImageKey) : null;
+    Widget? suffixImageWidget = (suffixImageKey != null) ? Styles().images.getImage(suffixImageKey) : null;
     if (suffixImageWidget != null) {
       contentList.add(Padding(padding: EdgeInsets.only(left: 6), child:
         suffixImageWidget,
@@ -177,7 +177,7 @@ class Event2CreatePanel extends StatefulWidget {
     Semantics ( label: title,
     child: RichText(textScaler: textScaler, text:
       TextSpan(text: title, style: textStyle ?? headingTextStype, semanticsLabel: "", children: required ? <InlineSpan>[
-        TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+        TextSpan(text: ' *', style: requiredTextStyle ?? Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
       ] : null),
     ));
 
@@ -186,7 +186,7 @@ class Event2CreatePanel extends StatefulWidget {
     Text(subTitle, style: subTitleTextStype);
 
   static Widget buildSectionRequiredWidget() => 
-    Text('*', style: Styles().textStyles?.getTextStyle("widget.label.small.fat"), semanticsLabel: ", required",);
+    Text('*', style: Styles().textStyles.getTextStyle("widget.label.small.fat"), semanticsLabel: ", required",);
 
   // Sections / Dropdown Section
 
@@ -229,7 +229,7 @@ class Event2CreatePanel extends StatefulWidget {
               buildSectionTitleWidget(title, required: required),
             ),
             Padding(padding: EdgeInsets.only(left: 8), child:
-              Styles().images?.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
+              Styles().images.getImage(expanded ? 'chevron-up' : 'chevron-down') ?? Container()
             ),
           ],),
         ),
@@ -281,7 +281,7 @@ class Event2CreatePanel extends StatefulWidget {
               leftWidget,
             ),
             Padding(padding: EdgeInsets.only(left: 8), child:
-              Styles().images?.getImage('chevron-right') ?? Container()
+              Styles().images.getImage('chevron-right') ?? Container()
             ),
           ],),
         ),
@@ -344,7 +344,7 @@ class Event2CreatePanel extends StatefulWidget {
       Row(mainAxisSize: MainAxisSize.min, children: [
         progress ? Padding(padding: padding, child:
           SizedBox(width: 16, height: 16, child:
-            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors?.fillColorSecondary,)
+            CircularProgressIndicator(strokeWidth: 2, color: Styles().colors.fillColorSecondary,)
           ),
         ) : Container(),
         LinkButton(
@@ -421,16 +421,16 @@ class Event2CreatePanel extends StatefulWidget {
           Padding(padding: padding, child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.white!, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.white!, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")
+                  style: Styles().textStyles.getTextStyle("widget.heading.regular.fat")
                 ),
               ),
             ],)
           ),
         ),
         //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
         //),
       ),
     );
@@ -439,7 +439,7 @@ class Event2CreatePanel extends StatefulWidget {
   static Widget buildHeaderBarActionProgress({ EdgeInsetsGeometry padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 20) }) =>
     Padding(padding: padding, child:
         SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors?.white, strokeWidth: 3,)
+          CircularProgressIndicator(color: Styles().colors.white, strokeWidth: 3,)
         )
     );
 
@@ -611,7 +611,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       Localization().getStringEx("panel.event2.update.header.title", "Update Event"),
       onLeading: _onHeaderBack,),
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Widget _buildPanelContent() {
@@ -653,22 +653,22 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       Localization().getStringEx("panel.create_event.modify_image.hint","") :
       Localization().getStringEx("panel.create_event.add_image.hint","");
 
-    return Container(height: 200, color: Styles().colors!.background, child:
+    return Container(height: 200, color: Styles().colors.background, child:
       Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           Positioned.fill(child: (_imageUrl != null) ?
             Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders) : Container()
           ),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white), child: Container(height: 30)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
           Positioned.fill(child:
             Center(child:
               Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
                 RoundedButton(
                   label: buttonTitle,
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapAddImage,
-                  backgroundColor: Styles().colors!.white,
-                  borderColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors.white,
+                  borderColor: Styles().colors.fillColorSecondary,
                   contentWeight: 0.67,
                 )
               ),
@@ -711,7 +711,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             Expanded(child:
               RichText(textScaler: MediaQuery.of(context).textScaler, text:
                 TextSpan(text: title, style: Event2CreatePanel.headingTextStype,  children: <InlineSpan>[
-                  TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
+                  TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
                 ])
               )
             ),
@@ -807,9 +807,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Location>(
-                  icon: Styles().images?.getImage('chevron-down'),
+                  icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
-                  style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                   hint: Text(_timeZone.name,),
                   items: _buildTimeZoneDropDownItems(),
                   onChanged: _onTimeZoneChanged
@@ -898,8 +898,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     return InkWell(onTap: onTap, child:
       Container(decoration: Event2CreatePanel.dropdownButtonDecoration, padding: Event2CreatePanel.dropdownButtonContentPadding, child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-          Text(label ??  '-', style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
-          Styles().images?.getImage('chevron-down') ?? Container()
+          Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),),
+          Styles().images.getImage('chevron-down') ?? Container()
         ],),
       ),
     );
@@ -919,7 +919,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     ));
 
   EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
-  BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
+  BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent!, width: 1);
   BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
   void _onToggleDateAndTimeSection() {
@@ -1061,7 +1061,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
         Expanded(flex: 4, child:
           RichText(textScaler: MediaQuery.of(context).textScaler, text:
             TextSpan(text: title, style: Event2CreatePanel.headingTextStype, semanticsLabel: "", children: <InlineSpan>[
-              TextSpan(text: ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+              TextSpan(text: ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
             ])
           )
         ),
@@ -1071,9 +1071,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Event2Type>(
-                  icon: Styles().images?.getImage('chevron-down'),
+                  icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
-                  style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                   hint: Text(event2TypeToDisplayString(_eventType) ?? '-',),
                   items: _buildEventTypeDropDownItems(),
                   onChanged: _onEventTypeChanged
@@ -1146,10 +1146,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
       Semantics(label: buttonTitle, hint: buttonHint, button: true, excludeSemantics: true, child:
         RoundedButton(
           label: buttonTitle,
-          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.regular"),
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.regular"),
           onTap: _onTapSelectLocation,
-          backgroundColor: Styles().colors!.white,
-          borderColor: Styles().colors!.fillColorSecondary,
+          backgroundColor: Styles().colors.white,
+          borderColor: Styles().colors.fillColorSecondary,
           contentWeight: 0.80,
         )
       ),
@@ -1243,8 +1243,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
           Expanded(child:
             RichText(textScaler: MediaQuery.of(context).textScaler, text:
               TextSpan(text: title, style: Event2CreatePanel.headingTextStype, children: <InlineSpan>[
-                TextSpan(text: description, style: Styles().textStyles?.getTextStyle('widget.item.small.thin'),),
-                TextSpan(text: _free ? '' : ' *', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
+                TextSpan(text: description, style: Styles().textStyles.getTextStyle('widget.item.small.thin'),),
+                TextSpan(text: _free ? '' : ' *', style: Styles().textStyles.getTextStyle('widget.label.small.fat'), semanticsLabel: ""),
               ])
             )
           ),
@@ -1285,7 +1285,7 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget? _buildAttributesSectionBody() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
 
     ContentAttributes? contentAttributes = Events2().contentAttributes;
     List<ContentAttribute>? attributes = contentAttributes?.attributes;
@@ -1451,8 +1451,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget? _buildSponsorshipAndContactsSectionBody() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.title.tiny.fat");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.title.tiny.fat");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
 
 //	"panel.event2.create.button.sponsorship_and_contacts.label.sponsor": "Sponsor: ",
 //	"panel.event2.create.button.sponsorship_and_contacts.label.speaker": "Speaker: ",
@@ -1543,9 +1543,9 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
                   DropdownButton<_Event2Visibility>(
-                    icon: Styles().images?.getImage('chevron-down'),
+                    icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
-                    style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                     hint: Text(_event2VisibilityToDisplayString(_visibility),),
                     items: _buildVisibilityDropDownItems(),
                     onChanged: _onVisibilityChanged
@@ -1637,10 +1637,10 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
     return Semantics(label: buttonTitle, hint: buttonHint, button: true, enabled: buttonEnabled, excludeSemantics: true, child:
       RoundedButton(
         label: buttonTitle,
-        textStyle: buttonEnabled ? Styles().textStyles?.getTextStyle('widget.button.title.large.fat') : Styles().textStyles?.getTextStyle('widget.button.disabled.title.large.fat'),
+        textStyle: buttonEnabled ? Styles().textStyles.getTextStyle('widget.button.title.large.fat') : Styles().textStyles.getTextStyle('widget.button.disabled.title.large.fat'),
         onTap: buttonEnabled ? _onTapCreateEvent : null,
-        backgroundColor: Styles().colors!.white,
-        borderColor: buttonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+        backgroundColor: Styles().colors.white,
+        borderColor: buttonEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
         progress: _creatingEvent,
       )
     );
@@ -1738,8 +1738,8 @@ class _Event2CreatePanelState extends State<Event2CreatePanel> implements Event2
 
   Widget _buildCreateErrorStatus() {
     List<InlineSpan> descriptionList = <InlineSpan>[];
-    TextStyle? boldStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text");
-    TextStyle? regularStyle = Styles().textStyles?.getTextStyle("panel.settings.error.text.small");
+    TextStyle? boldStyle = Styles().textStyles.getTextStyle("panel.settings.error.text");
+    TextStyle? regularStyle = Styles().textStyles.getTextStyle("panel.settings.error.text.small");
 
     List<String>? missingStringList = _errorMap[_ErrorCategory.missing];
     if ((missingStringList != null) && missingStringList.isNotEmpty) {

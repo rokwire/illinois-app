@@ -77,10 +77,10 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.all(16),
-        color: Styles().colors?.background,
+        color: Styles().colors.background,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx('panel.settings.icard.mobile_access.label', 'Allow mobile access when'),
-              style: Styles().textStyles?.getTextStyle('widget.message.regular.fat')),
+              style: Styles().textStyles.getTextStyle('widget.message.regular.fat')),
           _buildRadioButtonEntry(
               title: Localization().getStringEx('panel.settings.icard.mobile_access.opened_app.title.label', 'App is open'),
               description: Localization()
@@ -107,7 +107,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                       child: ToggleRibbonButton(
                           label: Localization().getStringEx('panel.settings.icard.play_sound.button', 'Play sound when unlocking'),
                           toggled: _soundEnabled,
-                          border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+                          border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           onTap: _onTapPlaySound)),
                   Padding(
@@ -115,7 +115,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                       child: ToggleRibbonButton(
                           label: Localization().getStringEx('panel.settings.icard.vibrate.button', 'Vibrate when unlocking'),
                           toggled: _vibrationEnabled,
-                          border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+                          border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           onTap: _onTapVibrate)),
                 ])),
@@ -127,7 +127,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
     return Stack(alignment: Alignment.center, children: [
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.label', 'Bluetooth sensitivity'),
-            style: Styles().textStyles?.getTextStyle('widget.message.regular.fat')),
+            style: Styles().textStyles.getTextStyle('widget.message.regular.fat')),
         _buildRadioButtonEntry(
             title: Localization().getStringEx('panel.settings.icard.bluetooth.sensitivity.high.label', 'High'),
             onTap: () => _onTapBluetoothSensitivity(MobileAccessBleRssiSensitivity.high),
@@ -143,7 +143,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
             onTap: () => _onTapBluetoothSensitivity(MobileAccessBleRssiSensitivity.low),
             selected: (_rssiSensitivity == MobileAccessBleRssiSensitivity.low)),
       ]),
-      Visibility(visible: _rssiLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary))
+      Visibility(visible: _rssiLoading, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary))
     ]);
   }
 
@@ -156,22 +156,22 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
               Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(title,
-                    style: Styles().textStyles?.getTextStyle('widget.message.regular.fat'), overflow: TextOverflow.ellipsis, maxLines: 2),
+                    style: Styles().textStyles.getTextStyle('widget.message.regular.fat'), overflow: TextOverflow.ellipsis, maxLines: 2),
                 Visibility(
                     visible: StringUtils.isNotEmpty(description),
                     child: Text(StringUtils.ensureNotEmpty(description),
-                        style: Styles().textStyles?.getTextStyle('widget.message.light.regular'),
+                        style: Styles().textStyles.getTextStyle('widget.message.light.regular'),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 4))
               ])),
               Padding(
                   padding: EdgeInsets.only(left: 16),
-                  child: Styles().images?.getImage((selected == true) ? 'radio-button-on' : 'radio-button-off'))
+                  child: Styles().images.getImage((selected == true) ? 'radio-button-on' : 'radio-button-off'))
             ])));
   }
 
   Widget _buildDividerWidget() {
-    return Padding(padding: EdgeInsets.only(left: 16), child: Divider(color: Styles().colors?.mediumGray, height: 1));
+    return Padding(padding: EdgeInsets.only(left: 16), child: Divider(color: Styles().colors.mediumGray, height: 1));
   }
 
   Widget _buildOpenIOSSystemSettingsWidget() {
@@ -181,8 +181,8 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: Styles().colors?.white,
-                      border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+                      color: Styles().colors.white,
+                      border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Padding(
                       padding: EdgeInsets.all(16),
@@ -190,7 +190,7 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                         Expanded(
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text(Localization().getStringEx('panel.settings.icard.ios_settings.title.label', 'Open System Settings'),
-                              style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.enabled')),
+                              style: Styles().textStyles.getTextStyle('panel.settings.toggle_button.title.small.enabled')),
                           Padding(
                             padding: EdgeInsets.only(top: 5),
                             child: Text(
@@ -199,10 +199,10 @@ class _SettingsICardContentWidgetState extends State<SettingsICardContentWidget>
                                         'Return to the {{app_title}} app by tapping the return arrow at top of the page.')
                                     .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
                                 maxLines: 4,
-                                style: Styles().textStyles?.getTextStyle('panel.settings.toggle_button.title.small.variant.enabled')),
+                                style: Styles().textStyles.getTextStyle('panel.settings.toggle_button.title.small.variant.enabled')),
                           )
                         ])),
-                        Padding(padding: EdgeInsets.only(left: 16), child: Styles().images?.getImage('chevron-right'))
+                        Padding(padding: EdgeInsets.only(left: 16), child: Styles().images.getImage('chevron-right'))
                       ]))))
         ]));
   }

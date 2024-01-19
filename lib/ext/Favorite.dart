@@ -111,8 +111,8 @@ extension FavoriteExt on Favorite {
   Color? get favoriteDetailTextColor {
     if (this is LaundryRoom) {
       switch((this as LaundryRoom).status) {
-        case LaundryRoomStatus.online: return Styles().colors?.fillColorPrimary;
-        case LaundryRoomStatus.offline: return Styles().colors?.disabledTextColor;
+        case LaundryRoomStatus.online: return Styles().colors.fillColorPrimary;
+        case LaundryRoomStatus.offline: return Styles().colors.disabledTextColor;
         default: return null;
       }
     }
@@ -121,28 +121,28 @@ extension FavoriteExt on Favorite {
 
   Widget? get favoriteDetailIcon {
     if (this is Event) {
-      return Styles().images?.getImage('events', excludeFromSemantics: true);
+      return Styles().images.getImage('events', excludeFromSemantics: true);
     }
     else if (this is Event2) {
-      return Styles().images?.getImage('events', excludeFromSemantics: true);
+      return Styles().images.getImage('events', excludeFromSemantics: true);
     }
     else if (this is Dining) {
-      return Styles().images?.getImage('dining', excludeFromSemantics: true);
+      return Styles().images.getImage('dining', excludeFromSemantics: true);
     }
     else if (this is Game) {
-      return Styles().images?.getImage('athletics', excludeFromSemantics: true);
+      return Styles().images.getImage('athletics', excludeFromSemantics: true);
     }
     else if (this is News) {
-      return Styles().images?.getImage('news', excludeFromSemantics: true);
+      return Styles().images.getImage('news', excludeFromSemantics: true);
     }
     else if (this is LaundryRoom) {
-      return Styles().images?.getImage('laundry', excludeFromSemantics: true);
+      return Styles().images.getImage('laundry', excludeFromSemantics: true);
     }
     else if (this is ExplorePOI) {
-      return Styles().images?.getImage('location', excludeFromSemantics: true);
+      return Styles().images.getImage('location', excludeFromSemantics: true);
     }
     else if (this is Appointment) {
-      return Styles().images?.getImage('appointments', excludeFromSemantics: true);
+      return Styles().images.getImage('appointments', excludeFromSemantics: true);
     }
     else {
       return null;
@@ -150,7 +150,7 @@ extension FavoriteExt on Favorite {
   }
 
   Widget? favoriteStarIcon({required bool selected}) {
-    return Styles().images?.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
+    return Styles().images.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
   }
 
   Color? get favoriteHeaderColor {
@@ -161,22 +161,22 @@ extension FavoriteExt on Favorite {
       return (this as Game).uiColor;
     }
     else if (this is News) {
-      return Styles().colors?.fillColorPrimary;
+      return Styles().colors.fillColorPrimary;
     }
     else if (this is LaundryRoom) {
-      return Styles().colors?.accentColor2;
+      return Styles().colors.accentColor2;
     }
     else if (this is MTDStop) {
-      return Styles().colors?.accentColor3;
+      return Styles().colors.accentColor3;
     }
     else if (this is GuideFavorite) {
-      return Styles().colors?.accentColor3;
+      return Styles().colors.accentColor3;
     }
     else if (this is InboxMessage) {
-      return Styles().colors?.fillColorSecondary;
+      return Styles().colors.fillColorSecondary;
     }
     else {
-      return Styles().colors?.fillColorSecondary;
+      return Styles().colors.fillColorSecondary;
     }
   }
 

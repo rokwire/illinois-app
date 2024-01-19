@@ -103,16 +103,16 @@ class HomeFavoritesWidget extends StatefulWidget {
 
   static Color? linkColor(String key) {
     switch(key) {
-      case Event.favoriteKeyName: return Styles().colors?.eventColor;
-      case Event2.favoriteKeyName: return Styles().colors?.eventColor;
-      case Dining.favoriteKeyName: return Styles().colors?.diningColor;
-      case Game.favoriteKeyName: return Styles().colors?.fillColorPrimary;
-      case News.favoriteKeyName: return Styles().colors?.fillColorPrimary;
-      case LaundryRoom.favoriteKeyName: return Styles().colors?.accentColor2;
-      case MTDStop.favoriteKeyName: return Styles().colors?.accentColor3;
-      case ExplorePOI.favoriteKeyName: return Styles().colors?.accentColor3;
-      case GuideFavorite.favoriteKeyName: return Styles().colors?.accentColor3;
-      case Appointment.favoriteKeyName: return Styles().colors?.accentColor3;
+      case Event.favoriteKeyName: return Styles().colors.eventColor;
+      case Event2.favoriteKeyName: return Styles().colors.eventColor;
+      case Dining.favoriteKeyName: return Styles().colors.diningColor;
+      case Game.favoriteKeyName: return Styles().colors.fillColorPrimary;
+      case News.favoriteKeyName: return Styles().colors.fillColorPrimary;
+      case LaundryRoom.favoriteKeyName: return Styles().colors.accentColor2;
+      case MTDStop.favoriteKeyName: return Styles().colors.accentColor3;
+      case ExplorePOI.favoriteKeyName: return Styles().colors.accentColor3;
+      case GuideFavorite.favoriteKeyName: return Styles().colors.accentColor3;
+      case Appointment.favoriteKeyName: return Styles().colors.accentColor3;
     }
     return null;
   }
@@ -280,7 +280,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         explore: item,
         showTopBorder: true,
         horizontalPadding: 0,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
         onTap:() => _onTapItem(item)
       );
     }
@@ -301,20 +301,20 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     Color? headerColor = item?.favoriteHeaderColor;
     String? title = item?.favoriteTitle;
     String? cardDetailText = item?.favoriteDetailText;
-    Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? Styles().colors?.textBackground;
+    Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? Styles().colors.textBackground;
     Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: () => _onTapItem(item), child:
       Semantics(label: title, child:
         Column(children: <Widget>[
           Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat")),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat")),
                       ),
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _onTapFavoriteStar(item), child:
@@ -340,10 +340,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                           Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
+                            Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
                           )
                         ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
+                        Text(cardDetailText ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.detail.medium")?.copyWith(color: cardDetailTextColor)),
                   )),)
                 ]),
               ),
@@ -533,12 +533,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildEmpty() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-      Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         padding: EdgeInsets.all(16),
         child:  HtmlWidget(
             HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
             onTapUrl : (url) {HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'HomeFavoritesWidget(${widget.favoriteKey})'); return true;},
-            textStyle:  Styles().textStyles?.getTextStyle("widget.card.detail.regular"),
+            textStyle:  Styles().textStyles.getTextStyle("widget.card.detail.regular"),
             customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(HomeFavoritesWidget.linkColor(widget.favoriteKey) ?? Colors.red)} : null
         )
       ),

@@ -89,7 +89,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         Localization().getStringEx('panel.appointment.reschedule.time.header.title', 'Reschedule Appointment')
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       //bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -130,7 +130,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   Widget _buildLoading() {
     return Center(child:
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 2,),
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2,),
       )
     );
   }
@@ -138,7 +138,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
   Widget _buildStatus(String status) {
     return Center(child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 48), child:
-        Text(status, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+        Text(status, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
       )
     );
   }
@@ -180,15 +180,15 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     Color? backColor;
     String textStyle;
     if (timeSlot?.available != true) {
-      backColor = Styles().colors?.background;
+      backColor = Styles().colors.background;
       textStyle = 'widget.button.title.disabled';
     }
     else if (_selectedSlot == timeSlot) {
-      backColor = Styles().colors?.fillColorPrimary;
+      backColor = Styles().colors.fillColorPrimary;
       textStyle = 'widget.colourful_button.title.accent';
     }
     else {
-      backColor = Styles().colors?.white;
+      backColor = Styles().colors.white;
       textStyle = 'widget.button.title.enabled';
     }
 
@@ -199,11 +199,11 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
           decoration: BoxDecoration(
             color: backColor,
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           ),
           child: InkWell(onTap: () => _onTimeSlot(timeSlot),
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Text(timeString ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle(textStyle),)
+              child: Text(timeString ?? '', textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle(textStyle),)
             )
           ),
         ),
@@ -237,10 +237,10 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
       
       return Padding(padding:EdgeInsets.only(left: 16, right: 16, top: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(sprintf(Localization().getStringEx('panel.appointment.reschedule.time.label.current.appointment', 'Current appointment for %s'), [personName]), style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
+          Text(sprintf(Localization().getStringEx('panel.appointment.reschedule.time.label.current.appointment', 'Current appointment for %s'), [personName]), style: Styles().textStyles.getTextStyle('widget.title.large.fat'),),
           Row(children: [
             Expanded(child:
-                Text(currentDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin'),)
+                Text(currentDateString, style: Styles().textStyles.getTextStyle('widget.button.title.regular.thin'),)
             ),
           
           ],),
@@ -258,24 +258,24 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
           Text((widget.sourceAppointment == null) ?
             sprintf(Localization().getStringEx('panel.appointment.schedule.time.label.current.appointment', 'Showing available appointments for %s:'), [personName]) :
             Localization().getStringEx('panel.appointment.reschedule.time.label.new.appointment', 'New appointment:'),
-            style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+            style: Styles().textStyles.getTextStyle('widget.title.large.fat'),
           ),
           Padding(padding: EdgeInsets.only(top: 2, bottom: 12), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 8), child:
-                Styles().images?.getImage('calendar')
+                Styles().images.getImage('calendar')
               ),
               Expanded(child:
-                Text(selectedDateString, style: Styles().textStyles?.getTextStyle('widget.button.title.regular.thin'),)
+                Text(selectedDateString, style: Styles().textStyles.getTextStyle('widget.button.title.regular.thin'),)
               ),
             ],),
           ),
           RoundedButton(
             label: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.title", "Select Alternative Date"),
             hint: Localization().getStringEx("panel.appointment.schedule.time.button.select.date.hint", ""),
-            backgroundColor: Styles().colors!.surface,
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-            borderColor: Styles().colors?.fillColorSecondary,
+            backgroundColor: Styles().colors.surface,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+            borderColor: Styles().colors.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             onTap: _onEditDate,
           ),
@@ -285,7 +285,7 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
     else {
       return Padding(padding: EdgeInsets.all(16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(Localization().getStringEx('panel.appointment.schedule.time.label.unavailable.appointment', 'There are no available dates for appointments.'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
+          Text(Localization().getStringEx('panel.appointment.schedule.time.label.unavailable.appointment', 'There are no available dates for appointments.'), style: Styles().textStyles.getTextStyle('widget.title.large.fat'),),
         ],)
       );
     }
@@ -328,9 +328,9 @@ class _AppointmentScheduleTimePanelState extends State<AppointmentScheduleTimePa
         RoundedButton(
           label: Localization().getStringEx("panel.appointment.schedule.time.button.continue.title", "Next"),
           hint: Localization().getStringEx("panel.appointment.schedule.time.button.continue.hint", ""),
-          backgroundColor: Styles().colors!.surface,
-          textStyle: _canContinue ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
-          borderColor: _canContinue ? Styles().colors!.fillColorSecondary : Styles().colors?.surfaceAccent,
+          backgroundColor: Styles().colors.surface,
+          textStyle: _canContinue ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+          borderColor: _canContinue ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
           onTap: ()=> _onContinue(),
         ),
       ),

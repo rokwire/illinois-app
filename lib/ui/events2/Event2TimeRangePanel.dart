@@ -75,7 +75,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.attributes.filters.time_range.header.title', 'Date & Time'), actions: _isModified ? <Widget>[_buildApplyButton(enabled: _canApply)] : null,),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
     );
   }
 
@@ -116,7 +116,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
       Row(children: <Widget>[
         Expanded(flex: 3, child:
           Text(Localization().getStringEx("panel.create_event.date_time.time_zone.title", "TIME ZONE"), style:
-            Styles().textStyles?.getTextStyle("panel.create_event.title.small")
+            Styles().textStyles.getTextStyle("panel.create_event.title.small")
           ),
         ),
         Container(width: 16,),
@@ -125,9 +125,9 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
             Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
               DropdownButtonHideUnderline(child:
                 DropdownButton<Location>(
-                  icon: Styles().images?.getImage('chevron-down'),
+                  icon: Styles().images.getImage('chevron-down'),
                   isExpanded: true,
-                  style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                  style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                   hint: Text(_timeZone.name,),
                   items: _buildTimeZoneDropDownItems(),
                   onChanged: _onTimeZoneChanged
@@ -170,7 +170,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.only(bottom: 8), child:
               Row(children: <Widget>[
-                Text(dateLabel ?? '', style: Styles().textStyles?.getTextStyle("panel.create_event.title.small"), ),
+                Text(dateLabel ?? '', style: Styles().textStyles.getTextStyle("panel.create_event.title.small"), ),
               ],),
             ),
             _buildDropdownButton(label: (date != null) ? DateFormat("EEE, MMM dd, yyyy").format(date) : "-", onTap: onDate,)
@@ -183,7 +183,7 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.only(bottom: 8), child:
               Row(children: <Widget>[
-                Text(timeLabel ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.create_event.title.small")),
+                Text(timeLabel ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.create_event.title.small")),
               ],),
             ),
             _buildDropdownButton(label: (time != null) ? DateFormat("h:mma").format(_dateWithTimeOfDay(time)) : "-", onTap: onTime,)
@@ -197,15 +197,15 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
     return InkWell(onTap: onTap, child:
       Container(decoration: _dropdownDecoration, padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), child:
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-          Text(label ??  '-', style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
-          Styles().images?.getImage('chevron-down') ?? Container()
+          Text(label ??  '-', style: Styles().textStyles.getTextStyle("widget.title.regular"),),
+          Styles().images.getImage('chevron-down') ?? Container()
         ],),
       ),
     );
   }
 
   BoxDecoration get _dropdownDecoration => BoxDecoration(
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
@@ -222,16 +222,16 @@ class _Event2TimeRangePanelState extends State<Event2TimeRangePanel> {
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
             Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? Styles().colors!.white! : Styles().colors!.whiteTransparent06!, width: 1.5, ))),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: enabled ? Styles().colors.white! : Styles().colors.whiteTransparent06!, width: 1.5, ))),
                 child: Text(title ?? '',
-                  style: Styles().textStyles?.getTextStyle(enabled ? "widget.heading.regular.fat" : "widget.heading.regular.fat.disabled")
+                  style: Styles().textStyles.getTextStyle(enabled ? "widget.heading.regular.fat" : "widget.heading.regular.fat.disabled")
                 ),
               ),
             ],)
           ),
         ),
         //Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12), child:
-        //  Text(title ?? '', style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
+        //  Text(title ?? '', style: Styles().textStyles.getTextStyle('panel.athletics.home.button.underline'))
         //),
       ),
     );

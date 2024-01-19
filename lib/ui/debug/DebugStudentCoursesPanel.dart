@@ -50,7 +50,7 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
         title: "Student Courses",
         onLeading: _onHeaderBack,
       ),
-      backgroundColor: Styles().colors!.surface,
+      backgroundColor: Styles().colors.surface,
       body: SafeArea(child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           ToggleRibbonButton(label: 'Use JSON Contnet:', toggled: _useDebugContent, onTap: _onToggleUseDebugContent),
@@ -61,21 +61,21 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
                   maxLines: 1024,
                   controller: _rawContentController,
                   decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),
+                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
                   onChanged: _onRawContentChanged,
                   onEditingComplete: _onRawContentFinished,
                 ),
                 Visibility(visible: (_processingContent == true), child:
                   Align(alignment: Alignment.center, child:
                     SizedBox(height: 32, width: 32, child:
-                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                      CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
                     ),
                   ),
                 ),
                 Visibility(visible: !_processingContent, child:
                   Align(alignment: Alignment.bottomRight, child:
                     Padding(padding: EdgeInsets.all(10), child: 
-                      _validContent ? Styles().images?.getImage('check-green') : Styles().images?.getImage('clear'),
+                      _validContent ? Styles().images.getImage('check-green') : Styles().images.getImage('clear'),
                     ),
                   ),
                 ),
@@ -84,12 +84,12 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
                     Wrap(children: [
                       InkWell(onTap: _onPaste, child:
                         Padding(padding: EdgeInsets.all(10), child: 
-                          Styles().images?.getImage('paste', excludeFromSemantics: true),
+                          Styles().images.getImage('paste', excludeFromSemantics: true),
                         ),
                       ),
                       InkWell(onTap: _onClear, child:
                         Padding(padding: EdgeInsets.only(top: 10, bottom: 10, left: 6, right: 14), child: 
-                          Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),), // Image.asset('images/icon-refresh.png'),
+                          Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),), // Image.asset('images/icon-refresh.png'),
                         ),
                       ),
                     ],),

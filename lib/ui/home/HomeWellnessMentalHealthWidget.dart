@@ -125,13 +125,13 @@ class _HomeWellnessMentalHealthWidgetState extends State<HomeWellnessMentalHealt
       .replaceAll(localUrlMacro, '$localScheme://$favoriteKey');
 
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-      Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      Container(decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         padding: EdgeInsets.all(16),
         child: HtmlWidget(
             message,
             onTapUrl : (url) {_handleLocalUrl(url); return true;},
-            textStyle:  Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
-            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors!.fillColorSecondary ?? Colors.blue)} : null
+            textStyle:  Styles().textStyles.getTextStyle("widget.item.regular.thin"),
+            customStylesBuilder: (element) => (element.localName == "a") ? {"color": ColorUtils.toHex(Styles().colors.fillColorSecondary ?? Colors.blue)} : null
         )
       ),
     );

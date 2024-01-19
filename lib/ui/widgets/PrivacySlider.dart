@@ -16,9 +16,9 @@ class PrivacyLevelSlider extends StatefulWidget {
 
 class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
   double? _discreteValue;
-  Color? _mainColor = Styles().colors!.white;
-  Color? _trackColor = Styles().colors!.fillColorPrimaryVariant;
-  Color? _inactiveTrackColor = Styles().colors!.surfaceAccent;
+  Color? _mainColor = Styles().colors.white;
+  Color? _trackColor = Styles().colors.fillColorPrimaryVariant;
+  Color? _inactiveTrackColor = Styles().colors.surfaceAccent;
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
     final ThemeData theme = Theme.of(context);
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 18),
-        color: widget.color ?? Styles().colors!.white,
+        color: widget.color ?? Styles().colors.white,
         child: Column(
             children: <Widget>[
               Stack(
@@ -45,8 +45,8 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             child: Container(
                                 height: 12,
                                 decoration: BoxDecoration(
-                                  color: Styles().colors!.fillColorPrimaryVariant,
-                                  border: Border.all(color: Styles().colors!.fillColorPrimaryVariant!, width: 1),
+                                  color: Styles().colors.fillColorPrimaryVariant,
+                                  border: Border.all(color: Styles().colors.fillColorPrimaryVariant!, width: 1),
                                   borderRadius: BorderRadius.circular(24.0),
                                 )),
                           )),
@@ -62,7 +62,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             trackHeight: 10,
                             inactiveTickMarkColor: _inactiveTrackColor,
                             showValueIndicator: ShowValueIndicator.never,
-                            valueIndicatorTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
+                            valueIndicatorTextStyle: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")),
                         child: MergeSemantics(
                             child: Semantics(
                                 label: Localization().getStringEx("panel.settings.privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),
@@ -180,7 +180,7 @@ class PrivacyIcon extends StatelessWidget{
   const PrivacyIcon({Key? key, this.minPrivacyLevel = 1, this.enabledIconKey, this.disabledIconKey, this.currentPrivacyLevel}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Styles().images?.getImage(currentPrivacyLevel! >= minPrivacyLevel ? enabledIconKey : disabledIconKey, excludeFromSemantics: true) ?? Container();
+    return Styles().images.getImage(currentPrivacyLevel! >= minPrivacyLevel ? enabledIconKey : disabledIconKey, excludeFromSemantics: true) ?? Container();
   }
 
 }
@@ -200,17 +200,17 @@ class _CustomThumbShape extends SliderComponentShape {
     );
 
     final ColorTween colorTween2 = ColorTween(
-      begin: Styles().colors!.white,
-      end: Styles().colors!.white,
+      begin: Styles().colors.white,
+      end: Styles().colors.white,
     );
 
     final ColorTween colorTween3 = ColorTween(
-      begin: Styles().colors!.fillColorSecondary,
-      end: Styles().colors!.fillColorSecondary,
+      begin: Styles().colors.fillColorSecondary,
+      end: Styles().colors.fillColorSecondary,
     );
     final ColorTween colorTween4 = ColorTween(
-      begin: Styles().colors!.fillColorPrimary,
-      end: Styles().colors!.fillColorPrimary,
+      begin: Styles().colors.fillColorPrimary,
+      end: Styles().colors.fillColorPrimary,
     );
 
     canvas.drawCircle(center, 25, Paint()..color = colorTween4.evaluate(enableAnimation)!);

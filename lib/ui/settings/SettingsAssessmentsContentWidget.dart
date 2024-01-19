@@ -99,7 +99,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
     return Padding(padding: const EdgeInsets.only(top: 16, bottom: 4), child: Row(children: [
       Expanded(
           child: Text(text,
-              style:  Styles().textStyles?.getTextStyle("widget.detail.regular.fat")))
+              style:  Styles().textStyles.getTextStyle("widget.detail.regular.fat")))
     ]));
   }
 
@@ -111,13 +111,13 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         contentList.add(ToggleRibbonButton(
             label: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
             toggled: Storage().assessmentsSaveResultsMap?[name] ?? Auth2().privacyMatch(4),
-            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+            border: Border.all(color: Styles().colors.blackTransparent018!, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             onTap: () => _onSave(name)));
       } else if (code == 'save_progress') {
         contentList.add(Text(
             Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_progress.description', 'Progress on an evaluation that you started will be saved automatically until you cancel or complete it.'),
-            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
+            style: Styles().textStyles.getTextStyle("widget.item.small.thin")
         ));
       }
     }
@@ -139,27 +139,27 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
           children: [
             TextSpan(
               text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
-              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
+              style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
             ),
             WidgetSpan(
               child: InkWell(onTap: _onTapPrivacyLevel, child: Text(
                 Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.privacy', 'Set your privacy level to 4 or 5.'),
-                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.link'),
+                style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.auth_dialog.link'),
               )),
             ),
             TextSpan(
               text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.suffix', ' Then, sign in with your NetID under Settings.'),
-              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
+              style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
             ),
           ],
         ),
       );
       showDialog(context: context, builder: (_) => InfoPopup(
-        backColor: Styles().colors?.surface,
+        backColor: Styles().colors.surface,
         padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
         alignment: Alignment.center,
         infoTextWidget: infoTextWidget,
-        closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
+        closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
       ),);
     }
   }

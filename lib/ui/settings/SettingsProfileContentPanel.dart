@@ -46,7 +46,7 @@ class SettingsProfileContentPanel extends StatefulWidget {
         useRootNavigator: true,
         routeSettings: RouteSettings(name: routeName),
         clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) {
@@ -92,7 +92,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile')),
       body: _buildPage(context),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar()
     );
   }*/
@@ -100,24 +100,24 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   Widget _buildSheet(BuildContext context) {
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
-      Container(color: Styles().colors?.white, child:
+      Container(color: Styles().colors.white, child:
         Row(children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
-              Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles?.getTextStyle("widget.label.medium.fat"),)
+              Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"),)
             )
           ),
           Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
               Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                Styles().images?.getImage('close', excludeFromSemantics: true),
+                Styles().images.getImage('close', excludeFromSemantics: true),
               ),
             ),
           ),
 
         ],),
       ),
-      Container(color: Styles().colors?.surfaceAccent, height: 1,),
+      Container(color: Styles().colors.surfaceAccent, height: 1,),
       Expanded(child:
         _buildPage(context),
       )
@@ -131,10 +131,10 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
               RibbonButton(
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-                backgroundColor: Styles().colors!.white,
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                backgroundColor: Styles().colors.white,
                 borderRadius: BorderRadius.all(Radius.circular(5)),
-                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
                 rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
                 label: _getContentLabel(_selectedContent),
                 onTap: _changeSettingsContentValuesVisibility
@@ -167,12 +167,12 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors!.blackTransparent06))));
+                child: Container(color: Styles().colors.blackTransparent06))));
   }
 
   Widget _buildContentValuesWidget() {
     List<Widget> contentList = <Widget>[];
-    contentList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    contentList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (SettingsProfileContent contentItem in SettingsProfileContent.values) {
       if ((contentItem == SettingsProfileContent.profile) && !Auth2().isLoggedIn) {
         continue;
@@ -186,8 +186,8 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
 
   Widget _buildContentItem(SettingsProfileContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));

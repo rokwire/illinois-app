@@ -84,7 +84,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         leadingIconKey: 'close-circle-white',
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
     );
   }
 
@@ -148,24 +148,24 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
     return Column(children: <Widget>[
       Stack(children: [
-        Semantics(container: true, child:Container(color: Styles().colors?.white, child:
+        Semantics(container: true, child:Container(color: Styles().colors.white, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
               Padding(padding: EdgeInsets.zero, child:
                 Text('Select Answers', //TBD localize
-                  style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
+                  style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
               ),
               Padding(padding: EdgeInsets.zero, child:
                 Text('Create a target audience by selecting answers that potential participants have chosen.',
-                  style: Styles().textStyles?.getTextStyle("panel.research_project.profile.detail.regular")),
+                  style: Styles().textStyles.getTextStyle("panel.research_project.profile.detail.regular")),
               ),
               Padding(padding: EdgeInsets.only(top: 4), child:
                 Text(headingInfo,
-                  style: Styles().textStyles?.getTextStyle("widget.title.small.fat")),
+                  style: Styles().textStyles.getTextStyle("widget.title.small.fat")),
               ),
               Padding(padding: EdgeInsets.only(right: 12), child:
                 Text(profileDescription, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: Styles().textStyles?.getTextStyle("panel.research_project.profile.detail.small")
+                  style: Styles().textStyles.getTextStyle("panel.research_project.profile.detail.small")
                 ),
               ),
             ]),
@@ -176,7 +176,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
             Align(alignment: Alignment.topRight, child:
               Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
                 SizedBox(width: 16, height: 16, child:
-                  CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 1, )
+                  CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 1, )
                 )
               )
             )
@@ -187,7 +187,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
             Align(alignment: Alignment.bottomRight, child:
               InkWell(onTap: _onDescriptionInfo, child:
                 Padding(padding: EdgeInsets.only(left: 8, right: 12, top: 8, bottom: 12), child:
-                  Styles().images?.getImage('eye', excludeFromSemantics: true,)
+                  Styles().images.getImage('eye', excludeFromSemantics: true,)
                 )
               ),
             ),
@@ -196,7 +196,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
 
       ],),
-      Container(height: 1, color: Styles().colors?.surfaceAccent,),
+      Container(height: 1, color: Styles().colors.surfaceAccent,),
 
       Expanded(child:
         SingleChildScrollView(child:
@@ -206,17 +206,17 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         ),
       ),
       
-      Container(height: 1, color: Styles().colors?.surfaceAccent,),
-      Container(color: Styles().colors?.white, child:
+      Container(height: 1, color: Styles().colors.surfaceAccent,),
+      Container(color: Styles().colors.white, child:
         Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 24, bottom: 12,), child:
           SafeArea(child: 
           RoundedButton(
             label: submitText,
             hint: '',
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            borderColor: Styles().colors?.fillColorSecondary,
-            backgroundColor: Styles().colors!.white,
+            borderColor: Styles().colors.fillColorSecondary,
+            backgroundColor: Styles().colors.white,
             onTap: () => _onSubmit(),
           ),
           ),
@@ -243,7 +243,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
         Row(children: [
           Expanded(child:
-            Text(title, style: Styles().textStyles?.getTextStyle("widget.title.large.fat"), textAlign: TextAlign.left,),
+            Text(title, style: Styles().textStyles.getTextStyle("widget.title.large.fat"), textAlign: TextAlign.left,),
           )
         ])      
       ));
@@ -254,7 +254,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 2), child:
         Row(children: [
           Expanded(child:
-            Text(descriptionPrefix, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
+            Text(descriptionPrefix, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
           )
         ])
       ));
@@ -272,7 +272,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, bottom: 16), child:
         Row(children: [
           Expanded(child:
-            Text(descriptionSuffix, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
+            Text(descriptionSuffix, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
           )
         ])
       ));
@@ -310,12 +310,12 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           Row(children: [
             InkWell(onTap: (){ _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(selected == true), title); }, child:
               Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
-                Styles().images?.getImage(selected ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
+                Styles().images.getImage(selected ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
               ),
             ),
             Expanded(child:
               Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-                Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                Text(title, style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
               ),
             ),
           ]),
@@ -423,9 +423,9 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
           }
           if (answerHints.isNotEmpty) {
             contentList.add(RichText(text:
-              TextSpan(style: Styles().textStyles?.getTextStyle("widget.description.regular"), children: <TextSpan>[
-                TextSpan(text: "$questionHint: ", style: Styles().textStyles?.getTextStyle("widget.description.regular.fat")),
-                TextSpan(text: answerHints.join(', '), style: Styles().textStyles?.getTextStyle("widget.description.regular")),
+              TextSpan(style: Styles().textStyles.getTextStyle("widget.description.regular"), children: <TextSpan>[
+                TextSpan(text: "$questionHint: ", style: Styles().textStyles.getTextStyle("widget.description.regular.fat")),
+                TextSpan(text: answerHints.join(', '), style: Styles().textStyles.getTextStyle("widget.description.regular")),
               ]),
             ));
           }
@@ -471,7 +471,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         Column(children: [
           Expanded(child:
             Align(alignment: Alignment.center, child:
-              CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3, )
+              CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3, )
             ),
           ),
         ],))
@@ -488,7 +488,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
                 Row(children: [
                   Expanded(child:
                     Text('Failed to load research questionnaire.', style:
-                      Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
+                      Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
                   ),
                 ],)
               )

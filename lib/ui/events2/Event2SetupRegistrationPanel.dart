@@ -123,7 +123,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Widget _buildPanelContent() {
@@ -165,9 +165,9 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
               Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
                 DropdownButtonHideUnderline(child:
                   DropdownButton<Event2RegistrationType>(
-                    icon: Styles().images?.getImage('chevron-down'),
+                    icon: Styles().images.getImage('chevron-down'),
                     isExpanded: true,
-                    style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+                    style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
                     hint: Text(event2RegistrationToDisplayString(_registrationType)),
                     items: _buildRegistrationTypeDropDownItems(),
                     onChanged: _onRegistrationTypeChanged
@@ -224,7 +224,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
 
-  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStype => Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
 
 
   // Internal Details
@@ -448,7 +448,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         continue;
 
       if (contentList.isNotEmpty) {
-        contentList.add(Divider(color: Styles().colors?.dividerLineAccent, thickness: 1, height: 1,));
+        contentList.add(Divider(color: Styles().colors.dividerLineAccent, thickness: 1, height: 1,));
       }
       contentList.add(_GuestListItemWidget(displayPerson, enabled: true, highlighted: false,));
     }
@@ -456,7 +456,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Center(child:
           SizedBox(width: 24, height: 24, child:
-            CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,)
+            CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,)
           ),
         ),
       );
@@ -471,7 +471,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
         Text(_hasError ?
         Localization().getStringEx("panel.event2.setup.registration.guest.failed.text", "Failed to load guests list.") :
         Localization().getStringEx("panel.event2.setup.registration.guest.empty.text", "There are no users registered for this event yet."),
-          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.small.thin.italic'),),
+          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.small.thin.italic'),),
         )
       ],)
       );
@@ -479,7 +479,7 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
   }
 
   Widget _buildUploadGuestsDescription() {
-    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
     final Color defaultStyleColor = Colors.red;
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
     final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
@@ -489,11 +489,11 @@ class _Event2SetupRegistrationPanelState extends State<Event2SetupRegistrationPa
     return Visibility(visible: StringUtils.isNotEmpty(eventAttendanceUrl), child:
       Padding(padding: EdgeInsets.only(top: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Styles().images?.getImage('info') ?? Container(),
+          Styles().images.getImage('info') ?? Container(),
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 6), child:
               HtmlWidget(contentHtml, onTapUrl: _onTapHtmlLink, textStyle: mainStyle,
-                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)} : null,
+                customStylesBuilder: (element) => (element.localName == "a") ? { "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor), "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary ?? defaultStyleColor)} : null,
               )
             ),
           ),
@@ -545,11 +545,11 @@ class _GuestListItemWidget extends StatelessWidget {
   Widget get _nameWidget {
     String? registrantNetId = registrant.identifier?.netId;
     String textStyleKey = (enabled ? (highlighted ? 'widget.label.regular.fat' : 'widget.card.title.small.fat') : 'widget.card.title.small.fat.variant3');
-    return Text(registrantNetId ?? '', style: Styles().textStyles?.getTextStyle(textStyleKey));
+    return Text(registrantNetId ?? '', style: Styles().textStyles.getTextStyle(textStyleKey));
   }
 
   Widget get _typeWidget {
     String type = event2UserRegistrationToDisplayString(registrant.registrationType) ?? Localization().getStringEx('model.event2.registrant_type.unknown', 'Unknown');
-    return Text(type, style: Styles().textStyles?.getTextStyle('widget.detail.light.regular'), textAlign: TextAlign.end,);
+    return Text(type, style: Styles().textStyles.getTextStyle('widget.detail.light.regular'), textAlign: TextAlign.end,);
   }
 }

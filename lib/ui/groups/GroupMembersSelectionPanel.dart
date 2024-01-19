@@ -77,7 +77,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
           title: Localization().getStringEx('panel.group.members.header.title', 'Members'),
           onLeading: _onTapDone,
         ),
-        backgroundColor: Styles().colors!.white,
+        backgroundColor: Styles().colors.white,
         body: Stack(alignment: Alignment.center, children: <Widget>[
           Column(
             children:[
@@ -86,11 +86,11 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     // Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                     //   Expanded(child: Container()),
-                    //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
+                    //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorSecondary, backgroundColor: Styles().colors.white, onTap: _onTapDone)
                     // ])),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        color: Styles().colors!.fillColorPrimary!,
+                        color: Styles().colors.fillColorPrimary!,
                         child: Semantics(
                           label: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.title", "Tap the checkmark to select members"),
                           hint: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.hint", ""),
@@ -100,14 +100,14 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                             children: <Widget>[
                               Text(
                                 Localization().getStringEx("panel.group.members.label.tap_the.title", "Tap the "),
-                                style: Styles().textStyles?.getTextStyle("widget.title.light.regular")
+                                style: Styles().textStyles.getTextStyle("widget.title.light.regular")
                               ),
-                              Styles().images?.getImage('check-circle-outline-gray-white', excludeFromSemantics: true) ?? Container(),
+                              Styles().images.getImage('check-circle-outline-gray-white', excludeFromSemantics: true) ?? Container(),
                               Expanded(
                                   child:Text(
                                     Localization().getStringEx("panel.group.members.label.follow_team.title", " to select members"),
                                     overflow: TextOverflow.ellipsis,
-                                    style: Styles().textStyles?.getTextStyle("widget.title.light.regular")
+                                    style: Styles().textStyles.getTextStyle("widget.title.light.regular")
                                   )
                               )
                             ],
@@ -128,15 +128,15 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
               ),
               Padding(padding: EdgeInsets.only(top: 24, bottom: 24), child:
               RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   contentWeight: 0.5,
-                  borderColor: Styles().colors!.fillColorSecondary,
-                  backgroundColor: Styles().colors!.white,
+                  borderColor: Styles().colors.fillColorSecondary,
+                  backgroundColor: Styles().colors.white,
                   onTap: _onTapDone),
               ),
             ]),
 
-          Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors!.background, child: CircularProgressIndicator()))
+          Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors.background, child: CircularProgressIndicator()))
         ])
     ));
   }
@@ -168,7 +168,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     List<Widget> memberWidgets = [];
     for (Member member in members!) {
       if (CollectionUtils.isNotEmpty(memberWidgets)) {
-        memberWidgets.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+        memberWidgets.add(Container(height: 1, color: Styles().colors.surfaceAccent));
       }
       memberWidgets.add(_MemberSelectionWidget(member: member, label: _getMemberDisplayData(member), selected: _isMemberSelected(member), onTap: () => _onMemberTaped(member)));
     }
@@ -176,7 +176,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
         borderRadius: BorderRadius.circular(15),
         child: Container(
             foregroundDecoration: BoxDecoration(
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1.0),
+              border: Border.all(color: Styles().colors.surfaceAccent!, width: 1.0),
               borderRadius: BorderRadius.circular(15),
             ),
             child: Column(children: memberWidgets)));
@@ -245,10 +245,10 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
         children: [
           Container(
               padding: EdgeInsets.symmetric(vertical: 2),
-              child: Text(Localization().getStringEx("panel.group.members.list.search.description","Search for a particular member:"),style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),)), //TBD localize
+              child: Text(Localization().getStringEx("panel.group.members.list.search.description","Search for a particular member:"),style: Styles().textStyles.getTextStyle("widget.message.regular.fat"),)), //TBD localize
           Container(
           padding: EdgeInsets.symmetric(horizontal: 0),
-          color: Styles().colors!.surface,
+          color: Styles().colors.surface,
           height: 48,
           child: Row(
             children: <Widget>[
@@ -262,9 +262,9 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                       controller: _searchController,
                       onChanged: (text) => _onTextChanged(text),
                       onSubmitted: (_) => () {},
-                      cursorColor: Styles().colors!.fillColorSecondary,
+                      cursorColor: Styles().colors.fillColorSecondary,
                       keyboardType: TextInputType.text,
-                      style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                      style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                       decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)))
                     )),
               ),
@@ -279,7 +279,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                     onTap: () {
                       _onTapCancelSearch();
                     },
-                    child: Styles().images?.getImage('clear'),
+                    child: Styles().images.getImage('clear'),
                   ),
                 ),
               ),
@@ -292,7 +292,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                     onTap: () {
                       _onSearchTap();
                     },
-                    child: Styles().images?.getImage('search'),
+                    child: Styles().images.getImage('search'),
                   ))
             ],
           ),
@@ -434,13 +434,13 @@ class _MemberSelectionWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                      Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray') ?? Container(),
+                      Styles().images.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray') ?? Container(),
                       SizedBox(width: 16),
                       Expanded(
                           child:
                           Container(
                             child: Text(label,
-                              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")))),
+                              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")))),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
@@ -449,7 +449,7 @@ class _MemberSelectionWidget extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(groupMemberStatusToDisplayString(member?.status)?.toUpperCase() ?? "",
-                            style: Styles().textStyles?.getTextStyle("widget.title.light.little.fat")
+                            style: Styles().textStyles.getTextStyle("widget.title.light.little.fat")
                           ),
                         ),
                       ),

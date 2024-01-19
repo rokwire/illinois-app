@@ -119,7 +119,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors?.background
+    backgroundColor: Styles().colors.background
   );
 
   Widget _buildPanelContent() {
@@ -142,7 +142,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(Localization().getStringEx('panel.event2.setup.survey.explanation.title', 'Choose a survey template to be sent to attendees of this event after it completes.'),
-              style: Styles().textStyles?.getTextStyle('widget.description.regular')),
+              style: Styles().textStyles.getTextStyle('widget.description.regular')),
           SizedBox(height: 16.0),
           _buildSurveysSection(),
           _buildHoursSection(),
@@ -156,7 +156,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       SizedBox(width: 32, height: 32, child:
-        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+        CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
       ),
       Expanded(flex: 2, child: Container(),),
     ],);
@@ -166,7 +166,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     return Column(children: [
       Expanded(flex: 1, child: Container(),),
       Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
-        Text(message ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18)),
+        Text(message ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18)),
       ),
       Expanded(flex: 2, child: Container(),),
     ],);
@@ -204,10 +204,10 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
     Padding(padding: EdgeInsets.only(left: 12, right: 8), child:
       DropdownButtonHideUnderline(child:
         DropdownButton<Survey?>(
-          icon: Styles().images?.getImage('chevron-down'),
+          icon: Styles().images.getImage('chevron-down'),
           isExpanded: true,
           value: _survey,
-          style: Styles().textStyles?.getTextStyle("panel.create_event.dropdown_button.title.regular"),
+          style: Styles().textStyles.getTextStyle("panel.create_event.dropdown_button.title.regular"),
           hint: Text((_survey != null) ? (_survey?.displayTitle ?? '') : nullSurveyTitle),
           items: _buildSurveyDropDownItems(),
           onChanged: _onSurveyChanged
@@ -277,8 +277,8 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
   Widget _buildSurveyPreviewSection() => Visibility(visible: _survey != null, child:
     Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),),
-        Text(Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'), style: Styles().textStyles?.getTextStyle('widget.title.large.fat')),
+        Padding(padding: EdgeInsets.only(bottom: 16), child: Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),),
+        Text(Localization().getStringEx('panel.event2.setup.survey.preview.title', 'Survey Preview'), style: Styles().textStyles.getTextStyle('widget.title.large.fat')),
         Padding(
           padding: const EdgeInsets.only(top: 8),
           child: Event2CreatePanel.buildSectionTitleWidget(Localization().getStringEx('panel.event2.setup.survey.preview.subtitle', 'Optional: Try out the survey by filling out the sample below.')),
@@ -296,7 +296,7 @@ class _Event2SetupSurveyPanelState extends State<Event2SetupSurveyPanel>  {
         child: Text(
           Localization().getStringEx('panel.event2.setup.survey.preview.continue.message',
             'Thank you for testing your event follow-up survey. At this point, the survey would be submitted, and the results would be available to view under the event admin settings.'),
-          style: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
+          style: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
         )
       ),
       buttonTitle: Localization().getStringEx("dialog.ok.title", "OK"),

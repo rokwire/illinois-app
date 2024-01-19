@@ -65,7 +65,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.white, child:
                   Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +98,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
                         LinkButton(
                           title: Localization().getStringEx('widget.home.wellness.rings.view_all.label', 'View All'),
                           hint: Localization().getStringEx('widget.home.wellness.rings.view_all.hint', 'Tap to view all rings'),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline"),
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline"),
                           onTap: _onTapViewAll,
                         ),
                       ],
@@ -138,8 +138,8 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
 
   Widget _buildCreateRingButton(){
     bool enabled = WellnessRings().canAddRing;
-    final Color disabledTextColor = Styles().colors?.textColorDisabled ?? Colors.white;
-    final Color disabledBackgroundColor = Styles().colors?.textBackgroundVariant2 ?? Colors.white;
+    final Color disabledTextColor = Styles().colors.textColorDisabled ?? Colors.white;
+    final Color disabledBackgroundColor = Styles().colors.textBackgroundVariant2 ?? Colors.white;
     String label = "Create New Ring";
     String description = "Maximum of 4 total";
     return Visibility(
@@ -150,19 +150,19 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
               // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Expanded(child:
-                  Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+                  Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors.surfaceAccent!, width: 1)), child:
                   Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 10, bottom: 10, right: 3/*+10 form icon*/), child:
                   Row( crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.only(right: 8),
-                        child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
+                        child: Styles().images.getImage('plus-circle', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
                       ),
                       Expanded(
                           flex: 5,
                           child: Container(
-                            child: Text(label , style: enabled? Styles().textStyles?.getTextStyle("panel.wellness.ring.home_widget.button.title.enabled") : Styles().textStyles?.getTextStyle("panel.wellness.ring.home_widget.button.title.disabled"), textAlign: TextAlign.start,),)),
+                            child: Text(label , style: enabled? Styles().textStyles.getTextStyle("panel.wellness.ring.home_widget.button.title.enabled") : Styles().textStyles.getTextStyle("panel.wellness.ring.home_widget.button.title.disabled"), textAlign: TextAlign.start,),)),
                     ],),
                   ),
                   )

@@ -291,20 +291,20 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
   @override
   Widget build(BuildContext context) {
     bool isFavorite = Auth2().isFavorite(widget.room);
-    Color? headerColor = Styles().colors?.accentColor2;
+    Color? headerColor = Styles().colors.accentColor2;
     String? title = widget.room?.name;
 
     return GestureDetector(onTap: widget.onTap, child:
       Semantics(label: title, child:
         Column(children: <Widget>[
           Container(height: 7, color: headerColor,),
-          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
+          Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Flex(direction: Axis.vertical, children: <Widget>[
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
                       Expanded(child:
-                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles?.getTextStyle("widget.card.title.medium")),
+                        Text(title ?? '', semanticsLabel: "", style: Styles().textStyles.getTextStyle("widget.card.title.medium")),
                       ),
                       Visibility(visible: Auth2().canFavorite, child:
                         GestureDetector(behavior: HitTestBehavior.opaque,
@@ -322,7 +322,7 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
                             button: true,
                             excludeSemantics: true,
                             child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))),
+                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Styles().images.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))),
                           )
                         ],
                       )

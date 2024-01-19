@@ -52,7 +52,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
     return Scaffold(
       appBar: HeaderBar(title: StringUtils.ensureNotEmpty(widget.module.name), maxLines: 3,),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -84,7 +84,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
                 Localization().getStringEx(
                     'panel.canvas_module_detail.load.failed.error.msg', 'Failed to load module items. Please, try again later.'),
                 textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+                style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
@@ -92,7 +92,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(Localization().getStringEx('panel.canvas_module_detail.empty.msg', 'There are no module items.'),
-                textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+                textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildItemsContent() {
@@ -115,12 +115,12 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
 
   Widget _buildItem(CanvasModuleItem item, {bool isFirst = false}) {
     double innerPadding = 10;
-    BorderSide borderSide = BorderSide(color: Styles().colors!.blackTransparent06!, width: 1);
+    BorderSide borderSide = BorderSide(color: Styles().colors.blackTransparent06!, width: 1);
     return GestureDetector(
         onTap: () => _onTapItem(item),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors!.white!,
+                color: Styles().colors.white!,
                 border: Border(left: borderSide, top: (isFirst ? borderSide : BorderSide.none), right: borderSide, bottom: borderSide)),
             padding: EdgeInsets.only(
                 left: ((item.indent ?? 0) * 20 + innerPadding), top: innerPadding, right: innerPadding, bottom: innerPadding),
@@ -131,7 +131,7 @@ class _CanvasModuleDetailPanelState extends State<CanvasModuleDetailPanel> {
                     child: Text(StringUtils.ensureNotEmpty(item.title),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles?.getTextStyle("panel.canvas.text.medium.fat")))
+                        style: Styles().textStyles.getTextStyle("panel.canvas.text.medium.fat")))
               ])
             ])));
   }

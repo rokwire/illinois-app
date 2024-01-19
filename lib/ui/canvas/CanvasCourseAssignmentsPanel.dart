@@ -58,7 +58,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         title: Localization().getStringEx('panel.canvas_assignments.header.title', 'Assignments'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -95,7 +95,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
                 Localization()
                     .getStringEx('panel.canvas_assignments.load.failed.error.msg', 'Failed to load assignments. Please, try again later.'),
                 textAlign: TextAlign.center,
-                style:  Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+                style:  Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
@@ -103,7 +103,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 28),
             child: Text(Localization().getStringEx('panel.canvas_assignments.empty.msg', 'There are no assignments.'),
-                textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+                textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildAssignmentsContent() {
@@ -147,13 +147,13 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         padding: EdgeInsets.only(top: 16, bottom: 10),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors!.backgroundVariant!, border: Border.all(color: Styles().colors!.blackTransparent06!, width: 1)),
+                color: Styles().colors.backgroundVariant!, border: Border.all(color: Styles().colors.blackTransparent06!, width: 1)),
             padding: EdgeInsets.all(10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(
                     child: Text(StringUtils.ensureNotEmpty(label),
-                        style: Styles().textStyles?.getTextStyle("widget.message.dark.semi_large.fat")))
+                        style: Styles().textStyles.getTextStyle("widget.message.dark.semi_large.fat")))
               ])
             ])));
   }
@@ -163,13 +163,13 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         padding: EdgeInsets.only(top: 16),
         child: Container(
             decoration: BoxDecoration(
-                color: Styles().colors!.backgroundVariant!, border: Border.all(color: Styles().colors!.blackTransparent06!, width: 1)),
+                color: Styles().colors.backgroundVariant!, border: Border.all(color: Styles().colors.blackTransparent06!, width: 1)),
             padding: EdgeInsets.all(10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(
                     child: Text(StringUtils.ensureNotEmpty(label),
-                        style: Styles().textStyles?.getTextStyle("widget.message.dark.semi_large.fat") ))
+                        style: Styles().textStyles.getTextStyle("widget.message.dark.semi_large.fat") ))
               ])
             ])));
   }
@@ -177,12 +177,12 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
   Widget _buildAssignmentItem(CanvasAssignment assignment) {
     String displayDueDate = StringUtils.ensureNotEmpty(assignment.dueDisplayDateTime);
     String displaySubmittedDate = StringUtils.ensureNotEmpty(assignment.submittedDisplayDateTime);
-    BorderSide borderSide = BorderSide(color: Styles().colors!.blackTransparent06!, width: 1);
+    BorderSide borderSide = BorderSide(color: Styles().colors.blackTransparent06!, width: 1);
     return GestureDetector(
         onTap: () => _onTapAssignment(assignment),
         child: Container(
             decoration:
-                BoxDecoration(color: Styles().colors!.white!, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
+                BoxDecoration(color: Styles().colors.white!, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
             padding: EdgeInsets.only(left: 30, top: 10, right: 10, bottom: 10),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -190,7 +190,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
                     child: Text(StringUtils.ensureNotEmpty(assignment.name),
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles?.getTextStyle("panel.canvas.text.medium.fat")))
+                        style: Styles().textStyles.getTextStyle("panel.canvas.text.medium.fat")))
               ]),
               Visibility(
                   visible: StringUtils.isNotEmpty(displayDueDate),
@@ -199,11 +199,11 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
                       child: Row(children: [
                         Text(Localization().getStringEx('panel.canvas_assignments.due.label', 'Due:'),
                             style:
-    Styles().textStyles?.getTextStyle("widget.title.small.fat")),
+    Styles().textStyles.getTextStyle("widget.title.small.fat")),
                         Padding(
                             padding: EdgeInsets.only(left: 5),
                             child: Text(displayDueDate,
-                                style: Styles().textStyles?.getTextStyle("widget.title.small")))
+                                style: Styles().textStyles.getTextStyle("widget.title.small")))
                       ]))),
               Visibility(
                   visible: StringUtils.isNotEmpty(displaySubmittedDate),
@@ -211,11 +211,11 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
                       padding: EdgeInsets.only(top: 5),
                       child: Row(children: [
                         Text(Localization().getStringEx('panel.canvas_assignments.submitted.label', 'Submitted:'),
-                            style: Styles().textStyles?.getTextStyle("panel.canvas.text.small.accent")),
+                            style: Styles().textStyles.getTextStyle("panel.canvas.text.small.accent")),
                         Padding(
                             padding: EdgeInsets.only(left: 5),
                             child: Text(displaySubmittedDate,
-                                style: Styles().textStyles?.getTextStyle("panel.canvas.text.small.accent")))
+                                style: Styles().textStyles.getTextStyle("panel.canvas.text.small.accent")))
                       ])))
             ])));
   }
@@ -236,13 +236,13 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: Styles().colors!.lightGray!, width: 1),
+            border: Border.all(color: Styles().colors.lightGray!, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Padding(
             padding: EdgeInsets.only(left: 10),
             child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-                    style: Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat"),
+                    style: Styles().textStyles.getTextStyle("panel.canvas.item.regular.fat"),
                     items: _buildCourseDropDownItems,
                     value: _selectedCourseId,
                     itemHeight: null,
@@ -260,13 +260,13 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
       items.add(DropdownMenuItem(
           value: currentCourse.id,
           child: Text(StringUtils.ensureNotEmpty(currentCourse.name),
-              style: (_selectedCourseId == currentCourse.id) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular")
+              style: (_selectedCourseId == currentCourse.id) ? Styles().textStyles.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles.getTextStyle("panel.canvas.item.regular")
               )));
     }
     items.add(DropdownMenuItem(
         value: null,
         child: Text(Localization().getStringEx('panel.canvas.common.all_courses.label', 'All Courses'),
-            style: (_selectedCourseId == null) ? Styles().textStyles?.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles?.getTextStyle("panel.canvas.item.regular"))));
+            style: (_selectedCourseId == null) ? Styles().textStyles.getTextStyle("panel.canvas.item.regular.fat") :  Styles().textStyles.getTextStyle("panel.canvas.item.regular"))));
     return items;
   }
 

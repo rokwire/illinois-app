@@ -82,7 +82,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           onLeading: _onTapCancel,
         ),
         body: Container(
-            color: Styles().colors!.white,
+            color: Styles().colors.white,
             child: SingleChildScrollView(
                       child: Column(children: [
                         _buildGeofenceDetails(),
@@ -124,7 +124,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 label: Localization().getStringEx("panel.create_stadium_poll.setting.geofence", "Geofence poll to venue"),
                 toggled: _selectedGeofenceResult,
                 borderRadius:  BorderRadius.all(Radius.circular(5)),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.thin"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.thin"),
                 onTap: () {
                   if (_progressPollStatus == null) {
                     setState(() {
@@ -145,11 +145,11 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           excludeSemantics:true,child:
         DropdownButtonHideUnderline(
             child: DropdownButton(
-                icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
+                icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
                 isExpanded: true,
-                style:Styles().textStyles?.getTextStyle("panel.poll.create.stadium.geofence.dropdown.title"),
+                style:Styles().textStyles.getTextStyle("panel.poll.create.stadium.geofence.dropdown.title"),
                 hint: Text(_selectedGeofence?.name??"Select Geofence",
-                    style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+                    style: Styles().textStyles.getTextStyle("widget.detail.regular")
                 ),
                 items: _buildDropDownItems(),
                 onChanged: _onDropDownValueChanged)),
@@ -167,7 +167,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           excludeSemantics: true, button:false,child:
           Text(
             geofence.name ?? '',
-            style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+            style: Styles().textStyles.getTextStyle("widget.detail.regular")
         ),
       )));
     }).toList();
@@ -239,16 +239,16 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           Container(
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
             decoration: BoxDecoration(
-              color: Styles().colors!.white,
-              border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2.0),
+              color: Styles().colors.white,
+              border: Border.all(color: Styles().colors.fillColorSecondary!, width: 2.0),
               borderRadius: BorderRadius.circular(24.0),
             ),
             child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
               Text(label, style:
-                Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
               ),
               Padding(padding: EdgeInsets.only(left: 5), child:
-              Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
+              Styles().images.getImage('plus-circle', excludeFromSemantics: true),
               )
             ])
           )
@@ -279,17 +279,17 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     return Padding(
         padding: EdgeInsets.only(top: 3),
         child: Container(
-            color: Styles().colors!.background,
+            color: Styles().colors.background,
             child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 26),
                 child: Semantics( label: additionalSettingsText, excludeSemantics: true, child:
                 Container(
                   child: Row(
                     children: <Widget>[
-                      Styles().images?.getImage('settings', excludeFromSemantics: true) ?? Container(),
+                      Styles().images.getImage('settings', excludeFromSemantics: true) ?? Container(),
                       Padding(
                         padding: EdgeInsets.only(left: 10),
-                        child: Text(additionalSettingsText, style:  Styles().textStyles?.getTextStyle("widget.title.regular.fat"),
+                        child: Text(additionalSettingsText, style:  Styles().textStyles.getTextStyle("widget.title.regular.fat"),
                         ),
                       )
                     ],
@@ -300,7 +300,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
 
   Widget _buildSettingsList() {
     return Container(
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
           child: Container(
@@ -311,7 +311,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   List<Widget> _buildSettingsButtons() {
-    TextStyle? _textStyle =  Styles().textStyles?.getTextStyle("widget.button.title.medium");
+    TextStyle? _textStyle =  Styles().textStyles.getTextStyle("widget.button.title.medium");
     BorderRadius rounding = BorderRadius.all(Radius.circular(5));
     List<Widget> widgets =  [];
 
@@ -375,9 +375,9 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                     child:
                       RoundedButton(
                         label: Localization().getStringEx("panel.create_stadium_poll.setting.button.save.title", "Save"),
-                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                         backgroundColor: Colors.white,
-                        borderColor: Styles().colors!.fillColorPrimary,
+                        borderColor: Styles().colors.fillColorPrimary,
                         progress: (_progressPollStatus == PollStatus.created),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.created);
@@ -391,9 +391,9 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                     child:
                       RoundedButton(
                         label: Localization().getStringEx("panel.create_stadium_poll.setting.start.preview.title", "Start poll!"),
-                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                         backgroundColor: Colors.white,
-                        borderColor: Styles().colors!.fillColorSecondary,
+                        borderColor: Styles().colors.fillColorSecondary,
                         progress: (_progressPollStatus == PollStatus.opened),
                         onTap: () {
                           _onCreatePoll(status: PollStatus.opened);
@@ -416,14 +416,14 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 children: <Widget>[
                   Text(
                     Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.title", "Illinois"),
-                    style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.large"),
+                    style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.large"),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(
                       Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.message", "Are you sure you want to cancel this Stadium Poll"),
                       textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular"),
+                      style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular"),
                     ),
                   ),
                   Row(

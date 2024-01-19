@@ -65,7 +65,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     return Scaffold(
       appBar: HeaderBar(title: Localization().getStringEx('panel.event2.detail.attendance.header.title', 'Event Attendance'), onLeading: _onTapBack),
       body: _buildPanelContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
     );
   }
 
@@ -166,7 +166,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildDetailNumber(int? number) {
-    return Text(StringUtils.ensureNotEmpty(number?.toString(), defaultValue: '-'), style: Styles().textStyles?.getTextStyle('widget.label.medium.fat'));
+    return Text(StringUtils.ensureNotEmpty(number?.toString(), defaultValue: '-'), style: Styles().textStyles.getTextStyle('widget.label.medium.fat'));
   }
 
   //TBD: DD - fill with proper data when we know where to retrieve it from. Handle drop-down item selection when we know what exactly to do.
@@ -179,9 +179,9 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                 padding: EdgeInsets.only(left: 12, right: 8),
                 child: DropdownButtonHideUnderline(
                     child: DropdownButton<dynamic>(
-                        icon: Styles().images?.getImage('chevron-down'),
+                        icon: Styles().images.getImage('chevron-down'),
                         isExpanded: true,
-                        style: Styles().textStyles?.getTextStyle('panel.create_event.dropdown_button.title.regular'),
+                        style: Styles().textStyles.getTextStyle('panel.create_event.dropdown_button.title.regular'),
                         hint: Event2CreatePanel.buildSectionTitleWidget(
                             Localization().getStringEx('panel.event2.detail.attendance.attendees.drop_down.hint', 'GUEST LIST')),
                         items: null,
@@ -189,7 +189,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildUploadAttendeesDescription() {
-    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('panel.event.attendance.detail.description.italic');
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('panel.event.attendance.detail.description.italic');
     final Color defaultStyleColor = Colors.red;
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
     final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
@@ -201,7 +201,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
         child: Padding(
             padding: EdgeInsets.only(left: _mainHorizontalPadding, top: 20, right: _mainHorizontalPadding),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.only(right: 8.8), child: Styles().images?.getImage('info')),
+              Padding(padding: EdgeInsets.only(right: 8.8), child: Styles().images.getImage('info')),
               Expanded(
                   child: HtmlWidget(StringUtils.ensureNotEmpty(contentHtml),
                       onTapUrl: (url) {
@@ -212,7 +212,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                       customStylesBuilder: (element) => (element.localName == "a")
                           ? {
                               "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor),
-                              "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)
+                              "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary ?? defaultStyleColor)
                             }
                           : null))
             ])));
@@ -229,12 +229,12 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
         child: Stack(alignment: Alignment.center, children: [
           RoundedButton(
               label: Localization().getStringEx('panel.event2.detail.attendance.scan.button', 'Scan Illini ID'),
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
               onTap: _onTapScanButton,
-              backgroundColor: Styles().colors!.white,
-              borderColor: Styles().colors!.fillColorSecondary,
+              backgroundColor: Styles().colors.white,
+              borderColor: Styles().colors.fillColorSecondary,
               contentWeight: 0.5),
-          Visibility(visible: _scanning, child: CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 1))
+          Visibility(visible: _scanning, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 1))
         ]));
   }
 
@@ -246,7 +246,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     setStateIfMounted(() {
       _scanning = true;
     });
-    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors!.fillColorSecondary!)!,
+    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors.fillColorSecondary!)!,
             Localization().getStringEx('panel.event2.detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
         .then((scanResult) {
       _onScanFinished(scanResult);
@@ -319,7 +319,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
   }
 
   Widget _buildAttendeesInputDescriptionSection() {
-    TextStyle? mainStyle = Styles().textStyles?.getTextStyle('panel.event.attendance.detail.description.italic');
+    TextStyle? mainStyle = Styles().textStyles.getTextStyle('panel.event.attendance.detail.description.italic');
     final Color defaultStyleColor = Colors.red;
     final String? eventAttendanceUrl = Config().eventAttendanceUrl;
     final String eventAttendanceUrlMacro = '{{event_attendance_url}}';
@@ -341,7 +341,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
                     customStylesBuilder: (element) => (element.localName == "a")
                         ? {
                             "color": ColorUtils.toHex(mainStyle?.color ?? defaultStyleColor),
-                            "text-decoration-color": ColorUtils.toHex(Styles().colors?.fillColorSecondary ?? defaultStyleColor)
+                            "text-decoration-color": ColorUtils.toHex(Styles().colors.fillColorSecondary ?? defaultStyleColor)
                           }
                         : null))
           ]),
@@ -354,7 +354,7 @@ class _Event2AttendanceDetailPanelState extends State<Event2AttendanceDetailPane
     //TBD: DD - implement
   }
 
-  Widget get _dividerWidget => Divider(color: Styles().colors?.dividerLineAccent, thickness: 1);
+  Widget get _dividerWidget => Divider(color: Styles().colors.dividerLineAccent, thickness: 1);
 
   bool get _isAdmin => (widget.event?.userRole == Event2UserRole.admin);
 

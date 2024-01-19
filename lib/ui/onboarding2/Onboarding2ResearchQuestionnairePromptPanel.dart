@@ -17,18 +17,18 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       body: Stack(children: [
         Column(children: [
-          Container(color: Styles().colors?.white, height: 90,),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+          Container(color: Styles().colors.white, height: 90,),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 70,),
           ),
         ],),
-        Styles().images?.getImage("header-questionnaire", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
+        Styles().images.getImage("header-questionnaire", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Padding(padding: EdgeInsets.only(top: 90), child:
           Align(alignment: Alignment.topCenter, child: 
-            Styles().images?.getImage('questionnaire', excludeFromSemantics: true),
+            Styles().images.getImage('questionnaire', excludeFromSemantics: true),
           ),
         ),
         Positioned.fill(child:
@@ -56,16 +56,16 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(height: 32,),
               Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. As a member of the university, you can help scientists answer questions that lead to new discoveries.'), textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle("widget.message.large"),
+                style: Styles().textStyles.getTextStyle("widget.message.large"),
               ),
               Container(height: 32,),
               RichText(text:
                 TextSpan(children: [
                   TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.question', 'Would you like to get invitations to become a research participant via the Illinois app?'),
-                    style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
+                    style: Styles().textStyles.getTextStyle("widget.message.large.fat"),
                   ),
                   TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.explanation', ' Many studies offer incentives.'),
-                    style: Styles().textStyles?.getTextStyle("widget.message.large"),
+                    style: Styles().textStyles.getTextStyle("widget.message.large"),
                   ),
                 ]),
                 textAlign: TextAlign.center,
@@ -81,10 +81,10 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
             Expanded(child:
               RoundedButton(
                 label: Localization().getStringEx('dialog.yes.title', 'Yes'),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                backgroundColor: Styles().colors!.white,
-                borderColor: Styles().colors!.fillColorSecondaryVariant,
+                backgroundColor: Styles().colors.white,
+                borderColor: Styles().colors.fillColorSecondaryVariant,
                 onTap: () => _onYes(context),
               ),
             ),
@@ -92,10 +92,10 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
             Expanded(child:
               RoundedButton(
                 label: Localization().getStringEx('dialog.no.title', 'No'),
-                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                backgroundColor: Styles().colors!.white,
-                borderColor: Styles().colors!.fillColorSecondaryVariant,
+                backgroundColor: Styles().colors.white,
+                borderColor: Styles().colors.fillColorSecondaryVariant,
                 onTap: () => _onNo(context),
               ),
             ),
@@ -103,7 +103,7 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
           InkWell(onTap: () => _onNotRightNow(context), child:
             Semantics(button: true, label: notRightNow, hint: Localization().getStringEx('panel.onboarding.base.not_now.hint', ''), excludeSemantics: true, child:
               Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-                Text(notRightNow, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")),
+                Text(notRightNow, style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline")),
               ),
             ),
           ),

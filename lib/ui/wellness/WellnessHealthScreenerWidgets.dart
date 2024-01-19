@@ -91,9 +91,9 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     return SectionSlantHeader(
       titleIconKey: 'health',
       headerWidget: _buildHeader(),
-      slantColor: Styles().colors?.gradientColorPrimary,
+      slantColor: Styles().colors.gradientColorPrimary,
       slantPainterHeadingHeight: 0,
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       children: _buildInfoAndSettings(accessWidget, showHistory),
       childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       allowOverlap: false,
@@ -104,13 +104,13 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     Widget content;
     if (StringUtils.isNotEmpty(Config().healthScreenerSurveyID)) {
       content = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Not feeling well?'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,),
-        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.subtitle', 'Find the right resources'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Not feeling well?'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.subtitle', 'Find the right resources'), style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
             label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title',
                 'Take the Screener'),
-            textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
+            textStyle: Styles().textStyles.getTextStyle('widget.detail.regular.fat'),
             onTap: _onTapTakeScreener
         )),
       ]);
@@ -120,7 +120,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
         Text(
           Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.missing.title',
               'The Illinois Health Screener is currently unavailable. Please check back later.'),
-          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'),
+          style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.get_started.header'),
         )
       ],);
     }
@@ -133,8 +133,8 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Styles().colors?.fillColorPrimaryVariant ?? Colors.transparent,
-                Styles().colors?.gradientColorPrimary ?? Colors.transparent,
+                Styles().colors.fillColorPrimaryVariant ?? Colors.transparent,
+                Styles().colors.gradientColorPrimary ?? Colors.transparent,
               ]
           )
       ),
@@ -144,11 +144,11 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(Localization().getStringEx('panel.wellness.sections.health_screener.description.title',
-        'Use the Illinois Health Screener to help you find the right resources'), style: Styles().textStyles?.getTextStyle('panel.wellness.sections.health_screener.description'),),
+        'Use the Illinois Health Screener to help you find the right resources'), style: Styles().textStyles.getTextStyle('panel.wellness.sections.health_screener.description'),),
       Padding(padding: EdgeInsets.only(top: 8), child: Text(
         Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.text',
             'Your screening results are confidential unless you choose to share them'),
-        style: Styles().textStyles?.getTextStyle('panel.wellness.sections.health_screener.description'),
+        style: Styles().textStyles.getTextStyle('panel.wellness.sections.health_screener.description'),
       ))
     ]);
   }
@@ -160,7 +160,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
         leftIconKey: "info",
         label: saveEnabled ? Localization().getStringEx("panel.wellness.sections.health_screener.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
         Localization().getStringEx("panel.wellness.sections.health_screener.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
-        textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.title'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSavedResultsInfo,
       ),
@@ -168,7 +168,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
         leftIconKey: "settings",
         label: saveEnabled ? Localization().getStringEx("panel.wellness.sections.health_screener.body.dont_save.label", "Don't Save My Results") :
         Localization().getStringEx("panel.wellness.sections.health_screener.body.save.label", "Save My Results"),
-        textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
+        textStyle: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSettings,
       ),
@@ -186,7 +186,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
         Text(Localization().getStringEx('panel.wellness.sections.health_screener.label.history.title', 'My Screener History',),
-        style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),),
+        style: Styles().textStyles.getTextStyle('widget.title.large.fat'),),
         _buildFiltersWidget(),
         SizedBox(height: 16.0),
         _buildResponsesSection(),
@@ -202,7 +202,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
         children: [
           Row(
             children: [
-              DropdownButton(value: _selectedTimeframe, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
+              DropdownButton(value: _selectedTimeframe, style: Styles().textStyles.getTextStyle('widget.detail.regular'),
                   items: _getDropDownItems(_timeframes), onChanged: (String? selected) {
                 setState(() {
                   _selectedTimeframe = selected;
@@ -212,17 +212,17 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
               Spacer(flex: 1,),
               TextButton(
                 child: Text(Localization().getStringEx("panel.wellness.sections.health_screener.history.clear", "Clear All"),
-                  style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat')),
+                  style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.content.link.fat')),
                 onPressed: _onTapClearHistoryConfirm,
               ),
             ],
           ),
           // Row(
           //   children: [
-          //     Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular.fat'),),
+          //     Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles.getTextStyle('widget.title.regular.fat'),),
           //     Container(width: 8.0),
           //     Expanded(
-          //       child: DropdownButton(value: _selectedSurveyType, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
+          //       child: DropdownButton(value: _selectedSurveyType, style: Styles().textStyles.getTextStyle('widget.detail.regular'),
           //           items: _getDropDownItems(_surveyTypes), isExpanded: true, onChanged: (String? selected) {
           //         setState(() {
           //           _selectedSurveyType = selected;
@@ -269,30 +269,30 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     List<Widget> buttons = [
       Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
         label: Localization().getStringEx('dialog.no.title', 'No'),
-        borderColor: Styles().colors?.fillColorPrimaryVariant,
-        backgroundColor: Styles().colors?.surface,
-        textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+        borderColor: Styles().colors.fillColorPrimaryVariant,
+        backgroundColor: Styles().colors.surface,
+        textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
         onTap: _onTapDismissClearHistory,
       )),
       Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
         label: Localization().getStringEx('dialog.yes.title', 'Yes'),
-        borderColor: Styles().colors?.fillColorSecondary,
-        backgroundColor: Styles().colors?.surface,
-        textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+        borderColor: Styles().colors.fillColorSecondary,
+        backgroundColor: Styles().colors.surface,
+        textStyle: Styles().textStyles.getTextStyle('widget.detail.large.fat'),
         onTap: _onTapClearHistory,
       )),
     ];
 
     ActionsMessage.show(
       context: context,
-      titleBarColor: Styles().colors?.surface,
+      titleBarColor: Styles().colors.surface,
       message: Localization().getStringEx('panel.wellness.sections.health_screener.history.clear.confirm', 'Are you sure you want to clear your history?'),
-      messageTextStyle: Styles().textStyles?.getTextStyle('widget.description.medium'),
+      messageTextStyle: Styles().textStyles.getTextStyle('widget.description.medium'),
       messagePadding: const EdgeInsets.only(left: 32, right: 32, top: 8, bottom: 32),
       messageTextAlign: TextAlign.center,
       buttons: buttons,
       buttonsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
-      closeButtonIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
+      closeButtonIcon: Styles().images.getImage('close', excludeFromSemantics: true),
     );
   }
 
@@ -314,7 +314,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       Center(child:
         Text(
           Localization().getStringEx('panel.wellness.sections.health_screener.offline.error.msg', 'Illinois Health Screener is not available while offline.'),
-          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.detail.regular.fat')
+          textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.detail.regular.fat')
         )
       ),
     );
@@ -358,10 +358,10 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   List<DropdownMenuItem<T>> _getDropDownItems<T>(List<T> options, {String? nullOption}) {
     List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
     if (nullOption != null) {
-      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: Styles().textStyles?.getTextStyle('widget.detail.regular'))));
+      dropDownItems.add(DropdownMenuItem(value: null, child: Text(nullOption, style: Styles().textStyles.getTextStyle('widget.detail.regular'))));
     }
     for (T option in options) {
-      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: Styles().textStyles?.getTextStyle('widget.detail.regular'))));
+      dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: Styles().textStyles.getTextStyle('widget.detail.regular'))));
     }
     return dropDownItems;
   }
@@ -372,15 +372,15 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog",
           "Your results will be saved for you to compare to future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.") :
       Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
-      style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
+      style: Styles().textStyles.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
       textAlign: TextAlign.center,
     );
     showDialog(context: context, builder: (_) => InfoPopup(
-      backColor: Styles().colors?.surface,
+      backColor: Styles().colors.surface,
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,
-      closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
+      closeIcon: Styles().images.getImage('close', excludeFromSemantics: true),
     ),);
   }
 

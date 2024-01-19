@@ -113,7 +113,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
       ),
       Visibility(visible: (_loading == true), child:
         Align(alignment: Alignment.center, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
         )
       ),
       Visibility(visible: (_selectedFilter != null), child:
@@ -160,9 +160,9 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   }
 
   Widget _buildListHeading({String? text}) {
-    return Container(color: Styles().colors!.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+    return Container(color: Styles().colors.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
         Semantics(header: true, child:
-          Text(text ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat"),)
+          Text(text ?? '', style: Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),)
         )
     );
   }
@@ -171,7 +171,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     return Container(padding: EdgeInsets.all(6), child:
       Align(alignment: Alignment.center, child:
         SizedBox(width: 24, height: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
   }
 
   void _onTapMessage(InboxMessage message) {
@@ -211,7 +211,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
         onTap: _onTapBanner,
         child:Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          color: Styles().colors?.saferLocationWaitTimeColorYellow ?? Colors.amberAccent,
+          color: Styles().colors.saferLocationWaitTimeColorYellow ?? Colors.amberAccent,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -219,11 +219,11 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                 Text(
                   "Notifications Paused",
                   textAlign: TextAlign.center,
-                  style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+                  style: Styles().textStyles.getTextStyle("widget.detail.regular")
                 ),
               ),
               Text(">",
-                style: Styles().textStyles?.getTextStyle("widget.detail.regular")
+                style: Styles().textStyles.getTextStyle("widget.detail.regular")
               ),
 
           ],)
@@ -307,12 +307,12 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     }
 
     return Padding(padding: EdgeInsets.only(top: 6, left: 16, right: 16, bottom: 32), child:
-      Container(decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.circular(5.0)), child: 
+      Container(decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.circular(5.0)), child: 
         Padding(padding: EdgeInsets.only(top: 2), child:
           Container(color: Colors.white, child:
             ListView.separated(
               shrinkWrap: true,
-              separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
+              separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
                 return  FilterListItem(
@@ -407,11 +407,11 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildOptionsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.options.title', 'Options'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
       Stack(children: [
-        IconButton(icon: Styles().images?.getImage('more') ?? Container(), onPressed: _onOptions),
+        IconButton(icon: Styles().images.getImage('more') ?? Container(), onPressed: _onOptions),
         Visibility(visible: (_processingOption == true), child:
           Container(padding: EdgeInsets.all(13), child:
             SizedBox(width: 22, height: 22, child:
-              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white),),
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white),),
             ),
           ),
         ),
@@ -422,28 +422,28 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildEditButton() {
     return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onEdit, child:
-        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
   Widget _buildDoneButton() {
     return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDone, child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
+        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
   Widget _buildSelectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onSelectAll, child:
-        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
+        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
   Widget _buildDeselectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDeselectAll, child:
-        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
+        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style:  Styles().textStyles.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
@@ -456,41 +456,41 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
           Row(children:<Widget>[Expanded(child:
-            Text(headingText, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),)
+            Text(headingText, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
           )]),
         ),
 
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors!.fillColorPrimaryTransparent015, height: 1))]),
+        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
 
         InkWell(onTap: () => _onDelete(context), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             Row(children:<Widget>[
               Padding(padding: EdgeInsets.only(right: 8), child:
-                Styles().images?.getImage('trash')
+                Styles().images.getImage('trash')
               ),
               Expanded(child:
-                Text("Delete", style: Styles().textStyles?.getTextStyle("widget.button.title.regular"),)
+                Text("Delete", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
               ),
             ]),
           )
         ),
 
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors!.fillColorPrimaryTransparent015, height: 1))]),
+        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
 
         InkWell(onTap: () => _onCancelOptions(context), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             Row(children:<Widget>[
               Padding(padding: EdgeInsets.only(right: 8), child:
-                Styles().images?.getImage('close', excludeFromSemantics: true)
+                Styles().images.getImage('close', excludeFromSemantics: true)
               ),
               Expanded(child:
-                Text("Cancel", style: Styles().textStyles?.getTextStyle("widget.button.title.regular"),)
+                Text("Cancel", style: Styles().textStyles.getTextStyle("widget.button.title.regular"),)
               ),
             ]),
           )
         ),
 
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors!.fillColorPrimaryTransparent015, height: 1))]),
+        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
       ]),
     );
   }
@@ -502,17 +502,17 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
             Row(children: <Widget>[
               Expanded(child:
-                Container(decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)), ), child:
+                Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)), ), child:
                   Padding(padding: EdgeInsets.all(16), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Text(title!, style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular.fat"),),
+                        Text(title!, style: Styles().textStyles.getTextStyle("widget.dialog.message.regular.fat"),),
                       ),
                       Semantics(label: "Close", button: true,  child:
                         GestureDetector(onTap: () => Navigator.pop(context), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2), ), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white!, width: 2), ), child:
                             Center(child:
-                              Text('\u00D7', style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.fat"), semanticsLabel: "",),
+                              Text('\u00D7', style: Styles().textStyles.getTextStyle("widget.dialog.message.large.fat"), semanticsLabel: "",),
                             ),
                           )
                         ),
@@ -526,15 +526,15 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
             Padding(padding: const EdgeInsets.all(16), child:
               Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Container(height: 16),
-                Text(message!, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.message.medium"),),
+                Text(message!, textAlign: TextAlign.left, style: Styles().textStyles.getTextStyle("widget.message.medium"),),
                 Container(height: 32),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                   Expanded(child:
-                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary,),
+                    RoundedButton(label: negativeButtonTitle ?? '', onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"), backgroundColor: Colors.transparent, borderColor: Styles().colors.fillColorPrimary,),
                   ),
                   Container(width: 8, ),
                   Expanded(child:
-                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat.variant2"), backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant),
+                    RoundedButton(label: positiveButtonTitle ?? '', onTap: onPositive ?? (){}, textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat.variant2"), backgroundColor: Styles().colors.fillColorSecondaryVariant, borderColor: Styles().colors.fillColorSecondaryVariant),
                   ),
                 ],)
               ],)
@@ -922,9 +922,9 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
     String mutedStatus = Localization().getStringEx('widget.inbox_message_card.status.muted', 'Muted');
     return Container(
         decoration: BoxDecoration(
-          color: Styles().colors!.white,
+          color: Styles().colors.white,
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
         clipBehavior: Clip.none,
         child: Stack(children: [
@@ -934,7 +934,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                 Visibility(visible: (widget.selected != null), child:
                   Padding(padding: EdgeInsets.only(right: leftPadding), child:
                     Semantics(label:(widget.selected == true) ? Localization().getStringEx('widget.inbox_message_card.selected.hint', 'Selected') : Localization().getStringEx('widget.inbox_message_card.unselected.hint', 'Not Selected'), child:
-                      Styles().images?.getImage((widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true,),
+                      Styles().images.getImage((widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true,),
                     )
                   ),
                 ),
@@ -946,11 +946,11 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                       Padding(padding: EdgeInsets.only(bottom: 4), child:
                         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Expanded(child:
-                            Text(widget.message?.subject ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'), [widget.message?.subject ?? '']), style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat"))
+                            Text(widget.message?.subject ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'), [widget.message?.subject ?? '']), style: Styles().textStyles.getTextStyle("widget.card.title.medium.extra_fat"))
                           ),
                           (widget.message?.mute == true) ? Semantics(label: sprintf(Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '), [mutedStatus.toLowerCase()]), excludeSemantics: true, child:
-                            Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors?.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
-                              Text(mutedStatus.toUpperCase(), style: Styles().textStyles?.getTextStyle("widget.heading.small"))
+                            Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
+                              Text(mutedStatus.toUpperCase(), style: Styles().textStyles.getTextStyle("widget.heading.small"))
                           )) : Container()
                         ])
                       ) : Container(),
@@ -959,19 +959,19 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.body ?? '']), style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
+                            Text(widget.message?.body ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.body ?? '']), style: Styles().textStyles.getTextStyle("widget.card.detail.regular"))
                       )])) : Container(),
 
                     Row(children: [
                       Expanded(child:
-                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small.regular"))
+                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles.getTextStyle("widget.card.detail.small.regular"))
                     )]),
                   ])
                 ),
               ],)
             ),
           ),
-          Container(color: Styles().colors!.fillColorSecondary, height: 4),
+          Container(color: Styles().colors.fillColorSecondary, height: 4),
         ],)
     );
   }

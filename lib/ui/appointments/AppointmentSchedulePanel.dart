@@ -62,7 +62,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
     return Scaffold(
       //appBar: HeaderBar(title: Localization().getStringEx('panel.appointment.schedule.header.title', 'Schedule Appointment')),
       body: _buildContentUi(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       //bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -83,12 +83,12 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
                       // Provider Name
                       Padding(padding: EdgeInsets.only(bottom: 2), child: Row(children: [Expanded(child:
-                        Text(widget.scheduleParam.provider?.name ?? '', style: Styles().textStyles?.getTextStyle("widget.title.extra_large.semi_fat"))
+                        Text(widget.scheduleParam.provider?.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.extra_large.semi_fat"))
                       ),],),),
                       
                       // Unit Name
                       Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: [Expanded(child:
-                        Text(widget.scheduleParam.unit?.name ?? '', style: Styles().textStyles?.getTextStyle("widget.title.large"))
+                        Text(widget.scheduleParam.unit?.name ?? '', style: Styles().textStyles.getTextStyle("widget.title.large"))
                       ),],),),
 
                       // Location
@@ -128,10 +128,10 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
         Padding(padding: EdgeInsets.only(top: 8, bottom: 8), child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(padding: EdgeInsets.only(right: 4), child:
-              Styles().images?.getImage('location', excludeFromSemantics: true),
+              Styles().images.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
-              Text(displayLocation, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline"))
+              Text(displayLocation, style: Styles().textStyles.getTextStyle("widget.button.title.medium.underline"))
             ),
           ],),
         ),
@@ -144,10 +144,10 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
       Padding(padding: EdgeInsets.only(top: 8, bottom: 6), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(padding: EdgeInsets.only(right: 4), child:
-            Styles().images?.getImage('person', excludeFromSemantics: true),
+            Styles().images.getImage('person', excludeFromSemantics: true),
           ),
           Expanded(child:
-            Text(displayPerson, style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+            Text(displayPerson, style: Styles().textStyles.getTextStyle("widget.item.regular"))
           ),
         ],),
       ) : Container();
@@ -159,10 +159,10 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
       Padding(padding: EdgeInsets.only(top: 8, bottom: 12), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(padding: EdgeInsets.only(right: 4), child:
-            Styles().images?.getImage('calendar', excludeFromSemantics: true),
+            Styles().images.getImage('calendar', excludeFromSemantics: true),
           ),
           Expanded(child:
-            Text(displayTime, style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+            Text(displayTime, style: Styles().textStyles.getTextStyle("widget.item.regular"))
           ),
         ],),
       ) : Container();
@@ -170,21 +170,21 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
 
   Widget _buildLabel(String text, { bool required = false}) => Padding(padding: EdgeInsets.only(top: 12, bottom: 2), child: Row(children: [Expanded(child:
     RichText(text:
-      TextSpan(text: text, style: Styles().textStyles?.getTextStyle('widget.title.tiny'), children: <InlineSpan>[
-        TextSpan(text: required ? ' *' : '', style: Styles().textStyles?.getTextStyle('widget.label.small.fat'),),
+      TextSpan(text: text, style: Styles().textStyles.getTextStyle('widget.title.tiny'), children: <InlineSpan>[
+        TextSpan(text: required ? ' *' : '', style: Styles().textStyles.getTextStyle('widget.label.small.fat'),),
       ])
     )
   ),],),);
 
   Widget _buildAppontmentTypeDropdown() => Padding(padding: EdgeInsets.only(bottom: 8), child:
-    Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
+    Container(decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.mediumGray!, width: 1), borderRadius: BorderRadius.all(Radius.circular(4))), child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         DropdownButtonHideUnderline(child:
           DropdownButton<AppointmentType>(
-            icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
-            style: Styles().textStyles?.getTextStyle("widget.detail.light.regular"),
+            icon: Styles().images.getImage('chevron-down', excludeFromSemantics: true),
+            style: Styles().textStyles.getTextStyle("widget.detail.light.regular"),
             hint: Text(appointmentTypeToDisplayString(_appointmentType, provider: widget.scheduleParam.provider) ?? '', style:
-              Styles().textStyles?.getTextStyle("widget.detail.regular"),),
+              Styles().textStyles.getTextStyle("widget.detail.regular"),),
             items: _appontmentTypesDropdownList,
             onChanged: _onSelectAppointmentType,
           )
@@ -211,7 +211,7 @@ class _AppointmentSchedulePanelState extends State<AppointmentSchedulePanel> {
       DropdownMenuItem<AppointmentType>(
         value: appointmentType,
         child: Padding(padding: EdgeInsets.only(right: 16), child:
-          Text(appointmentTypeToDisplayString(appointmentType, provider: widget.scheduleParam.provider) ?? '', style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),),
+          Text(appointmentTypeToDisplayString(appointmentType, provider: widget.scheduleParam.provider) ?? '', style: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),),
         ),
       )
     ).toList();

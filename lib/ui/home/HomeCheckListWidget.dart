@@ -92,12 +92,12 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
         Container(
           constraints: BoxConstraints(maxHeight: 100),
           padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Styles().colors!.white,
+            decoration: BoxDecoration(color: Styles().colors.white,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(children: <Widget>[
               Expanded(
                 child: Center(
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ),
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), ),
                 ),
               ),
             ]),
@@ -107,7 +107,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget _buildStartContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Styles().colors!.white,
+            decoration: BoxDecoration(color: Styles().colors.white,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
@@ -117,14 +117,14 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                     container: true,
                     child:Text(Localization().getStringEx(
                         'widget.gies.message.start', 'Ready to get started?'),
-                      style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')),)),
+                      style: Styles().textStyles.getTextStyle('widget.title.large.extra_fat')),)),
                   ],),
                 Container(height: 24,),
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.begin', "Begin Checklist"),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                  backgroundColor: Styles().colors?.white!,
-                  borderColor: Styles().colors?.fillColorSecondary!,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                  backgroundColor: Styles().colors.white!,
+                  borderColor: Styles().colors.fillColorSecondary!,
                   onTap: () => _onTapContinue(analyticsAction: 'Begin Checklist'),
                 ),
                 Container(height: 16,),
@@ -135,7 +135,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget _buildEndedContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Styles().colors!.white,
+            decoration: BoxDecoration(color: Styles().colors.white,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
@@ -145,14 +145,14 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                       container: true,
                       child:
                       Text(Localization().getStringEx('widget.gies.message.finished', 'You’ve completed the checklist.'),
-                        style: Styles().textStyles?.getTextStyle("widget.message.huge.extra_fat")))),
+                        style: Styles().textStyles.getTextStyle("widget.message.huge.extra_fat")))),
                 ],),
                 Container(height: 24,),
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.review', "Review Checklist"),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                  backgroundColor: Styles().colors?.white!,
-                  borderColor: Styles().colors?.fillColorSecondary!,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                  backgroundColor: Styles().colors.white!,
+                  borderColor: Styles().colors.fillColorSecondary!,
                   onTap: () => _onTapContinue(analyticsAction: 'Review Checklist'),
                 ),
                 Container(height: 16,),
@@ -164,7 +164,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget _buildProgressContent() {
     return 
         Container(padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(color: Styles().colors!.white,
+            decoration: BoxDecoration(color: Styles().colors.white,
                 borderRadius: BorderRadius.circular(5)),
             child: Column(
               children: [
@@ -173,14 +173,14 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                     Semantics(
                       container: true,
                       child: Text(_progressText,
-                        style: Styles().textStyles?.getTextStyle("widget.message.extra_large.extra_fat")))),
+                        style: Styles().textStyles.getTextStyle("widget.message.extra_large.extra_fat")))),
                     ],),
                 Container(height: 24,),
                 RoundedButton(
                   label: Localization().getStringEx('widget.gies.button.title.continue', "Continue"),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                  backgroundColor: Styles().colors?.white!,
-                  borderColor: Styles().colors?.fillColorSecondary!,
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                  backgroundColor: Styles().colors.white!,
+                  borderColor: Styles().colors.fillColorSecondary!,
                   onTap: () => _onTapContinue(analyticsAction: 'Continue'),
                 ),
                 Container(height: 16,),

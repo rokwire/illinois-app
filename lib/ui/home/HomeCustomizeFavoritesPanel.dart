@@ -39,7 +39,7 @@ class HomeCustomizeFavoritesPanel extends StatefulWidget {
       isDismissible: true,
       useRootNavigator: true,
       clipBehavior: Clip.antiAlias,
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       constraints: BoxConstraints(maxHeight: height, minHeight: height),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => HomeCustomizeFavoritesPanel._(),
@@ -96,23 +96,23 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   Widget build(BuildContext context) {
 
     return Column(children: [
-      Container(color: Styles().colors?.white, child:
+      Container(color: Styles().colors.white, child:
         Row(children: [
           Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(Localization().getStringEx('panel.home.header.editing.title', 'Customize'), style: Styles().textStyles?.getTextStyle("widget.label.medium.fat"))
+                Text(Localization().getStringEx('panel.home.header.editing.title', 'Customize'), style: Styles().textStyles.getTextStyle("widget.label.medium.fat"))
               )
           ),
           Semantics(label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
             InkWell(onTap : _onTapClose, child:
               Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child:
-                Styles().images?.getImage('close', excludeFromSemantics: true),
+                Styles().images.getImage('close', excludeFromSemantics: true),
               ),
             ),
           ),
         ],),
       ),
-      Container(color: Styles().colors?.surfaceAccent, height: 1,),
+      Container(color: Styles().colors.surfaceAccent, height: 1,),
       Expanded(child:
         RefreshIndicator(onRefresh: _onPullToRefresh, child:
           Listener(onPointerMove: _onPointerMove, onPointerUp: (_) => _onPointerCancel, onPointerCancel: (_) => _onPointerCancel, child:
@@ -204,15 +204,15 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
   Widget _buildEditingHeader({String? title, String? description, String? linkButtonTitle, void Function()? onTapLinkButton, String? favoriteId, CrossAxisAlignment? dropAnchorAlignment}) {
     return HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: this, dropAnchorAlignment: dropAnchorAlignment, childBuilder: (BuildContext context, { bool? dropTarget, CrossAxisAlignment? dropAnchorAlignment }) {
       return Column(children: [
-          Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : Colors.transparent,),
+          Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors.fillColorSecondary : Colors.transparent,),
           Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-              Text(title ?? '', style: Styles().textStyles?.getTextStyle("widget.title.medium_large.extra_fat")),
+              Text(title ?? '', style: Styles().textStyles.getTextStyle("widget.title.medium_large.extra_fat")),
             ),
             Expanded(child: Container()),
             Visibility(visible: (onTapLinkButton != null), child: InkWell(onTap: onTapLinkButton, child: 
               Padding(padding: EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 16), child:
-                Text(StringUtils.ensureNotEmpty(linkButtonTitle), style: Styles().textStyles?.getTextStyle("widget.home.link_button.regular.accent.underline")))
+                Text(StringUtils.ensureNotEmpty(linkButtonTitle), style: Styles().textStyles.getTextStyle("widget.home.link_button.regular.accent.underline")))
             ))
           ],)),
           Row(children: [
@@ -221,19 +221,19 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
               HtmlWidget(
                   StringUtils.ensureNotEmpty(description),
                   onTapUrl : (url) {_onTapHtmlLink(url); return true;},
-                  textStyle: Styles().textStyles?.getTextStyle("widget.description.regular"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.description.regular"),
                   customStylesBuilder: (element) => (element.localName == "b") ? {"font-weight": "bold"} : null
               )
                 // Html(data: StringUtils.ensureNotEmpty(description),
                 //   onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
                 //   style: {
-                //     "body": Style(color: Styles().colors!.textColorPrimaryVariant, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                //     "b": Style(fontFamily: Styles().fontFamilies!.bold)
+                //     "body": Style(color: Styles().colors.textColorPrimaryVariant, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                //     "b": Style(fontFamily: Styles().fontFamilies.bold)
                 //   })
               ),
             )
           ],),
-          Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors?.fillColorSecondary : Colors.transparent,),
+          Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors.fillColorSecondary : Colors.transparent,),
         ],);
 
     },);
@@ -392,20 +392,20 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
 
   void _showUnstarConfirmationDialog(List<String>? favorites) {
     AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget:
-      Container(height: 250, decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(15.0)), child:
+      Container(height: 250, decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.circular(15.0)), child:
         Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
             Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
                 Text(Localization().getStringEx('panel.home.edit.favorites.confirmation.dialog.msg', 'Are you sure you want to REMOVE all items from your favorites? Items can always be added back later.'), textAlign: TextAlign.center, style:
-                  Styles().textStyles?.getTextStyle("widget.detail.small")
+                  Styles().textStyles.getTextStyle("widget.detail.small")
                 )
               ),
               Padding(padding: EdgeInsets.only(top: 40), child:
                 Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.no.title', 'No'), borderColor: Styles().colors!.fillColorPrimary, onTap: _dismissUnstarConfirmationDialog)),
+                  Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.no.title', 'No'), borderColor: Styles().colors.fillColorPrimary, onTap: _dismissUnstarConfirmationDialog)),
                   Container(width: 16),
-                  Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.yes.title', 'Yes'), borderColor: Styles().colors!.fillColorSecondary, onTap: () { _dismissUnstarConfirmationDialog(); _unstarAvailableFavorites(favorites);} ))
+                  Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.yes.title', 'Yes'), borderColor: Styles().colors.fillColorSecondary, onTap: () { _dismissUnstarConfirmationDialog(); _unstarAvailableFavorites(favorites);} ))
                 ])
               )
             ])
@@ -413,7 +413,7 @@ class _HomeCustomizeFavoritesPanelState extends State<HomeCustomizeFavoritesPane
           Align(alignment: Alignment.topRight, child:
             GestureDetector(onTap: _dismissUnstarConfirmationDialog, child:
               Padding(padding: EdgeInsets.all(16), child:
-                Styles().images?.getImage('close', excludeFromSemantics: true)
+                Styles().images.getImage('close', excludeFromSemantics: true)
               )
             )
           )

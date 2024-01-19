@@ -96,7 +96,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.groups_home.label.heading","Groups"), leading: RootHeaderBarLeading.Back,),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -221,8 +221,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           Column(children: [
             _buildFunctionalBar(),
             Expanded(child: _isLoading
-              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
-              : Container(color: Styles().colors!.background, child:
+              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), ),)
+              : Container(color: Styles().colors.background, child:
                   RefreshIndicator(onRefresh: _onPullToRefresh, child:
                     SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
                       Column(children: <Widget>[ _buildGroupsContent(), ],),
@@ -245,7 +245,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildTypesValuesWidget() {
     List<Widget> typeWidgetList = <Widget>[];
-    typeWidgetList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    typeWidgetList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (rokwire.GroupsContentType type in rokwire.GroupsContentType.values) {
       if ((_selectedContentType != type)) {
         typeWidgetList.add(_buildContentItem(type));
@@ -256,8 +256,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildContentItem(rokwire.GroupsContentType contentType) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentType),
         onTap: () => _onTapContentType(contentType));
@@ -266,10 +266,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildGroupsContentSelection() {
     return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child: RibbonButton(
       progress: _myGroupsBusy,
-      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-      backgroundColor: Styles().colors!.white,
+      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+      backgroundColor: Styles().colors.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
-      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
       rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
       label: _getContentLabel(_selectedContentType),
       onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null
@@ -304,22 +304,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           InkWell(onTap: _onFilterAttributes, child:
             Padding(padding: EdgeInsets.only(top: 14, bottom: 8), child:
               Row(children: [
-                Text(filtersTitle, style:  Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
+                Text(filtersTitle, style:  Styles().textStyles.getTextStyle("widget.title.regular.fat")),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 4), child:
-                  Styles().images?.getImage('chevron-right', width: 6, height: 10) ?? Container(),
+                  Styles().images.getImage('chevron-right', width: 6, height: 10) ?? Container(),
                 )
               ],),
               /*Container(
                 decoration: BoxDecoration(border:
-                  Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1.5, ))
+                  Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary!, width: 1.5, ))
                 ),
                 child: Text(filtersTitle, style: TextStyle(
-                  fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary,
                 ),),
               ),*/
               /*Text(filtersTitle, style: TextStyle(
-                fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary,
-                decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
+                fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary,
+                decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
               ),)*/
             )
           ),
@@ -333,8 +333,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       List<InlineSpan> attributesList = <InlineSpan>[];
       ContentAttributes? contentAttributes = Groups().contentAttributes;
       List<ContentAttribute>? attributes = contentAttributes?.attributes;
-      TextStyle? boldStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.fat");
-      TextStyle? regularStyle = Styles().textStyles?.getTextStyle("widget.card.detail.small.regular");
+      TextStyle? boldStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.fat");
+      TextStyle? regularStyle = Styles().textStyles.getTextStyle("widget.card.detail.small.regular");
       if (_contentAttributesSelection.isNotEmpty && (contentAttributes != null) && (attributes != null)) {
         for (ContentAttribute attribute in attributes) {
           List<String>? displayAttributeValues = attribute.displaySelectedLabelsFromSelection(_contentAttributesSelection, complete: true);
@@ -385,7 +385,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Padding(
           padding: EdgeInsets.symmetric(horizontal: 7, vertical: 14),
           child: Text(countLabel,
-              style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")));
+              style: Styles().textStyles.getTextStyle("widget.title.regular.fat")));
     }
   }
 
@@ -395,16 +395,16 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           InkWell(onTap: _onTapCreate, child:
             Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")),
+                Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: Styles().textStyles.getTextStyle("widget.title.regular.fat")),
                 Padding(padding: EdgeInsets.only(left: 4), child:
-                  Styles().images?.getImage('plus-circle', excludeFromSemantics: true)
+                  Styles().images.getImage('plus-circle', excludeFromSemantics: true)
                 )
               ])
             ),
           ),
         ),
         Semantics(label: Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
-          IconButton(icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container(), onPressed: () {
+          IconButton(icon: Styles().images.getImage('search', excludeFromSemantics: true) ?? Container(), onPressed: () {
             Analytics().logSelect(target: "Search");
             Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
           },),
@@ -455,10 +455,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           child: RichText(
               textAlign: TextAlign.left,
               text: TextSpan(
-                  style: Styles().textStyles?.getTextStyle("widget.message.dark.regular"),
+                  style: Styles().textStyles.getTextStyle("widget.message.dark.regular"),
                   children:[
                     TextSpan(text:Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not a member of any group. To join or create a group, see .")),
-                    TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles?.getTextStyle("widget.link.button.title.regular"),
+                    TextSpan(text: Localization().getStringEx("panel.groups_home.label.my_groups.empty.link.all_groups", "All Groups"), style : Styles().textStyles.getTextStyle("widget.link.button.title.regular"),
                         recognizer: TapGestureRecognizer()..onTap = () {
                           Analytics().logSelect(target: "All Groups");
                           Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
@@ -502,7 +502,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       List<Widget> widgets = [];
       widgets.add(Container(height: 8));
       widgets.add(Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: Styles().textStyles?.getTextStyle("widget.title.large.fat"))
+        Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: Styles().textStyles.getTextStyle("widget.title.large.fat"))
         )
       );
       widgets.add(Container(height: 8,));
@@ -518,12 +518,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         }
       }
       return Stack(children: [
-          Container(height: 112, color: Styles().colors!.backgroundVariant, child:
+          Container(height: 112, color: Styles().colors.backgroundVariant, child:
             Column(children: [
               Container(height: 80,),
               Container(height: 32, child:
                 CustomPaint(painter:
-                  TrianglePainter(painterColor: Styles().colors!.background), child:
+                  TrianglePainter(painterColor: Styles().colors.background), child:
                     Container(),
                 ),
               ),
@@ -563,7 +563,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         text = Localization().getStringEx("panel.groups_home.label.all_groups.filtered.empty", "No groups match the selected filter");
       }
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
-        Text(text, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")),
+        Text(text, style: Styles().textStyles.getTextStyle("widget.item.regular.thin")),
       );
     }
   }

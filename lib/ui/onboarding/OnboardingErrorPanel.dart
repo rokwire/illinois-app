@@ -46,11 +46,11 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
 
     String buttonTitle = Localization().getStringEx('panel.onboarding.error.button.try_again.title', 'Try Again');
     String? buttonHint = Localization().getStringEx('panel.onboarding.error.button.try_again.hint', '');
-    Color buttonBackColor = Styles().colors?.fillColorSecondary ?? Color(0xFFE84A27);
+    Color buttonBackColor = Styles().colors.fillColorSecondary ?? Color(0xFFE84A27);
 
-    return Scaffold(backgroundColor: Styles().colors?.background ?? Color(0xFFF5F5F5), body:
+    return Scaffold(backgroundColor: Styles().colors.background ?? Color(0xFFF5F5F5), body:
       Stack(children: [
-        Styles().images?.getImage('header-login', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
+        Styles().images.getImage('header-login', fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           Expanded(child:
             SingleChildScrollView(child:
@@ -58,13 +58,13 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
                 Container(height: 148 + 48 + MediaQuery.of(context).padding.top),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 30), child:
                   Align(alignment: Alignment.center, child:
-                    Text(_error?.title ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies?.bold ?? "ProximaNovaBold", fontSize: 32, color: Styles().colors?.fillColorPrimary ?? Color(0xFF002855)),),
+                    Text(_error?.title ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold ?? "ProximaNovaBold", fontSize: 32, color: Styles().colors.fillColorPrimary ?? Color(0xFF002855)),),
                   ),
                 ),
                 Container(height: 48),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 40), child:
                   Align(alignment: Alignment.topCenter, child:
-                    Text(_error?.description ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies?.regular ?? "ProximaNovaRegular", fontSize: 20, color: Styles().colors?.fillColorPrimary ?? Color(0xFF002855)),),
+                    Text(_error?.description ?? '', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular ?? "ProximaNovaRegular", fontSize: 20, color: Styles().colors.fillColorPrimary ?? Color(0xFF002855)),),
                   ),
                 ),
               ],)
@@ -82,7 +82,7 @@ class _OnboardingErrorPanelState extends State<OnboardingErrorPanel> {
                             Padding(padding: EdgeInsets.all(0), child:
                               Semantics( excludeSemantics: true, child:
                                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                                  Text(buttonTitle, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies?.bold ?? 'ProximaNovaBold', fontSize: 20, color: Colors.white,),),
+                                  Text(buttonTitle, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold ?? 'ProximaNovaBold', fontSize: 20, color: Colors.white,),),
                                 ],),
                               ),
                             ),

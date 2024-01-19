@@ -64,7 +64,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: _questionnaire?.title ?? ''),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       body: SafeArea(child:
         _buildContent(),
       ),
@@ -91,12 +91,12 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
     if (description.isNotEmpty) {
       contentList.add(
-        Container(color: Styles().colors?.white, child:
+        Container(color: Styles().colors.white, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
             Semantics(label: description, hint: '', excludeSemantics: true, child:
               Row(children: [
                 Expanded(child:
-                  Text(description, style: Styles().textStyles?.getTextStyle("widget.item.regular"), textAlign: TextAlign.center,),
+                  Text(description, style: Styles().textStyles.getTextStyle("widget.item.regular"), textAlign: TextAlign.center,),
                 )
               ],)
             ),
@@ -116,17 +116,17 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           Column(children: contentList,),
         ),
       ),
-      Container(height: 1, color: Styles().colors!.surfaceAccent),
+      Container(height: 1, color: Styles().colors.surfaceAccent),
       Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
         Row(children: [
           Expanded(child:
             RoundedButton(
               label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.title', 'Cancel'),
               hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.hint', ''),
-              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium"),
+              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium"),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              borderColor: Styles().colors?.fillColorPrimary,
-              backgroundColor: Styles().colors!.white,
+              borderColor: Styles().colors.fillColorPrimary,
+              backgroundColor: Styles().colors.white,
               onTap: () => _onCancel(),
             ),
           ),
@@ -135,10 +135,10 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
             RoundedButton(
               label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.title', 'Submit'),
               hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.hint', ''),
-              textStyle: submitEnabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled"),
+              textStyle: submitEnabled ? Styles().textStyles.getTextStyle("widget.button.title.enabled") : Styles().textStyles.getTextStyle("widget.button.title.disabled"),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
-              backgroundColor: Styles().colors!.white,
+              borderColor: submitEnabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              backgroundColor: Styles().colors.white,
               onTap: () => _onSubmit(),
             ),
           ),
@@ -165,7 +165,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding), child:
         Row(children: [
           Expanded(child:
-            Text(title, style: Styles().textStyles?.getTextStyle("widget.title.large.fat"), textAlign: TextAlign.left,),
+            Text(title, style: Styles().textStyles.getTextStyle("widget.title.large.fat"), textAlign: TextAlign.left,),
           )
         ])      
       ));
@@ -176,7 +176,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 2), child:
         Row(children: [
           Expanded(child:
-            Text(descriptionPrefix, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
+            Text(descriptionPrefix, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
           )
         ])
       ));
@@ -194,7 +194,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, bottom: 16), child:
         Row(children: [
           Expanded(child:
-            Text(descriptionSuffix, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
+            Text(descriptionSuffix, style: Styles().textStyles.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
           )
         ])
       ));
@@ -208,8 +208,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     return Stack(children: [
       Column(children: [
         Column(children: [
-          Container(color: Styles().colors?.backgroundVariant, height: 100,),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.backgroundVariant, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+          Container(color: Styles().colors.backgroundVariant, height: 100,),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.backgroundVariant, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
             Container(height: 40,),
           ),
         ],),
@@ -243,15 +243,15 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
         child: InkWell(onTap: () { _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
-        Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: selected ? Styles().colors!.fillColorPrimary! : Styles().colors!.white!, width: 1)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: selected ? Styles().colors.fillColorPrimary! : Styles().colors.white!, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 12), child:
-                Styles().images?.getImage(imageAsset, excludeFromSemantics: true),
+                Styles().images.getImage(imageAsset, excludeFromSemantics: true),
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-                  Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left, semanticsLabel: "",)
+                  Text(title, style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left, semanticsLabel: "",)
                 ),
               ),
             ]),
@@ -383,7 +383,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         Column(children: [
           Expanded(child:
             Align(alignment: Alignment.center, child:
-              CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3, )
+              CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3, )
             ),
           ),
         ],))
@@ -400,7 +400,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
                 Row(children: [
                   Expanded(child:
                     Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.error.load', 'Failed to load research questionnaire.'), style:
-              Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
+              Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
                   ),
                 ],)
               )

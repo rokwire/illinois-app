@@ -109,7 +109,7 @@ class HomeMyEvents2Widget extends HomeEvent2Widget {
   Widget _emptyContentWidget(BuildContext context) => HomeMessageHtmlCard(
     message: Localization().getStringEx("widget.home.my_events2.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events Feed</b></a> for quick access here.")
       .replaceAll(localUrlMacro, '$localScheme://$localEventFeedHost'),
-    linkColor: Styles().colors?.eventColor,
+    linkColor: Styles().colors.eventColor,
     onTapLink : (url) {
       Uri? uri = (url != null) ? Uri.tryParse(url) : null;
       if ((uri?.scheme == localScheme) && (uri?.host == localEventFeedHost)) {

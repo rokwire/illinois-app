@@ -515,7 +515,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 children: panels,
               ),
             bottomNavigationBar: uiuc.TabBar(tabController: _tabBarController),
-            backgroundColor: Styles().colors!.background,
+            backgroundColor: Styles().colors.background,
           ),
         ),
         onWillPop: _onWillPop);
@@ -599,13 +599,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               children: <Widget>[
                 Expanded(
                   child: Container(
-                    color: Styles().colors!.fillColorPrimary,
+                    color: Styles().colors.fillColorPrimary,
                     child: Padding(
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
                           Localization().getStringEx("app.title", "Illinois"),
-                          style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular"),
+                          style: Styles().textStyles.getTextStyle("widget.dialog.message.regular"),
                         ),
                       ),
                     ),
@@ -618,7 +618,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Localization().getStringEx(
                   "common.message.exit_app", "Are you sure you want to exit?"),
               textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.regular.fat")
+              style: Styles().textStyles.getTextStyle("widget.dialog.message.dark.regular.fat")
             ),
             Container(height: 26,),
             Padding(
@@ -633,8 +633,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(true);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.yes.title", 'Yes')),
                   Container(height: 10,),
                   RoundedButton(
@@ -644,8 +644,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(false);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       label: Localization().getStringEx("dialog.no.title", 'No'))
                 ],
               ),

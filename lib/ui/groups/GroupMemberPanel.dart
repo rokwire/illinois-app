@@ -117,10 +117,10 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       appBar: HeaderBar(),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))
+          ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), ))
           : Column(
             children: <Widget>[
               Expanded(
@@ -164,11 +164,11 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(_member?.displayShortName ?? "",
-                style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
+                style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
               ),
               Container(height: 6,),
               Text(dateDescriptionMsg,
-                style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
+                style: Styles().textStyles.getTextStyle("widget.item.small.thin")
               )
             ],
           ),
@@ -199,13 +199,13 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                         toggled: _isAdmin,
                         onTap: _updateMemberStatus
                     ),
-                    _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ) : Container()
+                    _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorPrimary), ) : Container()
                   ],
                 ),
               ),
               Container(height: 8,),
               Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events."),
-                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
               ),
             ]
           ),
@@ -221,10 +221,10 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
         RoundedButton(label: _isResearchProject?
             Localization().getStringEx("panel.member_detail.button.remove.title.project", "Remove from Project") :
             Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
-          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
-          backgroundColor: Styles().colors!.white,
+          textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
+          backgroundColor: Styles().colors.white,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-          borderColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors.fillColorPrimary,
           borderWidth: 2,
           onTap: (){
             Analytics().logSelect(target: 'Remove from Group');
@@ -235,7 +235,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
 
   Widget _buildRemoveFromGroupDialog(BuildContext context) {
     return Dialog(
-      backgroundColor: Styles().colors!.fillColorPrimary,
+      backgroundColor: Styles().colors.fillColorPrimary,
       child: StatefulBuilder(
         builder: (context, setStateEx){
           return Padding(
@@ -251,7 +251,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                       Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),
                     [_member?.displayName]),
                     textAlign: TextAlign.left,
-                    style: Styles().textStyles?.getTextStyle("widget.dialog.message.medium")
+                    style: Styles().textStyles.getTextStyle("widget.dialog.message.medium")
                   ),
                 ),
                 Row(
@@ -259,9 +259,9 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                   children: <Widget>[
                     RoundedButton(
                       label: Localization().getStringEx("panel.member_detail.button.back.title", "Back"),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.thin"),
-                      borderColor: Styles().colors!.white,
-                      backgroundColor: Styles().colors!.white,
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.thin"),
+                      borderColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       contentWeight: 0.0,
                       onTap: (){
@@ -272,9 +272,9 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                     Container(width: 16,),
                         RoundedButton(
                           label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                          borderColor: Styles().colors!.white,
-                          backgroundColor: Styles().colors!.white,
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                          borderColor: Styles().colors.white,
+                          backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           contentWeight: 0.0,
                           progress: _removing,

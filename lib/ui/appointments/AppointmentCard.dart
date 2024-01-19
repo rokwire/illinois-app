@@ -63,7 +63,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
     String semanticsImageHint = 'Double tap to expand image';
 
     String typeImageKey = (widget.appointment.type == AppointmentType.online) ? 'laptop' : 'location';
-    Color? headerColor = (widget.appointment.isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary);
+    Color? headerColor = (widget.appointment.isUpcoming ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary);
     String? displayTime = widget.appointment.displayShortScheduleTime;
     String? displayType = widget.appointment.displayType;
     String? displayHost = widget.appointment.host?.displayName;
@@ -83,8 +83,8 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
         Stack(children: [
           Container(
             decoration: BoxDecoration(
-              color: Styles().colors!.surface,
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              color: Styles().colors.surface,
+              border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(4))
             ),
             child: Padding(padding: EdgeInsets.only(left: 16, bottom: 16), child:
@@ -93,7 +93,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                   Expanded(child:
                     Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: canFavorite ? 0 : 16), child:
                       Text(widget.appointment.category ?? '', style:
-                        Styles().textStyles?.getTextStyle("widget.item.small.semi_fat")
+                        Styles().textStyles.getTextStyle("widget.item.small.semi_fat")
                       ),
                     ),
                   ),
@@ -101,7 +101,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                     Semantics(label: semanticsFavLabel, hint: semanticsFavHint, button: true, child:
                       GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapExploreCardStar, child:
                         Padding(padding: EdgeInsets.all(16), child:
-                          Styles().images?.getImage(favImageKey, excludeFromSemantics: true)
+                          Styles().images.getImage(favImageKey, excludeFromSemantics: true)
                         )
                       )
                     )
@@ -114,7 +114,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
                         Text(widget.appointment.title ?? '', style:
-                          Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")
+                          Styles().textStyles.getTextStyle("widget.title.large.extra_fat")
                         ),
 
                         Visibility(visible: StringUtils.isNotEmpty(displayTime), child:
@@ -122,12 +122,12 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Padding(padding: EdgeInsets.only(right: 6), child: 
                                 SizedBox(width: iconSize, height: iconSize, child:
-                                  Styles().images?.getImage('calendar', excludeFromSemantics: true)
+                                  Styles().images.getImage('calendar', excludeFromSemantics: true)
                                 )
                               ),
                               Expanded(child:
                                 Text(displayTime ?? '', style:
-                                  Styles().textStyles?.getTextStyle("widget.item.regular")
+                                  Styles().textStyles.getTextStyle("widget.item.regular")
                                 )
                               )
                             ])
@@ -139,12 +139,12 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Padding(padding: EdgeInsets.only(right: 6), child:
                                 SizedBox(width: iconSize, height: iconSize, child:
-                                  Styles().images?.getImage('person', excludeFromSemantics: true)
+                                  Styles().images.getImage('person', excludeFromSemantics: true)
                                 )
                               ),
                               Expanded(child:
                                 Text(displayHost ?? '', overflow: TextOverflow.ellipsis, style:
-                                  Styles().textStyles?.getTextStyle("widget.item.regular")
+                                  Styles().textStyles.getTextStyle("widget.item.regular")
                                 )
                               ),
                             ])
@@ -156,12 +156,12 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Padding(padding: EdgeInsets.only(right: 6), child:
                                 SizedBox(width: iconSize, height: iconSize, child:
-                                  Styles().images?.getImage(typeImageKey, excludeFromSemantics: true)
+                                  Styles().images.getImage(typeImageKey, excludeFromSemantics: true)
                                 )
                               ),
                               Expanded(child:
                                 Text(displayType ?? '', overflow: TextOverflow.ellipsis, style:
-                                  Styles().textStyles?.getTextStyle("widget.item.regular")
+                                  Styles().textStyles.getTextStyle("widget.item.regular")
                                 )
                               ),
                             ])
@@ -177,7 +177,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                           Semantics(label: semanticsImageLabel, button: true, hint: semanticsImageHint, child:
                             InkWell(onTap: () => StringUtils.isNotEmpty(imageKey) ? _onTapCardImage(imageKey) : null, child:
                               SizedBox(width: imageSize, height: imageSize, child:
-                                Styles().images?.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
+                                Styles().images.getImage(imageKey, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders)
                               )
                             )
                           )
@@ -187,7 +187,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                       Visibility(visible: (widget.appointment.cancelled == true), child:
                         Padding(padding: EdgeInsets.only(top: 6), child:
                           Text(Localization().getStringEx('widget.appointment.card.cancelled.label', 'Cancelled'), textAlign: TextAlign.right, style:
-                            Styles().textStyles?.getTextStyle("panel.appointment_detail.title.large")
+                            Styles().textStyles.getTextStyle("panel.appointment_detail.title.large")
                           )
                         ),
                       )

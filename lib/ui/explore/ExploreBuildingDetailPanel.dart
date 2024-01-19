@@ -17,7 +17,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(context),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -44,7 +44,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
     return Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         Expanded(child:
-          Text(building.name ?? "", style: Styles().textStyles?.getTextStyle("widget.title.extra_large.spaced")),
+          Text(building.name ?? "", style: Styles().textStyles.getTextStyle("widget.title.extra_large.spaced")),
         ),
       ],),
     );
@@ -57,10 +57,10 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
-              Styles().images?.getImage('location', excludeFromSemantics: true),
+              Styles().images.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
-              Text(building.fullAddress ?? '', style: Styles().textStyles?.getTextStyle("widget.button.light.title.medium.underline")
+              Text(building.fullAddress ?? '', style: Styles().textStyles.getTextStyle("widget.button.light.title.medium.underline")
               ),
             )
           ],),
@@ -78,7 +78,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         InkWell(onTap: onTap, child:
           SizedBox(width: 48, height: 48, child:
             Center(child:
-              Styles().images?.getImage('chevron-left-bold', excludeFromSemantics: true
+              Styles().images.getImage('chevron-left-bold', excludeFromSemantics: true
             ),
           ),
         ),

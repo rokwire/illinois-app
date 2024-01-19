@@ -56,36 +56,36 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
             Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[
                 Row(children: [ Expanded(child:
-                  Text(description, style:  Styles().textStyles?.getTextStyle("widget.description.medium"))
+                  Text(description, style:  Styles().textStyles.getTextStyle("widget.description.medium"))
                 )],),
                 Container(height: 48),
                 Row(children: [ Expanded(child:
-                  Text(headingTitle, style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"))
+                  Text(headingTitle, style: Styles().textStyles.getTextStyle("widget.title.medium.fat"))
                 )],),
                 Container(height: 6),
                 Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
                   value: _codeController.text,
                   child: Container(
-                    color: Styles().colors?.white,
+                    color: Styles().colors.white,
                     child: TextField(
                       controller: _codeController,
                       autofocus: false,
                       autocorrect: false,
                       onSubmitted: (_) => _clearErrorMsg,
-                      cursorColor: Styles().colors?.textBackground,
+                      cursorColor: Styles().colors.textBackground,
                       keyboardType: TextInputType.phone,
-                      style: Styles().textStyles?.getTextStyle("widget.input_field.text.medium"),
+                      style: Styles().textStyles.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
-                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
-                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
-                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
+                        disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray!, width: 1.0),),
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray!, width: 1.0),),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray!, width: 1.0),),
                       ),
                     ),
                   ),
                 ),
                 Visibility(visible: StringUtils.isNotEmpty(_verificationErrorMsg), child:
                   Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-                    Text(StringUtils.ensureNotEmpty(_verificationErrorMsg), style: Styles().textStyles?.getTextStyle("panel.settings.error.text.small"),),
+                    Text(StringUtils.ensureNotEmpty(_verificationErrorMsg), style: Styles().textStyles.getTextStyle("panel.settings.error.text.small"),),
                   ),
                 ),
                 
@@ -93,10 +93,10 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
                 RoundedButton(
                   label:  Localization().getStringEx("panel.onboarding.confirm_phone.button.confirm.label", "Confirm phone number"),
                   hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.confirm.hint", ""),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                   onTap: _onTapConfirm,
-                  backgroundColor: Styles().colors?.white,
-                  borderColor: Styles().colors?.fillColorSecondary,
+                  backgroundColor: Styles().colors.white,
+                  borderColor: Styles().colors.fillColorSecondary,
                   progress: _isConfirming,
                 ),
                 Visibility(visible: (widget.link == true), child:
@@ -104,10 +104,10 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
                     RoundedButton(
                       label:  Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.label", "Cancel"),
                       hint: Localization().getStringEx("panel.onboarding.confirm_phone.button.link.cancel.hint", ""),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
                       onTap: _onTapCancel,
-                      backgroundColor: Styles().colors?.white,
-                      borderColor: Styles().colors?.fillColorSecondary,
+                      backgroundColor: Styles().colors.white,
+                      borderColor: Styles().colors.fillColorSecondary,
                       progress: _isCanceling,
                     ),
                   ),
@@ -119,7 +119,7 @@ class _SettingsLoginPhoneConfirmPanelState extends State<SettingsLoginPhoneConfi
         ),
         Container(height: 16,)
       ],),
-      backgroundColor: Styles().colors?.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }

@@ -76,18 +76,18 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
         children: [
           Text("User ID"),
           Text(_info?.userId ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
           Text("Date Created"),
           Text(_info?.dateCreated?.toIso8601String() ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
           Text("Date Updated"),
           Text(_info?.dateUpdated?.toIso8601String() ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
           Text("Topics"),
           Wrap(
             children: _info!.topics!.map((e) => Container(
               decoration: BoxDecoration(
-                color: Styles().colors!.fillColorPrimary,
+                color: Styles().colors.fillColorPrimary,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               padding: EdgeInsets.all(8),
@@ -95,7 +95,7 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
               child: Text(e, style: TextStyle(color: Colors.white),),
             )).toList(),
           ),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
           Text("Tokens"),
 
           Column(
@@ -104,11 +104,11 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(e.token!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold),),
-                  Text("Platform: ${e.appPlatform}", style: TextStyle(fontFamily: Styles().fontFamilies!.regular),),
-                  Text("Version: ${e.appVersion}", style: TextStyle(fontFamily: Styles().fontFamilies!.regular),),
-                  Text("Date created: ${e.dateCreated!.toIso8601String()}", style: TextStyle(fontFamily: Styles().fontFamilies!.regular),),
-                  Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
+                  Text(e.token!, style: TextStyle(fontFamily: Styles().fontFamilies.bold),),
+                  Text("Platform: ${e.appPlatform}", style: TextStyle(fontFamily: Styles().fontFamilies.regular),),
+                  Text("Version: ${e.appVersion}", style: TextStyle(fontFamily: Styles().fontFamilies.regular),),
+                  Text("Date created: ${e.dateCreated!.toIso8601String()}", style: TextStyle(fontFamily: Styles().fontFamilies.regular),),
+                  Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
                 ],
               ),
             )).toList(),

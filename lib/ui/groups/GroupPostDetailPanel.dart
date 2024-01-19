@@ -109,9 +109,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             leading: HeaderBackButton(),
             title: Text(
               Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
-              style:  Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat"),),
+              style:  Styles().textStyles.getTextStyle("widget.heading.regular.extra_fat"),),
             centerTitle: false),
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         bottomNavigationBar: uiuc.TabBar(),
         body: _buildContent(),
       );
@@ -130,13 +130,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           _buildRepliesSection(),
           _buildPostEdit(),
           ],)),
-          Container(key: _sliverHeaderKey, color: Styles().colors!.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
+          Container(key: _sliverHeaderKey, color: Styles().colors.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
               Row(children: [
                 Expanded(child:
                   Semantics(sortKey: OrdinalSortKey(1), container: true, child:
                     Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles?.getTextStyle("widget.detail.extra_large.fat"),
+                        style: Styles().textStyles.getTextStyle("widget.detail.extra_large.fat"),
                     )
                   )
                 ),
@@ -163,7 +163,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
                         GestureDetector(onTap: _onTapEditMainPost, child:
                           Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                            Styles().images?.getImage('edit', excludeFromSemantics: true))))))),
+                            Styles().images.getImage('edit', excludeFromSemantics: true))))))),
 
                 Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
                   Semantics(container: true, sortKey: OrdinalSortKey(5), child:
@@ -171,19 +171,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
                         GestureDetector(onTap: _onTapDeletePost, child:
                             Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                              Styles().images?.getImage('trash', excludeFromSemantics: true))))))),
+                              Styles().images.getImage('trash', excludeFromSemantics: true))))))),
 
                 Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
                     GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
                         Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                          Styles().images?.getImage('feedback', excludeFromSemantics: true))))),
+                          Styles().images.getImage('feedback', excludeFromSemantics: true))))),
 
                 Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
                     GestureDetector(onTap: _onTapHeaderReply, child:
                         Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
-                          Styles().images?.getImage('reply', excludeFromSemantics: true))))),
+                          Styles().images.getImage('reply', excludeFromSemantics: true))))),
 
               ]),
             ])
@@ -217,7 +217,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               HtmlWidget(
                                   StringUtils.ensureNotEmpty(_post?.body),
                                   onTapUrl : (url) {_onTapPostLink(url); return true;},
-                                  textStyle:  Styles().textStyles?.getTextStyle("widget.detail.large"),
+                                  textStyle:  Styles().textStyles.getTextStyle("widget.detail.large"),
                               )
                           )),
                       Visibility(
@@ -237,18 +237,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                             hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    color: Styles().colors!.mediumGray!,
+                                                    color: Styles().colors.mediumGray!,
                                                     width: 0.0))),
-                                        style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+                                        style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                                        )),
                                 Row(children: [
                                   Flexible(
                                       flex: 1,
                                       child: RoundedButton(
                                           label: Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
-                                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                                          borderColor: Styles().colors!.fillColorSecondary,
-                                          backgroundColor: Styles().colors!.white,
+                                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                                          borderColor: Styles().colors.fillColorSecondary,
+                                          backgroundColor: Styles().colors.white,
                                           onTap: _onTapUpdateMainPost)),
                                 ])
 
@@ -262,7 +262,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   StringUtils.ensureNotEmpty(
                                       _post?.member?.displayShortName ),
-                                  style: Styles().textStyles?.getTextStyle("widget.detail.large.thin"),
+                                  style: Styles().textStyles.getTextStyle("widget.detail.large.thin"),
                                   ))),
                       Semantics(
                           sortKey: OrdinalSortKey(3),
@@ -273,7 +273,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                   StringUtils.ensureNotEmpty(
                                       _post?.displayDateTime),
                                   semanticsLabel:  sprintf(Localization().getStringEx("panel.group.detail.post.updated.ago.format", "Updated %s ago"),[widget.post?.displayDateTime ?? ""]),
-                                  style: Styles().textStyles?.getTextStyle("widget.detail.medium"),))),
+                                  style: Styles().textStyles.getTextStyle("widget.detail.medium"),))),
                       Container(height: 6,),
                       GroupMembersSelectionWidget(
                         selectedMembers: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:(_isEditMainPost ? _mainPostUpdateData?.members : _post?.members), upToDateMembers: _allMembersAllowedToPost),
@@ -346,9 +346,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: (_editingReply != null) ?
                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
                           Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
-                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                        borderColor: Styles().colors!.fillColorSecondary,
-                        backgroundColor: Styles().colors!.white,
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.white,
                         onTap: _onTapSend)),
                 Container(width: 20),
                 Flexible(
@@ -357,9 +357,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: Localization().getStringEx(
                             'panel.group.detail.post.create.button.cancel.title',
                             'Cancel'),
-                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.large.fat"),
-                        borderColor: Styles().colors!.textSurface,
-                        backgroundColor: Styles().colors!.white,
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.large.fat"),
+                        borderColor: Styles().colors.textSurface,
+                        backgroundColor: Styles().colors.white,
                         onTap: _onTapCancel))
               ])
             ])));
@@ -461,9 +461,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             Expanded(
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
-                color: Styles().colors!.fillColorPrimary,
+                color: Styles().colors.fillColorPrimary,
                 child: Text("Replies",
-                    style: Styles().textStyles?.getTextStyle("widget.heading.medium"),
+                    style: Styles().textStyles.getTextStyle("widget.heading.medium"),
                 ),
               )
         )
@@ -549,7 +549,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Post Options');
     showModalBottomSheet(
       context: context,
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
@@ -579,7 +579,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
       context: context,
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       isScrollControlled: true,
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),

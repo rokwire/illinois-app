@@ -103,23 +103,23 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
         ? headerMsg.substring(iconMacroPosition + iconMacro.length)
         : '';
     return Container(
-        color: Styles().colors!.background,
+        color: Styles().colors.background,
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
           Semantics(
               label: headerMsg,
               excludeSemantics: true,
               child: Container(
                   alignment: Alignment.topCenter,
-                  color: Styles().colors!.fillColorPrimary,
+                  color: Styles().colors.fillColorPrimary,
                   child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                              style: Styles().textStyles?.getTextStyle("widget.heading.regular"),
+                              style: Styles().textStyles.getTextStyle("widget.heading.regular"),
                               children: [
                             TextSpan(text: headerMsgStart),
-                            WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images?.getImage('check-circle-outline-gray-white') ?? Container()),
+                            WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images.getImage('check-circle-outline-gray-white') ?? Container()),
                             TextSpan(text: headerMsgEnd)
                           ]))))),
           Padding(
@@ -159,7 +159,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
           child: Container(
             foregroundDecoration: BoxDecoration(
               border: Border.all(
-                color: Styles().colors!.surfaceAccent!,
+                color: Styles().colors.surfaceAccent!,
                 width: 1.0,
               ),
               borderRadius: BorderRadius.circular(15),
@@ -179,7 +179,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
         if (categoryWidgets.isNotEmpty) {
           categoryWidgets.add(Container(
             height: 1,
-            color: Styles().colors!.surfaceAccent,
+            color: Styles().colors.surfaceAccent,
           ));
         }
 
@@ -230,7 +230,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
   Widget _buildSearchField() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
-      color: Styles().colors!.surface,
+      color: Styles().colors.surface,
       height: 48,
       child: Row(
         children: <Widget>[
@@ -245,9 +245,9 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                   onChanged: (text) => _onTextChanged(text),
                   onSubmitted: (_) => () {},
                   autofocus: true,
-                  cursorColor: Styles().colors!.fillColorSecondary,
+                  cursorColor: Styles().colors.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
+                  style: Styles().textStyles.getTextStyle("widget.input_field.text.regular"),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -264,7 +264,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                 onTap: () {
                   _onCancelSearchTap();
                 },
-                child: Styles().images?.getImage('close', excludeFromSemantics: true),
+                child: Styles().images.getImage('close', excludeFromSemantics: true),
               ),
             ),
           ),
@@ -277,7 +277,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                 onTap: () {
                   _onSearchTap();
                 },
-                child: Styles().images?.getImage('search', excludeFromSemantics: true),
+                child: Styles().images.getImage('search', excludeFromSemantics: true),
               ))
         ],
       ),
@@ -322,7 +322,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
           child: Container(
             foregroundDecoration: BoxDecoration(
               border: Border.all(
-                color: Styles().colors!.surfaceAccent!,
+                color: Styles().colors.surfaceAccent!,
                 width: 1.0,
               ),
               borderRadius: BorderRadius.circular(15),
@@ -342,7 +342,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
         if (tagsWidgets.isNotEmpty) {
           tagsWidgets.add(Container(
             height: 1,
-            color: Styles().colors!.surfaceAccent,
+            color: Styles().colors.surfaceAccent,
           ));
         }
 
@@ -449,9 +449,9 @@ class _SelectionItemWidget extends StatelessWidget {
                       child: Text(
                         label!,
                         overflow: TextOverflow.ellipsis,
-                        style: Styles().textStyles?.getTextStyle("widget.title.regular.fat")
+                        style: Styles().textStyles.getTextStyle("widget.title.regular.fat")
                       )),
-                  Styles().images?.getImage(selected! ? 'check-circle-filled' : 'check-circle-outline-gray') ?? Container(),
+                  Styles().images.getImage(selected! ? 'check-circle-filled' : 'check-circle-outline-gray') ?? Container(),
                 ],
               ),
             ),

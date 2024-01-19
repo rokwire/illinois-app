@@ -66,8 +66,8 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
   }
 
   static BoxDecoration get _contentDecoration => BoxDecoration(
-    color: Styles().colors?.white,
-    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+    color: Styles().colors.white,
+    border: Border.all(color: Styles().colors.surfaceAccent!, width: 1),
     borderRadius: BorderRadius.all(Radius.circular(4))
   );
 
@@ -75,7 +75,7 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
     List<Widget> contentList = <Widget>[];
     contentList.add(_buildLanguageOption(Localization().getStringEx('panel.settings.home.language.system.title', 'Use System Language'), null));
     for (String code in Localization().supportedLanguages) {
-      contentList.add(Divider(thickness: 0.3, color: Styles().colors?.mediumGray2,));
+      contentList.add(Divider(thickness: 0.3, color: Styles().colors.mediumGray2,));
       contentList.add(_buildLanguageOption(Localization().getString('panel.settings.home.language.$code.title') ?? code, code));
     }
     return contentList;
@@ -86,12 +86,12 @@ class _SettingsLanguageContentWidgetState extends State<SettingsLanguageContentW
     return Row(children: [
       Expanded(child:
         Padding(padding: EdgeInsets.only(left: 16), child:
-          Text(name, style: Styles().textStyles?.getTextStyle("widget.title.regular.fat"),)
+          Text(name, style: Styles().textStyles.getTextStyle("widget.title.regular.fat"),)
         )
       ),
       InkWell(onTap: () => _onLanguageOption(name, code), child:
         Padding(padding: EdgeInsets.all(16), child:
-          Styles().images?.getImage((Localization().selectedLocale?.languageCode == code) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
+          Styles().images.getImage((Localization().selectedLocale?.languageCode == code) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
         )
       ),
     ],);
