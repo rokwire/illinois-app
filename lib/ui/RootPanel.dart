@@ -20,6 +20,7 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/AssistantPanel.dart';
@@ -40,6 +41,7 @@ import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
+import 'package:illinois/ui/widgets/InAppNotificationToast.dart';
 import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/event2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -665,12 +667,26 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
     String? body = content["body"];
-    Function? completion = content["onComplete"];
-    AppAlert.showDialogResult(context, body, buttonTitle: Localization().getStringEx("dialog.show.title", "Show")).then((bool? result) {
-      if ((result == true) && (completion != null)) {
-        completion();
-      }
-    });
+    void Function()? completion = content["onComplete"];
+    if (body != null) {
+      FToast toast = FToast();
+      AppToast.show(context,
+        toast: toast,
+        gravity: ToastGravity.TOP,
+        child: InAppNotificationToast.message(body,
+          actionText: Localization().getStringEx('dialog.show.title', 'Show'),
+          onAction: (completion != null) ? () {
+            toast.removeCustomToast();
+            completion.call();
+          } : null,
+        )
+      );
+      /*AppAlert.showDialogResult(context, body, buttonTitle: Localization().getStringEx('dialog.show.title', 'Show')).then((bool? result) {
+        if ((result == true) && (completion != null)) {
+          completion();
+        }
+      });*/
+    }
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
