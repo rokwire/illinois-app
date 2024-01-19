@@ -427,7 +427,13 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   Future<Uint8List?> _loadAuthVoiceRecordFromNet({String? accountId, Auth2Token? token}) async {
-    AudioResult? voiceRecordResponse = await Content().retrieveVoiceRecord();
+    Map<String, String>? authHeaders;
+    String? accessToken = token?.accessToken;
+    if (StringUtils.isNotEmpty(accountId) && StringUtils.isNotEmpty(accessToken)) {
+      String? tokenType = token?.tokenType ?? 'Bearer';
+      authHeaders = {HttpHeaders.authorizationHeader: "$tokenType $accessToken"};
+    }
+    AudioResult? voiceRecordResponse = await Content().retrieveVoiceRecord(authHeaders: authHeaders);
     return (voiceRecordResponse?.resultType == AudioResultType.succeeded ) ? voiceRecordResponse?.getDataAs<Uint8List>() : null;
   }
 

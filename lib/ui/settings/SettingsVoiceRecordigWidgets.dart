@@ -6,6 +6,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path/path.dart' as Path;
+import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -169,7 +171,7 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
   @override
   void initState() {
     _controller = SoundRecorderController(
-      initialRecordBytes: widget.initialRecordBytes,
+      initialAudio: widget.initialRecordBytes,
       notifyChanged: (fn) =>setStateIfMounted(fn)
     );
     _controller.init();
@@ -303,10 +305,10 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
       return;
 
     try {
-      File? audioFile = _controller.recordFile;
-      if (audioFile?.existsSync() == true) {
+      Uint8List? audioBytes = _controller.record;
+      if (audioBytes != null) {
         setStateIfMounted(() => _loading = true);
-        AudioResult result = await Content().uploadVoiceRecord(audioFile!.readAsBytesSync());
+        AudioResult result = await Content().uploadVoiceRecord(audioBytes);
         if(result.resultType == AudioResultType.succeeded){
           setStateIfMounted(() => _loading = false);
           Log.d(result.data ?? "");
@@ -393,17 +395,16 @@ class _SoundRecorderDialogState extends State<SoundRecorderDialog> {
 
 class SoundRecorderController {
   final Function(void Function()) notifyChanged;
-  final Uint8List? initialRecordBytes;
+  final Uint8List? initialAudio;
 
   late Record _audioRecord;
   late AudioPlayer _audioPlayer;
   Duration? _playerTimer;
-  String? _audioRecordPath = ""; //The result file when we make new record
-
-  Uint8List? _initialAudioBytes;//The bytes that we can initially play from already stored audio
+  String? _audioRecordPath = ""; //The path of the tmp audio Record so we can delete it.
+  Uint8List? _audio;//The bytes of the recorded audio
   bool _recording = false;
 
-  SoundRecorderController({required this.notifyChanged, this.initialRecordBytes});
+  SoundRecorderController({required this.notifyChanged, this.initialAudio});
 
   void init() {
     _audioRecord = Record();
@@ -411,23 +412,25 @@ class SoundRecorderController {
     _audioPlayer.positionStream.listen((elapsedDuration) {
       notifyChanged(() => _playerTimer = elapsedDuration);
     });
-    if(initialRecordBytes!= null){
-      _initialAudioBytes = initialRecordBytes;
+    if(initialAudio!= null){
+      _audio = initialAudio;
       preparePlayer();
     }
   }
 
   void dispose() {
+    _deleteRecord(); //clean the tmp file
     _audioRecord.dispose();
     _audioPlayer.dispose();
   }
 
   void startRecording() async {
+
     try {
       Log.d("START RECODING");
       if (await _audioRecord.hasPermission()) {
         notifyChanged(() => _recording = true);
-        await _audioRecord.start();
+        await _audioRecord.start(path: await _constructFilePath);
         _recording = await _audioRecord.isRecording();
       }
     } catch (e, stackTrace) {
@@ -440,8 +443,10 @@ class SoundRecorderController {
     try {
       String? path = await _audioRecord.stop();
       _recording = await _audioRecord.isRecording();
+      var audioBytes = await getFileAsBytes(path);
       notifyChanged(() {
-        _audioRecordPath = path!;
+        _audio = audioBytes;
+        _audioRecordPath = path;
       });
       Log.d("STOP RECODING audioPath = $_audioRecordPath");
     } catch (e) {
@@ -452,12 +457,12 @@ class SoundRecorderController {
   //Sets the audioPath to player. This loads the Time and Length of the audio
   Future<void> preparePlayer() async {
     Log.d("AUDIO PREPARING");
-    if(StringUtils.isNotEmpty(_audioRecordPath)) {
-      await _audioPlayer.setFilePath(_audioRecordPath!);
+    try {
+      if(_haveAudio)
+        await _audioPlayer.setAudioSource(_audioSource!);
       notifyChanged(() {});
-    } else if (_initialAudioBytes != null) {
-      await _audioPlayer.setAudioSource(BytesAudioSource(_initialAudioBytes!));
-      notifyChanged(() {});
+    } catch(e){
+      Log.d(e.toString());
     }
   }
 
@@ -498,7 +503,7 @@ class SoundRecorderController {
       _deleteRecord();
       notifyChanged(() {
         _audioRecordPath = null;
-        _initialAudioBytes = null;
+        _audio = null;
       });
   }
 
@@ -519,19 +524,42 @@ class SoundRecorderController {
   //Getters
   bool get isRecording => _recording;
 
-  bool get hasRecord => StringUtils.isNotEmpty(_audioRecordPath);
+  bool get hasRecord => _haveAudio;
 
-  String? get recordPath => _audioRecordPath;
+  Uint8List? get record => _audio;
 
-  File? get recordFile => StringUtils.isNotEmpty(recordPath) ? File(recordPath!) : null;
-
-  bool get canPlay => StringUtils.isNotEmpty(_audioRecordPath) || _initialAudioBytes != null;
+  bool get canPlay => _haveAudio;
 
   bool get isPlaying => _audioPlayer.playing;
 
   Duration? get playerLength => _audioPlayer.duration;
 
   Duration? get playerTime => _playerTimer;
+
+  AudioSource? get _audioSource => _haveAudio ? BytesAudioSource(_audio!) : null;
+
+  bool get _haveAudio => CollectionUtils.isNotEmpty(_audio);
+
+  Future<String?> get _constructFilePath async {
+    Directory dir = await getApplicationDocumentsDirectory();
+
+    return dir.existsSync() ? Path.join(dir.path, "tmp_audio.m4a") : null;
+  }
+
+  Future<Uint8List?> getFileAsBytes(String? filePath) async{
+    if(StringUtils.isNotEmpty(filePath)){
+      File file = File(filePath!);
+      try{
+        if(file.existsSync()){
+          return file.readAsBytes();
+        }
+      } catch(e) {
+        Log.e(e.toString());
+      }
+    }
+
+    return null;
+  }
 }
 
 class BytesAudioSource extends StreamAudioSource{
@@ -547,7 +575,7 @@ class BytesAudioSource extends StreamAudioSource{
       contentLength: (end ?? _data.length) - (start ?? 0),
       offset: start ?? 0,
       stream: Stream.fromIterable([_data.sublist(start ?? 0, end)]),
-      contentType: 'audio/m4a',
+      contentType: 'audio/mp4',
     );
   }
 }
