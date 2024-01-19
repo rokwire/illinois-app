@@ -19,21 +19,26 @@ class InAppNotificationToast extends StatelessWidget {
     this.decoration,
   });
 
-  InAppNotificationToast.message(String message, { String? actionText, void Function()? onAction,
+  InAppNotificationToast.message(String message, {
+    String? actionText, void Function()? onAction, void Function()? onMessage,
     EdgeInsetsGeometry padding = PopupToast.defaultPadding,
     double widthRatio = PopupToast.defaultWidthRatio,
     Decoration? decoration,
   }) : this(
-    message: Text(message,
-      style: Styles().textStyles.getTextStyle('widget.message.regular.semi_fat'),
-    ),
-    action: ((actionText != null) && (onAction != null)) ? TextButton(
-      child: Text(actionText,
-        style: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline')
-      ),
-      onPressed: onAction
-    ) : null,
-    padding: padding, widthRatio: widthRatio, decoration: decoration
+    
+      message: (onMessage != null) ?
+        InkWell(onTap: onMessage, child:
+          Text(message, style: Styles().textStyles.getTextStyle('widget.message.regular.semi_fat'),)
+        ) :
+        Text(message, style: Styles().textStyles.getTextStyle('widget.message.regular.semi_fat'),),
+
+      action: ((actionText != null) && (onAction != null)) ?
+        TextButton(onPressed: onAction, child:
+          Text(actionText, style: Styles().textStyles.getTextStyle('widget.button.title.medium.fat.underline')
+        ),
+      ) : null,
+
+      padding: padding, widthRatio: widthRatio, decoration: decoration
   );
 
   @override

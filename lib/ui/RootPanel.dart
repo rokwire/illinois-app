@@ -675,10 +675,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         gravity: ToastGravity.TOP,
         child: InAppNotificationToast.message(body,
           actionText: Localization().getStringEx('dialog.show.title', 'Show'),
-          onAction: (completion != null) ? () {
-            toast.removeCustomToast();
-            completion.call();
-          } : null,
+          onAction: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
+          onMessage: (completion != null) ? () => _onFirebaseForegroundMessageCompletition(toast, completion) : null,
         )
       );
       /*AppAlert.showDialogResult(context, body, buttonTitle: Localization().getStringEx('dialog.show.title', 'Show')).then((bool? result) {
@@ -687,6 +685,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         }
       });*/
     }
+  }
+
+  void _onFirebaseForegroundMessageCompletition(FToast toast, void Function() completion) {
+    toast.removeCustomToast();
+    completion.call();
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
