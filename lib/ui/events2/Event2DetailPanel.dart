@@ -763,7 +763,7 @@ class _Event2DetailPanelState extends State<Event2DetailPanel> implements Notifi
   Widget get _detailSpacerWidget => Container(height: 8,);
 
   Widget _buildLocationTextDetailWidget(String text, { TextStyle? textStyle }) =>
-    _buildDetailWidget(Text(text, style: textStyle ?? Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'), maxLines: 1, overflow: TextOverflow.ellipsis),
+    _buildDetailWidget(Text(text, style: textStyle ?? Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular')), // #3842 maxLines: 1, overflow: TextOverflow.ellipsis
       'location', iconVisible: false, detailPadding: EdgeInsets.zero
     );
 
