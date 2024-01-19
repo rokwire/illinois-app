@@ -153,7 +153,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
           ),
         ]),
       ),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: null,
     );
   }
@@ -299,13 +299,13 @@ class _BrowseSection extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: _onTapExpand, child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.only(left: 16),
           child: Column(children: [
             Row(children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 16), child:
-                  Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
+                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"))
                 )
               ),
               Opacity(opacity: _hasFavoriteContent ? 1 : 0, child:
@@ -319,7 +319,7 @@ class _BrowseSection extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
                 Padding(padding: EdgeInsets.only(bottom: 16), child:
-                  Text(_description, style: Styles().textStyles?.getTextStyle("widget.info.regular.thin"))
+                  Text(_description, style: Styles().textStyles.getTextStyle("widget.info.regular.thin"))
                 )
               ),
               Semantics(
@@ -331,8 +331,8 @@ class _BrowseSection extends StatelessWidget {
                       Center(child:
                         _hasBrowseContent ? (
                           expanded ?
-                            Styles().images?.getImage('chevron-up', excludeFromSemantics: true) :
-                            Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
+                            Styles().images.getImage('chevron-up', excludeFromSemantics: true) :
+                            Styles().images.getImage('chevron-down', excludeFromSemantics: true)
                         ) : Container()
                       ),
                     )
@@ -499,7 +499,7 @@ class _BrowseEntry extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
       InkWell(onTap: () => _onTap(context), child:
         Container(
-          decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
+          decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 1),),
           padding: EdgeInsets.zero,
           child: 
             Row(children: [
@@ -508,11 +508,11 @@ class _BrowseEntry extends StatelessWidget {
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
-                  Text(_title, style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),)
+                  Text(_title, style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),)
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: Styles().images?.getImage('chevron-right-bold', excludeFromSemantics: true)),
+                  child: Styles().images.getImage('chevron-right-bold', excludeFromSemantics: true)),
             ],),
         ),
       ),
@@ -1204,22 +1204,22 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
         return (loadingProgress != null) ?
-          Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+          Container(color: Styles().colors.fillColorPrimary, width: imageWidth, height: imageHeight, child:
             Center(child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
+              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.white), )
             ),
           ) :
           AspectRatio(aspectRatio: (1080.0 / 810.0), child: 
-            Container(color: Styles().colors?.fillColorPrimary, child: child)
+            Container(color: Styles().colors.fillColorPrimary, child: child)
           );
       })),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Column(mainAxisSize: MainAxisSize.min, children: [
-            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
               Container(height: 40)
             ),
-            Container(height: 20, color: Styles().colors?.fillColorSecondaryTransparent05),
+            Container(height: 20, color: Styles().colors.fillColorSecondaryTransparent05),
           ],),
         ),
       ),

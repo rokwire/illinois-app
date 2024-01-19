@@ -84,7 +84,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildScaffoldContent() => Scaffold(
     appBar: _headerBar,
     body: _buildPanelContent(),
-    backgroundColor: Styles().colors!.white,
+    backgroundColor: Styles().colors.white,
   );
 
   Widget _buildPanelContent() {
@@ -107,7 +107,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
 
   //EdgeInsetsGeometry get _togglePadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 12);
   //EdgeInsetsGeometry get _toggleDescriptionPadding => const EdgeInsets.symmetric(horizontal: 12, vertical: 5);
-  //BoxBorder get _toggleBorder => Border.all(color: Styles().colors!.surfaceAccent!, width: 1);
+  //BoxBorder get _toggleBorder => Border.all(color: Styles().colors.surfaceAccent, width: 1);
   //BorderRadius get _toggleBorderRadius => BorderRadius.all(Radius.circular(4));
 
   // Scan
@@ -198,11 +198,11 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
   Widget _buildAttendanceTakerSection() {
     return Padding(padding: Event2CreatePanel.sectionPadding, child:
       Column(children: [
-        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
         Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
           Event2AttendanceTakerWidget(_event, updateController: _updateController,),
         ),
-        Divider(color: Styles().colors?.dividerLineAccent, thickness: 1),
+        Divider(color: Styles().colors.dividerLineAccent, thickness: 1),
       ],),
     );
   }
@@ -225,7 +225,7 @@ class _Event2SetupAttendancePanelState extends State<Event2SetupAttendancePanel>
     ],),
   );
 
-  TextStyle? get _infoTextStype => Styles().textStyles?.getTextStyle('widget.item.small.thin.italic');
+  TextStyle? get _infoTextStype => Styles().textStyles.getTextStyle('widget.item.small.thin.italic');
 
   Future<void> _onRefresh() async {
     _updateController.add(Event2AttendanceTakerWidget.notifyRefresh);

@@ -104,11 +104,11 @@ class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWid
   Widget get _extendIndicator => Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
     Align(alignment: Alignment.center, child:
       SizedBox(width: 24, height: 24, child:
-        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
+        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary),),),),);
 
   Widget _buildLoadingContent() => Padding(padding: EdgeInsets.only(left: 16, right: 16, top: _screenHeight / 4, bottom: 3 * _screenHeight / 4), child:
     Center(child:
-      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+      CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 3,),
     ),
   );
 
@@ -116,9 +116,9 @@ class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWid
     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: _screenHeight / 6), child:
       Column(children: [
         (title != null) ? Padding(padding: EdgeInsets.only(bottom: 12), child:
-          Text(title, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.item.medium.fat'),)
+          Text(title, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle('widget.item.medium.fat'),)
         ) : Container(),
-        Text(message, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
+        Text(message, textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle((title != null) ? 'widget.item.regular.thin' : 'widget.item.medium.fat'),),
       ],),
     );
 

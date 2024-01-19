@@ -100,7 +100,7 @@ class ToDoItem {
   }
 
   Color get color {
-    return category?.color ?? Styles().colors!.fillColorPrimary!;
+    return category?.color ?? Styles().colors.fillColorPrimary;
   }
 
   static List<ToDoItem>? listFromJson(List<dynamic>? jsonList) {
@@ -180,7 +180,7 @@ class ToDoCategory {
   }
 
   Color get color {
-    return UiColors.fromHex(colorHex) ?? Styles().colors!.fillColorPrimary!;
+    return UiColors.fromHex(colorHex) ?? Styles().colors.fillColorPrimary;
   }
 
   static List<ToDoCategory>? listFromJson(List<dynamic>? jsonList) {

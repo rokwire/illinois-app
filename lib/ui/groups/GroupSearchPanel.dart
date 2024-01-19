@@ -86,7 +86,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
         title: Localization().getStringEx("panel.groups_search.header.title", "Search"),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -116,9 +116,9 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                         onChanged: (text) => _onTextChanged(text),
                         onSubmitted: (_) => _onTapSearch(),
                         autofocus: true,
-                        cursorColor: Styles().colors!.fillColorSecondary,
+                        cursorColor: Styles().colors.fillColorSecondary,
                         keyboardType: TextInputType.text,
-                        style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                        style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
@@ -134,7 +134,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                       padding: EdgeInsets.all(12),
                       child: GestureDetector(
                         onTap: _onTapClear,
-                        child: Styles().images?.getImage('close', excludeFromSemantics: true),
+                        child: Styles().images.getImage('close', excludeFromSemantics: true),
                       ),
                     )
                 ),
@@ -147,7 +147,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
                     padding: EdgeInsets.all(12),
                     child: GestureDetector(
                       onTap: _onTapSearch,
-                      child: Styles().images?.getImage('search', excludeFromSemantics: true),
+                      child: Styles().images.getImage('search', excludeFromSemantics: true),
                     ),
                   ),
                 ),
@@ -158,11 +158,11 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
               padding: EdgeInsets.all(16),
               child: RichText(
                 text: TextSpan(
-                  style: Styles().textStyles?.getTextStyle("widget.title.large"),
+                  style: Styles().textStyles.getTextStyle("widget.title.large"),
                   children: <TextSpan>[
                     TextSpan(
                         text: _searchLabel,
-                        style: Styles().textStyles?.getTextStyle("widget.title.large.semi_fat"),)
+                        style: Styles().textStyles.getTextStyle("widget.title.large.semi_fat"),)
                   ],
                 ),
               )),
@@ -171,7 +171,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
             child: Padding(
               padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
               child: Text(_resultsInfoText!,
-                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
               ),
             ),
           ),

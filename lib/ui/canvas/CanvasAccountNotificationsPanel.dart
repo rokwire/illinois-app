@@ -50,7 +50,7 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
         title: Localization().getStringEx('panel.canvas_notifications.header.title', 'Account Notifications'),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -77,13 +77,13 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
   Widget _buildErrorContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_notifications.load.failed.error.msg', 'Failed to load account notifications. Please, try again later.'),
-            textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+            textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildEmptyContent() {
     return Center(
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 28), child: Text(Localization().getStringEx('panel.canvas_notifications.empty.msg', 'There are no account notifications.'),
-            textAlign: TextAlign.center, style:  Styles().textStyles?.getTextStyle("widget.message.medium.thin"))));
+            textAlign: TextAlign.center, style:  Styles().textStyles.getTextStyle("widget.message.medium.thin"))));
   }
 
   Widget _buildNotificationsContent() {
@@ -110,17 +110,17 @@ class _CanvasAccountNotificationsPanelState extends State<CanvasAccountNotificat
             onTap: () => _onTapNotification(notification),
             child: Container(
                 decoration: BoxDecoration(
-                    color: Styles().colors!.white!,
+                    color: Styles().colors.white,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+                    border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
                 padding: EdgeInsets.all(10),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child: Text(StringUtils.ensureNotEmpty(notification.subject), maxLines: 2, overflow: TextOverflow.ellipsis,
-                        style:  Styles().textStyles?.getTextStyle("panel.canvas.text.small")))
+                        style:  Styles().textStyles.getTextStyle("panel.canvas.text.small")))
                   ]),
                   Padding(padding: EdgeInsets.only(top: 5), child: Row(children: [Expanded(child: Text(StringUtils.ensureNotEmpty(notification.startAtDisplayDate),
-                        style:  Styles().textStyles?.getTextStyle("widget.info.small")))]))
+                        style:  Styles().textStyles.getTextStyle("widget.info.small")))]))
                 ]))));
   }
 

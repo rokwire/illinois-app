@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Wrap long location details to multiple lines in Event2 detail panel [#3842](https://github.com/rokwire/illinois-app/issues/3842).
+- Show in app notificatons as toast message [#2774](https://github.com/rokwire/illinois-app/issues/2774).
+- Make predefined Style colors and font families not nullable [#2774](https://github.com/rokwire/illinois-app/issues/2774).
 
 ## [5.1.10] - 2024-01-18
 ### Fixed

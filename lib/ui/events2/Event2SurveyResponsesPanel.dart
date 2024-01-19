@@ -62,7 +62,7 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
     return Scaffold(
         appBar: _headerBar,
         body: _buildContent(),
-        backgroundColor: Styles().colors?.background);
+        backgroundColor: Styles().colors.background);
   }
 
   Widget _buildContent() {
@@ -99,7 +99,7 @@ class _Event2SurveyResponsesPanelState extends State<Event2SurveyResponsesPanel>
         Text(
             Localization().getStringEx('panel.event2.survey.responses.surveys.empty.msg', 'There are no survey responses available.'),
             textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18)
+            style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18)
         ),
       ),
     ];

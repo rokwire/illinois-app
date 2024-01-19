@@ -48,7 +48,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel>  {
                     child: Stack(children: <Widget>[
                           SingleChildScrollView(child:
                           Column(children: <Widget>[ Container(
-                            decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
+                            decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
                             child: Padding(padding: EdgeInsets.all(20), child:  PollContentWidget(pollId: widget.pollId,),),
                           ),],)),
                       Container(alignment: Alignment.topRight, child: _buildCloseButton()),
@@ -63,7 +63,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel>  {
         excludeSemantics: true,
         child: InkWell(
             onTap : _onClose,
-            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))));
+            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Styles().images.getImage('close-circle-white', excludeFromSemantics: true))));
   }
 
   void _onClose() {
@@ -97,9 +97,9 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   late Color? _doneButtonColor;
   @override
   void initState() {
-    _backgroundColor = widget.backgroundColor ?? Styles().colors!.fillColorPrimary;
-    _textColor = widget.textColor ?? Styles().colors!.white;
-    _doneButtonColor = widget.doneButtonColor ?? Styles().colors!.white;
+    _backgroundColor = widget.backgroundColor ?? Styles().colors.fillColorPrimary;
+    _textColor = widget.textColor ?? Styles().colors.white;
+    _doneButtonColor = widget.doneButtonColor ?? Styles().colors.white;
 
     NotificationService().subscribe(this, [
       Polls.notifyResultsChanged,
@@ -193,20 +193,20 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Semantics(label:semanticsQuestionText,excludeSemantics: true,child:
-      Text(wantsToKnow, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small")?.copyWith(color: _textColor))),
+      Text(wantsToKnow, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.small")?.copyWith(color: _textColor))),
       Semantics(excludeSemantics: true,child:
       Padding(padding: EdgeInsets.symmetric(vertical: 20),child:
-      Text(pollTitle, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.large.fat")?.copyWith(color: _textColor)),)),
+      Text(pollTitle, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.large.fat")?.copyWith(color: _textColor)),)),
       Padding(padding: EdgeInsets.only(bottom: 20),child:
-      Text(_votingRulesDetails, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.voting.result")?.copyWith(color: _textColor),),),
+      Text(_votingRulesDetails, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.voting.result")?.copyWith(color: _textColor),),),
 
       Column(children: contentOptionsList,),
 
       Semantics(label: semanticsStatusText, excludeSemantics: true,child:
       Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
-        Text(votesNum, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small.regular")?.copyWith(color: _textColor),),
-        Text('  ', style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small.regular")?.copyWith(color: _textColor),),
-        Text(pollStatus ?? '', style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small.thin")?.copyWith(color: _textColor)),
+        Text(votesNum, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.small.regular")?.copyWith(color: _textColor),),
+        Text('  ', style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.small.regular")?.copyWith(color: _textColor),),
+        Text(pollStatus ?? '', style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.small.thin")?.copyWith(color: _textColor)),
       ],),)),
 
       footerWidget,
@@ -219,8 +219,8 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Padding(padding: EdgeInsets.only(top: 32, bottom:20),child:
-      Text(thanks, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.large.fat")?.copyWith(color: _textColor)),),
-      Text(willNotify, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.regular.thin")?.copyWith(color: _textColor)),
+      Text(thanks, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.large.fat")?.copyWith(color: _textColor)),),
+      Text(willNotify, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.regular.thin")?.copyWith(color: _textColor)),
     ];
   }
 
@@ -232,10 +232,10 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       Stack(children: <Widget>[
         RoundedButton(
             label: _poll!.options![optionIndex],
-            backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors!.fillColorSecondary : _backgroundColor,
+            backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors.fillColorSecondary : _backgroundColor,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled")?.copyWith(color: _textColor),
-            borderColor: Styles().colors!.fillColorSecondary,
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled")?.copyWith(color: _textColor),
+            borderColor: Styles().colors.fillColorSecondary,
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             onTap: () { _onButtonOption(optionIndex); }
         ),
@@ -288,7 +288,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
           child:  Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
             Padding(padding: EdgeInsets.only(right: 10), child: Stack(children: <Widget>[
-              Styles().images?.getImage(checkboxIconKey, excludeFromSemantics: true) ?? Container(),
+              Styles().images.getImage(checkboxIconKey, excludeFromSemantics: true) ?? Container(),
               Visibility(visible: (_votingOptions[optionIndex] != null),
                 child: SizedBox(height: 24, width: 24,
                     child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )
@@ -296,17 +296,17 @@ class _PollContentState extends State<PollContentWidget> implements Notification
               ),
             ],),),
             Expanded(key: progressKey, child:Stack(children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
               Container(height: 15 + MediaQuery.of(context).textScaler.scale(16), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                 Padding(padding: EdgeInsets.only(left: 5), child:
                 Row(children: <Widget>[
                   Expanded(child:
-                  Text(optionString, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),
+                  Text(optionString, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),
                 ],))
               ],),),
             ],)
             ),
-            Padding(padding: EdgeInsets.only(left: 10), child: Text(votesString, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.medium.accent"),),),
+            Padding(padding: EdgeInsets.only(left: 10), child: Text(votesString, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.medium.accent"),),),
           ],)
           ))));
     }
@@ -341,18 +341,18 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
       Semantics(label: semanticsText, excludeSemantics: true, child:
       Row(children: <Widget>[
-        Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage(checkboxImageKey, excludeFromSemantics: true)),
+        Padding(padding: EdgeInsets.only(right: 10), child: Styles().images.getImage(checkboxImageKey, excludeFromSemantics: true)),
         Expanded(
             key: progressKey, child:Stack(children: <Widget>[
-          CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
+          CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
           Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             Padding(padding: EdgeInsets.only(left: 5), child:
-            Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),
+            Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),
           ],),),
         ],)
         ),
         Expanded(child:
-        Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign:TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.medium.accent")),),
+        Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign:TextAlign.right, style: Styles().textStyles.getTextStyle("panel.poll.bubble.prompt.detail.medium.accent")),),
         )
       ],))
       ));
@@ -363,7 +363,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
   Widget _buildVoteDoneButton(void Function() handler) {
     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
-        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled")?.copyWith(color: _textColor),
+        textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled")?.copyWith(color: _textColor),
         backgroundColor: _backgroundColor,
         borderColor: _doneButtonColor,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),

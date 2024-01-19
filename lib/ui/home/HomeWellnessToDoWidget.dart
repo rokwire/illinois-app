@@ -73,29 +73,29 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
           Row(children: <Widget>[
             Expanded(child:
               Column(children: <Widget>[
-                Container(color: Styles().colors!.white, child:
+                Container(color: Styles().colors.white, child:
                   Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.today.label', 'TODAY\'S ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.label.tiny.fat")))]),
+                      Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.today.label', 'TODAY\'S ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))]),
                       Stack(alignment: Alignment.center, children: [
                         Visibility(visible: !_loading, child: _buildTodayItemsWidget()),
                         _buildLoadingIndicator()
                       ]),
-                      Padding(padding: EdgeInsets.only(top: 15), child: Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.unassigned.label', 'UNASSIGNED ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("widget.label.tiny.fat")))])),
+                      Padding(padding: EdgeInsets.only(top: 15), child: Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.unassigned.label', 'UNASSIGNED ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: Styles().textStyles.getTextStyle("widget.label.tiny.fat")))])),
                       Stack(alignment: Alignment.center, children: [
                         Visibility(visible: !_loading, child: _buildUnAssignedItemsWidget()),
                         _buildLoadingIndicator()
                       ]),
                       Padding(padding: EdgeInsets.only(top: 20), child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         RoundedButton(
-                          label: Localization().getStringEx('widget.home.wellness.todo.items.add.button', 'Add Item'), borderColor: Styles().colors!.fillColorSecondary,
-                            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small"),
-                          leftIcon: Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
+                          label: Localization().getStringEx('widget.home.wellness.todo.items.add.button', 'Add Item'), borderColor: Styles().colors.fillColorSecondary,
+                            textStyle: Styles().textStyles.getTextStyle("widget.button.title.small"),
+                          leftIcon: Styles().images.getImage('plus-circle', excludeFromSemantics: true),
                           iconPadding: 8, rightIconPadding: EdgeInsets.only(right: 8), contentWeight: 0, padding: EdgeInsets.zero, onTap: _onTapAddItem),
                         LinkButton(
                           title: Localization().getStringEx('widget.home.wellness.todo.items.view_all.label', 'View All'),
                           hint: Localization().getStringEx('widget.home.wellness.todo.items.view_all.hint', 'Tap to view all To Do items'),
-                          textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline"),
+                          textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline"),
                           onTap: _onTapViewAll,
                         ),
                       ]))
@@ -111,7 +111,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   }
 
   Widget _buildLoadingIndicator() {
-    return Visibility(visible: _loading, child: SizedBox(width: 30, height: 30, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2)));
+    return Visibility(visible: _loading, child: SizedBox(width: 30, height: 30, child: CircularProgressIndicator(color: Styles().colors.fillColorSecondary, strokeWidth: 2)));
   }
 
   Widget _buildTodayItemsWidget() {
@@ -122,7 +122,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
         widgetList.add(_buildToDoItemWidget(item));
       }
     } else {
-      widgetList.add(Text(Localization().getStringEx('widget.home.wellness.todo.items.today.empty.msg', 'You have no to-do items for today.'), style: Styles().textStyles?.getTextStyle("widget.info.small")));
+      widgetList.add(Text(Localization().getStringEx('widget.home.wellness.todo.items.today.empty.msg', 'You have no to-do items for today.'), style: Styles().textStyles.getTextStyle("widget.info.small")));
     }
     return Padding(padding: EdgeInsets.only(top: 2), child: Column(children: widgetList));
   }
@@ -135,16 +135,16 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
         widgetList.add(_buildToDoItemWidget(item));
       }
     } else {
-      widgetList.add(Text(Localization().getStringEx('widget.home.wellness.todo.items.unassigned.empty.msg', 'You have no unassigned to-do items.'), style: Styles().textStyles?.getTextStyle("widget.info.small")));
+      widgetList.add(Text(Localization().getStringEx('widget.home.wellness.todo.items.unassigned.empty.msg', 'You have no unassigned to-do items.'), style: Styles().textStyles.getTextStyle("widget.info.small")));
     }
     return Padding(padding: EdgeInsets.only(top: 2), child: Column(children: widgetList));
   }
 
   Widget _buildToDoItemWidget(ToDoItem item) {
-    Widget? completedWidget = Styles().images?.getImage(item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', color: Styles().colors?.fillColorSecondary , excludeFromSemantics: true);
+    Widget? completedWidget = Styles().images.getImage(item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', color: Styles().colors.fillColorSecondary , excludeFromSemantics: true);
     return GestureDetector(onTap: () => _onTapToDoItem(item), child: Padding(padding: EdgeInsets.only(top: 10), child: Container(color: Colors.transparent, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(right: 10), child: completedWidget),
-      Expanded(child: Text(StringUtils.ensureNotEmpty(item.name), maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.start, style: Styles().textStyles?.getTextStyle("widget.info.small")))
+      Expanded(child: Text(StringUtils.ensureNotEmpty(item.name), maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.start, style: Styles().textStyles.getTextStyle("widget.info.small")))
     ]))));
   }
 

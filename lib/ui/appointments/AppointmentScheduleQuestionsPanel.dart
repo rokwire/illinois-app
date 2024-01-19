@@ -78,7 +78,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
         Localization().getStringEx('panel.appointment.reschedule.questions.header.title', 'Reschedule Appointment')
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       //bottomNavigationBar: uiuc.TabBar()
     );
   }
@@ -88,7 +88,7 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
       Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: _hPadding), child:
         Text(Localization().getStringEx('panel.appointment.schedule.questions.label.heading', 'Appointment Questions'),
           
-          style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+          style: Styles().textStyles.getTextStyle('widget.title.large.fat'),
         ),
       ),
       Expanded(child:
@@ -121,9 +121,9 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(child:
             RichText(text:
-              TextSpan(text: title, style: Styles().textStyles?.getTextStyle("widget.title.large.fat"),
+              TextSpan(text: title, style: Styles().textStyles.getTextStyle("widget.title.large.fat"),
                 children: [
-                  TextSpan(text: (question.required == true) ?  " *" : "", style: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
+                  TextSpan(text: (question.required == true) ?  " *" : "", style: Styles().textStyles.getTextStyle("widget.title.large.extra_fat"),
                 )
               ],),
             ),
@@ -167,14 +167,14 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     return Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
       Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1),
-          color: Styles().colors!.white),
+          border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),
+          color: Styles().colors.white),
         child: Semantics(textField: true, excludeSemantics: true, value: textController?.text,
           label: Localization().getStringEx('panel.appointment.schedule.notes.field', 'NOTES FIELD'),
           hint: Localization().getStringEx('panel.appointment.schedule.notes.field.hint', ''),
           child: TextField(controller: textController, focusNode: focusNode, maxLines: 10,
             decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8)),
-            style: Styles().textStyles?.getTextStyle('widget.item.regular.thin'),
+            style: Styles().textStyles.getTextStyle('widget.item.regular.thin'),
             onChanged: (String value) => _onEditChanged(question, value),
           )
         ),
@@ -222,12 +222,12 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
         Row(children: [
           InkWell(onTap: (){ _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(selected == true), answer); }, child:
             Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
-              Styles().images?.getImage(imageKey, excludeFromSemantics: true),
+              Styles().images.getImage(imageKey, excludeFromSemantics: true),
             ),
           ),
           Expanded(child:
             Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-              Text(answer, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,semanticsLabel: "",)
+              Text(answer, style: Styles().textStyles.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,semanticsLabel: "",)
             ),
           ),
         ]),
@@ -283,8 +283,8 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
     return Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
       Container (
         decoration: BoxDecoration(
-          color: Styles().colors!.white,
-          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          color: Styles().colors.white,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4))
         ),
         //padding: const EdgeInsets.only(left: 12, right: 8),
@@ -309,13 +309,13 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 12, top: 16, bottom: 16), child:
-                Text(question.title ?? '', style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
+                Text(question.title ?? '', style: Styles().textStyles.getTextStyle('widget.detail.regular'),
                   semanticsLabel: "",
                 )
               ),
             ),
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
-              Styles().images?.getImage(imageKey, excludeFromSemantics: true,) ?? Container(),
+              Styles().images.getImage(imageKey, excludeFromSemantics: true,) ?? Container(),
             ),
           ]),
         ),
@@ -368,9 +368,9 @@ class _AppointmentScheduleQuestionsPanelState extends State<AppointmentScheduleQ
         RoundedButton(
           label: Localization().getStringEx("panel.appointment.schedule.time.button.continue.title", "Next"),
           hint: Localization().getStringEx("panel.appointment.schedule.time.button.continue.hint", ""),
-          backgroundColor: Styles().colors!.surface,
-          textStyle: canContinue ? Styles().textStyles?.getTextStyle("widget.button.title.large.fat") : Styles().textStyles?.getTextStyle("widget.button.disabled.title.large.fat"),
-          borderColor: canContinue ? Styles().colors!.fillColorSecondary : Styles().colors?.surfaceAccent,
+          backgroundColor: Styles().colors.surface,
+          textStyle: canContinue ? Styles().textStyles.getTextStyle("widget.button.title.large.fat") : Styles().textStyles.getTextStyle("widget.button.disabled.title.large.fat"),
+          borderColor: canContinue ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
           enabled: canContinue,
           onTap: ()=> _onContinue(),
         ),

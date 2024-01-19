@@ -129,7 +129,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
         ],
       ),
       body: _buildBody(),
-      backgroundColor: Styles().colors?.white,
+      backgroundColor: Styles().colors.white,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -148,12 +148,12 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
     if (_loadingRoutes) {
       contentWidget = Center(child:
         SizedBox(width: 16, height: 16, child:
-          CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 2,),
+          CircularProgressIndicator(color: Styles().colors.mtdColor, strokeWidth: 2,),
         ),
       );
     }
     else if (CollectionUtils.isEmpty(_routes))  {
-      contentWidget = Text('NA', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black,));
+      contentWidget = Text('NA', style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black,));
     }
     else {
       List<Widget> routeWidgets = <Widget>[];
@@ -173,12 +173,12 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
 
     return Container(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),),
+        border: Border(bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1),),
       ),
       padding: EdgeInsets.all(24),
       child: Row(children: [
         Padding(padding: EdgeInsets.only(right: 8), child:
-          Text('Routes:', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+          Text('Routes:', style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black38,)),
         ),
         Expanded(child: contentWidget),
       ],),
@@ -203,7 +203,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
   Widget _buildDeparturesList() {
     return ListView.separated(
       itemBuilder: (context, index) => _buildDeparture(ListUtils.entry(_departures, index)),
-      separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
+      separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
       itemCount: _departures?.length ?? 0,
       padding: EdgeInsets.zero,
     );
@@ -216,7 +216,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
   /*Widget _buildRoute(MTDRoute route) {
     return Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
-        Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, color: route.textColor,)),
+        Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 12, color: route.textColor,)),
       )
     );
   }*/
@@ -227,7 +227,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
         Column(children: [
           Expanded(child:
             Align(alignment: Alignment.center, child:
-              CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 3, )
+              CircularProgressIndicator(color: Styles().colors.mtdColor, strokeWidth: 3, )
             ),
           ),
         ],),
@@ -247,7 +247,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
                   Row(children: [
                     Expanded(child:
                       Text(error ?? '', style:
-                        Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
+                        Styles().textStyles.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
                     ),
                   ],)
                 )

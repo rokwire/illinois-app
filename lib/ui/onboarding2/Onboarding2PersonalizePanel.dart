@@ -51,7 +51,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         body: SafeArea(child:SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -59,7 +59,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
             Column(children: [
               Expanded(child: SingleChildScrollView(child:
                 Container(
-                    color: Styles().colors!.white,
+                    color: Styles().colors.white,
                     child:Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
@@ -69,17 +69,17 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                               child:Row(children: [
                                 Expanded(
                                     flex:1,
-                                    child: Container(color: Styles().colors!.fillColorPrimary,)
+                                    child: Container(color: Styles().colors.fillColorPrimary,)
                                 ),
                                 Container(width: 2,),
                                 Expanded(
                                     flex:1,
-                                    child: Container(color: Styles().colors!.fillColorPrimary,)
+                                    child: Container(color: Styles().colors.fillColorPrimary,)
                                 ),
                                 Container(width: 2,),
                                 Expanded(
                                     flex:1,
-                                    child: Container(color: Styles().colors!.backgroundVariant,)
+                                    child: Container(color: Styles().colors.backgroundVariant,)
                                 ),
                               ],)
                           ),
@@ -103,7 +103,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                     child: Text(
                                       _title!,
                                       textAlign: TextAlign.center,
-                                      style: Styles().textStyles?.getTextStyle("panel.onboarding2.improve.heading.title"))
+                                      style: Styles().textStyles.getTextStyle("panel.onboarding2.improve.heading.title"))
                                 ),
                               )),
                           Semantics(
@@ -116,13 +116,13 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                     child: Text(
                                       _description!,
                                       textAlign: TextAlign.center,
-                                      style: Styles().textStyles?.getTextStyle("widget.description.regular"),
+                                      style: Styles().textStyles.getTextStyle("widget.description.regular"),
                                     )),
                               )),
                           Container(height: 10,),
                           Onboarding2UnderlinedButton(
                             title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
-                            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.small.semi_fat.underline"),
+                            textStyle: Styles().textStyles.getTextStyle("widget.button.title.small.semi_fat.underline"),
                             onTap: _onTapLearnMore,
                           ),
                           Container(height: 12,),
@@ -137,19 +137,19 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                       child:Column(
                                           children:[
                                             CustomPaint(
-                                              painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.leftToRight),
+                                              painter: TrianglePainter(painterColor: Styles().colors.background, horzDir: TriangleHorzDirection.leftToRight),
                                               child: Container(
                                                 height: 100,
                                               ),
                                             ),
-                                            Container(height: 60, color: Styles().colors!.background,)
+                                            Container(height: 60, color: Styles().colors.background,)
                                           ]),
                                     ),
                                   ),
                                   Align(
                                       alignment: Alignment.center,
                                       child:Container(
-                                        child: Styles().images?.getImage("personalize-illustration", excludeFromSemantics: true),
+                                        child: Styles().images.getImage("personalize-illustration", excludeFromSemantics: true),
                                       )
                                   )
                                 ],
@@ -177,10 +177,10 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                     RoundedButton(
                       label: Localization().getStringEx('panel.onboarding2.personalize.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.personalize.button.continue.hint', ''),
-                      textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                      textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      backgroundColor: Styles().colors!.white,
-                      borderColor: Styles().colors!.fillColorSecondaryVariant,
+                      backgroundColor: Styles().colors.white,
+                      borderColor: Styles().colors.fillColorSecondaryVariant,
                       onTap: () => _goNext(context),
                     )
                   ],

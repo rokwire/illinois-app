@@ -37,7 +37,7 @@ extension GroupExt on Group {
     if(member?.status != null){
       return groupMemberStatusToColor(member!.status);
     }
-    return Styles().colors!.white;
+    return Styles().colors.white;
   }
 
   String? get displayUpdateTime {
@@ -203,10 +203,10 @@ String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
 Color? groupMemberStatusToColor(GroupMemberStatus? value) {
   if (value != null) {
     switch(value){
-      case GroupMemberStatus.admin    :  return Styles().colors!.fillColorSecondary;
-      case GroupMemberStatus.member   :  return Styles().colors!.fillColorPrimary;
-      case GroupMemberStatus.pending  :  return Styles().colors!.mediumGray1;
-      case GroupMemberStatus.rejected :  return Styles().colors!.mediumGray1;
+      case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
+      case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
+      case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
+      case GroupMemberStatus.rejected :  return Styles().colors.mediumGray1;
     }
   }
   return null;

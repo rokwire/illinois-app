@@ -73,7 +73,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildHeaderBar(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
       body: buildContent()
     );
@@ -87,13 +87,13 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
           button: true,
           excludeSemantics: true,
           child: IconButton(
-              icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
+              icon: Styles().images.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
               onPressed: _onBack),
         ),
         title: Text(
           Localization()
               .getStringEx('panel.image_edit.header.title', 'Select Image'),
-          style: Styles().textStyles?.getTextStyle("widget.title.light.regular.extra_fat.spaced")
+          style: Styles().textStyles.getTextStyle("widget.title.light.regular.extra_fat.spaced")
         ),
         centerTitle: false);
   }
@@ -141,7 +141,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
                 Container(
                   child: Align(alignment: Alignment.center,
                     child: SizedBox(height: 24, width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors.fillColorSecondary), )
                     ),
                   ),
                 ),
@@ -165,7 +165,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               padding: EdgeInsets.all(15.0),
               child: Text(
                 "Image Source",
-                style: Styles().textStyles?.getTextStyle("widget.title.small"),
+                style: Styles().textStyles.getTextStyle("widget.title.small"),
               ),
             ),
             Padding(
@@ -242,10 +242,10 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
         onImageEndLoading: _hideLoader,
         visibleOtherAspectRatios: true,
         squareBorderWidth: 2,
-        squareCircleColor: Styles().colors!.fillColorPrimary!,
-        defaultTextColor: Styles().colors!.fillColorPrimary!,
-        selectedTextColor: Styles().colors!.fillColorSecondary!,
-        colorForWhiteSpace: Styles().colors!.white!,
+        squareCircleColor: Styles().colors.fillColorPrimary,
+        defaultTextColor: Styles().colors.fillColorPrimary,
+        selectedTextColor: Styles().colors.fillColorSecondary,
+        colorForWhiteSpace: Styles().colors.white,
       );
     }
   }
@@ -350,7 +350,7 @@ class AppDialogButtonState extends State<AppDialogButton> {
       onPressed: widget.onPressed,
       child: Text(
         widget.buttonTitle,
-        style: Styles().textStyles?.getTextStyle("widget.button.title.regular.thin")
+        style: Styles().textStyles.getTextStyle("widget.button.title.regular.thin")
       ),
     );
   }

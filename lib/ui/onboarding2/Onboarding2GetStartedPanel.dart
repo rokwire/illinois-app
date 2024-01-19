@@ -30,7 +30,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(body:
-      Container(color: Styles().colors!.background, child:
+      Container(color: Styles().colors.background, child:
         Column(children: [
           Expanded(child:
             SingleChildScrollView(child:
@@ -41,7 +41,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                 Container(height: 14,),
                 Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
                   Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to our campus ecosystem.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-                    textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.get_started.description"),),
+                    textAlign: TextAlign.center, style: Styles().textStyles.getTextStyle("panel.onboarding2.get_started.description"),),
                 ),
               ]),
             )
@@ -52,10 +52,10 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                 RoundedButton(
                   label: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue'),
                   hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
-                  textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+                  textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat"),
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  borderColor: Styles().colors!.fillColorSecondary,
-                  backgroundColor: Styles().colors!.white,
+                  borderColor: Styles().colors.fillColorSecondary,
+                  backgroundColor: Styles().colors.white,
                   onTap: () => _onGoNext(context),
                 ),
                 Onboarding2UnderlinedButton(

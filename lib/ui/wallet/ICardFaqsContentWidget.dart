@@ -52,7 +52,7 @@ class _ICardFaqsContentWidgetState extends State<ICardFaqsContentWidget> {
         child: Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: Container(
-                decoration: BoxDecoration(color: Styles().colors?.lightGray, borderRadius: BorderRadius.circular(5)),
+                decoration: BoxDecoration(color: Styles().colors.lightGray, borderRadius: BorderRadius.circular(5)),
                 padding: EdgeInsets.all(16),
                 child: Column(children: [
                   Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -60,8 +60,8 @@ class _ICardFaqsContentWidgetState extends State<ICardFaqsContentWidget> {
                         child: Text(StringUtils.ensureNotEmpty(question),
                             textAlign: TextAlign.start,
                             maxLines: 10,
-                            style: Styles().textStyles?.getTextStyle('panel.icard.content.faqs.mobile_card.usage.question'))),
-                    Padding(padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage('icon-down-blue') ?? Container())
+                            style: Styles().textStyles.getTextStyle('panel.icard.content.faqs.mobile_card.usage.question'))),
+                    Padding(padding: EdgeInsets.only(left: 10), child: Styles().images.getImage('icon-down-blue') ?? Container())
                   ])
                 ]))));
   }

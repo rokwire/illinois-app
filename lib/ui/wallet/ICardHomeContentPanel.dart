@@ -84,7 +84,7 @@ class ICardHomeContentPanel extends StatefulWidget {
         isScrollControlled: true,
         isDismissible: true,
         clipBehavior: Clip.antiAlias,
-        backgroundColor: Styles().colors!.background,
+        backgroundColor: Styles().colors.background,
         constraints: BoxConstraints(maxHeight: height, minHeight: height),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
         builder: (context) => ICardHomeContentPanel._(content: content));
@@ -107,14 +107,14 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors?.white,
+        backgroundColor: Styles().colors.white,
         body: Column(children: [
           Row(children: [
             Expanded(
                 child: Padding(
                     padding: EdgeInsets.only(left: 16),
                     child: Text(Localization().getStringEx('panel.icard.home.title.label', 'Illini ID'),
-                        style: Styles().textStyles?.getTextStyle('panel.id_card.heading.title')))),
+                        style: Styles().textStyles.getTextStyle('panel.id_card.heading.title')))),
             Semantics(
                 label: Localization().getStringEx('dialog.close.title', 'Close'),
                 hint: Localization().getStringEx('dialog.close.hint', ''),
@@ -124,9 +124,9 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
                     onTap: _onTapClose,
                     child: Container(
                         padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),
-                        child: Styles().images?.getImage('close-circle', excludeFromSemantics: true))))
+                        child: Styles().images.getImage('close-circle', excludeFromSemantics: true))))
           ]),
-          Container(color: Styles().colors?.surfaceAccent, height: 1),
+          Container(color: Styles().colors.surfaceAccent, height: 1),
           Expanded(child: _buildContent())
         ]));
   }
@@ -137,17 +137,17 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
           child: SingleChildScrollView(
               physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
               child: Container(
-                  color: Styles().colors!.white,
+                  color: Styles().colors.white,
                   child: Stack(children: [
                     _contentWidget,
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Padding(
                           padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                           child: RibbonButton(
-                              textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat.secondary"),
-                              backgroundColor: Styles().colors!.white,
+                              textStyle: Styles().textStyles.getTextStyle("widget.button.title.medium.fat.secondary"),
+                              backgroundColor: Styles().colors.white,
                               borderRadius: BorderRadius.all(Radius.circular(5)),
-                              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                              border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                               rightIconKey: (_contentValuesVisible ? 'icon-up-orange' : 'icon-down-orange'),
                               label: _getContentLabel(_selectedContent),
                               onTap: _onTapContentDropdown)),
@@ -172,12 +172,12 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors!.blackTransparent06, height: MediaQuery.of(context).size.height))));
+                child: Container(color: Styles().colors.blackTransparent06, height: MediaQuery.of(context).size.height))));
   }
 
   Widget _buildContentValuesWidget() {
     List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    sectionList.add(Container(color: Styles().colors.fillColorSecondary, height: 2));
     for (ICardContent currentContent in _contentValues) {
       if ((_selectedContent != currentContent)) {
         sectionList.add(_buildContentItem(currentContent));
@@ -188,8 +188,8 @@ class _ICardHomeContentPanelState extends State<ICardHomeContentPanel> {
 
   Widget _buildContentItem(ICardContent contentItem) {
     return RibbonButton(
-        backgroundColor: Styles().colors!.white,
-        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        backgroundColor: Styles().colors.white,
+        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
         rightIconKey: null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));

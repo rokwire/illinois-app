@@ -89,7 +89,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
             ],)
         )
       ],),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -101,7 +101,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
           Padding(
               padding: EdgeInsets.only(top: 5),
               child: Text(widget.examplesText ?? "",
-                  style: Styles().textStyles?.getTextStyle('widget.message.small')))
+                  style: Styles().textStyles.getTextStyle('widget.message.small')))
         ]));
   }
 
@@ -112,14 +112,14 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
           Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: Text(Localization().getStringEx('panel.wellness.ring.create.name.field.label', 'RING NAME'),
-                  style: Styles().textStyles?.getTextStyle('widget.description.small.fat'))),
+                  style: Styles().textStyles.getTextStyle('widget.description.small.fat'))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
+              decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
-                  style: Styles().textStyles?.getTextStyle('widget.title.medium.fat')))
+                  style: Styles().textStyles.getTextStyle('widget.title.medium.fat')))
         ]));
   }
 
@@ -183,21 +183,21 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   Widget _buildColorPickerDialog() {
     return SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-          ColorPicker(pickerColor: Styles().colors!.fillColorSecondary!, onColorChanged: _onColorChanged),
+          ColorPicker(pickerColor: Styles().colors.fillColorSecondary, onColorChanged: _onColorChanged),
           Padding(
               padding: EdgeInsets.only(top: 20),
               child: Center(
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
                     RoundedButton(
                         label: Localization().getStringEx('panel.wellness.categories.manage.color.pick.cancel.button', 'Cancel'),
-                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                         contentWeight: 0,
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                         onTap: _onTapCancelColorSelection),
                     Container(width: 30),
                     RoundedButton(
                         label: Localization().getStringEx('panel.wellness.categories.manage.color.pick.select.button', 'Select'),
-                        textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+                        textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
                         contentWeight: 0,
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                         onTap: _onTapSelectColor)
@@ -215,14 +215,14 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                   Padding(
                       padding: EdgeInsets.only(bottom: 6, left: 7),
                       child: Text(Localization().getStringEx('panel.wellness.ring.create.field.quantity.label', 'QUANTITY'),
-                          style: Styles().textStyles?.getTextStyle('widget.description.small.fat'))),
+                          style: Styles().textStyles.getTextStyle('widget.description.small.fat'))),
                   Container(
                       padding: EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
+                      decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                       child: TextField(
                           controller: _quantityController,
                           decoration: InputDecoration(border: InputBorder.none),
-                          style: Styles().textStyles?.getTextStyle('widget.title.medium.fat')))
+                          style: Styles().textStyles.getTextStyle('widget.title.medium.fat')))
                 ])),
           Container(width: 16,),
           Expanded(flex: 17,
@@ -231,14 +231,14 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                     Padding(
                         padding: EdgeInsets.only(bottom: 6, left: 7),
                         child: Text(Localization().getStringEx('panel.wellness.ring.create.field.unit.label', 'UNIT'),
-                            style: Styles().textStyles?.getTextStyle('widget.description.small.fat'))),
+                            style: Styles().textStyles.getTextStyle('widget.description.small.fat'))),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
+                        decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.mediumGray, width: 1)),
                         child: TextField(
                             controller: _unitController,
                             decoration: InputDecoration(border: InputBorder.none),
-                            style: Styles().textStyles?.getTextStyle('widget.title.medium.fat')))
+                            style: Styles().textStyles.getTextStyle('widget.title.medium.fat')))
                   ]))
         ],),
         );
@@ -249,7 +249,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         padding: EdgeInsets.only(top: 30),
         child: RoundedButton(
             label: _continueButtonTitle,
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             contentWeight: 0,
             progress: _loadingSave,
             padding: EdgeInsets.symmetric(horizontal: 46, vertical: 6),
@@ -264,7 +264,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         padding: EdgeInsets.only(top: 30, right: 16),
         child: RoundedButton(
             label: Localization().getStringEx('panel.wellness.categories.delete.button', 'Delete'),
-            textStyle: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),
+            textStyle: Styles().textStyles.getTextStyle("widget.button.title.enabled"),
             contentWeight: 0,
             progress: _loadingDelete,
             padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),

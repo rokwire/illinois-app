@@ -62,7 +62,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
         title: Localization().getStringEx("panel.search.header.title", "Search"),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -92,9 +92,9 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                           onChanged: (text) => _onTextChanged(text),
                           onSubmitted: (_) => _onTapSearch(),
                           autofocus: true,
-                          cursorColor: Styles().colors!.fillColorSecondary,
+                          cursorColor: Styles().colors.fillColorSecondary,
                           keyboardType: TextInputType.text,
-                          style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                          style: Styles().textStyles.getTextStyle("widget.item.regular.thin"),
                           decoration: InputDecoration(
                             border: InputBorder.none,
                           ),
@@ -110,7 +110,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                         padding: EdgeInsets.all(12),
                         child: GestureDetector(
                           onTap: _onTapClear,
-                          child: Styles().images?.getImage('close', excludeFromSemantics: true),
+                          child: Styles().images.getImage('close', excludeFromSemantics: true),
                         ),
                       )
                     ),
@@ -123,7 +123,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                         padding: EdgeInsets.all(12),
                         child: GestureDetector(
                           onTap: _onTapSearch,
-                          child: Styles().images?.getImage('search', excludeFromSemantics: true),
+                          child: Styles().images.getImage('search', excludeFromSemantics: true),
                         ),
                       ),
                     ),
@@ -134,11 +134,11 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                   padding: EdgeInsets.all(16),
                   child: RichText(
                     text: TextSpan(
-                      style: Styles().textStyles?.getTextStyle("widget.title.large"),
+                      style: Styles().textStyles.getTextStyle("widget.title.large"),
                       children: <TextSpan>[
                         TextSpan(
                             text: _searchLabel,
-                            style: Styles().textStyles?.getTextStyle("widget.text.semi_fat") ),
+                            style: Styles().textStyles.getTextStyle("widget.text.semi_fat") ),
                       ],
                     ),
                   )),
@@ -147,7 +147,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
                   child: Text(getResultsInfoText()!,
-                    style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                    style: Styles().textStyles.getTextStyle("widget.item.regular.thin")
                   ),
                 ),
               ),

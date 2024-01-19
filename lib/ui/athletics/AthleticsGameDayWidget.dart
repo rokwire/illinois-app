@@ -59,15 +59,15 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
       )
     :
       Column(children: <Widget>[
-        Container(color: Styles().colors!.fillColorPrimary, child:
+        Container(color: Styles().colors.fillColorPrimary, child:
           Semantics(label: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'), excludeSemantics: true, header: true, child:
             Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16), child:
               Row(children: <Widget>[
                 StringUtils.isNotEmpty(widget.sportDefinition?.iconPath)
-                  ? Styles().images?.getImage(widget.sportDefinition!.iconPath!, excludeFromSemantics: true) ?? Container()
+                  ? Styles().images.getImage(widget.sportDefinition!.iconPath!, excludeFromSemantics: true) ?? Container()
                   : Container(),
                 Container(width: 10,),
-                Text(Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'), style: Styles().textStyles?.getTextStyle("widget.title.light.large.extra_fat"),
+                Text(Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'), style: Styles().textStyles.getTextStyle("widget.title.light.large.extra_fat"),
                 )
               ],),
             )
