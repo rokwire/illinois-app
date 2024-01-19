@@ -446,7 +446,7 @@ class SoundRecorderController {
       var audioBytes = await getFileAsBytes(path);
       notifyChanged(() {
         _audio = audioBytes;
-        _audioRecordPath = path!;
+        _audioRecordPath = path;
       });
       Log.d("STOP RECODING audioPath = $_audioRecordPath");
     } catch (e) {
